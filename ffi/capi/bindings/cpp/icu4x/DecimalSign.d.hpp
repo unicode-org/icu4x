@@ -33,8 +33,17 @@ namespace icu4x {
 class DecimalSign {
 public:
     enum Value {
+        /**
+         * No sign (implicitly positive, e.g., 1729).
+         */
         None = 0,
+        /**
+         * A negative sign, e.g., -1729.
+         */
         Negative = 1,
+        /**
+         * An explicit positive sign, e.g., +1729.
+         */
         Positive = 2,
     };
 

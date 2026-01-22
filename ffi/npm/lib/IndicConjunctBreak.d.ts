@@ -16,9 +16,21 @@ export class IndicConjunctBreak {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.None) for more information.
+     */
     static None : IndicConjunctBreak;
+    /**
+     * See the [Rust documentation for `Consonant`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Consonant) for more information.
+     */
     static Consonant : IndicConjunctBreak;
+    /**
+     * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Extend) for more information.
+     */
     static Extend : IndicConjunctBreak;
+    /**
+     * See the [Rust documentation for `Linker`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Linker) for more information.
+     */
     static Linker : IndicConjunctBreak;
 
 
@@ -28,18 +40,34 @@ export class IndicConjunctBreak {
     static forChar(ch: codepoint): IndicConjunctBreak;
 
     /**
-     * Convert to an integer value usable with ICU4C and CodePointMapData
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
+    longName(): string | null;
+
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
+    shortName(): string | null;
+
+    /**
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue(): number;
 
     /**
-     * Convert from an integer value from ICU4C or CodePointMapData
+     * Convert from an integer value from ICU4C or `CodePointMapData`
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): IndicConjunctBreak | null;
+
+    static tryFromStr(s: string): IndicConjunctBreak | null;
 
     constructor(value: IndicConjunctBreak | string );
 }

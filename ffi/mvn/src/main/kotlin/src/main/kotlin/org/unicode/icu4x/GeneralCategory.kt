@@ -11,8 +11,9 @@ internal interface GeneralCategoryLib: Library {
     fun icu4x_GeneralCategory_long_name_mv1(inner: Int): OptionSlice
     fun icu4x_GeneralCategory_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_GeneralCategory_to_integer_value_mv1(inner: Int): FFIUint8
-    fun icu4x_GeneralCategory_to_group_mv1(inner: Int): GeneralCategoryGroupNative
     fun icu4x_GeneralCategory_from_integer_value_mv1(other: FFIUint8): OptionInt
+    fun icu4x_GeneralCategory_try_from_str_mv1(s: Slice): OptionInt
+    fun icu4x_GeneralCategory_to_group_mv1(inner: Int): GeneralCategoryGroupNative
 }
 /** See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
 */
@@ -106,8 +107,9 @@ enum class GeneralCategory(val inner: Int) {
         }
         @JvmStatic
         
-        /** Convert from an integer using the ICU4C integer mappings for `General_Category`
-        *Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
+        *
+        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
         */
         fun fromIntegerValue(other: UByte): GeneralCategory? {
             
@@ -116,10 +118,19 @@ enum class GeneralCategory(val inner: Int) {
             val intermediateOption = returnVal.option() ?: return null
             return GeneralCategory.fromNative(intermediateOption)
         }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): GeneralCategory? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_GeneralCategory_try_from_str_mv1(sSlice);
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return GeneralCategory.fromNative(intermediateOption)
+        }
     }
     
-    /** Convert to an integer using the ICU4C integer mappings for `General_Category`
-    *Get the "long" name of this property value (returns empty if property value is unknown)
+    /** Get the "long" name of this property value (returns empty if property value is unknown)
     *
     *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
     */
@@ -145,7 +156,9 @@ enum class GeneralCategory(val inner: Int) {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
+    *
+    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
     */
     fun toIntegerValue(): UByte {
         
@@ -153,7 +166,7 @@ enum class GeneralCategory(val inner: Int) {
         return (returnVal.toUByte())
     }
     
-    /** Produces a GeneralCategoryGroup mask that can represent a group of general categories
+    /** Produces a `GeneralCategoryGroup` mask that can represent a group of general categories
     *
     *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
     */
@@ -161,7 +174,7 @@ enum class GeneralCategory(val inner: Int) {
         
         val returnVal = lib.icu4x_GeneralCategory_to_group_mv1(this.toNative());
         
-        val returnStruct = GeneralCategoryGroup(returnVal)
+        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }
 }

@@ -43,6 +43,7 @@ prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 ///   2. Locale-sensitive grouping separator positions.
 ///
 /// Read more about the options in the [`super::options`] module.
+#[derive(Debug)]
 pub struct CurrencyFormatter {
     /// Options bag for the currency formatter to determine the behavior of the formatter.
     /// for example: currency width.
@@ -57,7 +58,7 @@ pub struct CurrencyFormatter {
 
 impl CurrencyFormatter {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences, options: super::options::CurrencyFormatterOptions) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, options: CurrencyFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_buffer_provider,
@@ -74,7 +75,7 @@ impl CurrencyFormatter {
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         prefs: CurrencyFormatterPreferences,
-        options: super::options::CurrencyFormatterOptions,
+        options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_formatter =
@@ -97,11 +98,11 @@ impl CurrencyFormatter {
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,
-        options: super::options::CurrencyFormatterOptions,
+        options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::currency::essentials::CurrencyEssentialsV1>
+            + DataProvider<CurrencyEssentialsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {

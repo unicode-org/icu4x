@@ -62,6 +62,7 @@ export class IanaParserExtended {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -85,6 +86,7 @@ export class IanaParserExtended {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -109,6 +111,7 @@ export class IanaParserExtended {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -130,6 +133,7 @@ export class IanaParserExtended {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -148,6 +152,7 @@ export class IanaParserExtended {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

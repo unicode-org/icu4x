@@ -272,6 +272,25 @@ pub enum BuilderError {
     /// assert!(superfluous_options.year_style.is_some());
     /// assert!(superfluous_options.time_precision.is_none());
     /// ```
+    ///
+    /// [`YearStyle`] requires a field set with years:
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// builder.date_fields = Some(DateFields::MD);
+    /// builder.year_style = Some(YearStyle::WithEra);
+    /// let err = builder.build_composite().unwrap_err();
+    ///
+    /// let BuilderError::SuperfluousOptions(superfluous_options) = err else {
+    ///     panic!("error type should be SuperfluousOptions");
+    /// };
+    ///
+    /// assert!(superfluous_options.year_style.is_some());
+    /// ```
     SuperfluousOptions(FieldSetBuilder),
 }
 
@@ -482,7 +501,7 @@ impl FieldSetBuilder {
             Some(DateFields::Y) => CalendarPeriod(CalendarPeriodFieldSet::Y(
                 fieldsets::Y::take_from_builder(self),
             )),
-            Option::None => return Err(BuilderError::MissingDateFields),
+            None => return Err(BuilderError::MissingDateFields),
         };
         Ok(field_set)
     }
@@ -490,6 +509,36 @@ impl FieldSetBuilder {
     /// Builds a [`DateFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_date(),
+    ///     Err(BuilderError::MissingDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YM);
+    /// assert!(matches!(
+    ///     builder.clone().build_date(),
+    ///     Err(BuilderError::InvalidDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(builder.clone().build_date(), Ok(_)));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_date(),
+    ///     Err(BuilderError::SuperfluousOptions(_))
+    /// ));
+    /// ```
     pub fn build_date(mut self) -> Result<DateFieldSet, BuilderError> {
         let date_field_set = match self.build_date_or_calendar_period_without_checking_options()? {
             DateOrCalendarPeriodFieldSet::Date(fs) => fs,
@@ -504,6 +553,36 @@ impl FieldSetBuilder {
     /// Builds a [`CalendarPeriodFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_calendar_period(),
+    ///     Err(BuilderError::MissingDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(
+    ///     builder.clone().build_calendar_period(),
+    ///     Err(BuilderError::InvalidDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YM);
+    /// assert!(matches!(builder.clone().build_calendar_period(), Ok(_)));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_calendar_period(),
+    ///     Err(BuilderError::SuperfluousOptions(_))
+    /// ));
+    /// ```
     pub fn build_calendar_period(mut self) -> Result<CalendarPeriodFieldSet, BuilderError> {
         let calendar_period_field_set = match self
             .build_date_or_calendar_period_without_checking_options()?
@@ -518,7 +597,34 @@ impl FieldSetBuilder {
     /// Builds a [`TimeFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_time(),
+    ///     Err(BuilderError::MissingTimePrecision)
+    /// ));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(builder.clone().build_time(), Ok(_)));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(
+    ///     builder.clone().build_time(),
+    ///     Err(BuilderError::SuperfluousOptions(_))
+    /// ));
+    /// ```
     pub fn build_time(mut self) -> Result<TimeFieldSet, BuilderError> {
+        if self.time_precision.is_none() {
+            return Err(BuilderError::MissingTimePrecision);
+        }
         let time_field_set = TimeFieldSet::T(fieldsets::T::take_from_builder(&mut self));
         self.check_options_consumed()?;
         Ok(time_field_set)
@@ -546,7 +652,7 @@ impl FieldSetBuilder {
             Some(ZoneStyle::ExemplarCity) => {
                 ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity)
             }
-            Option::None => return Err(BuilderError::MissingZoneStyle),
+            None => return Err(BuilderError::MissingZoneStyle),
         };
         Ok(zone_field_set)
     }
@@ -554,6 +660,30 @@ impl FieldSetBuilder {
     /// Builds a [`ZoneFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_zone(),
+    ///     Err(BuilderError::MissingZoneStyle)
+    /// ));
+    ///
+    /// builder.zone_style = Some(ZoneStyle::SpecificLong);
+    /// assert!(matches!(builder.clone().build_zone(), Ok(_)));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_zone(),
+    ///     Err(BuilderError::SuperfluousOptions(_))
+    /// ));
+    /// ```
     pub fn build_zone(mut self) -> Result<ZoneFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         self.check_options_consumed()?;
@@ -563,33 +693,68 @@ impl FieldSetBuilder {
     /// Builds a [`DateAndTimeFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_date_and_time(),
+    ///     Err(BuilderError::MissingDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YM);
+    /// assert!(matches!(
+    ///     builder.clone().build_date_and_time(),
+    ///     Err(BuilderError::MissingTimePrecision)
+    /// ));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_date_and_time(),
+    ///     Err(BuilderError::InvalidDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(builder.clone().build_date_and_time(), Ok(_)));
+    ///
+    /// builder.zone_style = Some(ZoneStyle::SpecificLong);
+    /// assert!(matches!(
+    ///     builder.clone().build_date_and_time(),
+    ///     Err(BuilderError::SuperfluousOptions(_))
+    /// ));
+    /// ```
     pub fn build_date_and_time(mut self) -> Result<DateAndTimeFieldSet, BuilderError> {
+        let Some(date_fields) = self.date_fields.take() else {
+            return Err(BuilderError::MissingDateFields);
+        };
         if self.time_precision.is_none() {
             return Err(BuilderError::MissingTimePrecision);
         }
-        let date_and_time_field_set = match self.date_fields.take() {
-            Some(DateFields::D) => {
-                DateAndTimeFieldSet::DT(fieldsets::DT::take_from_builder(&mut self))
-            }
-            Some(DateFields::MD) => {
+        let date_and_time_field_set = match date_fields {
+            DateFields::D => DateAndTimeFieldSet::DT(fieldsets::DT::take_from_builder(&mut self)),
+            DateFields::MD => {
                 DateAndTimeFieldSet::MDT(fieldsets::MDT::take_from_builder(&mut self))
             }
-            Some(DateFields::YMD) => {
+            DateFields::YMD => {
                 DateAndTimeFieldSet::YMDT(fieldsets::YMDT::take_from_builder(&mut self))
             }
-            Some(DateFields::DE) => {
+            DateFields::DE => {
                 DateAndTimeFieldSet::DET(fieldsets::DET::take_from_builder(&mut self))
             }
-            Some(DateFields::MDE) => {
+            DateFields::MDE => {
                 DateAndTimeFieldSet::MDET(fieldsets::MDET::take_from_builder(&mut self))
             }
-            Some(DateFields::YMDE) => {
+            DateFields::YMDE => {
                 DateAndTimeFieldSet::YMDET(fieldsets::YMDET::take_from_builder(&mut self))
             }
-            Some(DateFields::E) => {
-                DateAndTimeFieldSet::ET(fieldsets::ET::take_from_builder(&mut self))
-            }
-            Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | Option::None => {
+            DateFields::E => DateAndTimeFieldSet::ET(fieldsets::ET::take_from_builder(&mut self)),
+            DateFields::M | DateFields::YM | DateFields::Y => {
                 return Err(BuilderError::InvalidDateFields)
             }
         };
@@ -600,6 +765,45 @@ impl FieldSetBuilder {
     /// Builds a [`CompositeDateTimeFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_composite_datetime(),
+    ///     Err(BuilderError::MissingDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YM);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite_datetime(),
+    ///     Ok(CompositeDateTimeFieldSet::CalendarPeriod(_))
+    /// ));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite_datetime(),
+    ///     Err(BuilderError::InvalidDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite_datetime(),
+    ///     Ok(CompositeDateTimeFieldSet::DateTime(_))
+    /// ));
+    ///
+    /// builder.zone_style = Some(ZoneStyle::SpecificLong);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite_datetime(),
+    ///     Err(BuilderError::SuperfluousOptions(_))
+    /// ));
+    /// ```
     pub fn build_composite_datetime(mut self) -> Result<CompositeDateTimeFieldSet, BuilderError> {
         // Check for the presence of date and time, then delegate to the correct impl.
         match (self.date_fields.is_some(), self.time_precision.is_some()) {
@@ -626,6 +830,42 @@ impl FieldSetBuilder {
     /// Builds a [`Combo`] for a zoned date.
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_date(),
+    ///     Err(BuilderError::MissingZoneStyle)
+    /// ));
+    ///
+    /// builder.zone_style = Some(ZoneStyle::SpecificLong);
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_date(),
+    ///     Err(BuilderError::MissingDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YM);
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_date(),
+    ///     Err(BuilderError::InvalidDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(builder.clone().build_zoned_date(), Ok(_)));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_date(),
+    ///     Err(BuilderError::SuperfluousOptions(_))
+    /// ));
+    /// ```
     pub fn build_zoned_date(mut self) -> Result<ZonedDateFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let date_field_set = self.build_date()?;
@@ -635,6 +875,36 @@ impl FieldSetBuilder {
     /// Builds a [`Combo`] for a zoned time.
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_time(),
+    ///     Err(BuilderError::MissingZoneStyle)
+    /// ));
+    ///
+    /// builder.zone_style = Some(ZoneStyle::SpecificLong);
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_time(),
+    ///     Err(BuilderError::MissingTimePrecision)
+    /// ));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(builder.clone().build_zoned_time(), Ok(_)));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_time(),
+    ///     Err(BuilderError::SuperfluousOptions(_))
+    /// ));
+    /// ```
     pub fn build_zoned_time(mut self) -> Result<ZonedTimeFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let time_field_set = self.build_time()?;
@@ -644,6 +914,42 @@ impl FieldSetBuilder {
     /// Builds a [`Combo`] for a zoned date and time.
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_date_and_time(),
+    ///     Err(BuilderError::MissingZoneStyle)
+    /// ));
+    ///
+    /// builder.zone_style = Some(ZoneStyle::SpecificLong);
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_date_and_time(),
+    ///     Err(BuilderError::MissingDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YM);
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_date_and_time(),
+    ///     Err(BuilderError::MissingTimePrecision)
+    /// ));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_zoned_date_and_time(),
+    ///     Err(BuilderError::InvalidDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(builder.clone().build_zoned_date_and_time(), Ok(_)));
+    /// ```
     pub fn build_zoned_date_and_time(mut self) -> Result<ZonedDateAndTimeFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let datetime_field_set = self.build_date_and_time()?;
@@ -653,6 +959,69 @@ impl FieldSetBuilder {
     /// Builds a [`CompositeFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Err(BuilderError::MissingDateFields)
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YM);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Ok(CompositeFieldSet::CalendarPeriod(_))
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Ok(CompositeFieldSet::Date(_))
+    /// ));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Ok(CompositeFieldSet::DateTime(_))
+    /// ));
+    ///
+    /// builder.date_fields = None;
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Ok(CompositeFieldSet::Time(_))
+    /// ));
+    ///
+    /// builder.zone_style = Some(ZoneStyle::SpecificLong);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Ok(CompositeFieldSet::TimeZone(_))
+    /// ));
+    ///
+    /// builder.time_precision = None;
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Ok(CompositeFieldSet::Zone(_))
+    /// ));
+    ///
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Ok(CompositeFieldSet::DateZone(_))
+    /// ));
+    ///
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// assert!(matches!(
+    ///     builder.clone().build_composite(),
+    ///     Ok(CompositeFieldSet::DateTimeZone(_))
+    /// ));
+    /// ```
     pub fn build_composite(mut self) -> Result<CompositeFieldSet, BuilderError> {
         // Check for the presence of date, time, and zone, then delegate to the correct impl.
         match (

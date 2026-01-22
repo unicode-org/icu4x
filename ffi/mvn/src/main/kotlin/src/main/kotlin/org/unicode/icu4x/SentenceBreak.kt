@@ -12,6 +12,7 @@ internal interface SentenceBreakLib: Library {
     fun icu4x_SentenceBreak_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_SentenceBreak_to_integer_value_mv1(inner: Int): FFIUint8
     fun icu4x_SentenceBreak_from_integer_value_mv1(other: FFIUint8): OptionInt
+    fun icu4x_SentenceBreak_try_from_str_mv1(s: Slice): OptionInt
 }
 /** See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
 */
@@ -58,13 +59,23 @@ enum class SentenceBreak {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
         *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
         */
         fun fromIntegerValue(other: UByte): SentenceBreak? {
             
             val returnVal = lib.icu4x_SentenceBreak_from_integer_value_mv1(FFIUint8(other));
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return SentenceBreak.fromNative(intermediateOption)
+        }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): SentenceBreak? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_SentenceBreak_try_from_str_mv1(sSlice);
             
             val intermediateOption = returnVal.option() ?: return null
             return SentenceBreak.fromNative(intermediateOption)
@@ -97,7 +108,7 @@ enum class SentenceBreak {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
     *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
     */

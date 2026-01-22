@@ -5,14 +5,11 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
 enum BidiPairedBracketType {
-  /// Represents Bidi_Paired_Bracket_Type=Open.
-  // ignore: public_member_api_docs
+  /// Represents `Bidi_Paired_Bracket_Type=Open`.
   open,
-  /// Represents Bidi_Paired_Bracket_Type=Close.
-  // ignore: public_member_api_docs
+  /// Represents `Bidi_Paired_Bracket_Type=Close`.
   close,
-  /// Represents Bidi_Paired_Bracket_Type=None.
-  // ignore: public_member_api_docs
+  /// Represents `Bidi_Paired_Bracket_Type=None`.
   none;
 
 }

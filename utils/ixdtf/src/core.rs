@@ -79,7 +79,7 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
     /// Returns the next value as a digit
     ///
     /// # Errors
-    ///   - Returns an AbruptEnd error if cursor ends.
+    ///   - Returns an [`ParseError::AbruptEnd`] error if cursor ends.
     pub(crate) fn next_digit(&mut self) -> ParserResult<Option<u8>> {
         let ascii_char = self.next_or(ParseError::AbruptEnd { location: "digit" })?;
         if ascii_char.is_ascii_digit() {
@@ -89,7 +89,7 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
         }
     }
 
-    /// A utility next method that returns an `AbruptEnd` error if invalid.
+    /// A utility next method that returns an [`ParseError::AbruptEnd`] error if invalid.
     pub(crate) fn next_or(&mut self, err: ParseError) -> ParserResult<u8> {
         self.next()?.ok_or(err)
     }

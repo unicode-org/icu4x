@@ -75,7 +75,7 @@ public:
   inline std::unique_ptr<icu4x::ReorderedIndexMap> reorder_visual(icu4x::diplomat::span<const uint8_t> levels) const;
 
   /**
-   * Check if a Level returned by level_at is an RTL level.
+   * Check if a Level returned by `level_at` is an RTL level.
    *
    * Invalid levels (numbers greater than 125) will be assumed LTR
    *
@@ -84,7 +84,7 @@ public:
   inline static bool level_is_rtl(uint8_t level);
 
   /**
-   * Check if a Level returned by level_at is an LTR level.
+   * Check if a Level returned by `level_at` is an LTR level.
    *
    * Invalid levels (numbers greater than 125) will be assumed LTR
    *

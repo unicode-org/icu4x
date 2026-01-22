@@ -123,6 +123,7 @@ export class Script {
         ["NyiakengPuachueHmong", 186],
         ["Ogham", 29],
         ["OlChiki", 109],
+        ["OlOnal", 204],
         ["OldHungarian", 76],
         ["OldItalic", 30],
         ["OldNorthArabian", 142],
@@ -132,7 +133,6 @@ export class Script {
         ["OldSouthArabian", 133],
         ["OldTurkic", 88],
         ["OldUyghur", 194],
-        ["OlOnal", 204],
         ["Oriya", 31],
         ["Osage", 171],
         ["Osmanya", 50],
@@ -349,6 +349,7 @@ export class Script {
         [186]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 186),
         [29]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 29),
         [109]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 109),
+        [204]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 204),
         [76]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 76),
         [30]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 30),
         [142]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 142),
@@ -358,7 +359,6 @@ export class Script {
         [133]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 133),
         [88]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 88),
         [194]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 194),
-        [204]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 204),
         [31]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 31),
         [171]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 171),
         [50]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 50),
@@ -416,182 +416,713 @@ export class Script {
         [177]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 177),
     };
 
+    /**
+     * See the [Rust documentation for `Adlam`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Adlam) for more information.
+     */
     static Adlam = Script.#objectValues[167];
+    /**
+     * See the [Rust documentation for `Ahom`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ahom) for more information.
+     */
     static Ahom = Script.#objectValues[161];
+    /**
+     * See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.AnatolianHieroglyphs) for more information.
+     */
     static AnatolianHieroglyphs = Script.#objectValues[156];
+    /**
+     * See the [Rust documentation for `Arabic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Arabic) for more information.
+     */
     static Arabic = Script.#objectValues[2];
+    /**
+     * See the [Rust documentation for `Armenian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Armenian) for more information.
+     */
     static Armenian = Script.#objectValues[3];
+    /**
+     * See the [Rust documentation for `Avestan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Avestan) for more information.
+     */
     static Avestan = Script.#objectValues[117];
+    /**
+     * See the [Rust documentation for `Balinese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Balinese) for more information.
+     */
     static Balinese = Script.#objectValues[62];
+    /**
+     * See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Bamum) for more information.
+     */
     static Bamum = Script.#objectValues[130];
+    /**
+     * See the [Rust documentation for `BassaVah`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.BassaVah) for more information.
+     */
     static BassaVah = Script.#objectValues[134];
+    /**
+     * See the [Rust documentation for `Batak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Batak) for more information.
+     */
     static Batak = Script.#objectValues[63];
+    /**
+     * See the [Rust documentation for `Bengali`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Bengali) for more information.
+     */
     static Bengali = Script.#objectValues[4];
+    /**
+     * See the [Rust documentation for `BeriaErfe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.BeriaErfe) for more information.
+     */
     static BeriaErfe = Script.#objectValues[208];
+    /**
+     * See the [Rust documentation for `Bhaiksuki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Bhaiksuki) for more information.
+     */
     static Bhaiksuki = Script.#objectValues[168];
+    /**
+     * See the [Rust documentation for `Bopomofo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Bopomofo) for more information.
+     */
     static Bopomofo = Script.#objectValues[5];
+    /**
+     * See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
+     */
     static Brahmi = Script.#objectValues[65];
+    /**
+     * See the [Rust documentation for `Braille`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Braille) for more information.
+     */
     static Braille = Script.#objectValues[46];
+    /**
+     * See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Buginese) for more information.
+     */
     static Buginese = Script.#objectValues[55];
+    /**
+     * See the [Rust documentation for `Buhid`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Buhid) for more information.
+     */
     static Buhid = Script.#objectValues[44];
+    /**
+     * See the [Rust documentation for `CanadianAboriginal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.CanadianAboriginal) for more information.
+     */
     static CanadianAboriginal = Script.#objectValues[40];
+    /**
+     * See the [Rust documentation for `Carian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Carian) for more information.
+     */
     static Carian = Script.#objectValues[104];
+    /**
+     * See the [Rust documentation for `CaucasianAlbanian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.CaucasianAlbanian) for more information.
+     */
     static CaucasianAlbanian = Script.#objectValues[159];
+    /**
+     * See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Chakma) for more information.
+     */
     static Chakma = Script.#objectValues[118];
+    /**
+     * See the [Rust documentation for `Cham`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cham) for more information.
+     */
     static Cham = Script.#objectValues[66];
+    /**
+     * See the [Rust documentation for `Cherokee`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cherokee) for more information.
+     */
     static Cherokee = Script.#objectValues[6];
+    /**
+     * See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
+     */
     static Chisoi = Script.#objectValues[254];
+    /**
+     * See the [Rust documentation for `Chorasmian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Chorasmian) for more information.
+     */
     static Chorasmian = Script.#objectValues[189];
+    /**
+     * See the [Rust documentation for `Common`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Common) for more information.
+     */
     static Common = Script.#objectValues[0];
+    /**
+     * See the [Rust documentation for `Coptic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Coptic) for more information.
+     */
     static Coptic = Script.#objectValues[7];
+    /**
+     * See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cuneiform) for more information.
+     */
     static Cuneiform = Script.#objectValues[101];
+    /**
+     * See the [Rust documentation for `Cypriot`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cypriot) for more information.
+     */
     static Cypriot = Script.#objectValues[47];
+    /**
+     * See the [Rust documentation for `CyproMinoan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.CyproMinoan) for more information.
+     */
     static CyproMinoan = Script.#objectValues[193];
+    /**
+     * See the [Rust documentation for `Cyrillic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cyrillic) for more information.
+     */
     static Cyrillic = Script.#objectValues[8];
+    /**
+     * See the [Rust documentation for `Deseret`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Deseret) for more information.
+     */
     static Deseret = Script.#objectValues[9];
+    /**
+     * See the [Rust documentation for `Devanagari`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Devanagari) for more information.
+     */
     static Devanagari = Script.#objectValues[10];
+    /**
+     * See the [Rust documentation for `DivesAkuru`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.DivesAkuru) for more information.
+     */
     static DivesAkuru = Script.#objectValues[190];
+    /**
+     * See the [Rust documentation for `Dogra`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Dogra) for more information.
+     */
     static Dogra = Script.#objectValues[178];
+    /**
+     * See the [Rust documentation for `Duployan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Duployan) for more information.
+     */
     static Duployan = Script.#objectValues[135];
+    /**
+     * See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.EgyptianHieroglyphs) for more information.
+     */
     static EgyptianHieroglyphs = Script.#objectValues[71];
+    /**
+     * See the [Rust documentation for `Elbasan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Elbasan) for more information.
+     */
     static Elbasan = Script.#objectValues[136];
+    /**
+     * See the [Rust documentation for `Elymaic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Elymaic) for more information.
+     */
     static Elymaic = Script.#objectValues[185];
+    /**
+     * See the [Rust documentation for `Ethiopian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ethiopian) for more information.
+     */
     static Ethiopian = Script.#objectValues[11];
+    /**
+     * See the [Rust documentation for `Garay`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Garay) for more information.
+     */
     static Garay = Script.#objectValues[201];
+    /**
+     * See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Georgian) for more information.
+     */
     static Georgian = Script.#objectValues[12];
+    /**
+     * See the [Rust documentation for `Glagolitic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Glagolitic) for more information.
+     */
     static Glagolitic = Script.#objectValues[56];
+    /**
+     * See the [Rust documentation for `Gothic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Gothic) for more information.
+     */
     static Gothic = Script.#objectValues[13];
+    /**
+     * See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Grantha) for more information.
+     */
     static Grantha = Script.#objectValues[137];
+    /**
+     * See the [Rust documentation for `Greek`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Greek) for more information.
+     */
     static Greek = Script.#objectValues[14];
+    /**
+     * See the [Rust documentation for `Gujarati`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Gujarati) for more information.
+     */
     static Gujarati = Script.#objectValues[15];
+    /**
+     * See the [Rust documentation for `GunjalaGondi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.GunjalaGondi) for more information.
+     */
     static GunjalaGondi = Script.#objectValues[179];
+    /**
+     * See the [Rust documentation for `Gurmukhi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Gurmukhi) for more information.
+     */
     static Gurmukhi = Script.#objectValues[16];
+    /**
+     * See the [Rust documentation for `GurungKhema`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.GurungKhema) for more information.
+     */
     static GurungKhema = Script.#objectValues[202];
+    /**
+     * See the [Rust documentation for `Han`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Han) for more information.
+     */
     static Han = Script.#objectValues[17];
+    /**
+     * See the [Rust documentation for `Hangul`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hangul) for more information.
+     */
     static Hangul = Script.#objectValues[18];
+    /**
+     * See the [Rust documentation for `HanifiRohingya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.HanifiRohingya) for more information.
+     */
     static HanifiRohingya = Script.#objectValues[182];
+    /**
+     * See the [Rust documentation for `Hanunoo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hanunoo) for more information.
+     */
     static Hanunoo = Script.#objectValues[43];
+    /**
+     * See the [Rust documentation for `Hatran`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hatran) for more information.
+     */
     static Hatran = Script.#objectValues[162];
+    /**
+     * See the [Rust documentation for `Hebrew`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hebrew) for more information.
+     */
     static Hebrew = Script.#objectValues[19];
+    /**
+     * See the [Rust documentation for `Hiragana`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hiragana) for more information.
+     */
     static Hiragana = Script.#objectValues[20];
+    /**
+     * See the [Rust documentation for `ImperialAramaic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.ImperialAramaic) for more information.
+     */
     static ImperialAramaic = Script.#objectValues[116];
+    /**
+     * See the [Rust documentation for `Inherited`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Inherited) for more information.
+     */
     static Inherited = Script.#objectValues[1];
+    /**
+     * See the [Rust documentation for `InscriptionalPahlavi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalPahlavi) for more information.
+     */
     static InscriptionalPahlavi = Script.#objectValues[122];
+    /**
+     * See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalParthian) for more information.
+     */
     static InscriptionalParthian = Script.#objectValues[125];
+    /**
+     * See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Javanese) for more information.
+     */
     static Javanese = Script.#objectValues[78];
+    /**
+     * See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Kaithi) for more information.
+     */
     static Kaithi = Script.#objectValues[120];
+    /**
+     * See the [Rust documentation for `Kannada`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Kannada) for more information.
+     */
     static Kannada = Script.#objectValues[21];
+    /**
+     * See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Katakana) for more information.
+     */
     static Katakana = Script.#objectValues[22];
+    /**
+     * See the [Rust documentation for `Kawi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Kawi) for more information.
+     */
     static Kawi = Script.#objectValues[198];
+    /**
+     * See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.KayahLi) for more information.
+     */
     static KayahLi = Script.#objectValues[79];
+    /**
+     * See the [Rust documentation for `Kharoshthi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Kharoshthi) for more information.
+     */
     static Kharoshthi = Script.#objectValues[57];
+    /**
+     * See the [Rust documentation for `KhitanSmallScript`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.KhitanSmallScript) for more information.
+     */
     static KhitanSmallScript = Script.#objectValues[191];
+    /**
+     * See the [Rust documentation for `Khmer`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Khmer) for more information.
+     */
     static Khmer = Script.#objectValues[23];
+    /**
+     * See the [Rust documentation for `Khojki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Khojki) for more information.
+     */
     static Khojki = Script.#objectValues[157];
+    /**
+     * See the [Rust documentation for `Khudawadi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Khudawadi) for more information.
+     */
     static Khudawadi = Script.#objectValues[145];
+    /**
+     * See the [Rust documentation for `KiratRai`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.KiratRai) for more information.
+     */
     static KiratRai = Script.#objectValues[203];
+    /**
+     * See the [Rust documentation for `Lao`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lao) for more information.
+     */
     static Lao = Script.#objectValues[24];
+    /**
+     * See the [Rust documentation for `Latin`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Latin) for more information.
+     */
     static Latin = Script.#objectValues[25];
+    /**
+     * See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lepcha) for more information.
+     */
     static Lepcha = Script.#objectValues[82];
+    /**
+     * See the [Rust documentation for `Limbu`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Limbu) for more information.
+     */
     static Limbu = Script.#objectValues[48];
+    /**
+     * See the [Rust documentation for `LinearA`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.LinearA) for more information.
+     */
     static LinearA = Script.#objectValues[83];
+    /**
+     * See the [Rust documentation for `LinearB`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.LinearB) for more information.
+     */
     static LinearB = Script.#objectValues[49];
+    /**
+     * See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lisu) for more information.
+     */
     static Lisu = Script.#objectValues[131];
+    /**
+     * See the [Rust documentation for `Lycian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lycian) for more information.
+     */
     static Lycian = Script.#objectValues[107];
+    /**
+     * See the [Rust documentation for `Lydian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lydian) for more information.
+     */
     static Lydian = Script.#objectValues[108];
+    /**
+     * See the [Rust documentation for `Mahajani`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Mahajani) for more information.
+     */
     static Mahajani = Script.#objectValues[160];
+    /**
+     * See the [Rust documentation for `Makasar`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Makasar) for more information.
+     */
     static Makasar = Script.#objectValues[180];
+    /**
+     * See the [Rust documentation for `Malayalam`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Malayalam) for more information.
+     */
     static Malayalam = Script.#objectValues[26];
+    /**
+     * See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Mandaic) for more information.
+     */
     static Mandaic = Script.#objectValues[84];
+    /**
+     * See the [Rust documentation for `Manichaean`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Manichaean) for more information.
+     */
     static Manichaean = Script.#objectValues[121];
+    /**
+     * See the [Rust documentation for `Marchen`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Marchen) for more information.
+     */
     static Marchen = Script.#objectValues[169];
+    /**
+     * See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MasaramGondi) for more information.
+     */
     static MasaramGondi = Script.#objectValues[175];
+    /**
+     * See the [Rust documentation for `Medefaidrin`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Medefaidrin) for more information.
+     */
     static Medefaidrin = Script.#objectValues[181];
+    /**
+     * See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MeeteiMayek) for more information.
+     */
     static MeeteiMayek = Script.#objectValues[115];
+    /**
+     * See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MendeKikakui) for more information.
+     */
     static MendeKikakui = Script.#objectValues[140];
+    /**
+     * See the [Rust documentation for `MeroiticCursive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MeroiticCursive) for more information.
+     */
     static MeroiticCursive = Script.#objectValues[141];
+    /**
+     * See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MeroiticHieroglyphs) for more information.
+     */
     static MeroiticHieroglyphs = Script.#objectValues[86];
+    /**
+     * See the [Rust documentation for `Miao`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Miao) for more information.
+     */
     static Miao = Script.#objectValues[92];
+    /**
+     * See the [Rust documentation for `Modi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Modi) for more information.
+     */
     static Modi = Script.#objectValues[163];
+    /**
+     * See the [Rust documentation for `Mongolian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Mongolian) for more information.
+     */
     static Mongolian = Script.#objectValues[27];
+    /**
+     * See the [Rust documentation for `Mro`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Mro) for more information.
+     */
     static Mro = Script.#objectValues[149];
+    /**
+     * See the [Rust documentation for `Multani`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Multani) for more information.
+     */
     static Multani = Script.#objectValues[164];
+    /**
+     * See the [Rust documentation for `Myanmar`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Myanmar) for more information.
+     */
     static Myanmar = Script.#objectValues[28];
+    /**
+     * See the [Rust documentation for `Nabataean`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nabataean) for more information.
+     */
     static Nabataean = Script.#objectValues[143];
+    /**
+     * See the [Rust documentation for `NagMundari`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.NagMundari) for more information.
+     */
     static NagMundari = Script.#objectValues[199];
+    /**
+     * See the [Rust documentation for `Nandinagari`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nandinagari) for more information.
+     */
     static Nandinagari = Script.#objectValues[187];
+    /**
+     * See the [Rust documentation for `Nastaliq`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nastaliq) for more information.
+     */
     static Nastaliq = Script.#objectValues[200];
+    /**
+     * See the [Rust documentation for `NewTaiLue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.NewTaiLue) for more information.
+     */
     static NewTaiLue = Script.#objectValues[59];
+    /**
+     * See the [Rust documentation for `Newa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Newa) for more information.
+     */
     static Newa = Script.#objectValues[170];
+    /**
+     * See the [Rust documentation for `Nko`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nko) for more information.
+     */
     static Nko = Script.#objectValues[87];
+    /**
+     * See the [Rust documentation for `Nushu`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nushu) for more information.
+     */
     static Nushu = Script.#objectValues[150];
+    /**
+     * See the [Rust documentation for `NyiakengPuachueHmong`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.NyiakengPuachueHmong) for more information.
+     */
     static NyiakengPuachueHmong = Script.#objectValues[186];
+    /**
+     * See the [Rust documentation for `Ogham`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ogham) for more information.
+     */
     static Ogham = Script.#objectValues[29];
+    /**
+     * See the [Rust documentation for `OlChiki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlChiki) for more information.
+     */
     static OlChiki = Script.#objectValues[109];
-    static OldHungarian = Script.#objectValues[76];
-    static OldItalic = Script.#objectValues[30];
-    static OldNorthArabian = Script.#objectValues[142];
-    static OldPermic = Script.#objectValues[89];
-    static OldPersian = Script.#objectValues[61];
-    static OldSogdian = Script.#objectValues[184];
-    static OldSouthArabian = Script.#objectValues[133];
-    static OldTurkic = Script.#objectValues[88];
-    static OldUyghur = Script.#objectValues[194];
+    /**
+     * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
+     */
     static OlOnal = Script.#objectValues[204];
+    /**
+     * See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
+     */
+    static OldHungarian = Script.#objectValues[76];
+    /**
+     * See the [Rust documentation for `OldItalic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldItalic) for more information.
+     */
+    static OldItalic = Script.#objectValues[30];
+    /**
+     * See the [Rust documentation for `OldNorthArabian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldNorthArabian) for more information.
+     */
+    static OldNorthArabian = Script.#objectValues[142];
+    /**
+     * See the [Rust documentation for `OldPermic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldPermic) for more information.
+     */
+    static OldPermic = Script.#objectValues[89];
+    /**
+     * See the [Rust documentation for `OldPersian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldPersian) for more information.
+     */
+    static OldPersian = Script.#objectValues[61];
+    /**
+     * See the [Rust documentation for `OldSogdian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldSogdian) for more information.
+     */
+    static OldSogdian = Script.#objectValues[184];
+    /**
+     * See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldSouthArabian) for more information.
+     */
+    static OldSouthArabian = Script.#objectValues[133];
+    /**
+     * See the [Rust documentation for `OldTurkic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldTurkic) for more information.
+     */
+    static OldTurkic = Script.#objectValues[88];
+    /**
+     * See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
+     */
+    static OldUyghur = Script.#objectValues[194];
+    /**
+     * See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
+     */
     static Oriya = Script.#objectValues[31];
+    /**
+     * See the [Rust documentation for `Osage`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
+     */
     static Osage = Script.#objectValues[171];
+    /**
+     * See the [Rust documentation for `Osmanya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Osmanya) for more information.
+     */
     static Osmanya = Script.#objectValues[50];
+    /**
+     * See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.PahawhHmong) for more information.
+     */
     static PahawhHmong = Script.#objectValues[75];
+    /**
+     * See the [Rust documentation for `Palmyrene`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Palmyrene) for more information.
+     */
     static Palmyrene = Script.#objectValues[144];
+    /**
+     * See the [Rust documentation for `PauCinHau`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.PauCinHau) for more information.
+     */
     static PauCinHau = Script.#objectValues[165];
+    /**
+     * See the [Rust documentation for `PhagsPa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.PhagsPa) for more information.
+     */
     static PhagsPa = Script.#objectValues[90];
+    /**
+     * See the [Rust documentation for `Phoenician`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Phoenician) for more information.
+     */
     static Phoenician = Script.#objectValues[91];
+    /**
+     * See the [Rust documentation for `PsalterPahlavi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.PsalterPahlavi) for more information.
+     */
     static PsalterPahlavi = Script.#objectValues[123];
+    /**
+     * See the [Rust documentation for `Rejang`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Rejang) for more information.
+     */
     static Rejang = Script.#objectValues[110];
+    /**
+     * See the [Rust documentation for `Runic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Runic) for more information.
+     */
     static Runic = Script.#objectValues[32];
+    /**
+     * See the [Rust documentation for `Samaritan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Samaritan) for more information.
+     */
     static Samaritan = Script.#objectValues[126];
+    /**
+     * See the [Rust documentation for `Saurashtra`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Saurashtra) for more information.
+     */
     static Saurashtra = Script.#objectValues[111];
+    /**
+     * See the [Rust documentation for `Sharada`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sharada) for more information.
+     */
     static Sharada = Script.#objectValues[151];
+    /**
+     * See the [Rust documentation for `Shavian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Shavian) for more information.
+     */
     static Shavian = Script.#objectValues[51];
+    /**
+     * See the [Rust documentation for `Siddham`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Siddham) for more information.
+     */
     static Siddham = Script.#objectValues[166];
+    /**
+     * See the [Rust documentation for `Sidetic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sidetic) for more information.
+     */
     static Sidetic = Script.#objectValues[209];
+    /**
+     * See the [Rust documentation for `SignWriting`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.SignWriting) for more information.
+     */
     static SignWriting = Script.#objectValues[112];
+    /**
+     * See the [Rust documentation for `Sinhala`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sinhala) for more information.
+     */
     static Sinhala = Script.#objectValues[33];
+    /**
+     * See the [Rust documentation for `Sogdian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sogdian) for more information.
+     */
     static Sogdian = Script.#objectValues[183];
+    /**
+     * See the [Rust documentation for `SoraSompeng`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.SoraSompeng) for more information.
+     */
     static SoraSompeng = Script.#objectValues[152];
+    /**
+     * See the [Rust documentation for `Soyombo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Soyombo) for more information.
+     */
     static Soyombo = Script.#objectValues[176];
+    /**
+     * See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sundanese) for more information.
+     */
     static Sundanese = Script.#objectValues[113];
+    /**
+     * See the [Rust documentation for `Sunuwar`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sunuwar) for more information.
+     */
     static Sunuwar = Script.#objectValues[205];
+    /**
+     * See the [Rust documentation for `SylotiNagri`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.SylotiNagri) for more information.
+     */
     static SylotiNagri = Script.#objectValues[58];
+    /**
+     * See the [Rust documentation for `Syriac`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Syriac) for more information.
+     */
     static Syriac = Script.#objectValues[34];
+    /**
+     * See the [Rust documentation for `Tagalog`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tagalog) for more information.
+     */
     static Tagalog = Script.#objectValues[42];
+    /**
+     * See the [Rust documentation for `Tagbanwa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tagbanwa) for more information.
+     */
     static Tagbanwa = Script.#objectValues[45];
+    /**
+     * See the [Rust documentation for `TaiLe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TaiLe) for more information.
+     */
     static TaiLe = Script.#objectValues[52];
+    /**
+     * See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TaiTham) for more information.
+     */
     static TaiTham = Script.#objectValues[106];
+    /**
+     * See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TaiViet) for more information.
+     */
     static TaiViet = Script.#objectValues[127];
+    /**
+     * See the [Rust documentation for `TaiYo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TaiYo) for more information.
+     */
     static TaiYo = Script.#objectValues[210];
+    /**
+     * See the [Rust documentation for `Takri`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Takri) for more information.
+     */
     static Takri = Script.#objectValues[153];
+    /**
+     * See the [Rust documentation for `Tamil`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tamil) for more information.
+     */
     static Tamil = Script.#objectValues[35];
+    /**
+     * See the [Rust documentation for `Tangsa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tangsa) for more information.
+     */
     static Tangsa = Script.#objectValues[195];
+    /**
+     * See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tangut) for more information.
+     */
     static Tangut = Script.#objectValues[154];
+    /**
+     * See the [Rust documentation for `Telugu`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Telugu) for more information.
+     */
     static Telugu = Script.#objectValues[36];
+    /**
+     * See the [Rust documentation for `Thaana`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Thaana) for more information.
+     */
     static Thaana = Script.#objectValues[37];
+    /**
+     * See the [Rust documentation for `Thai`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Thai) for more information.
+     */
     static Thai = Script.#objectValues[38];
+    /**
+     * See the [Rust documentation for `Tibetan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tibetan) for more information.
+     */
     static Tibetan = Script.#objectValues[39];
+    /**
+     * See the [Rust documentation for `Tifinagh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tifinagh) for more information.
+     */
     static Tifinagh = Script.#objectValues[60];
+    /**
+     * See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tirhuta) for more information.
+     */
     static Tirhuta = Script.#objectValues[158];
+    /**
+     * See the [Rust documentation for `Todhri`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Todhri) for more information.
+     */
     static Todhri = Script.#objectValues[206];
+    /**
+     * See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
+     */
     static TolongSiki = Script.#objectValues[211];
+    /**
+     * See the [Rust documentation for `Toto`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Toto) for more information.
+     */
     static Toto = Script.#objectValues[196];
+    /**
+     * See the [Rust documentation for `TuluTigalari`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TuluTigalari) for more information.
+     */
     static TuluTigalari = Script.#objectValues[207];
+    /**
+     * See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ugaritic) for more information.
+     */
     static Ugaritic = Script.#objectValues[53];
+    /**
+     * See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Unknown) for more information.
+     */
     static Unknown = Script.#objectValues[103];
+    /**
+     * See the [Rust documentation for `Vai`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Vai) for more information.
+     */
     static Vai = Script.#objectValues[99];
+    /**
+     * See the [Rust documentation for `Vithkuqi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Vithkuqi) for more information.
+     */
     static Vithkuqi = Script.#objectValues[197];
+    /**
+     * See the [Rust documentation for `Wancho`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Wancho) for more information.
+     */
     static Wancho = Script.#objectValues[188];
+    /**
+     * See the [Rust documentation for `WarangCiti`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.WarangCiti) for more information.
+     */
     static WarangCiti = Script.#objectValues[146];
+    /**
+     * See the [Rust documentation for `Yezidi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Yezidi) for more information.
+     */
     static Yezidi = Script.#objectValues[192];
+    /**
+     * See the [Rust documentation for `Yi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Yi) for more information.
+     */
     static Yi = Script.#objectValues[41];
+    /**
+     * See the [Rust documentation for `ZanabazarSquare`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.ZanabazarSquare) for more information.
+     */
     static ZanabazarSquare = Script.#objectValues[177];
 
 
@@ -607,6 +1138,7 @@ export class Script {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -629,6 +1161,7 @@ export class Script {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -652,12 +1185,13 @@ export class Script {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
 
     /**
-     * Convert to an integer value usable with ICU4C and CodePointMapData
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#method.to_icu4c_value) for more information.
      */
@@ -670,11 +1204,12 @@ export class Script {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Convert from an integer value from ICU4C or CodePointMapData
+     * Convert from an integer value from ICU4C or `CodePointMapData`
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#method.from_icu4c_value) for more information.
      */
@@ -692,6 +1227,31 @@ export class Script {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    static tryFromStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_Script_try_from_str_mv1(diplomatReceive.buffer, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new Script(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
             diplomatReceive.free();
         }
     }

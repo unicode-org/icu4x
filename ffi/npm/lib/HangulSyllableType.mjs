@@ -70,11 +70,29 @@ export class HangulSyllableType {
         new HangulSyllableType(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
     ];
 
+    /**
+     * See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
+     */
     static NotApplicable = HangulSyllableType.#objectValues[0];
+    /**
+     * See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
+     */
     static LeadingJamo = HangulSyllableType.#objectValues[1];
+    /**
+     * See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
+     */
     static VowelJamo = HangulSyllableType.#objectValues[2];
+    /**
+     * See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
+     */
     static TrailingJamo = HangulSyllableType.#objectValues[3];
+    /**
+     * See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+     */
     static LeadingVowelSyllable = HangulSyllableType.#objectValues[4];
+    /**
+     * See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+     */
     static LeadingVowelTrailingSyllable = HangulSyllableType.#objectValues[5];
 
 
@@ -90,11 +108,60 @@ export class HangulSyllableType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Convert to an integer value usable with ICU4C and CodePointMapData
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
+    longName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+
+
+        const result = wasm.icu4x_HangulSyllableType_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
+    shortName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+
+
+        const result = wasm.icu4x_HangulSyllableType_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
      */
@@ -107,11 +174,12 @@ export class HangulSyllableType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Convert from an integer value from ICU4C or CodePointMapData
+     * Convert from an integer value from ICU4C or `CodePointMapData`
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
      */
@@ -129,6 +197,31 @@ export class HangulSyllableType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    static tryFromStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_HangulSyllableType_try_from_str_mv1(diplomatReceive.buffer, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new HangulSyllableType(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
             diplomatReceive.free();
         }
     }

@@ -6,16 +6,12 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
 enum IndicConjunctBreak {
   /// See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.None) for more information.
-  // ignore: public_member_api_docs
   none,
   /// See the [Rust documentation for `Consonant`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Consonant) for more information.
-  // ignore: public_member_api_docs
   consonant,
   /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Extend) for more information.
-  // ignore: public_member_api_docs
   extend,
   /// See the [Rust documentation for `Linker`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Linker) for more information.
-  // ignore: public_member_api_docs
   linker;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -24,7 +20,29 @@ enum IndicConjunctBreak {
     return IndicConjunctBreak.values[result];
   }
 
-  /// Convert to an integer value usable with ICU4C and CodePointMapData
+  /// Get the "long" name of this property value (returns empty if property value is unknown)
+  ///
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  String? longName() {
+    final result = _icu4x_IndicConjunctBreak_long_name_mv1(index);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([], isStatic: true);
+  }
+
+  /// Get the "short" name of this property value (returns empty if property value is unknown)
+  ///
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  String? shortName() {
+    final result = _icu4x_IndicConjunctBreak_short_name_mv1(index);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([], isStatic: true);
+  }
+
+  /// Convert to an integer value usable with ICU4C and `CodePointMapData`
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
@@ -32,11 +50,20 @@ enum IndicConjunctBreak {
     return result;
   }
 
-  /// Convert from an integer value from ICU4C or CodePointMapData
+  /// Convert from an integer value from ICU4C or `CodePointMapData`
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#method.from_icu4c_value) for more information.
   static IndicConjunctBreak? fromIntegerValue(int other) {
     final result = _icu4x_IndicConjunctBreak_from_integer_value_mv1(other);
+    if (!result.isOk) {
+      return null;
+    }
+    return IndicConjunctBreak.values[result.union.ok];
+  }
+
+  static IndicConjunctBreak? tryFromStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_IndicConjunctBreak_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       return null;
     }
@@ -50,6 +77,16 @@ enum IndicConjunctBreak {
 // ignore: non_constant_identifier_names
 external int _icu4x_IndicConjunctBreak_for_char_mv1(Rune ch);
 
+@_DiplomatFfiUse('icu4x_IndicConjunctBreak_long_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IndicConjunctBreak_long_name_mv1')
+// ignore: non_constant_identifier_names
+external _ResultSliceUtf8Void _icu4x_IndicConjunctBreak_long_name_mv1(int self);
+
+@_DiplomatFfiUse('icu4x_IndicConjunctBreak_short_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IndicConjunctBreak_short_name_mv1')
+// ignore: non_constant_identifier_names
+external _ResultSliceUtf8Void _icu4x_IndicConjunctBreak_short_name_mv1(int self);
+
 @_DiplomatFfiUse('icu4x_IndicConjunctBreak_to_integer_value_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IndicConjunctBreak_to_integer_value_mv1')
 // ignore: non_constant_identifier_names
@@ -59,5 +96,10 @@ external int _icu4x_IndicConjunctBreak_to_integer_value_mv1(int self);
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_IndicConjunctBreak_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_IndicConjunctBreak_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_IndicConjunctBreak_try_from_str_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IndicConjunctBreak_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_IndicConjunctBreak_try_from_str_mv1(_SliceUtf8 s);
 
 // dart format on

@@ -117,7 +117,8 @@ impl<'a, T: EncodingType> IxdtfParser<'a, T> {
     /// Parses the source as an [extended Date/Time string][rfc9557].
     ///
     /// This is the baseline parse method for `ixdtf`. For this method, the
-    /// TimeRecord, UTCOffsetRecord, and all annotations are optional.
+    /// [`TimeRecord`](crate::records::TimeRecord), [`UtcOffsetRecord`],
+    /// and all annotations are optional.
     ///
     /// # Example
     ///
@@ -160,7 +161,7 @@ impl<'a, T: EncodingType> IxdtfParser<'a, T> {
         self.parse_year_month_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an extended YearMonth string with an Annotation handler.
+    /// Parses the source as an extended `YearMonth` string with an Annotation handler.
     ///
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_year_month_with_annotation_handler(
@@ -193,7 +194,7 @@ impl<'a, T: EncodingType> IxdtfParser<'a, T> {
         self.parse_month_day_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an extended MonthDay string with an Annotation handler.
+    /// Parses the source as an extended `MonthDay` string with an Annotation handler.
     ///
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_month_day_with_annotation_handler(

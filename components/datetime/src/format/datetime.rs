@@ -17,7 +17,7 @@ use icu_calendar::types::{DayOfWeekInMonth, RataDie, Weekday};
 use icu_decimal::DecimalFormatter;
 use writeable::{Part, PartsWrite, Writeable};
 
-/// Apply length to input number and write to result using decimal_formatter.
+/// Apply length to input number and write to result using `decimal_formatter`.
 fn try_write_number<W>(
     part: Part,
     w: &mut W,
@@ -26,7 +26,7 @@ fn try_write_number<W>(
     length: FieldLength,
 ) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error>
 where
-    W: writeable::PartsWrite + ?Sized,
+    W: PartsWrite + ?Sized,
 {
     num.pad_start(length.to_len() as i16);
 
@@ -35,7 +35,7 @@ where
         Ok(Ok(()))
     } else {
         w.with_part(part, |w| {
-            w.with_part(writeable::Part::ERROR, |r| num.write_to_parts(r))
+            w.with_part(Part::ERROR, |r| num.write_to_parts(r))
         })?;
         Ok(Err(
             FormattedDateTimePatternError::DecimalFormatterNotLoaded,
@@ -43,7 +43,7 @@ where
     }
 }
 
-/// Apply length to input number and write to result using decimal_formatter.
+/// Apply length to input number and write to result using `decimal_formatter`.
 /// Don't annotate it with a part.
 fn try_write_number_without_part<W>(
     w: &mut W,
@@ -52,7 +52,7 @@ fn try_write_number_without_part<W>(
     length: FieldLength,
 ) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error>
 where
-    W: writeable::PartsWrite + ?Sized,
+    W: PartsWrite + ?Sized,
 {
     num.pad_start(length.to_len() as i16);
 
@@ -60,7 +60,7 @@ where
         fdf.format(&num).write_to(w)?;
         Ok(Ok(()))
     } else {
-        w.with_part(writeable::Part::ERROR, |r| num.write_to(r))?;
+        w.with_part(Part::ERROR, |r| num.write_to(r))?;
         Ok(Err(
             FormattedDateTimePatternError::DecimalFormatterNotLoaded,
         ))
@@ -76,7 +76,7 @@ pub(crate) fn try_write_pattern_items<W>(
     w: &mut W,
 ) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error>
 where
-    W: writeable::PartsWrite + ?Sized,
+    W: PartsWrite + ?Sized,
 {
     let mut r = Ok(());
     for item in pattern_items {
@@ -111,7 +111,7 @@ fn try_write_field<W>(
     w: &mut W,
 ) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error>
 where
-    W: writeable::PartsWrite + ?Sized,
+    W: PartsWrite + ?Sized,
 {
     macro_rules! input {
         // Get the input. If not found, write a replacement string but do NOT write a part.
@@ -175,21 +175,35 @@ where
         (FieldSymbol::Year(Year::Cyclic), l) => {
             const PART: Part = parts::YEAR_NAME;
             input!(PART, Year, year = input.year);
-            input!(PART, YearCyclic, cyclic = year.cyclic());
+
+            let Some(cyclic) = year.cyclic() else {
+                w.with_part(PART, |w| {
+                    try_write_number(
+                        Part::ERROR,
+                        w,
+                        decimal_formatter,
+                        year.era_year_or_related_iso().into(),
+                        FieldLength::One,
+                    )
+                    .map(|_| ())
+                })?;
+                return Ok(Err(FormattedDateTimePatternError::UnsupportedField(
+                    ErrorField(field),
+                )));
+            };
 
             match datetime_names.get_name_for_cyclic(l, cyclic.year) {
                 Ok(name) => Ok(w.with_part(PART, |w| w.write_str(name))?),
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| {
-                            try_write_number_without_part(
-                                w,
-                                decimal_formatter,
-                                cyclic.related_iso.into(),
-                                FieldLength::One,
-                            )
-                            .map(|_| ())
-                        })
+                        try_write_number(
+                            Part::ERROR,
+                            w,
+                            decimal_formatter,
+                            cyclic.related_iso.into(),
+                            FieldLength::One,
+                        )
+                        .map(|_| ())
                     })?;
                     return Ok(Err(match e {
                         GetNameForCyclicYearError::InvalidYearNumber { max } => {
@@ -540,7 +554,7 @@ where
 
 // Writes an error string for the given symbol
 fn write_value_missing(
-    w: &mut (impl writeable::PartsWrite + ?Sized),
+    w: &mut (impl PartsWrite + ?Sized),
     field: fields::Field,
 ) -> Result<(), fmt::Error> {
     w.with_part(Part::ERROR, |w| {
@@ -551,13 +565,13 @@ fn write_value_missing(
 }
 
 fn perform_timezone_fallback(
-    w: &mut (impl writeable::PartsWrite + ?Sized),
+    w: &mut (impl PartsWrite + ?Sized),
     input: &DateTimeInputUnchecked,
     datetime_names: &RawDateTimeNamesBorrowed,
     fdf: Option<&DecimalFormatter>,
     field: fields::Field,
     units: &[TimeZoneFormatterUnit],
-) -> Result<Result<(), FormattedDateTimePatternError>, core::fmt::Error> {
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
     const PART: Part = parts::TIME_ZONE_NAME;
     let payloads = datetime_names.get_payloads();
     let mut r = Err(FormatTimeZoneError::Fallback);
@@ -658,8 +672,8 @@ mod tests {
     #[test]
     fn julian_day() {
         let locale = icu::locale::locale!("en");
-        let parsed_pattern = crate::pattern::DateTimePattern::try_from_pattern_str("g").unwrap();
-        let mut names = crate::pattern::FixedCalendarDateTimeNames::<
+        let parsed_pattern = DateTimePattern::try_from_pattern_str("g").unwrap();
+        let mut names = FixedCalendarDateTimeNames::<
             icu::calendar::cal::Gregorian,
             crate::fieldsets::enums::DateFieldSet,
         >::try_new(locale.into())
@@ -674,8 +688,8 @@ mod tests {
     #[test]
     fn extended_year() {
         let locale = icu::locale::locale!("en");
-        let parsed_pattern = crate::pattern::DateTimePattern::try_from_pattern_str("u").unwrap();
-        let mut names = crate::pattern::FixedCalendarDateTimeNames::<
+        let parsed_pattern = DateTimePattern::try_from_pattern_str("u").unwrap();
+        let mut names = FixedCalendarDateTimeNames::<
             icu::calendar::cal::Ethiopian,
             crate::fieldsets::enums::DateFieldSet,
         >::try_new(locale.into())

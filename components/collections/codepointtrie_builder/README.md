@@ -8,7 +8,7 @@ This crate exposes functionality to build a [`CodePointTrie`] from values provid
 Because it is normally expected for [`CodePointTrie`] data to be pre-compiled, this crate is not
 optimized for speed; it should be used during a build phase.
 
-Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`].
+Under the hood, this crate uses the [`CodePointTrie`] builder code from ICU4C, [`UMutableCPTrie`].
 For more context, see <https://github.com/unicode-org/icu4x/issues/1837>.
 
 Unlike most of ICU4X, due in large part to the native dependency, this crate is not guaranteed
@@ -20,7 +20,7 @@ This crate has two primary modes it can be used in: `"wasm"` and `"icu4c"`, expo
 Cargo features. If both are enabled, the code will internally use the wasm codepath.
 
 The `"wasm"` mode uses a Wasm module packaged into this Rust crate that contains
-pre-compiled ICU4C CodePointTrie builder code. It evaluates the Wasm module using
+pre-compiled ICU4C [`CodePointTrie`] builder code. It evaluates the Wasm module using
 the Wasmer runtime, which "just works", but it requires a large number of
 Rust/Cargo dependencies.
 

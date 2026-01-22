@@ -12,7 +12,7 @@ use zerovec::ule::AsULE;
 
 // Export the duration types from here
 #[cfg(feature = "unstable")]
-pub use crate::duration::{DateDuration, DateDurationUnit};
+pub use crate::duration::{DateDuration, DateDurationParseError, DateDurationUnit};
 use crate::{calendar_arithmetic::ArithmeticDate, error::MonthCodeParseError};
 
 #[cfg(feature = "unstable")]
@@ -147,7 +147,7 @@ mod unstable {
         ///
         /// # Examples
         ///
-        /// Either `month_code` or `ordinal_month` can be used in DateFields, but they
+        /// Either `month_code` or `ordinal_month` can be used in [`DateFields`], but they
         /// might not resolve to the same month number:
         ///
         /// ```

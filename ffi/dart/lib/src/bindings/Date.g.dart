@@ -164,7 +164,7 @@ final class Date implements ffi.Finalizable {
   /// Returns 1-indexed number of the month of this date in its year
   ///
   /// Note that for lunar calendars this may not lead to the same month
-  /// having the same ordinal month across years; use month_code if you care
+  /// having the same ordinal month across years; use `month_code` if you care
   /// about month identity.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.month) for more information.

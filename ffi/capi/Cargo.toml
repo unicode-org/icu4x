@@ -161,3 +161,6 @@ icu_provider_fs = { workspace = true, optional = true }
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true
+
+[lints]
+workspace = true

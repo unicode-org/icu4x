@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! # ZeroTrie Builder
+//! # [`ZeroTrie`](crate::ZeroTrie) Builder
 //!
-//! There are two implementations of the ZeroTrie Builder:
+//! There are two implementations of the [`ZeroTrie`](crate::ZeroTrie) Builder:
 //!
-//! - [konst::ZeroTrieBuilderConst] allows for human-readable const construction
-//! - [nonconst::ZeroTrieBuilder] has the full feaure set but requires `alloc`
+//! - [`konst::ZeroTrieBuilderConst`] allows for human-readable const construction
+//! - [`nonconst::ZeroTrieBuilder`] has the full feaure set but requires `alloc`
 //!
 //! The two builders follow the same algorithm but have different capabilities.
 //!
@@ -149,6 +149,8 @@
 //! assert_eq!(TRIE.get(b"unknown"), None);
 //! ```
 
+#![allow(clippy::panic)]
+
 mod branch_meta;
 pub(crate) mod bytestr;
 #[cfg(all(feature = "alloc", feature = "dense"))]
@@ -182,7 +184,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     ///
     /// # Examples
     ///
-    /// Create a `const` ZeroTrieSimpleAscii at compile time:
+    /// Create a `const` [`ZeroTrieSimpleAscii`](crate::ZeroTrieSimpleAscii) at compile time:
     ///
     /// ```
     /// use zerotrie::ZeroTrieSimpleAscii;
@@ -262,7 +264,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     ///
     /// # Examples
     ///
-    /// Create a `const` ZeroTrieSimpleAscii at compile time:
+    /// Create a `const` [`ZeroTrieSimpleAscii`](crate::ZeroTrieSimpleAscii) at compile time:
     ///
     /// ```
     /// use zerotrie::ZeroTrieSimpleAscii;

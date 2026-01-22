@@ -88,20 +88,65 @@ export class SentenceBreak {
         new SentenceBreak(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 14),
     ];
 
+    /**
+     * See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Other) for more information.
+     */
     static Other = SentenceBreak.#objectValues[0];
+    /**
+     * See the [Rust documentation for `ATerm`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.ATerm) for more information.
+     */
     static ATerm = SentenceBreak.#objectValues[1];
+    /**
+     * See the [Rust documentation for `Close`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Close) for more information.
+     */
     static Close = SentenceBreak.#objectValues[2];
+    /**
+     * See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Format) for more information.
+     */
     static Format = SentenceBreak.#objectValues[3];
+    /**
+     * See the [Rust documentation for `Lower`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Lower) for more information.
+     */
     static Lower = SentenceBreak.#objectValues[4];
+    /**
+     * See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Numeric) for more information.
+     */
     static Numeric = SentenceBreak.#objectValues[5];
+    /**
+     * See the [Rust documentation for `OLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.OLetter) for more information.
+     */
     static OLetter = SentenceBreak.#objectValues[6];
+    /**
+     * See the [Rust documentation for `Sep`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Sep) for more information.
+     */
     static Sep = SentenceBreak.#objectValues[7];
+    /**
+     * See the [Rust documentation for `Sp`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Sp) for more information.
+     */
     static Sp = SentenceBreak.#objectValues[8];
+    /**
+     * See the [Rust documentation for `STerm`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.STerm) for more information.
+     */
     static STerm = SentenceBreak.#objectValues[9];
+    /**
+     * See the [Rust documentation for `Upper`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Upper) for more information.
+     */
     static Upper = SentenceBreak.#objectValues[10];
+    /**
+     * See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.CR) for more information.
+     */
     static Cr = SentenceBreak.#objectValues[11];
+    /**
+     * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Extend) for more information.
+     */
     static Extend = SentenceBreak.#objectValues[12];
+    /**
+     * See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.LF) for more information.
+     */
     static Lf = SentenceBreak.#objectValues[13];
+    /**
+     * See the [Rust documentation for `SContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.SContinue) for more information.
+     */
     static SContinue = SentenceBreak.#objectValues[14];
 
 
@@ -117,6 +162,7 @@ export class SentenceBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -139,6 +185,7 @@ export class SentenceBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -162,12 +209,13 @@ export class SentenceBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
 
     /**
-     * Convert to an integer value usable with ICU4C and CodePointMapData
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
      */
@@ -180,11 +228,12 @@ export class SentenceBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Convert from an integer value from ICU4C or CodePointMapData
+     * Convert from an integer value from ICU4C or `CodePointMapData`
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
      */
@@ -202,6 +251,31 @@ export class SentenceBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    static tryFromStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_SentenceBreak_try_from_str_mv1(diplomatReceive.buffer, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new SentenceBreak(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
             diplomatReceive.free();
         }
     }

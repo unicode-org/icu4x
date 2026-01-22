@@ -59,6 +59,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -78,6 +79,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -95,6 +97,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -122,6 +125,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -147,11 +151,12 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Returns the DateTime for the UTC zone name reference time
+     * Returns the `DateTime` for the UTC zone name reference time
      *
      * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
@@ -169,6 +174,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -187,6 +193,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -202,6 +209,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -221,6 +229,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -243,6 +252,7 @@ export class TimeZoneInfo {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

@@ -38,7 +38,7 @@ pub struct DateTimeInputUnchecked {
     pub(crate) weekday: Option<Weekday>,
     /// The day-of-year, required for field sets with weeks.
     pub(crate) day_of_year: Option<DayOfYear>,
-    /// The RataDie of the day
+    /// The [`RataDie`] of the day
     pub(crate) rata_die: Option<RataDie>,
     /// The hour, required for field sets with times (`T`).
     pub(crate) hour: Option<Hour>,

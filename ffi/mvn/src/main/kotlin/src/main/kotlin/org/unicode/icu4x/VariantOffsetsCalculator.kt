@@ -74,7 +74,7 @@ class VariantOffsetsCalculator internal constructor (
         
         val intermediateOption = returnVal.option() ?: return null
 
-        val returnStruct = VariantOffsets(intermediateOption)
+        val returnStruct = VariantOffsets.fromNative(intermediateOption)
         return returnStruct
                                 
     }
@@ -87,7 +87,7 @@ class VariantOffsetsCalculator internal constructor (
         
         val intermediateOption = returnVal.option() ?: return null
 
-        val returnStruct = VariantOffsets(intermediateOption)
+        val returnStruct = VariantOffsets.fromNative(intermediateOption)
         return returnStruct
                                 
     }

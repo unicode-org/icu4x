@@ -17,7 +17,7 @@ include = [
     "LICENSE",
     "README.md",
 ]
-version.workspace = true
+version = "2.1.2"
 
 authors.workspace = true
 categories.workspace = true
@@ -37,7 +37,6 @@ icu = { workspace = true, features = ["datagen"] }
 icu_time = { workspace = true, features = ["ixdtf"] }
 
 # ICU infrastructure
-calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_pattern = { workspace = true, features = ["alloc", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
@@ -102,3 +101,6 @@ icu_experimental = []
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
+
+[lints]
+workspace = true

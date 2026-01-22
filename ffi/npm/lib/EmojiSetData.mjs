@@ -65,6 +65,7 @@ export class EmojiSetData {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -84,6 +85,7 @@ export class EmojiSetData {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -101,6 +103,7 @@ export class EmojiSetData {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -124,7 +127,49 @@ export class EmojiSetData {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Get the `Basic_Emoji` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
+     */
+    static basicEmojiForChar(ch) {
+
+        const result = wasm.icu4x_EmojiSetData_basic_emoji_for_char_mv1(ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Get the `Basic_Emoji` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_str`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
+     */
+    static basicEmojiForStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+
+        const result = wasm.icu4x_EmojiSetData_basic_emoji_for_str_mv1(sSlice.ptr);
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
         }
     }
 

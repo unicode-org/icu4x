@@ -64,8 +64,17 @@ export class BidiPairedBracketType {
         new BidiPairedBracketType(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
     ];
 
+    /**
+     * Represents `Bidi_Paired_Bracket_Type=Open`.
+     */
     static Open = BidiPairedBracketType.#objectValues[0];
+    /**
+     * Represents `Bidi_Paired_Bracket_Type=Close`.
+     */
     static Close = BidiPairedBracketType.#objectValues[1];
+    /**
+     * Represents `Bidi_Paired_Bracket_Type=None`.
+     */
     static None = BidiPairedBracketType.#objectValues[2];
 
 

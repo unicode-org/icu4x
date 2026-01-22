@@ -47,3 +47,6 @@ alloc = ["zerovec/alloc", "icu_collections/alloc", "serde?/alloc"]
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true
+
+[lints]
+workspace = true

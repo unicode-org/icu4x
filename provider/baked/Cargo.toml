@@ -29,3 +29,6 @@ zerotrie = { workspace = true, features = ["databake"] }
 [dev-dependencies]
 icu_provider_export = { path = "../export" }
 zerovec = { workspace = true }
+
+[lints]
+workspace = true

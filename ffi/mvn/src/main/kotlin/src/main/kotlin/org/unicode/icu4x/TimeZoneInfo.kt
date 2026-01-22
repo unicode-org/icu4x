@@ -110,7 +110,7 @@ class TimeZoneInfo internal constructor (
         return returnOpaque
     }
     
-    /** Returns the DateTime for the UTC zone name reference time
+    /** Returns the `DateTime` for the UTC zone name reference time
     *
     *See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
     */
@@ -120,7 +120,7 @@ class TimeZoneInfo internal constructor (
         
         val intermediateOption = returnVal.option() ?: return null
 
-        val returnStruct = IsoDateTime(intermediateOption)
+        val returnStruct = IsoDateTime.fromNative(intermediateOption)
         return returnStruct
                                 
     }

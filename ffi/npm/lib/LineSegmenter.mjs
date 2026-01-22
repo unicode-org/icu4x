@@ -60,6 +60,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -78,6 +79,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -96,6 +98,26 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) and no support for scripts requiring complex context dependent line breaks
+     * (Burmese, Khmer, Lao, and Thai), using compiled data
+     *
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+     */
+    static createForNonComplexScripts() {
+
+        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_mv1();
+
+        try {
+            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -109,13 +131,14 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -133,7 +156,7 @@ export class LineSegmenter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -144,6 +167,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -160,13 +184,14 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -184,7 +209,7 @@ export class LineSegmenter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -195,6 +220,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -211,13 +237,14 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -235,7 +262,7 @@ export class LineSegmenter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -246,6 +273,60 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Construct a {@link LineSegmenter} with custom options and no support for scripts requiring complex context dependent line breaks
+     * (Burmese, Khmer, Lao, and Thai), using compiled data.
+     *
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+     */
+    static forNonComplexScriptsWithOptions(contentLocale, options) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+
+        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
+
+        try {
+            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+        }
+    }
+
+    /**
+     * Construct a {@link LineSegmenter} with custom options and no support for complex languages
+     * (Burmese, Khmer, Lao, and Thai), using a particular data source.
+     *
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+     */
+    static forNonComplexScriptsWithOptionsAndProvider(provider, contentLocale, options) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new LineSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -274,6 +355,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionGarbageCollectorGrip.releaseToGarbageCollector();
 
         }

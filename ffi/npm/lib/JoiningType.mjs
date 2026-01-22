@@ -70,11 +70,29 @@ export class JoiningType {
         new JoiningType(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
     ];
 
+    /**
+     * See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.NonJoining) for more information.
+     */
     static NonJoining = JoiningType.#objectValues[0];
+    /**
+     * See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.JoinCausing) for more information.
+     */
     static JoinCausing = JoiningType.#objectValues[1];
+    /**
+     * See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.DualJoining) for more information.
+     */
     static DualJoining = JoiningType.#objectValues[2];
+    /**
+     * See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.LeftJoining) for more information.
+     */
     static LeftJoining = JoiningType.#objectValues[3];
+    /**
+     * See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.RightJoining) for more information.
+     */
     static RightJoining = JoiningType.#objectValues[4];
+    /**
+     * See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.Transparent) for more information.
+     */
     static Transparent = JoiningType.#objectValues[5];
 
 
@@ -90,6 +108,7 @@ export class JoiningType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -112,6 +131,7 @@ export class JoiningType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -135,12 +155,13 @@ export class JoiningType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
 
     /**
-     * Convert to an integer value usable with ICU4C and CodePointMapData
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#method.to_icu4c_value) for more information.
      */
@@ -153,11 +174,12 @@ export class JoiningType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Convert from an integer value from ICU4C or CodePointMapData
+     * Convert from an integer value from ICU4C or `CodePointMapData`
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
      */
@@ -175,6 +197,31 @@ export class JoiningType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    static tryFromStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_JoiningType_try_from_str_mv1(diplomatReceive.buffer, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new JoiningType(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
             diplomatReceive.free();
         }
     }

@@ -41,7 +41,7 @@ export class ComposingNormalizer {
 
 
     /**
-     * Construct a new ComposingNormalizer instance for NFC using compiled data.
+     * Construct a new `ComposingNormalizer` instance for NFC using compiled data.
      *
      * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
      */
@@ -54,11 +54,12 @@ export class ComposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Construct a new ComposingNormalizer instance for NFC using a particular data source.
+     * Construct a new `ComposingNormalizer` instance for NFC using a particular data source.
      *
      * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
      */
@@ -77,12 +78,13 @@ export class ComposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
 
     /**
-     * Construct a new ComposingNormalizer instance for NFKC using compiled data.
+     * Construct a new `ComposingNormalizer` instance for NFKC using compiled data.
      *
      * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
      */
@@ -95,11 +97,12 @@ export class ComposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Construct a new ComposingNormalizer instance for NFKC using a particular data source.
+     * Construct a new `ComposingNormalizer` instance for NFKC using a particular data source.
      *
      * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
      */
@@ -118,6 +121,7 @@ export class ComposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -143,6 +147,7 @@ export class ComposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             write.free();
@@ -169,6 +174,7 @@ export class ComposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -191,6 +197,7 @@ export class ComposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }

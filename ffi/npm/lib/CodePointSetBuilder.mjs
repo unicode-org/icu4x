@@ -53,6 +53,7 @@ export class CodePointSetBuilder {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -72,6 +73,7 @@ export class CodePointSetBuilder {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -88,6 +90,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -105,6 +108,7 @@ export class CodePointSetBuilder {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -119,6 +123,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -133,6 +138,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -147,6 +153,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -161,6 +168,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -175,6 +183,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -189,6 +198,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -203,6 +213,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -217,6 +228,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -231,6 +243,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -247,6 +260,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -263,6 +277,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -279,6 +294,7 @@ export class CodePointSetBuilder {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

@@ -56,6 +56,7 @@ export class Bidi {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -77,6 +78,7 @@ export class Bidi {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -104,6 +106,7 @@ export class Bidi {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             functionGarbageCollectorGrip.releaseToGarbageCollector();
@@ -135,13 +138,14 @@ export class Bidi {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
     }
 
     /**
-     * Check if a Level returned by level_at is an RTL level.
+     * Check if a Level returned by `level_at` is an RTL level.
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
      *
@@ -156,11 +160,12 @@ export class Bidi {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Check if a Level returned by level_at is an LTR level.
+     * Check if a Level returned by `level_at` is an LTR level.
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
      *
@@ -175,6 +180,7 @@ export class Bidi {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -192,6 +198,7 @@ export class Bidi {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -209,6 +216,7 @@ export class Bidi {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

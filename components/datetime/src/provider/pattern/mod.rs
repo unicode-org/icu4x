@@ -20,7 +20,7 @@ pub mod runtime;
 use crate::provider::fields;
 pub use error::PatternError;
 #[cfg(feature = "datagen")]
-pub(crate) use hour_cycle::naively_apply_preferences;
+pub(crate) use hour_cycle::naively_apply_hour_cycle;
 pub use hour_cycle::CoarseHourCycle;
 use icu_provider::prelude::*;
 pub use item::{GenericPatternItem, PatternItem};
@@ -28,7 +28,7 @@ pub use item::{GenericPatternItem, PatternItem};
 /// The granularity of time represented in a [`Pattern`](runtime::Pattern).
 /// Ordered from least granular to most granular for comparison.
 #[derive(
-    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
+    Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern))]
@@ -36,6 +36,7 @@ pub use item::{GenericPatternItem, PatternItem};
 #[non_exhaustive]
 pub enum TimeGranularity {
     /// No time is in the pattern.
+    #[default]
     None,
     /// Smallest time unit = hours.
     Hours,
@@ -45,12 +46,6 @@ pub enum TimeGranularity {
     Seconds,
     /// Smallest time unit = Nanoseconds.
     Nanoseconds,
-}
-
-impl Default for TimeGranularity {
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 impl TimeGranularity {

@@ -45,8 +45,9 @@ use quote::quote;
 ///     }
 /// }
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 #[repr(transparent)]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct AsStaticStr<T>(pub T)
 where
     T: AsRef<str>;
@@ -56,6 +57,7 @@ where
     T: AsRef<str>,
 {
     #[inline]
+    #[allow(missing_docs)]
     pub fn into(self) -> T {
         self.0
     }
@@ -156,8 +158,9 @@ pub type StringAsStaticStr = AsStaticStr<String>;
 ///     }
 /// }
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 #[repr(transparent)]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct IteratorAsRefSlice<B, T>(pub B, pub PhantomData<T>)
 where
     for<'a> &'a B: IntoIterator<Item = &'a T>,
@@ -169,6 +172,7 @@ where
     T: Bake,
 {
     #[inline]
+    #[allow(missing_docs)]
     pub fn into(self) -> B {
         self.0
     }

@@ -102,7 +102,7 @@ impl ToExtendedYear for HebrewYear {
 
 impl HebrewYear {
     /// Convenience method to compute for a given year. Don't use this if you actually need
-    /// a YearInfo that you want to call .new_year() on.
+    /// a [`YearInfo`] that you want to call `.new_year()` on.
     fn compute(value: i32) -> Self {
         Self {
             keviyah: YearInfo::compute_for(value).keviyah,
@@ -151,7 +151,7 @@ impl DateFieldsResolver for Hebrew {
 
     fn reference_year_from_month_day(
         &self,
-        month: types::Month,
+        month: Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
@@ -186,7 +186,7 @@ impl DateFieldsResolver for Hebrew {
     fn ordinal_from_month(
         &self,
         year: Self::YearInfo,
-        month: types::Month,
+        month: Month,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
         let is_leap_year = year.keviyah.is_leap();
@@ -207,12 +207,12 @@ impl DateFieldsResolver for Hebrew {
         Ok(ordinal_month)
     }
 
-    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> types::Month {
+    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> Month {
         let is_leap = year.keviyah.is_leap();
         Month::new_unchecked(
             ordinal_month - (is_leap && ordinal_month >= 6) as u8,
             if ordinal_month == 6 && is_leap {
-                types::LeapStatus::Leap
+                LeapStatus::Leap
             } else if ordinal_month == 7 && is_leap {
                 // Use the leap name for Adar in a leap year
                 LeapStatus::FormattingLeap
@@ -220,6 +220,10 @@ impl DateFieldsResolver for Hebrew {
                 LeapStatus::Normal
             },
         )
+    }
+
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
+        year.new_year() + year.keviyah.days_preceding(month) as i64 + (day - 1) as i64
     }
 }
 
@@ -267,9 +271,7 @@ impl Calendar for Hebrew {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year().new_year()
-            + date.0.year().keviyah.days_preceding(date.0.month()) as i64
-            + (date.0.day() - 1) as i64
+        date.0.to_rata_die()
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -382,11 +384,10 @@ mod tests {
     pub const AV: Month = Month::new(11);
     pub const ELUL: Month = Month::new(12);
 
-    /// The leap years used in the tests below
     const LEAP_YEARS_IN_TESTS: [i32; 1] = [5782];
-    /// (iso, hebrew) pairs of testcases. If any of the years here
-    /// are leap years please add them to LEAP_YEARS_IN_TESTS (we have this manually
-    /// so we don't end up exercising potentially buggy codepaths to test this)
+    // If any of the years here are leap years, add them to
+    // [`LEAP_YEARS_IN_TESTS`] (we have this manually so we don't
+    // end up exercising potentially buggy codepaths to test this)
     #[expect(clippy::type_complexity)]
     const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (i32, Month, u8)); 48] = [
         ((2021, 1, 10), (5781, TEVET, 26)),

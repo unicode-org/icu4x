@@ -36,9 +36,21 @@ namespace icu4x {
 class NumericType {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.None) for more information.
+         */
         None = 0,
+        /**
+         * See the [Rust documentation for `Decimal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Decimal) for more information.
+         */
         Decimal = 1,
+        /**
+         * See the [Rust documentation for `Digit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Digit) for more information.
+         */
         Digit = 2,
+        /**
+         * See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Numeric) for more information.
+         */
         Numeric = 3,
     };
 
@@ -56,18 +68,34 @@ public:
   inline static icu4x::NumericType for_char(char32_t ch);
 
   /**
-   * Convert to an integer value usable with ICU4C and CodePointMapData
+   * Get the "long" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> long_name() const;
+
+  /**
+   * Get the "short" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> short_name() const;
+
+  /**
+   * Convert to an integer value usable with ICU4C and `CodePointMapData`
    *
    * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#method.to_icu4c_value) for more information.
    */
   inline uint8_t to_integer_value() const;
 
   /**
-   * Convert from an integer value from ICU4C or CodePointMapData
+   * Convert from an integer value from ICU4C or `CodePointMapData`
    *
    * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::NumericType> from_integer_value(uint8_t other);
+
+  inline static std::optional<icu4x::NumericType> try_from_str(std::string_view s);
 
     inline icu4x::capi::NumericType AsFFI() const;
     inline static icu4x::NumericType FromFFI(icu4x::capi::NumericType c_enum);

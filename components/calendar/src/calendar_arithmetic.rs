@@ -104,7 +104,7 @@ pub(crate) trait PackWithMD: Copy {
 }
 
 impl PackWithMD for i32 {
-    /// 2 bits unused, 21 bits year (test_validity_ranges),
+    /// 2 bits unused, 21 bits year (`test_validity_ranges`),
     /// 4 bits month (1..13), 5 bits day (1..31)
     type Packed = [u8; 4];
 
@@ -136,7 +136,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8;
 
-    /// Converts the era and era year to a YearInfo. If the calendar does not have eras,
+    /// Converts the era and era year to a [`Self::YearInfo`]. If the calendar does not have eras,
     /// this should always return an Err result.
     fn year_info_from_era(
         &self,
@@ -144,13 +144,13 @@ pub(crate) trait DateFieldsResolver: Calendar {
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError>;
 
-    /// Converts an extended year to a YearInfo.
+    /// Converts an extended year to a [`Self::YearInfo`].
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
 
     /// Calculates the ECMA reference year for the month code and day, or an error
     /// if the month code and day are invalid.
     ///
-    /// Note that this is called before any potential Overflow::Constrain application,
+    /// Note that this is called before any potential `Overflow::Constrain` application,
     /// so this should accept out-of-range day values as if they are the highest possible
     /// day for the given month.
     fn reference_year_from_month_day(
@@ -195,9 +195,17 @@ pub(crate) trait DateFieldsResolver: Calendar {
     fn month_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> Month {
         Month::new_unchecked(ordinal_month, types::LeapStatus::Normal)
     }
+
+    // Date-to-RD conversion
+    // Used internally for implementing date arithmetic
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie;
 }
 
 impl<C: DateFieldsResolver> ArithmeticDate<C> {
+    pub(crate) fn to_rata_die(self) -> RataDie {
+        C::to_rata_die_inner(self.year(), self.month(), self.day())
+    }
+
     pub(crate) fn year(self) -> C::YearInfo {
         C::YearInfo::unpack_year(self.0)
     }
@@ -415,7 +423,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Ok(ArithmeticDate::new_unchecked(year_info, month, day))
     }
 
-    /// Implements the Temporal abstract operation BalanceNonISODate.
+    /// Implements the Temporal abstract operation `BalanceNonISODate`.
     ///
     /// This takes a year, month, and day, where the month and day might be out of range, then
     /// balances excess months into the year field and excess days into the month field.
@@ -493,7 +501,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Self::new_unchecked(resolved_year, resolved_month, resolved_day)
     }
 
-    /// Implements the Temporal abstract operation NonISODateSurpasses.
+    /// Implements the Temporal abstract operation `NonISODateSurpasses`.
     ///
     /// This takes two dates (`self` and `other`), `duration`, and `sign` (either -1 or 1), then
     /// returns whether adding the duration to `self` results in a year/month/day that exceeds
@@ -593,7 +601,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         false
     }
 
-    /// Implements the Temporal abstract operation NonISODateAdd.
+    /// Implements the Temporal abstract operation `NonISODateAdd`.
     ///
     /// This takes a date (`self`) and `duration`, then returns a new date resulting from
     /// adding `duration` to `self`, constrained according to `options`.
@@ -654,7 +662,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ))
     }
 
-    /// Implements the Temporal abstract operation NonISODateUntil.
+    /// Implements the Temporal abstract operation `NonISODateUntil`.
     ///
     /// This takes a duration (`self`) and a date (`other`), then returns a duration that, when
     /// added to `self`, results in `other`, with largest unit according to `options`.
@@ -664,6 +672,22 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         cal: &C,
         options: DateDifferenceOptions,
     ) -> DateDuration {
+        // Fast path for day/week diffs
+        // Avoids quadratic behavior in surpasses() for days/weeks
+        if matches!(
+            options.largest_unit,
+            Some(DateDurationUnit::Days) | Some(DateDurationUnit::Weeks)
+        ) {
+            let from = self.to_rata_die();
+            let to = other.to_rata_die();
+            let diff = to - from;
+            if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
+                return DateDuration::for_weeks_and_days(diff);
+            } else {
+                return DateDuration::for_days(diff);
+            }
+        }
+
         // 1. Let _sign_ be -1 × CompareISODate(_one_, _two_).
         // 1. If _sign_ = 0, return ZeroDateDuration().
         let sign = match other.cmp(self) {

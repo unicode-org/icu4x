@@ -42,7 +42,7 @@ export class CaseMapCloser {
 
 
     /**
-     * Construct a new CaseMapCloser instance using compiled data.
+     * Construct a new `CaseMapCloser` instance using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
      */
@@ -61,12 +61,13 @@ export class CaseMapCloser {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
 
     /**
-     * Construct a new CaseMapCloser instance using a particular data source.
+     * Construct a new `CaseMapCloser` instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
      */
@@ -85,6 +86,7 @@ export class CaseMapCloser {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -101,6 +103,7 @@ export class CaseMapCloser {
         try {}
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -124,13 +127,14 @@ export class CaseMapCloser {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
     }
 
     /**
-     * Construct a new CaseMapCloser instance using compiled data.
+     * Construct a new `CaseMapCloser` instance using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
      */

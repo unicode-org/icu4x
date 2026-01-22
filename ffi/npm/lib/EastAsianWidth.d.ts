@@ -16,11 +16,29 @@ export class EastAsianWidth {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `Neutral`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Neutral) for more information.
+     */
     static Neutral : EastAsianWidth;
+    /**
+     * See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Ambiguous) for more information.
+     */
     static Ambiguous : EastAsianWidth;
+    /**
+     * See the [Rust documentation for `Halfwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Halfwidth) for more information.
+     */
     static Halfwidth : EastAsianWidth;
+    /**
+     * See the [Rust documentation for `Fullwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Fullwidth) for more information.
+     */
     static Fullwidth : EastAsianWidth;
+    /**
+     * See the [Rust documentation for `Narrow`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Narrow) for more information.
+     */
     static Narrow : EastAsianWidth;
+    /**
+     * See the [Rust documentation for `Wide`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Wide) for more information.
+     */
     static Wide : EastAsianWidth;
 
 
@@ -44,18 +62,20 @@ export class EastAsianWidth {
     shortName(): string | null;
 
     /**
-     * Convert to an integer value usable with ICU4C and CodePointMapData
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue(): number;
 
     /**
-     * Convert from an integer value from ICU4C or CodePointMapData
+     * Convert from an integer value from ICU4C or `CodePointMapData`
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): EastAsianWidth | null;
+
+    static tryFromStr(s: string): EastAsianWidth | null;
 
     constructor(value: EastAsianWidth | string );
 }

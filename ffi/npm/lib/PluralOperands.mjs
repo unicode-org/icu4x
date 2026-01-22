@@ -63,6 +63,7 @@ export class PluralOperands {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -81,11 +82,12 @@ export class PluralOperands {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Construct from a FixedDecimal
+     * Construct from a `FixedDecimal`
      *
      * Retains at most 18 digits each from the integer and fraction parts.
      */
@@ -98,6 +100,7 @@ export class PluralOperands {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

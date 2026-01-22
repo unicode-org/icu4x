@@ -149,7 +149,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
 }
 
 fn function_under_bench(
-    canonical_composer: &CanonicalCompositionBorrowed,
+    canonical_composer: CanonicalCompositionBorrowed,
     composable_points: &[(char, char)],
 ) {
     for pair in composable_points.iter() {
@@ -166,7 +166,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     for bench_data_content in black_box(normalizer_bench_data()) {
         group.bench_function(
             BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
-            |bencher| bencher.iter(|| function_under_bench(&composer, &bench_data_content.pairs)),
+            |bencher| bencher.iter(|| function_under_bench(composer, &bench_data_content.pairs)),
         );
     }
 

@@ -46,7 +46,7 @@ public:
   inline static std::unique_ptr<icu4x::PluralOperands> from(int64_t i);
 
   /**
-   * Construct from a FixedDecimal
+   * Construct from a `FixedDecimal`
    *
    * Retains at most 18 digits each from the integer and fraction parts.
    */

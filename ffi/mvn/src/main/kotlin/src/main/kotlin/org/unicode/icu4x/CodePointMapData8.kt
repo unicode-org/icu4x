@@ -12,18 +12,14 @@ internal interface CodePointMapData8Lib: Library {
     fun icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(handle: Pointer, value: FFIUint8): Pointer
     fun icu4x_CodePointMapData8_iter_ranges_for_group_mv1(handle: Pointer, group: GeneralCategoryGroupNative): Pointer
     fun icu4x_CodePointMapData8_get_set_for_value_mv1(handle: Pointer, value: FFIUint8): Pointer
-    fun icu4x_CodePointMapData8_create_general_category_mv1(): Pointer
-    fun icu4x_CodePointMapData8_create_general_category_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_bidi_class_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_numeric_type_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_CodePointMapData8_create_east_asian_width_mv1(): Pointer
-    fun icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_hangul_syllable_type_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_hangul_syllable_type_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_CodePointMapData8_create_indic_syllabic_category_mv1(): Pointer
-    fun icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_CodePointMapData8_create_east_asian_width_mv1(): Pointer
+    fun icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_line_break_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_line_break_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_grapheme_cluster_break_mv1(): Pointer
@@ -32,12 +28,18 @@ internal interface CodePointMapData8Lib: Library {
     fun icu4x_CodePointMapData8_create_word_break_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_sentence_break_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_sentence_break_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_CodePointMapData8_create_canonical_combining_class_mv1(): Pointer
+    fun icu4x_CodePointMapData8_create_canonical_combining_class_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_CodePointMapData8_create_indic_syllabic_category_mv1(): Pointer
+    fun icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_CodePointMapData8_create_indic_conjunct_break_mv1(): Pointer
+    fun icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_joining_group_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_joining_type_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_joining_type_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_CodePointMapData8_create_canonical_combining_class_mv1(): Pointer
-    fun icu4x_CodePointMapData8_create_canonical_combining_class_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_CodePointMapData8_create_general_category_mv1(): Pointer
+    fun icu4x_CodePointMapData8_create_general_category_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_vertical_orientation_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(provider: Pointer): ResultPointerInt
 }
@@ -69,41 +71,7 @@ class CodePointMapData8 internal constructor (
         internal val lib: CodePointMapData8Lib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Create a map for the `General_Category` property, using compiled data.
-        *
-        *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
-        */
-        fun createGeneralCategory(): CodePointMapData8 {
-            
-            val returnVal = lib.icu4x_CodePointMapData8_create_general_category_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = CodePointMapData8(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a map for the `General_Category` property, using a particular data source
-        *
-        *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
-        */
-        fun createGeneralCategoryWithProvider(provider: DataProvider): Result<CodePointMapData8> {
-            
-            val returnVal = lib.icu4x_CodePointMapData8_create_general_category_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointMapData8(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a map for the `Bidi_Class` property, using compiled data.
+        /** Create a map for the `BidiClass` property, using compiled data.
         *
         *See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
         */
@@ -118,7 +86,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Bidi_Class` property, using a particular data source.
+        /** Create a map for the `BidiClass` property, using a particular data source.
         *
         *See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
         */
@@ -137,7 +105,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Numeric_Type` property, using compiled data.
+        /** Create a map for the `NumericType` property, using compiled data.
         *
         *See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
         */
@@ -152,7 +120,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Bidi_Class` property, using a particular data source.
+        /** Create a map for the `NumericType` property, using a particular data source.
         *
         *See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
         */
@@ -171,41 +139,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `East_Asian_Width` property, using compiled data.
-        *
-        *See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
-        */
-        fun createEastAsianWidth(): CodePointMapData8 {
-            
-            val returnVal = lib.icu4x_CodePointMapData8_create_east_asian_width_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = CodePointMapData8(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a map for the `East_Asian_Width` property, using a particular data source.
-        *
-        *See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
-        */
-        fun createEastAsianWidthWithProvider(provider: DataProvider): Result<CodePointMapData8> {
-            
-            val returnVal = lib.icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointMapData8(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a map for the `Hangul_Syllable_Type` property, using compiled data.
+        /** Create a map for the `HangulSyllableType` property, using compiled data.
         *
         *See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
         */
@@ -220,7 +154,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Hangul_Syllable_Type` property, using a particular data source.
+        /** Create a map for the `HangulSyllableType` property, using a particular data source.
         *
         *See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
         */
@@ -239,13 +173,13 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Indic_Syllabic_Property` property, using compiled data.
+        /** Create a map for the `EastAsianWidth` property, using compiled data.
         *
-        *See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+        *See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
         */
-        fun createIndicSyllabicCategory(): CodePointMapData8 {
+        fun createEastAsianWidth(): CodePointMapData8 {
             
-            val returnVal = lib.icu4x_CodePointMapData8_create_indic_syllabic_category_mv1();
+            val returnVal = lib.icu4x_CodePointMapData8_create_east_asian_width_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = CodePointMapData8(handle, selfEdges)
@@ -254,13 +188,13 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Indic_Syllabic_Property` property, using a particular data source.
+        /** Create a map for the `EastAsianWidth` property, using a particular data source.
         *
-        *See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+        *See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
         */
-        fun createIndicSyllabicCategoryWithProvider(provider: DataProvider): Result<CodePointMapData8> {
+        fun createEastAsianWidthWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
-            val returnVal = lib.icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(provider.handle);
+            val returnVal = lib.icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(provider.handle);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
@@ -273,7 +207,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Line_Break` property, using compiled data.
+        /** Create a map for the `LineBreak` property, using compiled data.
         *
         *See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
         */
@@ -288,7 +222,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Line_Break` property, using a particular data source.
+        /** Create a map for the `LineBreak` property, using a particular data source.
         *
         *See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
         */
@@ -307,7 +241,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Grapheme_Cluster_Break` property, using compiled data.
+        /** Create a map for the `GraphemeClusterBreak` property, using compiled data.
         *
         *See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
         */
@@ -322,7 +256,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Grapheme_Cluster_Break` property, using a particular data source.
+        /** Create a map for the `GraphemeClusterBreak` property, using a particular data source.
         *
         *See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
         */
@@ -341,7 +275,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Word_Break` property, using compiled data.
+        /** Create a map for the `WordBreak` property, using compiled data.
         *
         *See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
         */
@@ -356,7 +290,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Word_Break` property, using a particular data source.
+        /** Create a map for the `WordBreak` property, using a particular data source.
         *
         *See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
         */
@@ -375,7 +309,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Sentence_Break` property, using compiled data.
+        /** Create a map for the `SentenceBreak` property, using compiled data.
         *
         *See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
         */
@@ -390,7 +324,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Sentence_Break` property, using a particular data source.
+        /** Create a map for the `SentenceBreak` property, using a particular data source.
         *
         *See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
         */
@@ -409,75 +343,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Joining_Group` property, using compiled data.
-        *
-        *See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
-        */
-        fun createJoiningGroup(): CodePointMapData8 {
-            
-            val returnVal = lib.icu4x_CodePointMapData8_create_joining_group_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = CodePointMapData8(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a map for the `Joining_Group` property, using a particular data source.
-        *
-        *See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
-        */
-        fun createJoiningGroupWithProvider(provider: DataProvider): Result<CodePointMapData8> {
-            
-            val returnVal = lib.icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointMapData8(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a map for the `Joining_Type` property, using compiled data.
-        *
-        *See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
-        */
-        fun createJoiningType(): CodePointMapData8 {
-            
-            val returnVal = lib.icu4x_CodePointMapData8_create_joining_type_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = CodePointMapData8(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a map for the `Joining_Type` property, using a particular data source.
-        *
-        *See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
-        */
-        fun createJoiningTypeWithProvider(provider: DataProvider): Result<CodePointMapData8> {
-            
-            val returnVal = lib.icu4x_CodePointMapData8_create_joining_type_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointMapData8(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a map for the `Canonical_Combining_Class` property, using compiled data.
+        /** Create a map for the `CanonicalCombiningClass` property, using compiled data.
         *
         *See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
         */
@@ -492,7 +358,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Canonical_Combining_Class` property, using a particular data source.
+        /** Create a map for the `CanonicalCombiningClass` property, using a particular data source.
         *
         *See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
         */
@@ -511,7 +377,177 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Vertical_Orientation` property, using compiled data.
+        /** Create a map for the `IndicSyllabicCategory` property, using compiled data.
+        *
+        *See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+        */
+        fun createIndicSyllabicCategory(): CodePointMapData8 {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_indic_syllabic_category_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData8(handle, selfEdges)
+            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a map for the `IndicSyllabicCategory` property, using a particular data source.
+        *
+        *See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+        */
+        fun createIndicSyllabicCategoryWithProvider(provider: DataProvider): Result<CodePointMapData8> {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(provider.handle);
+            if (returnVal.isOk == 1.toByte()) {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal.union.ok 
+                val returnOpaque = CodePointMapData8(handle, selfEdges)
+                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a map for the `IndicConjunctBreak` property, using compiled data.
+        *
+        *See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+        */
+        fun createIndicConjunctBreak(): CodePointMapData8 {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_indic_conjunct_break_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData8(handle, selfEdges)
+            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a map for the `IndicConjunctBreak` property, using a particular data source.
+        *
+        *See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+        */
+        fun createIndicConjunctBreakWithProvider(provider: DataProvider): Result<CodePointMapData8> {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1(provider.handle);
+            if (returnVal.isOk == 1.toByte()) {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal.union.ok 
+                val returnOpaque = CodePointMapData8(handle, selfEdges)
+                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a map for the `JoiningGroup` property, using compiled data.
+        *
+        *See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+        */
+        fun createJoiningGroup(): CodePointMapData8 {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_joining_group_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData8(handle, selfEdges)
+            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a map for the `JoiningGroup` property, using a particular data source.
+        *
+        *See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+        */
+        fun createJoiningGroupWithProvider(provider: DataProvider): Result<CodePointMapData8> {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(provider.handle);
+            if (returnVal.isOk == 1.toByte()) {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal.union.ok 
+                val returnOpaque = CodePointMapData8(handle, selfEdges)
+                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a map for the `JoiningType` property, using compiled data.
+        *
+        *See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+        */
+        fun createJoiningType(): CodePointMapData8 {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_joining_type_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData8(handle, selfEdges)
+            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a map for the `JoiningType` property, using a particular data source.
+        *
+        *See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+        */
+        fun createJoiningTypeWithProvider(provider: DataProvider): Result<CodePointMapData8> {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_joining_type_with_provider_mv1(provider.handle);
+            if (returnVal.isOk == 1.toByte()) {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal.union.ok 
+                val returnOpaque = CodePointMapData8(handle, selfEdges)
+                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a map for the `GeneralCategory` property, using compiled data.
+        *
+        *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+        */
+        fun createGeneralCategory(): CodePointMapData8 {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_general_category_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData8(handle, selfEdges)
+            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a map for the `GeneralCategory` property, using a particular data source.
+        *
+        *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+        */
+        fun createGeneralCategoryWithProvider(provider: DataProvider): Result<CodePointMapData8> {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_general_category_with_provider_mv1(provider.handle);
+            if (returnVal.isOk == 1.toByte()) {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal.union.ok 
+                val returnOpaque = CodePointMapData8(handle, selfEdges)
+                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a map for the `VerticalOrientation` property, using compiled data.
         *
         *See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
         */
@@ -526,7 +562,7 @@ class CodePointMapData8 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Vertical_Orientation` property, using a particular data source.
+        /** Create a map for the `VerticalOrientation` property, using a particular data source.
         *
         *See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
         */
@@ -588,17 +624,17 @@ class CodePointMapData8 internal constructor (
     /** Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
     *whose property values are contained in the mask.
     *
-    *The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or
+    *The main mask property supported is that for `General_Category`, which can be obtained via `general_category_to_mask()` or
     *by using `GeneralCategoryNameToMaskMapper`
     *
-    *Should only be used on maps for properties with values less than 32 (like Generak_Category),
+    *Should only be used on maps for properties with values less than 32 (like `General_Category`),
     *other maps will have unpredictable results
     *
     *See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
     */
     fun iterRangesForGroup(group: GeneralCategoryGroup): CodePointRangeIterator {
         
-        val returnVal = lib.icu4x_CodePointMapData8_iter_ranges_for_group_mv1(handle, group.nativeStruct);
+        val returnVal = lib.icu4x_CodePointMapData8_iter_ranges_for_group_mv1(handle, group.toNative());
         val selfEdges: List<Any> = listOf()
         val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 

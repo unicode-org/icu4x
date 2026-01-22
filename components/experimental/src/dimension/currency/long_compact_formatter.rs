@@ -9,9 +9,9 @@ use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 
 use crate::{
+    compactdecimal::options::CompactDecimalFormatterOptions,
+    compactdecimal::preferences::CompactDecimalFormatterPreferences,
     compactdecimal::CompactDecimalFormatter,
-    compactdecimal::CompactDecimalFormatterOptions,
-    compactdecimal::CompactDecimalFormatterPreferences,
     dimension::provider::currency::{
         extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
     },
@@ -46,6 +46,7 @@ prefs_convert!(
 /// [`LongCompactCurrencyFormatter`] supports:
 ///   1. Rendering in the locale's currency system.
 ///   2. Locale-sensitive grouping separator positions.
+#[derive(Debug)]
 pub struct LongCompactCurrencyFormatter {
     /// Extended data for the currency formatter.
     extended: DataPayload<CurrencyExtendedDataV1>,
@@ -128,8 +129,8 @@ impl LongCompactCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<crate::dimension::provider::currency::extended::CurrencyExtendedDataV1>
-            + DataProvider<crate::dimension::provider::currency::patterns::CurrencyPatternsDataV1>
+            + DataProvider<CurrencyExtendedDataV1>
+            + DataProvider<CurrencyPatternsDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>

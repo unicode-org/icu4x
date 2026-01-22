@@ -13,6 +13,7 @@ use crate::dimension::provider::currency::patterns::CurrencyPatternsData;
 
 use super::CurrencyCode;
 
+#[derive(Debug)]
 pub struct LongFormattedCurrency<'l> {
     pub(crate) value: &'l Decimal,
     // TODO: use this if the display name is not exist and make the extended data optional.
@@ -26,7 +27,7 @@ pub struct LongFormattedCurrency<'l> {
 writeable::impl_display_with_writeable!(LongFormattedCurrency<'_>);
 
 impl Writeable for LongFormattedCurrency<'_> {
-    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to<W>(&self, sink: &mut W) -> Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {

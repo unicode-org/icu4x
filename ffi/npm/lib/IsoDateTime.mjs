@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+ * An ICU4X `DateTime` object capable of containing a ISO-8601 date and time.
  *
  * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html) for more information.
  */
@@ -47,16 +47,23 @@ export class IsoDateTime {
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
     _intoFFI(
+        dst,
         functionCleanupArena,
         appendArrayMap
     ) {
-        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 8, 4);
 
-        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+        this._writeToArrayBuffer(wasm.memory.buffer, dst, functionCleanupArena, appendArrayMap);
 
-        functionCleanupArena.alloc(buffer);
+        return dst;
+    }
 
-        return buffer.ptr;
+    static get _sizeBytes() {
+        return 8;
+    }
+
+    /// Currently unused, we may want to use later on though:
+    static get _sizeAlign() {
+        return 4;
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -123,6 +130,7 @@ export class IsoDateTime {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();

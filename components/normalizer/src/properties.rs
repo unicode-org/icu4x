@@ -514,7 +514,7 @@ impl CanonicalDecomposition {
     }
 }
 
-/// Borrowed version of lookup of the Canonical_Combining_Class Unicode property.
+/// Borrowed version of lookup of the `Canonical_Combining_Class` Unicode property.
 ///
 /// # Example
 ///
@@ -610,7 +610,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     }
 }
 
-/// Lookup of the Canonical_Combining_Class Unicode property.
+/// Lookup of the `Canonical_Combining_Class` Unicode property.
 #[derive(Debug)]
 pub struct CanonicalCombiningClassMap {
     /// The data trie

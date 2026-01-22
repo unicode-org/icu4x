@@ -41,7 +41,7 @@ export class DecomposingNormalizer {
 
 
     /**
-     * Construct a new DecomposingNormalizer instance for NFD using compiled data.
+     * Construct a new `DecomposingNormalizer` instance for NFD using compiled data.
      *
      * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
      */
@@ -54,11 +54,12 @@ export class DecomposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Construct a new DecomposingNormalizer instance for NFD using a particular data source.
+     * Construct a new `DecomposingNormalizer` instance for NFD using a particular data source.
      *
      * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
      */
@@ -77,12 +78,13 @@ export class DecomposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
 
     /**
-     * Construct a new DecomposingNormalizer instance for NFKD using compiled data.
+     * Construct a new `DecomposingNormalizer` instance for NFKD using compiled data.
      *
      * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
      */
@@ -95,11 +97,12 @@ export class DecomposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
+     * Construct a new `DecomposingNormalizer` instance for NFKD using a particular data source.
      *
      * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
      */
@@ -118,6 +121,7 @@ export class DecomposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -143,6 +147,7 @@ export class DecomposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             write.free();
@@ -169,6 +174,7 @@ export class DecomposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -191,6 +197,7 @@ export class DecomposingNormalizer {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }

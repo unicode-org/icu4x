@@ -6,16 +6,12 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
 enum VerticalOrientation {
   /// See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Rotated) for more information.
-  // ignore: public_member_api_docs
   rotated,
   /// See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedRotated) for more information.
-  // ignore: public_member_api_docs
   transformedRotated,
   /// See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedUpright) for more information.
-  // ignore: public_member_api_docs
   transformedUpright,
   /// See the [Rust documentation for `Upright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Upright) for more information.
-  // ignore: public_member_api_docs
   upright;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -46,7 +42,7 @@ enum VerticalOrientation {
     return result.union.ok._toDart([], isStatic: true);
   }
 
-  /// Convert to an integer value usable with ICU4C and CodePointMapData
+  /// Convert to an integer value usable with ICU4C and `CodePointMapData`
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
@@ -54,11 +50,20 @@ enum VerticalOrientation {
     return result;
   }
 
-  /// Convert from an integer value from ICU4C or CodePointMapData
+  /// Convert from an integer value from ICU4C or `CodePointMapData`
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
   static VerticalOrientation? fromIntegerValue(int other) {
     final result = _icu4x_VerticalOrientation_from_integer_value_mv1(other);
+    if (!result.isOk) {
+      return null;
+    }
+    return VerticalOrientation.values[result.union.ok];
+  }
+
+  static VerticalOrientation? tryFromStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_VerticalOrientation_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       return null;
     }
@@ -91,5 +96,10 @@ external int _icu4x_VerticalOrientation_to_integer_value_mv1(int self);
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_VerticalOrientation_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_VerticalOrientation_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_VerticalOrientation_try_from_str_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_VerticalOrientation_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_VerticalOrientation_try_from_str_mv1(_SliceUtf8 s);
 
 // dart format on

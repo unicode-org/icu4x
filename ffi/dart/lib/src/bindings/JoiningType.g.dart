@@ -6,22 +6,16 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
 enum JoiningType {
   /// See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.NonJoining) for more information.
-  // ignore: public_member_api_docs
   nonJoining,
   /// See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.JoinCausing) for more information.
-  // ignore: public_member_api_docs
   joinCausing,
   /// See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.DualJoining) for more information.
-  // ignore: public_member_api_docs
   dualJoining,
   /// See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.LeftJoining) for more information.
-  // ignore: public_member_api_docs
   leftJoining,
   /// See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.RightJoining) for more information.
-  // ignore: public_member_api_docs
   rightJoining,
   /// See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.Transparent) for more information.
-  // ignore: public_member_api_docs
   transparent;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -52,7 +46,7 @@ enum JoiningType {
     return result.union.ok._toDart([], isStatic: true);
   }
 
-  /// Convert to an integer value usable with ICU4C and CodePointMapData
+  /// Convert to an integer value usable with ICU4C and `CodePointMapData`
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
@@ -60,11 +54,20 @@ enum JoiningType {
     return result;
   }
 
-  /// Convert from an integer value from ICU4C or CodePointMapData
+  /// Convert from an integer value from ICU4C or `CodePointMapData`
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
   static JoiningType? fromIntegerValue(int other) {
     final result = _icu4x_JoiningType_from_integer_value_mv1(other);
+    if (!result.isOk) {
+      return null;
+    }
+    return JoiningType.values[result.union.ok];
+  }
+
+  static JoiningType? tryFromStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_JoiningType_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       return null;
     }
@@ -97,5 +100,10 @@ external int _icu4x_JoiningType_to_integer_value_mv1(int self);
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_JoiningType_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_JoiningType_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_JoiningType_try_from_str_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_JoiningType_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_JoiningType_try_from_str_mv1(_SliceUtf8 s);
 
 // dart format on

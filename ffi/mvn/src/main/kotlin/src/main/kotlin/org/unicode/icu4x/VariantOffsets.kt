@@ -21,21 +21,66 @@ internal class VariantOffsetsNative: Structure(), Structure.ByValue {
     }
 }
 
+
+
+
+internal class OptionVariantOffsetsNative constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: VariantOffsetsNative = VariantOffsetsNative()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): VariantOffsetsNative? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: VariantOffsetsNative, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: VariantOffsetsNative): OptionVariantOffsetsNative {
+            return OptionVariantOffsetsNative(value, 1)
+        }
+
+        internal fun none(): OptionVariantOffsetsNative {
+            return OptionVariantOffsetsNative(VariantOffsetsNative(), 0)
+        }
+    }
+
+}
+
 /** See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsets.html) for more information.
 */
-class VariantOffsets internal constructor (
-    internal val nativeStruct: VariantOffsetsNative) {
-    val standard: UtcOffset = UtcOffset(nativeStruct.standard, listOf())
-    val daylight: UtcOffset? = if (nativeStruct.daylight == null) {
+class VariantOffsets (var standard: UtcOffset, var daylight: UtcOffset?) {
+    companion object {
+
+        internal val libClass: Class<VariantOffsetsLib> = VariantOffsetsLib::class.java
+        internal val lib: VariantOffsetsLib = Native.load("icu4x", libClass)
+        val NATIVESIZE: Long = Native.getNativeSize(VariantOffsetsNative::class.java).toLong()
+
+        internal fun fromNative(nativeStruct: VariantOffsetsNative): VariantOffsets {
+            val standard: UtcOffset = UtcOffset(nativeStruct.standard, listOf())
+            val daylight: UtcOffset? = if (nativeStruct.daylight == null) {
         null
     } else {
         UtcOffset(nativeStruct.daylight!!, listOf())
     }
 
-    companion object {
-        internal val libClass: Class<VariantOffsetsLib> = VariantOffsetsLib::class.java
-        internal val lib: VariantOffsetsLib = Native.load("icu4x", libClass)
-        val NATIVESIZE: Long = Native.getNativeSize(VariantOffsetsNative::class.java).toLong()
-    }
+            return VariantOffsets(standard, daylight)
+        }
 
+    }
 }

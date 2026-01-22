@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
+ * An ICU4X `ZonedDateTime` object capable of containing a ISO-8601 date, time, and zone.
  *
  * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html) for more information.
  */
@@ -61,16 +61,23 @@ export class ZonedIsoDateTime {
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
     _intoFFI(
+        dst,
         functionCleanupArena,
         appendArrayMap
     ) {
-        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 12, 4);
 
-        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+        this._writeToArrayBuffer(wasm.memory.buffer, dst, functionCleanupArena, appendArrayMap);
 
-        functionCleanupArena.alloc(buffer);
+        return dst;
+    }
 
-        return buffer.ptr;
+    static get _sizeBytes() {
+        return 12;
+    }
+
+    /// Currently unused, we may want to use later on though:
+    static get _sizeAlign() {
+        return 4;
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -140,6 +147,7 @@ export class ZonedIsoDateTime {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -171,6 +179,7 @@ export class ZonedIsoDateTime {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -195,6 +204,7 @@ export class ZonedIsoDateTime {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

@@ -89,7 +89,7 @@ impl PotentialUtf8 {
         Self::from_boxed_bytes(other.into_boxed_bytes())
     }
 
-    /// Get the bytes from a [`PotentialUtf8].
+    /// Get the bytes from a [`PotentialUtf8`].
     #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
         &self.0
@@ -246,6 +246,9 @@ where
     }
 }
 
+/// A `u16` slice that is expected to be a UTF-16 string but does not enforce that invariant.
+///
+/// See [`PotentialUtf8`] for more info.
 #[repr(transparent)]
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // transparent newtype
@@ -272,6 +275,9 @@ impl PotentialUtf16 {
         unsafe { core::mem::transmute(other) }
     }
 
+    /// Iterates the characters of the string.
+    ///
+    /// Returns [`char::REPLACEMENT_CHARACTER`] if invalid surrogates are encountered.
     pub fn chars(&self) -> impl Iterator<Item = char> + '_ {
         char::decode_utf16(self.0.iter().copied()).map(|c| c.unwrap_or(char::REPLACEMENT_CHARACTER))
     }

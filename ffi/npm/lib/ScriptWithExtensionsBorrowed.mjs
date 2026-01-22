@@ -9,7 +9,7 @@ const ScriptWithExtensionsBorrowed_box_destroy_registry = new FinalizationRegist
 });
 
 /**
- * A slightly faster ScriptWithExtensions object
+ * A slightly faster `ScriptWithExtensions` object
  *
  * See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
  */
@@ -59,6 +59,7 @@ export class ScriptWithExtensionsBorrowed {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -79,11 +80,12 @@ export class ScriptWithExtensionsBorrowed {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Check if the Script_Extensions property of the given code point covers the given script
+     * Check if the `Script_Extensions` property of the given code point covers the given script
      *
      * See the [Rust documentation for `has_script`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
      */
@@ -96,12 +98,13 @@ export class ScriptWithExtensionsBorrowed {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Build the CodePointSetData corresponding to a codepoints matching a particular script
-     * in their Script_Extensions
+     * Build the `CodePointSetData` corresponding to a codepoints matching a particular script
+     * in their `Script_Extensions`
      *
      * See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
      */
@@ -114,6 +117,7 @@ export class ScriptWithExtensionsBorrowed {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

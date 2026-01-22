@@ -140,7 +140,7 @@ mod check_convenience_constructors {
     use crate::{
         cal::{
             ChineseTraditional, EthiopianEraStyle, Hijri, HijriTabularEpoch, HijriTabularLeapYears,
-            Japanese, JapaneseExtended, KoreanTraditional,
+            Japanese, KoreanTraditional,
         },
         Ref,
     };
@@ -267,26 +267,6 @@ mod check_convenience_constructors {
         .unwrap_err();
         Date::try_new_japanese_with_calendar("reiwa", *VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&cal))
             .unwrap_err();
-    }
-    #[test]
-    fn japanese_extended() {
-        let cal = JapaneseExtended::new();
-        Date::try_new_japanese_extended_with_calendar(
-            "reiwa",
-            *VALID_YEAR_RANGE.start() - 1,
-            1,
-            1,
-            Ref(&cal),
-        )
-        .unwrap_err();
-        Date::try_new_japanese_extended_with_calendar(
-            "reiwa",
-            *VALID_YEAR_RANGE.end() + 1,
-            1,
-            1,
-            Ref(&cal),
-        )
-        .unwrap_err();
     }
     #[test]
     fn persian() {

@@ -2,17 +2,27 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! 🚧 The experimental development module of the `ICU4X` project.
 //!
 //! This module is published as its own crate ([`icu_experimental`](https://docs.rs/icu_experimental/latest/icu_experimental/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
-//! It will usually undergo a major SemVer bump for every ICU4X release. Components in this
+//! It will usually undergo a major `SemVer` bump for every ICU4X release. Components in this
 //! crate will eventually stabilize and move to their own top-level components.
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-// No boilerplate, each module has their own
 #![allow(clippy::module_inception)]
 
 extern crate alloc;
@@ -30,7 +40,11 @@ pub mod units;
 
 #[doc(hidden)] // compiled constructors look for the baked provider here
 pub mod provider {
+    // Provider structs must be stable
+    #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+
     #[cfg(feature = "compiled_data")]
+    #[derive(Debug)]
     pub struct Baked;
 
     #[cfg(feature = "compiled_data")]

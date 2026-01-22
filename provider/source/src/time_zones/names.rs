@@ -41,10 +41,7 @@ impl DataProvider<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
                     } else {
                         format!(
                             "{}{iana}",
-                            char::from_u32(
-                                icu::time::provider::iana::NON_REGION_CITY_PREFIX as u32
-                            )
-                            .unwrap()
+                            char::from_u32(NON_REGION_CITY_PREFIX as u32).unwrap()
                         )
                     }
                     .into_bytes(),
@@ -124,7 +121,7 @@ impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaExtendedV1> for So
     }
 }
 
-fn create_hasher() -> impl std::hash::Hasher {
+fn create_hasher() -> impl Hasher {
     twox_hash::XxHash64::with_seed(0)
 }
 
@@ -175,7 +172,7 @@ fn test_compute_bcp47_ids_hash() {
 /// Tests that all IANA time zone IDs normalize and canonicalize to their correct form.
 #[test]
 fn test_normalize_canonicalize_iana_coverage() {
-    let provider = crate::SourceDataProvider::new_testing();
+    let provider = SourceDataProvider::new_testing();
 
     let iana2bcp = provider.iana_to_bcp47_map().unwrap();
     let bcp2iana = provider.bcp47_to_canonical_iana_map().unwrap();

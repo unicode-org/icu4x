@@ -7,10 +7,8 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/2.1.1/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
 enum LocaleFallbackPriority {
-
   // ignore: public_member_api_docs
   language,
-
   // ignore: public_member_api_docs
   region;
 
