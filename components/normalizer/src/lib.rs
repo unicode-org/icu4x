@@ -1235,8 +1235,7 @@ where
                 return Some(starter);
             }
             // Now we need to check if composition with an upcoming starter is possible.
-            #[expect(clippy::unwrap_used)]
-            if self.decomposition.pending.is_some() {
+            if let Some(pending) = self.decomposition.pending.take() {
                 // We know that `pending_starter` decomposes to start with a starter.
                 // Otherwise, it would have been moved to `self.decomposition.buffer`
                 // by `self.decomposing_next()`. We do this set lookup here in order
@@ -1244,16 +1243,15 @@ where
                 // Note that this check has to happen _after_ checking that `pending`
                 // holds a character, because this flag isn't defined to be meaningful
                 // when `pending` isn't holding a character.
-                let pending = self.decomposition.pending.as_ref().unwrap();
                 if u32::from(pending.character) < self.composition_passthrough_bound
                     || !pending.can_combine_backwards()
                 {
                     // Won't combine backwards anyway.
+                    self.decomposition.pending = Some(pending);
                     return Some(starter);
                 }
-                // Consume what we peeked. `unwrap` OK, because we checked `is_some()`
-                // above.
-                undecomposed_starter = self.decomposition.pending.take().unwrap();
+                // Consume what we peeked.
+                undecomposed_starter = pending;
                 // The following line is OK, because we're about to loop back
                 // to `self.decomposition.decomposing_next(c);`, which will
                 // restore the between-`next()`-calls invariant of `pending`
