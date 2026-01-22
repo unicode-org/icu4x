@@ -187,12 +187,14 @@ pub trait BakeSize: Sized + Bake {
 #[macro_export]
 macro_rules! test_bake {
     ($type:ty, const, $expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
-        const _: &$type = &$expr;
+        #[allow(unused_qualifications)]
+        {const _: &$type = &$expr;}
         $crate::test_bake!($type, $expr $(, $krate)? $(, [$($env_crate),+])?);
     };
 
     ($type:ty, $expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
         let env = Default::default();
+        #[allow(unused_qualifications)]
         let expr: &$type = &$expr;
         let bake = $crate::Bake::bake(expr, &env).to_string();
         // For some reason `TokenStream` behaves differently in this line

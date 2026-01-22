@@ -226,7 +226,7 @@ impl TitlecaseMapper<CaseMapper> {
         P: DataProvider<CaseMapV1> + DataProvider<PropertyEnumGeneralCategoryV1> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let gc = icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::try_new_unstable(provider)?;
+        let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?;
         Ok(Self { cm, gc })
     }
 }
@@ -263,8 +263,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     pub const fn new_with_mapper(casemapper: CM) -> Self {
         Self {
             cm: casemapper,
-            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new()
-                .static_to_owned(),
+            gc: CodePointMapData::<GeneralCategory>::new().static_to_owned(),
         }
     }
 
@@ -274,7 +273,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     where
         P: DataProvider<CaseMapV1> + DataProvider<PropertyEnumGeneralCategoryV1> + ?Sized,
     {
-        let gc = icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::try_new_unstable(provider)?;
+        let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?;
         Ok(Self { cm: casemapper, gc })
     }
 
@@ -306,7 +305,7 @@ impl TitlecaseMapperBorrowed<'static> {
     pub const fn new() -> Self {
         Self {
             cm: CaseMapper::new(),
-            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new(),
+            gc: CodePointMapData::<GeneralCategory>::new(),
         }
     }
     /// Cheaply converts a [`TitlecaseMapperBorrowed<'static>`] into a [`TitlecaseMapper`].

@@ -453,7 +453,7 @@ impl FormattedDuration<'_> {
     fn partition_duration_format_pattern<V: PartsWrite + ?Sized>(
         &self,
         sink: &mut V,
-    ) -> core::fmt::Result {
+    ) -> fmt::Result {
         // We can have a maximum of 10 writeables (one FormattedUnit for each unit).
         // In the digital case, one or more unit is represented by the FormattedDigitalDuration,
         // which is a single writeable.

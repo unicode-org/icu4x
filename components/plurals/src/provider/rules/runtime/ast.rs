@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::rules::reference;
+use alloc::vec::Vec;
 use core::{
     convert::{TryFrom, TryInto},
     fmt, num,
@@ -85,7 +86,7 @@ impl TryFrom<&reference::ast::Rule> for Rule<'_> {
     type Error = num::TryFromIntError;
 
     fn try_from(input: &reference::ast::Rule) -> Result<Self, Self::Error> {
-        let mut relations: alloc::vec::Vec<Relation> = alloc::vec![];
+        let mut relations: Vec<Relation> = alloc::vec![];
 
         for (i_or, and_condition) in input.condition.0.iter().enumerate() {
             for (i_and, relation) in and_condition.0.iter().enumerate() {
@@ -94,7 +95,7 @@ impl TryFrom<&reference::ast::Rule> for Rule<'_> {
                     .0
                     .iter()
                     .map(|rov| rov.try_into())
-                    .collect::<Result<alloc::vec::Vec<_>, _>>()?;
+                    .collect::<Result<Vec<_>, _>>()?;
 
                 let and_or = if i_or > 0 && i_and == 0 {
                     AndOr::Or
@@ -122,8 +123,8 @@ impl TryFrom<&reference::ast::Rule> for Rule<'_> {
 
 impl From<&Rule<'_>> for reference::ast::Rule {
     fn from(input: &Rule<'_>) -> Self {
-        let mut or_conditions: alloc::vec::Vec<reference::ast::AndCondition> = alloc::vec![];
-        let mut and_conditions: alloc::vec::Vec<reference::ast::Relation> = alloc::vec![];
+        let mut or_conditions = alloc::vec![];
+        let mut and_conditions = alloc::vec![];
         for rel in input.0.iter() {
             let rel = rel.as_relation();
             let list = rel.range_list.iter().map(Into::into).collect();

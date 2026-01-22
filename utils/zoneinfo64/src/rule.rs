@@ -668,11 +668,8 @@ mod tests {
                 transition_time: 0,
                 time_mode: TimeMode::Utc,
             }
-            .day_in_year(
-                2025,
-                calendrical_calculations::gregorian::day_before_year(2025)
-            ),
-            calendrical_calculations::gregorian::days_before_month(2025, 8) + 6
+            .day_in_year(2025, gregorian::day_before_year(2025)),
+            gregorian::days_before_month(2025, 8) + 6
         );
 
         // Third Saturday in August 2025
@@ -685,11 +682,8 @@ mod tests {
                 transition_time: 0,
                 time_mode: TimeMode::Utc,
             }
-            .day_in_year(
-                2025,
-                calendrical_calculations::gregorian::day_before_year(2025)
-            ),
-            calendrical_calculations::gregorian::days_before_month(2025, 8) + 16
+            .day_in_year(2025, gregorian::day_before_year(2025)),
+            gregorian::days_before_month(2025, 8) + 16
         );
     }
 }

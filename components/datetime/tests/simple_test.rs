@@ -4,10 +4,10 @@
 
 use icu_calendar::cal::Hebrew;
 use icu_calendar::Date;
+use icu_datetime::fieldsets;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
-use icu_datetime::fieldsets::{self, YMD};
 use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
 use icu_time::{DateTime, Time};
@@ -182,7 +182,8 @@ fn hebrew_months() {
         time: Time::try_new(14, 15, 7, 0).unwrap(),
     };
     let formatter =
-        FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), YMD::medium()).unwrap();
+        FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), fieldsets::YMD::medium())
+            .unwrap();
 
     let formatted_datetime = formatter.format(&datetime);
 

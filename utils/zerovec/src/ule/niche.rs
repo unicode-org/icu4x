@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::{marker::Copy, mem::size_of};
+use core::marker::Copy;
 
 #[cfg(feature = "alloc")]
 use crate::map::ZeroMapKV;
@@ -69,7 +69,7 @@ impl<U: NicheBytes<N> + ULE + core::fmt::Debug, const N: usize> core::fmt::Debug
 impl<U: NicheBytes<N> + ULE, const N: usize> NichedOptionULE<U, N> {
     /// New `NichedOptionULE<U, N>` from `Option<U>`
     pub fn new(opt: Option<U>) -> Self {
-        assert!(N == core::mem::size_of::<U>());
+        assert!(N == size_of::<U>());
         match opt {
             Some(u) => Self { valid: u },
             None => Self {
@@ -136,7 +136,7 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
         let size = size_of::<Self>();
         // The implemention is only correct if NICHE_BIT_PATTERN has same number of bytes as the
         // type.
-        debug_assert!(N == core::mem::size_of::<U>());
+        debug_assert!(N == size_of::<U>());
 
         // The bytes should fully transmute to a collection of Self
         if bytes.len() % size != 0 {
@@ -156,7 +156,7 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 
 /// Optional type which uses [`NichedOptionULE<U,N>`] as ULE type.
 ///
-/// The implementors guarantee that `N == core::mem::size_of::<Self>()`
+/// The implementors guarantee that `N == size_of::<Self>()`
 /// `#[repr(transparent)]` guarantees that the layout is same as [`Option<U>`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[repr(transparent)]

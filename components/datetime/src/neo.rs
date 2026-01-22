@@ -662,7 +662,7 @@ where
     pub fn format_same_calendar<I>(
         &self,
         datetime: &I,
-    ) -> Result<FormattedDateTime<'_>, crate::MismatchedCalendarError>
+    ) -> Result<FormattedDateTime<'_>, MismatchedCalendarError>
     where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {

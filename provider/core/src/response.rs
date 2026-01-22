@@ -127,7 +127,6 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 /// Stack size comparison:
 ///
 /// ```
-/// use core::mem::size_of;
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
 ///
@@ -182,7 +181,7 @@ pub(crate) type CartInner = SelectedRc<Box<[u8]>>;
 pub(crate) type CartInner = &'static ();
 
 // Safety: Rc, Arc, and () are CloneableCart, and our impl delegates.
-unsafe impl yoke::CloneableCart for Cart {}
+unsafe impl CloneableCart for Cart {}
 
 #[cfg(feature = "alloc")]
 impl Deref for Cart {

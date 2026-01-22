@@ -335,7 +335,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                                 start + a.local_length,
                                 start + a.local_length + b.local_length,
                             );
-                            branch_metas = branch_metas.swap_or_panic(l - 1, l);
+                            branch_metas.swap_or_panic(l - 1, l);
                             start += b.local_length;
                             changes += 1;
                             // FIXME: fix the `length` field
@@ -354,8 +354,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             };
             // Write out the offset table
             current_len = total_length;
-            const USIZE_BITS: usize = core::mem::size_of::<usize>() * 8;
-            let w = (USIZE_BITS - (total_length.leading_zeros() as usize) - 1) / 8;
+            let w = (usize::BITS as usize - (total_length.leading_zeros() as usize) - 1) / 8;
             if w > 3 && matches!(self.options.capacity_mode, CapacityMode::Normal) {
                 return Err(ZeroTrieBuildError::CapacityExceeded);
             }

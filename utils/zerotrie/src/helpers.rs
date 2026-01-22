@@ -64,7 +64,7 @@ pub(crate) use debug_unwrap;
 
 /// The maximum number of base-10 digits required for rendering a usize.
 /// Note: 24/10 is an approximation of 8*log10(2)
-pub(crate) const MAX_USIZE_LEN_AS_DIGITS: usize = core::mem::size_of::<usize>() * 24 / 10 + 1;
+pub(crate) const MAX_USIZE_LEN_AS_DIGITS: usize = size_of::<usize>() * 24 / 10 + 1;
 
 /// Formats a usize as a string of length N, padded with spaces,
 /// with the given prefix.

@@ -326,7 +326,7 @@ impl HelloWorldFormatter {
         let locale = HelloWorldV1::make_locale(prefs.locale_preferences);
         let data = provider
             .load(DataRequest {
-                id: crate::request::DataIdentifierBorrowed::for_locale(&locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;

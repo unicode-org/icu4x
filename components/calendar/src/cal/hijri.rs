@@ -71,6 +71,8 @@ mod ummalqura_data;
 /// 2. [`TabularAlgorithm`] is based on a proleptic approximation of the length of a lunar year.
 ///    See the docs for information on the branches of Islam using it.
 ///
+/// To support other Hijri variants, use the [`Rules`] trait.
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
@@ -81,8 +83,11 @@ pub struct Hijri<S>(pub S);
 
 /// Defines a variant of the [`Hijri`] calendar.
 ///
-/// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`]
-/// rules, other rules can be implemented by users.
+/// This crate includes the [`UmmAlQura`] and [`TabularAlgorithm`] rules.
+///
+/// To support other Hijri variants, provide your own rules by implementing this trait.
+/// You may find the simulations in the [`calendrical_calculations`] crate to be useful,
+/// supplemented with data from human observations.
 ///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
@@ -385,7 +390,7 @@ impl Hijri<AstronomicalSimulation> {
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
     #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub fn try_new_mecca_with_buffer_provider(
-        _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(Self::new_simulated_mecca())
     }
@@ -828,7 +833,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month: types::Month,
+        month: Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
@@ -959,7 +964,7 @@ impl<R: Rules> Calendar for Hijri<R> {
         )
     }
 
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         self.0.calendar_algorithm()
     }
 }

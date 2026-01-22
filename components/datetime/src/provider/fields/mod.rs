@@ -96,7 +96,7 @@ writeable::impl_display_with_writeable!(Field);
 impl FieldULE {
     #[inline]
     pub(crate) fn validate_byte_pair(bytes: (u8, u8)) -> Result<(), zerovec::ule::UleError> {
-        symbols::FieldSymbolULE::validate_byte(bytes.0)?;
+        FieldSymbolULE::validate_byte(bytes.0)?;
         length::FieldLengthULE::validate_byte(bytes.1)?;
         Ok(())
     }

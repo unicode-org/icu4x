@@ -250,7 +250,7 @@ impl Default for FieldModifierSet {
 }
 
 impl fmt::Debug for FieldModifierSet {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut debug = f.debug_struct("FieldModifierSet");
         debug.field("core", &self.has_field(FieldModifier::Core));
         debug.field("informal", &self.has_field(FieldModifier::Informal));

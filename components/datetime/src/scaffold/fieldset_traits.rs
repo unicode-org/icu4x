@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
+    provider::semantic_skeletons::GluePattern,
     provider::{names::*, time_zones::tz, *},
     scaffold::*,
 };

@@ -5,6 +5,8 @@
 use crate::asciibyte::AsciiByte;
 use crate::int_ops::{Aligned4, Aligned8};
 use crate::ParseError;
+#[cfg(feature = "alloc")]
+use alloc::string::String;
 use core::borrow::Borrow;
 use core::fmt;
 use core::ops::Deref;
@@ -858,14 +860,14 @@ impl<const N: usize> PartialEq<&str> for TinyAsciiStr<N> {
 }
 
 #[cfg(feature = "alloc")]
-impl<const N: usize> PartialEq<alloc::string::String> for TinyAsciiStr<N> {
-    fn eq(&self, other: &alloc::string::String) -> bool {
+impl<const N: usize> PartialEq<String> for TinyAsciiStr<N> {
+    fn eq(&self, other: &String) -> bool {
         self.deref() == other.deref()
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
+impl<const N: usize> PartialEq<TinyAsciiStr<N>> for String {
     fn eq(&self, other: &TinyAsciiStr<N>) -> bool {
         self.deref() == other.deref()
     }
@@ -932,7 +934,7 @@ mod test {
     where
         F1: Fn(&str) -> T,
         F2: Fn(TinyAsciiStr<N>) -> T,
-        T: core::fmt::Debug + core::cmp::PartialEq,
+        T: fmt::Debug + PartialEq,
     {
         for s in STRINGS
             .into_iter()

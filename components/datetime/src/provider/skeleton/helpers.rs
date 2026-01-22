@@ -145,8 +145,8 @@ fn naively_apply_time_zone_name(
     // If there is a preference overriding the hour cycle, apply it now.
     if let Some(time_zone_name) = time_zone_name {
         runtime::helpers::maybe_replace_first(pattern, |item| {
-            if let PatternItem::Field(fields::Field {
-                symbol: fields::FieldSymbol::TimeZone(_),
+            if let PatternItem::Field(Field {
+                symbol: FieldSymbol::TimeZone(_),
                 length: _,
             }) = item
             {

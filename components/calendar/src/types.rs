@@ -70,7 +70,7 @@ mod unstable {
         ///
         /// For an example, see [`Self::extended_year`].
         pub era_year: Option<i32>,
-        /// See [`Date::extended_year()`](crate::Date::extended_year).
+        /// See [`YearInfo::extended_year()`](crate::types::YearInfo::extended_year).
         ///
         /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
         /// refer to the same year.
@@ -259,8 +259,16 @@ impl YearInfo {
         }
     }
 
-    /// Get the extended year (See [`Date::extended_year`](crate::Date::extended_year))
-    /// for more information
+    /// The "extended year".
+    ///
+    /// This year number can be used when you need a simple numeric representation
+    /// of the year, and can be meaningfully compared with extended years from other
+    /// eras or used in arithmetic.
+    ///
+    /// For calendars defined in Temporal, this will match the "arithmetic year"
+    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
+    /// This is typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar.
     pub fn extended_year(self) -> i32 {
         match self {
             YearInfo::Era(e) => e.extended_year,

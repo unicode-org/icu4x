@@ -54,7 +54,7 @@ where
     if found_name_script.is_none() {
         found_name_script = find_script(person_name, swe, Given);
     }
-    let name_script = found_name_script.unwrap_or(icu_properties::props::Script::Unknown);
+    let name_script = found_name_script.unwrap_or(Script::Unknown);
 
     let locid_script = scripts.get_locale_script(name_script).unwrap();
     person_name.name_locale().map_or_else(
@@ -75,7 +75,7 @@ fn find_script<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
     kind: NameFieldKind,
-) -> Option<icu_properties::props::Script>
+) -> Option<Script>
 where
     N: PersonName,
 {

@@ -6,7 +6,7 @@
 
 use crate::{
     assert_syntax,
-    core::EncodingType,
+    encoding::EncodingType,
     parsers::{
         annotations,
         grammar::{is_annotation_open, is_date_time_separator, is_hyphen, is_utc_designator},

@@ -128,8 +128,8 @@ impl CompactCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<crate::dimension::provider::currency::essentials::CurrencyEssentialsV1>
-            + DataProvider<crate::dimension::provider::currency::compact::ShortCurrencyCompactV1>
+            + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<ShortCurrencyCompactV1>
             + DataProvider<crate::compactdecimal::provider::ShortCompactDecimalFormatDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>

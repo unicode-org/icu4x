@@ -379,7 +379,6 @@ unsafe impl<C> Sync for CartableOptionPointer<C> where C: Send + CartablePointer
 mod tests {
     use super::*;
     use crate::Yoke;
-    use core::mem::size_of;
 
     const SAMPLE_BYTES: &[u8] = b"abCDEfg";
     const W: usize = size_of::<usize>();
