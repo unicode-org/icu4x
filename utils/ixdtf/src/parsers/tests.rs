@@ -9,7 +9,7 @@ use alloc::string::String;
 use alloc::vec::Vec;
 
 use crate::{
-    core::Utf16,
+    encoding::Utf16,
     parsers::IxdtfParser,
     records::{
         Annotation, DateRecord, Fraction, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
