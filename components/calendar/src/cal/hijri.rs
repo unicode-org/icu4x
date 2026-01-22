@@ -71,6 +71,8 @@ mod ummalqura_data;
 /// 2. [`TabularAlgorithm`] is based on a proleptic approximation of the length of a lunar year.
 ///    See the docs for information on the branches of Islam using it.
 ///
+/// To support other Hijri variants, use the [`Rules`] trait.
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
@@ -81,8 +83,11 @@ pub struct Hijri<S>(pub S);
 
 /// Defines a variant of the [`Hijri`] calendar.
 ///
-/// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`]
-/// rules, other rules can be implemented by users.
+/// This crate includes the [`UmmAlQura`] and [`TabularAlgorithm`] rules.
+///
+/// To support other Hijri variants, provide your own rules by implementing this trait.
+/// You may find the simulations in the [`calendrical_calculations`] crate to be useful,
+/// supplemented with data from human observations.
 ///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
