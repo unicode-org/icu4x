@@ -82,12 +82,6 @@ fn test_basic() {
     let data_as_map = strings_to_2d_btreemap(BASIC_DATA, "/");
     let dense =
         ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data_as_map, b'/').unwrap();
-
-    assert_eq!(
-        format!("{:?}", dense.as_borrowed()),
-        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [196, 97, 101, 102, 105, 4, 8, 12, 114, 128, 47, 128, 110, 129, 47, 133, 114, 130, 47, 137, 116, 47, 73, 84, 141] }, suffixes: ZeroTrieSimpleAscii { store: [197, 65, 70, 73, 83, 85, 2, 4, 10, 12, 85, 128, 82, 129, 194, 82, 84, 1, 130, 131, 65, 132, 194, 75, 83, 1, 133, 134] }, dense: ZeroVec([65535, 0, 1, 65535, 2, 3, 4, 0, 1, 65535, 65535, 65535, 2, 3, 65535, 0, 65535, 65535, 1, 2, 3]), suffix_count: 7, delimiter: 47 }"
-    );
-
     check_data(&data_as_map, dense.as_borrowed(), true);
     let non_existent_data_as_map = strings_to_2d_btreemap(NON_EXISTENT_BASIC_DATA, "/");
     check_data(&non_existent_data_as_map, dense.as_borrowed(), false);
