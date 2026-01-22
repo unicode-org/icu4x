@@ -13,17 +13,19 @@ use syn::visit::{visit_lifetime, visit_type, visit_type_path, Visit};
 use syn::{Ident, Lifetime, Type, TypePath};
 
 struct TypeVisitor<'a> {
+    /// The lifetime parameter of the yokeable
+    lt_param: &'a Ident,
     /// The type parameters in scope
     typarams: &'a HashSet<Ident>,
     /// Whether we found a type parameter
     found_typarams: bool,
-    /// Whether we found a non-'static lifetime parameter
+    /// Whether we found a usage of the `lt_param` lifetime
     found_lifetimes: bool,
 }
 
 impl<'ast> Visit<'ast> for TypeVisitor<'_> {
     fn visit_lifetime(&mut self, lt: &'ast Lifetime) {
-        if lt.ident != "static" {
+        if lt.ident == *self.lt_param {
             self.found_lifetimes = true;
         }
         visit_lifetime(self, lt)
@@ -43,10 +45,16 @@ impl<'ast> Visit<'ast> for TypeVisitor<'_> {
     // Type macros are ignored/skipped by default.
 }
 
-/// Checks if a type has type or lifetime parameters, given the local context of
-/// named type parameters. Returns `(has_type_params, has_lifetime_params)`.
-pub fn check_type_for_parameters(ty: &Type, typarams: &HashSet<Ident>) -> (bool, bool) {
+/// Checks if a type has type or parameters or uses the lifetime parameter of the yokeable type,
+/// given the local context of named type parameters and the lifetime parameter.
+/// Returns `(has_type_params, has_lifetime_params)`.
+pub fn check_type_for_parameters(
+    lt_param: &Ident,
+    ty: &Type,
+    typarams: &HashSet<Ident>,
+) -> (bool, bool) {
     let mut visit = TypeVisitor {
+        lt_param,
         typarams,
         found_typarams: false,
         found_lifetimes: false,
@@ -64,6 +72,10 @@ mod tests {
 
     use super::check_type_for_parameters;
 
+    fn a_ident() -> Ident {
+        Ident::new("a", Span::call_site())
+    }
+
     fn make_typarams(params: &[&str]) -> HashSet<Ident> {
         params
             .iter()
@@ -76,27 +88,27 @@ mod tests {
         let environment = make_typarams(&["T", "U", "V"]);
 
         let ty = parse_quote!(Foo<'a, T>);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (true, true));
 
         let ty = parse_quote!(Foo<T>);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (true, false));
 
         let ty = parse_quote!(Foo<'static, T>);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (true, false));
 
         let ty = parse_quote!(Foo<'a>);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (false, true));
 
         let ty = parse_quote!(Foo<'a, Bar<U>, Baz<(V, u8)>>);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (true, true));
 
         let ty = parse_quote!(Foo<'a, W>);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (false, true));
     }
 
@@ -105,15 +117,15 @@ mod tests {
         let environment = make_typarams(&["T"]);
 
         let ty = parse_quote!(<Foo as SomeTrait<'a, T>>::Output);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (true, true));
 
         let ty = parse_quote!(<Foo as SomeTrait<'static, T>>::Output);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (true, false));
 
         let ty = parse_quote!(<T as SomeTrait<'static, Foo>>::Output);
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (true, false));
     }
 
@@ -125,27 +137,27 @@ mod tests {
         // and the `T` is basically ignored.
 
         let ty = parse_quote!(foo!(Foo<'a, T>));
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<T>));
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<'static, T>));
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<'a>));
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<'a, Bar<U>, Baz<(V, u8)>>));
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<'a, W>));
-        let check = check_type_for_parameters(&ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
         assert_eq!(check, (false, false));
     }
 }

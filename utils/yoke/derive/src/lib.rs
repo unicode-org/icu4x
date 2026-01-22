@@ -222,7 +222,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     for variant_info in structure.variants() {
         for field in variant_info.ast().fields.iter() {
-            let (has_ty, has_lt) = check_type_for_parameters(&field.ty, &generics_env);
+            let (has_ty, has_lt) = check_type_for_parameters(lt_param, &field.ty, &generics_env);
 
             if has_ty {
                 // For field types without type or lifetime parameters, we don't require `Yokeable`.
@@ -261,7 +261,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         let field = binding.ast();
         let field_binding = &binding.binding;
 
-        let (has_ty, has_lt) = check_type_for_parameters(&field.ty, &generics_env);
+        let (has_ty, has_lt) = check_type_for_parameters(lt_param, &field.ty, &generics_env);
 
         if has_ty || has_lt {
             // We only evaluate this type a single time below (either here or in `output_checks`).
@@ -318,7 +318,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         let field = binding.ast();
         let field_binding = &binding.binding;
 
-        let (has_ty, has_lt) = check_type_for_parameters(&field.ty, &generics_env);
+        let (has_ty, has_lt) = check_type_for_parameters(lt_param, &field.ty, &generics_env);
 
         if has_ty || has_lt {
             // Handled above.
