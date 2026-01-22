@@ -6,11 +6,17 @@
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __enum_keyword_inner {
-    ($key:expr, $name:ident, $variant:ident) => {
+    ($key:expr, $name:ident, $variant:ident, $value:ident) => {{
+        if $value.get_subtag(1).is_some() {
+            return Err(Self::Error::InvalidKeywordValue);
+        }
         $name::$variant
-    };
+    }};
     ($key:expr, $name:ident, $variant:ident, $value:ident, $v2:ident, $($subk:expr => $subv:ident),*) => {{
         const _: () = assert!(!matches!($crate::subtags::subtag!($key), TRUE), "true value not allowed with second level");
+        if $value.get_subtag(2).is_some() {
+            return Err(Self::Error::InvalidKeywordValue);
+        }
         $name::$variant(match $value.get_subtag(1) {
             None => None,
             $(
@@ -140,7 +146,7 @@ macro_rules! __enum_keyword {
                 )?
                 Ok(match value.get_subtag(0).copied().unwrap_or(TRUE) {
                     $(
-                        s if s == $crate::subtags::subtag!($key) => $crate::__enum_keyword_inner!($key, $name, $variant $(,value, $v2, $($subk => $subv),*)?),
+                        s if s == $crate::subtags::subtag!($key) => $crate::__enum_keyword_inner!($key, $name, $variant, value$(, $v2, $($subk => $subv),*)?),
                     )*
                     _ => return Err(Self::Error::InvalidKeywordValue),
                 })
