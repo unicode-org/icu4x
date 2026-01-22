@@ -285,7 +285,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "is_normalized")]
-        pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
+        #[diplomat::abi_rename = "icu4x_DecomposingNormalizer_is_normalized_mv1"] // TODO(3.0): remove
+        pub fn is_normalized_utf8(&self, s: &DiplomatStr) -> bool {
             self.0.as_borrowed().is_normalized_utf8(s)
         }
 
@@ -314,7 +315,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "is_normalized_up_to")]
-        pub fn is_normalized_up_to(&self, s: &DiplomatStr) -> usize {
+        #[diplomat::abi_rename = "icu4x_DecomposingNormalizer_is_normalized_up_to_mv1"] // TODO(3.0): remove
+        pub fn is_normalized_utf8_up_to(&self, s: &DiplomatStr) -> usize {
             self.0.as_borrowed().split_normalized_utf8(s).0.len()
         }
 
