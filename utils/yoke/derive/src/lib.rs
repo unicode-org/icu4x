@@ -266,7 +266,9 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         if has_ty || has_lt {
             // We only evaluate this type a single time below (either here or in `output_checks`).
             // (We also evaluate it twice above in places that are not load-bearing for soundness).
-            // Therefore, even if there's a horribly pathological macro type, nothing can go wrong.
+            // Moreover, even if the macro type gives some strange output, the code would simply
+            // fail to compile; that is, nowhere is the visible type of a field load-bearing for
+            // soundness. Even if there's a horribly pathological macro type, nothing can go wrong.
             let fty_static = replace_lifetime(lt_param, &field.ty, static_lt());
 
             // This confirms that this `FieldTy` is a subtype of something which implements
@@ -300,12 +302,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             // Therefore, if this compiles, `*const &'a FieldTy` must be a subtype of `*const &'a T`
             // where `T = #fty_static` is the generic parameter of `__yoke_derive_require_yokeable`.
             // Looking at the signature of that function generated below, we have that
-            // `T: Yokeable<'a>` (if it compiles). Since `*const _` and `&'a _` are covariant over
-            // their type parameters, we have that `FieldTy` must be a subtype of `T` in order for a
-            // subtyping coercion from `*const &'a FieldTy` to `*const &'a T` to occur.
+            // `T: Yokeable<'a>` (if it compiles). Note that if `#fty_static` is incorrect, even if
+            // there is some other `T` which would work, this will just fail to compile. Since
+            // `*const _` and `&'a _` are covariant over their type parameters, we have that
+            // `FieldTy` must be a subtype of `T` in order for a subtyping coercion from
+            // `*const &'a FieldTy` to `*const &'a T` to occur.
             //
             // Therefore, `FieldTy` must be a subtype of something which implements `Yokeable<'a>`
-            // in order for this to compile.
+            // in order for this to compile. (Though that is not a sufficient condition, if
+            // there's some weird macro type.)
             quote! {
                 __yoke_derive_require_yokeable::<'a, #fty_static>(&raw const #field_binding);
             }

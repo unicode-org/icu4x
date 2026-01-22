@@ -137,6 +137,9 @@ Fully filled in up to 30c187f4b7
         - impl common traits (Display, PartialEq/Eq, PartialOrd/Ord) (#7400)
         - derive: Allow trait bounds in `where` clauses (unicode-org#7230)
         - Safely handle panics in the `replace_cart` callback, additionally fixing OOM safety issue in `wrap_cart_in_*` (unicode-org#7456)
+        - derive: Recognize only `yoke(prove_covariance_manually)`, not arbitrary `foo(prove_covariance_manually)` (unicode-org#XXXX)
+        - derive: Prevent unusual unsizing and deref coercions, un-pure macro types, and mutating macros from causing unsoundness (unicode-org#XXXX)
+        - derive: Substitute a lifetime into a type's lifetime parameter by replacing only that parameter in the type (unicode-org#XXXX)
     - `zerofrom`: No change (`0.1.6`)
     - `zerotrie`: `0.2.3 -> ???`
         - Add `ZeroAsciiDenseSparse2dTrie` for more efficient storage of data keys with many attributes (unicode-org#7264, unicode-org#7304, unicode-org#7305)
