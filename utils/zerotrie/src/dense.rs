@@ -193,8 +193,8 @@ impl<'a> ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
             return None;
         };
         let suffix_count = usize::from(self.suffix_count);
-        let index = row_index * suffix_count + column_index;
-        let Some(offset) = self.dense.get(index) else {
+        let Some(offset) = self.dense.get(suffix_count * row_index + column_index) else {
+            // The row and column indexes should be in-range
             debug_assert!(false);
             return None;
         };
