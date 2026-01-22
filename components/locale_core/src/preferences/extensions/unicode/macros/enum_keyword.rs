@@ -9,17 +9,15 @@ macro_rules! __enum_keyword_inner {
     ($key:expr, $name:ident, $variant:ident) => {
         $name::$variant
     };
-    ($key:expr, $name:ident, $variant:ident, $s:ident, $v2:ident, $($subk:expr => $subv:ident),*) => {{
-        const _: () = assert!(!matches!($key.as_bytes(), b"true"), "true value not allowed with second level");
-        let sv = $s.get_subtag(1).and_then(|st| {
-            match st.as_str() {
-                $(
-                    $subk => Some($v2::$subv),
-                )*
-                _ => None,
-            }
-        });
-        $name::$variant(sv)
+    ($key:expr, $name:ident, $variant:ident, $value:ident, $v2:ident, $($subk:expr => $subv:ident),*) => {{
+        const _: () = assert!(!matches!($crate::subtags::subtag!($key), TRUE), "true value not allowed with second level");
+        $name::$variant(match $value.get_subtag(1) {
+            None => None,
+            $(
+                Some(s) if s == &$crate::subtags::subtag!($subk) => Some($v2::$subv),
+            )*
+            _ => None,
+        })
     }};
 }
 
@@ -81,9 +79,9 @@ macro_rules! __enum_keyword {
         $(
             $(#[$variant_doc:meta])*
             $([$variant_attr:ty])?
-            ($key:expr => $variant:ident $(($v2:ident) {
+            ($key:literal => $variant:ident $(($v2:ident) {
                 $(
-                    ($subk:expr => $subv:ident)
+                    ($subk:literal => $subv:ident)
                 ),*
             })?)
         ),* $(,)?
@@ -131,25 +129,20 @@ macro_rules! __enum_keyword {
         impl TryFrom<&$crate::extensions::unicode::Value> for $name {
             type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
 
-            fn try_from(s: &$crate::extensions::unicode::Value) -> Result<Self, Self::Error> {
-                let subtag = s.get_subtag(0)
-                                // The empty `Value` is equivalent to "true"
-                                .unwrap_or(&$crate::subtags::subtag!("true"));
+            fn try_from(value: &$crate::extensions::unicode::Value) -> Result<Self, Self::Error> {
+                const TRUE: $crate::subtags::Subtag = $crate::subtags::subtag!("true");
+
                 #[allow(unused_imports)]
                 use $crate::extensions::unicode::value;
                 $(
-                    let $input = s;
+                    let $input = value;
                     $aliases
                 )?
-                Ok(match subtag.as_str() {
+                Ok(match value.get_subtag(0).copied().unwrap_or(TRUE) {
                     $(
-                        $key => {
-                            $crate::__enum_keyword_inner!($key, $name, $variant$(, s, $v2, $($subk => $subv),*)?)
-                        }
+                        s if s == $crate::subtags::subtag!($key) => $crate::__enum_keyword_inner!($key, $name, $variant $(,value, $v2, $($subk => $subv),*)?),
                     )*
-                    _ => {
-                        return Err(Self::Error::InvalidKeywordValue);
-                    }
+                    _ => return Err(Self::Error::InvalidKeywordValue),
                 })
             }
         }
@@ -219,7 +212,7 @@ macro_rules! __enum_keyword {
 }
 pub use __enum_keyword as enum_keyword;
 
-/// ```compile_error
+/// ```compile_fail,E0080
 /// use icu_locale_core::preferences::extensions::unicode::enum_keyword;
 ///
 /// enum_keyword!(DummySubKeyword { Standard, Rare });
