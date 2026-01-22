@@ -3,6 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Visitor for determining whether a type has type and non-static lifetime parameters
+//! (except for type macros, which are largely ignored).
+//!
+//! Note that poor handling of type macros in `derive(YokeableFixedDerive)` only results in
+//! compiler errors, not unsoundness.
 
 use std::collections::HashSet;
 use syn::visit::{visit_lifetime, visit_type, visit_type_path, Visit};
@@ -36,10 +40,11 @@ impl<'ast> Visit<'ast> for TypeVisitor<'_> {
 
         visit_type_path(self, ty)
     }
+    // Type macros are ignored/skipped by default.
 }
 
 /// Checks if a type has type or lifetime parameters, given the local context of
-/// named type parameters. Returns `(has_type_params, has_lifetime_params)`
+/// named type parameters. Returns `(has_type_params, has_lifetime_params)`.
 pub fn check_type_for_parameters(ty: &Type, typarams: &HashSet<Ident>) -> (bool, bool) {
     let mut visit = TypeVisitor {
         typarams,
@@ -58,6 +63,7 @@ mod tests {
     use syn::{parse_quote, Ident};
 
     use super::check_type_for_parameters;
+
     fn make_typarams(params: &[&str]) -> HashSet<Ident> {
         params
             .iter()
@@ -109,5 +115,37 @@ mod tests {
         let ty = parse_quote!(<T as SomeTrait<'static, Foo>>::Output);
         let check = check_type_for_parameters(&ty, &environment);
         assert_eq!(check, (true, false));
+    }
+
+    #[test]
+    fn test_macro_types() {
+        let environment = make_typarams(&["T"]);
+
+        // Macro types are opaque. Note that the environment doesn't contain `U` or `V`,
+        // and the `T` is basically ignored.
+
+        let ty = parse_quote!(foo!(Foo<'a, T>));
+        let check = check_type_for_parameters(&ty, &environment);
+        assert_eq!(check, (false, false));
+
+        let ty = parse_quote!(foo!(Foo<T>));
+        let check = check_type_for_parameters(&ty, &environment);
+        assert_eq!(check, (false, false));
+
+        let ty = parse_quote!(foo!(Foo<'static, T>));
+        let check = check_type_for_parameters(&ty, &environment);
+        assert_eq!(check, (false, false));
+
+        let ty = parse_quote!(foo!(Foo<'a>));
+        let check = check_type_for_parameters(&ty, &environment);
+        assert_eq!(check, (false, false));
+
+        let ty = parse_quote!(foo!(Foo<'a, Bar<U>, Baz<(V, u8)>>));
+        let check = check_type_for_parameters(&ty, &environment);
+        assert_eq!(check, (false, false));
+
+        let ty = parse_quote!(foo!(Foo<'a, W>));
+        let check = check_type_for_parameters(&ty, &environment);
+        assert_eq!(check, (false, false));
     }
 }
