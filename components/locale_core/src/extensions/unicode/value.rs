@@ -144,7 +144,9 @@ impl Value {
     /// ```
     #[cfg(feature = "alloc")]
     pub fn push_subtag(&mut self, subtag: Subtag) {
-        self.0.push(subtag);
+        if subtag != TRUE_VALUE {
+            self.0.push(subtag);
+        }
     }
 
     /// Returns the number of subtags in the [`Value`].
