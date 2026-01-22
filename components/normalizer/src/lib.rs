@@ -1962,16 +1962,152 @@ macro_rules! decomposing_normalize_to {
                 } else {
                     return Ok(());
                 };
-                if $undecomposed_starter.starter_and_decomposes_to_self() {
-                    // Don't bother including `undecomposed_starter` in a contiguous buffer
-                    // write: Just write it right away:
-                    $sink.write_char($undecomposed_starter.character)?;
+                loop {
+                    if $undecomposed_starter.starter_and_decomposes_to_self() {
+                        // Don't bother including `undecomposed_starter` in a contiguous buffer
+                        // write: Just write it right away:
+                        $sink.write_char($undecomposed_starter.character)?;
 
-                    let $pending_slice = $decomposition.delegate.$as_slice();
-                    $fast
+                        let $pending_slice = $decomposition.delegate.$as_slice();
+                        $fast
+                    }
+                    debug_assert!($decomposition.pending.is_none());
+                    let c_and_trie_val_unless_at_end = if let Some((upcoming, trie_val)) = $decomposition.delegate.next() {
+                        if likely(!decomposition_starts_with_non_starter(trie_val)) {
+                            Some(CharacterAndTrieValue::new(upcoming, trie_val))
+                        } else {
+                            $decomposition.pending = Some(CharacterAndTrieValue::new(upcoming, trie_val));
+                            break;
+                        }
+                    } else {
+                        None
+                    };
+                    // The upcoming character cannot sort into the tail of this decomposition,
+                    // so, for performance, let's write decomposition directly here without
+                    // going via `$decomposition.buffer`. This wall of (edited) copypaste is
+                    // crucial for performance competitiveness with ICU4C.
+
+                    // Start edited copypaste from `decomposing_next`
+
+                    let c = $undecomposed_starter.character;
+                    // See trie-value-format.md
+                    let decomposition = $undecomposed_starter.trie_val;
+                    // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+                    // and that flag needs to be ignored here.
+                    if unlikely((decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0) {
+                        // The character is its own decomposition
+                        $sink.write_char(c)?;
+                    } else {
+                        let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
+                        let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+                        if !high_zeros && !low_zeros {
+                            // Decomposition into two BMP characters: starter and non-starter
+                            let starter = char_from_u32(decomposition & 0x7FFF);
+                            let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
+                            $sink.write_char(starter)?;
+                            $sink.write_char(combining)?;
+                        } else if high_zeros {
+                            // Do the check by looking at `c` instead of looking at a marker
+                            // in `singleton` below, because if we looked at the trie value,
+                            // we'd still have to check that `c` is in the Hangul syllable
+                            // range in order for the subsequent interpretations as `char`
+                            // to be safe.
+                            // Alternatively, `FDFA_MARKER` and the Hangul marker could
+                            // be unified. That would add a branch for Hangul and remove
+                            // a branch from singleton decompositions. It seems more
+                            // important to favor Hangul syllables than singleton
+                            // decompositions.
+                            // Note that it would be valid to hoist this Hangul check
+                            // one or even two steps earlier in this check hierarchy.
+                            // Right now, it's assumed the kind of decompositions into
+                            // BMP starter and non-starter, which occur in many languages,
+                            // should be checked before Hangul syllables, which are about
+                            // one language specifically. Hopefully, we get some
+                            // instruction-level parallelism out of the disjointness of
+                            // operations on `c` and `decomposition`.
+                            let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
+                            if hangul_offset < HANGUL_S_COUNT {
+                                debug_assert_eq!(decomposition, 1);
+                                // Hangul syllable
+                                // The math here comes from page 144 of Unicode 14.0
+                                let l = hangul_offset / HANGUL_N_COUNT;
+                                let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                                let t = hangul_offset % HANGUL_T_COUNT;
+
+                                // The unsafe blocks here are OK, because the values stay
+                                // within the Hangul jamo block and, therefore, the scalar
+                                // value range by construction.
+                                $sink.write_char(unsafe { core::char::from_u32_unchecked(HANGUL_L_BASE + l) })?;
+                                $sink.write_char(unsafe {
+                                    core::char::from_u32_unchecked(HANGUL_V_BASE + v)
+                                })?;
+                                if t != 0 {
+                                    $sink.write_char(unsafe {
+                                        core::char::from_u32_unchecked(HANGUL_T_BASE + t)
+                                    })?;
+                                }
+                            } else {
+                                let singleton = decomposition as u16;
+                                if singleton != FDFA_MARKER {
+                                    // Decomposition into one BMP character
+                                    let starter = char_from_u16(singleton);
+                                    $sink.write_char(starter)?;
+                                } else {
+                                    // Special case for the NFKD form of U+FDFA.
+                                    $sink.write_char('\u{0635}')?;
+                                    for u in FDFA_NFKD {
+                                        // SAFETY: `FDFA_NFKD` is known not to contain
+                                        // surrogates.
+                                        $sink.write_char(unsafe { core::char::from_u32_unchecked(u32::from(u)) })?;
+                                    }
+                                }
+                            }
+                        } else {
+                            debug_assert!(low_zeros);
+                            // Only 12 of 14 bits used as of Unicode 16.
+                            let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+                            // Only 3 of 4 bits used as of Unicode 16.
+                            let len_bits = decomposition & 0b1111;
+                            if let Some(subslice) = $decomposition.scalars16.get_subslice(offset..offset+((len_bits + 2) as usize)) {
+                                for u in subslice.iter() {
+                                    $sink.write_char(char_from_u16(u))?;
+                                }
+                            } else {
+                                let offset = offset - $decomposition.scalars16.len();
+                                if let Some(subslice) = $decomposition.scalars24.get_subslice(offset..offset+((len_bits + 1) as usize)) {
+                                    for c in subslice.iter() {
+                                        $sink.write_char(c)?;
+                                    }
+                                } else {
+                                    let offset = offset - $decomposition.scalars24.len();
+                                    if let Some(subslice) = $decomposition.supplementary_scalars16.get_subslice(offset..offset+((len_bits + 2) as usize)) {
+                                        for u in subslice.iter() {
+                                            $sink.write_char(char_from_u16(u))?;
+                                        }
+                                    } else {
+                                        let offset = offset - $decomposition.supplementary_scalars16.len();
+                                        if let Some(subslice) = $decomposition.supplementary_scalars24.get_subslice(offset..offset+((len_bits + 1) as usize)) {
+                                            for c in subslice.iter() {
+                                                $sink.write_char(c)?;
+                                            }
+                                        } else {
+                                            // GIGO case
+                                            debug_assert!(false);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // End edited copypaste from `decomposing_next`
+
+                    if let Some(c_and_trie_val) = c_and_trie_val_unless_at_end {
+                        $undecomposed_starter = c_and_trie_val;
+                        continue;
+                    }
+                    return Ok(());
                 }
-                // TODO: If `$decomposition.pending` cannot combine backwards,
-                // write the decomposition directly to the sink.
                 let starter = $decomposition.decomposing_next($undecomposed_starter);
                 $sink.write_char(starter)?;
             }

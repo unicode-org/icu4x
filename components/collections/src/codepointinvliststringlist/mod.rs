@@ -175,16 +175,11 @@ impl<'data> CodePointInversionListAndStringList<'data> {
 
     /// See [`Self::contains_str`]
     pub fn contains_utf8(&self, s: &[u8]) -> bool {
-        use utf8_iter::Utf8CharsEx;
-        let mut chars = s.chars();
-        if let Some(first_char) = chars.next() {
-            if chars.next().is_none() {
-                return self.contains(first_char);
-            }
+        if let Ok(well_formed) = str::from_utf8(s) {
+            self.contains_str(well_formed)
+        } else {
+            false
         }
-        self.str_list
-            .binary_search_by(|t| t.as_bytes().cmp(s))
-            .is_ok()
     }
 
     ///
