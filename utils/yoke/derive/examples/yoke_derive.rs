@@ -13,8 +13,20 @@ struct StringExample {
     x: String,
 }
 
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualStringExample {
+    x: String,
+}
+
 #[derive(Yokeable, Copy, Clone)]
 struct IntExample {
+    x: u32,
+}
+
+#[derive(Yokeable, Copy, Clone)]
+#[yoke(prove_covariance_manually)]
+struct ManualIntExample {
     x: u32,
 }
 
@@ -25,7 +37,21 @@ struct GenericsExample<T> {
 }
 
 #[derive(Yokeable, Copy, Clone)]
+#[yoke(prove_covariance_manually)]
+struct ManualGenericsExample<T> {
+    x: u32,
+    y: T,
+}
+
+#[derive(Yokeable, Copy, Clone)]
 struct GenericsExampleWithDefault<T, U = usize> {
+    x: T,
+    y: U,
+}
+
+#[derive(Yokeable, Copy, Clone)]
+#[yoke(prove_covariance_manually)]
+struct ManualGenericsExampleWithDefault<T, U = usize> {
     x: T,
     y: U,
 }
@@ -39,13 +65,37 @@ struct CowExample<'a> {
 }
 
 #[derive(Yokeable)]
-struct ZeroVecExample<'a> {
-    var: VarZeroVec<'a, str>,
-    vec: ZeroVec<'a, u16>,
+#[yoke(prove_covariance_manually)]
+struct ManualCowExample<'a> {
+    x: u8,
+    y: &'a str,
+    z: Cow<'a, str>,
+    w: Cow<'a, [u8]>,
+}
+
+#[derive(Yokeable)]
+struct ZeroVecExample<'not_a> {
+    var: VarZeroVec<'not_a, str>,
+    vec: ZeroVec<'not_a, u16>,
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualZeroVecExample<'not_a> {
+    var: VarZeroVec<'not_a, str>,
+    vec: ZeroVec<'not_a, u16>,
 }
 
 #[derive(Yokeable)]
 struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
+    gen: ZeroVec<'a, T>,
+    vec: ZeroVec<'a, u16>,
+    bare: T,
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualZeroVecExampleWithGenerics<'a, T: AsULE> {
     gen: ZeroVec<'a, T>,
     vec: ZeroVec<'a, u16>,
     bare: T,
@@ -57,18 +107,27 @@ struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
 // yoke(prove_covariance_manually)
 #[derive(Yokeable)]
 #[yoke(prove_covariance_manually)]
-struct ZeroMapExample<'a> {
+struct ManualZeroMapExample<'a> {
     map: ZeroMap<'a, str, u16>,
 }
 
 #[derive(Yokeable)]
 #[yoke(prove_covariance_manually)]
-struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
+struct ManualZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
     map: ZeroMap<'a, str, T>,
 }
 
 #[derive(Yokeable)]
 struct MaybeSizedWrap<T, Q: ?Sized, U: ?Sized> {
+    x: T,
+    y: Option<T>,
+    ignored: PhantomData<U>,
+    q: Q,
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualMaybeSizedWrap<T, Q: ?Sized, U: ?Sized> {
     x: T,
     y: Option<T>,
     ignored: PhantomData<U>,
@@ -84,7 +143,22 @@ struct WithTraitBounds<T: Trait> {
 }
 
 #[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualWithTraitBounds<T: Trait> {
+    x: T,
+}
+
+#[derive(Yokeable)]
 struct WithTraitBoundsInWhere<T>
+where
+    T: Trait,
+{
+    x: T,
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualWithTraitBoundsInWhere<T>
 where
     T: Trait,
 {
@@ -113,14 +187,30 @@ struct AssertYokeable {
     zv: Yoke<ZeroVecExample<'static>, Box<[u8]>>,
     zv_gen1: Yoke<ZeroVecExampleWithGenerics<'static, u8>, Box<[u8]>>,
     zv_gen2: Yoke<ZeroVecExampleWithGenerics<'static, char>, Box<[u8]>>,
-    map: Yoke<ZeroMapExample<'static>, Box<[u8]>>,
-    map_gen1: Yoke<ZeroMapGenericExample<'static, u32>, Box<[u8]>>,
-    map_gen2: Yoke<ZeroMapGenericExample<'static, str>, Box<[u8]>>,
     maybe_sized_wrap: Yoke<MaybeSizedWrap<usize, usize, str>, Box<[u8]>>,
     trait_bounds: Yoke<WithTraitBounds<u32>, Box<[u8]>>,
     trait_bounds_where: Yoke<WithTraitBoundsInWhere<u32>, Box<[u8]>>,
     // TODO(#4119): Make this example compile
     // maybe_sized_wrap_with_lt: Yoke<MaybeSizedWrapWithLifetime<'static, usize, usize, str>, Box<[u8]>>,
+}
+
+struct AssertYokeableManual {
+    string: Yoke<ManualStringExample, Box<[u8]>>,
+    int: Yoke<ManualIntExample, Box<[u8]>>,
+    gen1: Yoke<ManualGenericsExample<u32>, Box<[u8]>>,
+    gen2: Yoke<ManualGenericsExample<String>, Box<[u8]>>,
+    gen_default1: Yoke<ManualGenericsExampleWithDefault<String>, Box<[u8]>>,
+    gen_default2: Yoke<ManualGenericsExampleWithDefault<String, u8>, Box<[u8]>>,
+    cow: Yoke<ManualCowExample<'static>, Box<[u8]>>,
+    zv: Yoke<ManualZeroVecExample<'static>, Box<[u8]>>,
+    zv_gen1: Yoke<ManualZeroVecExampleWithGenerics<'static, u8>, Box<[u8]>>,
+    zv_gen2: Yoke<ManualZeroVecExampleWithGenerics<'static, char>, Box<[u8]>>,
+    map: Yoke<ManualZeroMapExample<'static>, Box<[u8]>>,
+    map_gen1: Yoke<ManualZeroMapGenericExample<'static, u32>, Box<[u8]>>,
+    map_gen2: Yoke<ManualZeroMapGenericExample<'static, str>, Box<[u8]>>,
+    maybe_sized_wrap: Yoke<ManualMaybeSizedWrap<usize, usize, str>, Box<[u8]>>,
+    trait_bounds: Yoke<ManualWithTraitBounds<u32>, Box<[u8]>>,
+    trait_bounds_where: Yoke<ManualWithTraitBoundsInWhere<u32>, Box<[u8]>>,
 }
 
 fn main() {}
