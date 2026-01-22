@@ -560,6 +560,9 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
       run: git fetch origin ${{ github.base_ref }}
 
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
     # Actual job
     - name: Check semver
       uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae
@@ -568,9 +571,12 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
       with:
         baseline-rev: origin/${{ github.base_ref }}
+        rust-toolchain: manual
 
     - name: Show semver violations since last release
       uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae
+      with:
+        rust-toolchain: manual
       # On main, run against the last release, but warn only
       if: ${{ github.event_name != 'pull_request' }}
       continue-on-error: true
