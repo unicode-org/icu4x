@@ -280,6 +280,32 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             //
             // Now, to justify that `FieldTy` (the field's actual type, not just `field.ty` which may have
             // a non-pure macro type) is a subtype of something which implements `Yokeable<'a>`:
+            //
+            // `field_binding` has type `&'a FieldTy` (since it's a field of `&'a Self` matched
+            // as `self`). The operand of `&raw const` is not a location where implicit type coercion
+            // can occur. Therefore, `&raw const #field_binding` is guaranteed to be type
+            // `*const &'a FieldTy`. The argument to `__yoke_derive_require_yokeable` does allow
+            // type coercion. Looking at <https://doc.rust-lang.org/reference/type-coercions.html>,
+            // there are only three types of coercions that could plausibly apply:
+            // - subtyping coercions,
+            // - transitive coercions, and
+            // - unsizing coercions.
+            // (If some sort of `DerefRaw` trait gets added for `*const`, there could plausibly
+            // be problems with that. But there's no reason to think that such a trait will be
+            // added since it'd mess with `unsafe` code.)
+            //
+            // Since `&'a _` does not implement `Unsize`, we have that `*const &'a _` does not
+            // allow an unsizing coercion to occur. Therefore, there are only subtyping coercions,
+            // and transitive coercions add nothing on beyond subtyping coercions.
+            // Therefore, if this compiles, `*const &'a FieldTy` must be a subtype of `*const &'a T`
+            // where `T = #fty_static` is the generic parameter of `__yoke_derive_require_yokeable`.
+            // Looking at the signature of that function generated below, we have that
+            // `T: Yokeable<'a>` (if it compiles). Since `*const _` and `&'a _` are covariant over
+            // their type parameters, we have that `FieldTy` must be a subtype of `T` in order for a
+            // subtyping coercion from `*const &'a FieldTy` to `*const &'a T` to occur.
+            //
+            // Therefore, `FieldTy` must be a subtype of something which implements `Yokeable<'a>`
+            // in order for this to compile.
             quote! {
                 __yoke_derive_require_yokeable::<'a, #fty_static>(&raw const #field_binding);
             }
@@ -307,7 +333,10 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             // `'a` lifetime, we still need to check that the field's actual type is
             // `'static` regardless of `'a` (which we can check by ensuring that it must be a subtype
             // of a `'static` type).
-            // See reasoning in the `if` branch for why this works.
+            // See reasoning in the `if` branch for why this works. The difference is that
+            // `FieldTy` is guaranteed to be a subtype of `T = #fty_a` where `T: 'static`
+            // (if this compiles). Since the field's type is a subtype of something which is `'static`,
+            // it must itself be `'static`, and therefore did not manage to use `'a` via a macro.
             quote! {
                 __yoke_derive_require_static::<'a, #fty_a>(&raw const #field_binding);
             }
