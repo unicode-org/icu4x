@@ -125,7 +125,7 @@ fn parse_date<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<DateRecor
 
 // ==== `YearMonth` parsing functions ====
 
-/// Parse an annotated YearMonth
+/// Parse an annotated `YearMonth`
 pub(crate) fn parse_annotated_year_month<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
@@ -170,7 +170,7 @@ pub(crate) fn parse_year_month<T: EncodingType>(
 
 // ==== `MonthDay` parsing functions ====
 
-/// Parses an AnnotatedMonthDay.
+/// Parses an `AnnotatedMonthDay`.
 pub(crate) fn parse_annotated_month_day<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,

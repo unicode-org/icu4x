@@ -4,6 +4,7 @@
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
@@ -47,38 +48,38 @@ icu_provider::data_marker!(
 /// e.g. : initialPattern has no upper bound, DTD allows for the element to be specified any number
 /// of times, while in this implementation we are restraining it to the 2 documented types
 /// (`initial`, `initialSequence`).
-#[derive(PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PersonNamesFormat<'data> {
-    /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
+    /// `<nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub surname_first_locales: VarZeroVec<'data, str>,
 
-    /// <nameOrderLocales order="givenFirst">und en</nameOrderLocales>
+    /// `<nameOrderLocales order="givenFirst">und en</nameOrderLocales>`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub given_first_locales: VarZeroVec<'data, str>,
 
-    /// foreignSpaceReplacement element.
+    /// `foreignSpaceReplacement` element.
     #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub foreign_space_replacement: Option<Cow<'data, str>>,
 
-    /// Equivalent of initialPattern tag + initial
+    /// Equivalent of `initialPattern` tag + `initial`
     /// ```xml
     /// <initialPattern type="initial">{0}.</initialPattern>
     /// ```
     #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub initial_pattern: Option<Cow<'data, str>>,
 
-    /// Equivalent of initialPattern tag + initialSequence
+    /// Equivalent of `initialPattern` tag + `initialSequence`
     /// ```xml
     /// <initialPattern type="initialSequence">{0} {1}</initialPattern>
     /// ```
     #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub initial_pattern_sequence: Option<Cow<'data, str>>,
 
-    /// Equivalent of PersonNames
+    /// Equivalent of `personNames`
     /// ```xml
     /// <personName>...</personName>
     /// ```
@@ -90,6 +91,7 @@ icu_provider::data_struct!(PersonNamesFormat<'_>, #[cfg(feature = "datagen")]);
 
 /// Person Name Attributes.
 /// {order=givenFirst, length=long, usage=referring, formality=formal}
+#[derive(Debug)]
 pub enum PersonNamesFormattingAttributes {
     GivenFirst,
     SurnameFirst,
@@ -166,11 +168,10 @@ impl From<FormattingUsage> for PersonNamesFormattingAttributes {
 
 pub type PersonNamesFormattingAttributesMask = u32;
 
-/// PersonName Formatting data.
-///
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element>
 #[zerovec::make_varule(PersonNamesFormattingDataVarULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]
+#[zerovec::derive(Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]

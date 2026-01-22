@@ -1,220 +1,170 @@
 {
-  "compact_patterns": [
-    [
-      [
-        3,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤0 B"
-    ],
-    [
-      [
-        3,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 0 B"
-    ],
-    [
-      [
-        4,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤00 B"
-    ],
-    [
-      [
-        4,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 00 B"
-    ],
-    [
-      [
-        5,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤000 B"
-    ],
-    [
-      [
-        5,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 000 B"
-    ],
-    [
-      [
-        6,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤0 Mn"
-    ],
-    [
-      [
-        6,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 0 Mn"
-    ],
-    [
-      [
-        7,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤00 Mn"
-    ],
-    [
-      [
-        7,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 00 Mn"
-    ],
-    [
-      [
-        8,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤000 Mn"
-    ],
-    [
-      [
-        8,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 000 Mn"
-    ],
-    [
-      [
-        9,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤0 Mr"
-    ],
-    [
-      [
-        9,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 0 Mr"
-    ],
-    [
-      [
-        10,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤00 Mr"
-    ],
-    [
-      [
-        10,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 00 Mr"
-    ],
-    [
-      [
-        11,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤000 Mr"
-    ],
-    [
-      [
-        11,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 000 Mr"
-    ],
-    [
-      [
-        12,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤0 Tn"
-    ],
-    [
-      [
-        12,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 0 Tn"
-    ],
-    [
-      [
-        13,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤00 Tn"
-    ],
-    [
-      [
-        13,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 00 Tn"
-    ],
-    [
-      [
-        14,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤000 Tn"
-    ],
-    [
-      [
-        14,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 000 Tn"
-    ]
+  "standard": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " B"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " Mn"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " Mr"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " Tn"
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "alpha_next_to_number": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " B"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " Mn"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " Mr"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " Tn"
+            }
+          ]
+        ]
+      }
+    }
   ]
 }

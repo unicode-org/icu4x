@@ -9,7 +9,7 @@ final class _ZonedIsoDateTimeFfi extends ffi.Struct {
   external ffi.Pointer<ffi.Opaque> zone;
 }
 
-/// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
+/// An ICU4X `ZonedDateTime` object capable of containing a ISO-8601 date, time, and zone.
 ///
 /// See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html) for more information.
 final class ZonedIsoDateTime {

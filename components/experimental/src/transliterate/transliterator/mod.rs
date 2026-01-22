@@ -817,7 +817,7 @@ impl RuleBasedTransliterator<'_> {
     /// Transliteration using rules works as follows:
     /// 1. Split the input modifiable range of the Replaceable according into runs according to self.filter
     /// 2. Transliterate each run in sequence
-    ///     1. Transliterate the first id_group, then the first rule_group, then the second id_group, etc.
+    ///     1. Transliterate the first `id_group`, then the first `rule_group`, then the second `id_group`, etc.
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // assumes the cursor is at the right position.
 

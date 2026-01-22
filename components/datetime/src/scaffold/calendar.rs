@@ -4,7 +4,7 @@
 
 //! Scaffolding traits and impls for calendars.
 
-use crate::provider::{neo::*, *};
+use crate::provider::{names::*, *};
 use crate::scaffold::UnstableSealed;
 use crate::MismatchedCalendarError;
 use core::marker::PhantomData;
@@ -149,7 +149,9 @@ impl FormattableHijriRules for hijri::UmmAlQura {
     type SkeletaV1 = DatetimePatternsDateHijriV1;
 }
 
+#[allow(deprecated)]
 impl UnstableSealed for hijri::AstronomicalSimulation {}
+#[allow(deprecated)]
 impl FormattableHijriRules for hijri::AstronomicalSimulation {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
@@ -282,6 +284,7 @@ impl IntoFormattableAnyCalendar for Gregorian {}
 impl IntoFormattableAnyCalendar for Hebrew {}
 impl IntoFormattableAnyCalendar for Indian {}
 impl IntoFormattableAnyCalendar for Hijri<hijri::TabularAlgorithm> {}
+#[allow(deprecated)]
 impl IntoFormattableAnyCalendar for Hijri<hijri::AstronomicalSimulation> {}
 impl IntoFormattableAnyCalendar for Hijri<hijri::UmmAlQura> {}
 // _NOT_ Hijri<S>

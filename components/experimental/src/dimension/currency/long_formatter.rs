@@ -26,6 +26,7 @@ extern crate alloc;
 ///   2. Locale-sensitive grouping separator positions.
 ///
 /// Read more about the options in the [`super::options`] module.
+#[derive(Debug)]
 pub struct LongCurrencyFormatter {
     /// Extended data for the currency formatter.
     extended: DataPayload<CurrencyExtendedDataV1>,

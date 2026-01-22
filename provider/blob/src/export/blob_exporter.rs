@@ -47,7 +47,7 @@ impl<'w> BlobExporter<'w> {
     /// Creates a version 1 [`BlobExporter`] that writes to the given I/O stream.
     ///
     /// Version 1 is needed if the blob may be consumed by ICU4X versions 1.0 through 1.3. If
-    /// targeting only ICU4X 1.4 and above, see [BlobExporter::new_with_sink()].
+    /// targeting only ICU4X 1.4 and above, see [`BlobExporter::new_with_sink()`].
     pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
             resources: Default::default(),

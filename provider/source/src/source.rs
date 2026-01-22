@@ -27,9 +27,10 @@ pub(crate) struct SerdeCache {
 
 impl Debug for SerdeCache {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // skip formatting the cache
+        let _ = &self.cache;
         f.debug_struct("SerdeCache")
             .field("root", &self.root)
-            // skip formatting the cache
             .finish()
     }
 }

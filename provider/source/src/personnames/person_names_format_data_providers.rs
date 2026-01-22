@@ -78,7 +78,7 @@ fn to_mask(ordering: &str, size: &str, referring: &str, formality: &str) -> Resu
 }
 
 ///
-/// Transform the JSON Resource into a single PersonNamesFormattingDefinitionV1
+/// Transform the JSON Resource into a single `PersonNamesFormattingDefinitionV1`
 ///
 /// The JSON Structure is expected to be perfect and all combination should be provided.
 impl TryFrom<&'_ Resource> for PersonNamesFormat<'_> {

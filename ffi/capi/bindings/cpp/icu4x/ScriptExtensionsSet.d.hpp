@@ -20,7 +20,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * An object that represents the Script_Extensions property for a single character
+ * An object that represents the `Script_Extensions` property for a single character
  *
  * See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
  */
@@ -28,7 +28,7 @@ class ScriptExtensionsSet {
 public:
 
   /**
-   * Check if the Script_Extensions property of the given code point covers the given script
+   * Check if the `Script_Extensions` property of the given code point covers the given script
    *
    * See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
    */

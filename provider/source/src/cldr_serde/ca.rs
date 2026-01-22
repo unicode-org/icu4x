@@ -9,7 +9,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
-use icu::datetime::provider::neo::marker_attrs::{Context, Length, PatternLength};
+use icu::datetime::provider::semantic_skeletons::marker_attrs::{Context, Length, PatternLength};
 use icu_pattern::PatternString;
 use icu_pattern::SinglePlaceholder;
 use serde::Deserialize;
@@ -161,7 +161,7 @@ pub(crate) struct Eras {
 impl Eras {
     /// Load the era corresponding to a [`Length`] value
     ///
-    /// Panics on Length::Short
+    /// Panics on [`Length::Short`]
     pub(crate) fn load(&self, length: Length) -> &HashMap<String, String> {
         match length {
             Length::Abbr => &self.abbr,

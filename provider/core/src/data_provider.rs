@@ -470,7 +470,7 @@ mod test {
     // This tests DataProvider borrow semantics with a dummy data provider based on a
     // JSON string. It also exercises most of the data provider code paths.
 
-    /// A data struct serialization-compatible with HelloWorld used for testing mismatched types
+    /// A data struct serialization-compatible with [`HelloWorld`] used for testing mismatched types
     #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, yoke::Yokeable)]
     pub struct HelloAlt {
         message: String,
@@ -485,8 +485,8 @@ mod test {
         pub hello_alt: HelloAlt,
     }
 
-    /// A DataProvider that owns its data, returning an Rc-variant DataPayload.
-    /// Supports only key::HELLO_WORLD_V1. Uses `impl_dynamic_data_provider!()`.
+    /// A [`DataProvider`] that owns its data, returning an Rc-variant [`DataPayload`].
+    /// Supports only [`HelloWorldV1`]. Uses `impl_dynamic_data_provider!()`.
     #[derive(Debug)]
     struct DataWarehouse {
         hello_v1: HelloWorld<'static>,
@@ -502,7 +502,7 @@ mod test {
         }
     }
 
-    /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
+    /// A [`DataProvider`] that supports both [`HelloWorldV1`] and [`HelloAltV1`].
     #[derive(Debug)]
     struct DataProvider2 {
         data: DataWarehouse,

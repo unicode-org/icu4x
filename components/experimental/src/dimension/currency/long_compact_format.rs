@@ -10,6 +10,7 @@ use fixed_decimal::Decimal;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
+#[derive(Debug)]
 pub struct FormattedLongCompactCurrency<'l> {
     pub(crate) signed_fixed_decimal: &'l Decimal,
     // TODO: use this if the display name is not exist and make the extended data optional.

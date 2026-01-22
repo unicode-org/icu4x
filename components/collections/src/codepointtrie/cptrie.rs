@@ -43,6 +43,7 @@ use zerovec::ZeroVec;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake))]
 #[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
+#[allow(clippy::exhaustive_enums)] // based on a stable serialized form
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -89,6 +90,7 @@ macro_rules! impl_primitive_trie_value {
                 Self::try_from(i)
             }
 
+            #[allow(trivial_numeric_casts)]
             fn to_u32(self) -> u32 {
                 // bitcast when the same size, zero-extend/sign-extend
                 // when not the same size
@@ -172,6 +174,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 #[cfg_attr(feature = "databake", derive(databake::Bake))]
 #[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
+#[allow(clippy::exhaustive_structs)] // based on a stable serialized form
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -1383,6 +1386,7 @@ where
 /// The start and end of the interval is represented as a
 /// `RangeInclusive<u32>`, and the value is represented as `T`.
 #[derive(PartialEq, Eq, Debug, Clone)]
+#[allow(clippy::exhaustive_structs)] // based on a stable serialized form
 pub struct CodePointMapRange<T> {
     /// Range of code points from start to end (inclusive).
     pub range: RangeInclusive<u32>,
@@ -1392,6 +1396,7 @@ pub struct CodePointMapRange<T> {
 
 /// A custom [`Iterator`] type specifically for a code point trie that returns
 /// [`CodePointMapRange`]s.
+#[derive(Debug)]
 pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
     cpt: &'a CodePointTrie<'a, T>,
     // Initialize `range` to Some(CodePointMapRange{ start: u32::MAX, end: u32::MAX, value: 0}).
@@ -1664,6 +1669,8 @@ pub struct TypedCodePointTrieError;
 
 /// Holder for either fast or small trie with the trie
 /// type encoded into the Rust type.
+#[allow(clippy::exhaustive_enums)]
+#[derive(Debug)]
 pub enum Typed<F, S> {
     /// The trie type is fast.
     Fast(F),

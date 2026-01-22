@@ -51,7 +51,7 @@ use core::ops::Deref;
 use core::ops::DerefMut;
 
 /// A boxed slice that supports no-allocation, constant values if length 0 or 1.
-/// Using ZeroOne(Option<T>) saves 8 bytes in ShortBoxSlice via niche optimization.
+/// Using `ZeroOne(Option<T>)` saves 8 bytes in [`ShortBoxSlice`] via niche optimization.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub(crate) enum ShortBoxSliceInner<T> {
     ZeroOne(Option<T>),

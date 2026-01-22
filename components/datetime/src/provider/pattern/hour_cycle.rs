@@ -26,9 +26,9 @@ use icu_provider::prelude::*;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum CoarseHourCycle {
-    /// Can either be fields::Hour::H11 or fields::Hour::H12
+    /// Can either be [`fields::Hour::H11`] or [`fields::Hour::H12`]
     H11H12,
-    /// fields::Hour::H23
+    /// [`fields::Hour::H23`]
     H23,
 }
 
@@ -134,7 +134,7 @@ impl CoarseHourCycle {
 /// and between h23 and h24. This function is naive as it is assumed that this application of
 /// the hour cycle will not change between h1x to h2x.
 #[cfg(feature = "datagen")]
-pub(crate) fn naively_apply_preferences(
+pub(crate) fn naively_apply_hour_cycle(
     pattern: &mut runtime::Pattern,
     hour_cycle: Option<HourCycle>,
 ) {
@@ -146,7 +146,12 @@ pub(crate) fn naively_apply_preferences(
                 length,
             }) = item
             {
-                let candidate_field = fields::Hour::from_hour_cycle(hour_cycle);
+                let candidate_field = match hour_cycle {
+                    HourCycle::H11 => fields::Hour::H11,
+                    HourCycle::H12 => fields::Hour::H12,
+                    HourCycle::H23 => fields::Hour::H23,
+                    _ => unreachable!(),
+                };
                 if *current_hour != candidate_field {
                     Some(PatternItem::from((
                         fields::FieldSymbol::Hour(candidate_field),

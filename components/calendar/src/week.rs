@@ -107,13 +107,13 @@ impl WeekCalculator {
     ///
     /// # Arguments
     ///  - calendar: Calendar information used to compute the week number.
-    ///  - num_days_in_previous_unit: The number of days in the preceding month/year.
-    ///  - num_days_in_unit: The number of days in the month/year.
+    ///  - `num_days_in_previous_unit`: The number of days in the preceding month/year.
+    ///  - `num_days_in_unit`: The number of days in the month/year.
     ///  - day: 1-based day of month/year.
-    ///  - week_day: The weekday of `day`..
+    ///  - `week_day`: The weekday of `day`..
     ///
     /// # Error
-    /// If num_days_in_unit/num_days_in_previous_unit < MIN_UNIT_DAYS
+    /// If `num_days_in_unit/num_days_in_previous_unit` < `MIN_UNIT_DAYS`
     pub(crate) fn week_of(
         self,
         num_days_in_previous_unit: u16,
@@ -180,7 +180,7 @@ struct UnitInfo {
 }
 
 impl UnitInfo {
-    /// Creates a UnitInfo for a given year or month.
+    /// Creates a [`UnitInfo`] for a given year or month.
     fn new(first_day: Weekday, duration_days: u16) -> Result<UnitInfo, RangeError> {
         if duration_days < MIN_UNIT_DAYS {
             return Err(RangeError {
@@ -401,9 +401,9 @@ mod tests {
     /// Uses enumeration & bucketing to assign each day of a month or year `unit` to a week.
     ///
     /// This alternative implementation serves as an exhaustive safety check
-    /// of relative_week() (in addition to the manual test points used
-    /// for testing week_of()).
-    fn classify_days_of_unit(calendar: WeekCalculator, unit: &UnitInfo) -> Vec<RelativeWeek> {
+    /// of `relative_week()` (in addition to the manual test points used
+    /// for testing `week_of()`).
+    fn classify_days_of_unit(calendar: WeekCalculator, unit: UnitInfo) -> Vec<RelativeWeek> {
         let mut weeks: Vec<Vec<Weekday>> = Vec::new();
         for day_index in 0..unit.duration_days {
             let day = super::add_to_weekday(unit.first_day, i32::from(day_index));
@@ -447,7 +447,7 @@ mod tests {
                             unit_duration,
                         )
                         .unwrap();
-                        let expected = classify_days_of_unit(calendar, &unit);
+                        let expected = classify_days_of_unit(calendar, unit);
                         for (index, expected_week_of) in expected.iter().enumerate() {
                             let day = index + 1;
                             assert_eq!(

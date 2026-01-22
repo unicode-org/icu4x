@@ -16,14 +16,14 @@ use alloc::{vec, vec::Vec};
 #[cfg(feature = "alloc")]
 use core::mem;
 
-/// Allows types to be encoded as VarULEs. This is highly useful for implementing VarULE on
+/// Allows types to be encoded as [`VarULE`]s. This is highly useful for implementing [`VarULE`] on
 /// custom DSTs where the type cannot be obtained as a reference to some other type.
 ///
 /// [`Self::encode_var_ule_as_slices()`] should be implemented by providing an encoded slice for each field
-/// of the VarULE type to the callback, in order. For an implementation to be safe, the slices
-/// to the callback must, when concatenated, be a valid instance of the VarULE type.
+/// of the [`VarULE`] type to the callback, in order. For an implementation to be safe, the slices
+/// to the callback must, when concatenated, be a valid instance of the [`VarULE`] type.
 ///
-/// See the [custom VarULEdocumentation](crate::ule::custom) for examples.
+/// See the [custom `VarULEdocumentation`](crate::ule::custom) for examples.
 ///
 /// [`Self::encode_var_ule_as_slices()`] is only used to provide default implementations for [`Self::encode_var_ule_write()`]
 /// and [`Self::encode_var_ule_len()`]. If you override the default implementations it is totally valid to
@@ -39,7 +39,7 @@ use core::mem;
 /// implementation will add up the sizes of each field on the [`VarULE`] type and then add in the byte length of the
 /// dynamically-sized part.
 ///
-/// # Reverse-encoding VarULE
+/// # Reverse-encoding [`VarULE`]
 ///
 /// This trait maps a struct to its bytes representation ("serialization"), and
 /// [`ZeroFrom`](zerofrom::ZeroFrom) performs the opposite operation, taking those bytes and
@@ -58,7 +58,7 @@ use core::mem;
 /// with `unreachable!()`.
 ///
 /// The safety invariants of [`Self::encode_var_ule_len()`] are:
-/// - It must return the length of the corresponding VarULE type
+/// - It must return the length of the corresponding [`VarULE`] type
 ///
 /// The safety invariants of [`Self::encode_var_ule_write()`] are:
 /// - The slice written to `dst` must be a valid instance of the `T` [`VarULE`] type
@@ -91,7 +91,7 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
 
 /// Given an [`EncodeAsVarULE`] type `S`, encode it into a `Box<T>`
 ///
-/// This is primarily useful for generating `Deserialize` impls for VarULE types
+/// This is primarily useful for generating `Deserialize` impls for [`VarULE`] types
 #[cfg(feature = "alloc")]
 pub fn encode_varule_to_box<S: EncodeAsVarULE<T> + ?Sized, T: VarULE + ?Sized>(x: &S) -> Box<T> {
     // zero-fill the vector to avoid uninitialized data UB

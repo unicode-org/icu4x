@@ -16,6 +16,7 @@ use crate::{
 use fixed_decimal::Decimal;
 use writeable::Writeable;
 
+#[derive(Debug)]
 pub struct FormattedCompactCurrency<'l> {
     pub(crate) value: &'l Decimal,
     pub(crate) currency_code: CurrencyCode,

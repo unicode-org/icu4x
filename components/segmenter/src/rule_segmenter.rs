@@ -9,7 +9,7 @@ use crate::provider::*;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
 
-/// A trait allowing for RuleBreakIterator to be generalized to multiple string
+/// A trait allowing for `RuleBreakIterator` to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
 ///
 /// <div class="stab unstable">
@@ -33,7 +33,7 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 ///
 /// - `'l` = lifetime of the segmenter object from which this iterator was created
 /// - `'data` = lifetime of data borrowed by segmenter object
-///   (this largely exists because segmenter data is invariant due to ZeroMap constraints,
+///   (this largely exists because segmenter data is invariant due to `ZeroMap` constraints,
 ///   think of it as a second 'l)
 /// - `'s` = lifetime of the string being segmented
 ///
@@ -250,7 +250,7 @@ impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
     }
 
     /// Return the status value of break boundary.
-    /// If segmenter isn't word, always return WordType::None
+    /// If segmenter isn't word, always return [`WordType::None`]
     pub fn word_type(&self) -> WordType {
         if !self.result_cache.is_empty() {
             // Dictionary type (CJ and East Asian) is letter.

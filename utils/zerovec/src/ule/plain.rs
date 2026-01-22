@@ -121,11 +121,11 @@ macro_rules! impl_numbers_with_raw_bytes_ule {
 macro_rules! impl_const_constructors {
     ($base:ty) => {
         impl ZeroSlice<$base> {
-            /// This function can be used for constructing ZeroVecs in a const context, avoiding
+            /// This function can be used for constructing [`ZeroVec`](crate::ZeroVec)s in a `const` context, avoiding
             /// parsing checks.
             ///
-            /// This cannot be generic over T because of current limitations in `const`, but if
-            /// this method is needed in a non-const context, check out [`ZeroSlice::parse_bytes()`]
+            /// This cannot be generic over `T` because of current limitations in `const`, but if
+            /// this method is needed in a non-`const` context, check out [`ZeroSlice::parse_bytes()`]
             /// instead.
             ///
             /// See [`ZeroSlice::cast()`] for an example.

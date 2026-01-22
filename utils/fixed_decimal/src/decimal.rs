@@ -90,15 +90,15 @@ pub struct UnsignedDecimal {
     ///
     /// Invariants:
     /// - Must not include leading or trailing zeros
-    /// - Length must not exceed (magnitude - lower_magnitude + 1)
+    /// - Length must not exceed `magnitude - lower_magnitude + 1`
     // TODO: Consider using a nibble array
     digits: SmallVec<[u8; 8]>,
 
     /// Power of 10 of digits\[0\].
     ///
     /// Invariants:
-    /// - <= upper_magnitude
-    /// - >= lower_magnitude
+    /// - `<= upper_magnitude`
+    /// - `>= lower_magnitude`
     magnitude: i16,
 
     /// Power of 10 of the most significant digit, which may be zero.
@@ -117,6 +117,7 @@ pub struct UnsignedDecimal {
 }
 
 impl UnsignedDecimal {
+    /// The number 1.
     pub const ONE: Self = Self {
         digits: unsafe { SmallVec::from_const_with_len_unchecked([1; 8], 1) },
         magnitude: 0,

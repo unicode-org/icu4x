@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Custom derives for `ZeroFrom` from the `zerofrom` crate.
-
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -12,12 +11,11 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
+
+//! Custom derives for `ZeroFrom` from the `zerofrom` crate.
 
 use core::mem;
 use proc_macro::TokenStream;
@@ -41,7 +39,7 @@ mod visitor;
 /// for types with a lifetime parameter.
 ///
 /// Apply the `#[zerofrom(clone)]` attribute to a field if it doesn't implement
-/// Copy or ZeroFrom; this data will be cloned when the struct is zero_from'ed.
+/// [`Copy`] or [`ZeroFrom`]; this data will be cloned when the struct is zero-from'ed.
 ///
 /// Apply the `#[zerofrom(maybe_borrow(T, U, V))]` attribute to the struct to indicate
 /// that certain type parameters may themselves contain borrows (by default

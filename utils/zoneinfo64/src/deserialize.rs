@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::*;
+use alloc::boxed::Box;
+use alloc::vec::Vec;
 use core::marker::PhantomData;
 use resb::binary::BinaryDeserializerError;
 use serde::de::*;
 use serde::Deserialize;
 
-/// Deserialize a ZoneInfo64
+/// Deserialize a [`ZoneInfo64`]
 pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryDeserializerError> {
     let ZoneInfo64Raw {
         zones,
@@ -147,7 +149,7 @@ impl<'de: 'a, 'a> Deserialize<'de> for TzZoneRaw<'a> {
         impl<'de: 'a, 'a> Visitor<'de> for TzDataRuleEnumVisitor<'a> {
             type Value = TzZoneRaw<'a>;
 
-            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 formatter.write_str("an unsigned 32-bit integer or a table of rule data")
             }
 
@@ -221,7 +223,7 @@ fn rules<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<(&'de str, Tz
     impl<'de> Visitor<'de> for RulesVisitor {
         type Value = Vec<(&'de str, TzRule)>;
 
-        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
             write!(formatter, "a sequence of UTF-16 slices")
         }
 
@@ -229,7 +231,7 @@ fn rules<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<(&'de str, Tz
         where
             A: MapAccess<'de>,
         {
-            let mut vec = vec![];
+            let mut vec = Vec::new();
             while let Some((key, value)) = map.next_entry::<&str, &[u8]>()? {
                 if value
                     .as_ptr()
@@ -241,7 +243,10 @@ fn rules<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<(&'de str, Tz
                 }
                 let value = unsafe { &*(value.as_ptr() as *const [i32; 11]) };
 
-                vec.push((key, TzRule::from_raw(value)));
+                vec.push((
+                    key,
+                    TzRule::from_raw(value).ok_or_else(|| A::Error::custom("Invalid rule bits"))?,
+                ));
             }
             Ok(vec)
         }
@@ -256,7 +261,7 @@ fn regions<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<Region>, D:
     impl<'de> Visitor<'de> for RegionsVisitor {
         type Value = Vec<Region>;
 
-        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
             write!(formatter, "a sequence of UTF-16 slices")
         }
 
@@ -264,7 +269,7 @@ fn regions<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<Region>, D:
         where
             A: SeqAccess<'de>,
         {
-            let mut vec = vec![];
+            let mut vec = Vec::new();
             while let Some(bytes) = seq.next_element::<&[u8]>()? {
                 let utf16 = potential_utf::PotentialUtf16::from_slice(
                     // Safety: all byte representations are valid u16s

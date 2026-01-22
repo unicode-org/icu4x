@@ -153,7 +153,7 @@ impl<M: DataMarker> super::DataStore<M> for DataRef<M> {
     }
 }
 
-/// Optimized data stored as a single VarZeroSlice to reduce token count
+/// Optimized data stored as a single [`VarZeroSlice`] to reduce token count
 #[allow(missing_debug_implementations)] // Debug on this will not be too useful
 pub struct DataForVarULEs<M: DataMarker>
 where

@@ -39,7 +39,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Creates a `TinyAsciiStr<N>` from a UTF-8 slice, replacing invalid code units.
     ///
     /// Invalid code units, as well as null or non-ASCII code points
-    /// (i.e. those outside the range U+0001..=U+007F`)
+    /// (i.e. those outside the range `U+0001..=U+007F`)
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
@@ -74,7 +74,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Creates a `TinyAsciiStr<N>` from a UTF-16 slice, replacing invalid code units.
     ///
     /// Invalid code units, as well as null or non-ASCII code points
-    /// (i.e. those outside the range U+0001..=U+007F`)
+    /// (i.e. those outside the range `U+0001..=U+007F`)
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.

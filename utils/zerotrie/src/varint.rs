@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Varint spec for ZeroTrie:
+//! Varint spec for [`ZeroTrie`](crate::ZeroTrie):
 //!
 //! - Lead byte: top M (2 or 3) bits are metadata; next is varint extender; rest is value
 //! - Trail bytes: top bit is varint extender; rest are low bits of value
