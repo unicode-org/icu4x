@@ -121,7 +121,7 @@ impl DateFieldsResolver for Ethiopian {
         month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        crate::cal::Coptic::reference_year_from_month_day(month, day)
+        Coptic::reference_year_from_month_day(month, day)
     }
 
     fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {

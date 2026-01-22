@@ -11,7 +11,7 @@ use crate::preferences::CalendarAlgorithm;
 use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
 
-impl_with_abstract_gregorian!(crate::cal::Gregorian, GregorianDateInner, CeBce, _x, CeBce);
+impl_with_abstract_gregorian!(Gregorian, GregorianDateInner, CeBce, _x, CeBce);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct CeBce;

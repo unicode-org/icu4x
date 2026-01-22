@@ -24,7 +24,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_LocaleDirectionality_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleDirectionality_destroy_mv1));
 
-  /// Construct a new LocaleDirectionality instance using compiled data.
+  /// Construct a new `LocaleDirectionality` instance using compiled data.
   ///
   /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
   factory LocaleDirectionality() {
@@ -32,7 +32,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result, []);
   }
 
-  /// Construct a new LocaleDirectionality instance using a particular data source.
+  /// Construct a new `LocaleDirectionality` instance using a particular data source.
   ///
   /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
   ///
@@ -45,7 +45,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new LocaleDirectionality instance using compiled data.
+  /// Construct a new `LocaleDirectionality` instance using compiled data.
   ///
   /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
   factory LocaleDirectionality.extended() {
@@ -53,7 +53,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result, []);
   }
 
-  /// Construct a new LocaleDirectionality instance using a particular data source.
+  /// Construct a new `LocaleDirectionality` instance using a particular data source.
   ///
   /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
   ///

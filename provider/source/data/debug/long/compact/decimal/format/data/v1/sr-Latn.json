@@ -1,57 +1,121 @@
-{
-  "patterns": {
-    "3": {
-      "Few": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " hiljade"
-      },
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " hiljada"
-      }
-    },
-    "6": {
-      "One": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " milion"
-      },
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " miliona"
-      }
-    },
-    "9": {
-      "One": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " milijarda"
-      },
-      "Few": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " milijarde"
-      },
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " milijardi"
-      }
-    },
-    "12": {
-      "One": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " bilion"
-      },
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " biliona"
-      }
+[
+  {
+    "sized": 3,
+    "variable": {
+      "few": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " hiljade"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " hiljada"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milion"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " miliona"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milijarda"
+          }
+        ]
+      ],
+      "few": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milijarde"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milijardi"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " bilion"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " biliona"
+          }
+        ]
+      ]
     }
   }
-}
+]

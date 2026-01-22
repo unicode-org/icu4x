@@ -243,7 +243,7 @@ dependencies = [
 
 [[package]]
 name = "bies"
-version = "0.2.5"
+version = "0.3.0-dev"
 dependencies = [
  "itertools 0.14.0",
  "partial-min-max",
@@ -968,6 +968,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
 
 [[package]]
+name = "foldhash"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+
+[[package]]
 name = "freertos-rust"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1050,9 +1056,7 @@ version = "0.15.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1"
 dependencies = [
- "allocator-api2",
- "equivalent",
- "foldhash",
+ "foldhash 0.1.5",
 ]
 
 [[package]]
@@ -1060,6 +1064,11 @@ name = "hashbrown"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5419bdc4f6a9207fbeba6d11b604d481addf78ecd10c11ad51e76c2f6482748d"
+dependencies = [
+ "allocator-api2",
+ "equivalent",
+ "foldhash 0.2.0",
+]
 
 [[package]]
 name = "heck"
@@ -1380,6 +1389,7 @@ dependencies = [
  "serde_json",
  "smallvec",
  "tinystr",
+ "ureq",
  "writeable",
  "zerotrie",
  "zerovec",
@@ -1387,7 +1397,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_decimal"
@@ -1417,7 +1427,7 @@ version = "2.1.1"
 
 [[package]]
 name = "icu_experimental"
-version = "0.4.0"
+version = "0.5.0-dev"
 dependencies = [
  "criterion",
  "databake",
@@ -1456,7 +1466,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.4.0"
+version = "0.4.1"
 
 [[package]]
 name = "icu_freertos"
@@ -1531,7 +1541,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_normalizer"
@@ -1731,7 +1741,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_registry"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "icu",
  "icu_provider",
@@ -1739,9 +1749,8 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
- "calendrical_calculations",
  "displaydoc",
  "elsa",
  "flate2",
@@ -2025,11 +2034,11 @@ checksum = "34080505efa8e45a4b816c349525ebe327ceaa8559756f0356cba97ef3bf7432"
 
 [[package]]
 name = "lru"
-version = "0.13.0"
+version = "0.16.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "227748d55f2f0ab4735d87fd623798cb6b664512fe979705f829c9f81c934465"
+checksum = "a1dc47f592c06f33f8e3aea9591776ec7c9f9e4124778ff8a3c3b87159f7e593"
 dependencies = [
- "hashbrown 0.15.5",
+ "hashbrown 0.16.0",
 ]
 
 [[package]]
@@ -3276,7 +3285,7 @@ checksum = "562d481066bde0658276a35467c4af00bdc6ee726305698a55b86e61d7ad82bb"
 
 [[package]]
 name = "tzif"
-version = "0.4.1"
+version = "0.5.0-dev"
 dependencies = [
  "combine",
  "walkdir",
@@ -4014,7 +4023,7 @@ dependencies = [
 
 [[package]]
 name = "zoneinfo64"
-version = "0.2.1"
+version = "0.3.0-dev"
 dependencies = [
  "calendrical_calculations",
  "chrono",

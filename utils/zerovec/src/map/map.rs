@@ -411,7 +411,7 @@ where
     V: ZeroMapKV<'a, Container = VarZeroVec<'a, V>> + ?Sized,
     V: VarULE,
 {
-    /// Same as `insert()`, but allows using [EncodeAsVarULE](crate::ule::EncodeAsVarULE)
+    /// Same as `insert()`, but allows using [`EncodeAsVarULE`](crate::ule::EncodeAsVarULE)
     /// types with the value to avoid an extra allocation when dealing with custom ULE types.
     ///
     /// ```rust

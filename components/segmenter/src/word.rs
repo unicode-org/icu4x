@@ -302,7 +302,7 @@ impl WordSegmenter {
     #[cfg(feature = "auto")]
     pub fn new_auto(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
         WordSegmenterBorrowed {
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
             complex: ComplexPayloadsBorrowed::new_auto(),
             locale_override: None,
         }
@@ -394,7 +394,7 @@ impl WordSegmenter {
     #[cfg(feature = "lstm")]
     pub fn new_lstm(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
         WordSegmenterBorrowed {
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
             complex: ComplexPayloadsBorrowed::new_lstm(),
             locale_override: None,
         }
@@ -479,7 +479,7 @@ impl WordSegmenter {
     #[cfg(feature = "compiled_data")]
     pub fn new_dictionary(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
         WordSegmenterBorrowed {
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
             complex: ComplexPayloadsBorrowed::new_dict(),
             locale_override: None,
         }
@@ -542,7 +542,7 @@ impl WordSegmenter {
         _options: WordBreakInvariantOptions,
     ) -> WordSegmenterBorrowed<'static> {
         WordSegmenterBorrowed {
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
             complex: ComplexPayloadsBorrowed::empty(),
             locale_override: None,
         }
@@ -741,7 +741,6 @@ impl WordBreakType for Latin1 {
     }
 }
 
-/// handle_complex_language impl for UTF8 iterators
 fn handle_complex_language_utf8<T>(
     iter: &mut RuleBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,

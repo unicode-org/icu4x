@@ -350,7 +350,7 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let lstm: DataResponse<SegmenterLstmAutoV1> = crate::provider::Baked
+        let lstm: DataResponse<SegmenterLstmAutoV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic(

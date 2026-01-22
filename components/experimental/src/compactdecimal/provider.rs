@@ -4,17 +4,20 @@
 
 // Provider structs must be stable.
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-// Suppress a warning on zerovec::makevarule.
-#![allow(missing_docs)]
 
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
-use icu_plurals::PluralCategory;
+#[cfg(any(feature = "datagen", feature = "serde"))]
+use alloc::boxed::Box;
+#[cfg(feature = "datagen")]
+use alloc::{string::String, vec::Vec};
+use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
+use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap2d;
+use zerovec::ule::vartuple::VarTupleULE;
+use zerovec::VarZeroVec;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -29,125 +32,177 @@ pub use crate::provider::Baked;
 icu_provider::data_marker!(
     /// `LongCompactDecimalFormatDataV1`
     LongCompactDecimalFormatDataV1,
-    CompactDecimalPatternData<'static>,
+    CompactPatterns<'static, SinglePlaceholder>,
 );
 icu_provider::data_marker!(
     /// `ShortCompactDecimalFormatDataV1`
     ShortCompactDecimalFormatDataV1,
-    CompactDecimalPatternData<'static>,
+    CompactPatterns<'static, SinglePlaceholder>,
 );
 
-/// Compact Decimal Pattern  data struct.
+/// Compact pattern data struct.
 ///
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
-/// the magnitude of the number being formatted) and count (a plural case or an
-/// explicit 1) to a pattern.
+/// the magnitude of the number being formatted) to a plural pattern.
 ///
-/// However, plural cases that are identical to the other case are omitted, thus
-/// given
-/// > (1000, one) ↦ 0K, (1000, other) ↦ 0K
-///
-/// only
-/// > (1000, other) ↦ 0K
-///
-/// is stored.
-///
-/// Further, if all plural cases are compatible across consecutive types, the
+/// If all plural patterns are compatible across consecutive types, the
 /// larger types are omitted, thus given
-/// > (1000, other) ↦ 0K, (10000, other) ↦ 00K, (100000, other) ↦ 000K
+/// > (3, other) ↦ 0K, (4, other) ↦ 00K, (5, other) ↦ 000K
 ///
 /// only
-/// > (1000, other) ↦ 0K
+/// > (3, other) ↦ 0K
 ///
 /// is stored.
 ///
 /// Finally, the pattern indicating noncompact notation for the first few powers
-/// of ten is omitted; that is, there is an implicit (1, other) ↦ 0.
-#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+/// of ten might be omitted; that is, there is an implicit (0, other) ↦ 0.
+///
+/// The plural patterns are stored with the 4-bit metadata representing the exponent
+/// shift (number of zeros in the pattern minus 1).
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
-#[yoke(prove_covariance_manually)]
-pub struct CompactDecimalPatternData<'data> {
-    /// A map keyed on log10 of the CLDR `type` attribute and the CLDR `count` attribute.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,
-}
+pub struct CompactPatterns<'a, P: PatternBackend>(
+    pub VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>,
+);
 
-icu_provider::data_struct!(CompactDecimalPatternData<'_>, #[cfg(feature = "datagen")]);
-
-/// A CLDR plural keyword, or the explicit value 1.
-/// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
-#[zerovec::make_ule(CountULE)]
-#[zerovec::derive(Debug)]
-#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
-#[repr(u8)]
-pub enum Count {
-    /// The CLDR keyword `zero`.
-    Zero = 0,
-    /// The CLDR keyword `one`.
-    One = 1,
-    /// The CLDR keyword `two`.
-    Two = 2,
-    /// The CLDR keyword `few`.
-    Few = 3,
-    /// The CLDR keyword `many`.
-    Many = 4,
-    /// The CLDR keyword `other`.
-    Other = 5,
-    /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
-    Explicit1 = 6,
-    // NOTE(egg): No explicit 0, because the compact decimal pattern selection
-    // algorithm does not allow such a thing to arise.
-}
-
-impl From<PluralCategory> for Count {
-    fn from(other: PluralCategory) -> Self {
-        use PluralCategory::*;
-        match other {
-            Zero => Count::Zero,
-            One => Count::One,
-            Two => Count::Two,
-            Few => Count::Few,
-            Many => Count::Many,
-            Other => Count::Other,
-        }
+impl<P: PatternBackend> Default for CompactPatterns<'_, P> {
+    fn default() -> Self {
+        Self(VarZeroVec::new())
     }
 }
 
-/// A compact decimal pattern, representing some literal text with an optional
-/// placeholder, and the power of 10 expressed by the text.
-#[derive(
-    Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom, Ord, PartialOrd, Eq,
-)]
-#[zerovec::make_varule(PatternULE)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
-#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
-#[zerovec::derive(Debug)]
-#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
-pub struct Pattern<'data> {
-    /// The compact decimal exponent, e.g., 6 for "million".
-    /// The value 0 indicates that compact notation is not used; in that case,
-    /// literal text must be empty; this corresponds to the CLDR pattern "0".
-    /// This is derived from the numbers of 0s in the pattern and the associated
-    /// `type` attribute; it is a more convenient representation than the number
-    /// of 0s, because it is often common to multiple types; for instance, the
-    /// following correspond to the same [`Pattern`]:
-    ///   <pattern type="1000000" count="other">0 M</pattern>
-    ///   <pattern type="10000000" count="other">00 M</pattern>
-    pub exponent: i8,
-    /// The index in literal_text before which the placeholder is inserted;
-    /// this is 0 for insertion at the beginning, which is most common.
-    /// The value 255 indicates that the pattern does not have a placeholder,
-    /// as in French "mille" for 1000.
-    pub index: u8,
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    /// The underlying CLDR pattern with the placeholder removed, e.g.,
-    /// " M" for the pattern "000 M"
-    pub literal_text: Cow<'data, str>,
+#[cfg(feature = "datagen")]
+impl<'data, P: PatternBackend> serde::Serialize for CompactPatterns<'data, P>
+where
+    Pattern<P>: serde::Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.0.serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, 'data, P: PatternBackend> serde::Deserialize<'de> for CompactPatterns<'data, P>
+where
+    'de: 'data,
+    Box<Pattern<P>>: serde::Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        VarZeroVec::<VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>::deserialize(
+            deserializer,
+        )
+        .map(Self)
+    }
+}
+
+impl<P: PatternBackend> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
+    type EncodedStruct = [()];
+}
+
+#[cfg(feature = "datagen")]
+impl<P: PatternBackend> icu_provider::ule::MaybeEncodeAsVarULE for CompactPatterns<'_, P> {
+    type EncodeableStruct<'b>
+        = &'b [()]
+    where
+        Self: 'b;
+    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
+        None
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<P: PatternBackend> CompactPatterns<'static, P> {
+    /// Creates a new [`CompactPatterns`] from a map of patterns.
+    /// The values contains an additional `u8` that contains the
+    /// magnitude of the pattern, which can be different from the
+    /// magnitude key (e.g. for the maginute 5 there might be a
+    /// magnitude 3 pattern).
+    #[allow(clippy::type_complexity)]
+    pub fn new(
+        patterns: alloc::collections::BTreeMap<
+            u8,
+            (u8, icu_plurals::PluralElements<Box<Pattern<P>>>),
+        >,
+        zero_magnitude: Option<&icu_plurals::PluralElements<&Pattern<P>>>,
+    ) -> Result<Self, String> {
+        use icu_plurals::provider::FourBitMetadata;
+        use icu_plurals::PluralElements;
+        use zerovec::ule::encode_varule_to_box;
+        use zerovec::ule::vartuple::VarTuple;
+        use zerovec::vecs::VarZeroVecOwned;
+
+        if !patterns
+            .values()
+            .zip(patterns.values().skip(1))
+            .all(|(low, high)| low.0 <= high.0)
+        {
+            Err(alloc::format!(
+                "Compact exponents should be nondecreasing: {:?}",
+                patterns
+                    .values()
+                    .map(|(exponent, _)| exponent)
+                    .collect::<Vec<_>>(),
+            ))?;
+        }
+
+        let mut deduplicated_patterns: Vec<(
+            u8,
+            PluralElements<(FourBitMetadata, Box<Pattern<P>>)>,
+        )> = Vec::new();
+
+        // Deduplicate sequences of types that have the same plural map, keeping the lowest type.
+        for (log10_type, (exponent, map)) in patterns
+            .into_iter()
+            // Skip leading 0 patterns
+            .skip_while(|(_, (_, pattern))| Some(&pattern.as_ref().map(|p| &**p)) == zero_magnitude)
+        {
+            if let Some(prev) = deduplicated_patterns.last() {
+                // The higher pattern can never be exactly one of the low pattern, so we can ignore that value
+                if prev
+                    .1
+                    .as_ref()
+                    .with_explicit_one_value(None)
+                    .map(|(_, p)| p)
+                    == map.as_ref()
+                {
+                    continue;
+                }
+            }
+
+            // Store the exponent as a difference from the log10_type, i.e. the number of zeros
+            // in the pattern, minus 1. No pattern should have more than 16 zeros.
+            let Some(metadata) = FourBitMetadata::try_from_byte(log10_type - exponent) else {
+                return Err(alloc::format!(
+                    "Pattern has too many zeros {}",
+                    log10_type - exponent
+                ));
+            };
+
+            deduplicated_patterns.push((log10_type, map.map(|p| (metadata, p))))
+        }
+
+        #[allow(clippy::unwrap_used)] // keyed by u8, so it cannot exceed usize/2
+        Ok(Self(
+            VarZeroVecOwned::try_from_elements(
+                &deduplicated_patterns
+                    .into_iter()
+                    .map(|(log10_type, plural_map)| {
+                        encode_varule_to_box(&VarTuple {
+                            sized: log10_type,
+                            variable: plural_map,
+                        })
+                    })
+                    .collect::<Vec<Box<VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>>>(),
+            )
+            .unwrap()
+            .into(),
+        ))
+    }
 }

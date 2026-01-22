@@ -11,6 +11,9 @@ use crate::CoverageLevel;
 use icu::locale::provider::{
     LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
+#[cfg(feature = "experimental")]
+use icu::locale::subtags::Region;
+use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
@@ -196,7 +199,7 @@ impl CldrCache {
             return Ok(None);
         }
         let mut new_langid =
-            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
+            LanguageIdentifier::from((locale.language, locale.script, locale.region));
         self.extended_locale_expander()?.maximize(&mut new_langid);
         debug_assert!(
             new_langid.script.is_some(),
@@ -215,8 +218,7 @@ impl CldrCache {
         if locale.language.is_unknown() || locale.script.is_none() {
             return Ok(None);
         }
-        let mut langid =
-            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
+        let mut langid = LanguageIdentifier::from((locale.language, locale.script, locale.region));
         self.extended_locale_expander()?.minimize(&mut langid);
         if langid.script.is_some() || (locale.region.is_none() && langid.region.is_some()) {
             // Wasn't able to minimize the script, or had to add a region
@@ -225,6 +227,58 @@ impl CldrCache {
         // Restore the region
         langid.region = locale.region;
         Ok(Some(langid.into()))
+    }
+
+    /// Extracts the region from a [`DataLocale`].
+    ///
+    /// If the locale already has a region, it is returned.  
+    /// Otherwise, the likely region is inferred from the language.
+    ///
+    /// # Example
+    ///  - "en-US" -> "US"
+    ///  - "en" -> "US"
+    #[cfg(feature = "experimental")]
+    pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
+        if let Some(region) = locale.region {
+            return Ok(region);
+        }
+
+        let mut lang_id = LanguageIdentifier::from((locale.language, locale.script, locale.region));
+        let _ = self.extended_locale_expander()?.maximize(&mut lang_id);
+        Ok(lang_id.region.unwrap())
+    }
+
+    /// Computes the likely script-based locale group for a given locale.
+    ///
+    /// Example:
+    /// - "en-US" -> "en-Latn-US" -> "und-Latn" -> "en-Latn-US" -> "en"
+    /// - "es-US" ->  "es-Latn-US" -> "und-Latn" -> "en-Latn-US" -> "en"
+    /// - "fr-FR" -> "fr-Latn-FR" -> "und-Latn" -> "en-Latn-US" -> "en"
+    /// - "ar-SA" -> "ar-Arab-SA" -> "und-Arab" -> "ar-Arab-EG" -> "ar"
+    pub(crate) fn script_locale_group(&self, locale: &DataLocale) -> Result<DataLocale, DataError> {
+        use icu::locale::subtags::Language;
+        use icu::locale::LanguageIdentifier;
+
+        let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
+
+        // 1. Maximizes the input locale to get full language/script/region
+        //    (e.g. "es-US" -> "es-Latn-US")
+        self.extended_locale_expander()?.maximize(&mut group);
+
+        // 2. Strips language and region, keeping only script
+        //    (e.g. "es-Latn-US" -> "und-Latn")
+        group.language = Language::UNKNOWN;
+        group.region = Default::default();
+
+        // 3. Maximizes again to find the most likely language for that script
+        //    (e.g. "und-Latn" -> "en-Latn-US")
+        self.extended_locale_expander()?.maximize(&mut group);
+
+        // 4. Minimizes to keep just the language
+        //    (e.g. "en-Latn-US" -> "en")
+        self.extended_locale_expander()?
+            .minimize_favor_script(&mut group);
+        Ok(group.into())
     }
 }
 

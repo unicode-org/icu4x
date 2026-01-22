@@ -40,7 +40,7 @@ define_preferences!(
 ///
 /// assert_eq!(display_name.of(region!("AE")), Some("United Arab Emirates"));
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct RegionDisplayNames {
     options: DisplayNamesOptions,
     region_data: DataPayload<RegionDisplayNamesV1>,
@@ -107,7 +107,7 @@ impl RegionDisplayNames {
 ///
 /// assert_eq!(display_name.of(script!("Maya")), Some("Mayan hieroglyphs"));
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct ScriptDisplayNames {
     options: DisplayNamesOptions,
     script_data: DataPayload<ScriptDisplayNamesV1>,
@@ -174,7 +174,7 @@ impl ScriptDisplayNames {
 ///
 /// assert_eq!(display_name.of(variant!("POSIX")), Some("Computer"));
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct VariantDisplayNames {
     #[allow(dead_code)] //TODO: Add DisplayNamesOptions support for Variants.
     options: DisplayNamesOptions,
@@ -238,7 +238,7 @@ impl VariantDisplayNames {
 ///
 /// assert_eq!(display_name.of(language!("de")), Some("German"));
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct LanguageDisplayNames {
     options: DisplayNamesOptions,
     language_data: DataPayload<LanguageDisplayNamesV1>,
@@ -313,6 +313,7 @@ impl LanguageDisplayNames {
 /// assert_eq!(display_name.of(&locale!("xx-YY")), "xx (YY)");
 /// assert_eq!(display_name.of(&locale!("xx")), "xx");
 /// ```
+#[derive(Debug)]
 pub struct LocaleDisplayNamesFormatter {
     options: DisplayNamesOptions,
     // patterns: DataPayload<LocaleDisplayNamesPatternsV1>,

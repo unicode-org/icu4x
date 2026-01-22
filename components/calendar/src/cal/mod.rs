@@ -38,6 +38,7 @@ pub use hebrew::Hebrew;
 pub use hijri_internal::Hijri;
 /// Customizations for the [`Hijri`] calendar.
 pub mod hijri {
+    #[allow(deprecated)]
     pub use super::hijri_internal::{
         AstronomicalSimulation, TabularAlgorithm, TabularAlgorithmEpoch, TabularAlgorithmLeapYears,
         UmmAlQura,
@@ -57,7 +58,10 @@ pub mod hijri {
 
 pub use indian::Indian;
 pub use iso::Iso;
-pub use japanese::{Japanese, JapaneseExtended};
+pub use japanese::Japanese;
+/// Deprecated
+#[deprecated(since = "2.2.0")]
+pub type JapaneseExtended = Japanese;
 pub use julian::Julian;
 pub use persian::Persian;
 pub use roc::Roc;
@@ -69,6 +73,7 @@ pub use hijri::{
 };
 /// Deprecated
 #[deprecated]
+#[allow(deprecated)]
 pub type HijriSimulated = Hijri<hijri::AstronomicalSimulation>;
 /// Deprecated
 #[deprecated]

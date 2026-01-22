@@ -28,7 +28,7 @@ pub(crate) enum ElementKind {
     Quantifier,
     /// A segment: `(abc)`.
     Segment,
-    /// A UnicodeSet: `[a-z]`.
+    /// A `UnicodeSet`: `[a-z]`.
     UnicodeSet,
     /// A function call: `&[a-z] Remove(...)`.
     FunctionCall,

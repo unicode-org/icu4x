@@ -1697,6 +1697,40 @@ let termini = Object.assign({
         ]
     },
 
+    "EmojiSetData.basicEmojiForChar": {
+        func: (ch) => icu.EmojiSetData.basicEmojiForChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "EmojiSetData.basicEmojiForChar",
+        expr: (ch) => "icu.EmojiSetData.basicEmojiForChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "EmojiSetData.basicEmojiForStr": {
+        func: (s) => icu.EmojiSetData.basicEmojiForStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "EmojiSetData.basicEmojiForStr",
+        expr: (s) => "icu.EmojiSetData.basicEmojiForStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "ScriptWithExtensions.getScriptVal": {
         func: (ch) => new icu.ScriptWithExtensions().getScriptVal(ch),
         // For avoiding webpacking minifying issues:

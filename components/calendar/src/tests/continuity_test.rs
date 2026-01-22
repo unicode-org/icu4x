@@ -65,7 +65,7 @@ fn test_buddhist_continuity() {
 
 #[test]
 fn test_chinese_continuity() {
-    let cal = crate::cal::ChineseTraditional::new();
+    let cal = cal::ChineseTraditional::new();
     let date = Date::try_new_from_codes(None, -10, Month::new(1).code(), 1, cal);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_from_codes(None, -300, Month::new(1).code(), 1, cal);
@@ -158,16 +158,19 @@ fn test_hijri_civil_continuity() {
 }
 
 #[test]
+#[allow(deprecated)]
 fn test_hijri_simulated_mecca_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
     let cal = cal::Hijri::new_simulated_mecca();
     let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
-    // This test is slow since it is doing astronomical calculations, so check only 3 years
-    check_continuity(date.unwrap(), 3);
+    check_continuity(date.unwrap(), 20);
+    let date = Date::try_new_hijri_with_calendar(1290, 1, 1, cal);
+    check_continuity(date.unwrap(), 20);
+    let date = Date::try_new_hijri_with_calendar(1590, 1, 1, cal);
+    check_continuity(date.unwrap(), 20);
     let date = Date::try_new_hijri_with_calendar(-300, 1, 1, cal);
-    // This test is slow since it is doing astronomical calculations, so check only 100 dates
-    check_every_250_days(date.unwrap(), 100);
+    check_every_250_days(date.unwrap(), 2000);
 }
 
 #[test]
@@ -212,16 +215,6 @@ fn test_japanese_continuity() {
     let date = Date::try_new_japanese_with_calendar("heisei", 20, 1, 1, cal);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_japanese_with_calendar("bce", 500, 1, 1, cal);
-    check_every_250_days(date.unwrap(), 2000);
-}
-
-#[test]
-fn test_japanese_extended_continuity() {
-    let cal = cal::JapaneseExtended::new();
-    let cal = Ref(&cal);
-    let date = Date::try_new_japanese_extended_with_calendar("heisei", 20, 1, 1, cal);
-    check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_japanese_extended_with_calendar("bce", 500, 1, 1, cal);
     check_every_250_days(date.unwrap(), 2000);
 }
 

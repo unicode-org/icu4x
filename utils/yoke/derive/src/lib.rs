@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! Custom derives for `Yokeable` from the `yoke` crate.
 
 use proc_macro::TokenStream;
@@ -211,7 +224,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         use core::{mem, ptr};
                         // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
                         // are the same
-                        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
+                        debug_assert!(size_of::<Self::Output>() == size_of::<Self>());
                         let ptr: *const Self = (&this as *const Self::Output).cast();
                         // This is a noop if the struct is copy, which Clippy doesn't like
                         // Furthermore, restriction lints like mem_forget are usually for first-party code, not custom derives
@@ -252,7 +265,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     use core::{mem, ptr};
                     // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
                     // are the same
-                    debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
+                    debug_assert!(size_of::<Self::Output>() == size_of::<Self>());
                     let ptr: *const Self = (&this as *const Self::Output).cast();
                     // This is a noop if the struct is copy, which Clippy doesn't like
                     // Furthermore, restriction lints like mem_forget are usually for first-party code, not custom derives

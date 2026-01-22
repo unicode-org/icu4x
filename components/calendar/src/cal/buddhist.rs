@@ -30,13 +30,7 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
-impl_with_abstract_gregorian!(
-    crate::cal::Buddhist,
-    BuddhistDateInner,
-    BuddhistEra,
-    _x,
-    BuddhistEra
-);
+impl_with_abstract_gregorian!(Buddhist, BuddhistDateInner, BuddhistEra, _x, BuddhistEra);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct BuddhistEra;

@@ -108,7 +108,7 @@ enum IndicSyllabicCategory {
     return result.union.ok._toDart([], isStatic: true);
   }
 
-  /// Convert to an integer value usable with ICU4C and CodePointMapData
+  /// Convert to an integer value usable with ICU4C and `CodePointMapData`
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
@@ -116,7 +116,7 @@ enum IndicSyllabicCategory {
     return result;
   }
 
-  /// Convert from an integer value from ICU4C or CodePointMapData
+  /// Convert from an integer value from ICU4C or `CodePointMapData`
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html#method.from_icu4c_value) for more information.
   static IndicSyllabicCategory? fromIntegerValue(int other) {

@@ -18,9 +18,10 @@
 #[cfg(feature = "serde")]
 pub(crate) mod compat;
 pub mod fields;
-pub mod neo;
+pub mod names;
 pub(crate) mod packed_pattern;
 pub mod pattern;
+pub mod semantic_skeletons;
 #[cfg(feature = "datagen")]
 pub mod skeleton;
 pub mod time_zones;
@@ -77,7 +78,6 @@ const _: () = {
     impl_datetime_names_year_indian_v1!(Baked);
     impl_datetime_names_year_hijri_v1!(Baked);
     impl_datetime_names_year_japanese_v1!(Baked);
-    impl_datetime_names_year_japanext_v1!(Baked);
     impl_datetime_names_year_persian_v1!(Baked);
     impl_datetime_names_year_roc_v1!(Baked);
 
@@ -91,7 +91,6 @@ const _: () = {
     impl_datetime_names_month_indian_v1!(Baked);
     impl_datetime_names_month_hijri_v1!(Baked);
     impl_datetime_names_month_japanese_v1!(Baked);
-    impl_datetime_names_month_japanext_v1!(Baked);
     impl_datetime_names_month_persian_v1!(Baked);
     impl_datetime_names_month_roc_v1!(Baked);
 
@@ -105,26 +104,22 @@ const _: () = {
     impl_datetime_patterns_date_indian_v1!(Baked);
     impl_datetime_patterns_date_hijri_v1!(Baked);
     impl_datetime_patterns_date_japanese_v1!(Baked);
-    impl_datetime_patterns_date_japanext_v1!(Baked);
     impl_datetime_patterns_date_persian_v1!(Baked);
     impl_datetime_patterns_date_roc_v1!(Baked);
 };
 
 #[cfg(feature = "compiled_data")]
-impl icu_provider::DataProvider<icu_time::provider::TimezonePeriodsV1> for Baked {
+impl DataProvider<icu_time::provider::TimezonePeriodsV1> for Baked {
     #[inline]
     fn load(
         &self,
-        req: icu_provider::DataRequest,
-    ) -> Result<
-        icu_provider::DataResponse<icu_time::provider::TimezonePeriodsV1>,
-        icu_provider::DataError,
-    > {
+        req: DataRequest,
+    ) -> Result<DataResponse<icu_time::provider::TimezonePeriodsV1>, DataError> {
         icu_time::provider::Baked.load(req)
     }
 }
 
-#[cfg(feature = "datagen")]
+#[cfg(any(feature = "datagen", feature = "compiled_data"))]
 use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
@@ -140,36 +135,34 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::TimezoneNamesSpecificLongV1::INFO,
     time_zones::TimezoneNamesSpecificShortV1::INFO,
     time_zones::TimezoneNamesEssentialsV1::INFO,
-    neo::DatetimeNamesWeekdayV1::INFO,
-    neo::DatetimeNamesDayperiodV1::INFO,
-    neo::DatetimePatternsGlueV1::INFO,
+    names::DatetimeNamesWeekdayV1::INFO,
+    names::DatetimeNamesDayperiodV1::INFO,
+    names::DatetimePatternsGlueV1::INFO,
     DatetimePatternsTimeV1::INFO,
-    neo::DatetimeNamesYearBuddhistV1::INFO,
-    neo::DatetimeNamesYearChineseV1::INFO,
-    neo::DatetimeNamesYearCopticV1::INFO,
-    neo::DatetimeNamesYearDangiV1::INFO,
-    neo::DatetimeNamesYearEthiopianV1::INFO,
-    neo::DatetimeNamesYearGregorianV1::INFO,
-    neo::DatetimeNamesYearHebrewV1::INFO,
-    neo::DatetimeNamesYearIndianV1::INFO,
-    neo::DatetimeNamesYearHijriV1::INFO,
-    neo::DatetimeNamesYearJapaneseV1::INFO,
-    neo::DatetimeNamesYearJapanextV1::INFO,
-    neo::DatetimeNamesYearPersianV1::INFO,
-    neo::DatetimeNamesYearRocV1::INFO,
-    neo::DatetimeNamesMonthBuddhistV1::INFO,
-    neo::DatetimeNamesMonthChineseV1::INFO,
-    neo::DatetimeNamesMonthCopticV1::INFO,
-    neo::DatetimeNamesMonthDangiV1::INFO,
-    neo::DatetimeNamesMonthEthiopianV1::INFO,
-    neo::DatetimeNamesMonthGregorianV1::INFO,
-    neo::DatetimeNamesMonthHebrewV1::INFO,
-    neo::DatetimeNamesMonthIndianV1::INFO,
-    neo::DatetimeNamesMonthHijriV1::INFO,
-    neo::DatetimeNamesMonthJapaneseV1::INFO,
-    neo::DatetimeNamesMonthJapanextV1::INFO,
-    neo::DatetimeNamesMonthPersianV1::INFO,
-    neo::DatetimeNamesMonthRocV1::INFO,
+    names::DatetimeNamesYearBuddhistV1::INFO,
+    names::DatetimeNamesYearChineseV1::INFO,
+    names::DatetimeNamesYearCopticV1::INFO,
+    names::DatetimeNamesYearDangiV1::INFO,
+    names::DatetimeNamesYearEthiopianV1::INFO,
+    names::DatetimeNamesYearGregorianV1::INFO,
+    names::DatetimeNamesYearHebrewV1::INFO,
+    names::DatetimeNamesYearIndianV1::INFO,
+    names::DatetimeNamesYearHijriV1::INFO,
+    names::DatetimeNamesYearJapaneseV1::INFO,
+    names::DatetimeNamesYearPersianV1::INFO,
+    names::DatetimeNamesYearRocV1::INFO,
+    names::DatetimeNamesMonthBuddhistV1::INFO,
+    names::DatetimeNamesMonthChineseV1::INFO,
+    names::DatetimeNamesMonthCopticV1::INFO,
+    names::DatetimeNamesMonthDangiV1::INFO,
+    names::DatetimeNamesMonthEthiopianV1::INFO,
+    names::DatetimeNamesMonthGregorianV1::INFO,
+    names::DatetimeNamesMonthHebrewV1::INFO,
+    names::DatetimeNamesMonthIndianV1::INFO,
+    names::DatetimeNamesMonthHijriV1::INFO,
+    names::DatetimeNamesMonthJapaneseV1::INFO,
+    names::DatetimeNamesMonthPersianV1::INFO,
+    names::DatetimeNamesMonthRocV1::INFO,
     DatetimePatternsDateBuddhistV1::INFO,
     DatetimePatternsDateChineseV1::INFO,
     DatetimePatternsDateCopticV1::INFO,
@@ -180,7 +173,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     DatetimePatternsDateIndianV1::INFO,
     DatetimePatternsDateHijriV1::INFO,
     DatetimePatternsDateJapaneseV1::INFO,
-    DatetimePatternsDateJapanextV1::INFO,
     DatetimePatternsDatePersianV1::INFO,
     DatetimePatternsDateRocV1::INFO,
 ];

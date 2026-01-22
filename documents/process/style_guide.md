@@ -917,7 +917,7 @@ Some lints should be enabled at the crate level for primary ICU4X crates. This g
 
 ## Exhaustiveness :: required
 
-Crates should deny the `clippy::exhaustive_structs, clippy::exhaustive_enums` lints at the top-level so that our types default to being `#[non_exhaustive]`.
+Enforced by the workspace-level `clippy::exhaustive_structs, clippy::exhaustive_enums` lints so that our types default to being `#[non_exhaustive]`.
 
 These kinds of types _must_ be `#[non_exhaustive]`:
 
@@ -948,7 +948,7 @@ In general, non-panicky APIs that return `Result`s or `Option`s should be prefer
 
 ## Debug :: required
 
-Crates should deny the `missing_debug_implementations` lint at the top-level so that our types all have `Debug` implementations.
+Enforced by the workspace-level `missing_debug_implementations` lint so that our types all have `Debug` implementations.
 
 # Imports and Configurations
 

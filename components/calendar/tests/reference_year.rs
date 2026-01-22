@@ -14,7 +14,7 @@ use icu_calendar::{
 
 /// Test that a given calendar produces valid monthdays
 ///
-/// `valid_md_condition`, given (month_number, is_leap, day_number), should return whether or not
+/// `valid_md_condition`, given `(month_number, is_leap, day_number)`, should return whether or not
 /// that combination is ever possible in that calendar
 fn test_reference_year_impl<C>(cal: C, valid_md_condition: impl Fn(u8, bool, u8) -> bool)
 where
@@ -292,11 +292,6 @@ fn test_reference_year_iso() {
 #[test]
 fn test_reference_year_japanese() {
     test_reference_year_impl(Japanese::new(), gregorian_md_condition)
-}
-
-#[test]
-fn test_reference_year_japanese_extended() {
-    test_reference_year_impl(JapaneseExtended::new(), gregorian_md_condition)
 }
 
 #[test]

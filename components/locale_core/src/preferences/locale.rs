@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::extensions::unicode::{SubdivisionId, SubdivisionSuffix};
 use crate::preferences::extensions::unicode::keywords::{RegionOverride, RegionalSubdivision};
 #[cfg(feature = "alloc")]
 use crate::subtags::Variants;
@@ -15,57 +16,47 @@ pub struct LocalePreferences {
     pub(crate) language: Language,
     /// Preference of Script
     pub(crate) script: Option<Script>,
-    /// Preference of Region
-    pub(crate) region: Option<Region>,
+    /// Preference of Region/Subdivision
+    pub(crate) region: Option<RegionalSubdivision>,
     /// Preference of Variant
     pub(crate) variant: Option<Variant>,
-    /// Preference of Regional Subdivision
-    pub(crate) subdivision: Option<RegionalSubdivision>,
-    /// Preference of Unicode Extension Region
+    /// Preference of Unicode region override
     pub(crate) region_override: Option<RegionOverride>,
 }
 
 impl LocalePreferences {
-    /// Convert to a DataLocale, with region-based fallback priority
+    /// Convert to a [`DataLocale`], with region-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
-    pub fn to_data_locale_region_priority(self) -> DataLocale {
-        if let Some(ro) = self.region_override {
-            return DataLocale::from_parts(self.language, self.script, Some(*ro), self.variant);
-        }
-
-        self.to_data_locale_language_priority()
+    pub const fn to_data_locale_region_priority(self) -> DataLocale {
+        DataLocale::from_parts(
+            self.language,
+            self.script,
+            if let Some(region) = self.region_override {
+                Some(region.0)
+            } else if let Some(region) = self.region {
+                Some(region.0)
+            } else {
+                None
+            },
+            self.variant,
+        )
     }
 
-    /// Convert to a DataLocale, with language-based fallback priority
+    /// Convert to a `DataLocale`, with language-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
-    pub fn to_data_locale_language_priority(self) -> DataLocale {
-        use crate::extensions::unicode::{SubdivisionId, SubdivisionSuffix};
-
-        let region = if let Some(sd) = self.subdivision {
+    pub const fn to_data_locale_language_priority(self) -> DataLocale {
+        DataLocale::from_parts(
+            self.language,
+            self.script,
             if let Some(region) = self.region {
-                // Discard the subdivison if it doesn't match the region
-                Some(SubdivisionId {
-                    region,
-                    suffix: if sd.region == region {
-                        sd.suffix
-                    } else {
-                        SubdivisionSuffix::UNKNOWN
-                    },
-                })
+                Some(region.0)
             } else {
-                // Use the subdivision's region if there's no region
-                Some(*sd)
-            }
-        } else {
-            self.region.map(|region| SubdivisionId {
-                region,
-                suffix: SubdivisionSuffix::UNKNOWN,
-            })
-        };
-
-        DataLocale::from_parts(self.language, self.script, region, self.variant)
+                None
+            },
+            self.variant,
+        )
     }
 }
 impl Default for LocalePreferences {
@@ -76,24 +67,7 @@ impl Default for LocalePreferences {
 
 impl From<&crate::Locale> for LocalePreferences {
     fn from(loc: &crate::Locale) -> Self {
-        Self {
-            language: loc.id.language,
-            script: loc.id.script,
-            region: loc.id.region,
-            variant: loc.id.variants.iter().copied().next(),
-            subdivision: loc
-                .extensions
-                .unicode
-                .keywords
-                .get(&RegionalSubdivision::UNICODE_EXTENSION_KEY)
-                .and_then(|v| RegionalSubdivision::try_from(v).ok()),
-            region_override: loc
-                .extensions
-                .unicode
-                .keywords
-                .get(&RegionOverride::UNICODE_EXTENSION_KEY)
-                .and_then(|v| RegionOverride::try_from(v).ok()),
-        }
+        Self::from_locale_strict(loc).unwrap_or_else(|e| e)
     }
 }
 
@@ -102,9 +76,13 @@ impl From<&crate::LanguageIdentifier> for LocalePreferences {
         Self {
             language: lid.language,
             script: lid.script,
-            region: lid.region,
+            region: lid.region.map(|region| {
+                RegionalSubdivision(SubdivisionId {
+                    region,
+                    suffix: SubdivisionSuffix::UNKNOWN,
+                })
+            }),
             variant: lid.variants.iter().copied().next(),
-            subdivision: None,
             region_override: None,
         }
     }
@@ -118,7 +96,7 @@ impl From<LocalePreferences> for crate::Locale {
             id: crate::LanguageIdentifier {
                 language: prefs.language,
                 script: prefs.script,
-                region: prefs.region,
+                region: prefs.region.map(|sd| sd.region),
                 variants: prefs
                     .variant
                     .map(Variants::from_variant)
@@ -126,7 +104,7 @@ impl From<LocalePreferences> for crate::Locale {
             },
             extensions: {
                 let mut extensions = crate::extensions::Extensions::default();
-                if let Some(sd) = prefs.subdivision {
+                if let Some(sd) = prefs.region.filter(|sd| !sd.suffix.is_unknown()) {
                     extensions
                         .unicode
                         .keywords
@@ -152,19 +130,86 @@ impl LocalePreferences {
             script: None,
             region: None,
             variant: None,
-            subdivision: None,
             region_override: None,
         }
     }
 
+    /// Construct a `LocalePreferences` from a `Locale`
+    ///
+    /// Returns `Err` if any of of the preference values are invalid.
+    pub fn from_locale_strict(loc: &crate::Locale) -> Result<Self, Self> {
+        let mut is_err = false;
+
+        let subdivision = if let Some(sd) = loc
+            .extensions
+            .unicode
+            .keywords
+            .get(&RegionalSubdivision::UNICODE_EXTENSION_KEY)
+        {
+            if let Ok(sd) = RegionalSubdivision::try_from(sd) {
+                Some(sd)
+            } else {
+                is_err = true;
+                None
+            }
+        } else {
+            None
+        };
+
+        let region = if let Some(sd) = subdivision {
+            if let Some(region) = loc.id.region {
+                // Discard the subdivison if it doesn't match the region
+                Some(RegionalSubdivision(SubdivisionId {
+                    region,
+                    suffix: if sd.region == region {
+                        sd.suffix
+                    } else {
+                        is_err = true;
+                        SubdivisionSuffix::UNKNOWN
+                    },
+                }))
+            } else {
+                // Use the subdivision's region if there's no region
+                Some(sd)
+            }
+        } else {
+            loc.id.region.map(|region| {
+                RegionalSubdivision(SubdivisionId {
+                    region,
+                    suffix: SubdivisionSuffix::UNKNOWN,
+                })
+            })
+        };
+        let region_override = loc
+            .extensions
+            .unicode
+            .keywords
+            .get(&RegionOverride::UNICODE_EXTENSION_KEY)
+            .and_then(|v| {
+                RegionOverride::try_from(v)
+                    .inspect_err(|_| is_err = true)
+                    .ok()
+            });
+
+        (if is_err { Err } else { Ok })(Self {
+            language: loc.id.language,
+            script: loc.id.script,
+            region,
+            variant: loc.id.variants.iter().copied().next(),
+            region_override,
+        })
+    }
+
     /// Preference of Language
+    #[deprecated(since = "2.2.0", note = "convert to `DataLocale` to access fields")]
     pub const fn language(&self) -> Language {
-        self.language
+        self.to_data_locale_language_priority().language
     }
 
     /// Preference of Region
+    #[deprecated(since = "2.2.0", note = "convert to `DataLocale` to access fields")]
     pub const fn region(&self) -> Option<Region> {
-        self.region
+        self.to_data_locale_region_priority().region
     }
 
     /// Extends the preferences with the values from another set of preferences.
@@ -175,14 +220,14 @@ impl LocalePreferences {
         if let Some(script) = other.script {
             self.script = Some(script);
         }
-        if let Some(region) = other.region {
-            self.region = Some(region);
+        if let Some(sd) = other.region {
+            // Use the other region if it's different, or if it has a subdivision
+            if !sd.suffix.is_unknown() || Some(sd.region) != self.region.map(|sd| sd.region) {
+                self.region = Some(sd);
+            }
         }
         if let Some(variant) = other.variant {
             self.variant = Some(variant);
-        }
-        if let Some(subdivision) = other.subdivision {
-            self.subdivision = Some(subdivision);
         }
         if let Some(region_override) = other.region_override {
             self.region_override = Some(region_override);
@@ -235,7 +280,7 @@ mod tests {
                 region_priority: "en-GB",
             },
             TestCase {
-                input: "en-US-u-sd-gbzzzz",
+                input: "!en-US-u-sd-gbzzzz",
                 language_priority: "en-US",
                 region_priority: "en-US",
             },
@@ -254,10 +299,45 @@ mod tests {
                 language_priority: "en-US-u-sd-ustx",
                 region_priority: "en-GB-u-sd-gbeng",
             },
+            TestCase {
+                input: "!en-TR-u-rg-true",
+                language_priority: "en-TR",
+                region_priority: "en-TR",
+            },
+            TestCase {
+                input: "!en-US-u-sd-tx",
+                language_priority: "en-US",
+                region_priority: "en-US",
+            },
+            TestCase {
+                input: "!en-GB-u-rg-tx",
+                language_priority: "en-GB",
+                region_priority: "en-GB",
+            },
+            TestCase {
+                input: "en-US-u-rg-eng",
+                language_priority: "en-US",
+                region_priority: "en-EN-u-sd-eng",
+            },
+            TestCase {
+                // All alphabetic values of `-u-sd` are valid, as they are of length 3+, so there's
+                // always at least a one-character subdivision. Numeric regions can lead to invalid
+                // values though.
+                input: "!en-001-u-sd-001",
+                language_priority: "en-001",
+                region_priority: "en-001",
+            },
         ];
         for test_case in test_cases.iter() {
-            let locale = Locale::try_from_str(test_case.input).unwrap();
-            let prefs = LocalePreferences::from(&locale);
+            let prefs = if let Some(locale) = test_case.input.strip_prefix("!") {
+                LocalePreferences::from_locale_strict(&Locale::try_from_str(locale).unwrap())
+                    .expect_err(locale)
+            } else {
+                LocalePreferences::from_locale_strict(
+                    &Locale::try_from_str(test_case.input).unwrap(),
+                )
+                .expect(test_case.input)
+            };
             assert_eq!(
                 prefs.to_data_locale_language_priority().to_string(),
                 test_case.language_priority,
