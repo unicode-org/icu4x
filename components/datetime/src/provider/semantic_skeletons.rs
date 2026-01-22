@@ -315,7 +315,7 @@ size_test!(GluePattern, glue_pattern_v1_size, 24);
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::semantic_skeletons))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct GluePattern<'data> {
