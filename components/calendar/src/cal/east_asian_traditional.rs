@@ -1232,7 +1232,7 @@ mod test {
             let chinese = Date::from_rata_die(rata_die, ChineseTraditional::new());
             assert_eq!(
                 case.expected_year,
-                chinese.extended_year(),
+                chinese.year().extended_year(),
                 "Chinese from RD failed, case: {case:?}"
             );
             assert_eq!(
@@ -1895,21 +1895,21 @@ mod test {
                     'outer: for long in [false, true] {
                         for (start_year, start_month, end_year, end_month, by) in [
                             (
-                                reference_year_end.extended_year(),
+                                reference_year_end.year().extended_year(),
                                 reference_year_end.month().number(),
-                                year_1900_start.extended_year(),
+                                year_1900_start.year().extended_year(),
                                 year_1900_start.month().number(),
                                 -1,
                             ),
                             (
-                                reference_year_end.extended_year(),
+                                reference_year_end.year().extended_year(),
                                 reference_year_end.month().number(),
-                                year_2035_end.extended_year(),
+                                year_2035_end.year().extended_year(),
                                 year_2035_end.month().number(),
                                 1,
                             ),
                             (
-                                year_1900_start.extended_year(),
+                                year_1900_start.year().extended_year(),
                                 year_1900_start.month().number(),
                                 -10000,
                                 1,
