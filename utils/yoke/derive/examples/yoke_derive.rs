@@ -165,6 +165,27 @@ where
     x: T,
 }
 
+#[derive(Yokeable)]
+struct BoundFn<'a>(&'a (), for<'b> fn(&'b ()));
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualBoundFn<'a>(&'a (), for<'b> fn(&'b ()));
+
+#[derive(Yokeable)]
+struct Invariant<'a, T>(&'a mut T);
+
+#[derive(Yokeable)]
+struct InvariantStatic<'a> {
+    field: Invariant<'a, &'static str>,
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualInvariantStatic<'a> {
+    field: Invariant<'a, &'static str>,
+}
+
 // TODO(#4119): Make this example compile
 /*
 #[derive(Yokeable)]
@@ -190,6 +211,8 @@ struct AssertYokeable {
     maybe_sized_wrap: Yoke<MaybeSizedWrap<usize, usize, str>, Box<[u8]>>,
     trait_bounds: Yoke<WithTraitBounds<u32>, Box<[u8]>>,
     trait_bounds_where: Yoke<WithTraitBoundsInWhere<u32>, Box<[u8]>>,
+    bound_fn: Yoke<BoundFn<'static>, Box<[u8]>>,
+    invariant_static: Yoke<InvariantStatic<'static>, Box<[u8]>>,
     // TODO(#4119): Make this example compile
     // maybe_sized_wrap_with_lt: Yoke<MaybeSizedWrapWithLifetime<'static, usize, usize, str>, Box<[u8]>>,
 }
@@ -211,6 +234,8 @@ struct AssertYokeableManual {
     maybe_sized_wrap: Yoke<ManualMaybeSizedWrap<usize, usize, str>, Box<[u8]>>,
     trait_bounds: Yoke<ManualWithTraitBounds<u32>, Box<[u8]>>,
     trait_bounds_where: Yoke<ManualWithTraitBoundsInWhere<u32>, Box<[u8]>>,
+    bound_fn: Yoke<ManualBoundFn<'static>, Box<[u8]>>,
+    invariant_static: Yoke<ManualInvariantStatic<'static>, Box<[u8]>>,
 }
 
 fn main() {}
