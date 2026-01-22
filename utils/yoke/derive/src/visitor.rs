@@ -5,8 +5,8 @@
 //! Visitor for determining whether a type has type and non-static lifetime parameters
 //! (except for type macros, which are largely ignored).
 //!
-//! Note that poor handling of type macros in `derive(YokeableFixedDerive)` only results in
-//! compiler errors, not unsoundness.
+//! Note that poor handling of type macros in `derive(Yokeable)` can only result in
+//! compiler errors at worst, not unsoundness.
 
 use std::collections::HashSet;
 use syn::visit::{visit_lifetime, visit_type, visit_type_path, Visit};

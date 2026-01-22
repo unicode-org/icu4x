@@ -80,7 +80,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .filter(|p| matches!(p, WherePredicate::Type(_)))
         .collect::<Vec<_>>();
     // We require all type parameters be 'static, otherwise
-    // the Yokeable impl becomes really unweildy to generate safely
+    // the Yokeable impl becomes really unwieldy to generate safely
     let static_bounds: Vec<WherePredicate> = typarams
         .iter()
         .map(|ty| parse_quote!(#ty: 'static))
