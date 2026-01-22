@@ -26,8 +26,6 @@ pub mod semantic_skeletons;
 pub mod skeleton;
 pub mod time_zones;
 
-pub use packed_pattern::*;
-
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data

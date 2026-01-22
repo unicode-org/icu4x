@@ -118,7 +118,7 @@ size_test!(PackedPatterns, packed_skeleton_data_size, 32);
 /// [`YearStyle::Auto`]: crate::options::YearStyle::Auto
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::packed_pattern))]
 pub struct PackedPatterns<'data> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
