@@ -65,27 +65,27 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
         },
         BenchDataContent {
             file_name: "Carroll-11-de".to_owned(),
-            pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/Carroll-11-de.txt"
-            )))),
+            pairs: decompose_data(
+                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/Carroll-11-de.txt"))),
+            ),
         },
         BenchDataContent {
             file_name: "Carroll-11-el".to_owned(),
-            pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/Carroll-11-el.txt"
-            )))),
+            pairs: decompose_data(
+                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/Carroll-11-el.txt"))),
+            ),
         },
         BenchDataContent {
             file_name: "Carroll-11-es".to_owned(),
-            pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/Carroll-11-es.txt"
-            )))),
+            pairs: decompose_data(
+                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/Carroll-11-es.txt"))),
+            ),
         },
         BenchDataContent {
             file_name: "Carroll-11-fr".to_owned(),
-            pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/Carroll-11-fr.txt"
-            )))),
+            pairs: decompose_data(
+                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/Carroll-11-fr.txt"))),
+            ),
         },
         BenchDataContent {
             file_name: "TestRandomWordsUDHR_he".to_owned(),
@@ -95,15 +95,15 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
         },
         BenchDataContent {
             file_name: "Carroll-11-pl".to_owned(),
-            pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/Carroll-11-pl.txt"
-            )))),
+            pairs: decompose_data(
+                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/Carroll-11-pl.txt"))),
+            ),
         },
         BenchDataContent {
             file_name: "Carroll-11-ru".to_owned(),
-            pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/Carroll-11-ru.txt"
-            )))),
+            pairs: decompose_data(
+                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/Carroll-11-ru.txt"))),
+            ),
         },
         BenchDataContent {
             file_name: "TestRandomWordsUDHR_th".to_owned(),
@@ -116,9 +116,9 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
         },
         BenchDataContent {
             file_name: "Carroll-11-tr".to_owned(),
-            pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/Carroll-11-tr.txt"
-            )))),
+            pairs: decompose_data(
+                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/Carroll-11-tr.txt"))),
+            ),
         },
         BenchDataContent {
             file_name: "udhr_vie".to_owned(),
