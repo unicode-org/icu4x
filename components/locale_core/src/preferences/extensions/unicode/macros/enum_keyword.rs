@@ -6,10 +6,11 @@
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __enum_keyword_inner {
-    ($name:ident, $variant:ident) => {
+    ($key:expr, $name:ident, $variant:ident) => {
         $name::$variant
     };
-    ($name:ident, $variant:ident, $s:ident, $v2:ident, $($subk:expr => $subv:ident),*) => {{
+    ($key:expr, $name:ident, $variant:ident, $s:ident, $v2:ident, $($subk:expr => $subv:ident),*) => {{
+        const _: () = assert!(!matches!($key.as_bytes(), b"true"), "true value not allowed with second level");
         let sv = $s.get_subtag(1).and_then(|st| {
             match st.as_str() {
                 $(
@@ -132,7 +133,7 @@ macro_rules! __enum_keyword {
 
             fn try_from(s: &$crate::extensions::unicode::Value) -> Result<Self, Self::Error> {
                 let subtag = s.get_subtag(0)
-                                // No subtag is equivalent to the "true" value.
+                                // The empty `Value` is equivalent to "true"
                                 .unwrap_or(&$crate::subtags::subtag!("true"));
                 #[allow(unused_imports)]
                 use $crate::extensions::unicode::value;
@@ -143,7 +144,7 @@ macro_rules! __enum_keyword {
                 Ok(match subtag.as_str() {
                     $(
                         $key => {
-                            $crate::__enum_keyword_inner!($name, $variant$(, s, $v2, $($subk => $subv),*)?)
+                            $crate::__enum_keyword_inner!($key, $name, $variant$(, s, $v2, $($subk => $subv),*)?)
                         }
                     )*
                     _ => {
@@ -217,6 +218,21 @@ macro_rules! __enum_keyword {
     };
 }
 pub use __enum_keyword as enum_keyword;
+
+/// ```compile_error
+/// use icu_locale_core::preferences::extensions::unicode::enum_keyword;
+///
+/// enum_keyword!(DummySubKeyword { Standard, Rare });
+///
+/// icu_locale_core::preferences::extensions::unicode::enum_keyword!(DummyKeyword {
+///     ("default" => Default),
+///     ("true" => Sub(DummySubKeyword) {
+///         ("standard" => Standard),
+///         ("rare" => Rare)
+///     })
+/// }, "dk");
+/// ```
+fn _nested_true() {}
 
 #[cfg(test)]
 mod tests {
