@@ -144,12 +144,12 @@ use zerovec::{zeroslice, ZeroSlice};
 // See https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3#commitcomment-164768806
 // for permission to relicense under Unicode-3.0.
 
-#[cfg(all(not(feature = "serde"), feature = "utf16_iter"))]
+#[cfg(not(feature = "serde"))]
 #[inline(always)]
 #[cold]
 fn cold_path() {}
 
-#[cfg(all(not(feature = "serde"), feature = "utf16_iter"))]
+#[cfg(not(feature = "serde"))]
 #[inline(always)]
 pub(crate) fn likely(b: bool) -> bool {
     if b {
@@ -160,7 +160,7 @@ pub(crate) fn likely(b: bool) -> bool {
     }
 }
 
-#[cfg(all(not(feature = "serde"), feature = "utf16_iter"))]
+#[cfg(not(feature = "serde"))]
 #[inline(always)]
 pub(crate) fn unlikely(b: bool) -> bool {
     if b {
@@ -174,14 +174,14 @@ pub(crate) fn unlikely(b: bool) -> bool {
 // End import from https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3 .
 
 /// No-op for typed trie case.
-#[cfg(all(feature = "serde", feature = "utf16_iter"))]
+#[cfg(feature = "serde")]
 #[inline(always)]
 fn likely(b: bool) -> bool {
     b
 }
 
 /// No-op for typed trie case.
-#[cfg(all(feature = "serde", feature = "utf16_iter"))]
+#[cfg(feature = "serde")]
 #[inline(always)]
 fn unlikely(b: bool) -> bool {
     b
@@ -276,6 +276,7 @@ fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bo
 /// Checks if the trie signifies a non-decomposing non-starter.
 ///
 /// See trie-value-format.md
+#[cfg(feature = "utf16_iter")]
 fn trie_value_indicates_non_decomposing_non_starter(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFF00) == 0xD800
 }
