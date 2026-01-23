@@ -258,7 +258,7 @@ mod tests {
 
         let v = unicode::Value::from_str("foo").unwrap();
         let dk = DummyKeyword::try_from(&v);
-        assert!(dk.is_err());
+        dk.unwrap_err();
 
         assert_eq!(DummyKeyword::Standard.as_str(), "standard");
     }
@@ -287,7 +287,7 @@ mod tests {
 
         let v = unicode::Value::from_str("foo").unwrap();
         let dk = DummyKeyword::try_from(&v);
-        assert!(dk.is_err());
+        dk.unwrap_err();
 
         assert_eq!(DummyKeyword::Standard.as_str(), "standard");
     }
@@ -316,7 +316,7 @@ mod tests {
 
         let v = unicode::Value::from_str("foo").unwrap();
         let dk = DummyKeyword::try_from(&v);
-        assert!(dk.is_err());
+        dk.unwrap_err();
 
         let v = unicode::Value::from_str("sub-standard").unwrap();
         let dk = DummyKeyword::try_from(&v).unwrap();
@@ -329,9 +329,8 @@ mod tests {
         assert_eq!(unicode::Value::from(dk), v);
 
         let v = unicode::Value::from_str("sub-foo").unwrap();
-        let dk = DummyKeyword::try_from(&v).unwrap();
-        assert_eq!(dk, DummyKeyword::Sub(None));
-        assert_eq!(unicode::Value::from(dk), unicode::value!("sub"));
+        let dk = DummyKeyword::try_from(&v);
+        dk.unwrap_err();
 
         assert_eq!(
             DummyKeyword::Sub(Some(DummySubKeyword::Rare)).as_str(),
