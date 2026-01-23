@@ -273,6 +273,13 @@ fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bo
     (trie_value & 0x3FFFFF00) == 0xD900
 }
 
+/// Checks if the trie signifies a non-decomposing non-starter.
+///
+/// See trie-value-format.md
+fn trie_value_indicates_non_decomposing_non_starter(trie_value: u32) -> bool {
+    (trie_value & 0x3FFFFF00) == 0xD800
+}
+
 /// Checks if a trie value signifies a character whose decomposition
 /// starts with a non-starter.
 ///
@@ -2721,10 +2728,83 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         if likely(starter_and_decomposes_to_self_impl(trie_value)) {
                             continue 'fast;
                         }
+
                         // We might now be looking at a surrogate.
                         // The loop is only broken out of as goto forward
                         #[expect(clippy::never_loop)]
                         'surrogateloop: loop {
+
+                            // Try to handle a single BMP combining mark followed by a starter in a way
+                            // that avoids `decomposition.buffer`. Crucial for perf competitiveness with ICU4C.
+
+                            if likely(trie_value_indicates_non_decomposing_non_starter(trie_value)) {
+                                if likely(ptr != end) {
+                                    // SAFETY: We just checked that `ptr` has not reached `end`.
+                                    // `ptr` always advances by one, and we always have a check
+                                    // per advancement.
+                                    let after_mark_code_unit = unsafe { *ptr };
+                                    // SAFETY: Since `ptr` hadn't reached `end`, yet, advancing
+                                    // by one points to the same allocation or to immediately
+                                    // after, which is OK.
+                                    ptr = unsafe { ptr.add(1) };
+                                    let after_mark_trie_value = decomposition.delegate.trie().bmp(after_mark_code_unit);
+                                    if likely(starter_and_decomposes_to_self_impl(after_mark_trie_value)) {
+                                        continue 'fast;
+                                    }
+                                    if unlikely(in_inclusive_range16(after_mark_code_unit, 0xD800, 0xDFFF)) {
+                                        // We have a surrogate. Too complicated to deal with, because
+                                        // it might be the first half of a combining mark.
+                                        // Pretend we didn't see it.
+
+                                        // SAFETY: We just incremented `ptr`, so decrementing it
+                                        // has to stay within the allocation.
+                                        ptr = unsafe { ptr.sub(1) };
+                                        break 'surrogateloop;
+                                    }
+                                    if likely(!decomposition_starts_with_non_starter(after_mark_trie_value)) {
+                                        // We have a decomposing starter.
+
+                                        // No need to sync `upcoming_code_unit`, since nothing reads it below.
+                                        upcoming32 = u32::from(after_mark_code_unit);
+                                        trie_value = after_mark_trie_value;
+                                        break 'surrogateloop;
+                                    }
+                                    // We have another combining mark.
+                                    // We put the first combining mark, which we know doesn't decompose,
+                                    // directly into the buffer. We put the second one, which might decompose,
+                                    // into `decomposition.pending` for `gather_and_sort_combining` to deal
+                                    // with.
+
+                                    // Our belief that `upcoming32` is not a surrogate is based on trie data,
+                                    // which might be GIGO.
+                                    let upcoming = char_from_u32(upcoming32);
+
+                                    debug_assert!(decomposition.buffer.is_empty());
+
+                                    // Narrowing `trie_value` to `u8` is OK, because we already checked
+                                    // `decomposition_starts_with_non_starter`.
+                                    debug_assert!(trie_value_has_ccc(trie_value));
+                                    decomposition.buffer.push(CharacterAndClass::new(upcoming, CanonicalCombiningClass::from_icu4c_value(trie_value as u8)));
+
+                                    // Sync with main iterator
+                                    // SAFETY: `ptr` and `end` have been derived from the same allocation
+                                    // and `ptr` is never greater than `end`.
+                                    decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars_with_trie(decomposition.delegate.trie());
+                                    // Let this trie value to be reprocessed in case it is
+                                    // one of the rare decomposing ones.
+                                    // SAFETY: We checked above that we don't have surrogate.
+                                    let after_mark_char = unsafe { char::from_u32_unchecked(u32::from(after_mark_code_unit))};
+                                    decomposition.pending = Some(CharacterAndTrieValue::new(after_mark_char, after_mark_trie_value));
+                                    decomposition.gather_and_sort_combining(0);
+                                    continue 'outer;
+                                }
+                                // End of stream
+                                sink.write_slice(pending_slice)?;
+                                return Ok(());
+                            }
+
+                            // End skipping over single combining mark
+
                             // LLVM's optimizations are incredibly brittle for the code _above_,
                             // and using `likely` _below_ without using it _above_ helps!
                             // What a massive sink of developer time!
