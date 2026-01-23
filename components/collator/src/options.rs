@@ -18,10 +18,17 @@ use crate::{
 /// The collation strength that indicates how many levels to compare. The primary
 /// level considers base letters, i.e. 'a' and 'b' are unequal but 'E' and 'é'
 /// are equal, with further levels dealing with distinctions such as accents
-/// and case. Note that what constitutes a base letter depends on the language and
+/// and case.
+///
+/// Note that what constitutes a base letter depends on the language and
 /// not on Unicode character properties. For example, 'ö' is analyzed as a base letter
 /// for various languages (e.g. Estonian, Finnish, Icelandic, Swedish, and Turkish),
 /// so it is distinct from 'o' even on the primary level in such languages.
+/// Inputs that are equal in fold case (as tailored for e.g. Turkish) are expected
+/// to be equal on the primary level. For example, "ß" is primary-equal with "ss".
+/// Characters that are graphically ligature-like can be primary-equal with what
+/// they appear to be ligatures of. For example, in the root collation (but not
+/// in e.g. Danish and Norwegian) "æ" is primary-equal with "ae".
 ///
 /// If an earlier level isn't equal, the earlier level is decisive.
 /// If the result is equal on a level, but the strength is higher,
