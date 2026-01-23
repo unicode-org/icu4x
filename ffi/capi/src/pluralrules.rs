@@ -192,4 +192,98 @@ pub mod ffi {
             )
         }
     }
+    #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges, Struct)]
+    #[diplomat::opaque]
+    pub struct PluralRulesWithRanges(icu_plurals::PluralRulesWithRanges<icu_plurals::PluralRules>);
+
+    impl PluralRulesWithRanges {
+        /// Construct an [`PluralRulesWithRanges`] for the given locale, for cardinal numbers, using compiled data.
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new_cardinal, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::demo(default_constructor)]
+        pub fn create_cardinal(
+            locale: &Locale,
+        ) -> Result<Box<PluralRulesWithRanges>, DataError> {
+            let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
+            Ok(Box::new(PluralRulesWithRanges(
+                icu_plurals::PluralRulesWithRanges::try_new_cardinal(prefs)?,
+            )))
+        }
+
+        /// Construct an [`PluralRulesWithRanges`] for the given locale, for cardinal numbers, using a particular data source.
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new_cardinal, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_cardinal_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<PluralRulesWithRanges>, DataError> {
+            let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
+            Ok(Box::new(PluralRulesWithRanges(
+                icu_plurals::PluralRulesWithRanges::try_new_cardinal_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                )?,
+            )))
+        }
+
+        /// Construct an [`PluralRulesWithRanges`] for the given locale, for ordinal numbers, using compiled data.
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new_ordinal, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ordinal")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_ordinal(
+            locale: &Locale,
+        ) -> Result<Box<PluralRulesWithRanges>, DataError> {
+            let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
+            Ok(Box::new(PluralRulesWithRanges(
+                icu_plurals::PluralRulesWithRanges::try_new_ordinal(prefs)?,
+            )))
+        }
+
+        /// Construct an [`PluralRulesWithRanges`] for the given locale, for ordinal numbers, using a particular data source.
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new_ordinal, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ordinal_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_ordinal_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<PluralRulesWithRanges>, DataError> {
+            let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
+            Ok(Box::new(PluralRulesWithRanges(
+                icu_plurals::PluralRulesWithRanges::try_new_ordinal_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                )?,
+            )))
+        }
+
+        /// Get the category for a range of numbers represented as operands
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::category_for_range, FnInStruct)]
+        pub fn category_for_range(
+            &self,
+            start: &PluralOperands,
+            end: &PluralOperands,
+        ) -> PluralCategory {
+            self.0.category_for_range(start.0, end.0).into()
+        }
+
+        /// Get the category for a range from the categories of its endpoints
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::resolve_range, FnInStruct)]
+        pub fn resolve_range(
+            &self,
+            start: PluralCategory,
+            end: PluralCategory,
+        ) -> PluralCategory {
+            self.0.resolve_range(start.into(), end.into()).into()
+        }
+    }
 }
