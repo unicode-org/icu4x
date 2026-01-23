@@ -36,20 +36,24 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
+        let numbering_system = if req.id.marker_attributes.is_empty() {
+            numbers_resource
+                .main
+                .value
+                .numbers
+                .default_numbering_system
+                .as_str()
+        } else {
+            req.id.marker_attributes.as_str()
+        };
+
         let Some(compact_patterns) = numbers_resource
             .main
             .value
             .numbers
             .numsys_data
             .currency_patterns
-            .get(
-                numbers_resource
-                    .main
-                    .value
-                    .numbers
-                    .default_numbering_system
-                    .as_str(),
-            )
+            .get(numbering_system)
             .and_then(|patterns| patterns.compact_short.as_ref())
             .map(|short_compact| &short_compact.standard.patterns)
         else {
@@ -217,36 +221,50 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
 impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let cldr = self.cldr()?;
-        cldr.numbers()
-            .list_locales()?
-            .map(DataIdentifierCow::from_locale)
-            .filter_map(|id| {
-                let numbers_resource = match cldr
-                    .numbers()
-                    .read_and_parse::<cldr_serde::numbers::Resource>(&id.locale, "numbers.json")
-                {
-                    Ok(r) => r,
-                    Err(e) => return Some(Err(e)),
-                };
+        let mut r = self.iter_ids_for_numbers_with_locales()?;
+        // TODO(#7493): This filtering might not be needed
+        let mut err = None;
+        r.retain(|id| {
+            if err.is_some() {
+                return true;
+            }
+            let numbers_resource = match cldr
+                .numbers()
+                .read_and_parse::<cldr_serde::numbers::Resource>(&id.locale, "numbers.json")
+            {
+                Ok(r) => r,
+                Err(e) => {
+                    err = Some(e);
+                    return true;
+                }
+            };
 
+            let numbering_system = if id.marker_attributes.is_empty() {
                 numbers_resource
                     .main
                     .value
                     .numbers
-                    .numsys_data
-                    .currency_patterns
-                    .get(
-                        numbers_resource
-                            .main
-                            .value
-                            .numbers
-                            .default_numbering_system
-                            .as_str(),
-                    )
-                    .and_then(|patterns| patterns.compact_short.as_ref())
-                    .map(|_| Ok(id))
-            })
-            .collect::<Result<_, _>>()
+                    .default_numbering_system
+                    .as_str()
+            } else {
+                id.marker_attributes.as_str()
+            };
+
+            numbers_resource
+                .main
+                .value
+                .numbers
+                .numsys_data
+                .currency_patterns
+                .get(numbering_system)
+                .and_then(|patterns| patterns.compact_short.as_ref())
+                .is_some()
+        });
+        if let Some(e) = err {
+            Err(e)
+        } else {
+            Ok(r)
+        }
     }
 }
 
