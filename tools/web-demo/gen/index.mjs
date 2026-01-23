@@ -1663,6 +1663,35 @@ let termini = Object.assign({
         ]
     },
 
+    "PluralRulesWithRanges.categoryForRange": {
+        func: (selfLocaleName, startXV, endXV) => icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).categoryForRange(icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(startXV)), icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(endXV))),
+        // For avoiding webpacking minifying issues:
+        funcName: "PluralRulesWithRanges.categoryForRange",
+        expr: (selfLocaleName, startXV, endXV) => "icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).categoryForRange(icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(startXV)), icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(endXV)))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])startXV([,\) \n])/, '$1' + startXV + '$2').replace(/([\( ])endXV([,\) \n])/, '$1' + endXV + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "start_x_v",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "end_x_v",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "EmojiSetData.containsStr": {
         func: (s) => icu.EmojiSetData.createBasic().containsStr(s),
         // For avoiding webpacking minifying issues:

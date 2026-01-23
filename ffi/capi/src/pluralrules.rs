@@ -284,7 +284,7 @@ pub mod ffi {
         #[test]
         fn test_plural_rules_with_ranges() {
             let locale =
-                crate::unstable::locale_core::ffi::Locale(icu_locale_core::locale!("en").into());
+                crate::unstable::locale_core::ffi::Locale(icu_locale_core::locale!("en"));
             let rules = PluralRulesWithRanges::create_cardinal(&locale).unwrap();
 
             let start = PluralOperands::from_int64(1);
