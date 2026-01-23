@@ -1,4 +1,132 @@
 {
-  "standard": [],
+  "standard": [
+    {
+      "sized": 3,
+      "variable": {
+        "few": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " آلاف "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " ألف "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 4,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " ألف "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " مليون "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " مليار "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " ترليون "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    }
+  ],
   "alpha_next_to_number": []
 }
