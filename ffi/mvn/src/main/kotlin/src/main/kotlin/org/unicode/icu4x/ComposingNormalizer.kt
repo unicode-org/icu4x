@@ -35,7 +35,7 @@ class ComposingNormalizer internal constructor (
         internal val lib: ComposingNormalizerLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new ComposingNormalizer instance for NFC using compiled data.
+        /** Construct a new `ComposingNormalizer` instance for NFC using compiled data.
         *
         *See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
         */
@@ -50,7 +50,7 @@ class ComposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new ComposingNormalizer instance for NFC using a particular data source.
+        /** Construct a new `ComposingNormalizer` instance for NFC using a particular data source.
         *
         *See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
         */
@@ -69,7 +69,7 @@ class ComposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new ComposingNormalizer instance for NFKC using compiled data.
+        /** Construct a new `ComposingNormalizer` instance for NFKC using compiled data.
         *
         *See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
         */
@@ -84,7 +84,7 @@ class ComposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new ComposingNormalizer instance for NFKC using a particular data source.
+        /** Construct a new `ComposingNormalizer` instance for NFKC using a particular data source.
         *
         *See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
         */

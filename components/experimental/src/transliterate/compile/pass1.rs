@@ -18,7 +18,7 @@
 //!   direction, the source is on the left and the target is on the right, and vice versa for
 //!   the _reverse_ direction.
 //! * "Special matchers" are non-literal items that can appear on the source side of a rule.
-//!   This includes, e.g., UnicodeSets and quantifiers.
+//!   This includes, e.g., `UnicodeSets` and quantifiers.
 //! * "Special replacers" are non-literal items that can appear on the target side of a rule.
 //!   This includes, e.g., function calls and back references.
 //! * "Special constructs" are just any non-literal rule item.
@@ -26,7 +26,7 @@
 //! # Conversion rule encoding
 //!
 //! Conversion rules are encoded using `str`s, and private use code points are used to represent
-//! the special constructs that can appear in a conversion rule (UnicodeSets, quantifiers, ...).
+//! the special constructs that can appear in a conversion rule (`UnicodeSets`, quantifiers, ...).
 //! This works as follows:
 //! * We use PUP (15), code points U+F0000 to U+FFFFD (inclusive)
 //! * A private use code point simply encodes an integer, obtained by subtracting U+F0000 from it
@@ -74,7 +74,7 @@
 //!
 //! Only special constructs for the current direction contribute to the `VZV` lengths,
 //! i.e., the rule `a <> [a-z] { b` will not increment the size of the
-//! `VZV` for UnicodeSets if the current direction is `forward`, but it will if the current
+//! `VZV` for `UnicodeSets` if the current direction is `forward`, but it will if the current
 //! direction is `reverse` (this is because contexts on the target side of a rule are ignored).
 //!
 //! Similarly, only recursive transliterators and variables actually used for this direction are

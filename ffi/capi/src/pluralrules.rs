@@ -145,7 +145,7 @@ pub mod ffi {
             Box::new(PluralOperands(icu_plurals::PluralOperands::from(i)))
         }
 
-        /// Construct from a FixedDecimal
+        /// Construct from a `FixedDecimal`
         ///
         /// Retains at most 18 digits each from the integer and fraction parts.
         #[cfg(feature = "decimal")]

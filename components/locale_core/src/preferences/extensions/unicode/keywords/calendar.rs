@@ -24,7 +24,7 @@ enum_keyword!(
         Rgsa
 });
 
-/// Handles aliases present in `v`. If found, returns a CalendarAlgorithm, else returns None
+/// Handles aliases present in `v`. If found, returns a [`CalendarAlgorithm`], else returns None
 fn handle_aliases(v: &Value) -> Option<CalendarAlgorithm> {
     if *v == value!("islamicc") {
         return Some(CalendarAlgorithm::Hijri(Some(

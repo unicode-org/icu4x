@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+// #![cfg_attr(
+//     not(test),
+//     deny(
+//         clippy::indexing_slicing,
+//         clippy::unwrap_used,
+//         clippy::expect_used,
+//         clippy::panic,
+//     )
+// )]
+#![warn(missing_docs)]
+
 //! `icu_provider_source` defines [`SourceDataProvider`], the authorative ICU4X [`DataProvider`] that produces data from
 //! CLDR and ICU sources.
 //!
@@ -133,7 +146,7 @@ impl SourceDataProvider {
     #[expect(clippy::new_without_default)]
     pub fn new() -> Self {
         // Singleton so that all instantiations share the same cache.
-        static SINGLETON: std::sync::OnceLock<SourceDataProvider> = std::sync::OnceLock::new();
+        static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
         SINGLETON
             .get_or_init(|| {
                 Self::new_custom()
@@ -431,7 +444,7 @@ fn test_check_req() {
     }
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
-    impl crate::IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
+    impl IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
         fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
             Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
         }

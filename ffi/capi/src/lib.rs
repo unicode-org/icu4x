@@ -11,12 +11,14 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        // Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
-        clippy::exhaustive_enums,
-        // Structs should be exhaustive, as they are exhaustive in C/C++
-        // Debug is not required as there is no stable Rust API
     )
 )]
+// Debug is not required as there is no stable Rust API
+#![allow(missing_debug_implementations)]
+// Structs should be exhaustive, as they are exhaustive in C/C++
+// Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
+#![allow(clippy::exhaustive_structs)]
+// #![warn(missing_docs)] // todo
 // Diplomat limitations
 #![allow(
     clippy::needless_lifetimes,
@@ -25,6 +27,7 @@
 )]
 // libc is behind a negative feature
 #![allow(unused_crate_dependencies)]
+#![allow(unused_qualifications)]
 
 //! This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! C and C++ headers. ICU4X is also available for JavaScript/TypeScript through [`npm`](https://www.npmjs.com/package/icu), and for

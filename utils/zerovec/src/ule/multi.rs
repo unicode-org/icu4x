@@ -5,6 +5,8 @@
 use super::*;
 use crate::varzerovec::lengthless::VarZeroLengthlessSlice;
 use crate::vecs::VarZeroVecFormat;
+#[cfg(doc)]
+use crate::VarZeroSlice;
 use core::{fmt, mem};
 
 /// This type is used by the custom derive to represent multiple [`VarULE`]
@@ -12,9 +14,9 @@ use core::{fmt, mem};
 /// to use this type directly, use [`Tuple2VarULE`](crate::ule::tuplevar::Tuple2VarULE) etc instead.
 ///
 /// Logically, consider it to be `(, , , ..)`
-/// where `` etc are potentially different [`VarULE`] types.
+/// where ` ` etc are potentially different [`VarULE`] types.
 ///
-/// Internally, it is represented by a VarZeroSlice without the length part.
+/// Internally, it is represented by a [`VarZeroSlice`] without the length part.
 #[derive(PartialEq, Eq)]
 #[repr(transparent)]
 pub struct MultiFieldsULE<const LEN: usize, Format: VarZeroVecFormat>(
@@ -33,7 +35,7 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
         .expect("Too many bytes to encode") as usize
     }
 
-    /// Construct a partially initialized MultiFieldsULE backed by a mutable byte buffer
+    /// Construct a partially initialized `MultiFieldsULE` backed by a mutable byte buffer
     pub fn new_from_lengths_partially_initialized<'a>(
         lengths: [usize; LEN],
         output: &'a mut [u8],
@@ -68,7 +70,7 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
         value.encode_var_ule_write(self.0.get_bytes_at_mut(LEN as u32, idx))
     }
 
-    /// Validate field at `index` to see if it is a valid `T` VarULE type
+    /// Validate field at `index` to see if it is a valid `T` [`VarULE`] type
     ///
     /// # Safety
     ///
@@ -83,7 +85,7 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
     /// # Safety
     ///
     /// - `index` must be in range
-    /// - Element at `index` must have been created with the VarULE type T
+    /// - Element at `index` must have been created with the [`VarULE`] type T
     #[inline]
     pub unsafe fn get_field<T: VarULE + ?Sized>(&self, index: usize) -> &T {
         T::from_bytes_unchecked(self.0.get_unchecked(LEN as u32, index))
@@ -92,7 +94,7 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
     /// Construct from a byte slice
     ///
     /// # Safety
-    /// - byte slice must be a valid VarZeroLengthlessSlice<[u8], Format> with length LEN
+    /// - byte slice must be a valid `VarZeroLengthlessSlice<[u8], Format>` with length `LEN`
     #[inline]
     pub unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &Self is transparent over &VZS<..> with the right format
@@ -110,7 +112,7 @@ impl<const LEN: usize, Format: VarZeroVecFormat> fmt::Debug for MultiFieldsULE<L
         write!(f, "MultiFieldsULE<{LEN}>({:?})", self.0.as_bytes())
     }
 }
-/// This lets us conveniently use the EncodeAsVarULE functionality to create
+/// This lets us conveniently use the `EncodeAsVarULE` functionality to create
 /// `VarZeroVec<[u8]>`s that have the right amount of space for elements
 /// without having to duplicate any unsafe code
 #[repr(transparent)]
@@ -142,10 +144,10 @@ unsafe impl EncodeAsVarULE<[u8]> for BlankSliceEncoder {
 //  6. All other methods are defaulted
 //  7. `MultiFieldsULE` byte equality is semantic equality (achieved by being transparent over a VarULE type)
 unsafe impl<const LEN: usize, Format: VarZeroVecFormat> VarULE for MultiFieldsULE<LEN, Format> {
-    /// Note: MultiFieldsULE is usually used in cases where one should be calling .validate_field() directly for
-    /// each field, rather than using the regular VarULE impl.
+    /// Note: `MultiFieldsULE` is usually used in cases where one should be calling .`validate_field()` directly for
+    /// each field, rather than using the regular `VarULE` impl.
     ///
-    /// This impl exists so that EncodeAsVarULE can work.
+    /// This impl exists so that `EncodeAsVarULE` can work.
     #[inline]
     fn validate_bytes(slice: &[u8]) -> Result<(), UleError> {
         <VarZeroLengthlessSlice<[u8], Format>>::parse_bytes(LEN as u32, slice).map(|_| ())

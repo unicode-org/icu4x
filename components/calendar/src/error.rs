@@ -346,7 +346,7 @@ impl From<MonthCodeError> for DateFromFieldsError {
 mod inner {
     /// Internal narrow error type for calculating the ECMA reference year
     ///
-    /// Public but unstable because it is used on hijri::Rules
+    /// Public but unstable because it is used on [`hijri::Rules`](crate::cal::hijri::Rules)
     #[derive(Debug, Copy, Clone, PartialEq, Eq)]
     #[allow(missing_docs)] // TODO: fix when graduating
     #[non_exhaustive]

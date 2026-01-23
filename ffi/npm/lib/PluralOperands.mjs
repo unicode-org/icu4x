@@ -87,7 +87,7 @@ export class PluralOperands {
     }
 
     /**
-     * Construct from a FixedDecimal
+     * Construct from a `FixedDecimal`
      *
      * Retains at most 18 digits each from the integer and fraction parts.
      */

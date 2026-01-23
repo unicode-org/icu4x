@@ -11,7 +11,7 @@ use icu_collections::codepointtrie::{CodePointTrie, CodePointTrieHeader};
 
 use zerovec::ZeroVec;
 
-use core::{mem, slice};
+use core::slice;
 
 enum UMutableCPTrie {}
 
@@ -159,7 +159,7 @@ where
     // safety: based on the trie width used we expect (ptr, dataLength) to be valid for the correct
     // ptr type. The ptr types are already strongly typed, giving the right slice type.
     let data_vec: Result<Vec<T>, _> = unsafe {
-        match mem::size_of::<T::ULE>() {
+        match size_of::<T::ULE>() {
             1 => slice::from_raw_parts(trie.data.ptr8, data_length)
                 .iter()
                 .map(|x| TrieValue::try_from_u32((*x).into()))

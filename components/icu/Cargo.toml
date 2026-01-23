@@ -172,3 +172,5 @@ required-features = ["serde"]
 name = "elevator_floors"
 required-features = ["serde"]
 
+[lints]
+workspace = true
