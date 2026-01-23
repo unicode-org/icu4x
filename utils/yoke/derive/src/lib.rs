@@ -21,14 +21,14 @@ mod lifetimes;
 mod visitor;
 
 use proc_macro::TokenStream;
-use proc_macro2::{Span, TokenStream as TokenStream2};
+use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::ext::IdentExt as _;
 use syn::spanned::Spanned;
-use syn::{DeriveInput, GenericParam, Ident, Lifetime, WherePredicate, parse_macro_input, parse_quote};
+use syn::{parse_macro_input, parse_quote, DeriveInput, GenericParam, Ident, WherePredicate};
 use synstructure::Structure;
 
-use self::lifetimes::{ignored_lifetime_ident, replace_lifetime, static_lt};
+use self::lifetimes::{custom_lt, ignored_lifetime_ident, replace_lifetime, static_lt};
 use self::visitor::{
     check_parameter_for_bound_lts, check_type_for_parameters, check_where_clause_for_bound_lts,
     CheckResult,
@@ -137,9 +137,11 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     // This parameter affects `uses_lifetime_param` values of `CheckResult`s and `uses_lt`
     // values of `FieldParamUsage`, but those values only impact the generated code if there
     // is at least one lifetime parameter; therefore, the random ident doesn't matter.
-    let lt_param = input.generics.lifetimes().next().map_or_else(ignored_lifetime_ident, |lt| {
-        lt.lifetime.ident.unraw()
-    });
+    let lt_param = input
+        .generics
+        .lifetimes()
+        .next()
+        .map_or_else(ignored_lifetime_ident, |lt| lt.lifetime.ident.unraw());
     let typarams_env = tybounds
         .iter()
         .filter_map(|param| {
@@ -179,6 +181,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         structure
     };
 
+    // This code creating `field_info` should not be carelessly modified, else it could cause
+    // a panic in a below `expect`.
     for variant_info in structure.variants() {
         for field_binding_info in variant_info.bindings() {
             let field = field_binding_info.ast();
@@ -195,13 +199,17 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     // in order to ensure that `yoke_lt` is correct.
     let (yoke_lt, bound_lt) = {
         let underscores = vec![b'_'; underscores_for_lt];
+        #[expect(clippy::expect_used, reason = "invariant is ensured immediately above")]
         let underscores = String::from_utf8(underscores).expect("_ is ASCII and thus UTF-8");
-        (format!("'{underscores}yoke"), format!("'_{underscores}yoke"))
+        (
+            format!("'{underscores}yoke"),
+            format!("'_{underscores}yoke"),
+        )
     };
     // This is used where the `Yokeable<'a>` trait uses `'a` by default
-    let yoke_lt = Lifetime::new(&yoke_lt, Span::call_site());
+    let yoke_lt = custom_lt(&yoke_lt);
     // This is used where the `Yokeable<'a>` trait uses `'b` by default
-    let bound_lt = Lifetime::new(&bound_lt, Span::call_site());
+    let bound_lt = custom_lt(&bound_lt);
 
     let mut lts = input.generics.lifetimes();
 
@@ -356,6 +364,13 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             let field = field_binding_info.ast();
             let field_binding = &field_binding_info.binding;
 
+            // This invariant is somewhat complicated, but immutable variables, iteration order,
+            // and creating/using one `FieldParamUsage per iteration ensure that `field_info`
+            // has an entry for this field (and it refers to the expected field).
+            #[expect(
+                clippy::expect_used,
+                reason = "See above comment; this should never panic"
+            )]
             let FieldParamUsage { uses_lt, uses_ty } = field_info
                 .next()
                 .expect("fields of an unmutated synstructure::Structure should remain the same");

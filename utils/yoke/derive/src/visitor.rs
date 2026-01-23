@@ -11,8 +11,8 @@
 use std::collections::HashSet;
 use syn::ext::IdentExt as _;
 use syn::visit::{
-    visit_bound_lifetimes, visit_generic_param, visit_lifetime,
-    visit_type, visit_type_path, visit_where_clause, Visit,
+    visit_bound_lifetimes, visit_generic_param, visit_lifetime, visit_type, visit_type_path,
+    visit_where_clause, Visit,
 };
 use syn::{GenericParam, Ident, Lifetime, Type, TypePath, WhereClause};
 
@@ -329,7 +329,9 @@ mod tests {
         let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check.min_underscores_for_yoke_lt, 4);
 
-        let ty = parse_quote!(for<'yoke> fn(for<'_yoke> fn(for<'b> fn(&'b (), &'_yoke (), &'yoke ()))));
+        let ty = parse_quote! {
+            for<'yoke> fn(for<'_yoke> fn(for<'b> fn(&'b (), &'_yoke (), &'yoke ())))
+        };
         let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check.min_underscores_for_yoke_lt, 2);
 
