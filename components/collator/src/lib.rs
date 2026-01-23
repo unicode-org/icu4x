@@ -69,30 +69,31 @@
 //!
 //! The collation strength indicates how many levels to compare. The primary
 //! level considers base letters, i.e. 'a' and 'b' are unequal but 'E' and 'é'
-//! are equal, with further levels dealing with distinctions such as accents
+//! are equal, with higher levels dealing with distinctions such as accents
 //! and case.
 //!
-//! If an earlier level isn't equal, the earlier level is decisive.
-//! If the result is equal on a level, but the strength is higher,
-//! the comparison proceeds to the next level.
+//! If an lower level isn't equal, the lower level is decisive.
+//! If the comparison result is equal on one level, 
+//! but the collator's strength input value is higher than that,
+//! then the collator comparison iteratively proceeds to the next higher level.
 //!
-//! Note that lowering the strength means that more user-perceptible differences
-//! compare as equal. This may make sense when sorting more complex structures
+//! Note that lowering the strength value given to the collator means that more user-perceptible
+//!  differences will compare as equal. This may make sense when sorting more complex structures
 //! where the string to be compared is just one field, and ties between strings
 //! that differ only in case, accent, or similar are resolved by comparing some
 //! secondary field in the larger structure to be sorted.
 //!
-//! However, if the sort is just a string sort without some other field for
+//! Therefore, if the sort is just a string sort without some other field for
 //! resolving ties, lowering the strength means that factors that don't make
 //! sense to the user (such as the order of items prior to sorting with a stable
 //! sort algorithm or the internal details of a sorting algorithm that doesn't
 //! provide the stability property) affect the relative order of strings that
 //! do have user-perceptible differences particularly in accents or case.
 //!
-//! Lowering the strength is less of a perfomance optimization that it may seem
+//! Lowering the strength is less of a perfomance optimization than it may seem
 //! directly from the above description. As described above, in the case
 //! of identical strings to be compared, the algorithm has to work though all
-//! the levels included in the strength without an early exit. However, this
+//! the levels, from primary up to the provided strength value given to collator, without an early exit. However, this
 //! collator implements an identical prefix optimization, which examines the
 //! code units of the strings to be compared to skip the identical prefix before
 //! starting the actual collation algorithm. When the strings to be compared
