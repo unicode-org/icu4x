@@ -21,15 +21,18 @@ mod lifetimes;
 mod visitor;
 
 use proc_macro::TokenStream;
-use proc_macro2::TokenStream as TokenStream2;
+use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
 use syn::ext::IdentExt as _;
 use syn::spanned::Spanned;
-use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, WherePredicate};
+use syn::{DeriveInput, GenericParam, Ident, Lifetime, WherePredicate, parse_macro_input, parse_quote};
 use synstructure::Structure;
 
-use self::lifetimes::{custom_lt, replace_lifetime, static_lt};
-use self::visitor::check_type_for_parameters;
+use self::lifetimes::{ignored_lifetime_ident, replace_lifetime, static_lt};
+use self::visitor::{
+    check_parameter_for_bound_lts, check_type_for_parameters, check_where_clause_for_bound_lts,
+    CheckResult,
+};
 
 /// Custom derive for `yoke::Yokeable`.
 ///
@@ -51,43 +54,164 @@ pub fn yokeable_derive(input: TokenStream) -> TokenStream {
     TokenStream::from(yokeable_derive_impl(&input))
 }
 
+/// A small amount of metadata about a field of the yokeable type
+struct FieldParamUsage {
+    uses_lt: bool,
+    uses_ty: bool,
+}
+
+impl From<CheckResult> for FieldParamUsage {
+    fn from(value: CheckResult) -> Self {
+        Self {
+            uses_lt: value.uses_lifetime_param,
+            uses_ty: value.uses_type_params,
+        }
+    }
+}
+
 fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
+    let name = &input.ident;
     let tybounds = input
         .generics
-        .type_params()
-        .map(|ty| {
-            // Strip out param defaults, we don't need them in the impl
-            let mut ty = ty.clone();
-            ty.eq_token = None;
-            ty.default = None;
-            ty
+        .params
+        .iter()
+        .filter_map(|param| {
+            match param {
+                GenericParam::Lifetime(_) => None,
+                GenericParam::Type(ty) => {
+                    // Strip out param defaults, we don't need them in the impl
+                    let mut ty = ty.clone();
+                    ty.eq_token = None;
+                    ty.default = None;
+                    Some(GenericParam::Type(ty))
+                }
+                // TODO: support const-generics in a future PR
+                // GenericParam::Const(const_param) => {
+                //     // Strip out param defaults, we don't need them in the impl
+                //     let mut const_param = const_param.clone();
+                //     const_param.eq_token = None;
+                //     const_param.default = None;
+                //     Some(GenericParam::Const(const_param))
+                // }
+                GenericParam::Const(_) => None,
+            }
         })
         .collect::<Vec<_>>();
     let typarams = tybounds
         .iter()
-        .map(|ty| ty.ident.clone())
+        .map(|param| match param {
+            // We filtered out lifetime parameters
+            GenericParam::Lifetime(_) => unreachable!(),
+            GenericParam::Type(ty) => ty.ident.clone(),
+            // TODO: support const-generics in a future PR
+            // GenericParam::Const(const_param) => const_param.ident.clone(),
+            GenericParam::Const(_) => unreachable!(),
+        })
         .collect::<Vec<_>>();
     let wherebounds = input
         .generics
         .where_clause
         .iter()
         .flat_map(|wc| wc.predicates.iter())
+        // If some future version of Rust adds more than just lifetime and type where-bound
+        // predicates, we may want to match more predicates.
         .filter(|p| matches!(p, WherePredicate::Type(_)))
         .collect::<Vec<_>>();
     // We require all type parameters be 'static, otherwise
-    // the Yokeable impl becomes really unwieldy to generate safely
-    let static_bounds: Vec<WherePredicate> = typarams
+    // the Yokeable impl becomes really unwieldy to generate safely.
+    let static_bounds: Vec<WherePredicate> = tybounds
         .iter()
-        .map(|ty| parse_quote!(#ty: 'static))
+        .filter_map(|param| {
+            if let GenericParam::Type(ty) = param {
+                let ty = &ty.ident;
+                Some(parse_quote!(#ty: 'static))
+            } else {
+                None
+            }
+        })
         .collect();
+    // Above idents are *not* `unraw`d, because they may be emitted by the derive
+    // (so they might actually need to be raw).
+
+    // Either the `unraw`d first lifetime parameter of the yokeable, or some ignored ident.
+    // This parameter affects `uses_lifetime_param` values of `CheckResult`s and `uses_lt`
+    // values of `FieldParamUsage`, but those values only impact the generated code if there
+    // is at least one lifetime parameter; therefore, the random ident doesn't matter.
+    let lt_param = input.generics.lifetimes().next().map_or_else(ignored_lifetime_ident, |lt| {
+        lt.lifetime.ident.unraw()
+    });
+    let typarams_env = tybounds
+        .iter()
+        .filter_map(|param| {
+            if let GenericParam::Type(ty) = param {
+                Some(ty.ident.unraw())
+            } else {
+                None
+            }
+        })
+        .collect();
+    let mut underscores_for_lt = 0;
+
+    // We need to do this analysis even before the case where there are zero lifetime parameters
+    // in order to choose a `'__[underscores]__yoke` lifetime.
+    // We need to check:
+    // - trait bounds on generic type parameters
+    // - default types for generic type parameters
+    // - type bounds on const generic parameters
+    // - where-bounds
+    // - field types
+    // Checking lifetime parameters and default values for const generic parameters isn't
+    // particularly useful, but does no harm, so the simplest approach to knock out the first three
+    // is to just check every parameter.
+    for param in &input.generics.params {
+        underscores_for_lt = underscores_for_lt.max(check_parameter_for_bound_lts(param));
+    }
+    if let Some(where_clause) = &input.generics.where_clause {
+        underscores_for_lt = underscores_for_lt.max(check_where_clause_for_bound_lts(where_clause));
+    }
+
+    // Information from `synstructure`, whose ordering of fields is deterministic.
+    // Note that it's crucial that we don't filter out any variants or fields from the `Structure`.
+    let mut field_info: Vec<FieldParamUsage> = Vec::new();
+    let structure = {
+        let mut structure = Structure::new(input);
+        structure.bind_with(|_| synstructure::BindStyle::Move);
+        structure
+    };
+
+    for variant_info in structure.variants() {
+        for field_binding_info in variant_info.bindings() {
+            let field = field_binding_info.ast();
+            // Note: `lt_param` and everything in `typarams_env` were `unraw`d
+            let check_result = check_type_for_parameters(&lt_param, &typarams_env, &field.ty);
+
+            underscores_for_lt = underscores_for_lt.max(check_result.min_underscores_for_yoke_lt);
+            field_info.push(check_result.into());
+        }
+    }
+    let field_info = field_info;
+
+    // All usages of the `check_*` functions are above this point,
+    // in order to ensure that `yoke_lt` is correct.
+    let (yoke_lt, bound_lt) = {
+        let underscores = vec![b'_'; underscores_for_lt];
+        let underscores = String::from_utf8(underscores).expect("_ is ASCII and thus UTF-8");
+        (format!("'{underscores}yoke"), format!("'_{underscores}yoke"))
+    };
+    // This is used where the `Yokeable<'a>` trait uses `'a` by default
+    let yoke_lt = Lifetime::new(&yoke_lt, Span::call_site());
+    // This is used where the `Yokeable<'a>` trait uses `'b` by default
+    let bound_lt = Lifetime::new(&bound_lt, Span::call_site());
+
     let mut lts = input.generics.lifetimes();
 
-    let Some(lt_param) = lts.next() else {
-        // There are 0 lifetime parameters, since `input.generics.lifetimes()` is empty.
-        let name = &input.ident;
+    if lts.next().is_none() {
+        // There are 0 lifetime parameters.
+
         return quote! {
-            // This is safe because there are no lifetime parameters.
-            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*>
+            // This is safe because there are no lifetime parameters, and `type Output = Self`.
+            unsafe impl<#yoke_lt, #(#tybounds),*> yoke::Yokeable<#yoke_lt>
+            for #name<#(#typarams),*>
             where
                 #(#static_bounds,)*
                 #(#wherebounds,)*
@@ -107,9 +231,9 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     this
                 }
                 #[inline]
-                fn transform_mut<F>(&'a mut self, f: F)
+                fn transform_mut<F>(&#yoke_lt mut self, f: F)
                 where
-                    F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
+                    F: 'static + for<#bound_lt> FnOnce(&#bound_lt mut Self::Output) {
                     f(self)
                 }
             }
@@ -126,7 +250,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .to_compile_error();
     }
 
-    let name = &input.ident;
     let manual_covariance = input.attrs.iter().any(|a| {
         if a.path().is_ident("yoke") {
             if let Ok(i) = a.parse_args::<Ident>() {
@@ -141,6 +264,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     if !manual_covariance {
         // This is safe because as long as `transform()` compiles,
         // we can be sure that `'a` is a covariant lifetime on `Self`.
+        // (Using `'a` as shorthand for `#yoke_lt`.)
         //
         // In particular, the operand of `&raw const` is not a location where implicit
         // type coercion can occur, so the type of `&raw const self` is `*const &'a Self`.
@@ -163,17 +287,21 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         // This custom derive can be improved to handle this case when necessary,
         // with `prove_covariance_manually`.
         return quote! {
-            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*>
+            unsafe impl<#yoke_lt, #(#tybounds),*> yoke::Yokeable<#yoke_lt>
+            for #name<'static, #(#typarams),*>
             where
                 #(#static_bounds,)*
                 #(#wherebounds,)*
-                // See the comment for the `prove_covariance_manually` impl about `Self: Sized`.
+                // Adding `Self: Sized` here doesn't work.
+                // `for<#bound_lt> #name<#bound_lt, #(#typarams),*>: Sized`
+                // might work, though. Since these trait bounds are very finicky, it's best to just
+                // not try unless necessary.
             {
-                type Output = #name<'a, #(#typarams),*>;
+                type Output = #name<#yoke_lt, #(#typarams),*>;
                 #[inline]
-                fn transform(&'a self) -> &'a Self::Output {
+                fn transform(&#yoke_lt self) -> &#yoke_lt Self::Output {
                     if false {
-                        let _: *const &'a Self::Output = &raw const self;
+                        let _: *const &#yoke_lt Self::Output = &raw const self;
                     }
                     self
                 }
@@ -196,170 +324,171 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     unsafe { ::core::ptr::read(ptr) }
                 }
                 #[inline]
-                fn transform_mut<F>(&'a mut self, f: F)
+                fn transform_mut<F>(&#yoke_lt mut self, f: F)
                 where
-                    F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
-                    unsafe { f(::core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+                    F: 'static + for<#bound_lt> FnOnce(&#bound_lt mut Self::Output) {
+                    unsafe {
+                        f(::core::mem::transmute::<
+                            &#yoke_lt mut Self,
+                            &#yoke_lt mut Self::Output,
+                        >(self))
+                    }
                 }
             }
         };
     }
 
-    let mut structure = Structure::new(input);
-    structure.bind_with(|_| synstructure::BindStyle::Move);
-    let generics_env = typarams.iter().map(|typaram| typaram.unraw()).collect();
-    let static_bounds: Vec<WherePredicate> = typarams
-        .iter()
-        .map(|ty| parse_quote!(#ty: 'static))
-        .collect();
-    let mut yoke_bounds: Vec<WherePredicate> = vec![];
-    let lt_param = &lt_param.lifetime.ident.unraw();
+    // `prove_covariance_manually` requires additional bounds
+    let mut manual_proof_bounds: Vec<WherePredicate> = Vec::new();
+    let mut yokeable_checks = TokenStream2::new();
+    let mut output_checks = TokenStream2::new();
+    let mut field_info = field_info.into_iter();
 
+    // See `synstructure::Structure::each` and `synstructure::VariantInfo::each`
+    // for the setup of the two `*_checks` token streams.
+
+    // We iterate over the fields of `structure` in the same way that `field_info` was created.
     for variant_info in structure.variants() {
-        for field in variant_info.ast().fields.iter() {
-            // Note: `lt_param` and everything in `generics_env` were `unraw`d
-            let (has_ty, has_lt) = check_type_for_parameters(lt_param, &generics_env, &field.ty);
+        let mut yokeable_check_body = TokenStream2::new();
+        let mut output_check_body = TokenStream2::new();
 
-            if has_ty {
-                // For field types without type or lifetime parameters, we don't require `Yokeable`.
-                // For field types with lifetime parameters but no type parameters, we require `Yokeable` and
-                // the compiler can figure out that the field implements `Yokeable` on its own (else, emit an
-                // error, since `Yokeable` would *never* be implemented on this type).
-                // However, if there are type parameters, there may be complex preconditions to
-                // `FieldTy: Yokeable` that need to be satisfied. We get them to be
-                // satisfied by requiring `FieldTy<'static>: Yokeable<'_, Output = FieldTy<'a>>`
-                // or `FieldTy: Yokeable<'_, Output = FieldTy>`.
-                // Note: the bound in the case where the field has no lifetime parameter feels trivial and
-                // perhaps should be loosened, but loosening it is a possibly-breaking change.
-                // Note: if `field.ty` involves a non-pure macro type, each time it's evaluated, it could be a
-                // different type. The `yoke_bounds` are relied on to let the impl compile, *not* for soundness.
-                // Our `borrowed_body` does not blindly assume that the fields' types implement `Yokeable`,
-                // regardless of these bounds.
-                let fty_static = replace_lifetime(lt_param, &field.ty, static_lt());
+        for field_binding_info in variant_info.bindings() {
+            let field = field_binding_info.ast();
+            let field_binding = &field_binding_info.binding;
 
-                if has_lt {
-                    let fty_a = replace_lifetime(lt_param, &field.ty, custom_lt("'a"));
-                    yoke_bounds
-                        .push(parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_a>));
+            let FieldParamUsage { uses_lt, uses_ty } = field_info
+                .next()
+                .expect("fields of an unmutated synstructure::Structure should remain the same");
+
+            // Note that these two types could be weird non-pure macro types. However, even though
+            // we evaluate them once or twice in where-bounds, we evaluate one of them at most once
+            // in the soundness-critical checks, so they can't cause UB by unexpectedly evaluating
+            // to a different type.
+            let fty_static = replace_lifetime(&lt_param, &field.ty, static_lt());
+            let fty_output = replace_lifetime(&lt_param, &field.ty, yoke_lt.clone());
+
+            // For field types that don't use type or lifetime parameters, we don't add `Yokeable`
+            // or `'static` where-bounds, and the field is required to unconditionally meet a
+            // `'static` requirement (in its output form).
+            //
+            // For field types that use the lifetime parameter but no type parameters, we also don't
+            // add any where-bounds, and the field is required to unconditionally meet a
+            // `Yokeable` requirement (in its static yokeable form).
+            // (The compiler should be able to figure out whether that requirement is satisfied.
+            // A where-bound is intentionally avoided, to avoid letting `derive(Yokeable)`
+            // compile on a struct when it's statically known that the where-bound is never
+            // satisfied.)
+            //
+            // For field types that use a type parameter but not the lifetime parameter, the field
+            // is assumed not to borrow from the cart and is therefore required to be `'static`
+            // (in its output form), and a where-bound is added for this field being `'static`.
+            //
+            // For field types that use both the lifetime parameter and type parameters, the
+            // field is required to be `Yokeable` (in its static form). Since there may be complex
+            // preconditions to `FieldTy: Yokeable` that need to be satisfied, a where-bound
+            // requires that `FieldTy<'static>: Yokeable<#yoke_lt, Output = FieldTy<#yoke_lt>>`.
+            // This requirement is also tested on the field's static yokeable form.
+            //
+            // Note: if `field.ty` involves a non-pure macro type, each time it's evaluated, it
+            // could be a different type. The where-bounds are relied on to make the impl compile
+            // in sane cases, *not* for soundness. Our `transform()` impl does not blindly assume
+            // that the fields' types implement `Yokeable` or `'static`, regardless of these bounds,
+            // thanks to the checks.
+            if uses_ty {
+                if uses_lt {
+                    manual_proof_bounds.push(
+                        parse_quote!(#fty_static: yoke::Yokeable<#yoke_lt, Output = #fty_output>),
+                    );
                 } else {
-                    yoke_bounds
-                        .push(parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_static>));
+                    manual_proof_bounds.push(parse_quote!(#fty_static: 'static));
                 }
             }
+            if uses_lt {
+                // This confirms that this `FieldTy` is a subtype of something which implements
+                // `Yokeable<'a>`, and since only `'static` types can be subtypes of a `'static`
+                // type (and all `Yokeable` implementors are `'static`), we have that either:
+                // - `FieldTy` is some `'static` type which does NOT implement `Yokeable`, but via
+                //   function pointer subtyping or something similar, is a subtype of something
+                //   implementing `Yokeable`, or
+                // - `FieldTy` is some type which does itself implement `Yokeable`.
+                // In either of those cases, it is sound to treat `FieldTy` as covariant in the `'a`
+                // parameter. (Using `'a` as shorthand for `#yoke_lt`.)
+                //
+                // Now, to justify that `FieldTy` (the field's actual type,
+                // not just `field.ty`, which may have a non-pure macro type)
+                // is a subtype of something which implements `Yokeable<'a>`:
+                //
+                // `#field_binding` has type `&'a FieldTy` (since it's a field of `&'a Self` matched
+                // as `self`). The operand of `&raw const` is not a location where implicit type
+                // coercion can occur. Therefore, `&raw const #field_binding` is guaranteed to be
+                // type `*const &'a FieldTy`. The argument to `__yoke_derive_require_yokeable`
+                // does allow type coercion.
+                // Looking at <https://doc.rust-lang.org/reference/type-coercions.html>,
+                // there are only three types of coercions that could plausibly apply:
+                // - subtyping coercions,
+                // - transitive coercions, and
+                // - unsizing coercions.
+                // (If some sort of `DerefRaw` trait gets added for `*const`, there could plausibly
+                // be problems with that. But there's no reason to think that such a trait will be
+                // added, since it'd mess with `unsafe` code, and Rust devs should recognize that.)
+                //
+                // Since `&'a _` does not implement `Unsize`, we have that `*const &'a _` does not
+                // allow an unsizing coercion to occur. Therefore, there are only subtyping
+                // coercions, since transitive coercions add nothing on top of subtyping coercions.
+                // Therefore, if this compiles, `*const &'a FieldTy` must be a subtype of
+                // `*const &'a T` where `T = #fty_static` is the generic parameter of
+                // `__yoke_derive_require_yokeable`.
+                // Looking at the signature of that function generated below, we have that
+                // `T: Yokeable<'a>` (if it compiles). Note that if `#fty_static` is incorrect,
+                // even if there is some other `T` which would work, this will just fail to compile.
+                // Since `*const _` and `&'a _` are covariant over their type parameters, we have
+                // that `FieldTy` must be a subtype of `T` in order for a subtyping coercion from
+                // `*const &'a FieldTy` to `*const &'a T` to occur.
+                //
+                // Therefore, `FieldTy` must be a subtype of something which implements
+                // `Yokeable<'a>` in order for this to compile. (Though that is not a sufficient
+                // condition, such as when there's some weird macro type.)
+                yokeable_check_body.extend(quote! {
+                    __yoke_derive_require_yokeable::<#yoke_lt, #fty_static>(&raw const #field_binding);
+                });
+            } else {
+                // No visible nested lifetimes, so there should be nothing to be done in sane cases.
+                // However, in case a macro type does something strange and accesses the available
+                // `#yoke_lt` lifetime, we still need to check that the field's actual type is
+                // `'static` regardless of `#yoke_lt` (which we can check by ensuring that it must
+                // be a subtype of a `'static` type).
+                // See reasoning in the `if` branch for why this works. The difference is that
+                // `FieldTy` is guaranteed to be a subtype of `T = #fty_output` where `T: 'static`
+                // (if this compiles). Since the field's type is a subtype of something which is
+                // `'static`, it must itself be `'static`, and therefore did not manage to use
+                // `#yoke_lt` via a macro.
+                output_check_body.extend(quote! {
+                    __yoke_derive_require_static::<#yoke_lt, #fty_output>(&raw const #field_binding);
+                });
+            }
         }
+
+        let pat = variant_info.pat();
+        yokeable_checks.extend(quote! { #pat => { #yokeable_check_body }});
+        output_checks.extend(quote! { #pat => { #output_check_body }});
     }
 
-    // `static_checks` and `output_checks` ensure that every field of the type we're deriving `Yokeable`
-    // on has `FieldTy` types which are sound to treat covariantly in the `'a` parameter. That is,
-    // if the checks successfully pass typeck, the below `Yokeable` impl is sound.
-    // Checks on `Self` (noting that `Self: 'static` is required)
-    let static_checks = structure.each(|binding| {
-        let field = binding.ast();
-        let field_binding = &binding.binding;
-
-        // Note: `lt_param` and everything in `generics_env` were `unraw`d
-        let (has_ty, has_lt) = check_type_for_parameters(lt_param, &generics_env, &field.ty);
-
-        if has_ty || has_lt {
-            // We only evaluate this type a single time below (either here or in `output_checks`).
-            // (We also evaluate it twice above in places that are not load-bearing for soundness).
-            // Moreover, even if the macro type gives some strange output, the code would simply
-            // fail to compile; that is, nowhere is the visible type of a field load-bearing for
-            // soundness. Even if there's a horribly pathological macro type, nothing can go wrong.
-            let fty_static = replace_lifetime(lt_param, &field.ty, static_lt());
-
-            // This confirms that this `FieldTy` is a subtype of something which implements
-            // `Yokeable<'a>`, and since only `'static` types can be subtypes of a `'static` type
-            // (and all `Yokeable` implementors are `'static`), we have that either:
-            // - `FieldTy` is some `'static` type which does NOT implement `Yokeable`, but via function
-            //   pointer subtyping or something similar, is a subtype of something implementing `Yokeable`, or
-            // - `FieldTy` is some type which does itself implement `Yokeable`.
-            // In either of those cases, it is sound to treat `FieldTy` as covariant in the `'a`
-            // parameter.
-            //
-            // Now, to justify that `FieldTy` (the field's actual type, not just `field.ty` which may have
-            // a non-pure macro type) is a subtype of something which implements `Yokeable<'a>`:
-            //
-            // `field_binding` has type `&'a FieldTy` (since it's a field of `&'a Self` matched
-            // as `self`). The operand of `&raw const` is not a location where implicit type coercion
-            // can occur. Therefore, `&raw const #field_binding` is guaranteed to be type
-            // `*const &'a FieldTy`. The argument to `__yoke_derive_require_yokeable` does allow
-            // type coercion. Looking at <https://doc.rust-lang.org/reference/type-coercions.html>,
-            // there are only three types of coercions that could plausibly apply:
-            // - subtyping coercions,
-            // - transitive coercions, and
-            // - unsizing coercions.
-            // (If some sort of `DerefRaw` trait gets added for `*const`, there could plausibly
-            // be problems with that. But there's no reason to think that such a trait will be
-            // added since it'd mess with `unsafe` code.)
-            //
-            // Since `&'a _` does not implement `Unsize`, we have that `*const &'a _` does not
-            // allow an unsizing coercion to occur. Therefore, there are only subtyping coercions,
-            // and transitive coercions add nothing on beyond subtyping coercions.
-            // Therefore, if this compiles, `*const &'a FieldTy` must be a subtype of `*const &'a T`
-            // where `T = #fty_static` is the generic parameter of `__yoke_derive_require_yokeable`.
-            // Looking at the signature of that function generated below, we have that
-            // `T: Yokeable<'a>` (if it compiles). Note that if `#fty_static` is incorrect, even if
-            // there is some other `T` which would work, this will just fail to compile. Since
-            // `*const _` and `&'a _` are covariant over their type parameters, we have that
-            // `FieldTy` must be a subtype of `T` in order for a subtyping coercion from
-            // `*const &'a FieldTy` to `*const &'a T` to occur.
-            //
-            // Therefore, `FieldTy` must be a subtype of something which implements `Yokeable<'a>`
-            // in order for this to compile. (Though that is not a sufficient condition, if
-            // there's some weird macro type.)
-            quote! {
-                __yoke_derive_require_yokeable::<'a, #fty_static>(&raw const #field_binding);
-            }
-        } else {
-            // Handled below
-            quote! {}
-        }
-    });
-    let output_checks = structure.each(|binding| {
-        let field = binding.ast();
-        let field_binding = &binding.binding;
-
-        // Note: `lt_param` and everything in `generics_env` were `unraw`d
-        let (has_ty, has_lt) = check_type_for_parameters(lt_param, &generics_env, &field.ty);
-
-        if has_ty || has_lt {
-            // Handled above.
-            quote! {}
-        } else {
-            // See `static_checks`. We treat this very carefully in order to avoid prevent
-            // non-pure macro types from causing unsoundness.
-            let fty_a = replace_lifetime(lt_param, &field.ty, custom_lt("'a"));
-
-            // No nested lifetimes, so there should be nothing to be done. However,
-            // in case a macro type does something strange and accesses the available
-            // `'a` lifetime, we still need to check that the field's actual type is
-            // `'static` regardless of `'a` (which we can check by ensuring that it must be a subtype
-            // of a `'static` type).
-            // See reasoning in the `if` branch for why this works. The difference is that
-            // `FieldTy` is guaranteed to be a subtype of `T = #fty_a` where `T: 'static`
-            // (if this compiles). Since the field's type is a subtype of something which is `'static`,
-            // it must itself be `'static`, and therefore did not manage to use `'a` via a macro.
-            quote! {
-                __yoke_derive_require_static::<'a, #fty_a>(&raw const #field_binding);
-            }
-        }
-    });
     quote! {
         // SAFETY: we assert covariance in `borrowed_checks`
-        unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*>
+        unsafe impl<#yoke_lt, #(#tybounds),*> yoke::Yokeable<#yoke_lt>
+        for #name<'static, #(#typarams),*>
         where
             #(#static_bounds,)*
             #(#wherebounds,)*
-            #(#yoke_bounds,)*
-            // Adding `Self: Sized` here doesn't work. `for<'b> #name<'b, #(#typarams),*>: Sized`
-            // could work, though. (But we'd need another reserved lifetime, so probably `'_yoke_a`
-            // or something, not `'b`.) Since these trait bounds are very finicky, it's best to just
+            #(#manual_proof_bounds,)*
+            // Adding `Self: Sized` here doesn't work.
+            // `for<#bound_lt> #name<#bound_lt, #(#typarams),*>: Sized`
+            // might work, though. Since these trait bounds are very finicky, it's best to just
             // not try unless necessary.
         {
-            type Output = #name<'a, #(#typarams),*>;
+            type Output = #name<#yoke_lt, #(#typarams),*>;
             #[inline]
-            fn transform(&'a self) -> &'a Self::Output {
+            fn transform(&#yoke_lt self) -> &#yoke_lt Self::Output {
                 // These are just type asserts, we don't need to run them
                 if false {
                     // This could, hypothetically, conflict with the name of one of the `FieldTy`s
@@ -369,17 +498,23 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     // `__yoke_derive_require_yokeable` would instead refer to this function item
                     // and therefore fail.)
                     #[allow(dead_code)]
-                    fn __yoke_derive_require_yokeable<'a: 'a, T: yoke::Yokeable<'a>>(_t: *const &'a T) {}
+                    fn __yoke_derive_require_yokeable<
+                        #yoke_lt: #yoke_lt,
+                        T: yoke::Yokeable<#yoke_lt>,
+                    >(_t: *const &#yoke_lt T) {}
 
                     match self {
-                        #static_checks
+                        #yokeable_checks
                     }
                 }
-                let output: &'a Self::Output = unsafe { ::core::mem::transmute(self) };
+                let output: &#yoke_lt Self::Output = unsafe { ::core::mem::transmute(self) };
                 if false {
                     // Same deal as above.
                     #[allow(dead_code)]
-                    fn __yoke_derive_require_static<'a: 'a, T: 'static>(_t: *const &'a T) {}
+                    fn __yoke_derive_require_static<
+                        #yoke_lt: #yoke_lt,
+                        T: 'static,
+                    >(_t: *const &#yoke_lt T) {}
 
                     match output {
                         #output_checks
@@ -416,10 +551,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 unsafe { ::core::ptr::read(ptr) }
             }
             #[inline]
-            fn transform_mut<F>(&'a mut self, f: F)
+            fn transform_mut<F>(&#yoke_lt mut self, f: F)
             where
-                F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
-                unsafe { f(::core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+                F: 'static + for<#bound_lt> FnOnce(&#bound_lt mut Self::Output) {
+                unsafe {
+                    f(::core::mem::transmute::<
+                        &#yoke_lt mut Self,
+                        &#yoke_lt mut Self::Output,
+                    >(self))
+                }
             }
         }
     }
