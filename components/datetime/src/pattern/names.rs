@@ -2743,6 +2743,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet>
 where
     FSet::DayPeriodNames: NamesContainer<
