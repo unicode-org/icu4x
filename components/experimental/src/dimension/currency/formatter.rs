@@ -136,16 +136,13 @@ impl CurrencyFormatter {
     /// use icu::experimental::dimension::currency::CurrencyCode;
     /// use icu::locale::locale;
     /// use tinystr::*;
-    /// use writeable::Writeable;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let locale = locale!("en-US").into();
     /// let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
-    /// let mut sink = String::new();
-    /// formatted_currency.write_to(&mut sink).unwrap();
-    /// assert_eq!(sink.as_str(), "$12,345.67");
+    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value, &currency_code), "$12,345.67");
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,

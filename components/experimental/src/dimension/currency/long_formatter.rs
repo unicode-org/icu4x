@@ -153,13 +153,13 @@ impl LongCurrencyFormatter {
     /// use icu::experimental::dimension::currency::CurrencyCode;
     /// use icu::locale::locale;
     /// use tinystr::*;
-    /// use writeable::assert_writable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
     /// let fmt = LongCurrencyFormatter::try_new(currency_preferences, &currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
-    /// assert_eq!(fmt.format_fixed_decimal(&value), "12,345.67 US dollars");
+    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67 US dollars");
     /// ```
     pub fn format_fixed_decimal<'l>(&'l self, value: &'l Decimal) -> impl Writeable + Display + 'l {
         let operands = value.into();
