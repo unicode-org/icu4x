@@ -811,3 +811,26 @@ mod test {
         }
     }
 }
+
+#[test]
+fn test_chinese_leap_months() {
+    let expected = [
+        (1933, 6),
+        (1938, 8),
+        (1984, 11),
+        (2009, 6),
+        (2017, 7),
+        (2028, 6),
+    ];
+
+    for (year, expected_month) in expected {
+        let bounds = YearBounds::compute::<Chinese>(fixed_from_gregorian(year, 6, 1));
+
+        assert!(bounds.is_leap(), "{year} should be a leap year");
+        assert_eq!(
+            expected_month,
+            get_leap_month_from_new_year::<Chinese>(bounds.new_year),
+            "{year} have leap month {expected_month}"
+        );
+    }
+}
