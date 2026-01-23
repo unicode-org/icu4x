@@ -284,7 +284,9 @@ where
     W: Trait,
 {
     X(String),
-    X2 { x: u32 },
+    X2 {
+        x: u32,
+    },
     Y(T),
     Gen {
         x: T,
@@ -316,13 +318,20 @@ where
 #[derive(Yokeable)]
 #[yoke(prove_covariance_manually)]
 enum ManualAlmostEverything<
-    'a, T, ULE: AsULE, r#W, Z: for<'b> ZeroMapKV<'b> + ?Sized, /*const N: u32,*/ U = usize,
->
-where
+    'a,
+    T,
+    ULE: AsULE,
+    r#W,
+    Z: for<'b> ZeroMapKV<'b> + ?Sized,
+    // const N: u32,
+    U = usize,
+> where
     W: Trait,
 {
     X(String),
-    X2 { x: u32 },
+    X2 {
+        x: u32,
+    },
     Y(T),
     Gen {
         x: T,
@@ -349,7 +358,7 @@ where
     RawLifetime(for<'r#_yoke> fn(&'r#_yoke ())),
     // MixedRawLifetime(&'r#a &'a str),
     Variadic(&'a fn(extern "C" fn(&'a (), u32, u32, ...))),
-    Map(ZeroMap<'a, str, u16>, ZeroMap<'a, str, Z>)
+    Map(ZeroMap<'a, str, u16>, ZeroMap<'a, str, Z>),
 }
 
 struct AssertYokeable {
