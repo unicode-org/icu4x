@@ -205,6 +205,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_cardinal(locale: &Locale) -> Result<Box<PluralRulesWithRanges>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
             Ok(Box::new(PluralRulesWithRanges(
