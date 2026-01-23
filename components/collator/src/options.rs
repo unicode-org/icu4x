@@ -40,7 +40,7 @@ use crate::{
 /// that differ only in case, accent, or similar are resolved by comparing some
 /// secondary field in the larger structure to be sorted.
 ///
-/// However, if the sort is just a string sort without some other field for
+/// Therefore, if the sort is just a string sort without some other field for
 /// resolving ties, lowering the strength means that factors that don't make
 /// sense to the user (such as the order of items prior to sorting with a stable
 /// sort algorithm or the internal details of a sorting algorithm that doesn't
