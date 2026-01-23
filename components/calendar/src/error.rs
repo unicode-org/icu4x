@@ -4,13 +4,16 @@
 
 //! Error types for functions in the calendar crate
 
-use crate::{options::Overflow, types::MonthCode};
+use crate::{
+    options::Overflow,
+    types::{Month, MonthCode},
+};
 use displaydoc::Display;
 
-#[derive(Debug, Copy, Clone, PartialEq, Display)]
 /// Error type for date creation via [`Date::try_new_from_codes`].
 ///
 /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+#[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum DateError {
     /// A field is out of range for its domain.
@@ -37,7 +40,6 @@ pub enum DateError {
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
     /// use icu::calendar::DateError;
-    /// use tinystr::tinystr;
     ///
     /// Date::try_new_from_codes(
     ///     None,
@@ -61,6 +63,45 @@ pub enum DateError {
     /// ```
     #[displaydoc("Unknown month code {0:?}")]
     UnknownMonthCode(MonthCode),
+}
+
+/// Error type for date creation via [`Date::try_new_from_codes`].
+///
+/// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+#[derive(Debug, Copy, Clone, PartialEq, Display)]
+#[non_exhaustive]
+pub enum LunisolarRangeError {
+    /// A field is out of range for its domain.
+    #[displaydoc("The {field} = {value} argument is out of range {min}..={max}")]
+    Range {
+        /// The field that is out of range, such as "year"
+        field: &'static str,
+        /// The actual value
+        value: i32,
+        /// The minimum value (inclusive). This might not be tight.
+        min: i32,
+        /// The maximum value (inclusive). This might not be tight.
+        max: i32,
+    },
+    /// The month code is invalid for the calendar or year.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::types::Month;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::LunisolarRangeError;
+    ///
+    /// Date::try_new_hebrew_fixed(5784, Month::leap(5), 1)
+    ///     .expect("5784 is a leap year");
+    ///
+    /// let err = Date::try_new_hebrew_fixed(5785, Month::leap(5), 1)
+    ///     .expect_err("5785 is a common year");
+    ///
+    /// assert!(matches!(err, LunisolarRangeError::InvalidMonth(_)));
+    /// ```
+    #[displaydoc("Invalid month {0:?}")]
+    InvalidMonth(Month),
 }
 
 impl core::error::Error for DateError {}
@@ -309,7 +350,7 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
-/// Error for [`Month`](crate::types::Month) parsing
+/// Error for [`Month`] parsing
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum MonthCodeParseError {
@@ -400,6 +441,24 @@ impl From<RangeError> for DateError {
             max,
         } = value;
         DateError::Range {
+            field,
+            value,
+            min,
+            max,
+        }
+    }
+}
+
+impl From<RangeError> for LunisolarRangeError {
+    #[inline]
+    fn from(value: RangeError) -> Self {
+        let RangeError {
+            field,
+            value,
+            min,
+            max,
+        } = value;
+        LunisolarRangeError::Range {
             field,
             value,
             min,
