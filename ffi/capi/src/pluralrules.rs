@@ -18,6 +18,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     #[diplomat::enum_convert(icu_plurals::PluralCategory)]
     #[non_exhaustive]
+    #[derive(Debug, PartialEq)]
     pub enum PluralCategory {
         Zero,
         One,
@@ -192,10 +193,12 @@ pub mod ffi {
             )
         }
     }
+    #[cfg(feature = "experimental")]
     #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges, Struct)]
     #[diplomat::opaque]
     pub struct PluralRulesWithRanges(icu_plurals::PluralRulesWithRanges<icu_plurals::PluralRules>);
 
+    #[cfg(feature = "experimental")]
     impl PluralRulesWithRanges {
         /// Construct an [`PluralRulesWithRanges`] for the given locale, for cardinal numbers, using compiled data.
         #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new_cardinal, FnInStruct)]
@@ -204,9 +207,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_cardinal(
-            locale: &Locale,
-        ) -> Result<Box<PluralRulesWithRanges>, DataError> {
+        pub fn create_cardinal(locale: &Locale) -> Result<Box<PluralRulesWithRanges>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
             Ok(Box::new(PluralRulesWithRanges(
                 icu_plurals::PluralRulesWithRanges::try_new_cardinal(prefs)?,
@@ -238,9 +239,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ordinal")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_ordinal(
-            locale: &Locale,
-        ) -> Result<Box<PluralRulesWithRanges>, DataError> {
+        pub fn create_ordinal(locale: &Locale) -> Result<Box<PluralRulesWithRanges>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
             Ok(Box::new(PluralRulesWithRanges(
                 icu_plurals::PluralRulesWithRanges::try_new_ordinal(prefs)?,
@@ -275,15 +274,25 @@ pub mod ffi {
         ) -> PluralCategory {
             self.0.category_for_range(start.0, end.0).into()
         }
+    }
 
-        /// Get the category for a range from the categories of its endpoints
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::resolve_range, FnInStruct)]
-        pub fn resolve_range(
-            &self,
-            start: PluralCategory,
-            end: PluralCategory,
-        ) -> PluralCategory {
-            self.0.resolve_range(start.into(), end.into()).into()
+    #[cfg(test)]
+    #[cfg(feature = "experimental")]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn test_plural_rules_with_ranges() {
+            let locale =
+                crate::unstable::locale_core::ffi::Locale(icu_locale_core::locale!("en").into());
+            let rules = PluralRulesWithRanges::create_cardinal(&locale).unwrap();
+
+            let start = PluralOperands::from_int64(1);
+            let end = PluralOperands::from_int64(2);
+
+            let category = rules.category_for_range(&start, &end);
+
+            assert_eq!(category, PluralCategory::Other);
         }
     }
 }
