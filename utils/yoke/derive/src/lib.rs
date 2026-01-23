@@ -23,6 +23,7 @@ mod visitor;
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
+use syn::ext::IdentExt as _;
 use syn::spanned::Spanned;
 use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, WherePredicate};
 use synstructure::Structure;
@@ -42,13 +43,7 @@ use self::visitor::check_type_for_parameters;
 /// #[yoke(prove_covariance_manually)]
 /// ```
 ///
-/// The derive uses a `'a` lifetime for `Yokeable<'a>`, so if one of your type's
-/// fields or bounds contains a `for<'a>` binder, the derive will fail to compile;
-/// it is your responsibility to choose appropriate lifetime names for `for<..>`
-/// binders. (However, the type's lifetime parameter, if any, does not need to be
-/// named `'a`; the `'a` lifetime will be substituted into the type as necessary.)
-///
-/// Beyond these cases, if the derive fails to compile due to lifetime issues, it likely
+/// Beyond this case, if the derive fails to compile due to lifetime issues, it likely
 /// means that the lifetime is not covariant and `Yokeable` is not safe to implement.
 #[proc_macro_derive(Yokeable, attributes(yoke))]
 pub fn yokeable_derive(input: TokenStream) -> TokenStream {
@@ -212,17 +207,18 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     let mut structure = Structure::new(input);
     structure.bind_with(|_| synstructure::BindStyle::Move);
-    let generics_env = typarams.iter().cloned().collect();
+    let generics_env = typarams.iter().map(|typaram| typaram.unraw()).collect();
     let static_bounds: Vec<WherePredicate> = typarams
         .iter()
         .map(|ty| parse_quote!(#ty: 'static))
         .collect();
     let mut yoke_bounds: Vec<WherePredicate> = vec![];
-    let lt_param = &lt_param.lifetime.ident;
+    let lt_param = &lt_param.lifetime.ident.unraw();
 
     for variant_info in structure.variants() {
         for field in variant_info.ast().fields.iter() {
-            let (has_ty, has_lt) = check_type_for_parameters(lt_param, &field.ty, &generics_env);
+            // Note: `lt_param` and everything in `generics_env` were `unraw`d
+            let (has_ty, has_lt) = check_type_for_parameters(lt_param, &generics_env, &field.ty);
 
             if has_ty {
                 // For field types without type or lifetime parameters, we don't require `Yokeable`.
@@ -261,7 +257,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         let field = binding.ast();
         let field_binding = &binding.binding;
 
-        let (has_ty, has_lt) = check_type_for_parameters(lt_param, &field.ty, &generics_env);
+        // Note: `lt_param` and everything in `generics_env` were `unraw`d
+        let (has_ty, has_lt) = check_type_for_parameters(lt_param, &generics_env, &field.ty);
 
         if has_ty || has_lt {
             // We only evaluate this type a single time below (either here or in `output_checks`).
@@ -323,7 +320,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         let field = binding.ast();
         let field_binding = &binding.binding;
 
-        let (has_ty, has_lt) = check_type_for_parameters(lt_param, &field.ty, &generics_env);
+        // Note: `lt_param` and everything in `generics_env` were `unraw`d
+        let (has_ty, has_lt) = check_type_for_parameters(lt_param, &generics_env, &field.ty);
 
         if has_ty || has_lt {
             // Handled above.

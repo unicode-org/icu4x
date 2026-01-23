@@ -9,59 +9,94 @@
 //! compiler errors at worst, not unsoundness.
 
 use std::collections::HashSet;
-use syn::visit::{visit_lifetime, visit_type, visit_type_path, Visit};
-use syn::{Ident, Lifetime, Type, TypePath};
+use syn::ext::IdentExt as _;
+use syn::visit::{visit_bound_lifetimes, visit_lifetime, visit_type, visit_type_path, Visit};
+use syn::{GenericParam, Ident, Lifetime, Type, TypePath};
 
-struct TypeVisitor<'a> {
-    /// The lifetime parameter of the yokeable
+struct Visitor<'a> {
+    /// The lifetime parameter of the yokeable, stripped of any leading `r#`
     lt_param: &'a Ident,
-    /// The type parameters in scope
+    /// The type parameters in scope, stripped of any leading `r#`s
     typarams: &'a HashSet<Ident>,
-    /// Whether we found a type parameter
-    found_typarams: bool,
-    /// Whether we found a usage of the `lt_param` lifetime
-    found_lifetimes: bool,
+    /// Whether we found a type parameter (or its `raw` form)
+    found_typaram_usage: bool,
+    /// Whether we found a usage of the `lt_param` lifetime (or its `raw` form)
+    found_lt_param_usage: bool,
+    /// How many underscores should be added before "yoke" in the `'__[underscores]__yoke`
+    /// lifetime used by the derive.
+    ///
+    /// This is one more than the maximum number of underscores in
+    /// (possibly raw) `'__[underscores]__yoke` lifetimes bound by `for<>` binders,
+    /// or 0 if no such bound lifetimes were found.
+    underscores_for_yoke_lt: usize,
 }
 
-impl<'ast> Visit<'ast> for TypeVisitor<'_> {
+impl<'ast> Visit<'ast> for Visitor<'_> {
     fn visit_lifetime(&mut self, lt: &'ast Lifetime) {
-        if lt.ident == *self.lt_param {
-            self.found_lifetimes = true;
+        if lt.ident.unraw() == *self.lt_param {
+            // Note that `for<>` binders cannot introduce a lifetime already in scope,
+            // so `lt.ident` necessarily refers to the lifetime parameter of the yokeable.
+            self.found_lt_param_usage = true;
         }
         visit_lifetime(self, lt)
     }
+
     fn visit_type_path(&mut self, ty: &'ast TypePath) {
         // We only need to check ty.path.get_ident() and not ty.qself or any
         // generics in ty.path because the visitor will eventually visit those
         // types on its own
         if let Some(ident) = ty.path.get_ident() {
-            if self.typarams.contains(ident) {
-                self.found_typarams = true;
+            if self.typarams.contains(&ident.unraw()) {
+                self.found_typaram_usage = true;
             }
         }
-
         visit_type_path(self, ty)
+    }
+
+    fn visit_bound_lifetimes(&mut self, lts: &'ast syn::BoundLifetimes) {
+        for lt in &lts.lifetimes {
+            if let GenericParam::Lifetime(lt) = lt {
+                let maybe_underscores_yoke = lt.lifetime.ident.unraw().to_string();
+
+                // Check if the unraw'd lifetime ident is `__[underscores]__yoke`
+                if let Some(underscores) = maybe_underscores_yoke.strip_suffix("yoke") {
+                    if underscores.as_bytes().iter().all(|byte| *byte == b'_') {
+                        // Since `_` is ASCII, `underscores` consists entirely of `_` characters
+                        // iff it consists entirely of `b'_'` bytes, which holds iff
+                        // `underscores.len()` is the number of underscores.
+                        self.underscores_for_yoke_lt = self.underscores_for_yoke_lt.max(
+                            // 1 more underscore, so as not to conflict
+                            underscores.len() + 1,
+                        );
+                    }
+                }
+            }
+        }
+        visit_bound_lifetimes(self, lts);
     }
     // Type macros are ignored/skipped by default.
 }
 
 /// Checks if a type has type or parameters or uses the lifetime parameter of the yokeable type,
 /// given the local context of named type parameters and the lifetime parameter.
-/// Returns `(has_type_params, has_lifetime_params)`.
+/// Returns `(uses_type_params, uses_lifetime_param)`.
+///
+/// Crucially, the idents in `lt_param` and `typarams` are required to not have leading `r#`s.
 pub fn check_type_for_parameters(
     lt_param: &Ident,
-    ty: &Type,
     typarams: &HashSet<Ident>,
+    ty: &Type,
 ) -> (bool, bool) {
-    let mut visit = TypeVisitor {
+    let mut visit = Visitor {
         lt_param,
         typarams,
-        found_typarams: false,
-        found_lifetimes: false,
+        found_typaram_usage: false,
+        found_lt_param_usage: false,
+        underscores_for_yoke_lt: 0,
     };
     visit_type(&mut visit, ty);
 
-    (visit.found_typarams, visit.found_lifetimes)
+    (visit.found_typaram_usage, visit.found_lt_param_usage)
 }
 
 #[cfg(test)]
@@ -88,27 +123,27 @@ mod tests {
         let environment = make_typarams(&["T", "U", "V"]);
 
         let ty = parse_quote!(Foo<'a, T>);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (true, true));
 
         let ty = parse_quote!(Foo<T>);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (true, false));
 
         let ty = parse_quote!(Foo<'static, T>);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (true, false));
 
         let ty = parse_quote!(Foo<'a>);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (false, true));
 
         let ty = parse_quote!(Foo<'a, Bar<U>, Baz<(V, u8)>>);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (true, true));
 
         let ty = parse_quote!(Foo<'a, W>);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (false, true));
     }
 
@@ -117,15 +152,15 @@ mod tests {
         let environment = make_typarams(&["T"]);
 
         let ty = parse_quote!(<Foo as SomeTrait<'a, T>>::Output);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (true, true));
 
         let ty = parse_quote!(<Foo as SomeTrait<'static, T>>::Output);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (true, false));
 
         let ty = parse_quote!(<T as SomeTrait<'static, Foo>>::Output);
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (true, false));
     }
 
@@ -137,27 +172,56 @@ mod tests {
         // and the `T` is basically ignored.
 
         let ty = parse_quote!(foo!(Foo<'a, T>));
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<T>));
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<'static, T>));
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<'a>));
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<'a, Bar<U>, Baz<(V, u8)>>));
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (false, false));
 
         let ty = parse_quote!(foo!(Foo<'a, W>));
-        let check = check_type_for_parameters(&a_ident(), &ty, &environment);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check, (false, false));
+    }
+
+    #[test]
+    fn test_raw_types() {
+        let environment = make_typarams(&["T", "U", "V"]);
+
+        let ty = parse_quote!(Foo<'a, r#T>);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
+        assert_eq!(check, (true, true));
+
+        let ty = parse_quote!(Foo<r#T>);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
+        assert_eq!(check, (true, false));
+
+        let ty = parse_quote!(Foo<'static, r#T>);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
+        assert_eq!(check, (true, false));
+
+        let ty = parse_quote!(Foo<'a>);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
+        assert_eq!(check, (false, true));
+
+        let ty = parse_quote!(Foo<'a, Bar<r#U>, Baz<(r#V, u8)>>);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
+        assert_eq!(check, (true, true));
+
+        let ty = parse_quote!(Foo<'a, r#W>);
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
+        assert_eq!(check, (false, true));
     }
 }
