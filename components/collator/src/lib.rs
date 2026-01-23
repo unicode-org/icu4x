@@ -69,7 +69,7 @@
 //! and case.
 //!
 //! If an lower level isn't equal, the lower level is decisive.
-//! If the comparison result is equal on one level, 
+//! If the comparison result is equal on one level,
 //! but the collator's strength input value is higher than that,
 //! then the collator comparison iteratively proceeds to the next higher level.
 //!
