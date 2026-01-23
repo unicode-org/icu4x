@@ -22,7 +22,7 @@ macro_rules! __enum_keyword_inner {
             $(
                 Some(s) if s == &$crate::subtags::subtag!($subk) => Some($v2::$subv),
             )*
-            _ => None,
+            _ => return Err(Self::Error::InvalidKeywordValue),
         })
     }};
 }
