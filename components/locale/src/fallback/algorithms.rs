@@ -204,7 +204,6 @@ impl LocaleFallbackIteratorInner<'_> {
                     locale.variant = self.backup_variant.take();
                 }
                 // needed if more fallback is added at the end
-                return;
             } else {
                 // 3. Remove the language and apply the maximized script
                 locale.language = Language::UNKNOWN;
@@ -214,16 +213,13 @@ impl LocaleFallbackIteratorInner<'_> {
                     locale.variant = self.backup_variant.take();
                 }
                 // needed if more fallback is added at the end
-                return;
             }
-        }
+        } else if locale.script.is_some() {
+            // note: UTS #35 wants us to apply "other associated scripts" now. ICU4C/J does not do this,
+            // so we don't either. They would be found here if they are ever needed:
+            // https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json
 
-        // note: UTS #35 wants us to apply "other associated scripts" now. ICU4C/J does not do this,
-        // so we don't either. They would be found here if they are ever needed:
-        // https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json
-
-        // 6. Remove script
-        if locale.script.is_some() {
+            // 6. Remove script
             locale.script = None;
         }
     }
