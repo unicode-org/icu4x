@@ -56,6 +56,7 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
             .map(|short_compact| &short_compact.standard.patterns)
         {
             Some(patterns) => patterns,
+            // TODO(#7493): Investigate behavior when compact currency pattern is missing
             None => {
                 return Ok(DataResponse {
                     metadata: Default::default(),
