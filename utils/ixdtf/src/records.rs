@@ -95,9 +95,10 @@ pub enum Sign {
 
 impl From<bool> for Sign {
     fn from(value: bool) -> Self {
-        match value {
-            true => Self::Positive,
-            false => Self::Negative,
+        if value {
+            Self::Positive
+        } else {
+            Self::Negative
         }
     }
 }

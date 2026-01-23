@@ -50,9 +50,10 @@ where
                     valid_day_number = day_number;
                 }
                 let mut fields = DateFields::default();
-                let mc = match is_leap {
-                    false => Month::new(month_number),
-                    true => Month::leap(month_number),
+                let mc = if is_leap {
+                    Month::leap(month_number)
+                } else {
+                    Month::new(month_number)
                 }
                 .code();
                 fields.month_code = Some(mc.0.as_bytes());

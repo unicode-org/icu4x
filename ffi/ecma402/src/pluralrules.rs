@@ -14,14 +14,6 @@ pub(crate) mod internal {
     use icu::plurals::{PluralCategory, PluralOperands, PluralRuleType};
     use std::cmp::{max, min};
 
-    // The difference between `first` and `second`, clamped on the bottom by zero.
-    fn clamp_diff(first: usize, second: usize) -> usize {
-        match first > second {
-            true => first - second,
-            false => 0,
-        }
-    }
-
     /// Converts the trait style option to an equivalent ICU4X type.
     pub fn to_icu4x_type(style: &Type) -> PluralRuleType {
         match style {
@@ -64,21 +56,22 @@ pub(crate) mod internal {
             ),
         );
 
-        let significant_digits_in_fraction = clamp_diff(total_significant_digits, int_part.len());
+        let significant_digits_in_fraction =
+            total_significant_digits.saturating_sub(int_part.len());
 
         // Integer fragment.
-        let leading_zeros = clamp_diff(display_integer_digits, int_part.len());
-        let trailing_zeros_in_int_part = clamp_diff(int_part.len(), total_significant_digits);
+        let leading_zeros = display_integer_digits.saturating_sub(int_part.len());
+        let trailing_zeros_in_int_part = int_part.len().saturating_sub(total_significant_digits);
         let i = std::iter::repeat_n('0', leading_zeros)
             .chain(int_part.chars().take(total_significant_digits))
             .chain(std::iter::repeat_n('0', trailing_zeros_in_int_part));
 
         // Decimal dot is printed only if decimals will follow.
-        let dd = match display_fraction_digits == 0 {
-            true => "",
-            false => ".",
-        }
-        .chars();
+        let dd = if display_fraction_digits == 0 {
+            None
+        } else {
+            Some('.')
+        };
 
         // Fractional fragment.
         let f = frac_part

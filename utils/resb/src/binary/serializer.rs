@@ -582,10 +582,7 @@ impl Serializer {
 
                 // If this string is addressable by a 16-bit offset, return
                 // that offset.
-                match string_offset <= u16::MAX as u32 {
-                    true => Some(string_offset as u16),
-                    false => None,
-                }
+                u16::try_from(string_offset).ok()
             }
             BinResourceTypeData::Array { ref mut children } => {
                 if children.is_empty() {
