@@ -3335,6 +3335,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     }
 
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    #[allow(clippy::unnecessary_wraps)] // consistency
     pub(crate) fn load_time_zone_field_V(
         &mut self,
         _prefs: DateTimeFormatterPreferences,
@@ -3382,6 +3383,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     }
 
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    #[allow(clippy::unnecessary_wraps)] // consistency
     pub(crate) fn load_time_zone_field_X(
         &mut self,
         _prefs: DateTimeFormatterPreferences,
