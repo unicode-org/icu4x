@@ -144,6 +144,8 @@ pub struct CurrencyPatternConfig {
 }
 
 impl<'a> CurrencyEssentials<'a> {
+    // Returns the currency placeholder value for the currency,
+    // and the currency pattern for the given width and currency
     pub(crate) fn name_and_pattern(
         &'a self,
         width: Width,
