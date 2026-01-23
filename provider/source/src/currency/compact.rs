@@ -36,35 +36,26 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
-        let default_system = numbers_resource
-            .main
-            .value
-            .numbers
-            .default_numbering_system
-            .as_str();
-
-        let currency_patterns = &numbers_resource
+        let Some(compact_patterns) = numbers_resource
             .main
             .value
             .numbers
             .numsys_data
-            .currency_patterns;
-
-        let compact_patterns = match currency_patterns
-            .get(default_system)
+            .currency_patterns
+            .get(
+                numbers_resource
+                    .main
+                    .value
+                    .numbers
+                    .default_numbering_system
+                    .as_str(),
+            )
             .and_then(|patterns| patterns.compact_short.as_ref())
             .map(|short_compact| &short_compact.standard.patterns)
-        {
-            Some(patterns) => patterns,
-            None => {
-                return Ok(DataResponse {
-                    metadata: Default::default(),
-                    payload: DataPayload::from_owned(ShortCurrencyCompact {
-                        standard: Default::default(),
-                        alpha_next_to_number: Default::default(),
-                    }),
-                })
-            }
+        else {
+            return Err(
+                DataErrorKind::IdentifierNotFound.with_req(ShortCurrencyCompactV1::INFO, req)
+            );
         };
 
         let mut parsed_patterns: BTreeMap<
@@ -225,12 +216,37 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
 
 impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .numbers()
+        let cldr = self.cldr()?;
+        cldr.numbers()
             .list_locales()?
             .map(DataIdentifierCow::from_locale)
-            .collect())
+            .filter_map(|id| {
+                let numbers_resource = match cldr
+                    .numbers()
+                    .read_and_parse::<cldr_serde::numbers::Resource>(&id.locale, "numbers.json")
+                {
+                    Ok(r) => r,
+                    Err(e) => return Some(Err(e)),
+                };
+
+                numbers_resource
+                    .main
+                    .value
+                    .numbers
+                    .numsys_data
+                    .currency_patterns
+                    .get(
+                        numbers_resource
+                            .main
+                            .value
+                            .numbers
+                            .default_numbering_system
+                            .as_str(),
+                    )
+                    .and_then(|patterns| patterns.compact_short.as_ref())
+                    .map(|_| Ok(id))
+            })
+            .collect::<Result<_, _>>()
     }
 }
 
