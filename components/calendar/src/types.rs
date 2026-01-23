@@ -129,14 +129,18 @@ mod unstable {
         /// let mut fields = DateFields::default();
         ///
         /// // As a byte string literal:
-        /// fields.era = Some(b"M02L");
+        /// fields.month_code = Some(b"M02L");
         ///
         /// // Using str::as_bytes:
-        /// fields.era = Some("M02L".as_bytes());
+        /// fields.month_code = Some("M02L".as_bytes());
         /// ```
         ///
         /// For a full example, see [`Self::ordinal_month`].
         pub month_code: Option<&'a [u8]>,
+        /// The month representing a valid month in this calendar year.
+        ///
+        /// For a full example, see [`Self::ordinal_month`].
+        pub month: Option<crate::types::Month>,
         /// See [`MonthInfo::ordinal`](crate::types::MonthInfo::ordinal).
         ///
         /// If both this and [`Self::month_code`] are set, they must refer to
@@ -147,18 +151,18 @@ mod unstable {
         ///
         /// # Examples
         ///
-        /// Either `month_code` or `ordinal_month` can be used in [`DateFields`], but they
+        /// Either `month_code`, `month`, or `ordinal_month` can be used in [`DateFields`], but they
         /// might not resolve to the same month number:
         ///
         /// ```
         /// use icu::calendar::cal::ChineseTraditional;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// // The 2023 Year of the Rabbit had a leap month after the 2nd month.
         /// let mut fields1 = DateFields::default();
         /// fields1.extended_year = Some(2023);
-        /// fields1.month_code = Some(b"M02L");
+        /// fields1.month = Some(Month::leap(2));
         /// fields1.day = Some(1);
         ///
         /// let date1 = Date::try_from_fields(
@@ -184,7 +188,8 @@ mod unstable {
         ///
         /// let month_info = date1.month();
         /// assert_eq!(month_info.ordinal, 3);
-        /// assert_eq!(month_info.standard_code.0, "M02L");
+        /// assert_eq!(month_info.number(), 2);
+        /// assert_eq!(month_info.is_leap(), true);
         /// ```
         pub ordinal_month: Option<u8>,
         /// See [`DayOfMonth`](crate::types::DayOfMonth).
@@ -201,6 +206,7 @@ impl fmt::Debug for DateFields<'_> {
             era_year,
             extended_year,
             month_code,
+            month,
             ordinal_month,
             day,
         } = *self;
@@ -212,6 +218,7 @@ impl fmt::Debug for DateFields<'_> {
         }
         builder.field("era_year", &era_year);
         builder.field("extended_year", &extended_year);
+        builder.field("month", &month);
         if let Some(s) = month_code.and_then(|s| core::str::from_utf8(s).ok()) {
             builder.field("month_code", &Some(s));
         } else {

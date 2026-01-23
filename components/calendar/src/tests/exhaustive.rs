@@ -34,7 +34,7 @@ super::test_all_cals!(
     #[ignore] // takes about 90 seconds in release-with-assertions
     fn check_from_fields<C: Calendar>(cal: Ref<C>) {
         let months = (1..19)
-            .flat_map(|i| [types::Month::new(i).code(), types::Month::leap(i).code()].into_iter())
+            .flat_map(|i| [types::Month::new(i), types::Month::leap(i)].into_iter())
             .collect::<Vec<_>>();
         for year in VALID_YEAR_RANGE {
             if year % 50000 == 0 {
@@ -46,9 +46,9 @@ super::test_all_cals!(
                 options.overflow = Some(overflow);
                 for mut fields in months
                     .iter()
-                    .map(|m| {
+                    .map(|&m| {
                         let mut fields = types::DateFields::default();
-                        fields.month_code = Some(m.0.as_bytes());
+                        fields.month = Some(m);
                         fields
                     })
                     .chain((1..20).map(|m| {

@@ -127,7 +127,7 @@ mod unstable {
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(2000);
-        /// fields.month_code = Some(b"????");
+        /// fields.month_code = Some(b"sep");
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Iso)
@@ -144,12 +144,12 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M13");
+        /// fields.month = Some(Month::new(13));
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
@@ -165,12 +165,12 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M05L");
+        /// fields.month = Some(Month::leap(5));
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
@@ -215,13 +215,13 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use tinystr::tinystr;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M06");
+        /// fields.month = Some(Month::new(6));
         /// fields.ordinal_month = Some(6);
         /// fields.day = Some(1);
         ///
@@ -231,7 +231,7 @@ mod unstable {
         /// fields.extended_year = Some(5784);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
-        ///     .expect_err("month M06 is not the 6th month in leap year 5784");
+        ///     .expect_err("month 6 is not the 6th month in leap year 5784");
         ///
         /// assert_eq!(err, DateFromFieldsError::InconsistentMonth);
         /// ```
