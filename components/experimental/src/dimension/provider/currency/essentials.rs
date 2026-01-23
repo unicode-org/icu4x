@@ -29,7 +29,7 @@ use crate::dimension::currency::CurrencyCode;
 pub use crate::provider::Baked;
 
 icu_provider::data_marker!(
-    /// Essential currency data needed for currency formatting. For example, currency patterns.
+    /// Provides essential currency data needed for currency formatting. For example, currency patterns.
     CurrencyEssentialsV1,
     CurrencyEssentials<'static>
 );

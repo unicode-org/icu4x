@@ -11,12 +11,12 @@ use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 
 icu_provider::data_marker!(
-    /// `CurrencyPatternsDataV1`
+    /// Provides currency patterns information for currency formatting.
     CurrencyPatternsDataV1,
     CurrencyPatternsData<'static>,
 );
 
-/// Currency Extended data struct.
+/// Contains the currency patterns information for currency formatting.
 #[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

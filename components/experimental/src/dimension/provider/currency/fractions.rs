@@ -21,7 +21,7 @@ use zerovec::ZeroMap;
 pub use crate::provider::Baked;
 
 icu_provider::data_marker!(
-    /// `CurrencyFractionsV1` provides currency fraction data for rounding and decimal digit rules.
+    /// Provides currency fraction data for rounding and decimal digit rules.
     CurrencyFractionsV1,
     CurrencyFractions<'static>,
     is_singleton = true

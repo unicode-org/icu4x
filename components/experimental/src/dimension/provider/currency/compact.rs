@@ -12,12 +12,14 @@ use icu_provider::prelude::*;
 use crate::compactdecimal::provider::CompactPatterns;
 
 icu_provider::data_marker!(
-    /// `ShortCurrencyCompactV1`
+    /// Provides currency compact data for short currency formatting.
+    ///
+    /// For example, "1000 US dollars" becomes "1k USD" in en-US.
     ShortCurrencyCompactV1,
     ShortCurrencyCompact<'static>
 );
 
-/// Currency Compact  data struct.
+/// Currency compact data struct.
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
