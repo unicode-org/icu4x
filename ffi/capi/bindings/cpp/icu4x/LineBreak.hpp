@@ -31,6 +31,9 @@ namespace capi {
     typedef struct icu4x_LineBreak_from_integer_value_mv1_result {union {icu4x::capi::LineBreak ok; }; bool is_ok;} icu4x_LineBreak_from_integer_value_mv1_result;
     icu4x_LineBreak_from_integer_value_mv1_result icu4x_LineBreak_from_integer_value_mv1(uint8_t other);
 
+    typedef struct icu4x_LineBreak_try_from_str_mv1_result {union {icu4x::capi::LineBreak ok; }; bool is_ok;} icu4x_LineBreak_try_from_str_mv1_result;
+    icu4x_LineBreak_try_from_str_mv1_result icu4x_LineBreak_try_from_str_mv1(icu4x::diplomat::capi::DiplomatStringView s);
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -89,6 +92,7 @@ inline icu4x::LineBreak icu4x::LineBreak::FromFFI(icu4x::capi::LineBreak c_enum)
         case icu4x::capi::LineBreak_AksaraStart:
         case icu4x::capi::LineBreak_ViramaFinal:
         case icu4x::capi::LineBreak_Virama:
+        case icu4x::capi::LineBreak_UnambiguousHyphen:
             return static_cast<icu4x::LineBreak::Value>(c_enum);
         default:
             std::abort();
@@ -117,6 +121,11 @@ inline uint8_t icu4x::LineBreak::to_integer_value() const {
 
 inline std::optional<icu4x::LineBreak> icu4x::LineBreak::from_integer_value(uint8_t other) {
     auto result = icu4x::capi::icu4x_LineBreak_from_integer_value_mv1(other);
+    return result.is_ok ? std::optional<icu4x::LineBreak>(icu4x::LineBreak::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline std::optional<icu4x::LineBreak> icu4x::LineBreak::try_from_str(std::string_view s) {
+    auto result = icu4x::capi::icu4x_LineBreak_try_from_str_mv1({s.data(), s.size()});
     return result.is_ok ? std::optional<icu4x::LineBreak>(icu4x::LineBreak::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // ICU4X_LineBreak_HPP

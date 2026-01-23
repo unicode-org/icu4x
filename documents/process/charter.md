@@ -70,7 +70,7 @@ ICU4X is a new library to fill the growing need for on-device internationalizati
 
 Because client-side needs are fundamentally different from server-side needs.
 
-ICU has a long history of contributors adding [cruft](http://site.icu-project.org/design/cpp#TOC-Cruft-Complication) to serve their specific use cases.  Over that time, ICU has been increasingly optimized for high performance on servers; code size and constrained memory usage have not been at the forefront of design decisions.
+ICU has a long history of contributors adding [cruft](https://icu.unicode.org/design/cpp#TOC-Cruft-Complication) to serve their specific use cases.  Over that time, ICU has been increasingly optimized for high performance on servers; code size and constrained memory usage have not been at the forefront of design decisions.
 
 Improving ICU to be the go-to solution to solve all client-side use cases would amount to a major overhaul and rewrite of the software, including a complete overhaul of the data loading mechanism, a re-write of classes with large code size, disentanglement of Java class dependencies, and a refactor of singleton caches to reduce memory usage.  In addition to these each being multi-quarter efforts, they would need to be done in a way that is backwards-compatible and does not hurt performance on the server side.  Such an effort also would not solve the current need from clients like Fuchsia and Mozilla for a memory-safe Rust ICU.  At the end of the day, given the interconnectedness of ICU primitives, even with compile-time dead code elimination, we will never be able to get code size down to as low as if we wrote new code with that as a primary design constraint.
 

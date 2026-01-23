@@ -49,28 +49,84 @@ namespace icu4x {
 /**
  * The various calendar types currently supported by {@link Calendar}
  *
- * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html) for more information.
+ * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/2.1.1/icu/calendar/enum.AnyCalendarKind.html) for more information.
  */
 class CalendarKind {
 public:
     enum Value {
+        /**
+         * The kind of an Iso calendar
+         */
         Iso = 0,
+        /**
+         * The kind of a Gregorian calendar
+         */
         Gregorian = 1,
+        /**
+         * The kind of a Buddhist calendar
+         */
         Buddhist = 2,
+        /**
+         * The kind of a Japanese calendar
+         */
         Japanese = 3,
-        JapaneseExtended = 4,
+        /**
+         * Deprecated, use `Japanese`
+         *
+         * \deprecated use `Japanese`
+         */
+        JapaneseExtended [[deprecated("use `Japanese`")]] = 4,
+        /**
+         * The kind of an Ethiopian calendar, with Amete Mihret era
+         */
         Ethiopian = 5,
+        /**
+         * The kind of an Ethiopian calendar, with Amete Alem era
+         */
         EthiopianAmeteAlem = 6,
+        /**
+         * The kind of a Indian calendar
+         */
         Indian = 7,
+        /**
+         * The kind of a Coptic calendar
+         */
         Coptic = 8,
+        /**
+         * The kind of a Dangi calendar
+         */
         Dangi = 9,
+        /**
+         * The kind of a Chinese calendar
+         */
         Chinese = 10,
+        /**
+         * The kind of a Hebrew calendar
+         */
         Hebrew = 11,
+        /**
+         * The kind of a Hijri tabular, type II leap years, Friday epoch, calendar
+         */
         HijriTabularTypeIIFriday = 12,
+        /**
+         * The kind of a Hijri simulated, Mecca calendar
+         */
         HijriSimulatedMecca = 18,
+        /**
+         * The kind of a Hijri tabular, type II leap years, Thursday epoch, calendar
+         */
         HijriTabularTypeIIThursday = 14,
+        /**
+         * The kind of a Hijri Umm al-Qura calendar
+         */
         HijriUmmAlQura = 15,
+        /**
+         * The kind of a Persian calendar
+         */
         Persian = 16,
+        /**
+         * The kind of a Roc calendar
+         */
         Roc = 17,
     };
 
@@ -85,7 +141,7 @@ public:
   /**
    * Creates a new {@link CalendarKind} for the specified locale, using compiled data.
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
    */
   inline static icu4x::CalendarKind create(const icu4x::Locale& locale);
 

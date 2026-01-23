@@ -15,10 +15,6 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -363,6 +359,9 @@ pub mod provider;
 pub use comparison::Collator;
 pub use comparison::CollatorBorrowed;
 pub use comparison::CollatorPreferences;
+
+#[cfg(feature = "unstable")]
+pub use comparison::CollationKeySink;
 
 /// Locale preferences used by this crate
 pub mod preferences {

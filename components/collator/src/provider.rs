@@ -370,7 +370,7 @@ pub struct CollationReordering<'data> {
     /// their lead bytes modified by the signed offset (-0xff..+0xff)
     /// stored in the lower 16 bits.
     ///
-    /// CollationData::makeReorderRanges() writes a full list where the
+    /// `CollationData::makeReorderRanges()` writes a full list where the
     /// first range (at least for terminators and separators) has a 0
     /// offset. The last range has a non-zero offset. minHighNoReorder
     /// is set to the limit of that last range.
@@ -577,39 +577,28 @@ pub(crate) struct CollationSpecialPrimariesValidated<'data> {
     pub numeric_primary: u8,
     /// 256 bits (packed in 16 u16s) to classify every possible
     /// byte into compressible or non-compressible.
-    pub compressible_bytes: [u16; 16],
+    pub compressible_bytes: &'data [<u16 as AsULE>::ULE; 16],
 }
 
 impl CollationSpecialPrimariesValidated<'static> {
-    pub(crate) const HARDCODED_FALLBACK: &Self = &Self {
-        last_primaries: zerovec::zerovec!(u16; <u16 as AsULE>::ULE::from_aligned; [
-          // Last primaries
-          1286,
-          3072,
-          3488,
-          3840,
-        ]),
-        numeric_primary: 16u8,
-        compressible_bytes: [
-            // Compressible bytes
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b1111_1111_1111_1110,
-            0b1111_1111_1111_1111,
-            0b0000_0000_0000_0001,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0100_0000_0000_0000,
-        ],
-    };
+    pub(crate) const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b1111_1111_1111_1110),
+        <u16 as AsULE>::ULE::from_unsigned(0b1111_1111_1111_1111),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0001),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0100_0000_0000_0000),
+    ];
 }
 
 icu_provider::data_struct!(
@@ -633,7 +622,7 @@ impl CollationSpecialPrimariesValidated<'_> {
         // into Compiler Explorer shows that the panic
         // is optimized away.
         #[expect(clippy::indexing_slicing)]
-        let field = self.compressible_bytes[usize::from(b >> 4)];
+        let field = u16::from_unaligned(self.compressible_bytes[usize::from(b >> 4)]);
         let mask = 1 << (b & 0b1111);
         (field & mask) != 0
     }

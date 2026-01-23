@@ -49,7 +49,7 @@ pub struct RuleBasedTransliterator<'a> {
     /// Hidden transliterators are intended as dependencies for visible transliterators,
     /// see, e.g., [Devanagari-Latin](https://github.com/unicode-org/cldr/blob/main/common/transforms/Devanagari-Latin.xml)
     pub visibility: bool,
-    /// The [`VarTable`] containing any special matchers (variables, UnicodeSets, ...) used by this transliterator.
+    /// The [`VarTable`] containing any special matchers (variables, `UnicodeSets`, ...) used by this transliterator.
     pub variable_table: VarTable<'a>,
     /// The filter for this transliterator. If there is none, the set of all code points is used.
     pub filter: CodePointInversionList<'a>,
@@ -147,7 +147,7 @@ pub struct SimpleId<'a> {
 }
 
 /// A conversion rule. The source patterns as well as the replacer use inlined private use characters
-/// that refer to elements of the [`VarTable`] for special matchers (variables, UnicodeSets, ...).
+/// that refer to elements of the [`VarTable`] for special matchers (variables, `UnicodeSets`, ...).
 #[derive(Debug, Clone)]
 #[make_varule(RuleULE)]
 #[zerovec::skip_derive(Ord)]
@@ -198,7 +198,7 @@ pub struct VarTable<'a> {
     /// Segments.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub segments: VarZeroVec<'a, SegmentULE, Index32>,
-    /// UnicodeSets. These are represented as a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList)
+    /// `UnicodeSets`. These are represented as a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList)
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub unicode_sets: VarZeroVec<'a, CodePointInversionListAndStringListULE, Index32>,
     /// Function calls.

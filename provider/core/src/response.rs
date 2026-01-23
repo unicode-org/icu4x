@@ -96,7 +96,7 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// # Examples
 ///
-/// Create and use DataPayloadOr:
+/// Create and use [`DataPayloadOr`]:
 ///
 /// ```
 /// use icu_locale_core::langid;
@@ -127,7 +127,6 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 /// Stack size comparison:
 ///
 /// ```
-/// use core::mem::size_of;
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
 ///
@@ -182,7 +181,7 @@ pub(crate) type CartInner = SelectedRc<Box<[u8]>>;
 pub(crate) type CartInner = &'static ();
 
 // Safety: Rc, Arc, and () are CloneableCart, and our impl delegates.
-unsafe impl yoke::CloneableCart for Cart {}
+unsafe impl CloneableCart for Cart {}
 
 #[cfg(feature = "alloc")]
 impl Deref for Cart {
@@ -198,6 +197,8 @@ unsafe impl stable_deref_trait::StableDeref for Cart {}
 impl Cart {
     #[cfg(feature = "alloc")]
     /// Creates a `Yoke<Y, Option<Cart>>` from owned bytes by applying `f`.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
     where
         for<'a> Y: Yokeable<'a>,
@@ -244,7 +245,7 @@ where
     }
 }
 
-/// Cloning a DataPayload is generally a cheap operation.
+/// Cloning a [`DataPayload`] is generally a cheap operation.
 /// See notes in the `Clone` impl for [`Yoke`].
 ///
 /// # Examples
@@ -358,7 +359,7 @@ impl<M> DataPayload<M>
 where
     M: DynamicDataMarker,
 {
-    /// Convert a fully owned (`'static`) data struct into a DataPayload.
+    /// Convert a fully owned (`'static`) data struct into a [`DataPayload`].
     ///
     /// This constructor creates `'static` payloads.
     ///
@@ -392,7 +393,7 @@ where
         Self(DataPayloadInner::StaticRef(data))
     }
 
-    /// Mutate the data contained in this DataPayload.
+    /// Mutate the data contained in this [`DataPayload`].
     ///
     /// For safety, all mutation operations must take place within a helper function that cannot
     /// borrow data from the surrounding context.
@@ -444,8 +445,8 @@ where
 
     /// Borrows the underlying data.
     ///
-    /// This function should be used like `Deref` would normally be used. For more information on
-    /// why DataPayload cannot implement `Deref`, see the `yoke` crate.
+    /// This function should be used like [`Deref`] would normally be used. For more information on
+    /// why [`DataPayload`] cannot implement [`Deref`], see the `yoke` crate.
     ///
     /// # Examples
     ///
@@ -896,6 +897,8 @@ where
 
 impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
         let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b)
@@ -1076,7 +1079,7 @@ where
     }
 }
 
-/// Cloning a DataResponse is generally a cheap operation.
+/// Cloning a [`DataResponse`] is generally a cheap operation.
 /// See notes in the `Clone` impl for [`Yoke`].
 ///
 /// # Examples

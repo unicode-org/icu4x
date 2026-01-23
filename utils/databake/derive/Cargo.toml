@@ -14,7 +14,7 @@ edition.workspace = true
 include.workspace = true
 license.workspace = true
 repository.workspace = true
-rust-version.workspace = true
+rust-version = "1.82"
 
 [package.metadata.workspaces]
 independent = true
@@ -31,3 +31,6 @@ synstructure = { workspace = true }
 
 [dev-dependencies]
 databake = { path = "..", features = ["derive"]}
+
+[lints]
+workspace = true

@@ -1,5 +1,5 @@
-list/and/v1, <lookup>, 2176B, 401 identifiers
-list/and/v1, <total>, 43505B, 5203B, 141 unique payloads
+list/and/v1, <lookup>, 2172B, 400 identifiers
+list/and/v1, <total>, 43221B, 5192B, 140 unique payloads
 list/and/v1, af/N, 290B, 20B, d2846cc3cf177584
 list/and/v1, af/S, 288B, 15B, abf92122ab812de
 list/and/v1, af/W, -> af/S
@@ -88,7 +88,7 @@ list/and/v1, en/S, -> chr/S
 list/and/v1, en/W, 295B, 25B, 3950f21ab734a978
 list/and/v1, eo/S, 287B, 14B, 861fd1a2bf7bd6c8
 list/and/v1, eo/W, 289B, 16B, 95e232efe2396226
-list/and/v1, es/N, 1290B, 1021B, 58945fe7830785e
+list/and/v1, es/N, 1290B, 1021B, e7cb3bc031264b0c
 list/and/v1, es/S, -> es/N
 list/and/v1, es/W, -> es/N
 list/and/v1, et/S, 288B, 15B, 72326c49bce9b8aa
@@ -127,7 +127,7 @@ list/and/v1, gu/W, -> gu/S
 list/and/v1, ha/N, 293B, 23B, f9af5c2bb97e481d
 list/and/v1, ha/S, -> ha/N
 list/and/v1, ha/W, -> ha/N
-list/and/v1, he/N, 1374B, 1105B, 4e9ad2964c0b706d
+list/and/v1, he/N, 1374B, 1105B, 78f4c6ee06a40556
 list/and/v1, he/S, -> he/N
 list/and/v1, he/W, -> he/N
 list/and/v1, hi-Latn/N, 291B, 21B, 846f8de82e79c4a6
@@ -251,8 +251,7 @@ list/and/v1, mt/W, -> mt/N
 list/and/v1, my/N, 302B, 29B, f8f106567810dfe9
 list/and/v1, my/S, -> my/N
 list/and/v1, my/W, -> my/N
-list/and/v1, ne/N, 285B, 12B, 5824e00cb529485a
-list/and/v1, ne/S, 288B, 15B, ac494b1e6e2e8cb2
+list/and/v1, ne/S, 289B, 16B, f23fd51345600ec0
 list/and/v1, ne/W, -> ne/S
 list/and/v1, nl/S, -> blo/N
 list/and/v1, nl/W, -> af/S
@@ -487,7 +486,7 @@ list/or/v1, en-CA/W, -> en-001/N
 list/or/v1, eo/N, 289B, 16B, 9d3ad3a0a097f9f2
 list/or/v1, eo/S, -> eo/N
 list/or/v1, eo/W, -> eo/N
-list/or/v1, es/N, 1583B, 1314B, f6111f97ee2cc20e
+list/or/v1, es/N, 1583B, 1314B, aec368bf3b08c131
 list/or/v1, es/S, -> es/N
 list/or/v1, es/W, -> es/N
 list/or/v1, et/N, 290B, 17B, c579aed1ecbf264c
@@ -798,8 +797,8 @@ list/or/v1, zh-Hant/W, -> zh-Hant/N
 list/or/v1, zh/N, -> zh-Hant/N
 list/or/v1, zh/S, -> zh-Hant/N
 list/or/v1, zh/W, -> zh-Hant/N
-list/unit/v1, <lookup>, 1751B, 331 identifiers
-list/unit/v1, <total>, 31952B, 5081B, 99 unique payloads
+list/unit/v1, <lookup>, 1746B, 330 identifiers
+list/unit/v1, <total>, 31101B, 5046B, 96 unique payloads
 list/unit/v1, af/N, 283B, 10B, 65599aa2ed9d8617
 list/unit/v1, ak/N, -> af/N
 list/unit/v1, ak/S, 293B, 23B, 665ac0fadccdd886
@@ -865,12 +864,12 @@ list/unit/v1, ee/W, -> ee/N
 list/unit/v1, el/N, -> af/N
 list/unit/v1, en/N, -> af/N
 list/unit/v1, eo/N, -> af/N
-list/unit/v1, es-DO/N, 1289B, 1023B, dcd965b6b291c020
-list/unit/v1, es-DO/S, 1290B, 1021B, 58945fe7830785e
+list/unit/v1, es-DO/N, 1289B, 1023B, b26156e1782db07b
+list/unit/v1, es-DO/S, 1290B, 1021B, e7cb3bc031264b0c
 list/unit/v1, es-PY/S, -> es-DO/S
 list/unit/v1, es-US/S, -> es-DO/S
 list/unit/v1, es/N, -> af/N
-list/unit/v1, es/S, 1292B, 1026B, 2e14180a8853718f
+list/unit/v1, es/S, 1292B, 1026B, 55d759cf91a81ab
 list/unit/v1, es/W, -> es-DO/S
 list/unit/v1, et/N, -> af/N
 list/unit/v1, eu/N, 289B, 16B, 6869307ba313e5b6
@@ -1004,9 +1003,8 @@ list/unit/v1, mt/W, -> mt/S
 list/unit/v1, my/N, 298B, 25B, 357d51c14429b0c0
 list/unit/v1, my/S, 302B, 29B, f8f106567810dfe9
 list/unit/v1, my/W, 300B, 27B, f7c572578fa48186
-list/unit/v1, ne/N, 282B, 9B, 2c5f201e301c66b2
-list/unit/v1, ne/S, 285B, 15B, 30a87972b0be1666
-list/unit/v1, ne/W, 284B, 11B, ef0626e9ddfbe8f9
+list/unit/v1, ne/N, -> af/N
+list/unit/v1, ne/S, -> kn/N
 list/unit/v1, nl/W, 288B, 15B, abf92122ab812de
 list/unit/v1, nn/N, -> af/N
 list/unit/v1, nn/W, -> hi-Latn/N

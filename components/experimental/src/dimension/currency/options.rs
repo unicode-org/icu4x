@@ -23,7 +23,7 @@ impl From<Width> for CurrencyFormatterOptions {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy, Hash)]
+#[derive(Default, Debug, Eq, PartialEq, Clone, Copy, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub enum Width {
@@ -31,6 +31,7 @@ pub enum Width {
     ///
     /// For example, 1 USD formats as "$1.00" in en-US and "US$1" in most other locales.
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
+    #[default]
     Short,
 
     /// Format the currency with the narrow currency symbol.
@@ -41,10 +42,4 @@ pub enum Width {
     /// For example, 1 USD formats as "$1.00" in most locales.
     #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
-}
-
-impl Default for Width {
-    fn default() -> Self {
-        Self::Short
-    }
 }

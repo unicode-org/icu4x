@@ -8,7 +8,10 @@
 #include "diplomat_runtime.h"
 
 #include "Calendar.d.h"
+#include "CalendarDateFromFieldsError.d.h"
 #include "CalendarError.d.h"
+#include "DateFields.d.h"
+#include "DateFromFieldsOptions.d.h"
 #include "IsoDate.d.h"
 #include "Rfc9557ParseError.d.h"
 #include "Weekday.d.h"
@@ -22,6 +25,9 @@
 
 typedef struct icu4x_Date_from_iso_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_from_iso_in_calendar_mv1_result;
 icu4x_Date_from_iso_in_calendar_mv1_result icu4x_Date_from_iso_in_calendar_mv1(int32_t iso_year, uint8_t iso_month, uint8_t iso_day, const Calendar* calendar);
+
+typedef struct icu4x_Date_from_fields_in_calendar_mv1_result {union {Date* ok; CalendarDateFromFieldsError err;}; bool is_ok;} icu4x_Date_from_fields_in_calendar_mv1_result;
+icu4x_Date_from_fields_in_calendar_mv1_result icu4x_Date_from_fields_in_calendar_mv1(DateFields fields, DateFromFieldsOptions options, const Calendar* calendar);
 
 typedef struct icu4x_Date_from_codes_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_from_codes_in_calendar_mv1_result;
 icu4x_Date_from_codes_in_calendar_mv1_result icu4x_Date_from_codes_in_calendar_mv1(DiplomatStringView era_code, int32_t year, DiplomatStringView month_code, uint8_t day, const Calendar* calendar);
@@ -43,6 +49,8 @@ uint16_t icu4x_Date_day_of_year_mv1(const Date* self);
 uint8_t icu4x_Date_day_of_month_mv1(const Date* self);
 
 Weekday icu4x_Date_day_of_week_mv1(const Date* self);
+
+Weekday icu4x_Date_weekday_mv1(const Date* self);
 
 uint8_t icu4x_Date_ordinal_month_mv1(const Date* self);
 

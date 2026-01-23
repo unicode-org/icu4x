@@ -29,12 +29,15 @@ namespace icu4x {
  *
  * Currently never returned by any API.
  *
- * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
+ * Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
  */
 class DateTimeWriteError {
 public:
     enum Value {
         Unknown = 0,
+        /**
+         * Unused
+         */
         MissingTimeZoneVariant = 1,
     };
 

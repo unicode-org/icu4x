@@ -2,29 +2,341 @@
 
 ## Unreleased
 
+Fully filled in up to 30c187f4b7
+
+
 - Components
     - General
+        - Use HTTPS links in docs (unicode-org#7212)
     - `icu_calendar`
-      - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
+        - Introduce a new `Month` type, preferred over using month codes (unicode-org#7147)
+        - Restrict the range of valid dates constructed via certain constructors (unicode-org#7219, unicode-org#7227)
+        - Fix out-of-range bug during date arithmetic (unicode-org#7257)
+        - Implement ISO 8601 date duration parsing (#7355)
+        - Correctly produce `ethioaa` calendars from `CalendarAlgorithm` (unicode-org#7321)
+        - Respect `-u-rg` in calendar resolution (unicode-org#7376)
+        - Optimize the stack size of `Date` types (unicode-org#7220)
+        - `AnyCalendar` cleanups and docs fixes (unicode-org#7223, unicode-org#7225)
+        - Improve Hijri docs (unicode-org#7330, unicode-org#7332, unicode-org#7333)
+        - Remove `Hijri<AstronomicalSimulation>` simulation code, retaining hardcoded data, falling back to Tabular for non-modern dates (unicode-org#7301)
+        - Replace `Date::day_of_week` by `Date::weekday` (unicode-org#7288)
+        - Deprecate `Date::new_from_iso`/`Date::to_iso` (unicode-org#7287)
+        - Optimize Hebrew and Julian calendars (unicode-org#7213)
+        - Optimize day/week diffing to use RDs (unicode-org#7308)
+    - `icu_casemap`
+        - General changes only
+    - `icu_collections`
+        - Add `CodePointInversionListAndStringList::contains_utf8` (unicode-org#7363)
+    - `icu_codepointtrie_builder`: `0.5.1 -> ???`
+        - Remove serde dep from `icu_codepointtrie_builder` (unicode-org#7298)
+    - `icu_collator`
+        - General changes only
+    - `icu_datetime`
+        - Fix error handling for FieldSetBuilder (unicode-org#7245)
+        - Add some support for `U` (cyclic year) datetime symbol (unicode-org#7328)
+        - Remove old datetime data structs (unicode-org#7205)
+        - Assorted improvements to icu_datetime docs (unicode-org#7244)
+    - `icu_decimal`
+        - General changes only
+    - `icu_experimental`: `0.4.0 -> ???`
+        - `compactdecimal`
+            - Don't hallucinate patterns (unicode-org#7387)
+            - Pack compact decimal data (unicode-org#7388)
+            - Round fractional compact decimals to two significant digits (unicode-org#7389)
+        - `currency`
+            - Add currency fractions provider (unicode-org#7278)
+            - Update comments for currency data structures to enhance clarity (unicode-org#7405)
+        - `dimension`
+        - `measure`
+        - `relativetime`
+        - `units`
+            - Correct region extraction for categorized display names (#7421)
+    - `icu`
+        - Add example for measuring Date::try_from_fields code size (unicode-org#7297)
+    - `icu_list`
+        - General changes only
+    - `icu_locale`
+        - Add docs discouraging direct conversion from Locale to DataLocale for locale fallback (unicode-org#7348)
+    - `icu_locale_core`
+        - Fix regional override `-u-rg` (unicode-org#7337) and regional subdivision `-u-sd` (unicode-org#7341) to fix region-priority data loading in other components
+        - (Macro-breaking) The `struct_keyword!` macro was changed to operate on references for conversions. This API is mostly used internally by ICU4X. (unicode-orgunicode-org#7361)
+        - Add `From<&Value>` for struct preferences (unicode-org#7361)
+        - Correctly parse `-u-ca-ethiopic-amete-alem` alias (#7413)
+        - Add `LocalePreferences::from_locale_strict` (unicode-org#7377)
+        - Fix `LanguageIdentifier::normalize_utf8` example (unicode-org#7372)
+        - Use better types in `LocalePreferences` (unicode-org#7360)
+    - `icu_normalizer`
+        - Move `harfbuzz-traits` implementations into component crates (unicode-org#7200)
+    - `icu_pattern`
+        - Create SinglePlaceholderPattern::PASS_THROUGH (unicode-org#7393)
+    - `icu_plurals`
+        - FourBitMetadata should be checked against 0x10 or 0x0F, not 0x80 (unicode-org#7395)
+        - Fix overflow in `PluralOperands` constructor (#7425)
     - `icu_properties`
-      - Add support for missing binary properties:
-        - ID_Compat_Math_Continue
-        - ID_Compat_Math_Start
-        - IDS_Unary_Operator
-        - Modifier_Combining_Mark
+        - Add enumerated property `Numeric_Type` (unicode-org#7157)
+        - Add enumerated property `Joining_Group` (unicode-org#7293)
+        - Add missing convenience API for `Basic_Emoji` and `EmojiSet` (unicode-org#7358)
+        - Stabilise `IndicConjuctBreak` (unicode-org#7280)
+        - Constify `PropertyNamesLong`/`PropertNamesShort`/`PropertyParser` constructors (unicode-orgunicode-org#7294)
+        - Fix script values (unicode-org#7269)
+        - Move `harfbuzz-traits` implementations into component crates (unicode-org#7200)
+        - Add conversions for `unicode_bidi::BidiClass` (unicode-org#7272)
+        - Add conversions for properties/locale scripts (unicode-org#7270)
+        - Validate properties names, constants (unicode-org#7284, unicode-org#7281)
+    - `icu_segmenter`
+        - Add non-complex segmenter constructors (unicode-org#7268)
+        - (Experimental) Initial code for RAdaBoost word segmenter for Chinese and CNN word segmenter for Thai (unicode-org#7122, unicode-org#7217, unicode-org#7246, unicode-org#7344)
+    - `icu_time`
+        - Add docs for `DateTime`/`ZonedDateTime` semantics (unicode-org#7275)
+        - Relax some bounds (unicode-org#7286)
 - Data model and providers
-    - ...
+    - `icu_provider_adapters`
+        - General changes only
+    - `icu_provider_baked`
+        - Use `Index32` in baked data by default (unicode-org#7310)
+    - `icu_provider_blob`
+        - General changes only
+    - `icu_provider`
+        - Breaking: Add associated type to `MaybeEncodeAsVarULE` trait and use Index32 (unicode-org#7310)
+        - Add serde cargo feature comments to icu_provider buf/serde.rs (unicode-org#7408)
+    - `icu_provider_export`
+        - Print warning when multiple filters are applied to same marker (unicode-org#7240)
+    - `icu4x-datagen`
+        - Add `--attribute-filter` cli flag to icu4x-datagen (unicode-org#7236)
+    - `icu_provider_registry`
+        - Various new data markers as needed by component crates
+    - `icu_provider_source`
+        - Support for generating any new data markers as needed by component crates
+        - Update datagen to TZDB 2025c (unicode-org#7306)
+        - Always generate fast-mode data for NFD and NFKD tries (unicode-org#7222)
+- FFI
+    - `icu_capi`
+        - FFI analogues for *most* new ICU4X component APIs
+        - Add FFI property `try_from_str` (unicode-org#7367)
+    - (Experimental) Basic Kotlin bindings (unicode-org#7237, unicode-org#7256, unicode-org#7265)
+    - Use stable Dart 3.10 (unicode-org#7243)
+    - `icu_harfbuzz`
+        - Retire the `icu_harfbuzz` crate. The `icu_properties` and `icu_normalizer` types now directly implement the `harfbuzz-traits`
+- Utils
+    - `bies`: No change (`0.2.5`)
+    - `calendrical_calculations`: `0.2.3 -> ???`
+        - Optimize Hebrew and Julian calendars (unicode-org#7213)
+        - Add docs about the Skaukat criterion (unicode-org#7331)
+    - `crlify`: No change (`1.0.4`)
+    - `databake`: No change (`0.2.0`)
+    - `fixed_decimal`: No change (`0.7.1`)
+    - `ixdtf`: No change (`0.6.4`)
+    - `litemap`: No change (`0.8.1`)
+    - `potential_utf`: No change (`0.1.4`)
+    - `resb`: No change (`0.1.1`)
+    - `tinystr`: No change (`0.8.2`)
+    - `tzif`: No change (`0.4.1`)
+    - `writeable`: `0.6.2 -> ???`
+        - Add writeable::adapters::Concat and writeable::concat_writeable! (unicode-org#6929)
+    - `yoke`, `yoke_derive`: `0.8.1 -> ???`
+        - impl common traits (Display, PartialEq/Eq, PartialOrd/Ord) (#7400)
+        - derive: Allow trait bounds in `where` clauses (unicode-org#7230)
+        - Safely handle panics in the `replace_cart` callback, additionally fixing OOM safety issue in `wrap_cart_in_*` (unicode-org#7456)
+        - derive: Recognize only `yoke(prove_covariance_manually)`, not arbitrary `foo(prove_covariance_manually)` (unicode-org#7470)
+        - derive: Prevent unusual unsizing coercions, deref coercions, and macros from causing unsoundness (unicode-org#7470)
+        - derive: Handle types' lifetime parameters more precisely (unicode-org#7470)
+    - `zerofrom`: No change (`0.1.6`)
+    - `zerotrie`: `0.2.3 -> ???`
+        - Add `ZeroAsciiDenseSparse2dTrie` for more efficient storage of data keys with many attributes (unicode-org#7264, unicode-org#7304, unicode-org#7305)
+    - `zerovec`: `0.11.5 -> ???`
+        - `schemars` support (unicode-org#7209)
+    - `zerovec`: No change (`0.11.2`)
+    - `zoneinfo64`: `0.2.1 -> ???`
+        - Internal cleanups
+
+## icu 2.1.x
+
+Several crates have had patch releases in the 2.1 stream:
+
+- Components
+    - (2.1.1) General
+        - Fix `icu_locale_core` dependency (unicode-org#7191)
+    - (2.1.2)`icu_properties`
+        - Fix some property constants (unicode-org#7269, unicode-org#7281, unicode-org#7284)
+        - Add conversions for `unicode_bidi::BidiClass` (unicode-org#7272)
+        - Add `IndicConjunctBreak` (unicode-org#7280)
+        - Add conversion between `icu::properties::props::Script` and `icu::locale::subtags:Script` (unicode-org#7270)
+    - (2.1.2) `icu_segmenter`
+        - Add non-complex line and word break constructors (unicode-org#7268)
+- Data model and providers
+    - (2.1.2) `icu_provider_source`, `icu_locale_data`, `icu_datetime_data`, `icu_experimental_data`
+        - Update to CLDR 48.1 (unicode-org#7396)
+    - (2.1.2) `icu_provider_registry`, `icu_provider_source`
+        - Add `IndicConjunctBreak` (unicode-org#7280)
+
+## icu4x 2.1
+
+- Components
+    - General
+        - Update MSRV to 1.83 (unicode-org#7066)
+        - Remove unused dependencies (unicode-org#6978)
+    - `icu_calendar`
+        - Collapse `Dangi` and `Chinese` into `EastAsianTraditional`, expose (unstable) customization trait (unicode-org#6938, unicode-org#7159)
+        - Collapse Hijri calendar types, expose (unstable) `Rules` trait for customization (unicode-org#6935)
+        - Add Easter holiday to `Gregorian` and `Julian` (unicode-org#6899)
+        - Implement `PartialOrd` for `Date` unconditionally (unicode-org#7090)
+        - Switch Chinese and Korean calendars to no longer being data-driven, hardcoding their data (unicode-org#6934, unicode-org#7008)
+        - (unstable) Add `Date::try_from_fields` for flexibly building Temporal dates (unicode-org#6910, unicode-org#7116, unicode-org#7163)
+        - (unstable) Implement date arithmetic according to Temporal specification (unicode-org#6992, unicode-org#7012)
+        - Make `extended_year` have consistent behavior across calendars, matching specced behavior in CLDR and Temporal (unicode-org#6800, unicode-org#6937)
+        - Remove era aliases for Persian (unicode-org#7124)
+        - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
+        - Fix calendar preference resolution (unicode-org#7158)
+        - Deprecate convenience constructors of lunisolar calendars (unicode-org#7143)
+        - Avoid panics for large past/future dates in astronomical calendars (unicode-org#6876)
+        - Improve some Gregorian calendar code (unicode-org#6870)
+        - Optimise `day_of_provided_year`, `date_from_provided_year_day` for ISO/Gregorian (unicode-org#6883)
+        - Add a lot more documentation on individual calendars (unicode-org#7016, unicode-org#7033, unicode-org#7036, unicode-org#7037, unicode-org#7047, unicode-org#7082, unicode-org#7151)
+        - Compare Chinese calendar against Hong Kong observatory (unicode-org#6944)
+        - Test Korean calendar against KASI (unicode-org#7041)
+    - `icu_casemap`
+        - General changes only
+    - `icu_collator`
+        - Add `CollatorBorrowed::write_sort_key_to`; to support generating sort keys (unicode-org#6537, unicode-org#6656, unicode-org#6708, unicode-org#7186)
+        - Make merge separator compare less than U+0000 on the identical strength (unicode-org#6814, unicode-org#6823)
+        - Add Latin1 comparisons to the collator (unicode-org#6674)
+        - Avoid double-validating `char`s (unicode-org#6924)
+    - `icu_collections`
+        - Fix building without the `alloc` crate (unicode-org#6997)
+        - Optimize `CodePointTrie` by hoisting fast path bound checks to constructor (unicode-org#6863)
+        - Make trivial constructors for Char16Trie / Char16TrieIterator inline-eligible (unicode-org#6864)
+    - `icu_datetime`
+        - Add `Preferences::from_locale_strict` (unicode-org#6737)
+        - Change short localized offset format to use +0 (unicode-org#6729)
+        - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
+        - Use atTime patterns where available (unicode-org#7106)
+        - Disambiguate inconsistent metazones (unicode-org#6755, unicode-org#7160)
+        - Implement `u` and `g` fields (unicode-org#6930)
+        - Use accurate `ZoneNameTimestamps` (unicode-org#6942)
+        - Improve formatting for Etc/GMT+X zones (unicode-org#7055)
+    - `icu_decimal`
+        - General changes only
+    - `icu_experimental`: `0.3.0 -> 0.4.0`
+        - `units`
+            - Refactor measure unit parser by using fixed unit ids (unicode-org#6683)
+        - `measure`
+            - End-to-End Categorized Units Formatter with sliced data (Core / Extended / Outlier)  (unicode-org#6830)
+            - Add short representation generator for MeasureUnit (unicode-org#6685)
+            - Add `CategorizedFormatter` for unit formatting (unicode-org#6710)
+            - Introduce `duration` category for measure units (unicode-org#6676)
+            - Add category module for measure units with associated traits and implementations (unicode-org#6535)
+            - Add UnitsIdsV1 to support the fundamental units' indices (unicode-org#6598)
+        - `relativetime`
+            - Fix relativetime preferences to observe numbering system (unicode-org#6928)
+        - `dimension`
+            - Migrate PercentEssentials to VarZeroCow; add test for #4662 (unicode-org#6716)
+            - Refactor currency provider structure (unicode-org#6732)
+    - `icu`
+        - Move examples into metacrate (unicode-org#6591)
+    - `icu_list`
+        - General changes only
+    - `icu_locale`
+        - Add `extend` to Unicode Extensions (unicode-org#7112)
+    - `icu_locale_core`
+        - Fix building without the `alloc` crate (unicode-org#6997)
+        - Implement Serialize and Deserialize for Locale (unicode-org#6829)
+        - Add `Preferences::from_locale_strict` (unicode-org#6737)
+    - `icu_normalizer`
+        - Permit enabling optimizations when the data is known at compile time to always be a fast trie (unicode-org#6906)
+        - Performance work counteracting a compiler regression (unicode-org#6825)
+        - Jump forward throwing away work instead of panic in release builds (unicode-org#6816)
+    - `icu_pattern`: `0.4.0 -> 0.4.1`
+        - General changes only
+    - `icu_plurals`
+        - Change debug output of PluralElementsPackedULE (unicode-org#6841)
+    - `icu_properties`
+        - Fix building without the `alloc` crate (unicode-org#6997)
+        - Optimize property map lookups (unicode-org#6886)
+        - Add support for missing binary properties:
+            - ID_Compat_Math_Continue
+            - ID_Compat_Math_Start
+            - IDS_Unary_Operator
+            - Modifier_Combining_Mark
+    - `icu_segmenter`
+        - General changes only
+    - `icu_time`
+        - Deprecate `VariantOffsetCalculator` (unicode-org#6905)
+        - Deprecate time zone variant APIs (unicode-org#6754)
+        - Move `TimeZoneVariant` to provider module (unicode-org#6822)
+        - Treat `Etc/GMT+x` as a raw offset, improve formatting (unicode-org#7055)
+        - Store `ZoneNameTimestamp` as UTC (unicode-org#6746)
+        - Use accurate `ZoneNameTimestamps` (unicode-org#6942)
+        - Optimize DST offsets using a lookup table (unicode-org#6765)
+- Data model and providers
+    - `icu_provider_baked`
+        - Expose const structs in baked data (unicode-org#6652)
+    - `icu_provider`
+        - Fix building without the `alloc` crate (unicode-org#6997)
+    - `icu4x-datagen`
+        - Don't require sources to be set in `icu4x-datagen` (unicode-org#6892)
+    - `icu_provider_source`
+        - Update to CLDR 48 (unicode-org#6793, unicode-org#6989, unicode-org#7046, unicode-org#7167)
+        - Don't complain about not covering `Factory` timezone in datagen (unicode-org#6768)
+        - Detect rearguard TZDB differences (unicode-org#6943, unicode-org#6749)
+        - Include metazone periods before the horizon if the metazone is included anyway (unicode-org#6747)
+        - Handle locales without `territories.json`, locales with inconsistent patterns (unicode-org#6709)
 - FFI
     - `icu_capi`
         - All C++ enums now default to a valid value; which is the `Default` impl where there is one, and some semi-logical value otherwise. This has changed defaults in some cases and may cause a behavioral change for people relying on C++ default constructors. (unicode-org#6692)
+        - Wasm code now uses the stable standard `wasm-c-abi=spec` (unicode-org#6679)
+        - Enable experimental code in NPM (unicode-org#6743)
+        - Allow consumers to determine bindings directories (unicode-org#6887)
+        - Document deprecated APIs (unicode-org#6890)
+        - FFI for most new APIs
         - `ListFormatter::format` now takes a `diplomat::span<const diplomat::string_view_for_slice>` instead of a `diplomat::span<std::string_view>` to handle soundness issues on some platforms (unicode-org#6974)
+    - Dart version `2.1.0-dev.0`, `2.1.0-dev.1`
+    - NPM version `2.1.0`
 - Utils
-    - `yoke`
+    - General
+        - Util MSRV is decoupled from ICU4X MSRV; uniformly set to 1.82 for now (unicode-org#7125)
+    - `bies`: `0.2.4 -> 0.2.5`
+        - Minor internal changes
+    - `calendrical_calculations`: `0.2.2 -> 0.2.3`
+        - Add RataDie::in_well_behaved_astronomical_range(), use to avoid panics (unicode-org#6876)
+    - `crlify`: No change
+    - `databake`: No change
+    - `databake_derive`: `0.2.0 -> 0.2.1`
+        - Require public fields for `Bake` derive (unicode-org#6586)
+    - `fixed_decimal`: `0.7.0 -> 0.7.1`
+        - Minor internal changes
+    - `ixdtf`: `0.6.3 -> 0.6.4`
+        - Add to_static_string for IXDTF errors (unicode-org#6917)
+    - `litemap`: `0.8.0 -> 0.8.1`
+        - Use `serde_core` (unicode-org#6991)
+    - `potential_utf`: `0.1.3 -> 0.1.4`
+        - Use `serde_core` (unicode-org#6991)
+    - `resb`: `0.1.0 -> 0.1.1`
+        - Use `serde_core` (unicode-org#6991)
+    - `tinystr`: `0.8.1 -> 0.8.2`
+        - Add TinyAsciiStr::new_unsigned_decimal (unicode-org#6912)
+        - Use `serde_core` (unicode-org#6991)
+    - `tzif`: `0.4.0 -> 0.4.1`
+        - Minor internal changes
+    - `writeable`: `0.6.1 -> 0.6.2`
+        - Fix building without the `alloc` crate (unicode-org#6985)
+    - `yoke`, `yoke_derive`: `0.8.0 -> 0.8.1`
         - Add four `map_with_cart` methods to `yoke::Yoke`, similar to `Yoke::map_project` but
         additionally providing a reference to the cart. (unicode-org#6781)
         - Add `Yoke::with_mut_return`, similar to `Yoke::with_mut` but with a callback that may
             return any `'static` type. (unicode-org#6827)
-    - `zoneinfo64`
+        - Allow clippy::mem_forget in yoke_derive (unicode-org#6891)
+    - `zerofrom`, `zerofrom_derive`: No change
+    - `zerotrie`: `0.2.2 -> 0.2.3`
+        - Use `serde_core` (unicode-org#6991)
+        - Internal docs and lints (unicode-org#6740)
+        - Fix test failures in zerotrie on 32-bit platforms (unicode-org#6697)
+    - `zerovec`: `0.11.4 -> 0.11.5`
+        - Write a proper safety comment for ZeroVec::truncate (unicode-org#6809)
+        - Use `serde_core` (unicode-org#6991)
+    - `zerovec_derive`: `0.11.1 -> 0.11.2`
+        - Minor internal changes
+    - `zoneinfo64`: `0.2.0 -> 0.2.1`
+        - Minor internal changes
 
 ## icu4x 2.0.x
 
@@ -59,8 +371,8 @@ Several crates have had patch releases in the 2.0 stream:
     - (0.6.0) Reject empty durations when parsing ISO8601 durations (unicode-org#6718)
     - (0.6.0) Handle ambiguous time parsing with MonthDay and YearMonth in `ixdtf` (unicode-org#6717)
     - (0.6.1) Fix is_valid_month_day argument ordering bug (unicode-org#6756)
-    - (0.6.2) Offset must have a sign (#6763)
-    - (0.6.2) Correctly handle ambiguous annotations (#6776)
+    - (0.6.2) Offset must have a sign (unicode-org#6763)
+    - (0.6.2) Correctly handle ambiguous annotations (unicode-org#6776)
 - `potential_utf`
     - (0.1.3) Add `.chars()` to `PotentialUtf16` (unicode-org#6726)
 - `zerovec`:
@@ -107,7 +419,7 @@ Some major changes worth highlighting:
         - Remove `prev_year` info (unicode-org#6382)
         - Use regions, not languages, for calendar algorithm defaults (unicode-org#6325)
         - Hide week-of-month, non-iso week-of-year (unicode-org#6319)
-        - Expose `Date` to/from `RataDie` (#6369)
+        - Expose `Date` to/from `RataDie` (unicode-org#6369)
     - `icu_casemap`
         - Add borrowed types (`CaseMapperBorrowed`, etc) to icu_casemap (unicode-org#6353)
     - `icu_collator`
@@ -159,15 +471,15 @@ Some major changes worth highlighting:
         - Reduce trait complexity (unicode-org#6417)
         - Reorganize module structure (unicode-org#6409, unicode-org#6441)
         - Add borrowed versions of segmenter types (unicode-org#6395)
-        - Update UAX#29 text segmenter data rules to 16.0. (#6367)
+        - Update UAX#29 text segmenter data rules to 16.0. (unicode-org#6367)
     - `icu_time`
         - A lot of things have changed, it is preferable to reacquaint oneself with this crate from the ground up.
-        - Various refactors for comprehensibility (#6460)
-        - Rename `ZonedDateTime::try_from_str` to `try_full_from_str` (#6506)
-        - Add type `ZoneNameTimestamp` for time zone display names (#6513)
-        - `from_epoch_milliseconds_and_utc_offset` and follow-ups (#6515)
-        - Add `Time::noon()` (#6536)
-        - Make `DateTime`, `ZonedDateTime` `Clone` and `Copy` (#6527)
+        - Various refactors for comprehensibility (unicode-org#6460)
+        - Rename `ZonedDateTime::try_from_str` to `try_full_from_str` (unicode-org#6506)
+        - Add type `ZoneNameTimestamp` for time zone display names (unicode-org#6513)
+        - `from_epoch_milliseconds_and_utc_offset` and follow-ups (unicode-org#6515)
+        - Add `Time::noon()` (unicode-org#6536)
+        - Make `DateTime`, `ZonedDateTime` `Clone` and `Copy` (unicode-org#6527)
 - Data model and providers
     - General
         - Remove explicit icu_locale/icu_provider_baked deps from baked data (unicode-org#6340)
@@ -200,6 +512,8 @@ Some major changes worth highlighting:
     - `icu_capi`
         - This crate's API has been updated to continue reflecting ICU4X's API. ICU4X 2.0 breaking changes will likely be a breaking change here as well.
         - All `ICU4XFoo` types have now been unprefixed into `Foo`; backends like C++ use namespacing now.
+    - Dart version `2.0.0-dev.0`
+    - NPM version `2.0.0`
 - Utils
     - General
         - Update most dependencies to latest major version (unicode-org#6266)

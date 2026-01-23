@@ -6,7 +6,7 @@ So, let's add some data for Chakma.
 
 ## 1. Installing `icu4x-datagen`
 
-Data generation is done using the `icu4x-datagen` tool, which pulls data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases.
+Data generation is done using the `icu4x-datagen` tool, which pulls data from [Unicode's *Common Locale Data Repository* (*CLDR*)](https://cldr.unicode.org/index/downloads) and from `ICU4C` releases.
 
 Verify that Rust is installed. If it's not, you can install it in a few seconds from [https://rustup.rs/](https://rustup.rs/).
 
@@ -31,7 +31,7 @@ icu4x-datagen --markers all --locales ccp --format blob --out ccp.blob
 
 This will generate a `ccp.blob` file containing data for Chakma.
 
-💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2023-11-03/ccp.blob).
+💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp.blob) (generated with icu4x 2.1).
 
 
 ## 3. Using the data pack
@@ -99,9 +99,9 @@ function load_blob(url, callback) {
 }
 
 if (localeStr == "ccp") {
-    load_blob("https://storage.googleapis.com/static-493776/icu4x_2023-11-03/ccp.blob", (blob) => {
+    load_blob("https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp.blob", (blob) => {
         let dateTimeFormatter = DateTimeFormatter.createYmdtWithProvider(
-            DataProvider.createFromBlob(blob),
+            DataProvider.fromByteSlice(blob),
             locale,
             DateTimeLength.Long,
         );
@@ -143,6 +143,8 @@ wc -c *.blob
 
 This is much better! Rerun your app with `ccp_smaller.blob` to make sure it still works!
 
+💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp_smaller.blob) (generated with icu4x 2.1).
+
 ## 5. Slimming the data pack ... again
 
 The last datagen invocation still produced a lot of markers, as you saw in its output. This is because we used the `DateTimeFormatter` API, which can format dates for a lot of different calendars (remember `en-u-ca-hebrew`). However, if we were only using it with a Gregorian calendar date, we wouldn't need Coptic, Indian, etc. date formatting data. Now, how do we communicate this to `--markers-for-bin`? Turns out, `icu::datetime` also exposes a `FixedCalendarDateTimeFormatter`, which is generic in a single calendar type. If you use this API instead, `--markers-for-bin` will only include the markers for that one calendar type.
@@ -182,5 +184,7 @@ wc -c *.blob
 ```
 
 Rerun your app with `ccp_smallest.blob` to make sure it still works!
+
+💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp_smallest.blob) (generated with icu4x 2.1).
 
 Does the locale `en-u-ca-hebrew` still use the Hebrew calendar? Why is that?

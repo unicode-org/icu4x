@@ -16,9 +16,10 @@ pub mod ffi {
         DefaultIgnorableCodePoint, Deprecated, Diacritic, Emoji, EmojiComponent, EmojiModifier,
         EmojiModifierBase, EmojiPresentation, ExtendedPictographic, Extender,
         FullCompositionExclusion, Graph, GraphemeBase, GraphemeExtend, GraphemeLink, HexDigit,
-        Hyphen, IdContinue, IdStart, Ideographic, IdsBinaryOperator, IdsTrinaryOperator,
-        JoinControl, LogicalOrderException, Lowercase, Math, NfcInert, NfdInert, NfkcInert,
-        NfkdInert, NoncharacterCodePoint, PatternSyntax, PatternWhiteSpace,
+        Hyphen, IdCompatMathContinue, IdCompatMathStart, IdContinue, IdStart, Ideographic,
+        IdsBinaryOperator, IdsTrinaryOperator, IdsUnaryOperator, JoinControl,
+        LogicalOrderException, Lowercase, Math, ModifierCombiningMark, NfcInert, NfdInert,
+        NfkcInert, NfkdInert, NoncharacterCodePoint, PatternSyntax, PatternWhiteSpace,
         PrependedConcatenationMark, Print, QuotationMark, Radical, RegionalIndicator,
         SegmentStarter, SentenceTerminal, SoftDotted, TerminalPunctuation, UnifiedIdeograph,
         Uppercase, VariationSelector, WhiteSpace, Xdigit, XidContinue, XidStart,
@@ -84,7 +85,7 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "general_category_group")]
         #[cfg(feature = "compiled_data")]
         pub fn create_general_category_group(
-            group: crate::unstable::properties_enums::ffi::GeneralCategoryGroup,
+            group: crate::unstable::properties_gcg::ffi::GeneralCategoryGroup,
         ) -> Box<CodePointSetData> {
             let data = icu_properties::CodePointMapData::<GeneralCategory>::new().static_to_owned();
 
@@ -1079,6 +1080,64 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn id_compat_math_continue_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<IdCompatMathContinue>().contains32(ch)
+        }
+        /// Create a set for the `ID_Compat_Math_Continue` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::IdCompatMathContinue, Struct)]
+        #[diplomat::attr(auto, named_constructor = "id_compat_math_continue")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_id_compat_math_continue() -> Box<CodePointSetData> {
+            Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::new::<IdCompatMathContinue>().static_to_owned(),
+            ))
+        }
+        /// Create a set for the `ID_Compat_Math_Continue` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::IdCompatMathContinue, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "id_compat_math_continue_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_id_compat_math_continue_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<IdCompatMathContinue>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
+        }
+
+        /// Get the `ID_Compat_Math_Start` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn id_compat_math_start_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<IdCompatMathStart>().contains32(ch)
+        }
+        /// Create a set for the `ID_Compat_Math_Start` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::IdCompatMathStart, Struct)]
+        #[diplomat::attr(auto, named_constructor = "id_compat_math_start")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_id_compat_math_start() -> Box<CodePointSetData> {
+            Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::new::<IdCompatMathStart>().static_to_owned(),
+            ))
+        }
+        /// Create a set for the `ID_Compat_Math_Start` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::IdCompatMathStart, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "id_compat_math_start_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_id_compat_math_start_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<IdCompatMathStart>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
+        }
+
         /// Get the `Id_Continue` value for a given character, using compiled data
         #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
@@ -1229,6 +1288,36 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Ids_Unary_Operator` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn ids_unary_operator_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<IdsUnaryOperator>().contains32(ch)
+        }
+        /// Create a set for the `Ids_Unary_Operator` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::IdsUnaryOperator, Struct)]
+        #[diplomat::attr(auto, named_constructor = "ids_unary_operator")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_ids_unary_operator() -> Box<CodePointSetData> {
+            Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::new::<IdsUnaryOperator>().static_to_owned(),
+            ))
+        }
+
+        /// Create a set for the `Ids_Unary_Operator` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::IdsUnaryOperator, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ids_unary_operator_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_ids_unary_operator_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<IdsUnaryOperator>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
+        }
+
         /// Get the `Join_Control` value for a given character, using compiled data
         #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
@@ -1344,6 +1433,36 @@ pub mod ffi {
         ) -> Result<Box<CodePointSetData>, DataError> {
             Ok(Box::new(CodePointSetData(
                 icu_properties::CodePointSetData::try_new_unstable::<Math>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
+        }
+
+        /// Get the `Modifier_Combining_mark` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn modifier_combining_mark_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<ModifierCombiningMark>().contains32(ch)
+        }
+        /// Create a set for the `Modifier_Combining_mark` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::ModifierCombiningMark, Struct)]
+        #[diplomat::attr(auto, named_constructor = "modifier_combining_mark")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_modifier_combining_mark() -> Box<CodePointSetData> {
+            Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::new::<ModifierCombiningMark>().static_to_owned(),
+            ))
+        }
+
+        /// Create a set for the `Modifier_Combining_mark` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::ModifierCombiningMark, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "modifier_combining_mark_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_modifier_combining_mark_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<ModifierCombiningMark>(
                     &provider.get_unstable()?,
                 )?,
             )))

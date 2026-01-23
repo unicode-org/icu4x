@@ -24,7 +24,6 @@ include!("datetime_names_month_chinese_v1.rs.data");
 include!("timezone_names_locations_root_v1.rs.data");
 include!("timezone_names_specific_short_v1.rs.data");
 include!("datetime_patterns_glue_v1.rs.data");
-include!("datetime_names_month_japanext_v1.rs.data");
 include!("timezone_names_cities_root_v1.rs.data");
 include!("datetime_names_year_indian_v1.rs.data");
 include!("timezone_names_generic_short_v1.rs.data");
@@ -36,7 +35,6 @@ include!("timezone_names_essentials_v1.rs.data");
 include!("datetime_names_year_hijri_v1.rs.data");
 include!("timezone_names_cities_override_v1.rs.data");
 include!("datetime_patterns_date_japanese_v1.rs.data");
-include!("datetime_patterns_date_japanext_v1.rs.data");
 include!("datetime_names_year_coptic_v1.rs.data");
 include!("timezone_names_generic_long_v1.rs.data");
 include!("datetime_names_month_indian_v1.rs.data");
@@ -48,7 +46,6 @@ include!("datetime_names_month_japanese_v1.rs.data");
 include!("datetime_names_year_gregorian_v1.rs.data");
 include!("datetime_names_month_coptic_v1.rs.data");
 include!("timezone_names_locations_override_v1.rs.data");
-include!("datetime_names_year_japanext_v1.rs.data");
 include!("datetime_patterns_date_dangi_v1.rs.data");
 include!("datetime_names_month_roc_v1.rs.data");
 include!("datetime_names_year_japanese_v1.rs.data");
@@ -67,7 +64,7 @@ include!("datetime_names_year_japanese_v1.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
@@ -113,7 +110,6 @@ macro_rules! impl_data_provider {
         impl_timezone_names_locations_root_v1!($provider);
         impl_timezone_names_specific_short_v1!($provider);
         impl_datetime_patterns_glue_v1!($provider);
-        impl_datetime_names_month_japanext_v1!($provider);
         impl_timezone_names_cities_root_v1!($provider);
         impl_datetime_names_year_indian_v1!($provider);
         impl_timezone_names_generic_short_v1!($provider);
@@ -125,7 +121,6 @@ macro_rules! impl_data_provider {
         impl_datetime_names_year_hijri_v1!($provider);
         impl_timezone_names_cities_override_v1!($provider);
         impl_datetime_patterns_date_japanese_v1!($provider);
-        impl_datetime_patterns_date_japanext_v1!($provider);
         impl_datetime_names_year_coptic_v1!($provider);
         impl_timezone_names_generic_long_v1!($provider);
         impl_datetime_names_month_indian_v1!($provider);
@@ -137,7 +132,6 @@ macro_rules! impl_data_provider {
         impl_datetime_names_year_gregorian_v1!($provider);
         impl_datetime_names_month_coptic_v1!($provider);
         impl_timezone_names_locations_override_v1!($provider);
-        impl_datetime_names_year_japanext_v1!($provider);
         impl_datetime_patterns_date_dangi_v1!($provider);
         impl_datetime_names_month_roc_v1!($provider);
         impl_datetime_names_year_japanese_v1!($provider);

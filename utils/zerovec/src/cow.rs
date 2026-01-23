@@ -39,7 +39,7 @@ pub struct VarZeroCow<'a, V: ?Sized> {
     marker2: PhantomData<Box<V>>,
 }
 
-/// VarZeroCow without the `V` to simulate a dropck eyepatch
+/// [`VarZeroCow`] without the `V` to simulate a dropck eyepatch
 /// (i.e., prove to rustc that the dtor is not able to observe V or 'a)
 ///
 /// This is effectively `Cow<'a, [u8]>`, with the lifetime managed externally
@@ -50,7 +50,7 @@ struct RawVarZeroCow {
     ///
     /// 1. This slice must always be valid as a byte slice
     /// 2. If `owned` is true, this slice can be freed.
-    /// 3. VarZeroCow, the only user of this type, will impose an additional invariant that the buffer is a valid V
+    /// 3. [`VarZeroCow`], the only user of this type, will impose an additional invariant that the buffer is a valid V
     buf: NonNull<[u8]>,
     /// The buffer is `Box<[u8]>` if true
     #[cfg(feature = "alloc")]
@@ -122,6 +122,8 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     }
 
     /// Construct from an owned slice. Errors if the slice doesn't represent a valid `V`
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn parse_owned_bytes(bytes: Box<[u8]>) -> Result<Self, UleError> {
         V::validate_bytes(&bytes)?;
@@ -168,6 +170,8 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// Construct this from an [`EncodeAsVarULE`] version of the contained type
     ///
     /// Will always construct an owned version
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn from_encodeable<E: EncodeAsVarULE<V>>(encodeable: &E) -> Self {
         let b = crate::ule::encode_varule_to_box(encodeable);
@@ -183,6 +187,8 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     }
 
     /// Construct a new borrowed version of this
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn new_owned(val: Box<V>) -> Self {
         let val = ManuallyDrop::new(val);
@@ -329,7 +335,7 @@ impl<'a, V: VarULE + ?Sized + serde::Serialize> serde::Serialize for VarZeroCow<
     }
 }
 
-#[cfg(feature = "serde")]
+#[cfg(all(feature = "serde", feature = "alloc"))]
 impl<'a, 'de: 'a, V: VarULE + ?Sized> serde::Deserialize<'de> for VarZeroCow<'a, V>
 where
     Box<V>: serde::Deserialize<'de>,

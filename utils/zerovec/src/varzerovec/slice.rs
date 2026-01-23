@@ -14,6 +14,9 @@ use core::mem;
 use core::ops::Index;
 use core::ops::Range;
 
+#[cfg(feature = "alloc")]
+use alloc::{boxed::Box, vec::Vec};
+
 /// A zero-copy "slice", that works for unsized types, i.e. the zero-copy version of `[T]`
 /// where `T` is not `Sized`.
 ///
@@ -78,7 +81,7 @@ use core::ops::Range;
 /// ## Iterate over Windows
 ///
 /// Although [`VarZeroSlice`] does not itself have a `.windows` iterator like
-/// [core::slice::Windows], this behavior can be easily modeled using an iterator:
+/// [`core::slice::Windows`], this behavior can be easily modeled using an iterator:
 ///
 /// ```
 /// use zerovec::VarZeroVec;
@@ -104,7 +107,7 @@ pub struct VarZeroSlice<T: ?Sized, F = Index16> {
 }
 
 impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
-    /// Construct a new empty VarZeroSlice
+    /// Construct a new empty [`VarZeroSlice`]
     pub const fn new_empty() -> &'static Self {
         // The empty VZV is special-cased to the empty slice
         unsafe { mem::transmute(&[] as &[u8]) }
@@ -229,8 +232,10 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     }
 
     /// Obtain an owned `Vec<Box<T>>` out of this
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
-    pub fn to_vec(&self) -> alloc::vec::Vec<alloc::boxed::Box<T>> {
+    pub fn to_vec(&self) -> Vec<Box<T>> {
         self.as_components().to_vec()
     }
 
@@ -263,7 +268,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
         VarZeroVec(VarZeroVecInner::Borrowed(self))
     }
 
-    /// Parse a VarZeroSlice from a slice of the appropriate format
+    /// Parse a [`VarZeroSlice`] from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
     pub fn parse_bytes<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {

@@ -29,6 +29,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `categories`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+ */
 struct PluralCategories {
     bool zero;
     bool one;

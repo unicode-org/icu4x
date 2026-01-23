@@ -2,35 +2,38 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::abstract_gregorian::{
+    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+};
 use crate::calendar_arithmetic::ArithmeticDate;
+use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
 use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
 
 /// The [Republic of China Calendar](https://en.wikipedia.org/wiki/Republic_of_China_calendar)
 ///
-/// The ROC calendar is a solar calendar used in Taiwan and Penghu, as well as by overseas diaspora from
-/// those locations. Months and days are identical to the [`Gregorian`](super::Gregorian) calendar, while years are counted
-/// with 1912, the year of the establishment of the Republic of China, as year 1 of the ROC/Minguo/民国/民國 era.
+/// The ROC Calendar is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
+/// created by the government of the Republic of China. It is identical to the Gregorian
+/// calendar except that is uses the ROC/Minguo/民国/民國 Era (1912 CE) instead of the Common Era.
 ///
-/// The ROC calendar should not be confused with the Chinese traditional lunar calendar
-/// (see [`Chinese`](crate::cal::Chinese)).
+/// This implementation extends proleptically for dates before the calendar's creation
+/// in 1 Minguo (1912 CE).
+///
+/// The ROC calendar should not be confused with the [`ChineseTraditional`](crate::cal::ChineseTraditional)
+/// lunisolar calendar.
+///
+/// This corresponds to the `"roc"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
 /// # Era codes
 ///
 /// This calendar uses two era codes: `roc`, corresponding to years in the 民國 era (CE year 1912 and
 /// after), and `broc`, corresponding to years before the 民國 era (CE year 1911 and before).
-///
-///
-/// # Month codes
-///
-/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Roc;
 
-impl_with_abstract_gregorian!(crate::cal::Roc, RocDateInner, RocEra, _x, RocEra);
+impl_with_abstract_gregorian!(Roc, RocDateInner, RocEra, _x, RocEra);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct RocEra;
@@ -38,12 +41,16 @@ pub(crate) struct RocEra;
 impl GregorianYears for RocEra {
     const EXTENDED_YEAR_OFFSET: i32 = 1911;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&[u8]>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
         match era {
             None => Ok(year),
-            Some("roc") => Ok(year),
-            Some("broc") => Ok(1 - year),
-            Some(_) => Err(DateError::UnknownEra),
+            Some(b"roc") => Ok(year),
+            Some(b"broc") => Ok(1 - year),
+            Some(_) => Err(UnknownEraError),
         }
     }
 
@@ -77,11 +84,10 @@ impl GregorianYears for RocEra {
 }
 
 impl Date<Roc> {
-    /// Construct a new Republic of China calendar Date.
+    /// Construct a new Republic of China calendar [`Date`].
     ///
-    /// Years are specified in the "roc" era. This function accepts an extended year in that era, so dates
-    /// before Minguo are negative and year 0 is 1 Before Minguo. To specify dates using explicit era
-    /// codes, use [`Date::try_new_from_codes()`].
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -92,7 +98,7 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.era_year().era, tinystr!(16, "roc"));
+    /// assert_eq!(date_roc.era_year().era, "roc");
     /// assert_eq!(date_roc.era_year().year, 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
@@ -104,7 +110,8 @@ impl Date<Roc> {
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
     pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
-        ArithmeticDate::new_gregorian::<RocEra>(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(RocEra))
+            .map(ArithmeticDate::cast)
             .map(RocDateInner)
             .map(|i| Date::from_raw(i, Roc))
     }
@@ -120,50 +127,50 @@ mod test {
     #[derive(Debug)]
     struct TestCase {
         rd: RataDie,
-        iso_year: i32,
-        iso_month: u8,
-        iso_day: u8,
-        expected_year: i32,
-        expected_era: &'static str,
-        expected_month: u8,
-        expected_day: u8,
+        year: i32,
+        era: &'static str,
+        month: u8,
+        day: u8,
     }
 
     fn check_test_case(case: TestCase) {
-        let iso_from_rd = Date::from_rata_die(case.rd, Iso);
         let roc_from_rd = Date::from_rata_die(case.rd, Roc);
         assert_eq!(
             roc_from_rd.era_year().year,
-            case.expected_year,
-            "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+            case.year,
+            "Failed year check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
             roc_from_rd.era_year().era,
-            case.expected_era,
-            "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+            case.era,
+            "Failed era check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.extended_year(),
-            if case.expected_era == "roc" {
-                case.expected_year
+            roc_from_rd.year().extended_year(),
+            if case.era == "roc" {
+                case.year
             } else {
-                1 - case.expected_year
+                1 - case.year
             },
-            "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+            "Failed year check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
             roc_from_rd.month().ordinal,
-            case.expected_month,
-            "Failed month check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+            case.month,
+            "Failed month check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
-        assert_eq!(roc_from_rd.day_of_month().0, case.expected_day,
-            "Failed day_of_month check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}");
+        assert_eq!(
+            roc_from_rd.day_of_month().0,
+            case.day,
+            "Failed day_of_month check from RD: {case:?}\nROC: {roc_from_rd:?}"
+        );
 
-        let iso_from_case = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
-            .expect("Failed to initialize ISO date for {case:?}");
-        let roc_from_case = Date::new_from_iso(iso_from_case, Roc);
-        assert_eq!(iso_from_rd, iso_from_case,
-            "ISO from RD not equal to ISO generated from manually-input ymd\nCase: {case:?}\nRD: {iso_from_rd:?}\nManual: {iso_from_case:?}");
+        let roc_from_case = Date::try_new_roc(
+            roc_from_rd.year().extended_year(),
+            roc_from_rd.month().ordinal,
+            roc_from_rd.day_of_month().0,
+        )
+        .unwrap();
         assert_eq!(roc_from_rd, roc_from_case,
             "ROC date from RD not equal to ROC generated from manually-input ymd\nCase: {case:?}\nRD: {roc_from_rd:?}\nManual: {roc_from_case:?}");
     }
@@ -177,44 +184,32 @@ mod test {
 
         let cases = [
             TestCase {
-                rd: RataDie::new(697978),
-                iso_year: 1912,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 1,
-                expected_era: "roc",
-                expected_month: 1,
-                expected_day: 1,
+                rd: Date::try_new_iso(1912, 1, 1).unwrap().to_rata_die(),
+                year: 1,
+                era: "roc",
+                month: 1,
+                day: 1,
             },
             TestCase {
-                rd: RataDie::new(698037),
-                iso_year: 1912,
-                iso_month: 2,
-                iso_day: 29,
-                expected_year: 1,
-                expected_era: "roc",
-                expected_month: 2,
-                expected_day: 29,
+                rd: Date::try_new_iso(1912, 2, 29).unwrap().to_rata_die(),
+                year: 1,
+                era: "roc",
+                month: 2,
+                day: 29,
             },
             TestCase {
-                rd: RataDie::new(698524),
-                iso_year: 1913,
-                iso_month: 6,
-                iso_day: 30,
-                expected_year: 2,
-                expected_era: "roc",
-                expected_month: 6,
-                expected_day: 30,
+                rd: Date::try_new_iso(1913, 6, 30).unwrap().to_rata_die(),
+                year: 2,
+                era: "roc",
+                month: 6,
+                day: 30,
             },
             TestCase {
-                rd: RataDie::new(738714),
-                iso_year: 2023,
-                iso_month: 7,
-                iso_day: 13,
-                expected_year: 112,
-                expected_era: "roc",
-                expected_month: 7,
-                expected_day: 13,
+                rd: Date::try_new_iso(2023, 7, 13).unwrap().to_rata_die(),
+                year: 112,
+                era: "roc",
+                month: 7,
+                day: 13,
             },
         ];
 
@@ -231,64 +226,46 @@ mod test {
         // Jan 1. 1912 CE = RD 697978
         let cases = [
             TestCase {
-                rd: RataDie::new(697977),
-                iso_year: 1911,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 1,
-                expected_era: "broc",
-                expected_month: 12,
-                expected_day: 31,
+                rd: Date::try_new_iso(1911, 12, 31).unwrap().to_rata_die(),
+                year: 1,
+                era: "broc",
+                month: 12,
+                day: 31,
             },
             TestCase {
-                rd: RataDie::new(697613),
-                iso_year: 1911,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 1,
-                expected_era: "broc",
-                expected_month: 1,
-                expected_day: 1,
+                rd: Date::try_new_iso(1911, 1, 1).unwrap().to_rata_die(),
+                year: 1,
+                era: "broc",
+                month: 1,
+                day: 1,
             },
             TestCase {
-                rd: RataDie::new(697612),
-                iso_year: 1910,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 2,
-                expected_era: "broc",
-                expected_month: 12,
-                expected_day: 31,
+                rd: Date::try_new_iso(1910, 12, 31).unwrap().to_rata_die(),
+                year: 2,
+                era: "broc",
+                month: 12,
+                day: 31,
             },
             TestCase {
-                rd: RataDie::new(696576),
-                iso_year: 1908,
-                iso_month: 2,
-                iso_day: 29,
-                expected_year: 4,
-                expected_era: "broc",
-                expected_month: 2,
-                expected_day: 29,
+                rd: Date::try_new_iso(1908, 2, 29).unwrap().to_rata_die(),
+                year: 4,
+                era: "broc",
+                month: 2,
+                day: 29,
             },
             TestCase {
-                rd: RataDie::new(1),
-                iso_year: 1,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 1911,
-                expected_era: "broc",
-                expected_month: 1,
-                expected_day: 1,
+                rd: Date::try_new_iso(1, 1, 1).unwrap().to_rata_die(),
+                year: 1911,
+                era: "broc",
+                month: 1,
+                day: 1,
             },
             TestCase {
-                rd: RataDie::new(0),
-                iso_year: 0,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 1912,
-                expected_era: "broc",
-                expected_month: 12,
-                expected_day: 31,
+                rd: Date::try_new_iso(0, 12, 31).unwrap().to_rata_die(),
+                year: 1912,
+                era: "broc",
+                month: 12,
+                day: 31,
             },
         ];
 

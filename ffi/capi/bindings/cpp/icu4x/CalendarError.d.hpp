@@ -27,7 +27,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.0.0/icu/calendar/enum.DateError.html)
+ * Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.1.1/icu/calendar/enum.DateError.html), [3](https://docs.rs/icu/2.1.1/icu/calendar/error/enum.MonthCodeParseError.html)
  */
 class CalendarError {
 public:

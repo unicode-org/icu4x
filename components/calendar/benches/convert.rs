@@ -50,7 +50,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/chinese_cached",
-        icu::calendar::cal::LunarChinese::new_china(),
+        icu::calendar::cal::ChineseTraditional::new(),
     );
 
     bench_calendar(
@@ -61,6 +61,7 @@ fn convert_benches(c: &mut Criterion) {
 
     bench_calendar(&mut group, "calendar/hebrew", icu::calendar::cal::Hebrew);
 
+    #[allow(deprecated)]
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",

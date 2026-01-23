@@ -18,11 +18,9 @@ The main ICU4X library does not use nightly; however nightly is required for bui
 
 Our "utils" crates (yoke, zerovec, zerofrom, etc) are not versioned alongside ICU4X: they may have major version updates between minor ICU4X releases, and they may choose to have minor version updates between major ICU4X releases.
 
-By default, these crates have the same MSRV as their corresponding ICU4X release, however at times we may give them a lower MSRV for a wider range of compatability.
+We intend for these crates to gain wider adoption than just ICU4X. As such, these crates don't change their MSRV unless there is a need for it.
 
-This is done on an as-requested basis and is best-effort.
-
-Currently, `zerofrom` is the only crate with a lower MSRV.
+When an ICU4X developer needs to use a new Rust API/feature in such a crate, they may update the MSRV to any Rust version at least six Rust versions before the current stable Rust (and also less than or equal to the current ICU4X MSRV).
  
 ## For ICU4X developers
 
@@ -43,9 +41,8 @@ When the nightly cronjob CI fails, ICU4X developers must fix it and ensure it do
 ICU4X pins Rust Nightlies in CI for multiple purposes:
 
  - `diplomat-coverage/src/main.rs`: Running the diplomat-coverage task, which uses unstable Rustdoc JSON output, requiring synchronization between the Rust version and the `rustdoc_types` dependency.
- - `PINNED_CI_NIGHTLY`: Running various FFI CI jobs that need _some_ Rust nightly to use build-std or other nightly features, without becoming beholden to arbitrary
+ - `PINNED_CI_NIGHTLY`: Running various FFI CI jobs that need a reasonably recent Rust nightly to use build-std or other nightly features, without becoming beholden to arbitrary specific version constraints.
  - `LLVM_COMPATIBLE_NIGHTLY`: Usage of `-Clinker-plugin-lto` in size-optimized tests where Rust and Clang need to be using compatible LLVM versions.
-
 
  ICU4X also runs its entire CI against the latest nightly once a day, reporting errors to Slack. These errors help us catch upstream breakages early, but ICU4X does not have any particular SLO against these being fixed. We guarantee we build on the latest stable as detailed in the first section of this page.
 

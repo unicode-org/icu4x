@@ -44,9 +44,9 @@
                 "en-u-ca-buddhist": "2563 BE",
                 "en-u-ca-coptic": "1736 AM",
                 "fr-u-ca-coptic": "1736 ap. D.",
-                "en-u-ca-ethiopic" : "2012 ERA1",
-                "fr-u-ca-ethiopic" : "2012 ap. Inc.",
-                "fr-u-ca-ethioaa" : "7512 av. Inc."
+                "en-u-ca-ethiopic" : "2012 AM",
+                "fr-u-ca-ethiopic" : "2012 AM",
+                "fr-u-ca-ethioaa" : "7512 AA"
             }
         }
     },

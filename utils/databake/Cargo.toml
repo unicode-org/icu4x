@@ -14,7 +14,7 @@ edition.workspace = true
 include.workspace = true
 license.workspace = true
 repository.workspace = true
-rust-version.workspace = true
+rust-version = "1.82"
 
 [package.metadata.workspaces]
 independent = true
@@ -29,3 +29,6 @@ derive = ["dep:databake-derive"]
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
 databake-derive = { workspace = true, optional = true}
+
+[lints]
+workspace = true

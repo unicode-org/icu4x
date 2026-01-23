@@ -3,15 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{IsoDateInner, IsoEra};
-use crate::calendar_arithmetic::{
-    ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, DateFieldsResolver,
-};
-use crate::error::DateError;
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::preferences::CalendarAlgorithm;
 use crate::types::EraYear;
-use crate::{types, Calendar, DateDuration, DateDurationUnit, RangeError};
-use calendrical_calculations::helpers::I32CastError;
+use crate::{types, Calendar};
 use calendrical_calculations::rata_die::RataDie;
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -21,7 +19,8 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
     // Positive if after 0 CE
     const EXTENDED_YEAR_OFFSET: i32 = 0;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError>;
+    fn extended_from_era_year(&self, era: Option<&[u8]>, year: i32)
+        -> Result<i32, UnknownEraError>;
 
     fn era_year_from_extended(&self, extended_year: i32, month: u8, day: u8) -> EraYear;
 
@@ -32,63 +31,30 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
     fn debug_name(&self) -> &'static str;
 }
 
-impl ArithmeticDate<AbstractGregorian<IsoEra>> {
-    pub(crate) fn new_gregorian<Y: GregorianYears>(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Self, RangeError> {
-        ArithmeticDate::try_from_ymd(year + Y::EXTENDED_YEAR_OFFSET, month, day)
-    }
-}
-
-impl CalendarArithmetic for AbstractGregorian<IsoEra> {
-    type YearInfo = i32;
-
-    fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
-        if month == 2 {
-            28 + calendrical_calculations::iso::is_leap_year(year) as u8
-        } else {
-            30 | month ^ (month >> 3)
-        }
-    }
-
-    fn months_in_provided_year(_: i32) -> u8 {
-        12
-    }
-
-    fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::iso::is_leap_year(year)
-    }
-
-    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
-        (12, 31)
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        365 + calendrical_calculations::iso::is_leap_year(year) as u16
-    }
-
-    fn day_of_provided_year(year: Self::YearInfo, month: u8, day: u8) -> u16 {
-        calendrical_calculations::iso::days_before_month(year, month) + day as u16
-    }
-
-    fn date_from_provided_year_day(year: Self::YearInfo, year_day: u16) -> (u8, u8) {
-        calendrical_calculations::iso::year_day(year, year_day)
-    }
-}
-
 pub(crate) const REFERENCE_YEAR: i32 = 1972;
+#[cfg(test)]
 pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: RataDie =
-    calendrical_calculations::iso::day_before_year(REFERENCE_YEAR + 1);
+    calendrical_calculations::gregorian::day_before_year(REFERENCE_YEAR + 1);
 
 impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     // Gregorian year
     type YearInfo = i32;
 
+    fn days_in_provided_month(year: i32, month: u8) -> u8 {
+        if month == 2 {
+            28 + calendrical_calculations::gregorian::is_leap_year(year) as u8
+        } else {
+            // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
+            30 | month ^ (month >> 3)
+        }
+    }
+
     #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        era: &[u8],
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         Ok(self.0.extended_from_era_year(Some(era), era_year)? + Y::EXTENDED_YEAR_OFFSET)
     }
 
@@ -100,10 +66,14 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        _month_code: types::MonthCode,
+        _month: types::Month,
         _day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Ok(REFERENCE_YEAR)
+    }
+
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
+        calendrical_calculations::gregorian::fixed_from_gregorian(year, month, day)
     }
 }
 
@@ -111,28 +81,44 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
-    type Year = types::EraYear;
+    type Year = EraYear;
+    type DifferenceError = core::convert::Infallible;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(ArithmeticDate::cast)
+    }
+
+    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: types::DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
+        ArithmeticDate::from_fields(fields, options, self).map(ArithmeticDate::cast)
     }
 
     fn from_rata_die(&self, date: RataDie) -> Self::DateInner {
-        match calendrical_calculations::iso::iso_from_fixed(date) {
-            Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
-            Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-            Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
-        }
+        // by precondition the year cannot exceed i32, so the error case is unreachable
+        let (year, month, day) =
+            calendrical_calculations::gregorian::gregorian_from_fixed(date).unwrap_or((1, 1, 1));
+
+        // date is in the valid RD range
+        ArithmeticDate::new_unchecked(year, month, day)
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::iso::fixed_from_iso(date.year, date.month, date.day)
+        date.to_rata_die()
+    }
+
+    fn has_cheap_iso_conversion(&self) -> bool {
+        true
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
@@ -144,60 +130,69 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.months_in_year()
+        AbstractGregorian::<IsoEra>::months_in_provided_year(date.year())
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.days_in_year()
+        365 + calendrical_calculations::gregorian::is_leap_year(date.year()) as u16
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.days_in_month()
+        AbstractGregorian::<IsoEra>::days_in_provided_month(date.year(), date.month())
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.offset_date(offset.cast_unit(), &());
+    #[cfg(feature = "unstable")]
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
+        date.added(duration, &AbstractGregorian(IsoEra), options)
     }
 
+    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        date1
-            .until(*date2, _largest_unit, _smallest_unit)
-            .cast_unit()
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
+        Ok(date1.until(date2, &AbstractGregorian(IsoEra), options))
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        self.0
-            .era_year_from_extended(date.year - Y::EXTENDED_YEAR_OFFSET, date.month, date.day)
+        self.0.era_year_from_extended(
+            date.year() - Y::EXTENDED_YEAR_OFFSET,
+            date.month(),
+            date.day(),
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        AbstractGregorian::<IsoEra>::provided_year_is_leap(date.year)
+        calendrical_calculations::gregorian::is_leap_year(date.year())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.month()
+        types::MonthInfo::new(self, date.cast())
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.day_of_month()
+        types::DayOfMonth(date.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.day_of_year()
+        types::DayOfYear(
+            calendrical_calculations::gregorian::days_before_month(date.year(), date.month())
+                + date.day() as u16,
+        )
     }
 
     fn debug_name(&self) -> &'static str {
         self.0.debug_name()
     }
 
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         self.0.calendar_algorithm()
     }
 }
@@ -215,11 +210,27 @@ macro_rules! impl_with_abstract_gregorian {
         impl crate::Calendar for $cal_ty {
             type DateInner = $inner_date_ty;
             type Year = types::EraYear;
+            type DifferenceError = core::convert::Infallible;
+
+            fn from_codes(
+                &self,
+                era: Option<&str>,
+                year: i32,
+                month_code: types::MonthCode,
+                day: u8,
+            ) -> Result<Self::DateInner, crate::error::DateError> {
+                let $self_ident = self;
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
+                    .from_codes(era, year, month_code, day)
+                    .map($inner_date_ty)
+            }
+
+            #[cfg(feature = "unstable")]
             fn from_fields(
                 &self,
                 fields: crate::types::DateFields,
                 options: crate::options::DateFromFieldsOptions,
-            ) -> Result<Self::DateInner, DateError> {
+            ) -> Result<Self::DateInner, crate::error::DateFromFieldsError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
                     .from_fields(fields, options)
@@ -236,6 +247,12 @@ macro_rules! impl_with_abstract_gregorian {
             fn to_rata_die(&self, date: &Self::DateInner) -> crate::types::RataDie {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).to_rata_die(&date.0)
+            }
+
+            fn has_cheap_iso_conversion(&self) -> bool {
+                let $self_ident = self;
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
+                    .has_cheap_iso_conversion()
             }
 
             fn from_iso(&self, iso: crate::cal::iso::IsoDateInner) -> Self::DateInner {
@@ -266,32 +283,29 @@ macro_rules! impl_with_abstract_gregorian {
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).days_in_month(&date.0)
             }
 
-            fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration<Self>) {
+            #[cfg(feature = "unstable")]
+            fn add(
+                &self,
+                date: &Self::DateInner,
+                duration: crate::types::DateDuration,
+                options: crate::options::DateAddOptions,
+            ) -> Result<Self::DateInner, DateError> {
                 let $self_ident = self;
-                let mut inner = date.0;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .offset_date(&mut inner, offset.cast_unit());
-                date.0 = inner;
+                    .add(&date.0, duration, options)
+                    .map($inner_date_ty)
             }
 
+            #[cfg(feature = "unstable")]
             fn until(
                 &self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
-                _calendar2: &Self,
-                largest_unit: crate::DateDurationUnit,
-                smallest_unit: crate::DateDurationUnit,
-            ) -> crate::DateDuration<Self> {
+                options: crate::options::DateDifferenceOptions,
+            ) -> Result<crate::types::DateDuration, Self::DifferenceError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .until(
-                        &date1.0,
-                        &date2.0,
-                        &crate::cal::abstract_gregorian::AbstractGregorian($eras_expr),
-                        largest_unit,
-                        smallest_unit,
-                    )
-                    .cast_unit()
+                    .until(&date1.0, &date2.0, options)
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {

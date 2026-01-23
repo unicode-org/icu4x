@@ -43,6 +43,7 @@ use zerovec::ZeroVec;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake))]
 #[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
+#[allow(clippy::exhaustive_enums)] // based on a stable serialized form
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -60,7 +61,7 @@ pub enum TrieType {
 /// This trait is used as a type parameter in constructing a `CodePointTrie`.
 ///
 /// This trait can be implemented on anything that can be represented as a u32s worth of data.
-pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
+pub trait TrieValue: Copy + Eq + PartialEq + AsULE + 'static {
     /// Last-resort fallback value to return if we cannot read data from the trie.
     ///
     /// In most cases, the error value is read from the last element of the `data` array,
@@ -89,6 +90,7 @@ macro_rules! impl_primitive_trie_value {
                 Self::try_from(i)
             }
 
+            #[allow(trivial_numeric_casts)]
             fn to_u32(self) -> u32 {
                 // bitcast when the same size, zero-extend/sign-extend
                 // when not the same size
@@ -126,7 +128,7 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// ICU binary data.
 ///
 /// For more information:
-/// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
+/// - [ICU Site design doc](https://unicode-org.github.io/icu/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 // serde impls in crate::serde
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
@@ -172,6 +174,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 #[cfg_attr(feature = "databake", derive(databake::Bake))]
 #[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
+#[allow(clippy::exhaustive_structs)] // based on a stable serialized form
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -210,13 +213,13 @@ pub struct CodePointTrieHeader {
 }
 
 impl TryFrom<u8> for TrieType {
-    type Error = crate::codepointtrie::error::Error;
+    type Error = Error;
 
-    fn try_from(trie_type_int: u8) -> Result<TrieType, crate::codepointtrie::error::Error> {
+    fn try_from(trie_type_int: u8) -> Result<TrieType, Error> {
         match trie_type_int {
             0 => Ok(TrieType::Fast),
             1 => Ok(TrieType::Small),
-            _ => Err(crate::codepointtrie::error::Error::FromDeserialized {
+            _ => Err(Error::FromDeserialized {
                 reason: "Cannot parse value for trie_type",
             }),
         }
@@ -753,6 +756,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// More specifically, panics if [`ZeroVec::try_into_converted()`] panics when converting
     /// `ZeroVec<T>` into `ZeroVec<P>`, which happens if `T::ULE` and `P::ULE` differ in size.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -792,6 +797,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// If the old and new types are the same size, use the more efficient
     /// [`CodePointTrie::try_into_converted`].
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -1285,6 +1292,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// Returns a [`CodePointInversionList`] for the code points that have the given
     /// [`TrieValue`] in the trie.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -1359,7 +1368,7 @@ impl<T: TrieValue + Into<u32>> CodePointTrie<'_, T> {
 
 impl<T: TrieValue> Clone for CodePointTrie<'_, T>
 where
-    <T as zerovec::ule::AsULE>::ULE: Clone,
+    <T as AsULE>::ULE: Clone,
 {
     fn clone(&self) -> Self {
         CodePointTrie {
@@ -1377,6 +1386,7 @@ where
 /// The start and end of the interval is represented as a
 /// `RangeInclusive<u32>`, and the value is represented as `T`.
 #[derive(PartialEq, Eq, Debug, Clone)]
+#[allow(clippy::exhaustive_structs)] // based on a stable serialized form
 pub struct CodePointMapRange<T> {
     /// Range of code points from start to end (inclusive).
     pub range: RangeInclusive<u32>,
@@ -1386,6 +1396,7 @@ pub struct CodePointMapRange<T> {
 
 /// A custom [`Iterator`] type specifically for a code point trie that returns
 /// [`CodePointMapRange`]s.
+#[derive(Debug)]
 pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
     cpt: &'a CodePointTrie<'a, T>,
     // Initialize `range` to Some(CodePointMapRange{ start: u32::MAX, end: u32::MAX, value: 0}).
@@ -1658,6 +1669,8 @@ pub struct TypedCodePointTrieError;
 
 /// Holder for either fast or small trie with the trie
 /// type encoded into the Rust type.
+#[allow(clippy::exhaustive_enums)]
+#[derive(Debug)]
 pub enum Typed<F, S> {
     /// The trie type is fast.
     Fast(F),
@@ -1674,7 +1687,7 @@ mod tests {
     #[test]
     #[cfg(feature = "serde")]
     fn test_serde_with_postcard_roundtrip() -> Result<(), postcard::Error> {
-        let trie = crate::codepointtrie::planes::get_planes_trie();
+        let trie = planes::get_planes_trie();
         let trie_serialized: Vec<u8> = postcard::to_allocvec(&trie).unwrap();
 
         // Assert an expected (golden data) version of the serialized trie.

@@ -20,7 +20,7 @@ use alloc::borrow::Cow;
 /// multiple possible orderings. Depending on your use case, two orderings are available:
 ///
 /// 1. A string ordering, suitable for stable serialization: [`LanguageIdentifier::strict_cmp`]
-/// 2. A struct ordering, suitable for use with a BTreeSet: [`LanguageIdentifier::total_cmp`]
+/// 2. A struct ordering, suitable for use with a `BTreeSet`: [`LanguageIdentifier::total_cmp`]
 ///
 /// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
@@ -79,7 +79,7 @@ use alloc::borrow::Cow;
 /// assert_eq!(li.language, language!("en"));
 /// assert_eq!(li.script, Some(script!("Latn")));
 /// assert_eq!(li.region, Some(region!("US")));
-/// assert_eq!(li.variants.get(0), Some(&variant!("valencia")));
+/// assert_eq!(li.variants.first(), Some(&variant!("valencia")));
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
@@ -103,6 +103,8 @@ impl LanguageIdentifier {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`LanguageIdentifier`].
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -117,9 +119,11 @@ impl LanguageIdentifier {
     }
 
     /// See [`Self::try_from_str`]
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        crate::parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
+        parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
     }
 
     #[doc(hidden)] // macro use
@@ -137,7 +141,7 @@ impl LanguageIdentifier {
         ),
         ParseError,
     > {
-        crate::parser::parse_language_identifier_with_single_variant(
+        parser::parse_language_identifier_with_single_variant(
             code_units,
             parser::ParserMode::LanguageIdentifier,
         )
@@ -145,6 +149,8 @@ impl LanguageIdentifier {
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
     /// parses it and produces a well-formed [`LanguageIdentifier`].
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -176,13 +182,15 @@ impl LanguageIdentifier {
     ///
     /// This operation will normalize casing and the separator.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
+    ///     LanguageIdentifier::normalize_utf8(b"pL-latn-pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
@@ -195,6 +203,8 @@ impl LanguageIdentifier {
     /// Normalize the language identifier (operating on strings)
     ///
     /// This operation will normalize casing and the separator.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -503,6 +513,7 @@ impl core::fmt::Debug for LanguageIdentifier {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromStr for LanguageIdentifier {
     type Err = ParseError;
@@ -513,7 +524,7 @@ impl FromStr for LanguageIdentifier {
     }
 }
 
-impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier, selff, selff.script.is_none() && selff.region.is_none() && selff.variants.is_empty() => selff.language.write_to_string());
+impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier, selff, selff.script.is_none() && selff.region.is_none() && selff.variants.is_empty() => Some(selff.language.as_str()));
 
 #[test]
 fn test_writeable() {

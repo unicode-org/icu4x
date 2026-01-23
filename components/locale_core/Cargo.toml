@@ -21,12 +21,12 @@ all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-litemap = { workspace = true, features = ["alloc"] }
-tinystr = { workspace = true, features = ["alloc"] }
+litemap = { workspace = true }
+tinystr = { workspace = true }
 writeable = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { workspace = true, features = ["alloc", "derive"], optional = true }
+serde = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -45,9 +45,9 @@ criterion = { workspace = true }
 
 [features]
 databake = ["dep:databake", "alloc"]
-serde = ["dep:serde", "tinystr/serde", "alloc"]
+serde = ["dep:serde", "tinystr/serde"]
 zerovec = ["dep:zerovec", "tinystr/zerovec"]
-alloc = []
+alloc = ["litemap/alloc", "tinystr/alloc", "writeable/alloc", "serde?/alloc"]
 
 [lib]
 bench = false # This option is required for Benchmark CI
@@ -67,3 +67,10 @@ harness = false
 [[bench]]
 name = "iai_langid"
 harness = false
+
+[package.metadata.cargo-semver-checks.lints]
+workspace = true
+
+
+[lints]
+workspace = true

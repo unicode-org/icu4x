@@ -37,7 +37,7 @@
 //!
 //! # Preferences Merging
 //!
-//! In traditional internatonalization APIs, the argument passed to constructors is a locale.
+//! In traditional internationalization APIs, the argument passed to constructors is a locale.
 //! ICU4X changes this paradigm by accepting a `Preferences`, which can be extracted from a [`Locale`] and combined with
 //! other `Preferences`s provided by the environment.
 //!
@@ -401,8 +401,7 @@ pub trait PreferenceKey: Sized {
     fn try_from_key_value(
         _key: &crate::extensions::unicode::Key,
         _value: &crate::extensions::unicode::Value,
-    ) -> Result<Option<Self>, crate::preferences::extensions::unicode::errors::PreferencesParseError>
-    {
+    ) -> Result<Option<Self>, extensions::unicode::errors::PreferencesParseError> {
         Ok(None)
     }
 
@@ -573,7 +572,7 @@ macro_rules! __define_preferences {
                 }
 
                 let r = Self {
-                    locale_preferences: loc.into(),
+                    locale_preferences: $crate::preferences::LocalePreferences::from_locale_strict(loc).unwrap_or_else(|e| { is_err = true; e }),
 
                     $(
                         $key,
@@ -594,8 +593,8 @@ macro_rules! __define_preferences {
 #[doc(hidden)]
 macro_rules! __prefs_convert {
     (
-        $name1:ident,
-        $name2:ident
+        $name1:ty,
+        $name2:ty
     ) => {
         impl From<&$name1> for $name2 {
             fn from(other: &$name1) -> Self {
@@ -606,8 +605,8 @@ macro_rules! __prefs_convert {
         }
     };
     (
-        $name1:ident,
-        $name2:ident,
+        $name1:ty,
+        $name2:ty,
         {
             $(
                 $key:ident

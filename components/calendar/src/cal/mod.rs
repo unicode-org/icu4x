@@ -4,9 +4,9 @@
 
 //! Types for individual calendars
 pub(crate) mod buddhist;
-#[path = "chinese.rs"]
-pub(crate) mod chinese_internal;
 pub(crate) mod coptic;
+#[path = "east_asian_traditional.rs"]
+pub(crate) mod east_asian_traditional_internal;
 pub(crate) mod ethiopian;
 pub(crate) mod gregorian;
 pub(crate) mod hebrew;
@@ -22,26 +22,46 @@ pub(crate) mod roc;
 pub(crate) mod abstract_gregorian;
 
 pub use buddhist::Buddhist;
-pub use chinese_internal::LunarChinese;
-/// Customizations for the [`LunarChinese`] calendar.
-pub mod chinese {
-    pub use super::chinese_internal::{China, Dangi, LunarChineseYearData, Rules};
+/// Customizations for the [`EastAsianTraditional`](east_asian_traditional::EastAsianTraditional) calendar.
+pub mod east_asian_traditional {
+    pub use super::east_asian_traditional_internal::{China, EastAsianTraditional, Korea};
+
+    // TODO(#6962) Stabilize
+    #[cfg(feature = "unstable")]
+    pub use super::east_asian_traditional_internal::{EastAsianTraditionalYear, Rules};
 }
 pub use coptic::Coptic;
+pub use east_asian_traditional_internal::{ChineseTraditional, KoreanTraditional};
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
 pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
 pub use hijri_internal::Hijri;
 /// Customizations for the [`Hijri`] calendar.
 pub mod hijri {
+    #[allow(deprecated)]
     pub use super::hijri_internal::{
-        AstronomicalSimulation, HijriYearData, Rules, TabularAlgorithm, TabularAlgorithmEpoch,
-        TabularAlgorithmLeapYears, UmmAlQura,
+        AstronomicalSimulation, TabularAlgorithm, TabularAlgorithmEpoch, TabularAlgorithmLeapYears,
+        UmmAlQura,
     };
+
+    // TODO(#6962) Stabilize
+    #[cfg(feature = "unstable")]
+    pub use super::hijri_internal::{HijriYear, Rules};
+
+    #[doc(hidden)]
+    /// These are unstable traits but we expose them on stable to
+    /// icu_datetime.
+    pub mod unstable_internal {
+        pub use super::super::hijri_internal::Rules;
+    }
 }
+
 pub use indian::Indian;
 pub use iso::Iso;
-pub use japanese::{Japanese, JapaneseExtended};
+pub use japanese::Japanese;
+/// Deprecated
+#[deprecated(since = "2.2.0")]
+pub type JapaneseExtended = Japanese;
 pub use julian::Julian;
 pub use persian::Persian;
 pub use roc::Roc;
@@ -53,6 +73,7 @@ pub use hijri::{
 };
 /// Deprecated
 #[deprecated]
+#[allow(deprecated)]
 pub type HijriSimulated = Hijri<hijri::AstronomicalSimulation>;
 /// Deprecated
 #[deprecated]
@@ -60,16 +81,17 @@ pub type HijriUmmAlQura = Hijri<hijri::UmmAlQura>;
 /// Deprecated
 #[deprecated]
 pub type HijriTabular = Hijri<hijri::TabularAlgorithm>;
-/// Deprecated
-#[deprecated]
-pub type Dangi = LunarChinese<chinese::Dangi>;
-/// Deprecated
-#[deprecated]
-pub type Chinese = LunarChinese<chinese::China>;
+/// Use [`KoreanTraditional`]
+#[deprecated(since = "2.1.0", note = "use `KoreanTraditional`")]
+pub type Dangi = KoreanTraditional;
+/// Use [`ChineseTraditional`]
+#[deprecated(since = "2.1.0", note = "use `ChineseTraditional`")]
+pub type Chinese = ChineseTraditional;
 
-pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};
+pub use crate::any_calendar::{AnyCalendar, AnyCalendarDifferenceError, AnyCalendarKind};
 
 /// Internal scaffolding types
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
 pub mod scaffold {
     /// Trait marking other traits that are considered unstable and should not generally be
     /// implemented outside of the calendar crate.

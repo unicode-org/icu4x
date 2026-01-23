@@ -16,7 +16,7 @@ pub mod ffi {
     use crate::unstable::timezone::ffi::TimeZoneInfo;
     use crate::unstable::variant_offset::ffi::UtcOffset;
 
-    /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
+    /// An ICU4X `ZonedDateTime` object capable of containing a ISO-8601 date, time, and zone.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
     #[diplomat::out]
     pub struct ZonedIsoDateTime {
@@ -45,6 +45,7 @@ pub mod ffi {
 
         /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
         #[deprecated(note = "use strict_from_string")]
+        #[diplomat::attr(dart, disable)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
@@ -81,7 +82,7 @@ pub mod ffi {
         }
     }
 
-    /// An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
+    /// An ICU4X `DateTime` object capable of containing a date, time, and zone for any calendar.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
     #[diplomat::out]
     pub struct ZonedDateTime {
@@ -115,6 +116,7 @@ pub mod ffi {
 
         /// Creates a new [`ZonedDateTime`] from an IXDTF string.
         #[deprecated(note = "use strict_from_string")]
+        #[diplomat::attr(dart, disable)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]

@@ -10,7 +10,7 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
-use icu_locale_core::subtags::language;
+use icu_locale_core::subtags::{language, Language};
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
@@ -208,6 +208,17 @@ pub struct LineBreakOptions<'a> {
     pub content_locale: Option<&'a LanguageIdentifier>,
 }
 
+impl LineBreakOptions<'_> {
+    /// `const` version of [`Default::default`]
+    pub const fn default() -> Self {
+        Self {
+            strictness: None,
+            word_option: None,
+            content_locale: None,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 struct ResolvedLineBreakOptions {
     strictness: LineBreakStrictness,
@@ -215,17 +226,24 @@ struct ResolvedLineBreakOptions {
     ja_zh: bool,
 }
 
-impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
-    fn from(options: LineBreakOptions<'_>) -> Self {
-        let ja_zh = if let Some(content_locale) = options.content_locale.as_ref() {
-            content_locale.language == language!("ja") || content_locale.language == language!("zh")
-        } else {
-            false
-        };
-        Self {
-            strictness: options.strictness.unwrap_or_default(),
-            word_option: options.word_option.unwrap_or_default(),
-            ja_zh,
+impl LineBreakOptions<'_> {
+    const fn resolve(self) -> ResolvedLineBreakOptions {
+        ResolvedLineBreakOptions {
+            strictness: match self.strictness {
+                Some(s) => s,
+                None => LineBreakStrictness::Strict,
+            },
+            word_option: match self.word_option {
+                Some(s) => s,
+                None => LineBreakWordOption::Normal,
+            },
+            ja_zh: if let Some(content_locale) = self.content_locale.as_ref() {
+                const JA: Language = language!("ja");
+                const ZH: Language = language!("zh");
+                matches!(content_locale.language, JA | ZH)
+            } else {
+                false
+            },
         }
     }
 }
@@ -240,7 +258,7 @@ impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
 /// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
 /// line break opportunities ([definition LD3][LD3]).
 /// It does not distinguish them.  Callers requiring that distinction can check
-/// the Line_Break property of the code point preceding the break against those
+/// the `Line_Break` property of the code point preceding the break against those
 /// listed in rules [LB4][LB4] and [LB5][LB5], special-casing the end of text
 /// according to [LB3][LB3].
 ///
@@ -337,9 +355,8 @@ impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
 ///
 /// let mandatory_breaks: Vec<usize> = segmenter
 ///     .segment_str(text)
-///     .into_iter()
 ///     .filter(|&i| {
-///         text[..i].chars().next_back().map_or(false, |c| {
+///         text[..i].chars().next_back().is_some_and(|c| {
 ///             matches!(
 ///                 CodePointMapData::<LineBreak>::new().get(c),
 ///                 LineBreak::MandatoryBreak
@@ -427,8 +444,8 @@ impl LineSegmenter {
     #[cfg(feature = "compiled_data")]
     pub fn new_lstm(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
-            options: options.into(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            options: options.resolve(),
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             complex: ComplexPayloadsBorrowed::new_lstm(),
         }
     }
@@ -457,7 +474,7 @@ impl LineSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            options: options.into(),
+            options: options.resolve(),
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
         })
@@ -469,16 +486,14 @@ impl LineSegmenter {
     /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
     /// faster than the LSTM model but requires more data.
     ///
-    /// See also [`Self::new_dictionary`].
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn new_dictionary(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
-            options: options.into(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            options: options.resolve(),
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
@@ -511,7 +526,7 @@ impl LineSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            options: options.into(),
+            options: options.resolve(),
             payload: provider.load(Default::default())?.payload,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
@@ -520,6 +535,50 @@ impl LineSegmenter {
             // [1]: https://www.unicode.org/reports/tr14/#ID
             // [2]: https://www.unicode.org/reports/tr14/#SA
             complex: ComplexPayloads::try_new_southeast_asian(provider)?,
+        })
+    }
+
+    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+    /// no support for scripts requiring complex context dependent line breaks (Khmer, Lao, Myanmar, Thai).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_for_non_complex_scripts(
+        options: LineBreakOptions,
+    ) -> LineSegmenterBorrowed<'static> {
+        LineSegmenterBorrowed {
+            options: options.resolve(),
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            complex: ComplexPayloadsBorrowed::empty(),
+        }
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (options: LineBreakOptions) -> error: DataError,
+        functions: [
+            new_for_non_complex_scripts: skip,
+            try_new_for_non_complex_scripts_with_buffer_provider,
+            try_new_for_non_complex_scripts_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_non_complex_scripts)]
+    pub fn try_new_for_non_complex_scripts_unstable<D>(
+        provider: &D,
+        options: LineBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakLineV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + ?Sized,
+    {
+        Ok(Self {
+            options: options.resolve(),
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_empty(provider)?,
         })
     }
 
@@ -720,7 +779,7 @@ fn is_break_utf32_by_loose(
     None
 }
 
-/// A trait allowing for LineBreakIterator to be generalized to multiple string iteration methods.
+/// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
 ///
 /// This is implemented by ICU4X for several common string types.
 ///
@@ -1113,7 +1172,7 @@ impl LineBreakType for PotentiallyIllFormedUtf8 {
         line_handle_complex_language_utf8(iter, left_codepoint)
     }
 }
-/// line_handle_complex_language impl for UTF8 iterators
+
 fn line_handle_complex_language_utf8<T>(
     iter: &mut LineBreakIterator<'_, '_, T>,
     left_codepoint: char,
@@ -1265,10 +1324,9 @@ mod tests {
 
     #[test]
     fn linebreak_property() {
-        let payload =
-            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
-                .expect("Loading should succeed!")
-                .payload;
+        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+            .expect("Loading should succeed!")
+            .payload;
 
         let get_linebreak_property = |codepoint| {
             payload.get().get_linebreak_property_utf32_with_rule(
@@ -1297,10 +1355,9 @@ mod tests {
     #[test]
     #[expect(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
-        let payload =
-            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
-                .expect("Loading should succeed!")
-                .payload;
+        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+            .expect("Loading should succeed!")
+            .payload;
         let lb_data: &RuleBreakData = payload.get();
 
         let is_break = |left, right| {
@@ -1398,9 +1455,8 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter =
-            LineSegmenter::try_new_dictionary_unstable(&crate::provider::Baked, Default::default())
-                .expect("Data exists");
+        let segmenter = LineSegmenter::try_new_dictionary_unstable(&Baked, Default::default())
+            .expect("Data exists");
         let segmenter = segmenter.as_borrowed();
 
         let mut iter = segmenter.segment_str("hello world");

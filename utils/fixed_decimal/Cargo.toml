@@ -5,7 +5,7 @@
 [package]
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
-version = "0.7.0"
+version = "0.7.1"
 
 authors.workspace = true
 categories.workspace = true
@@ -13,7 +13,7 @@ edition.workspace = true
 include.workspace = true
 license.workspace = true
 repository.workspace = true
-rust-version.workspace = true
+rust-version = "1.82"
 
 [package.metadata.workspaces]
 independent = true
@@ -23,8 +23,8 @@ all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-smallvec = { workspace = true }
-writeable = { workspace = true }
+smallvec = { workspace = true, features = ["const_new"] }
+writeable = { workspace = true, features = ["alloc"] }
 
 ryu = { workspace = true, features = ["small"], optional = true }
 
@@ -48,3 +48,6 @@ bench = false  # This option is required for Benchmark CI
 [[bench]]
 name = "fixed_decimal"
 harness = false
+
+[lints]
+workspace = true

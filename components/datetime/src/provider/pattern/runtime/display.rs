@@ -100,7 +100,7 @@ impl_display_with_writeable!(Pattern<'_>);
 
 impl Writeable for GenericPattern<'_> {
     fn write_to<W: Write + ?Sized>(&self, formatter: &mut W) -> fmt::Result {
-        let mut buffer = alloc::string::String::new();
+        let mut buffer = String::new();
         for pattern_item in self.items.iter() {
             match pattern_item {
                 GenericPatternItem::Placeholder(idx) => {

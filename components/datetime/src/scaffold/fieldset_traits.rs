@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::{neo::*, time_zones::tz, *},
+    provider::semantic_skeletons::GluePattern,
+    provider::{names::*, time_zones::tz, *},
     scaffold::*,
 };
 use icu_calendar::{
@@ -37,7 +38,7 @@ pub trait DateInputMarkers: UnstableSealed {
     type DayOfYearInput: IntoOption<DayOfYear>;
     /// Marker for resolving the day-of-year input field.
     type RataDieInput: IntoOption<RataDie>;
-    /// Marker for resolving the day-of-week input field.
+    /// Marker for resolving the weekday input field.
     type DayOfWeekInput: IntoOption<Weekday>;
 }
 
@@ -91,13 +92,13 @@ pub trait DateDataMarkers: UnstableSealed {
 /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
 pub trait TimeMarkers: UnstableSealed {
-    /// Marker for resolving the day-of-month input field.
+    /// Marker for resolving the hour input field.
     type HourInput: IntoOption<Hour>;
-    /// Marker for resolving the day-of-week input field.
+    /// Marker for resolving the minute input field.
     type MinuteInput: IntoOption<Minute>;
-    /// Marker for resolving the day-of-year input field.
+    /// Marker for resolving the second input field.
     type SecondInput: IntoOption<Second>;
-    /// Marker for resolving the any-calendar-kind input field.
+    /// Marker for resolving the nanosecond input field.
     type NanosecondInput: IntoOption<Nanosecond>;
     /// Marker for loading time skeleton patterns.
     type TimeSkeletonPatternsV1: DataMarker<DataStruct = PackedPatterns<'static>>;
@@ -579,9 +580,6 @@ macro_rules! datetime_marker_helper {
     (@dates/typed, yes) => {
         C::SkeletaV1
     };
-    (@dates/typed,) => {
-        NeverMarker<PackedPatterns<'static>>
-    };
     (@calmarkers, yes) => {
         FullDataCalMarkers
     };
@@ -597,23 +595,14 @@ macro_rules! datetime_marker_helper {
     (@dayperiods, yes) => {
         DayPeriodNamesV1
     };
-    (@dayperiods,) => {
-        NeverMarker<LinearNames<'static>>
-    };
     (@times, yes) => {
         DatetimePatternsTimeV1
-    };
-    (@times,) => {
-        NeverMarker<ErasedPackedPatterns>
     };
     (@glue, yes) => {
         DatetimePatternsGlueV1
     };
     (@glue,) => {
         NeverMarker<GluePattern<'static>>
-    };
-    (@option/length, yes) => {
-        Length
     };
     (@option/length, long) => {
         Length
@@ -633,9 +622,6 @@ macro_rules! datetime_marker_helper {
     (@option/timeprecision, yes) => {
         Option<TimePrecision>
     };
-    (@option/$any:ident,) => {
-        ()
-    };
     (@input/year, yes) => {
         YearInfo
     };
@@ -645,7 +631,7 @@ macro_rules! datetime_marker_helper {
     (@input/day_of_month, yes) => {
         DayOfMonth
     };
-    (@input/day_of_week, yes) => {
+    (@input/weekday, yes) => {
         Weekday
     };
     (@input/day_of_year, yes) => {
@@ -797,9 +783,6 @@ macro_rules! datetime_marker_helper {
     };
     (@names/zone/$any:ident,) => {
         ()
-    };
-    () => {
-        unreachable!() // prevent bugs
     };
 }
 pub(crate) use datetime_marker_helper;

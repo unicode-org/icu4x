@@ -31,6 +31,7 @@ include!("units_names_volume_outlier_v1.rs.data");
 include!("language_display_names_v1.rs.data");
 include!("short_hour_relative_v1.rs.data");
 include!("units_names_mass_extended_v1.rs.data");
+include!("units_display_names_v1.rs.data");
 include!("units_names_area_outlier_v1.rs.data");
 include!("units_names_mass_core_v1.rs.data");
 include!("short_currency_compact_v1.rs.data");
@@ -47,7 +48,6 @@ include!("short_second_relative_v1.rs.data");
 include!("variant_display_names_v1.rs.data");
 include!("narrow_month_relative_v1.rs.data");
 include!("narrow_day_relative_v1.rs.data");
-include!("units_display_name_v1.rs.data");
 include!("transliterator_rules_v1.rs.data");
 include!("units_names_duration_outlier_v1.rs.data");
 include!("narrow_quarter_relative_v1.rs.data");
@@ -56,6 +56,7 @@ include!("script_display_names_v1.rs.data");
 include!("narrow_minute_relative_v1.rs.data");
 include!("digital_duration_data_v1.rs.data");
 include!("units_names_duration_core_v1.rs.data");
+include!("currency_fractions_v1.rs.data");
 include!("units_info_v1.rs.data");
 include!("narrow_year_relative_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
@@ -73,7 +74,7 @@ include!("narrow_year_relative_v1.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
@@ -124,6 +125,7 @@ macro_rules! impl_data_provider {
         impl_language_display_names_v1!($provider);
         impl_short_hour_relative_v1!($provider);
         impl_units_names_mass_extended_v1!($provider);
+        impl_units_display_names_v1!($provider);
         impl_units_names_area_outlier_v1!($provider);
         impl_units_names_mass_core_v1!($provider);
         impl_short_currency_compact_v1!($provider);
@@ -140,7 +142,6 @@ macro_rules! impl_data_provider {
         impl_variant_display_names_v1!($provider);
         impl_narrow_month_relative_v1!($provider);
         impl_narrow_day_relative_v1!($provider);
-        impl_units_display_name_v1!($provider);
         impl_transliterator_rules_v1!($provider);
         impl_units_names_duration_outlier_v1!($provider);
         impl_narrow_quarter_relative_v1!($provider);
@@ -149,6 +150,7 @@ macro_rules! impl_data_provider {
         impl_narrow_minute_relative_v1!($provider);
         impl_digital_duration_data_v1!($provider);
         impl_units_names_duration_core_v1!($provider);
+        impl_currency_fractions_v1!($provider);
         impl_units_info_v1!($provider);
         impl_narrow_year_relative_v1!($provider);
     };

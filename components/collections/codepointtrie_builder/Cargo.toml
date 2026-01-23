@@ -5,7 +5,7 @@
 [package]
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
-version = "0.5.0"
+version = "0.5.1"
 license = "Unicode-3.0"
 include = [
     "src/**/*",
@@ -39,10 +39,10 @@ wasm = ["dep:wasmi", "dep:wat", "dep:zerovec"]
 icu4c = ["dep:zerovec"]
 
 [dependencies]
-icu_collections = { workspace = true, features = ["serde"] }
-zerovec = { workspace = true, optional = true }
+icu_collections = { workspace = true }
 wasmi = { workspace = true, optional = true }
 wat = { workspace = true, optional = true }
+zerovec = { workspace = true, optional = true, features = ["alloc"] }
 
 [dev-dependencies]
 icu = { path = "../../icu" }
@@ -52,5 +52,5 @@ skip_optional_dependencies = true
 # these need env vars. They still get `cargo check'd` when doing `--all-features`
 denylist = ["icu4c"]
 
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4c_enable_renaming)'] }
+[lints]
+workspace = true

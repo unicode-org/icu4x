@@ -21,19 +21,19 @@ const REPO_VERSION: &str = "version.workspace = true";
 const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     ("calendar", icu::calendar::provider::MARKERS, REPO_VERSION),
     ("casemap", icu::casemap::provider::MARKERS, REPO_VERSION),
-    (
-        "collator",
-        icu::collator::provider::MARKERS,
-        r#"version = "2.0.1""#,
-    ),
+    ("collator", icu::collator::provider::MARKERS, REPO_VERSION),
     (
         "datetime",
         icu::datetime::provider::MARKERS,
-        r#"version = "2.0.2""#,
+        "version = \"2.1.2\"",
     ),
     ("decimal", icu::decimal::provider::MARKERS, REPO_VERSION),
     ("list", icu::list::provider::MARKERS, REPO_VERSION),
-    ("locale", icu::locale::provider::MARKERS, REPO_VERSION),
+    (
+        "locale",
+        icu::locale::provider::MARKERS,
+        "version = \"2.1.2\"",
+    ),
     (
         "normalizer",
         icu::normalizer::provider::MARKERS,
@@ -43,14 +43,14 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     (
         "properties",
         icu::properties::provider::MARKERS,
-        r#"version = "2.0.1""#,
+        "version = \"2.1.2\"",
     ),
     ("segmenter", icu::segmenter::provider::MARKERS, REPO_VERSION),
-    ("time", icu::time::provider::MARKERS, r#"version = "2.0.2""#),
+    ("time", icu::time::provider::MARKERS, REPO_VERSION),
     (
         "experimental",
         icu::experimental::provider::MARKERS,
-        r#"version = "0.3.0""#,
+        r#"version = "0.4.1""#,
     ),
 ];
 

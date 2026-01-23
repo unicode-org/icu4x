@@ -31,6 +31,9 @@ namespace capi {
     typedef struct icu4x_Script_from_integer_value_mv1_result {union {icu4x::capi::Script ok; }; bool is_ok;} icu4x_Script_from_integer_value_mv1_result;
     icu4x_Script_from_integer_value_mv1_result icu4x_Script_from_integer_value_mv1(uint16_t other);
 
+    typedef struct icu4x_Script_try_from_str_mv1_result {union {icu4x::capi::Script ok; }; bool is_ok;} icu4x_Script_try_from_str_mv1_result;
+    icu4x_Script_try_from_str_mv1_result icu4x_Script_try_from_str_mv1(icu4x::diplomat::capi::DiplomatStringView s);
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -52,6 +55,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_BassaVah:
         case icu4x::capi::Script_Batak:
         case icu4x::capi::Script_Bengali:
+        case icu4x::capi::Script_BeriaErfe:
         case icu4x::capi::Script_Bhaiksuki:
         case icu4x::capi::Script_Bopomofo:
         case icu4x::capi::Script_Brahmi:
@@ -64,6 +68,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Chakma:
         case icu4x::capi::Script_Cham:
         case icu4x::capi::Script_Cherokee:
+        case icu4x::capi::Script_Chisoi:
         case icu4x::capi::Script_Chorasmian:
         case icu4x::capi::Script_Common:
         case icu4x::capi::Script_Coptic:
@@ -80,6 +85,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Elbasan:
         case icu4x::capi::Script_Elymaic:
         case icu4x::capi::Script_Ethiopian:
+        case icu4x::capi::Script_Garay:
         case icu4x::capi::Script_Georgian:
         case icu4x::capi::Script_Glagolitic:
         case icu4x::capi::Script_Gothic:
@@ -88,6 +94,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Gujarati:
         case icu4x::capi::Script_GunjalaGondi:
         case icu4x::capi::Script_Gurmukhi:
+        case icu4x::capi::Script_GurungKhema:
         case icu4x::capi::Script_Han:
         case icu4x::capi::Script_Hangul:
         case icu4x::capi::Script_HanifiRohingya:
@@ -110,6 +117,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Khmer:
         case icu4x::capi::Script_Khojki:
         case icu4x::capi::Script_Khudawadi:
+        case icu4x::capi::Script_KiratRai:
         case icu4x::capi::Script_Lao:
         case icu4x::capi::Script_Latin:
         case icu4x::capi::Script_Lepcha:
@@ -148,6 +156,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_NyiakengPuachueHmong:
         case icu4x::capi::Script_Ogham:
         case icu4x::capi::Script_OlChiki:
+        case icu4x::capi::Script_OlOnal:
         case icu4x::capi::Script_OldHungarian:
         case icu4x::capi::Script_OldItalic:
         case icu4x::capi::Script_OldNorthArabian:
@@ -173,12 +182,14 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Sharada:
         case icu4x::capi::Script_Shavian:
         case icu4x::capi::Script_Siddham:
+        case icu4x::capi::Script_Sidetic:
         case icu4x::capi::Script_SignWriting:
         case icu4x::capi::Script_Sinhala:
         case icu4x::capi::Script_Sogdian:
         case icu4x::capi::Script_SoraSompeng:
         case icu4x::capi::Script_Soyombo:
         case icu4x::capi::Script_Sundanese:
+        case icu4x::capi::Script_Sunuwar:
         case icu4x::capi::Script_SylotiNagri:
         case icu4x::capi::Script_Syriac:
         case icu4x::capi::Script_Tagalog:
@@ -186,6 +197,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_TaiLe:
         case icu4x::capi::Script_TaiTham:
         case icu4x::capi::Script_TaiViet:
+        case icu4x::capi::Script_TaiYo:
         case icu4x::capi::Script_Takri:
         case icu4x::capi::Script_Tamil:
         case icu4x::capi::Script_Tangsa:
@@ -196,7 +208,10 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Tibetan:
         case icu4x::capi::Script_Tifinagh:
         case icu4x::capi::Script_Tirhuta:
+        case icu4x::capi::Script_Todhri:
+        case icu4x::capi::Script_TolongSiki:
         case icu4x::capi::Script_Toto:
+        case icu4x::capi::Script_TuluTigalari:
         case icu4x::capi::Script_Ugaritic:
         case icu4x::capi::Script_Unknown:
         case icu4x::capi::Script_Vai:
@@ -234,6 +249,11 @@ inline uint16_t icu4x::Script::to_integer_value() const {
 
 inline std::optional<icu4x::Script> icu4x::Script::from_integer_value(uint16_t other) {
     auto result = icu4x::capi::icu4x_Script_from_integer_value_mv1(other);
+    return result.is_ok ? std::optional<icu4x::Script>(icu4x::Script::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline std::optional<icu4x::Script> icu4x::Script::try_from_str(std::string_view s) {
+    auto result = icu4x::capi::icu4x_Script_try_from_str_mv1({s.data(), s.size()});
     return result.is_ok ? std::optional<icu4x::Script>(icu4x::Script::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // ICU4X_Script_HPP

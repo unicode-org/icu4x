@@ -71,7 +71,7 @@ pub const BASIC_BUILD_DEPS: &[&str] = &[
 /// This should almost never change
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.
-pub const EXTRA_SERDE_DEPS: &[&str] = &["serde", "serde_derive"];
+pub const EXTRA_SERDE_DEPS: &[&str] = &["serde", "serde_core", "serde_derive"];
 
 /// Dependencies allowed when opting in to compiled data
 pub const EXTRA_DATA_DEPS: &[&str] = &[
@@ -137,7 +137,13 @@ pub const EXTRA_CAPI_BUILD_DEPS: &[&str] = &["diplomat", "diplomat_core", "strck
 /// This shuld rarely change
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.
-pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
+pub const EXTRA_BLOB_DEPS: &[&str] = &[
+    "cobs",
+    "icu_provider_blob",
+    "postcard",
+    "thiserror",
+    "thiserror-impl",
+];
 
 /// Dependencies allowed when opting in to FS providers on FFI
 /// This shuld rarely change
@@ -203,6 +209,8 @@ pub const EXTRA_EXPORT_DEPS: &[&str] = &[
     "erased-serde",
     "postcard",
     "typeid",
+    "thiserror",
+    "thiserror-impl",
 ];
 
 /// Dependencies needed by the `log` crate

@@ -11,12 +11,14 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        // Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
-        clippy::exhaustive_enums,
-        // Structs should be exhaustive, as they are exhaustive in C/C++
-        // Debug is not required as there is no stable Rust API
     )
 )]
+// Debug is not required as there is no stable Rust API
+#![allow(missing_debug_implementations)]
+// Structs should be exhaustive, as they are exhaustive in C/C++
+// Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
+#![allow(clippy::exhaustive_structs)]
+// #![warn(missing_docs)] // todo
 // Diplomat limitations
 #![allow(
     clippy::needless_lifetimes,
@@ -25,9 +27,11 @@
 )]
 // libc is behind a negative feature
 #![allow(unused_crate_dependencies)]
+#![allow(unused_qualifications)]
 
 //! This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
-//! C, C++, Dart, JavaScript, and TypeScript bindings.
+//! C and C++ headers. ICU4X is also available for JavaScript/TypeScript through [`npm`](https://www.npmjs.com/package/icu), and for
+//! Dart through [`pub.dev`](https://pub.dev/packages/icu4x).
 //!
 #![allow(rustdoc::invalid_html_tags)]
 // attribute split over three lines because `cargo generate-readmes` does not evaluate `#![doc = ]` docs
@@ -46,7 +50,6 @@
 //! The <code>extern "C"</code> APIs exposed by this crate, while not directly documented, are stable within the same major
 //! semver version, as are the bindings in the <code>bindings</code> folder.
 //! </div>
-//!
 
 // Renamed so you can't accidentally use it
 #[cfg(target_arch = "wasm32")]
@@ -129,6 +132,8 @@ pub mod unstable {
     pub mod properties_bidi;
     #[cfg(feature = "properties")]
     pub mod properties_enums;
+    #[cfg(feature = "properties")]
+    pub mod properties_gcg;
     #[cfg(feature = "properties")]
     pub mod properties_iter;
     #[cfg(feature = "properties")]

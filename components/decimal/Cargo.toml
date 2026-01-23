@@ -24,7 +24,7 @@ fixed_decimal = { workspace = true }
 icu_provider = { workspace = true }
 icu_locale_core = { workspace = true }
 writeable = { workspace = true }
-zerovec = { workspace = true }
+zerovec = { workspace = true, features = ["alloc"] }
 databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive"], optional = true }
 
@@ -50,9 +50,9 @@ compiled_data = ["dep:icu_decimal_data", "dep:icu_locale", "icu_locale?/compiled
 ryu = ["fixed_decimal/ryu"]
 alloc = ["serde?/alloc", "zerovec/alloc"]
 
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
-
 [[bench]]
 name = "fixed_decimal_format"
 harness = false
+
+[lints]
+workspace = true

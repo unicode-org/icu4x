@@ -5,7 +5,7 @@
 use crate::LiteMap;
 use databake::*;
 
-/// Bakes a LiteMap into Rust code for fast runtime construction from data. Use this impl during
+/// Bakes a [`LiteMap`] into Rust code for fast runtime construction from data. Use this impl during
 /// code generation, such as in a `build.rs` script.
 ///
 /// For the most efficient bake, bake the [`LiteMap`] with a slice store. Use functions such as
@@ -37,7 +37,7 @@ use databake::*;
 /// let mut ctx = Default::default();
 /// println!(
 ///     "const FOO: LiteMap<usize, &str, &[(usize, &str)]> = {};",
-///     litemap_slice.bake(&mut ctx)
+///     litemap_slice.bake(&ctx)
 /// );
 /// ```
 impl<K, V, S> Bake for LiteMap<K, V, S>

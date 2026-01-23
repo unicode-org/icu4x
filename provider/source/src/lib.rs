@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+// #![cfg_attr(
+//     not(test),
+//     deny(
+//         clippy::indexing_slicing,
+//         clippy::unwrap_used,
+//         clippy::expect_used,
+//         clippy::panic,
+//     )
+// )]
+#![warn(missing_docs)]
+
 //! `icu_provider_source` defines [`SourceDataProvider`], the authorative ICU4X [`DataProvider`] that produces data from
 //! CLDR and ICU sources.
 //!
@@ -110,16 +123,16 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_CLDR_TAG: &'static str = "48.0.0-ALPHA2D0";
+    pub const TESTED_CLDR_TAG: &'static str = "48.1.0";
 
     /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2025-05-21/77.x";
+    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-78.1rc";
 
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2025b";
+    pub const TESTED_TZDB_TAG: &'static str = "2025c";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///
@@ -133,7 +146,7 @@ impl SourceDataProvider {
     #[expect(clippy::new_without_default)]
     pub fn new() -> Self {
         // Singleton so that all instantiations share the same cache.
-        static SINGLETON: std::sync::OnceLock<SourceDataProvider> = std::sync::OnceLock::new();
+        static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
         SINGLETON
             .get_or_init(|| {
                 Self::new_custom()
@@ -234,16 +247,21 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn with_icuexport_for_tag(self, mut tag: &str) -> Self {
-        if tag == "release-71-1" {
-            tag = "icu4x/2022-08-17/71.x";
-        }
+    pub fn with_icuexport_for_tag(self, tag: &str) -> Self {
+        let url = if tag >= "release-78.1" || tag.starts_with("icu4x-") {
+            format!(
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-icuexportdata-{}.zip",
+                tag.replace("release-", "").replace("icu4x-", "")
+            )
+        } else {
+            format!(
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
+                tag.replace('/', "-")
+            )
+        };
         Self {
-                icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
-                    tag.replace('/', "-")
-                ))))),
-                ..self
+            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(url)))),
+            ..self
         }
     }
 
@@ -339,7 +357,10 @@ impl SourceDataProvider {
         self.tzdb_paths.as_deref().ok_or(Self::MISSING_TZDB_ERROR)
     }
 
-    /// Set this to use tries optimized for speed instead of data size
+    /// Set this to use tries optimized for speed instead of data size.
+    ///
+    /// The tries for the core (UAX #15 but not UAX #46) normalization
+    /// forms use the fast trie type regardless of this setting.
     pub fn with_fast_tries(self) -> Self {
         Self {
             trie_type: TrieType::Fast,
@@ -423,7 +444,7 @@ fn test_check_req() {
     }
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
-    impl crate::IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
+    impl IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
         fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
             Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
         }

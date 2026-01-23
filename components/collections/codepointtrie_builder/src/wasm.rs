@@ -259,13 +259,13 @@ where
     let data_length = wasm.get_data_length(&ucptrie_ptr);
 
     let index = ZeroSlice::<u16>::parse_bytes(
-        wasm.get_bytes_at_ptr(&index_ptr, index_length * core::mem::size_of::<u16>()),
+        wasm.get_bytes_at_ptr(&index_ptr, index_length * size_of::<u16>()),
     )
     .unwrap()
     .as_zerovec()
     .into_owned();
 
-    let data = if core::mem::size_of::<T::ULE>() == 3 {
+    let data = if size_of::<T::ULE>() == 3 {
         // need to reallocate 32-bit trie as 24-bit zerovec
         ZeroVec::<T>::parse_bytes(
             &wasm
@@ -280,7 +280,7 @@ where
         .into_owned()
     } else {
         ZeroVec::<T>::parse_bytes(
-            wasm.get_bytes_at_ptr(&data_ptr, data_length * core::mem::size_of::<T::ULE>()),
+            wasm.get_bytes_at_ptr(&data_ptr, data_length * size_of::<T::ULE>()),
         )
         .unwrap()
         .into_owned()

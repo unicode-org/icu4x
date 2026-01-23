@@ -25,7 +25,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.0.0/icu/casemap/options/enum.TrailingCase.html) for more information.
+ * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.1.1/icu/casemap/options/enum.TrailingCase.html) for more information.
  */
 class TrailingCase {
 public:

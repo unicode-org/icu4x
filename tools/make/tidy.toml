@@ -25,12 +25,11 @@ script = '''
 exit_on_error true
 
 # Check files matching these patterns.
-glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp" "./**/*.hpp" "./**/*.h" "./**/*.mjs" "./**/*.ts" "./**/*.*.dart"
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.yaml" "./**/*.toml" "./**/*.c" "./**/*.cpp" "./**/*.hpp" "./**/*.h" "./**/*.mjs" "./**/*.ts" "./**/*.js" "./**/*.*.dart"
 
-files = exec --fail-on-error git ls-files --cached --others --exclude-standard
+glob_skip_pattern_array = array "ffi/capi/bindings/**/*" "**/data/**/*" "tools/web-demo/gen/**/*" "ffi/dart/lib/src/bindings/**/*" "ffi/npm/lib/**/*" "ffi/nvm/src/kotlin/**/*"
 
-# Skip the files matching these patterns.
-glob_skip_pattern_array = array "ffi/capi/bindings/**/*" "ffi/npm/lib/**/*" "ffi/dart/lib/src/**/*" "tools/web-demo/gen/**/*" "**/target/**/*" "**/node_modules/**/*" "**/data/**/*" "examples/gn/vendor/**/*" "examples/gn/third_party_tools/**/*" "ffi/capi/tests/tinyc/*/baked_data/**/*"
+output = exec --fail-on-error git ls-files --cached --others --exclude-standard
 
 blank_line = set ""
 
@@ -59,11 +58,6 @@ license_rem_line_3 = set "REM (online at: https://github.com/unicode-org/icu4x/b
 license_rem_array = array ${license_rem_line_1} ${license_rem_line_2} ${license_rem_line_3} ${blank_line}
 license_rem_str = array_join ${license_rem_array} "\n"
 
-license_unicode_hash_line_1 = set "# Copyright (C) 2021 and later: Unicode, Inc. and others."
-license_unicode_hash_line_2 = set "# License & terms of use: http://www.unicode.org/copyright.html"
-license_unicode_hash_array = array ${license_unicode_hash_line_1} ${license_unicode_hash_line_2}
-license_unicode_hash_str = array_join ${license_unicode_hash_array} "\n"
-
 license_apache_hash_line_1 = set "# This file is part of ICU4X."
 license_apache_hash_line_2 = set "#"
 license_apache_hash_line_3 = set "# This file is licensed under the Apache License, Version 2.0,"
@@ -82,20 +76,24 @@ license_apache_slash_line_6 = set "// <https://www.apache.org/licenses/LICENSE-2
 license_apache_slash_array = array ${license_apache_slash_line_1} ${license_apache_slash_line_2} ${license_apache_slash_line_3} ${license_apache_slash_line_4} ${license_apache_slash_line_5} ${license_apache_slash_line_6}
 license_apache_hash_str = array_join ${license_apache_slash_array} "\n"
 
-skip_paths = set_new
+paths = set_new
+files = split ${output.stdout} "\n"
+for path in ${files}
+    set_put ${paths} ${path}
+end
+
 for skip_pattern in ${glob_skip_pattern_array}
     echo "License header check skipped in files match ${skip_pattern}"
-    paths = glob_array ${skip_pattern}
-    for p in ${paths}
-        set_put ${skip_paths} ${p}
+    skip = glob_array ${skip_pattern}
+    for p in ${skip}
+        set_remove ${paths} ${p}
     end
 end
 
 for pattern in ${glob_pattern_array}
     handle = glob_array ${pattern}
     for path in ${handle}
-        should_skip = set_contains ${skip_paths} ${path}
-        should_check_header = eq ${should_skip} false
+        should_check_header = set_contains ${paths} ${path}
         if ${should_check_header}
             text = readfile ${path}
             if starts_with ${path} "utils/calendrical_calculations"
@@ -112,13 +110,11 @@ for pattern in ${glob_pattern_array}
                 result_slash = starts_with ${text} ${license_slash_str}
                 result_rst = starts_with ${text} ${license_rst_str}
                 result_rem = starts_with ${text} ${license_rem_str}
-                result_unicode_hash = starts_with ${text} ${license_unicode_hash_str}
                 not_result_hash = not ${result_hash}
                 not_result_slash = not ${result_slash}
                 not_result_rst = not ${result_rst}
                 not_result_rem = not ${result_rem}
-                not_result_unicode_hash = not ${result_unicode_hash}
-                if ${not_result_hash} and ${not_result_slash} and ${not_result_rst} and ${not_result_rem} and ${not_result_unicode_hash}
+                if ${not_result_hash} and ${not_result_slash} and ${not_result_rst} and ${not_result_rem}
                   echo "License header missing in ${path}"
                   trigger_error "License header missing or misformatted in ${path}."
                 end
@@ -132,6 +128,7 @@ echo "License header check complete"
 
 [tasks.generate-readmes]
 description = "Automatically generate README.md for each component."
+install_crate = { crate_name = "cargo-rdme", test_arg = ["--help"] }
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
@@ -264,11 +261,12 @@ end
 description = "Run the dependency checker"
 category = "ICU4X Development"
 script_runner = "@duckscript"
-env = { "RUSTFLAGS" = "-D unused_crate_dependencies" }
 script = '''
 exit_on_error true
 
+set_env "RUSTFLAGS" "-D unused_crate_dependencies"
 exec --fail-on-error cargo check --all-features
+unset_env "RUSTFLAGS"
 exec --fail-on-error cargo run --manifest-path tools/make/depcheck/Cargo.toml
 '''
 
