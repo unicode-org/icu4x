@@ -7,7 +7,7 @@ use alloc::string::String;
 use core::fmt::Write;
 
 /// Represents a single unit in a measure unit.
-/// For example, the MeasureUnit `kilometer-per-square-second` contains two single units:
+/// For example, the [`MeasureUnit`](crate::measure::measureunit::MeasureUnit) `kilometer-per-square-second` contains two single units:
 ///    1. `kilometer` with power 1 and prefix 3 with base 10.
 ///    2. `second` with power -2 and prefix power equal to 0.
 #[zerovec::make_ule(SingleUnitULE)]
@@ -33,7 +33,7 @@ impl SingleUnit {
     /// 1. If the power is not 1, the power is prefixed with "P" followed by the power value.
     /// 2. If the si prefix power is not 0, the si prefix is represented by its base character ('D' for Decimal, 'B' for Binary) followed by the prefix power value.
     /// 3. The unit ID is prefixed with "I" and appended to the string.
-    pub(crate) fn append_short_representation(&self, buff: &mut String) {
+    pub(crate) fn append_short_representation(self, buff: &mut String) {
         if self.power != 1 {
             buff.push('P');
             let _infallible = write!(buff, "{}", self.power);

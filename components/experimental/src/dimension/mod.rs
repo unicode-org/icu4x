@@ -2,7 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
+#![allow(
+    clippy::panic,
+    clippy::indexing_slicing,
+    clippy::unwrap_used,
+    missing_docs
+)]
 
 pub mod currency;
 pub mod percent;

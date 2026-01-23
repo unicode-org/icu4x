@@ -193,16 +193,31 @@ impl<'a> ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
             return None;
         };
         let suffix_count = usize::from(self.suffix_count);
-        let Some(offset) = self.dense.get(suffix_count * row_index + column_index) else {
-            // The row and column indexes should be in-range
-            debug_assert!(false);
+        let Some(offset) = row_index
+            .checked_mul(suffix_count)
+            .and_then(|v| v.checked_add(column_index))
+            .and_then(|index| self.dense.get(index))
+        else {
+            debug_assert!(
+                false,
+                "matrix index out of bounds: row={}, col={}, suffix_count={}",
+                row_index, column_index, suffix_count
+            );
             return None;
         };
         if offset == DenseType::MAX {
             // There is an entry in the dense matrix but it is a None value
             return None;
         }
-        Some(usize::from(offset) + row_value_offset)
+        let Some(result) = usize::from(offset).checked_add(row_value_offset) else {
+            debug_assert!(
+                false,
+                "overflow: offset={}, row_value_offset={}",
+                offset, row_value_offset
+            );
+            return None;
+        };
+        Some(result)
     }
 
     /// Borrows the structure for encoding into [`zerovec`].

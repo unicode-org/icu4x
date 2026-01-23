@@ -42,7 +42,7 @@ pub(crate) struct EraData {
     pub(crate) code: String,
     #[serde(rename = "_aliases", default)]
     pub(crate) aliases: String,
-    /// EraYear::era_index
+    /// `EraYear::era_index`
     #[serde(skip)]
     pub(crate) icu4x_era_index: Option<u8>,
 }

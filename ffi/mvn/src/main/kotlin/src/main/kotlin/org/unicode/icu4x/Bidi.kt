@@ -67,7 +67,7 @@ class Bidi internal constructor (
         }
         @JvmStatic
         
-        /** Check if a Level returned by level_at is an RTL level.
+        /** Check if a Level returned by `level_at` is an RTL level.
         *
         *Invalid levels (numbers greater than 125) will be assumed LTR
         *
@@ -80,7 +80,7 @@ class Bidi internal constructor (
         }
         @JvmStatic
         
-        /** Check if a Level returned by level_at is an LTR level.
+        /** Check if a Level returned by `level_at` is an LTR level.
         *
         *Invalid levels (numbers greater than 125) will be assumed LTR
         *

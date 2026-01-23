@@ -74,13 +74,13 @@ pub mod ffi {
         }
         #[diplomat::rust_link(icu::properties::props::{{prop.name}}::to_icu4c_value, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
         pub fn to_integer_value(self) -> {{ prop.int_type }} {
             self as {{ prop.int_type }}
         }
         #[diplomat::rust_link(icu::properties::props::{{prop.name}}::from_icu4c_value, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or CodePointMapData
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
         pub fn from_integer_value(other: {{ prop.int_type }}) -> Option<Self> {
             Some(match other {
                 {%- for (variant, discriminant) in prop.variants %}
@@ -98,7 +98,7 @@ pub mod ffi {
     {%- endfor %}
 
     impl GeneralCategory {
-        /// Produces a GeneralCategoryGroup mask that can represent a group of general categories
+        /// Produces a `GeneralCategoryGroup` mask that can represent a group of general categories
         #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
         // hidden rust_links that need to go somewhere
         #[diplomat::rust_link(

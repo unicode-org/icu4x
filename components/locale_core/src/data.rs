@@ -21,16 +21,32 @@ use core::str::FromStr;
 /// [`LanguageIdentifier`] for better size and performance while still meeting
 /// the needs of the ICU4X data pipeline.
 ///
-/// You can create a [`DataLocale`] from a borrowed [`Locale`], which is more
-/// efficient than cloning the [`Locale`], but less efficient than converting an owned
-/// [`Locale`]:
+/// In general, you should not need to construct one of these directly. If you do,
+/// even though there is a direct `From<Locale>` conversion, you should
+/// convert through the [`LocalePreferences`] type:
 ///
 /// ```
 /// use icu_locale_core::locale;
 /// use icu_provider::DataLocale;
+/// use icu_locale_core::preferences::LocalePreferences;
+/// use writeable::assert_writeable_eq;
 ///
-/// let locale1 = locale!("en-u-ca-buddhist");
-/// let data_locale = DataLocale::from(&locale1);
+/// // Locale: American English with British user preferences
+/// let locale = locale!("en-US-u-rg-gbzzzz");
+///
+/// // For language-priority fallback, the region override is ignored
+/// let data_locale = LocalePreferences::from(&locale)
+///     .to_data_locale_language_priority();
+/// assert_writeable_eq!(data_locale, "en-US");
+///
+/// // The direct conversion implicitly uses language-priority fallback
+/// // (which is incorrect for some use cases).
+/// assert_eq!(data_locale, DataLocale::from(&locale));
+///
+/// // For region-priority fallback, the region override is applied
+/// let data_locale = LocalePreferences::from(&locale)
+///     .to_data_locale_region_priority();
+/// assert_writeable_eq!(data_locale, "en-GB");
 /// ```
 ///
 /// [`DataLocale`] only supports `-u-sd` keywords, to reflect the current state of CLDR data
@@ -49,6 +65,8 @@ use core::str::FromStr;
 ///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
 /// );
 /// ```
+///
+/// [`LocalePreferences`]: crate::preferences::LocalePreferences
 #[derive(Clone, Copy)]
 #[non_exhaustive]
 pub struct DataLocale {
@@ -245,7 +263,7 @@ impl DataLocale {
         )
     }
 
-    pub(crate) fn from_parts(
+    pub(crate) const fn from_parts(
         language: Language,
         script: Option<Script>,
         region: Option<unicode_ext::SubdivisionId>,
@@ -254,9 +272,17 @@ impl DataLocale {
         Self {
             language,
             script,
-            region: region.map(|sd| sd.region),
+            region: if let Some(r) = region {
+                Some(r.region)
+            } else {
+                None
+            },
             variant,
-            subdivision: region.map(|sd| sd.into_subtag()),
+            subdivision: if let Some(r) = region {
+                Some(r.into_subtag())
+            } else {
+                None
+            },
         }
     }
 

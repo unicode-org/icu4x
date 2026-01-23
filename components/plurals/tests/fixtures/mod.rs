@@ -18,25 +18,25 @@ pub struct OperandsTestSet {
     pub from_test: Vec<FromTestCase>,
 }
 
-/// A single test case verifying the conversion from [FixedDecimal] into
-/// [PluralOperands].
+/// A single test case verifying the conversion from [`FixedDecimal`] into
+/// [`PluralOperands`].
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 pub struct FromTestCase {
-    /// The [FixedDecimal] input
+    /// The [`FixedDecimal`] input
     pub input: FixedDecimalInput,
     /// The expected value after conversion.
     pub expected: PluralOperandsInput,
 }
 
-/// A serialized representation of [FixedDecimal] in the data driven tests.
+/// A serialized representation of [`FixedDecimal`] in the data driven tests.
 ///
-/// Use the `From` trait to convert into [FixedDecimal] in tests.
+/// Use the `From` trait to convert into [`FixedDecimal`] in tests.
 #[derive(Debug, Deserialize)]
 pub struct FixedDecimalInput {
-    /// Value supplied to [FixedDecimal::from] when constructing.
+    /// Value supplied to [`FixedDecimal::from`] when constructing.
     from: i64,
-    /// Value supplied to [FixedDecimal::multiplied_pow10] when constructing.
+    /// Value supplied to [`FixedDecimal::multiplied_pow10`] when constructing.
     pow10: i16,
 }
 

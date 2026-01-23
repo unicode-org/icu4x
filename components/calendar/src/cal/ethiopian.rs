@@ -121,7 +121,7 @@ impl DateFieldsResolver for Ethiopian {
         month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        crate::cal::Coptic::reference_year_from_month_day(month, day)
+        Coptic::reference_year_from_month_day(month, day)
     }
 
     fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
@@ -321,7 +321,7 @@ mod test {
         // 2023-09-11 ISO is 2025-13-06 Ethiopian
         let rd = Date::try_new_iso(2023, 9, 11).unwrap().to_rata_die();
         let date_ethiopian = Date::from_rata_die(rd, Ethiopian::new());
-        assert_eq!(date_ethiopian.extended_year(), 2015);
+        assert_eq!(date_ethiopian.year().extended_year(), 2015);
         assert_eq!(date_ethiopian.month().ordinal, 13);
         assert_eq!(date_ethiopian.day_of_month().0, 6);
     }
@@ -331,7 +331,7 @@ mod test {
         let rd = Date::try_new_iso(1970, 1, 2).unwrap().to_rata_die();
         let date_ethiopian = Date::from_rata_die(rd, Ethiopian::new());
 
-        assert_eq!(date_ethiopian.extended_year(), 1962);
+        assert_eq!(date_ethiopian.year().extended_year(), 1962);
         assert_eq!(date_ethiopian.month().ordinal, 4);
         assert_eq!(date_ethiopian.day_of_month().0, 24);
 
@@ -343,7 +343,7 @@ mod test {
         let rd = Date::try_new_iso(1970, 1, 2).unwrap().to_rata_die();
         let date_ethiopian = Date::from_rata_die(rd, Ethiopian(EthiopianEraStyle::AmeteAlem));
 
-        assert_eq!(date_ethiopian.extended_year(), 7462);
+        assert_eq!(date_ethiopian.year().extended_year(), 7462);
         assert_eq!(date_ethiopian.month().ordinal, 4);
         assert_eq!(date_ethiopian.day_of_month().0, 24);
 
@@ -364,6 +364,7 @@ mod test {
             Date::try_new_iso(-5500 + 9, 1, 1)
                 .unwrap()
                 .to_calendar(Ethiopian(EthiopianEraStyle::AmeteAlem))
+                .year()
                 .extended_year(),
             1
         );
@@ -371,6 +372,7 @@ mod test {
             Date::try_new_iso(9, 1, 1)
                 .unwrap()
                 .to_calendar(Ethiopian(EthiopianEraStyle::AmeteAlem))
+                .year()
                 .extended_year(),
             5501
         );
@@ -379,6 +381,7 @@ mod test {
             Date::try_new_iso(-5500 + 9, 1, 1)
                 .unwrap()
                 .to_calendar(Ethiopian(EthiopianEraStyle::AmeteMihret))
+                .year()
                 .extended_year(),
             -5499
         );
@@ -386,6 +389,7 @@ mod test {
             Date::try_new_iso(9, 1, 1)
                 .unwrap()
                 .to_calendar(Ethiopian(EthiopianEraStyle::AmeteMihret))
+                .year()
                 .extended_year(),
             1
         );

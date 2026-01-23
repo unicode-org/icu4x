@@ -258,7 +258,7 @@ impl LineBreakOptions<'_> {
 /// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
 /// line break opportunities ([definition LD3][LD3]).
 /// It does not distinguish them.  Callers requiring that distinction can check
-/// the Line_Break property of the code point preceding the break against those
+/// the `Line_Break` property of the code point preceding the break against those
 /// listed in rules [LB4][LB4] and [LB5][LB5], special-casing the end of text
 /// according to [LB3][LB3].
 ///
@@ -445,7 +445,7 @@ impl LineSegmenter {
     pub fn new_lstm(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
             options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             complex: ComplexPayloadsBorrowed::new_lstm(),
         }
     }
@@ -493,7 +493,7 @@ impl LineSegmenter {
     pub fn new_dictionary(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
             options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
@@ -550,7 +550,7 @@ impl LineSegmenter {
     ) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
             options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             complex: ComplexPayloadsBorrowed::empty(),
         }
     }
@@ -779,7 +779,7 @@ fn is_break_utf32_by_loose(
     None
 }
 
-/// A trait allowing for LineBreakIterator to be generalized to multiple string iteration methods.
+/// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
 ///
 /// This is implemented by ICU4X for several common string types.
 ///
@@ -1172,7 +1172,7 @@ impl LineBreakType for PotentiallyIllFormedUtf8 {
         line_handle_complex_language_utf8(iter, left_codepoint)
     }
 }
-/// line_handle_complex_language impl for UTF8 iterators
+
 fn line_handle_complex_language_utf8<T>(
     iter: &mut LineBreakIterator<'_, '_, T>,
     left_codepoint: char,
@@ -1324,10 +1324,9 @@ mod tests {
 
     #[test]
     fn linebreak_property() {
-        let payload =
-            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
-                .expect("Loading should succeed!")
-                .payload;
+        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+            .expect("Loading should succeed!")
+            .payload;
 
         let get_linebreak_property = |codepoint| {
             payload.get().get_linebreak_property_utf32_with_rule(
@@ -1356,10 +1355,9 @@ mod tests {
     #[test]
     #[expect(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
-        let payload =
-            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
-                .expect("Loading should succeed!")
-                .payload;
+        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+            .expect("Loading should succeed!")
+            .payload;
         let lb_data: &RuleBreakData = payload.get();
 
         let is_break = |left, right| {
@@ -1457,9 +1455,8 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter =
-            LineSegmenter::try_new_dictionary_unstable(&crate::provider::Baked, Default::default())
-                .expect("Data exists");
+        let segmenter = LineSegmenter::try_new_dictionary_unstable(&Baked, Default::default())
+            .expect("Data exists");
         let segmenter = segmenter.as_borrowed();
 
         let mut iter = segmenter.segment_str("hello world");

@@ -1,68 +1,66 @@
-{
-  "patterns": [
-    {
-      "sized": 3,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " хиљ."
-            }
-          ]
+[
+  {
+    "sized": 3,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " хиљ."
+          }
         ]
-      }
-    },
-    {
-      "sized": 6,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " мил."
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 9,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " млрд."
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 12,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " бил."
-            }
-          ]
-        ]
-      }
+      ]
     }
-  ]
-}
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " мил."
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " млрд."
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " бил."
+          }
+        ]
+      ]
+    }
+  }
+]

@@ -14,7 +14,7 @@ edition.workspace = true
 include.workspace = true
 license.workspace = true
 repository.workspace = true
-rust-version = "1.82"
+rust-version = "1.83"
 
 [package.metadata.workspaces]
 independent = true
@@ -97,3 +97,6 @@ required-features = ["serde", "hashmap", "derive"]
 [[example]]
 name = "zv_serde"
 required-features = ["serde"]
+
+[lints]
+workspace = true
