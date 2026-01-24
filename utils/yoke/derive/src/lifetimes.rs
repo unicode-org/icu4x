@@ -106,10 +106,9 @@ mod tests {
 
     #[test]
     fn replace_raw() {
-        // TODO: update workspace `quote` dependency to at least 1.0.44, so that it can parse raw lifetimes.
-        // assert_eq!(
-        //     replace_lifetime(&a_ident(), &parse_quote!(Foo<'r#a, T>), custom_lt("'b")),
-        //     parse_quote!(Foo<'b, T>),
-        // );
+        assert_eq!(
+            replace_lifetime(&a_ident(), &parse_quote!(Foo<'r#a, T>), custom_lt("'b")),
+            parse_quote!(Foo<'b, T>),
+        );
     }
 }

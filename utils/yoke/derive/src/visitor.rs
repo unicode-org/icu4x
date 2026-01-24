@@ -335,9 +335,10 @@ mod tests {
         let check = check_type_for_parameters(&a_ident(), &environment, &ty);
         assert_eq!(check.min_underscores_for_yoke_lt, 2);
 
-        // TODO: enable once `quote` dep is at least 1.0.44
-        // let ty = parse_quote!(for<'yoke> for<'r#_yoke> for<'b> fn(&'b (), &'_yoke (), &'yoke ()));
-        // let check = check_type_for_parameters(&a_ident(), &environment, &ty);
-        // assert_eq!(check.min_underscores_for_yoke_lt, 2);
+        let ty = parse_quote! {
+            for<'yoke> fn(for<'r#_yoke> fn(for<'b> fn(&'b (), &'_yoke (), &'yoke ())))
+        };
+        let check = check_type_for_parameters(&a_ident(), &environment, &ty);
+        assert_eq!(check.min_underscores_for_yoke_lt, 2);
     }
 }
