@@ -215,13 +215,20 @@ struct MixedRawLifetime<'r#a> {
     field: &'r#a &'a str,
 }
 
-// TODO: make this compile
-// #[derive(Yokeable)]
-// #[yoke(prove_covariance_manually)]
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
 struct ManualMixedRawLifetime<'r#a> {
     field: &'r#a &'a str,
 }
 
+#[derive(Yokeable)]
+struct YokeLifetime<'r#_yoke>(&'r#_yoke str, for<'yoke> fn(&'yoke ()));
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualYokeLifetime<'r#_yoke>(&'r#_yoke str, for<'yoke> fn(&'yoke ()));
+
+// TODO: make this compile
 // #[derive(Yokeable)]
 struct ConstGenerics<'a, const N: u32> {
     field: &'a str,
@@ -356,7 +363,7 @@ enum ManualAlmostEverything<
     TraitBounds(W),
     BoundFn(for<'yoke> fn(&'yoke ())),
     RawLifetime(for<'r#_yoke> fn(&'r#_yoke ())),
-    // MixedRawLifetime(&'r#a &'a str),
+    MixedRawLifetime(&'r#a &'a str),
     Variadic(&'a fn(extern "C" fn(&'a (), u32, u32, ...))),
     Map(ZeroMap<'a, str, u16>, ZeroMap<'a, str, Z>),
 }
@@ -381,6 +388,7 @@ struct AssertYokeable {
     invariant_static: Yoke<InvariantStatic<'static>, Box<[u8]>>,
     raw: Yoke<RawLifetime<'static>, Box<[u8]>>,
     mixed_raw: Yoke<MixedRawLifetime<'static>, Box<[u8]>>,
+    yoke_lt: Yoke<YokeLifetime<'static>, Box<[u8]>>,
     // const_gen: Yoke<ConstGenerics<'static>, Box<[u8]>>,
     variadic: Yoke<Variadic<'static>, Box<[u8]>>,
     simple_enum: Yoke<Enum, Box<[u8]>>,
@@ -409,7 +417,8 @@ struct AssertYokeableManual {
     bound_fn: Yoke<ManualBoundFn<'static>, Box<[u8]>>,
     invariant_static: Yoke<ManualInvariantStatic<'static>, Box<[u8]>>,
     raw: Yoke<ManualRawLifetime<'static>, Box<[u8]>>,
-    // mixed_raw: Yoke<ManualMixedRawLifetime<'static>, Box<[u8]>>,
+    mixed_raw: Yoke<ManualMixedRawLifetime<'static>, Box<[u8]>>,
+    yoke_lt: Yoke<ManualYokeLifetime<'static>, Box<[u8]>>,
     // const_gen: Yoke<ManualConstGenerics<'static>, Box<[u8]>>,
     variadic: Yoke<ManualVariadic<'static>, Box<[u8]>>,
     simple_enum: Yoke<ManualEnum, Box<[u8]>>,

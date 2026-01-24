@@ -172,15 +172,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         underscores_for_lt = underscores_for_lt.max(check_where_clause_for_bound_lts(where_clause));
     }
 
-    // Information from `synstructure`, whose ordering of fields is deterministic.
-    // Note that it's crucial that we don't filter out any variants or fields from the `Structure`.
-    let mut field_info: Vec<FieldParamUsage> = Vec::new();
     let structure = {
         let mut structure = Structure::new(input);
         structure.bind_with(|_| synstructure::BindStyle::Move);
         structure
     };
 
+    // Information from `synstructure::Structure`, whose ordering of fields is deterministic.
+    // Note that it's crucial that we don't filter out any variants or fields from the `Structure`.
+    let mut field_info: Vec<FieldParamUsage> = Vec::new();
     // This code creating `field_info` should not be carelessly modified, else it could cause
     // a panic in a below `expect`.
     for variant_info in structure.variants() {
@@ -200,7 +200,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let (yoke_lt, bound_lt) = {
         let underscores = vec![b'_'; underscores_for_lt];
         #[expect(clippy::expect_used, reason = "invariant is ensured immediately above")]
-        let underscores = String::from_utf8(underscores).expect("_ is ASCII and thus UTF-8");
+        let underscores = str::from_utf8(&underscores).expect("_ is ASCII and thus UTF-8");
         (
             format!("'{underscores}yoke"),
             format!("'_{underscores}yoke"),
@@ -353,7 +353,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let mut field_info = field_info.into_iter();
 
     // See `synstructure::Structure::each` and `synstructure::VariantInfo::each`
-    // for the setup of the two `*_checks` token streams.
+    // for the setup of the two `*_checks` token streams. We can elide some brackets compared
+    // to `synstructure`, since we know that each check defines no local variables, items, etc.
 
     // We iterate over the fields of `structure` in the same way that `field_info` was created.
     for variant_info in structure.variants() {
@@ -375,12 +376,11 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 .next()
                 .expect("fields of an unmutated synstructure::Structure should remain the same");
 
-            // Note that these two types could be weird non-pure macro types. However, even though
-            // we evaluate them once or twice in where-bounds, we evaluate one of them at most once
-            // in the soundness-critical checks, so they can't cause UB by unexpectedly evaluating
-            // to a different type.
+            // Note that this type could be a weird non-pure macro type. However, even though
+            // we evaluate it once or twice in where-bounds, we evaluate it exactly once
+            // in the soundness-critical checks, so it can't cause UB by unexpectedly evaluating
+            // to a different type. That can only cause a compile error at worst.
             let fty_static = replace_lifetime(&lt_param, &field.ty, static_lt());
-            let fty_output = replace_lifetime(&lt_param, &field.ty, yoke_lt.clone());
 
             // For field types that don't use type or lifetime parameters, we don't add `Yokeable`
             // or `'static` where-bounds, and the field is required to unconditionally meet a
@@ -403,14 +403,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             // preconditions to `FieldTy: Yokeable` that need to be satisfied, a where-bound
             // requires that `FieldTy<'static>: Yokeable<#yoke_lt, Output = FieldTy<#yoke_lt>>`.
             // This requirement is also tested on the field's static yokeable form.
-            //
+
             // Note: if `field.ty` involves a non-pure macro type, each time it's evaluated, it
             // could be a different type. The where-bounds are relied on to make the impl compile
             // in sane cases, *not* for soundness. Our `transform()` impl does not blindly assume
-            // that the fields' types implement `Yokeable` or `'static`, regardless of these bounds,
-            // thanks to the checks.
+            // that the fields' types implement `Yokeable` or `'static`, regardless of these bounds.
             if uses_ty {
                 if uses_lt {
+                    let fty_output = replace_lifetime(&lt_param, &field.ty, yoke_lt.clone());
+
                     manual_proof_bounds.push(
                         parse_quote!(#fty_static: yoke::Yokeable<#yoke_lt, Output = #fty_output>),
                     );
@@ -461,8 +462,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 // `*const &'a FieldTy` to `*const &'a T` to occur.
                 //
                 // Therefore, `FieldTy` must be a subtype of something which implements
-                // `Yokeable<'a>` in order for this to compile. (Though that is not a sufficient
-                // condition, such as when there's some weird macro type.)
+                // `Yokeable<'a>` in order for this to compile. (Though that is not a _sufficient_
+                // condition to compile, as some weird macro type could break stuff.)
                 yokeable_check_body.extend(quote! {
                     __yoke_derive_require_yokeable::<#yoke_lt, #fty_static>(&raw const #field_binding);
                 });
@@ -470,15 +471,18 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 // No visible nested lifetimes, so there should be nothing to be done in sane cases.
                 // However, in case a macro type does something strange and accesses the available
                 // `#yoke_lt` lifetime, we still need to check that the field's actual type is
-                // `'static` regardless of `#yoke_lt` (which we can check by ensuring that it must
+                // `'static` regardless of `#yoke_lt` (which we can check by ensuring that it
                 // be a subtype of a `'static` type).
                 // See reasoning in the `if` branch for why this works. The difference is that
-                // `FieldTy` is guaranteed to be a subtype of `T = #fty_output` where `T: 'static`
+                // `FieldTy` is guaranteed to be a subtype of `T = #fty_static` where `T: 'static`
                 // (if this compiles). Since the field's type is a subtype of something which is
                 // `'static`, it must itself be `'static`, and therefore did not manage to use
                 // `#yoke_lt` via a macro.
+                // Note that creating and using `#fty_output` is not necessary here, since
+                // `field.ty == fty_static == fty_output` (no lifetime was visibly present which
+                // could be replaced).
                 output_check_body.extend(quote! {
-                    __yoke_derive_require_static::<#yoke_lt, #fty_output>(&raw const #field_binding);
+                    __yoke_derive_require_static::<#yoke_lt, #fty_static>(&raw const #field_binding);
                 });
             }
         }
