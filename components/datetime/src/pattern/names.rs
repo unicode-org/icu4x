@@ -2781,6 +2781,11 @@ where
     /// // But other lengths are not loaded:
     /// assert_eq!(names.get_am(DayPeriodNameLength::Wide), None);
     /// ```
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+    /// </div>
     pub fn get_am(&self, length: DayPeriodNameLength) -> Option<&str> {
         let borrowed = self.inner.as_borrowed();
         borrowed
@@ -2818,6 +2823,11 @@ where
     /// // But other lengths are not loaded:
     /// assert_eq!(names.get_pm(DayPeriodNameLength::Abbreviated), None);
     /// ```
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+    /// </div>
     pub fn get_pm(&self, length: DayPeriodNameLength) -> Option<&str> {
         let borrowed = self.inner.as_borrowed();
         borrowed
