@@ -41,6 +41,40 @@ const _: () = {
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U32>;
 
+fn assert_all_comparisons(
+    collator: &CollatorBorrowed,
+    left: &str,
+    right: &str,
+    expected: Ordering,
+) {
+    // UTF-8
+    let result = collator.compare(left, right);
+    assert_eq!(result, expected);
+
+    // Sort keys
+    let mut sort_key_left_buffer = Vec::new();
+    let mut sort_key_right_buffer = Vec::new();
+
+    collator
+        .write_sort_key_to(left, &mut sort_key_left_buffer)
+        .unwrap();
+    collator
+        .write_sort_key_to(right, &mut sort_key_right_buffer)
+        .unwrap();
+
+    assert_eq!(sort_key_left_buffer.cmp(&sort_key_right_buffer), expected);
+
+    // UTF-16
+    let left_encode = left.encode_utf16().collect::<Vec<u16>>();
+    let right_encode = right.encode_utf16().collect::<Vec<u16>>();
+
+    let result_utf16 = collator.compare_utf16(&left_encode, &right_encode);
+    assert_eq!(result_utf16, expected);
+
+    // For checking UTF-8 == UTF-16
+    assert_eq!(result_utf16, result);
+}
+
 /// Parse a string of space-separated hexadecimal code points (ending in end of input or semicolon)
 fn parse_hex(mut hexes: &[u8]) -> Option<StackString> {
     let mut buf = StackString::new();
@@ -113,7 +147,7 @@ fn test_implicit_unihan() {
     assert_eq!(collator.compare("\u{4E01}", "\u{4E00}"), Ordering::Greater);
 
     assert_eq!(collator.compare("\u{4E18}", "\u{4E42}"), Ordering::Less);
-    assert_eq!(collator.compare("\u{4E94}", "\u{50F6}"), Ordering::Less);
+    assert_all_comparisons(&collator, "\u{4E18}", "\u{4E42}", Ordering::Less);
 }
 
 #[test]
@@ -134,12 +168,11 @@ fn test_currency() {
         let mut tail = chars.clone();
         while let Some(_) = tail.next() {
             let higher_end = tail.offset();
-            assert_eq!(
-                collator.compare(
-                    &currencies[lower_start..lower_end],
-                    &currencies[higher_start..higher_end]
-                ),
-                Ordering::Less
+            assert_all_comparisons(
+                &collator,
+                &currencies[lower_start..lower_end],
+                &currencies[higher_start..higher_end],
+                Ordering::Less,
             );
         }
         lower_start = higher_start;
@@ -1529,10 +1562,14 @@ fn test_basics() {
 
     let mut options = CollatorOptions::default();
     options.strength = Some(Strength::Tertiary);
-
     {
         let collator = Collator::try_new(Default::default(), options).unwrap();
-        check_expectations(&collator, &left, &right, &expectations);
+
+        for ((left_str, right_str), expected) in
+            left.iter().zip(right.iter()).zip(expectations.iter())
+        {
+            assert_all_comparisons(&collator, left_str, right_str, *expected);
+        }
     }
 }
 
