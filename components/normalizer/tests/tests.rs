@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::mem::MaybeUninit;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalCombiningClassMapBorrowed;
 use icu_normalizer::properties::CanonicalComposition;
@@ -45,7 +46,7 @@ fn test_nfd_owned() {
     assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}");
     assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ﾍﾞ"); // half-width unchanged
-    assert_eq!(normalizer.normalize("ﾍﾟ"), "ﾍﾟ"); // half-width unchanged
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ﾍﾟ"); // half-width unchanged9
     assert_eq!(normalizer.normalize("ﬁ"), "ﬁ"); // ligature unchanged
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{FDFA}"); // ligature unchanged
     assert_eq!(normalizer.normalize("㈎"), "㈎"); // parenthetical unchanged
@@ -2083,84 +2084,109 @@ fn test_is_normalized_up_to() {
 }
 
 #[test]
-fn test_latin1_split_normalized_nfd() {
+fn test_latin1_is_normalized_nfd_up_to() {
     assert_eq!(
-        icu_normalizer::latin1::split_normalized_nfd(b"abc\xA8\xE4efg"),
-        (&b"abc\xA8"[..], &b"\xE4efg"[..])
+        icu_normalizer::latin1::is_normalized_nfd_up_to(b"abc\xA8\xE4efg"),
+        (4, 24840)
     );
 }
 
 #[test]
-fn test_latin1_split_normalized_nfkd() {
+fn test_latin1_is_normalized_nfkc_up_to() {
     assert_eq!(
-        icu_normalizer::latin1::split_normalized_nfkd(b"abc\xA8\xE4efg"),
-        (&b"abc"[..], &b"\xA8\xE4efg"[..])
+        icu_normalizer::latin1::is_normalized_nfkc_up_to(b"abc\xA8\xE4efg"),
+        (3, 2)
     );
 }
 
 #[test]
-fn test_latin1_split_normalized_nfkc() {
+fn test_latin1_is_normalized_nfkd_up_to() {
     assert_eq!(
-        icu_normalizer::latin1::split_normalized_nfkc(b"abc\xE4\xA8efg"),
-        (&b"abc\xE4"[..], &b"\xA8efg"[..])
+        icu_normalizer::latin1::is_normalized_nfkd_up_to(b"abc\xA8\xE4efg"),
+        (3, 2)
     );
 }
 
 #[test]
-fn test_latin1_normalize_nfd_to() {
+fn test_latin1_normalize_nfd() {
     let mut text: Vec<u8> = Vec::new();
     for c in 0..=255u8 {
+        text.push(b' ');
+        text.push(b' ');
         text.push(c);
     }
-    let mut normalized: Vec<u16> = Vec::new();
-    assert!(icu_normalizer::latin1::normalize_nfd_to(&text, &mut normalized).is_ok());
-    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    text.push(b' ');
+    text.push(b' ');
+    let mut normalized: Vec<u16> = Vec::with_capacity(text.len() * 3);
+    let ptr: *mut u16 = normalized.as_mut_ptr();
+    let cap: usize = normalized.capacity();
+    let normalized_slice: &mut [MaybeUninit<u16>] = unsafe {
+        let ptr_to_uninit: *mut MaybeUninit<u16> = core::mem::transmute(ptr);
+        core::slice::from_raw_parts_mut(ptr_to_uninit, cap)
+    };
+
+    let (up_to, v) = icu_normalizer::latin1::is_normalized_nfd_up_to(&text);
+    let (read, written, v) = icu_normalizer::latin1::normalize_nfd(&text, normalized_slice, up_to, v);
+    assert_eq!(read, text.len());
+    assert_eq!(v, 0);
+    unsafe {
+        normalized.set_len(written);
+    }
+
+    let norm = DecomposingNormalizerBorrowed::new_nfd();
     let mut text16: Vec<u16> = Vec::new();
     for c in 0..=255u16 {
+        text16.push(0x20);
+        text16.push(0x20);
         text16.push(c);
     }
+    text16.push(0x20);
+    text16.push(0x20);
     let mut normalized16: Vec<u16> = Vec::new();
-    assert!(nfd.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert!(norm.normalize_utf16_to(&text16, &mut normalized16).is_ok());
     assert_eq!(&normalized[..], &normalized16[..]);
-    assert!(nfd.is_normalized_utf16(&normalized));
+    assert!(norm.is_normalized_utf16(&normalized));
 }
 
 #[test]
-fn test_latin1_normalize_nkfd_to() {
+fn test_latin1_normalize_nfkd() {
     let mut text: Vec<u8> = Vec::new();
     for c in 0..=255u8 {
+        text.push(b' ');
+        text.push(b' ');
         text.push(c);
     }
-    let mut normalized: Vec<u16> = Vec::new();
-    assert!(icu_normalizer::latin1::normalize_nfkd_to(&text, &mut normalized).is_ok());
-    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
-    let mut text16: Vec<u16> = Vec::new();
-    for c in 0..=255u16 {
-        text16.push(c);
-    }
-    let mut normalized16: Vec<u16> = Vec::new();
-    assert!(nfkd.normalize_utf16_to(&text16, &mut normalized16).is_ok());
-    assert_eq!(&normalized[..], &normalized16[..]);
-    assert!(nfkd.is_normalized_utf16(&normalized));
-}
+    text.push(b' ');
+    text.push(b' ');
+    let mut normalized: Vec<u16> = Vec::with_capacity(text.len() * 3);
+    let ptr: *mut u16 = normalized.as_mut_ptr();
+    let cap: usize = normalized.capacity();
+    let normalized_slice: &mut [MaybeUninit<u16>] = unsafe {
+        let ptr_to_uninit: *mut MaybeUninit<u16> = core::mem::transmute(ptr);
+        core::slice::from_raw_parts_mut(ptr_to_uninit, cap)
+    };
 
-#[test]
-fn test_latin1_normalize_nkfc_to() {
-    let mut text: Vec<u8> = Vec::new();
-    for c in 0..=255u8 {
-        text.push(c);
+    let (up_to, v) = icu_normalizer::latin1::is_normalized_nfkd_up_to(&text);
+    let (read, written, v) = icu_normalizer::latin1::normalize_nfkd(&text, normalized_slice, up_to, v);
+    assert_eq!(read, text.len());
+    assert_eq!(v, 0);
+    unsafe {
+        normalized.set_len(written);
     }
-    let mut normalized: Vec<u16> = Vec::new();
-    assert!(icu_normalizer::latin1::normalize_nfkc_to(&text, &mut normalized).is_ok());
-    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+
+    let norm = DecomposingNormalizerBorrowed::new_nfkd();
     let mut text16: Vec<u16> = Vec::new();
     for c in 0..=255u16 {
+        text16.push(0x20);
+        text16.push(0x20);
         text16.push(c);
     }
+    text16.push(0x20);
+    text16.push(0x20);
     let mut normalized16: Vec<u16> = Vec::new();
-    assert!(nfkc.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert!(norm.normalize_utf16_to(&text16, &mut normalized16).is_ok());
     assert_eq!(&normalized[..], &normalized16[..]);
-    assert!(nfkc.is_normalized_utf16(&normalized));
+    assert!(norm.is_normalized_utf16(&normalized));
 }
 
 #[test]
