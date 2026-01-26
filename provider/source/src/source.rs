@@ -519,7 +519,7 @@ impl UnihanCache {
                         .strip_prefix("U+")
                         .and_then(|hex| u32::from_str_radix(hex, 16).ok())
                         .and_then(char::from_u32)
-                        .unwrap_or('\u{4E00}');
+                        .expect("Invalid Unihan codepoint format");
 
                     let mut candidate = parts[2].trim();
                     if let Some(first_part) = candidate.split_whitespace().next() {
@@ -532,7 +532,10 @@ impl UnihanCache {
                     };
                     let clean_str = radical_str.replace('\'', "");
                     if let Ok(value) = clean_str.parse::<u8>() {
-                        map.insert(codepoint, IRGValue { value });
+                        let val = IRGValue { value };
+                        if let Some((k, v)) = map.try_append(codepoint, val) {
+                            map.insert(k, v);
+                        }
                     }
                 }
                 Ok(map)
