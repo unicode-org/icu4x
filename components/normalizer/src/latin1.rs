@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Methods for normalizing Latin1 input into a UTF-16 sink.
+//! Methods for normalizing Latin1 input into UTF-16 output.
 //!
 //! NFC is not available, since Latin1 input is already known to be
 //! in NFC.
 
-use write16::Write16;
+use core::mem::MaybeUninit;
 
 /// Entries start from U+00A0 NO-BREAK SPACE. If the character is
 /// always its own normalization, the value in the table is 0.
@@ -138,40 +138,143 @@ fn compatibility_decomposition(val: u16) -> &'static [u16] {
         })
 }
 
+/// Copies at least `items` code units from `src` to `dst` with
+/// zero extension. Can copy up to 15 more items to make good use
+/// of SIMD.
+///
+/// Returns `items` to include at least `items` values were copied
+/// or a smaller number to indicate that fewer were copied.
+#[inline(always)]
+fn copy(src: &[u8], dst: &mut [MaybeUninit<u16>], items: usize) -> usize {
+    let len = core::cmp::min(src.len(), dst.len());
+    let low_four = items & 0b1111;
+    let rounded_up = if low_four == 0 {
+        items
+    } else {
+        ((items >> 4) + 1) << 4
+    };
+    let (ret, cap) = if rounded_up > len {
+        if items > len {
+            (len, len)
+        } else {
+            (items, items)
+        }
+    } else {
+        (items, rounded_up)
+    };
+    let src_capped = &src[..cap];
+    let dst_capped = &mut dst[..cap];
+    let (src_chunks, src_tail) = src_capped.as_chunks::<16>();
+    let (dst_chunks, dst_tail) = dst_capped.as_chunks_mut::<16>();
+    for (src_chunk, dst_chunk) in src_chunks.iter().zip(dst_chunks.iter_mut()) {
+        dst_chunk[0] = MaybeUninit::new(u16::from(src_chunk[0]));
+        dst_chunk[1] = MaybeUninit::new(u16::from(src_chunk[1]));
+        dst_chunk[2] = MaybeUninit::new(u16::from(src_chunk[2]));
+        dst_chunk[3] = MaybeUninit::new(u16::from(src_chunk[3]));
+        dst_chunk[4] = MaybeUninit::new(u16::from(src_chunk[4]));
+        dst_chunk[5] = MaybeUninit::new(u16::from(src_chunk[5]));
+        dst_chunk[6] = MaybeUninit::new(u16::from(src_chunk[6]));
+        dst_chunk[7] = MaybeUninit::new(u16::from(src_chunk[7]));
+        dst_chunk[8] = MaybeUninit::new(u16::from(src_chunk[8]));
+        dst_chunk[9] = MaybeUninit::new(u16::from(src_chunk[9]));
+        dst_chunk[10] = MaybeUninit::new(u16::from(src_chunk[10]));
+        dst_chunk[11] = MaybeUninit::new(u16::from(src_chunk[11]));
+        dst_chunk[12] = MaybeUninit::new(u16::from(src_chunk[12]));
+        dst_chunk[13] = MaybeUninit::new(u16::from(src_chunk[13]));
+        dst_chunk[14] = MaybeUninit::new(u16::from(src_chunk[14]));
+        dst_chunk[15] = MaybeUninit::new(u16::from(src_chunk[15]));
+    }
+    for (src_slot, dst_slot) in src_tail.iter().zip(dst_tail.iter_mut()) {
+        *dst_slot = MaybeUninit::new(u16::from(*src_slot));
+    }
+    ret
+}
+
 /// Normalize Latin1 `text` to NFD UTF-16 written to `sink`.
-pub fn normalize_nfd_to<W: Write16 + ?Sized>(mut text: &[u8], sink: &mut W) -> core::fmt::Result {
+pub fn normalize_nfd(src: &[u8], dst: &mut [MaybeUninit<u16>], prefix: usize, value_from_table: u16) -> (usize, usize, u16) {
+    debug_assert_ne!(value_from_table, 0);
     // Indexing is OK, because the index is statically in range.
     #[expect(clippy::indexing_slicing)]
     let table = &TABLE[0x20..];
 
-    'outer: loop {
-        let mut iter = text.iter();
+    let dst_len = dst.len();
+    let src_len = if src.len() < dst_len {
+        // Cap the source so that we don't read
+        // further than we can write anyway.
+        dst_len
+    } else {
+        src.len()
+    };
+
+    let mut passthrough = if prefix > src_len {
+        // Cap the prefix so that it can't be longer
+        // than the source.
+        prefix
+    } else {
+        src_len
+    };
+
+    let mut src_left = &src[..src_len];
+    let mut src_left_len = src_len;
+    let mut dst_left = &dst;
+    // Set up `iter` as if it has already seen
+    // `passthough` bytes from `src_left`
+    let mut iter = src_left[passthrough..].iter();
+    // Value read from table.
+    let mut v = value_from_table;
+    loop {
+        let written = copy(src_left, dst_left, passthrough);
+        let ret = (src_len - src_left_len + written, dst_len - dst_left.len() + written, v);
+        if (written != passthrough) || v == 0 {
+            return ret;
+        }
+        let dst_pending = &mut dst_left[passthrough..];
+        // Start varying part
+        if let Some((target, tail)) = dst_pending.split_first_chunk_mut::<2>() {
+            target[0] = MaybeUninit::new(v >> 8);
+            target[1] = MaybeUninit::new((v & 0xFF) + 0x0300);
+            dst_left = tail;
+        } else {
+            return ret;
+        };
+        // End varying part
         loop {
-            let Some(c) = iter.next() else {
-                sink.write_latin1_slice(text)?;
-                return Ok(());
-            };
             if let Some(val) = table.get(c.wrapping_sub(0xC0) as usize) {
-                let v = *val;
+                v = *val;
                 if v == 0 {
                     continue;
                 }
-
+                src_left_len = src_left.len();
                 let remaining = iter.as_slice();
-                // Indexing is OK, because the index is by construction in range.
-                #[expect(clippy::indexing_slicing)]
-                let prefix = &text[..text.len() - remaining.len() - 1];
-                sink.write_latin1_slice(prefix)?;
-
-                sink.write_slice(&[v >> 8, (v & 0xFF) + 0x0300])?;
-
-                text = remaining;
-                continue 'outer;
+                passthough = src_left_len - remaining.len() - 1;
+                src_left = iter.as_slice();
+                break; // Continue outer
             }
+            v = 0; // Take the return;
+            break; // Continue outer
         }
     }
 }
 
+pub fn is_normalized_nfd_up_to(text: &[u8]) -> (usize, u16) {
+    // Indexing is OK, because the index is statically in range.
+    #[expect(clippy::indexing_slicing)]
+    let table = &TABLE[0x20..];
+
+    let mut iter = text.iter();
+    while let Some(c) = iter.next() {
+        if let Some(val) = table.get(c.wrapping_sub(0xC0) as usize) {
+            v = *val;
+            if v == 0 {
+                continue;
+            }
+            return (text.len() - iter.as_slice().len() - 1, v);
+        }
+    }
+    (text.len(), 0)
+}
+
+/*
 /// Normalize Latin1 `text` to NFKD UTF-16 written to `sink`.
 pub fn normalize_nfkd_to<W: Write16 + ?Sized>(mut text: &[u8], sink: &mut W) -> core::fmt::Result {
     'outer: loop {
@@ -253,18 +356,11 @@ pub fn split_normalized_nfd(text: &[u8]) -> (&[u8], &[u8]) {
         if let Some(c) = iter.next() {
             if let Some(val) = table.get(c.wrapping_sub(0xC0) as usize) {
                 if *val != 0 {
-                    let tail = iter.as_slice();
-                    return text
-                        .split_at_checked(text.len() - tail.len() - 1)
-                        .unwrap_or_else(|| {
-                            // Internal bug, not even GIGO, never supposed to happen
-                            debug_assert!(false);
-                            (&[], text)
-                        });
+                    return text.len() - iter.as_slice().len() - 1;
                 }
             }
         } else {
-            return (text, &[]);
+            return text.len();
         }
     }
 }
@@ -272,24 +368,17 @@ pub fn split_normalized_nfd(text: &[u8]) -> (&[u8], &[u8]) {
 /// Split Latin1 `text` into `(head, tail)` such that the first
 /// byte of `tail` is the first byte of input that is not in NFKD.
 /// If `text` is fully in NFKD, `tail` is empty.
-pub fn split_normalized_nfkd(text: &[u8]) -> (&[u8], &[u8]) {
+pub fn is_normalized_nfkd_up_to(text: &[u8]) -> usize {
     let mut iter = text.iter();
     loop {
         if let Some(c) = iter.next() {
             if let Some(val) = TABLE.get(c.wrapping_sub(0xA0) as usize) {
                 if *val != 0 {
-                    let tail = iter.as_slice();
-                    return text
-                        .split_at_checked(text.len() - tail.len() - 1)
-                        .unwrap_or_else(|| {
-                            // Internal bug, not even GIGO, never supposed to happen
-                            debug_assert!(false);
-                            (&[], text)
-                        });
+                    return text.len() - iter.as_slice().len() - 1;
                 }
             }
         } else {
-            return (text, &[]);
+            return text.len();
         }
     }
 }
@@ -297,7 +386,7 @@ pub fn split_normalized_nfkd(text: &[u8]) -> (&[u8], &[u8]) {
 /// Split Latin1 `text` into `(head, tail)` such that the first
 /// byte of `tail` is the first byte of input that is not in NFKC.
 /// If `text` is fully in NFKC, `tail` is empty.
-pub fn split_normalized_nfkc(text: &[u8]) -> (&[u8], &[u8]) {
+pub fn is_normalized_nfkc_up_to(text: &[u8]) -> usize {
     // Indexing is OK, because the index is statically in range.
     #[expect(clippy::indexing_slicing)]
     let table = &TABLE[..0x20];
@@ -307,18 +396,12 @@ pub fn split_normalized_nfkc(text: &[u8]) -> (&[u8], &[u8]) {
             if let Some(val) = table.get(c.wrapping_sub(0xA0) as usize) {
                 let v = *val;
                 if v != 0 {
-                    let tail = iter.as_slice();
-                    return text
-                        .split_at_checked(text.len() - tail.len() - 1)
-                        .unwrap_or_else(|| {
-                            // Internal bug, not even GIGO, never supposed to happen
-                            debug_assert!(false);
-                            (&[], text)
-                        });
+                    return text.len() - iter.as_slice().len() - 1;
                 }
             }
         } else {
-            return (text, &[]);
+            return text.len();
         }
     }
 }
+*/
