@@ -18,16 +18,6 @@ mod tests {
             .irg_sources()
             .expect("Should be able to parse Unihan_IRGSources.txt");
 
-        // let sentence = "我爱中文";
-
-        // for char in sentence.chars() {
-        //     if let Some(irg_value) = irg_map.get(&char) {
-        //         println!("Char: {} (U+{:04X}) => IRG Value: {:.1}", char, char as u32, irg_value.value);
-        //     } else {
-        //         println!("Char: {} (U+{:04X}) => Not found in IRG sources", char, char as u32);
-        //     }
-        // }
-
         assert_eq!(irg_map.get(&'我').map(|v| v.value), Some(62));
         assert_eq!(irg_map.get(&'爱').map(|v| v.value), Some(87));
         assert_eq!(irg_map.get(&'中').map(|v| v.value), Some(2));

@@ -172,11 +172,11 @@ struct Cli {
     #[cfg(feature = "provider")]
     icuexport_root: Option<PathBuf>,
 
-    #[arg(long, value_name = "TAG", default_value = "latest")]
-    #[arg(help = "Download Unihan data from unicode.org.")]
+    #[arg(long, value_name = "TAG", default_value = "17.0.0")]
+    #[arg(help = "Download versioned UCD from unicode.org.")]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
     #[cfg(feature = "provider")]
-    unihan_tag: String,
+    ucd_tag: String,
 
     #[arg(long, value_name = "PATH")]
     #[arg(help = "Path to a local Unihan.zip file or directory.")]
@@ -518,11 +518,11 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 (None, _) => p,
             };
 
-            p = match (cli.unihan_root, cli.unihan_tag.as_str()) {
+            p = match (cli.unihan_root, cli.ucd_tag.as_str()) {
                 (Some(path), _) => p.with_unihan(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_unihan_for_tag(SourceDataProvider::TESTED_UNIHAN_TAG)
+                    p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_unihan_for_tag(tag),

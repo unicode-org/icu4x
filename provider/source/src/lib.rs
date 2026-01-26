@@ -96,7 +96,6 @@ pub struct SourceDataProvider {
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
-    #[allow(dead_code)]
     unihan_paths: Option<Arc<UnihanCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
@@ -133,7 +132,7 @@ impl SourceDataProvider {
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
-    pub const TESTED_UNIHAN_TAG: &'static str = "latest";
+    pub const TESTED_UCD_TAG: &'static str = "17.0.0";
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_TZDB_TAG: &'static str = "2025c";
@@ -158,7 +157,7 @@ impl SourceDataProvider {
                     .with_icuexport_for_tag(Self::TESTED_ICUEXPORT_TAG)
                     .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
                     .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
-                    .with_unihan_for_tag(Self::TESTED_UNIHAN_TAG)
+                    .with_unihan_for_tag(Self::TESTED_UCD_TAG)
             })
             .clone()
     }
@@ -222,6 +221,7 @@ impl SourceDataProvider {
         Ok(Self {
             unihan_paths: Some(Arc::new(UnihanCache {
                 root: AbstractFs::new(root)?,
+                irg_cache: Default::default(),
             })),
             ..self
         })
@@ -301,8 +301,9 @@ impl SourceDataProvider {
         Self {
             unihan_paths: Some(Arc::new(UnihanCache {
                 root: AbstractFs::new_from_url(format!(
-                    "https://www.unicode.org/Public/UCD/{tag}/ucd/Unihan.zip"
+                    "https://www.unicode.org/Public/{tag}/ucd/Unihan.zip"
                 )),
+                irg_cache: Default::default(),
             })),
             ..self
         }

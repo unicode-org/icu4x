@@ -497,41 +497,47 @@ pub struct IRGValue {
 pub(crate) struct UnihanCache {
     #[allow(dead_code)]
     pub(crate) root: AbstractFs,
+    pub(crate) irg_cache: OnceLock<Result<LiteMap<char, IRGValue>, DataError>>,
 }
 
 impl UnihanCache {
     #[allow(dead_code)]
-    pub(crate) fn irg_sources(&self) -> Result<LiteMap<char, IRGValue>, DataError> {
-        let raw_content = self.root.read_to_string("Unihan_IRGSources.txt")?;
-        let mut map = LiteMap::new();
-        for line in raw_content.lines() {
-            if line.starts_with('#') || line.trim().is_empty() {
-                continue;
-            }
-            let parts: Vec<&str> = line.trim().split('\t').collect();
-            if parts[1] != "kRSUnicode" {
-                continue;
-            }
-            let codepoint = parts[0]
-                .strip_prefix("U+")
-                .and_then(|hex| u32::from_str_radix(hex, 16).ok())
-                .and_then(char::from_u32)
-                .unwrap_or('\u{4E00}');
+    pub(crate) fn irg_sources(&self) -> Result<&LiteMap<char, IRGValue>, DataError> {
+        self.irg_cache
+            .get_or_init(|| {
+                let raw_content = self.root.read_to_string("Unihan_IRGSources.txt")?;
+                let mut map = LiteMap::new();
+                for line in raw_content.lines() {
+                    if line.starts_with('#') || line.trim().is_empty() {
+                        continue;
+                    }
+                    let parts: Vec<&str> = line.trim().split('\t').collect();
+                    if parts[1] != "kRSUnicode" {
+                        continue;
+                    }
+                    let codepoint = parts[0]
+                        .strip_prefix("U+")
+                        .and_then(|hex| u32::from_str_radix(hex, 16).ok())
+                        .and_then(char::from_u32)
+                        .unwrap_or('\u{4E00}');
 
-            let mut candidate = parts[2].trim();
-            if let Some(first_part) = candidate.split_whitespace().next() {
-                candidate = first_part;
-            }
-            let radical_str = if let Some(idx) = candidate.find('.') {
-                &candidate[..idx]
-            } else {
-                candidate
-            };
-            let clean_str = radical_str.replace('\'', "");
-            if let Ok(value) = clean_str.parse::<u8>() {
-                map.insert(codepoint, IRGValue { value });
-            }
-        }
-        Ok(map)
+                    let mut candidate = parts[2].trim();
+                    if let Some(first_part) = candidate.split_whitespace().next() {
+                        candidate = first_part;
+                    }
+                    let radical_str = if let Some(idx) = candidate.find('.') {
+                        &candidate[..idx]
+                    } else {
+                        candidate
+                    };
+                    let clean_str = radical_str.replace('\'', "");
+                    if let Ok(value) = clean_str.parse::<u8>() {
+                        map.insert(codepoint, IRGValue { value });
+                    }
+                }
+                Ok(map)
+            })
+            .as_ref()
+            .map_err(|&e| e)
     }
 }
