@@ -10,7 +10,7 @@ use icu_provider_source::SourceDataProvider;
 use simple_logger::SimpleLogger;
 use std::collections::BTreeSet;
 use std::fs::{self, File};
-use std::io::{self, BufWriter, Cursor, Write};
+use std::io::{self, BufRead, BufWriter, Cursor, Write};
 use std::path::PathBuf;
 use std::process::Command;
 use zip::ZipArchive;
@@ -209,8 +209,8 @@ fn main() -> eyre::Result<()> {
     }
     extract_zip(
         cached(&format!(
-            "https://www.unicode.org/Public/UCD/{}/ucd/Unihan.zip",
-            SourceDataProvider::TESTED_UNIHAN_TAG,
+            "https://www.unicode.org/Public/{}/ucd/Unihan.zip",
+            SourceDataProvider::TESTED_UCD_TAG,
         ))
         .with_context(|| "Failed to download Unihan ZIP".to_owned())?,
         UNIHAN_GLOB.iter().copied().map(String::from).collect(),
@@ -269,7 +269,6 @@ fn main() -> eyre::Result<()> {
         })
         .collect::<Vec<_>>()
         .join(",\n                        ");
-    #[allow(dead_code)]
     let unihan_data = UNIHAN_GLOB
         .iter()
         .map(|path| {
@@ -279,15 +278,15 @@ fn main() -> eyre::Result<()> {
         .collect::<Vec<_>>()
         .join(",\n                        ");
     let irg_path = out_root.join("tests/data/unihan/Unihan_IRGSources.txt");
-    fs::write(
-        &irg_path,
-        fs::read_to_string(&irg_path)?
-            .lines()
-            .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
-            .collect::<Vec<_>>()
-            .join("\n"),
-    )
-    .context("Failed to filter IRG file")?;
+    let file = File::open(&irg_path)?;
+    let reader = io::BufReader::new(file);
+    let filtered_content: String = reader
+        .lines()
+        .map_while(Result::ok)
+        .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
+        .collect::<Vec<_>>()
+        .join("\n");
+    fs::write(&irg_path, filtered_content)?;
     let tzdb_data: String = tzdb_data
         .iter()
         .map(|path| {
@@ -332,7 +331,7 @@ impl SourceDataProvider {{
                     [
                         {unihan_data}
                     ].into_iter().collect(),
-                )}})),
+                ), irg_cache: Default::default() }})),
                 tzdb_paths: Some(Arc::new(TzdbCache {{ root: AbstractFs::Memory(
                     [
                         {tzdb_data}
