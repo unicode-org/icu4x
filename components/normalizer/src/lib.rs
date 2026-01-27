@@ -234,6 +234,7 @@ const LOW_ZEROS_MASK: u32 = 0xFFE0;
 /// combining class.
 ///
 /// See trie-value-format.md
+#[inline]
 fn trie_value_has_ccc(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFE00) == 0xD800
 }
