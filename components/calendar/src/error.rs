@@ -347,6 +347,13 @@ mod inner {
     /// Internal narrow error type for calculating the ECMA reference year
     ///
     /// Public but unstable because it is used on [`hijri::Rules`](crate::cal::hijri::Rules)
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+    /// </div>
     #[derive(Debug, Copy, Clone, PartialEq, Eq)]
     #[allow(missing_docs)] // TODO: fix when graduating
     #[non_exhaustive]
