@@ -461,7 +461,6 @@ pub struct Month {
 pub(crate) enum LeapStatus {
     Normal,
     Leap,
-    FormattingLeap,
 }
 
 impl Month {
@@ -562,14 +561,6 @@ impl Month {
         self.leap_status == LeapStatus::Leap
     }
 
-    /// Returns whether the [`Month`] is a formatting-leap month
-    ///
-    /// This is true for months that format differently during leap years, even if they are not
-    /// considered leap months.
-    pub fn is_formatting_leap(self) -> bool {
-        self.leap_status == LeapStatus::Leap || self.leap_status == LeapStatus::FormattingLeap
-    }
-
     /// Returns the [`MonthCode`] for this month.
     pub fn code(self) -> MonthCode {
         #[allow(clippy::unwrap_used)] // by construction
@@ -579,22 +570,6 @@ impl Month {
                 b'0' + self.number / 10,
                 b'0' + self.number % 10,
                 if self.is_leap() { b'L' } else { 0 },
-            ])
-            .unwrap(),
-        )
-    }
-
-    /// Returns the formatting [`MonthCode`] for this month.
-    ///
-    /// See [`Self::is_formatting_leap`].
-    pub fn formatting_code(self) -> MonthCode {
-        #[allow(clippy::unwrap_used)] // by construction
-        MonthCode(
-            TinyAsciiStr::try_from_raw([
-                b'M',
-                b'0' + self.number / 10,
-                b'0' + self.number % 10,
-                if self.is_formatting_leap() { b'L' } else { 0 },
             ])
             .unwrap(),
         )

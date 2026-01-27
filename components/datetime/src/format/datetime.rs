@@ -287,13 +287,13 @@ where
                 Err(e) => {
                     w.with_part(PART, |w| {
                         w.with_part(Part::ERROR, |w| {
-                            w.write_str(&month.value.formatting_code().0)
+                            w.write_str(&month.formatting_code.0)
                         })
                     })?;
                     Err(match e {
                         GetNameForMonthError::InvalidMonthCode => {
                             FormattedDateTimePatternError::InvalidMonthCode(
-                                month.value.formatting_code(),
+                                month.formatting_code,
                             )
                         }
                         GetNameForMonthError::InvalidFieldLength => {

@@ -224,7 +224,7 @@ impl DateFieldsResolver for Hebrew {
                 LeapStatus::Leap
             } else if ordinal_month == 7 && is_leap {
                 // Use the leap name for Adar in a leap year
-                LeapStatus::FormattingLeap
+                LeapStatus::Leap
             } else {
                 LeapStatus::Normal
             },
