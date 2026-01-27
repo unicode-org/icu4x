@@ -6,6 +6,7 @@
 
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
+use core::cmp::Ordering;
 use core::fmt;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::AsULE;
@@ -456,6 +457,19 @@ pub(crate) enum LeapStatus {
     FormattingLeap,
 }
 
+impl LeapStatus {
+    fn cmp_lexicographic(self, other: LeapStatus) -> Ordering {
+        use LeapStatus::*;
+        // FormattingLeap is ignored in .code() (folded into Normal)
+        match (self, other) {
+            (Normal | FormattingLeap, Normal | FormattingLeap) => Ordering::Equal,
+            (Leap, Leap) => Ordering::Equal,
+            (Normal | FormattingLeap, Leap) => Ordering::Less,
+            (Leap, Normal | FormattingLeap) => Ordering::Greater,
+        }
+    }
+}
+
 impl Month {
     /// Constructs a non-leap [`Month`] with with the given number.
     ///
@@ -590,6 +604,22 @@ impl Month {
             ])
             .unwrap(),
         )
+    }
+
+    /// # Examples
+    ///
+    /// ```
+    /// let m01 = Month::new(1);
+    /// let m02 = Month::new(2);
+    /// let m02l = Month::leap(2);
+    /// let m03 = Month::new(3);
+    /// let m10 = Month::new(10);
+    /// let m10l = Month::leap(10);
+    ///
+    /// TODO
+    /// ```
+    pub(crate) fn cmp_lexicographic(self, other: Self) -> Ordering {
+        self.number.cmp(&other.number).then_with(|| self.leap_status.cmp_lexicographic(other.leap_status))
     }
 }
 
