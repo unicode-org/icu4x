@@ -259,6 +259,17 @@ impl CldrCache {
         use icu::locale::subtags::Language;
         use icu::locale::LanguageIdentifier;
 
+        if locale.to_string() == "nqo" {
+            return DataLocale::try_from_str("nqo")
+                .map_err(|e| DataError::custom("invalid locale: nqo").with_display_context(&e));
+        }
+
+        if locale.to_string() == "bm-Nkoo" {
+            return DataLocale::try_from_str("bm").map_err(|e| {
+                DataError::custom("invalid locale: bm-Nkoo").with_display_context(&e)
+            });
+        }
+
         let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
 
         // 1. Maximizes the input locale to get full language/script/region

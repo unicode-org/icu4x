@@ -55,6 +55,7 @@ include!("units_names_volume_core_v1.rs.data");
 include!("script_display_names_v1.rs.data");
 include!("narrow_minute_relative_v1.rs.data");
 include!("digital_duration_data_v1.rs.data");
+include!("currency_essentials_root_v1.rs.data");
 include!("units_names_duration_core_v1.rs.data");
 include!("currency_fractions_v1.rs.data");
 include!("units_info_v1.rs.data");
@@ -151,6 +152,7 @@ macro_rules! impl_data_provider {
         impl_script_display_names_v1!($provider);
         impl_narrow_minute_relative_v1!($provider);
         impl_digital_duration_data_v1!($provider);
+        impl_currency_essentials_root_v1!($provider);
         impl_units_names_duration_core_v1!($provider);
         impl_currency_fractions_v1!($provider);
         impl_units_info_v1!($provider);

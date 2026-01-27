@@ -28,10 +28,32 @@ use crate::dimension::currency::CurrencyCode;
 /// </div>
 pub use crate::provider::Baked;
 
-icu_provider::data_marker!(
-    /// Essential currency data needed for currency formatting. For example, currency patterns.
-    CurrencyEssentialsV1,
-    CurrencyEssentials<'static>
+macro_rules! currency_essentials_data_markers {
+    ($(($marker_name:ident, $doc:expr)),* $(,)?) => {
+        $(
+            icu_provider::data_marker!(
+                #[doc = $doc]
+                $marker_name,
+                CurrencyEssentials<'static>
+            );
+        )*
+    };
+}
+
+currency_essentials_data_markers!(
+    // TODO(#7417): remove the CurrencyEssentialsV1 marker once sliced currency and the general currency formatter are implemented
+    (
+        CurrencyEssentialsV1,
+        "Essential currency data needed for currency formatting, including currency patterns"
+    ),
+    (
+        CurrencyEssentialsRootV1,
+        "Essential currency data for the root locale"
+    ),
+    (
+        CurrencyEssentialsOverrideV1,
+        "Essential currency data that overrides the root locale"
+    ),
 );
 
 /// This type contains all of the essential data for currency formatting.
