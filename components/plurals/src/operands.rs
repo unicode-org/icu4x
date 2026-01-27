@@ -388,13 +388,13 @@ impl From<&CompactDecimal> for PluralOperands {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use fixed_decimal::Decimal;
     use core::str::FromStr;
+    use fixed_decimal::Decimal;
 
     #[test]
     fn test_u128_overflow() {
         let limit_18 = LIMIT_18_DIGITS;
-        
+
         // Small u128
         let val_small: u128 = 123;
         let ops = PluralOperands::from(val_small);
@@ -404,7 +404,7 @@ mod tests {
         // u128::MAX should end in 5.
         let val_max = u128::MAX;
         let ops = PluralOperands::from(val_max);
-        
+
         assert!(ops.i >= limit_18, "i should be offset by LIMIT_18_DIGITS");
         assert_eq!(ops.i % 10, 5, "Mod 10 Check");
         assert_eq!(ops.i % 100, 55, "Mod 100 Check");
@@ -426,12 +426,14 @@ mod tests {
 
         // Huge FixedDecimal
         let mut s = "1".to_string();
-        for _ in 0..29 { s.push('0'); }
+        for _ in 0..29 {
+            s.push('0');
+        }
         s.push('7');
-        
+
         let dec = Decimal::from_str(&s).unwrap();
         let ops = PluralOperands::from(&dec);
-        
+
         assert!(ops.i >= limit_18, "i should be offset");
         assert_eq!(ops.i % 10, 7, "Mod 10 check");
         assert_eq!(ops.i, limit_18 + 7);
@@ -440,10 +442,10 @@ mod tests {
     #[test]
     fn test_i128_overflow() {
         let limit_18 = LIMIT_18_DIGITS;
-        
+
         let val = i128::MIN;
         let ops = PluralOperands::from(val);
-        
+
         assert!(ops.i >= limit_18);
         assert_eq!(ops.i % 10, 8);
     }
