@@ -201,6 +201,7 @@ macro_rules! impl_integer_type {
     ($ty:ident) => {
         impl From<$ty> for PluralOperands {
             #[inline]
+            #[allow(trivial_numeric_casts)]
             fn from(input: $ty) -> Self {
                 Self {
                     i: input as u64,

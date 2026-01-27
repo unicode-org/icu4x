@@ -501,7 +501,7 @@ impl FieldSetBuilder {
             Some(DateFields::Y) => CalendarPeriod(CalendarPeriodFieldSet::Y(
                 fieldsets::Y::take_from_builder(self),
             )),
-            Option::None => return Err(BuilderError::MissingDateFields),
+            None => return Err(BuilderError::MissingDateFields),
         };
         Ok(field_set)
     }
@@ -652,7 +652,7 @@ impl FieldSetBuilder {
             Some(ZoneStyle::ExemplarCity) => {
                 ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity)
             }
-            Option::None => return Err(BuilderError::MissingZoneStyle),
+            None => return Err(BuilderError::MissingZoneStyle),
         };
         Ok(zone_field_set)
     }

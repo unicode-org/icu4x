@@ -286,19 +286,9 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year_info(&self.inner).into()
     }
 
-    /// The "extended year" of this date.
-    ///
-    /// This year number can be used when you need a simple numeric representation
-    /// of the year, and can be meaningfully compared with extended years from other
-    /// eras or used in arithmetic.
-    ///
-    /// For calendars defined in Temporal, this will match the "arithmetic year"
-    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
-    /// This is typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar.
-    ///
-    /// See [`Self::year()`] for more information about the year.
+    /// Use [`YearInfo::extended_year`](types::YearInfo::extended_year)
     #[inline]
+    #[deprecated(since = "2.2.0", note = "use `date.year().extended_year()`")]
     pub fn extended_year(&self) -> i32 {
         self.year().extended_year()
     }
@@ -425,8 +415,8 @@ impl<A: AsCalendar> Date<A> {
     /// Calling this outside of calendar implementations is sound, but calendar implementations are not
     /// expected to do anything sensible with such invalid dates.
     ///
-    /// AnyCalendar *will* panic if AnyCalendar [`Date`] objects with mismatching
-    /// date and calendar types are constructed
+    /// [`AnyCalendar`](crate::AnyCalendar) *will* panic if `Date<AnyCalendar>` objects with mismatching
+    /// date and calendar types are encountered.
     #[inline]
     pub fn from_raw(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
         Self { inner, calendar }
@@ -500,7 +490,7 @@ impl Date<Iso> {
                 debug_assert!(false);
                 WeekOf {
                     week: 1,
-                    unit: crate::week::RelativeUnit::Current,
+                    unit: RelativeUnit::Current,
                 }
             });
 

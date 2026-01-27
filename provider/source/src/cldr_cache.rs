@@ -13,7 +13,6 @@ use icu::locale::provider::{
 };
 #[cfg(feature = "experimental")]
 use icu::locale::subtags::Region;
-#[cfg(feature = "experimental")]
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
@@ -200,7 +199,7 @@ impl CldrCache {
             return Ok(None);
         }
         let mut new_langid =
-            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
+            LanguageIdentifier::from((locale.language, locale.script, locale.region));
         self.extended_locale_expander()?.maximize(&mut new_langid);
         debug_assert!(
             new_langid.script.is_some(),
@@ -219,8 +218,7 @@ impl CldrCache {
         if locale.language.is_unknown() || locale.script.is_none() {
             return Ok(None);
         }
-        let mut langid =
-            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
+        let mut langid = LanguageIdentifier::from((locale.language, locale.script, locale.region));
         self.extended_locale_expander()?.minimize(&mut langid);
         if langid.script.is_some() || (locale.region.is_none() && langid.region.is_some()) {
             // Wasn't able to minimize the script, or had to add a region

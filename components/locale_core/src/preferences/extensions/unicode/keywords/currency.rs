@@ -24,7 +24,7 @@ struct_keyword!(
         Err(PreferencesParseError::InvalidKeywordValue)
     },
     |input: &CurrencyType| {
-        crate::extensions::unicode::Value::from_subtag(Some(
+        Value::from_subtag(Some(
             Subtag::from_tinystr_unvalidated(input.0.resize()),
         ))
     }

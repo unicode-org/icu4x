@@ -82,10 +82,6 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -123,6 +119,8 @@ pub(crate) mod size_test_macro;
 
 pub use format::{FormattedDecimal, FormattedSign, FormattedUnsignedDecimal};
 
+#[cfg(feature = "alloc")]
+use alloc::string::String;
 use fixed_decimal::{Decimal, Sign, UnsignedDecimal};
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
@@ -347,7 +345,7 @@ impl DecimalFormatter {
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
-    pub fn format_to_string(&self, value: &Decimal) -> alloc::string::String {
+    pub fn format_to_string(&self, value: &Decimal) -> String {
         use writeable::Writeable;
         self.format(value).write_to_string().into_owned()
     }

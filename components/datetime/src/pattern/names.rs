@@ -10,8 +10,9 @@ use super::{
 use crate::error::ErrorField;
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
-use crate::provider::neo::{marker_attrs, *};
+use crate::provider::names::*;
 use crate::provider::pattern::PatternItem;
+use crate::provider::semantic_skeletons::marker_attrs;
 use crate::provider::time_zones::tz;
 use crate::size_test_macro::size_test;
 use crate::FixedCalendarDateTimeFormatter;
@@ -238,7 +239,7 @@ impl WeekdayNameLength {
         let field_symbol = field_symbol.to_format_symbol();
         // UTS 35 says that "E..EEE" are all Abbreviated
         // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+        let field_length = if matches!(field_symbol, Weekday::Format) {
             field_length.numeric_to_abbr()
         } else {
             field_length
@@ -623,7 +624,7 @@ pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDa
     _calendar: PhantomData<C>,
 }
 
-/// Extra metadata associated with DateTimeNames but not DateTimeFormatter.
+/// Extra metadata associated with [`FixedCalendarDateTimeNames`] but not [`DateTimeFormatter`].
 #[derive(Debug, Clone)]
 pub(crate) struct DateTimeNamesMetadata {
     zone_checksum: Option<u64>,
@@ -637,7 +638,7 @@ impl DateTimeNamesMetadata {
             zone_checksum: None,
         }
     }
-    /// If mz_periods is already populated, we can't load anything else because
+    /// If `mz_periods` is already populated, we can't load anything else because
     /// we can't verify the checksum. Set a blank checksum in this case.
     #[inline]
     pub(crate) fn new_from_previous<M: DateTimeNamesMarker>(names: &RawDateTimeNames<M>) -> Self {
@@ -1355,7 +1356,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         length: YearNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1>,
     {
         self.load_year_names(&crate::provider::Baked, length)
     }
@@ -1421,7 +1422,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         length: MonthNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1>,
     {
         self.load_month_names(&crate::provider::Baked, length)
     }
@@ -3742,18 +3743,20 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(year_name_length)
             .ok_or(GetNameForEraError::NotLoaded)?;
 
-        match (year_names, era_year.era_index) {
-            (YearNames::VariableEras(era_names), None) => {
-                crate::provider::neo::get_year_name_from_map(
-                    era_names,
-                    era_year.era.as_str().into(),
-                )
-                .ok_or(GetNameForEraError::InvalidEraCode)
+        match year_names {
+            YearNames::VariableEras(era_names) => {
+                get_year_name_from_map(era_names, era_year.era.as_str().into())
+                    .ok_or(GetNameForEraError::InvalidEraCode)
             }
-            (YearNames::FixedEras(era_names), Some(index)) => era_names
-                .get(index as usize)
+            YearNames::FixedEras(era_names) => era_names
+                .get(if let Some(i) = era_year.era_index {
+                    i as usize
+                } else {
+                    debug_assert!(false, "missing era index");
+                    usize::MAX
+                })
                 .ok_or(GetNameForEraError::InvalidEraCode),
-            _ => Err(GetNameForEraError::InvalidEraCode),
+            YearNames::Cyclic(_) => Err(GetNameForEraError::InvalidEraCode),
         }
     }
 

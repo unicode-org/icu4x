@@ -68,7 +68,7 @@ const MERGE_SEPARATOR: char = '\u{fffe}';
 const MERGE_SEPARATOR_BYTE: u8 = 2;
 const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000;
 
-/// Primary compression low terminator, must be greater than MERGE_SEPARATOR_BYTE.
+/// Primary compression low terminator, must be greater than [`MERGE_SEPARATOR_BYTE`].
 ///
 /// Reserved value in primary second byte if the lead byte is compressible.
 /// Otherwise usable in all CE weight bytes.
@@ -462,36 +462,34 @@ impl LocaleSpecificDataHolder {
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1> = provider
+        let metadata_payload: DataPayload<CollationMetadataV1> = provider
             .load(req)
             .or_else(|_| provider.load(fallback_req))?
             .payload;
 
         let metadata = metadata_payload.get();
 
-        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1>> =
-            if metadata.tailored() {
-                Some(
-                    provider
-                        .load(req)
-                        .or_else(|_| provider.load(fallback_req))?
-                        .payload,
-                )
-            } else {
-                None
-            };
+        let tailoring: Option<DataPayload<CollationTailoringV1>> = if metadata.tailored() {
+            Some(
+                provider
+                    .load(req)
+                    .or_else(|_| provider.load(fallback_req))?
+                    .payload,
+            )
+        } else {
+            None
+        };
 
-        let reordering: Option<DataPayload<crate::provider::CollationReorderingV1>> =
-            if metadata.reordering() {
-                Some(
-                    provider
-                        .load(req)
-                        .or_else(|_| provider.load(fallback_req))?
-                        .payload,
-                )
-            } else {
-                None
-            };
+        let reordering: Option<DataPayload<CollationReorderingV1>> = if metadata.reordering() {
+            Some(
+                provider
+                    .load(req)
+                    .or_else(|_| provider.load(fallback_req))?
+                    .payload,
+            )
+        } else {
+            None
+        };
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {

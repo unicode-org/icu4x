@@ -11,7 +11,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
+ * An ICU4X `DateTime` object capable of containing a date, time, and zone for any calendar.
  *
  * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html) for more information.
  */

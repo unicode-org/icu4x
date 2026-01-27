@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{provider::neo::*, scaffold::*};
+use crate::provider::semantic_skeletons::DatetimePatternsGlueV1;
+use crate::scaffold::*;
 
 /// Struct for combining date/time fields with zone fields.
 ///

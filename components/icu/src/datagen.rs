@@ -35,7 +35,7 @@ macro_rules! cb {
         pub fn markers_for_bin(bytes: &[u8]) -> Result<BTreeSet<DataMarkerInfo>, DataError> {
             use crate as icu;
             let lookup =
-                [
+                alloc::vec![
                     (icu_provider::hello_world::HelloWorldV1::INFO.id.hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
                         (<$marker_ty>::INFO.id.hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
@@ -74,10 +74,10 @@ fn test_markers_for_bin() {
     assert_eq!(
         markers_for_bin(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap(),
         [
-            crate::datetime::provider::neo::DayPeriodNamesV1::INFO,
-            crate::datetime::provider::neo::DatetimeNamesMonthGregorianV1::INFO,
-            crate::datetime::provider::neo::DatetimeNamesYearGregorianV1::INFO,
-            crate::datetime::provider::neo::DatetimePatternsGlueV1::INFO,
+            crate::datetime::provider::names::DayPeriodNamesV1::INFO,
+            crate::datetime::provider::names::DatetimeNamesMonthGregorianV1::INFO,
+            crate::datetime::provider::names::DatetimeNamesYearGregorianV1::INFO,
+            crate::datetime::provider::semantic_skeletons::DatetimePatternsGlueV1::INFO,
             crate::datetime::provider::DatetimePatternsDateGregorianV1::INFO,
             crate::datetime::provider::DatetimePatternsTimeV1::INFO,
             crate::decimal::provider::DecimalSymbolsV1::INFO,
