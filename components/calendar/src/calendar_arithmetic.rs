@@ -11,7 +11,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::types::{DateFields, Month};
+use crate::types::{DateFields, Month, MonthInfo};
 use crate::{types, Calendar, DateError, RangeError};
 use core::cmp::Ordering;
 use core::fmt::Debug;
@@ -192,8 +192,15 @@ pub(crate) trait DateFieldsResolver: Calendar {
     ///
     /// The default impl is for non-lunisolar calendars!
     #[inline]
-    fn month_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> Month {
-        Month::new_unchecked(ordinal_month, types::LeapStatus::Normal)
+    fn month_info_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> MonthInfo {
+        let month = Month::new_unchecked(ordinal_month, types::LeapStatus::Normal);
+        #[allow(deprecated)]
+        MonthInfo {
+            ordinal: ordinal_month,
+            value: month,
+            standard_code: month.code(),
+            formatting_code: month.code(),
+        }
     }
 
     // Date-to-RD conversion
@@ -517,7 +524,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let base_month = cal.month_from_ordinal(self.year(), self.month());
+        let base_month = cal.month_info_from_ordinal(self.year(), self.month()).value;
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
@@ -615,7 +622,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month = cal.month_from_ordinal(self.year(), self.month());
+        let base_month = cal.month_info_from_ordinal(self.year(), self.month()).value;
         let m0 = cal
             .ordinal_from_month(
                 y0,

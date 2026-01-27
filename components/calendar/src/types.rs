@@ -628,7 +628,6 @@ pub struct MonthInfo {
     pub standard_code: MonthCode,
 
     /// The [`Month::formatting_code()`] of [`Self::value`].
-    #[deprecated(since = "2.2.0", note = "use `value.formatting_code()")]
     pub formatting_code: MonthCode,
 }
 
@@ -638,16 +637,7 @@ impl MonthInfo {
         date: ArithmeticDate<C>,
     ) -> Self {
         let ordinal = date.month();
-        let value = c.month_from_ordinal(date.year(), ordinal);
-        #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
-        Self {
-            ordinal,
-            value,
-            #[allow(deprecated)]
-            standard_code: value.code(),
-            #[allow(deprecated)]
-            formatting_code: value.code(),
-        }
+        c.month_info_from_ordinal(date.year(), ordinal)
     }
 
     /// Returns the month number of the [`Month`].
@@ -688,8 +678,9 @@ impl MonthInfo {
     ///
     /// This is true for months that should format as leap months, even if they are not
     /// considered leap months.
+    #[allow(deprecated)]
     pub fn is_formatting_leap(self) -> bool {
-        self.value.is_formatting_leap()
+        self.standard_code != self.formatting_code
     }
 
     /// Gets the month number. A month number N is not necessarily the Nth month in the year

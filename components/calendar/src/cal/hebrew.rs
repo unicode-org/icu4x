@@ -207,9 +207,18 @@ impl DateFieldsResolver for Hebrew {
         Ok(ordinal_month)
     }
 
-    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> Month {
+    #[inline]
+    fn month_info_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> MonthInfo {
         let is_leap = year.keviyah.is_leap();
-        Month::new_unchecked(
+        let month = Month::new_unchecked(
+            ordinal_month - (is_leap && ordinal_month >= 6) as u8,
+            if ordinal_month == 6 && is_leap {
+                LeapStatus::Leap
+            } else {
+                LeapStatus::Normal
+            },
+        );
+        let formatting_month = Month::new_unchecked(
             ordinal_month - (is_leap && ordinal_month >= 6) as u8,
             if ordinal_month == 6 && is_leap {
                 LeapStatus::Leap
@@ -219,7 +228,14 @@ impl DateFieldsResolver for Hebrew {
             } else {
                 LeapStatus::Normal
             },
-        )
+        );
+        #[allow(deprecated)]
+        MonthInfo {
+            ordinal: ordinal_month,
+            value: month,
+            standard_code: month.code(),
+            formatting_code: formatting_month.code(),
+        }
     }
 
     fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
