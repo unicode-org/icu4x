@@ -90,7 +90,7 @@
 )]
 #![warn(missing_docs)]
 
-#[cfg(feature = "alloc")]
+#[cfg(any(feature = "alloc", test))]
 extern crate alloc;
 
 #[cfg(feature = "alloc")]
@@ -118,6 +118,9 @@ mod format;
 mod grouper;
 pub mod options;
 pub mod parts;
+/// Pattern parsing for decimal numbers.
+#[cfg(any(feature = "alloc", test))]
+pub mod pattern;
 pub mod provider;
 pub(crate) mod size_test_macro;
 
