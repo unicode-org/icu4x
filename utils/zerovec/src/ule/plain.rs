@@ -27,7 +27,7 @@ impl<const N: usize> RawBytesULE<N> {
         let data = bytes.as_mut_ptr();
         let len = bytes.len() / N;
         // Safe because Self is transparent over [u8; N]
-        unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
+        unsafe { slice::from_raw_parts_mut(data as *mut Self, len) }
     }
 }
 
@@ -61,9 +61,9 @@ impl<const N: usize> From<[u8; N]> for RawBytesULE<N> {
 
 macro_rules! impl_numbers_with_raw_bytes_ule {
     ($unsigned:ty, $signed:ty $(, $float:ty)?) => {
-        const _: () = assert!(core::mem::size_of::<$unsigned>() == core::mem::size_of::<$signed>() $(&& core::mem::size_of::<$unsigned>() == core::mem::size_of::<$float>())?);
+        const _: () = assert!(size_of::<$unsigned>() == size_of::<$signed>() $(&& size_of::<$unsigned>() == size_of::<$float>())?);
 
-        impl RawBytesULE<{ core::mem::size_of::<$unsigned>() }> {
+        impl RawBytesULE<{ size_of::<$unsigned>() }> {
             #[doc = concat!("Gets this `RawBytesULE` as a `", stringify!($unsigned), "`. This is equivalent to calling [`AsULE::from_unaligned()`] on [`", stringify!($unsigned), "`].")]
             #[inline]
             pub const fn as_unsigned_int(&self) -> $unsigned {
@@ -92,8 +92,8 @@ macro_rules! impl_numbers_with_raw_bytes_ule {
 
             impl_ule_from_array!(
                 $unsigned,
-                RawBytesULE<{ core::mem::size_of::<$unsigned>() }>,
-                RawBytesULE([0; { core::mem::size_of::<$unsigned>() }])
+                RawBytesULE<{ size_of::<$unsigned>() }>,
+                RawBytesULE([0; { size_of::<$unsigned>() }])
             );
         }
 
@@ -121,17 +121,17 @@ macro_rules! impl_numbers_with_raw_bytes_ule {
 macro_rules! impl_const_constructors {
     ($base:ty) => {
         impl ZeroSlice<$base> {
-            /// This function can be used for constructing ZeroVecs in a const context, avoiding
+            /// This function can be used for constructing [`ZeroVec`](crate::ZeroVec)s in a `const` context, avoiding
             /// parsing checks.
             ///
-            /// This cannot be generic over T because of current limitations in `const`, but if
-            /// this method is needed in a non-const context, check out [`ZeroSlice::parse_bytes()`]
+            /// This cannot be generic over `T` because of current limitations in `const`, but if
+            /// this method is needed in a non-`const` context, check out [`ZeroSlice::parse_bytes()`]
             /// instead.
             ///
             /// See [`ZeroSlice::cast()`] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
                 let len = bytes.len();
-                const STRIDE: usize = core::mem::size_of::<$base>();
+                const STRIDE: usize = size_of::<$base>();
                 #[allow(clippy::modulo_one)]
                 if (if STRIDE <= 1 { len } else { len % STRIDE }) == 0 {
                     Ok(unsafe { Self::from_bytes_unchecked(bytes) })
@@ -148,14 +148,14 @@ macro_rules! impl_const_constructors {
 
 macro_rules! impl_byte_slice_type {
     ($single_fn:ident, $type:ty) => {
-        impl From<$type> for RawBytesULE<{ core::mem::size_of::<$type>() }> {
+        impl From<$type> for RawBytesULE<{ size_of::<$type>() }> {
             #[inline]
             fn from(value: $type) -> Self {
                 Self(value.to_le_bytes())
             }
         }
         impl AsULE for $type {
-            type ULE = RawBytesULE<{ core::mem::size_of::<$type>() }>;
+            type ULE = RawBytesULE<{ size_of::<$type>() }>;
             #[inline]
             fn to_unaligned(self) -> Self::ULE {
                 RawBytesULE(self.to_le_bytes())
@@ -165,11 +165,11 @@ macro_rules! impl_byte_slice_type {
                 <$type>::from_le_bytes(unaligned.0)
             }
         }
-        // EqULE is true because $type and RawBytesULE<{ core::mem::size_of::<$type> }>
+        // EqULE is true because $type and RawBytesULE<{ size_of::<$type> }>
         // have the same byte sequence on little-endian
         unsafe impl EqULE for $type {}
 
-        impl RawBytesULE<{ core::mem::size_of::<$type>() }> {
+        impl RawBytesULE<{ size_of::<$type>() }> {
             pub const fn $single_fn(v: $type) -> Self {
                 RawBytesULE(v.to_le_bytes())
             }
@@ -285,13 +285,13 @@ impl AsULE for NonZeroI8 {
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
         // Safety: NonZeroU8 and NonZeroI8 have same size
-        unsafe { core::mem::transmute(self) }
+        unsafe { mem::transmute(self) }
     }
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         // Safety: NonZeroU8 and NonZeroI8 have same size
-        unsafe { core::mem::transmute(unaligned) }
+        unsafe { mem::transmute(unaligned) }
     }
 }
 

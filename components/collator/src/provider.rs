@@ -370,7 +370,7 @@ pub struct CollationReordering<'data> {
     /// their lead bytes modified by the signed offset (-0xff..+0xff)
     /// stored in the lower 16 bits.
     ///
-    /// CollationData::makeReorderRanges() writes a full list where the
+    /// `CollationData::makeReorderRanges()` writes a full list where the
     /// first range (at least for terminators and separators) has a 0
     /// offset. The last range has a non-zero offset. minHighNoReorder
     /// is set to the limit of that last range.

@@ -12,6 +12,8 @@ use crate::grouper;
 use crate::options::*;
 use crate::parts;
 use crate::provider::*;
+#[cfg(feature = "alloc")]
+use alloc::string::String;
 use fixed_decimal::UnsignedDecimal;
 use writeable::PartsWrite;
 use writeable::Writeable;
@@ -53,9 +55,9 @@ impl<T: Writeable> Writeable for FormattedSign<'_, T> {
 }
 
 impl Writeable for FormattedUnsignedDecimal<'_> {
-    fn write_to_parts<W>(&self, w: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to_parts<W>(&self, w: &mut W) -> Result<(), core::fmt::Error>
     where
-        W: writeable::PartsWrite + ?Sized,
+        W: PartsWrite + ?Sized,
     {
         let range = self.value.magnitude_range();
         let upper_magnitude = *range.end();
@@ -94,9 +96,9 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
 }
 
 impl Writeable for FormattedDecimal<'_> {
-    fn write_to_parts<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to_parts<W>(&self, sink: &mut W) -> Result<(), core::fmt::Error>
     where
-        W: writeable::PartsWrite + ?Sized,
+        W: PartsWrite + ?Sized,
     {
         self.0.write_to_parts(sink)
     }
@@ -110,7 +112,7 @@ writeable::impl_display_with_writeable!(FormattedUnsignedDecimal<'_>, #[cfg(feat
 impl<T: Writeable> core::fmt::Display for FormattedSign<'_, T> {
     #[inline]
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self, f)
+        Writeable::write_to(&self, f)
     }
 }
 #[cfg(feature = "alloc")]
@@ -121,8 +123,8 @@ impl<T: Writeable> FormattedSign<'_, T> {
     /// However, in order to avoid allocating a string, it is more efficient
     /// to use [`Writeable`] directly.
     #[allow(clippy::inherent_to_string_shadow_display)]
-    pub fn to_string(&self) -> writeable::_internal::String {
-        writeable::Writeable::write_to_string(self).into_owned()
+    pub fn to_string(&self) -> String {
+        Writeable::write_to_string(self).into_owned()
     }
 }
 

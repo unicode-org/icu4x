@@ -70,6 +70,7 @@ macro_rules! create_const_array {
 
 
         impl From<$enum_ty> for u16  {
+            #[allow(trivial_numeric_casts)]
             fn from(other: $enum_ty) -> Self {
                 other.0 as u16
             }
@@ -133,7 +134,7 @@ macro_rules! make_enumerated_property {
     };
 }
 
-/// Enumerated property Bidi_Class
+/// Enumerated property `Bidi_Class`
 ///
 /// These are the categories required by the Unicode Bidirectional Algorithm.
 /// For the property values, see [Bidirectional Class Values](https://unicode.org/reports/tr44/#Bidi_Class_Values).
@@ -233,7 +234,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Enumerated property Numeric_Type.
+/// Enumerated property `Numeric_Type`.
 ///
 /// See Section 4.6, Numeric Value in The Unicode Standard for the summary of
 /// each property value.
@@ -302,13 +303,13 @@ make_enumerated_property! {
 
 // This exists to encapsulate GeneralCategoryULE so that it can exist in the provider module rather than props
 pub(crate) mod gc {
-    /// Enumerated property General_Category.
+    /// Enumerated property `General_Category`.
     ///
-    /// General_Category specifies the most general classification of a code point, usually
+    /// `General_Category` specifies the most general classification of a code point, usually
     /// determined based on the primary characteristic of the assigned character. For example, is the
     /// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
     ///
-    /// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
+    /// `GeneralCategory` only supports specific subcategories (eg `UppercaseLetter`).
     /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`](
     /// crate::props::GeneralCategoryGroup).
     ///
@@ -479,7 +480,7 @@ make_enumerated_property! {
     singleton: SINGLETON_PROPERTY_ENUM_GENERAL_CATEGORY_V1;
 }
 
-/// Groupings of multiple General_Category property values.
+/// Groupings of multiple `General_Category` property values.
 ///
 /// Instances of `GeneralCategoryGroup` represent the defined multi-category
 /// values that are useful for users in certain contexts, such as regex. In
@@ -516,7 +517,7 @@ impl GeneralCategoryGroup {
     pub const ModifierLetter: GeneralCategoryGroup = GCG(1 << (GC::ModifierLetter as u32));
     /// (`Lo`) Other letters, including syllables and ideographs
     pub const OtherLetter: GeneralCategoryGroup = GCG(1 << (GC::OtherLetter as u32));
-    /// (`LC`) The union of UppercaseLetter, LowercaseLetter, and TitlecaseLetter
+    /// (`LC`) The union of `UppercaseLetter`, `LowercaseLetter`, and `TitlecaseLetter`
     pub const CasedLetter: GeneralCategoryGroup = GCG((1 << (GC::UppercaseLetter as u32))
         | (1 << (GC::LowercaseLetter as u32))
         | (1 << (GC::TitlecaseLetter as u32)));
@@ -664,7 +665,7 @@ impl GeneralCategoryGroup {
         0 != (1 << (val as u32)) & self.0
     }
 
-    /// Produce a GeneralCategoryGroup that is the inverse of this one
+    /// Produce a `GeneralCategoryGroup` that is the inverse of this one
     ///
     /// # Example
     ///
@@ -687,7 +688,7 @@ impl GeneralCategoryGroup {
         GeneralCategoryGroup(!self.0 & Self::ALL)
     }
 
-    /// Return the group representing all GeneralCategory values
+    /// Return the group representing all `GeneralCategory` values
     ///
     /// # Example
     ///
@@ -781,11 +782,11 @@ impl From<GeneralCategoryGroup> for u32 {
 
 /// Enumerated property Script.
 ///
-/// This is used with both the Script and Script_Extensions Unicode properties.
+/// This is used with both the Script and `Script_Extensions` Unicode properties.
 /// Each character is assigned a single Script, but characters that are used in
-/// a particular subset of scripts will be in more than one Script_Extensions set.
-/// For example, DEVANAGARI DIGIT NINE has Script=Devanagari, but is also in the
-/// Script_Extensions set for Dogra, Kaithi, and Mahajani. If you are trying to
+/// a particular subset of scripts will be in more than one `Script_Extensions` set.
+/// For example, `DEVANAGARI DIGIT NINE` has `Script=Devanagari`, but is also in the
+/// `Script_Extensions` set for Dogra, Kaithi, and Mahajani. If you are trying to
 /// determine whether a code point belongs to a certain script, you should use
 /// [`ScriptWithExtensionsBorrowed::has_script`].
 ///
@@ -1041,7 +1042,7 @@ make_enumerated_property! {
     ule_ty: <u16 as zerovec::ule::AsULE>::ULE;
 }
 
-/// Enumerated property Hangul_Syllable_Type
+/// Enumerated property `Hangul_Syllable_Type`
 ///
 /// The Unicode standard provides both precomposed Hangul syllables and conjoining Jamo to compose
 /// arbitrary Hangul syllables. This property provides that ontology of Hangul code points.
@@ -1109,7 +1110,7 @@ make_enumerated_property! {
 
 }
 
-/// Enumerated property East_Asian_Width.
+/// Enumerated property `East_Asian_Width`.
 ///
 /// See "Definition" in UAX #11 for the summary of each property value:
 /// <https://www.unicode.org/reports/tr11/#Definitions>
@@ -1169,7 +1170,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Enumerated property Line_Break.
+/// Enumerated property `Line_Break`.
 ///
 /// See "Line Breaking Properties" in UAX #14 for the summary of each property
 /// value: <https://www.unicode.org/reports/tr14/#Properties>
@@ -1280,7 +1281,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Enumerated property Grapheme_Cluster_Break.
+/// Enumerated property `Grapheme_Cluster_Break`.
 ///
 /// See "Default Grapheme Cluster Boundary Specification" in UAX #29 for the
 /// summary of each property value:
@@ -1359,7 +1360,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Enumerated property Word_Break.
+/// Enumerated property `Word_Break`.
 ///
 /// See "Default Word Boundary Specification" in UAX #29 for the summary of
 /// each property value:
@@ -1443,7 +1444,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Enumerated property Sentence_Break.
+/// Enumerated property `Sentence_Break`.
 ///
 /// See "Default Sentence Boundary Specification" in UAX #29 for the summary of
 /// each property value:
@@ -1515,15 +1516,15 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Property Canonical_Combining_Class.
+/// Property `Canonical_Combining_Class`.
 /// See UAX #15:
 /// <https://www.unicode.org/reports/tr15/>.
 ///
 /// See `icu::normalizer::properties::CanonicalCombiningClassMap` for the API
-/// to look up the Canonical_Combining_Class property by scalar value.
+/// to look up the `Canonical_Combining_Class` property by scalar value.
 ///
 /// **Note:** See `icu::normalizer::CanonicalCombiningClassMap` for the preferred API
-/// to look up the Canonical_Combining_Class property by scalar value.
+/// to look up the `Canonical_Combining_Class` property by scalar value.
 ///
 /// # Example
 ///
@@ -1638,7 +1639,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Property Indic_Conjunct_Break.
+/// Property `Indic_Conjunct_Break`.
 /// See UAX #44:
 /// <https://www.unicode.org/reports/tr44/#Indic_Conjunct_Break>.
 ///
@@ -1703,7 +1704,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Property Indic_Syllabic_Category.
+/// Property `Indic_Syllabic_Category`.
 /// See UAX #44:
 /// <https://www.unicode.org/reports/tr44/#Indic_Syllabic_Category>.
 ///
@@ -1793,7 +1794,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Enumerated property Joining_Group.
+/// Enumerated property `Joining_Group`.
 ///
 /// See Section 9.2, Arabic Joining Groups in The Unicode Standard for the summary of
 /// each property value.
@@ -1951,7 +1952,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Enumerated property Joining_Type.
+/// Enumerated property `Joining_Type`.
 ///
 /// See Section 9.2, Arabic Cursive Joining in The Unicode Standard for the summary of
 /// each property value.
@@ -2011,7 +2012,7 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-/// Property Vertical_Orientation
+/// Property `Vertical_Orientation`
 ///
 /// See UTR #50:
 /// <https://www.unicode.org/reports/tr50/#vo>
@@ -2775,7 +2776,7 @@ make_binary_property! {
     ident: IdCompatMathContinue;
     data_marker: crate::provider::PropertyBinaryIdCompatMathContinueV1;
     singleton: SINGLETON_PROPERTY_BINARY_ID_COMPAT_MATH_CONTINUE_V1;
-    /// ID_Compat_Math_Continue Property
+    /// `ID_Compat_Math_Continue` Property
 }
 
 make_binary_property! {
@@ -2784,7 +2785,7 @@ make_binary_property! {
     ident: IdCompatMathStart;
     data_marker: crate::provider::PropertyBinaryIdCompatMathStartV1;
     singleton: SINGLETON_PROPERTY_BINARY_ID_COMPAT_MATH_START_V1;
-    /// ID_Compat_Math_Start Property
+    /// `ID_Compat_Math_Start` Property
 }
 
 make_binary_property! {
@@ -2919,7 +2920,7 @@ make_binary_property! {
     ident: IdsUnaryOperator;
     data_marker: crate::provider::PropertyBinaryIdsUnaryOperatorV1;
     singleton: SINGLETON_PROPERTY_BINARY_IDS_UNARY_OPERATOR_V1;
-    /// IDS_Unary_Operator Property
+    /// `IDS_Unary_Operator` Property
 }
 
 make_binary_property! {
@@ -3018,7 +3019,7 @@ make_binary_property! {
     ident: ModifierCombiningMark;
     data_marker: crate::provider::PropertyBinaryModifierCombiningMarkV1;
     singleton: SINGLETON_PROPERTY_BINARY_MODIFIER_COMBINING_MARK_V1;
-    /// Modifier_Combining_Mark Property
+    /// `Modifier_Combining_Mark` Property
 }
 
 make_binary_property! {

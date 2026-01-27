@@ -18,42 +18,42 @@ export class ListFormatter {
 
 
     /**
-     * Construct a new ListFormatter instance for And patterns from compiled data.
+     * Construct a new `ListFormatter` instance for And patterns from compiled data.
      *
      * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
      */
     static createAndWithLength(locale: Locale, length: ListLength): ListFormatter;
 
     /**
-     * Construct a new ListFormatter instance for And patterns
+     * Construct a new `ListFormatter` instance for And patterns
      *
      * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
      */
     static createAndWithLengthAndProvider(provider: DataProvider, locale: Locale, length: ListLength): ListFormatter;
 
     /**
-     * Construct a new ListFormatter instance for And patterns from compiled data.
+     * Construct a new `ListFormatter` instance for And patterns from compiled data.
      *
      * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
      */
     static createOrWithLength(locale: Locale, length: ListLength): ListFormatter;
 
     /**
-     * Construct a new ListFormatter instance for And patterns
+     * Construct a new `ListFormatter` instance for And patterns
      *
      * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
      */
     static createOrWithLengthAndProvider(provider: DataProvider, locale: Locale, length: ListLength): ListFormatter;
 
     /**
-     * Construct a new ListFormatter instance for And patterns from compiled data.
+     * Construct a new `ListFormatter` instance for And patterns from compiled data.
      *
      * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
      */
     static createUnitWithLength(locale: Locale, length: ListLength): ListFormatter;
 
     /**
-     * Construct a new ListFormatter instance for And patterns
+     * Construct a new `ListFormatter` instance for And patterns
      *
      * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
      */

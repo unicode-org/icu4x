@@ -25,29 +25,36 @@ pub struct LocalePreferences {
 }
 
 impl LocalePreferences {
-    /// Convert to a DataLocale, with region-based fallback priority
+    /// Convert to a [`DataLocale`], with region-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
-    pub fn to_data_locale_region_priority(self) -> DataLocale {
+    pub const fn to_data_locale_region_priority(self) -> DataLocale {
         DataLocale::from_parts(
             self.language,
             self.script,
-            self.region_override
-                .as_deref()
-                .or(self.region.as_deref())
-                .copied(),
+            if let Some(region) = self.region_override {
+                Some(region.0)
+            } else if let Some(region) = self.region {
+                Some(region.0)
+            } else {
+                None
+            },
             self.variant,
         )
     }
 
-    /// Convert to a DataLocale, with language-based fallback priority
+    /// Convert to a `DataLocale`, with language-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
-    pub fn to_data_locale_language_priority(self) -> DataLocale {
+    pub const fn to_data_locale_language_priority(self) -> DataLocale {
         DataLocale::from_parts(
             self.language,
             self.script,
-            self.region.as_deref().copied(),
+            if let Some(region) = self.region {
+                Some(region.0)
+            } else {
+                None
+            },
             self.variant,
         )
     }
@@ -194,22 +201,15 @@ impl LocalePreferences {
     }
 
     /// Preference of Language
+    #[deprecated(since = "2.2.0", note = "convert to `DataLocale` to access fields")]
     pub const fn language(&self) -> Language {
-        self.language
+        self.to_data_locale_language_priority().language
     }
 
     /// Preference of Region
-    ///
-    /// This respects the [`RegionOverride`], and should only be used
-    /// for [data that is region-specific](https://github.com/unicode-org/cldr/blob/main/common/supplemental/rgScope.xml).
+    #[deprecated(since = "2.2.0", note = "convert to `DataLocale` to access fields")]
     pub const fn region(&self) -> Option<Region> {
-        if let Some(rg) = self.region_override {
-            Some(rg.0.region)
-        } else if let Some(sd) = self.region {
-            Some(sd.0.region)
-        } else {
-            None
-        }
+        self.to_data_locale_region_priority().region
     }
 
     /// Extends the preferences with the values from another set of preferences.

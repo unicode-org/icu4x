@@ -75,7 +75,7 @@ mod test {
         assert_eq!(rg.0.suffix, subdivision_suffix!("zzzz"));
 
         for i in &["4aabel", "a4bel", "ukabcde"] {
-            let val = unicode::Value::try_from_str(i).unwrap();
+            let val = Value::try_from_str(i).unwrap();
             let rg: Result<RegionOverride, _> = val.try_into();
             assert!(rg.is_err());
         }

@@ -9,7 +9,7 @@ const CanonicalCombiningClassMap_box_destroy_registry = new FinalizationRegistry
 });
 
 /**
- * Lookup of the Canonical_Combining_Class Unicode property
+ * Lookup of the `Canonical_Combining_Class` Unicode property
  *
  * See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
  */
@@ -43,7 +43,7 @@ export class CanonicalCombiningClassMap {
 
 
     /**
-     * Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
+     * Construct a new `CanonicalCombiningClassMap` instance for NFC using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
      */
@@ -61,7 +61,7 @@ export class CanonicalCombiningClassMap {
     }
 
     /**
-     * Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
+     * Construct a new `CanonicalCombiningClassMap` instance for NFC using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
      */
@@ -104,7 +104,7 @@ export class CanonicalCombiningClassMap {
     }
 
     /**
-     * Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
+     * Construct a new `CanonicalCombiningClassMap` instance for NFC using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
      */

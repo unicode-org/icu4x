@@ -162,7 +162,7 @@ where
 /// The literals and placeholders are stored in context. A placeholder is encoded as a name length
 /// in octal code points followed by the placeholder name.
 ///
-/// For example, consider the pattern: "Hello, {user} and {someone_else}!"
+/// For example, consider the pattern: `Hello, {user} and {someone_else}!`
 ///
 /// The encoding for this would be:
 ///

@@ -2,13 +2,26 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+// #![cfg_attr(
+//     not(test),
+//     deny(
+//         clippy::indexing_slicing,
+//         clippy::unwrap_used,
+//         clippy::expect_used,
+//         clippy::panic,
+//     )
+// )]
+#![warn(missing_docs)]
+
 //! `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 //!
 //! This crate exposes functionality to build a [`CodePointTrie`] from values provided at runtime.
 //! Because it is normally expected for [`CodePointTrie`] data to be pre-compiled, this crate is not
 //! optimized for speed; it should be used during a build phase.
 //!
-//! Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`].
+//! Under the hood, this crate uses the [`CodePointTrie`] builder code from ICU4C, [`UMutableCPTrie`].
 //! For more context, see <https://github.com/unicode-org/icu4x/issues/1837>.
 //!
 //! Unlike most of ICU4X, due in large part to the native dependency, this crate is not guaranteed
@@ -20,7 +33,7 @@
 //! Cargo features. If both are enabled, the code will internally use the wasm codepath.
 //!
 //! The `"wasm"` mode uses a Wasm module packaged into this Rust crate that contains
-//! pre-compiled ICU4C CodePointTrie builder code. It evaluates the Wasm module using
+//! pre-compiled ICU4C [`CodePointTrie`] builder code. It evaluates the Wasm module using
 //! the Wasmer runtime, which "just works", but it requires a large number of
 //! Rust/Cargo dependencies.
 //!
@@ -70,20 +83,6 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
-
-#![cfg_attr(
-    not(test),
-    deny(
-        // The crate is documented to allow panics.
-        // clippy::indexing_slicing,
-        // clippy::unwrap_used,
-        // clippy::expect_used,
-        // clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums, clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
 
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;

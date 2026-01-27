@@ -75,10 +75,10 @@ pub mod ffi {
         /// Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
         /// whose property values are contained in the mask.
         ///
-        /// The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or
+        /// The main mask property supported is that for `General_Category`, which can be obtained via `general_category_to_mask()` or
         /// by using `GeneralCategoryNameToMaskMapper`
         ///
-        /// Should only be used on maps for properties with values less than 32 (like Generak_Category),
+        /// Should only be used on maps for properties with values less than 32 (like `General_Category`),
         /// other maps will have unpredictable results
         #[diplomat::rust_link(
             icu::properties::CodePointMapDataBorrowed::iter_ranges_for_group,

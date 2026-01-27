@@ -31,3 +31,6 @@ synstructure = { workspace = true }
 
 [dev-dependencies]
 databake = { path = "..", features = ["derive"]}
+
+[lints]
+workspace = true

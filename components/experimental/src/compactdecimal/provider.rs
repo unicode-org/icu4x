@@ -4,13 +4,15 @@
 
 // Provider structs must be stable.
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-// Suppress a warning on zerovec::makevarule.
-#![allow(missing_docs)]
 
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(any(feature = "datagen", feature = "serde"))]
+use alloc::boxed::Box;
+#[cfg(feature = "datagen")]
+use alloc::{string::String, vec::Vec};
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
@@ -57,17 +59,17 @@ icu_provider::data_marker!(
 ///
 /// The plural patterns are stored with the 4-bit metadata representing the exponent
 /// shift (number of zeros in the pattern minus 1).
-#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
-pub struct CompactPatterns<'a, P: PatternBackend<Store = str>>(
+pub struct CompactPatterns<'a, P: PatternBackend>(
     pub VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>,
 );
 
 #[cfg(feature = "datagen")]
-impl<'data, P: PatternBackend<Store = str>> serde::Serialize for CompactPatterns<'data, P>
+impl<'data, P: PatternBackend> serde::Serialize for CompactPatterns<'data, P>
 where
-    for<'a> P::PlaceholderKeyCow<'a>: serde::Serialize + From<P::PlaceholderKey<'a>>,
+    Pattern<P>: serde::Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -78,11 +80,10 @@ where
 }
 
 #[cfg(feature = "serde")]
-impl<'de, 'data, P: PatternBackend<Store = str>> serde::Deserialize<'de>
-    for CompactPatterns<'data, P>
+impl<'de, 'data, P: PatternBackend> serde::Deserialize<'de> for CompactPatterns<'data, P>
 where
     'de: 'data,
-    P::PlaceholderKeyCow<'data>: serde::Deserialize<'de>,
+    Box<Pattern<P>>: serde::Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -95,14 +96,12 @@ where
     }
 }
 
-impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
+impl<P: PatternBackend> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
     type EncodedStruct = [()];
 }
 
 #[cfg(feature = "datagen")]
-impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeEncodeAsVarULE
-    for CompactPatterns<'_, P>
-{
+impl<P: PatternBackend> icu_provider::ule::MaybeEncodeAsVarULE for CompactPatterns<'_, P> {
     type EncodeableStruct<'b>
         = &'b [()]
     where
@@ -113,20 +112,20 @@ impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeEncodeAsVarULE
 }
 
 #[cfg(feature = "datagen")]
-impl<P: PatternBackend<Store = str>> CompactPatterns<'static, P> {
+impl<P: PatternBackend> CompactPatterns<'static, P> {
+    /// Creates a new [`CompactPatterns`] from a map of patterns.
+    /// The values contains an additional `u8` that contains the
+    /// magnitude of the pattern, which can be different from the
+    /// magnitude key (e.g. for the maginute 5 there might be a
+    /// magnitude 3 pattern).
     #[allow(clippy::type_complexity)]
     pub fn new(
         patterns: alloc::collections::BTreeMap<
             u8,
-            (
-                u8,
-                icu_plurals::PluralElements<alloc::boxed::Box<Pattern<P>>>,
-            ),
+            (u8, icu_plurals::PluralElements<Box<Pattern<P>>>),
         >,
         zero_magnitude: Option<&icu_plurals::PluralElements<&Pattern<P>>>,
-    ) -> Result<Self, alloc::string::String> {
-        use alloc::boxed::Box;
-        use alloc::vec::Vec;
+    ) -> Result<Self, String> {
         use icu_plurals::provider::FourBitMetadata;
         use icu_plurals::PluralElements;
         use zerovec::ule::encode_varule_to_box;

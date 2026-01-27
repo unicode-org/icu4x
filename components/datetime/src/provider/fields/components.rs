@@ -36,6 +36,7 @@ use crate::{
 };
 
 use crate::pattern::DateTimePattern;
+use alloc::vec::Vec;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -77,6 +78,9 @@ pub struct Bag {
     pub time_zone_name: Option<TimeZoneName>,
 
     /// An override of the hour cycle.
+    //
+    // TODO: This should probably not be the preferences [HourCycle] type. It directly sets the
+    // hour cycle, without support for Clock12 and Clock24, which will panic.
     pub hour_cycle: Option<HourCycle>,
 }
 
@@ -106,7 +110,7 @@ impl Bag {
         }
     }
 
-    /// Converts the components::Bag into a `Vec<Field>`. The fields will be ordered in from most
+    /// Converts the [`Bag`] into a [`Vec<Field>`]. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
     ///
@@ -114,8 +118,8 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> alloc::vec::Vec<Field> {
-        let mut fields = alloc::vec::Vec::new();
+    pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> Vec<Field> {
+        let mut fields = Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
                 symbol: FieldSymbol::Era,

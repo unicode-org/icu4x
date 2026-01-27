@@ -10,7 +10,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
-    /// Lookup of the Canonical_Combining_Class Unicode property
+    /// Lookup of the `Canonical_Combining_Class` Unicode property
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalCombiningClassMap, Struct)]
     #[diplomat::rust_link(
@@ -23,7 +23,7 @@ pub mod ffi {
     );
 
     impl CanonicalCombiningClassMap {
-        /// Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
+        /// Construct a new `CanonicalCombiningClassMap` instance for NFC using compiled data.
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCombiningClassMap::new,
             FnInStruct
@@ -41,7 +41,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
+        /// Construct a new `CanonicalCombiningClassMap` instance for NFC using a particular data source.
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCombiningClassMap::new,
             FnInStruct
@@ -87,7 +87,7 @@ pub mod ffi {
 
     /// The raw canonical composition operation.
     ///
-    /// Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
+    /// Callers should generally use `ComposingNormalizer` unless they specifically need raw composition operations
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition, Struct)]
     #[diplomat::rust_link(
@@ -98,7 +98,7 @@ pub mod ffi {
     pub struct CanonicalComposition(pub icu_normalizer::properties::CanonicalComposition);
 
     impl CanonicalComposition {
-        /// Construct a new CanonicalComposition instance for NFC using compiled data.
+        /// Construct a new `CanonicalComposition` instance for NFC using compiled data.
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCompositionBorrowed::new,
@@ -113,7 +113,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new CanonicalComposition instance for NFC using a particular data source.
+        /// Construct a new `CanonicalComposition` instance for NFC using a particular data source.
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCompositionBorrowed::new,
@@ -159,7 +159,7 @@ pub mod ffi {
 
     /// The raw (non-recursive) canonical decomposition operation.
     ///
-    /// Callers should generally use DecomposingNormalizer unless they specifically need raw composition operations
+    /// Callers should generally use `DecomposingNormalizer` unless they specifically need raw composition operations
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition, Struct)]
     #[diplomat::rust_link(
@@ -170,7 +170,7 @@ pub mod ffi {
     pub struct CanonicalDecomposition(pub icu_normalizer::properties::CanonicalDecomposition);
 
     impl CanonicalDecomposition {
-        /// Construct a new CanonicalDecomposition instance for NFC using compiled data.
+        /// Construct a new `CanonicalDecomposition` instance for NFC using compiled data.
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalDecompositionBorrowed::new,
@@ -185,7 +185,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new CanonicalDecomposition instance for NFC using a particular data source.
+        /// Construct a new `CanonicalDecomposition` instance for NFC using a particular data source.
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalDecompositionBorrowed::new,

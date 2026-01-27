@@ -81,7 +81,7 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
-    type Year = types::EraYear;
+    type Year = EraYear;
     type DifferenceError = core::convert::Infallible;
 
     fn from_codes(
@@ -192,7 +192,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         self.0.debug_name()
     }
 
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         self.0.calendar_algorithm()
     }
 }

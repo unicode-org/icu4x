@@ -55,3 +55,6 @@ export = [
 [[bench]]
 name = "provider_fs"
 harness = false
+
+[lints]
+workspace = true

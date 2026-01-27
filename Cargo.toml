@@ -194,7 +194,7 @@ ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
 potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false }
 resb = { version = "0.1.0", path = "utils/resb", default-features = false }
-tzif = { version = "0.4.0", path = "utils/tzif", default-features = false }
+tzif = { version = "0.5.0-dev", path = "utils/tzif", default-features = false }
 tinystr = { version = "0.8.0", path = "utils/tinystr", default-features = false }
 writeable = { version = "0.6.0", path = "utils/writeable", default-features = false }
 yoke = { version = "0.8.0", path = "utils/yoke", default-features = false }
@@ -294,7 +294,7 @@ itertools = "0.14.0"
 ndarray = "0.16.0"
 parse-zoneinfo =  "0.5.0"
 proc-macro2 = "1.0.61"
-quote = "1.0.28"
+quote = "1.0.44"
 rand = "0.9"
 rand_distr = "0.5"
 rand_pcg = "0.9"
@@ -338,6 +338,55 @@ lto = true
 [profile.bench-memory]
 inherits = "bench"
 debug = true
+
+[workspace.lints]
+clippy.collection_is_never_read = "warn"
+clippy.dbg_macro = "warn"
+clippy.debug_assert_with_mut_call = "warn"
+clippy.doc_markdown = "warn"
+clippy.exhaustive_enums = "deny"
+clippy.exhaustive_structs = "deny"
+clippy.fn_to_numeric_cast_any = "warn"
+clippy.infinite_loop = "warn"
+clippy.large_stack_arrays = "warn"
+clippy.mismatching_type_param_order = "warn"
+clippy.missing_fields_in_debug = "warn"
+clippy.negative_feature_names = "warn"
+clippy.same_functions_in_if_condition = "warn"
+clippy.todo = "warn"
+clippy.trivially_copy_pass_by_ref = "deny"
+clippy.wildcard_dependencies = "warn"
+rust.missing_debug_implementations = "deny"
+rust.trivial_numeric_casts = "deny"
+rust.unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(icu4c_enable_renaming)',
+    'cfg(needs_alloc_error_handler)',
+    'cfg(icu4x_run_size_tests)',
+    'cfg(icu4x_unstable_fast_trie_only)',
+] }
+rust.unused_lifetimes = "warn"
+rust.unused_macro_rules = "warn"
+rust.unused_qualifications = "warn"
+
+# These lints are currently enabled in the crate roots because of https://github.com/rust-lang/rust-clippy/issues/13981
+# clippy.unwrap_used = "warn"
+# clippy.expect_used = "warn"
+# clippy.panic = "warn"
+# clippy.indexing_slicing = "warn"
+
+# This lint is currently enabled in the crate roots because of https://github.com/rust-lang/rust/issues/137561
+# rust.missing_docs = "deny"
+
+# We should enable these lints
+# clippy.allow_attributes_without_reason = "warn"
+# clippy.cargo_common_metadata = "warn"
+# clippy.cast_possible_truncation = "warn"
+# clippy.default_trait_access = "warn"
+# clippy.missing_assert_message = "warn"
+# clippy.redundant_feature_names = "warn"
+# clippy.use_self = "warn"
+# rust.unreachable_pub = "warn"
+# rust.unsafe_op_in_unsafe_fn = "forbid"
 
 [workspace.metadata.cargo-semver-checks.lints]
 type_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
