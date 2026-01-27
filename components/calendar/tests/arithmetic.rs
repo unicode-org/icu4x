@@ -220,11 +220,12 @@ fn test_tricky_leap_months() {
     let duration0_actual = date0.try_until_with_options(&date1, until_options).unwrap();
     assert_eq!(duration0_actual, duration0);
 
-    // M02L until M02 = 1yr
+    // M02L until M02 = 12mo
     let cdate0 = chinese_date(2023, Month::leap(2), 1);
     let cdate1 = chinese_date(2024, Month::new(2), 1);
+    let duration0a = DateDuration::for_months(12);
     let diff0 = cdate0.try_until_with_options(&cdate1, until_options).unwrap();
-    assert_eq!(diff0, duration0);
+    assert_eq!(diff0, duration0a);
 
     // M06 - 1mo = M05L (leap to leap)
     let duration1 = DateDuration::for_months(-1);
@@ -235,10 +236,10 @@ fn test_tricky_leap_months() {
     let duration1_actual = date1.try_until_with_options(&date2, until_options).unwrap();
     assert_eq!(duration1_actual, duration1);
 
-    // M05L until previous M06 = -1yr (leap to common)
+    // M05L until previous M06 = -12mo (leap to common)
     let diff1 = date2.try_until_with_options(&date0, until_options).unwrap();
-    let duration0n = DateDuration::for_years(-1);
-    assert_eq!(diff1, duration0n);
+    let duration0an = DateDuration::for_months(-12);
+    assert_eq!(diff1, duration0an);
 
     // M05L + 1yr1mo = M07 (leap to common)
     let duration2 = DateDuration {
