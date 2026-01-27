@@ -501,6 +501,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Self::new_unchecked(resolved_year, resolved_month, resolved_day)
     }
 
+    /// Implements CompareSurpasses based on month code
     fn compare_surpasses_lexicographic(
         sign: i64,
         year: C::YearInfo,
@@ -548,7 +549,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         false
     }
 
-    fn compare_surpasses_ordinally(
+    /// Implements CompareSurpasses based on month ordinal
+    fn compare_surpasses_ordinal(
         sign: i64,
         year: C::YearInfo,
         month: u8,
@@ -625,7 +627,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _monthsAdded_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _months_, 1).
         let months_added = Self::new_balanced(y0, duration.add_months_to(m0), 1, cal);
         // 1. If CompareSurpasses(_sign_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]], _parts_.[[Day]], _calDate2_) is *true*, return *true*.
-        if Self::compare_surpasses_ordinally(
+        if Self::compare_surpasses_ordinal(
             sign,
             months_added.year(),
             months_added.month(),
@@ -665,7 +667,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             duration.add_weeks_and_days_to(regulated_day),
             cal,
         );
-        Self::compare_surpasses_ordinally(
+        Self::compare_surpasses_ordinal(
             sign,
             balanced_date.year(),
             balanced_date.month(),
