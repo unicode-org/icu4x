@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::DateDurationParseError;
+
 /// A signed length of time in terms of days, weeks, months, and years.
 ///
 /// This type represents the abstract concept of a date duration. For example, a duration of
@@ -155,94 +157,6 @@ pub enum DateDurationUnit {
     Weeks,
     /// Duration in days
     Days,
-}
-
-/// Errors that can occur when parsing an ISO 8601 date-only duration string.
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-#[non_exhaustive]
-pub enum DateDurationParseError {
-    /// The input does not follow the expected ISO 8601 date only duration structure.
-    ///
-    /// This error occurs when the duration string is incomplete,
-    /// or contains unexpected characters.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use icu::calendar::types::{DateDuration, DateDurationParseError};
-    ///
-    /// assert_eq!(DateDuration::try_from_str("P"),  Err(DateDurationParseError::InvalidStructure));
-    /// assert_eq!(DateDuration::try_from_str("P1"), Err(DateDurationParseError::InvalidStructure));
-    /// ```
-    InvalidStructure,
-
-    /// The duration contains a time component, which is not supported.
-    ///
-    /// Only date based units (`Y`, `M`, `W`, `D`) are supported. Any duration
-    /// containing a `T` time separator is rejected.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use icu::calendar::types::{DateDuration, DateDurationParseError} ;
-    ///
-    /// assert_eq!(DateDuration::try_from_str("PT5M"), Err(DateDurationParseError::TimeNotSupported));
-    /// assert_eq!(DateDuration::try_from_str("P1DT"), Err(DateDurationParseError::TimeNotSupported));
-    /// ```
-    TimeNotSupported,
-
-    /// A duration unit appeared without a number before it.
-    ///
-    /// For example, the string contains `Y`, `M`, `W`, or `D` without a
-    /// numeric value directly in front of it.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use icu::calendar::types::{DateDuration, DateDurationParseError};
-    ///
-    /// assert_eq!(DateDuration::try_from_str("PY"), Err(DateDurationParseError::MissingValue));
-    /// assert_eq!(DateDuration::try_from_str("PX1D"), Err(DateDurationParseError::MissingValue));
-    /// ```
-    MissingValue,
-
-    /// A duration unit was specified more than once.
-    ///
-    /// Each unit (`Y`, `M`, `W`, `D`) may appear at most once only.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use icu::calendar::types::{DateDuration, DateDurationParseError};
-    ///
-    /// assert_eq!(DateDuration::try_from_str("P1Y2Y"), Err(DateDurationParseError::DuplicateUnit));
-    /// assert_eq!(DateDuration::try_from_str("P1D1D"), Err(DateDurationParseError::DuplicateUnit));
-    /// ```
-    DuplicateUnit,
-
-    /// A numeric value exceeded or was more than the supported range.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use icu::calendar::types::{DateDuration, DateDurationParseError};
-    ///
-    /// assert_eq!(DateDuration::try_from_str("P4294967296Y"), Err(DateDurationParseError::NumberOverflow));
-    /// ```
-    NumberOverflow,
-
-    /// A duration starts with a `+` sign, which is not allowed.
-    ///
-    /// Only negative durations using a leading `-` are supported.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use icu::calendar::types::{DateDuration, DateDurationParseError};
-    ///
-    /// assert_eq!(DateDuration::try_from_str("+P1D"), Err(DateDurationParseError::PlusNotAllowed));
-    /// ```
-    PlusNotAllowed,
 }
 
 impl DateDuration {
