@@ -207,18 +207,19 @@ impl Calendar for Ethiopian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let coptic_year = date.0 .0.year();
+        let coptic_year = Coptic.year_info(&date.0);
         let extended_year = if self.0 == EthiopianEraStyle::AmeteAlem {
-            coptic_year - AMETE_ALEM_OFFSET
+            coptic_year.extended_year - AMETE_ALEM_OFFSET
         } else {
-            coptic_year - AMETE_MIHRET_OFFSET
+            coptic_year.extended_year - AMETE_MIHRET_OFFSET
         };
 
         if self.0 == EthiopianEraStyle::AmeteAlem || extended_year <= 0 {
             types::EraYear {
                 era: tinystr!(16, "aa"),
                 era_index: Some(0),
-                year: coptic_year - AMETE_ALEM_OFFSET,
+                year: coptic_year.year - AMETE_ALEM_OFFSET,
+                related_iso: coptic_year.related_iso,
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
@@ -226,7 +227,8 @@ impl Calendar for Ethiopian {
             types::EraYear {
                 era: tinystr!(16, "am"),
                 era_index: Some(1),
-                year: coptic_year - AMETE_MIHRET_OFFSET,
+                year: coptic_year.year - AMETE_MIHRET_OFFSET,
+                related_iso: coptic_year.related_iso,
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
@@ -392,6 +394,43 @@ mod test {
                 .year()
                 .extended_year(),
             1
+        );
+    }
+
+    #[test]
+    fn related_gregorian() {
+        assert_eq!(
+            Date::try_new_gregorian(2025, 8, 18)
+                .unwrap()
+                .to_calendar(Ethiopian::new())
+                .era_year()
+                .related_iso,
+            2024
+        );
+        assert_eq!(
+            Date::try_new_gregorian(2025, 9, 18)
+                .unwrap()
+                .to_calendar(Ethiopian::new())
+                .era_year()
+                .related_iso,
+            2025
+        );
+
+        // By 16702 the Ethiopian calendar is a full year ahead
+        // of the Gregorian calendar
+        assert_eq!(
+            Date::try_new_ethiopian(EthiopianEraStyle::AmeteMihret, 16695, 1, 1)
+                .unwrap()
+                .era_year()
+                .related_iso,
+            16702
+        );
+        assert_eq!(
+            Date::try_new_ethiopian(EthiopianEraStyle::AmeteMihret, 16696, 1, 1)
+                .unwrap()
+                .era_year()
+                .related_iso,
+            16704
         );
     }
 }

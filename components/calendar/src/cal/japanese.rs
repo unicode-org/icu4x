@@ -150,7 +150,13 @@ impl GregorianYears for &'_ Japanese {
         Ok(year - 1 + start.year)
     }
 
-    fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
+    fn era_year_from_extended(
+        &self,
+        year: i32,
+        related_gregorian: i32,
+        month: u8,
+        day: u8,
+    ) -> types::EraYear {
         let date: EraStartDate = EraStartDate { year, month, day };
 
         if let Some((start, code, idx)) = self.eras().find(|&(start, ..)| date >= start) {
@@ -159,10 +165,11 @@ impl GregorianYears for &'_ Japanese {
                 era_index: Some(idx),
                 year: year - start.year + 1,
                 extended_year: year,
+                related_iso: related_gregorian,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
-            CeBce.era_year_from_extended(year, month, day)
+            CeBce.era_year_from_extended(year, related_gregorian, month, day)
         }
     }
 

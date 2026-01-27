@@ -282,7 +282,7 @@ impl FieldSymbol {
             // Self::Year(Year::WeekOf) => 2,
             Self::Year(Year::Extended) => 2,
             Self::Year(Year::Cyclic) => 3,
-            Self::Year(Year::RelatedIso) => 4,
+            Self::Year(Year::RelatedGregorian) => 4,
             Self::Month(Month::Format) => 5,
             Self::Month(Month::StandAlone) => 6,
             // TODO(#5643): Add week fields back
@@ -509,8 +509,8 @@ field_type! (
         'y' => Calendar = 0,
         /// Field symbol for cyclic year; used in calendars where years are tracked in cycles, such as the Chinese or Dangi calendars.
         'U' => Cyclic = 1,
-        /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
-        'r' => RelatedIso = 2,
+        /// Field symbol for related Gregorian year. This corresponds to the extended Gregorian year in which the calendar’s year begins.
+        'r' => RelatedGregorian = 2,
         /// Field symbol for extended year
         'u' => Extended = 3,
         // /// Field symbol for year in "week of year".

@@ -244,6 +244,7 @@ impl Calendar for Indian {
             era: tinystr!(16, "shaka"),
             year: extended_year,
             extended_year,
+            related_iso: extended_year + YEAR_OFFSET,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
@@ -543,5 +544,25 @@ mod tests {
                 assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
             }
         }
+    }
+
+    #[test]
+    fn related_gregorian() {
+        assert_eq!(
+            Date::try_new_gregorian(2025, 3, 18)
+                .unwrap()
+                .to_calendar(Indian)
+                .era_year()
+                .related_iso,
+            2024
+        );
+        assert_eq!(
+            Date::try_new_gregorian(2025, 4, 18)
+                .unwrap()
+                .to_calendar(Indian)
+                .era_year()
+                .related_iso,
+            2025
+        );
     }
 }

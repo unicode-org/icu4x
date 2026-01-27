@@ -222,14 +222,13 @@ where
                 }
             }
         }
-        (FieldSymbol::Year(Year::RelatedIso), l) => {
+        (FieldSymbol::Year(Year::RelatedGregorian), l) => {
             const PART: Part = parts::RELATED_YEAR;
             input!(PART, Year, year = input.year);
-            input!(PART, YearCyclic, cyclic = year.cyclic());
 
             // Always in latin digits according to spec
             w.with_part(PART, |w| {
-                let mut num = Decimal::from(cyclic.related_iso);
+                let mut num = Decimal::from(year.related_iso());
                 num.pad_start(l.to_len() as i16);
                 num.write_to(w)
             })?;
