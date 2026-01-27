@@ -132,6 +132,7 @@ impl SourceDataProvider {
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
+    /// The UCD version tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_UCD_TAG: &'static str = "17.0.0";
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
@@ -217,6 +218,8 @@ impl SourceDataProvider {
         })
     }
 
+    /// Adds segmenter LSTM source data to the provider. The path should point to the Unihan ZIP file
+    /// (see [Unicode Character Database](https://www.unicode.org/ucd/)).
     pub fn with_unihan(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
             unihan_paths: Some(Arc::new(UnihanCache {
@@ -296,6 +299,12 @@ impl SourceDataProvider {
         }
     }
 
+    /// Adds UCD Unihan source data to the provider. The data will be downloaded from unicode.org
+    /// using the given version tag (see [Unicode Character Database](https://www.unicode.org/ucd/)).
+    ///
+    /// Also see: [`TESTED_UCD_TAG`](Self::TESTED_UCD_TAG)
+    ///
+    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_unihan_for_tag(self, tag: &str) -> Self {
         Self {
@@ -368,6 +377,7 @@ impl SourceDataProvider {
         e == Self::MISSING_TZDB_ERROR
     }
 
+    /// Identifies errors that are due to missing UCD data.
     pub fn is_missing_unihan_error(mut e: DataError) -> bool {
         e.marker = None;
         e == Self::MISSING_UNIHAN_ERROR
