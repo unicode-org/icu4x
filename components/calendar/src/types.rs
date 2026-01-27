@@ -606,20 +606,31 @@ impl Month {
         )
     }
 
-    /// # Examples
-    ///
-    /// ```
-    /// let m01 = Month::new(1);
-    /// let m02 = Month::new(2);
-    /// let m02l = Month::leap(2);
-    /// let m03 = Month::new(3);
-    /// let m10 = Month::new(10);
-    /// let m10l = Month::leap(10);
-    ///
-    /// TODO
-    /// ```
     pub(crate) fn cmp_lexicographic(self, other: Self) -> Ordering {
-        self.number.cmp(&other.number).then_with(|| self.leap_status.cmp_lexicographic(other.leap_status))
+        self.number
+            .cmp(&other.number)
+            .then_with(|| self.leap_status.cmp_lexicographic(other.leap_status))
+    }
+}
+
+#[test]
+fn test_cmp_lexicographic() {
+    let months_in_order = [
+        Month::new(1),
+        Month::new(2),
+        Month::leap(2),
+        Month::new(3),
+        Month::new(10),
+        Month::leap(10),
+    ];
+    for i in 0..months_in_order.len() - 1 {
+        for j in i + 1..months_in_order.len() {
+            let a = months_in_order[i];
+            let b = months_in_order[j];
+            assert!(a.cmp_lexicographic(a).is_eq());
+            assert!(a.cmp_lexicographic(b).is_lt());
+            assert!(b.cmp_lexicographic(a).is_gt());
+        }
     }
 }
 
