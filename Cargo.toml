@@ -294,7 +294,7 @@ itertools = "0.14.0"
 ndarray = "0.16.0"
 parse-zoneinfo =  "0.5.0"
 proc-macro2 = "1.0.61"
-quote = "1.0.28"
+quote = "1.0.44"
 rand = "0.9"
 rand_distr = "0.5"
 rand_pcg = "0.9"
@@ -368,7 +368,7 @@ rust.unused_lifetimes = "warn"
 rust.unused_macro_rules = "warn"
 rust.unused_qualifications = "warn"
 
-# These lints are currently enabled in the crate roots because of https://github.com/rust-lang/rust-clippy/issues/13981 
+# These lints are currently enabled in the crate roots because of https://github.com/rust-lang/rust-clippy/issues/13981
 # clippy.unwrap_used = "warn"
 # clippy.expect_used = "warn"
 # clippy.panic = "warn"
