@@ -200,7 +200,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let (yoke_lt, bound_lt) = {
         let underscores = vec![b'_'; underscores_for_lt];
         #[expect(clippy::expect_used, reason = "invariant is ensured immediately above")]
-        let underscores = String::from_utf8(underscores).expect("_ is ASCII and thus UTF-8");
+        let underscores = core::str::from_utf8(&underscores).expect("_ is ASCII and thus UTF-8");
         (
             format!("'{underscores}yoke"),
             format!("'_{underscores}yoke"),
