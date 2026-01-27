@@ -501,7 +501,14 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Self::new_unchecked(resolved_year, resolved_month, resolved_day)
     }
 
-    fn compare_surpasses_lexicographic(sign: i64, year: C::YearInfo, month: Month, day: u8, target: &Self, cal: &C) -> bool {
+    fn compare_surpasses_lexicographic(
+        sign: i64,
+        year: C::YearInfo,
+        month: Month,
+        day: u8,
+        target: &Self,
+        cal: &C,
+    ) -> bool {
         // 1. If _year_ ≠ _target_.[[Year]], then
         //   1. If _sign_ × (_year_ - _target_.[[Year]]) > 0, return *true*.
         // 1. Else if _monthCode_ ≠ _target_.[[MonthCode]], then
@@ -541,7 +548,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         false
     }
 
-    fn compare_surpasses_ordinally(sign: i64, year: C::YearInfo, month: u8, day: u8, target: &Self) -> bool {
+    fn compare_surpasses_ordinally(
+        sign: i64,
+        year: C::YearInfo,
+        month: u8,
+        day: u8,
+        target: &Self,
+    ) -> bool {
         // 1. If _year_ ≠ _target_.[[Year]], then
         //   1. If _sign_ × (_year_ - _target_.[[Year]]) > 0, return *true*.
         // (note: month code steps omitted)
@@ -585,10 +598,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _calDate2_ be CalendarISOToDate(_calendar_, _toIsoDate_).
         let cal_date_2 = other;
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
-        let y0 = cal.year_info_from_extended(duration.add_years_to(parts.year().to_extended_year()));
+        let y0 =
+            cal.year_info_from_extended(duration.add_years_to(parts.year().to_extended_year()));
         // 1. If CompareSurpasses(_sign_, _y0_, _parts_.[[MonthCode]], _parts_.[[Day]], _calDate2_) is *true*, return *true*.
         let base_month = cal.month_from_ordinal(parts.year(), parts.month());
-        if Self::compare_surpasses_lexicographic(sign, y0, base_month, parts.day(), cal_date_2, cal) {
+        if Self::compare_surpasses_lexicographic(sign, y0, base_month, parts.day(), cal_date_2, cal)
+        {
             return true;
         }
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
@@ -610,7 +625,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _monthsAdded_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _months_, 1).
         let months_added = Self::new_balanced(y0, duration.add_months_to(m0), 1, cal);
         // 1. If CompareSurpasses(_sign_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]], _parts_.[[Day]], _calDate2_) is *true*, return *true*.
-        if Self::compare_surpasses_ordinally(sign, months_added.year(), months_added.month(), parts.day(), cal_date_2) {
+        if Self::compare_surpasses_ordinally(
+            sign,
+            months_added.year(),
+            months_added.month(),
+            parts.day(),
+            cal_date_2,
+        ) {
             return true;
         }
         // 1. If _weeks_ = 0 and _days_ = 0, return *false*.
@@ -618,7 +639,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             return false;
         }
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]] + 1, 0).
-        let end_of_month = Self::new_balanced(months_added.year(), i64::from(months_added.month()) + 1, 0, cal);
+        let end_of_month = Self::new_balanced(
+            months_added.year(),
+            i64::from(months_added.month()) + 1,
+            0,
+            cal,
+        );
         // 1. Let _baseDay_ be _parts_.[[Day]].
         let base_day = parts.day();
         // 1. If _baseDay_ &le; _endOfMonth_.[[Day]], then
@@ -639,7 +665,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             duration.add_weeks_and_days_to(regulated_day),
             cal,
         );
-        Self::compare_surpasses_ordinally(sign, balanced_date.year(), balanced_date.month(), balanced_date.day(), cal_date_2)
+        Self::compare_surpasses_ordinally(
+            sign,
+            balanced_date.year(),
+            balanced_date.month(),
+            balanced_date.day(),
+            cal_date_2,
+        )
     }
 
     /// Implements the Temporal abstract operation NonISODateAdd.

@@ -224,7 +224,9 @@ fn test_tricky_leap_months() {
     let cdate0 = chinese_date(2023, Month::leap(2), 1);
     let cdate1 = chinese_date(2024, Month::new(2), 1);
     let duration0a = DateDuration::for_months(12);
-    let diff0 = cdate0.try_until_with_options(&cdate1, until_options).unwrap();
+    let diff0 = cdate0
+        .try_until_with_options(&cdate1, until_options)
+        .unwrap();
     assert_eq!(diff0, duration0a);
 
     // M06 - 1mo = M05L (leap to leap)
