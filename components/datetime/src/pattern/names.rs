@@ -2783,7 +2783,7 @@ where
     /// ```
     ///
     /// <div class="stab unstable">
-    /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
     /// </div>
     pub fn get_am(&self, length: DayPeriodNameLength) -> Option<&str> {
