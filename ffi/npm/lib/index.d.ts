@@ -134,6 +134,8 @@ export { PluralOperands } from "./PluralOperands"
 
 export { PluralRules } from "./PluralRules"
 
+export { PluralRulesWithRanges } from "./PluralRulesWithRanges"
+
 export { CodePointRangeIterator } from "./CodePointRangeIterator"
 
 export { CodePointMapData16 } from "./CodePointMapData16"
