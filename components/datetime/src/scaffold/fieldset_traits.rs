@@ -4,7 +4,7 @@
 
 use crate::{
     provider::semantic_skeletons::GluePattern,
-    provider::{names::*, time_zones::tz, *},
+    provider::{names::*, packed_pattern::*, time_zones::tz},
     scaffold::*,
 };
 use icu_calendar::{

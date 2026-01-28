@@ -13,8 +13,8 @@ use crate::provider::pattern::{
     GenericPatternItem, PatternItem,
 };
 use crate::provider::{
+    packed_pattern::{ErasedPackedPatterns, PackedSkeletonVariant},
     semantic_skeletons::{marker_attrs, DatetimePatternsGlueV1, GluePattern},
-    ErasedPackedPatterns, PackedSkeletonVariant,
 };
 use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
