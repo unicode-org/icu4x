@@ -235,6 +235,13 @@ public:
   inline uint16_t days_in_year() const;
 
   /**
+   * Returns if the year is a leap year for this date
+   *
+   * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+   */
+  inline bool is_in_leap_year() const;
+
+  /**
    * Returns the {@link Calendar} object backing this date
    *
    * See the [Rust documentation for `calendar`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.calendar) for more information.

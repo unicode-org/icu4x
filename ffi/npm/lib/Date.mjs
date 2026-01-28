@@ -532,6 +532,24 @@ export class Date {
     }
 
     /**
+     * Returns if the year is a leap year for this date
+     *
+     * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+     */
+    get isInLeapYear() {
+
+        const result = wasm.icu4x_Date_is_in_leap_year_mv1(this.ffiValue);
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
      * Returns the {@link Calendar} object backing this date
      *
      * See the [Rust documentation for `calendar`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.calendar) for more information.
