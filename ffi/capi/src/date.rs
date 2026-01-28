@@ -496,6 +496,13 @@ pub mod ffi {
             self.0.days_in_year()
         }
 
+        /// Returns if the year is a leap year for this date
+        #[diplomat::rust_link(icu::calendar::Date::is_in_leap_year, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn is_in_leap_year(&self) -> bool {
+            self.0.is_in_leap_year()
+        }
+
         /// Returns the [`Calendar`] object backing this date
         #[diplomat::rust_link(icu::calendar::Date::calendar, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::calendar_wrapper, FnInStruct, hidden)]
