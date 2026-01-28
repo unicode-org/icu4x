@@ -71,6 +71,8 @@ mod ummalqura_data;
 /// 2. [`TabularAlgorithm`] is based on a proleptic approximation of the length of a lunar year.
 ///    See the docs for information on the branches of Islam using it.
 ///
+/// To support other Hijri variants, use the [`Rules`] trait.
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
@@ -81,8 +83,19 @@ pub struct Hijri<S>(pub S);
 
 /// Defines a variant of the [`Hijri`] calendar.
 ///
-/// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`]
-/// rules, other rules can be implemented by users.
+/// This crate includes the [`UmmAlQura`] and [`TabularAlgorithm`] rules.
+///
+/// To support other Hijri variants, provide your own rules by implementing this trait.
+/// You may find the simulations in the [`calendrical_calculations`] crate to be useful,
+/// supplemented with data from human observations.
+///
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+/// </div>
 ///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
@@ -146,14 +159,24 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// Currently, this uses simulation results published by the KACST,
 /// making it identical to [`UmmAlQura`].
 ///
+/// In previous versions, this type used arithmetic published by E. M. Reingold, S. K. Shaukat,
+/// et al.[^1]. Since it now uses the KACST simulations, it is deprecated in favor of [`UmmAlQura`].
+/// If you wish to use the previous behavior, use the [`calendrical_calculations`] crate directly;
+/// for an example, see [`tests/reingold.rs`](https://github.com/unicode-org/icu4x/blob/main/components/calendar/tests/reingold.rs).
+///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
 /// - We decide to expand or reduce the range where we are using the astronomical simulation.
+///
+/// [^1]: See [`calendrical_calculations::islamic::observational_islamic_from_fixed`]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
+#[deprecated(since = "2.2.0", note = "use `UmmAlQura`")]
 pub struct AstronomicalSimulation;
 
+#[allow(deprecated)]
 impl crate::cal::scaffold::UnstableSealed for AstronomicalSimulation {}
+#[allow(deprecated)]
 impl Rules for AstronomicalSimulation {
     fn debug_name(&self) -> &'static str {
         "Hijri (simulated, Mecca)"
@@ -352,10 +375,11 @@ impl Rules for TabularAlgorithm {
     }
 }
 
+#[allow(deprecated)]
 impl Hijri<AstronomicalSimulation> {
     /// Use [`Self::new_simulated_mecca`].
     #[cfg(feature = "compiled_data")]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_mecca() -> Self {
         Self::new_simulated_mecca()
     }
@@ -365,27 +389,28 @@ impl Hijri<AstronomicalSimulation> {
     /// These simulations are unofficial and are known to not necessarily match sightings
     /// on the ground. Unless you know otherwise for sure, instead of this variant, use
     /// [`Hijri::new_umm_al_qura`], which uses the results of KACST's Mecca-based calculations.
+    #[deprecated(since = "2.2.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_simulated_mecca() -> Self {
         Self(AstronomicalSimulation)
     }
 
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub fn try_new_mecca_with_buffer_provider(
-        _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(Self::new_simulated_mecca())
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub fn try_new_mecca_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
         Ok(Self::new_simulated_mecca())
     }
 
     /// Use [`Self::new_simulated_mecca`].
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_mecca_always_calculating() -> Self {
         Self::new_simulated_mecca()
     }
@@ -451,6 +476,13 @@ impl Hijri<TabularAlgorithm> {
 }
 
 /// Information about a Hijri year.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+/// </div>
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct HijriYear {
     packed: PackedHijriYearData,
@@ -466,19 +498,36 @@ impl ToExtendedYear for HijriYear {
 impl HijriYear {
     /// Creates [`HijriYear`] from the given parts.
     ///
-    /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
-    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar. `start_day` has
-    /// to be within 5 days of the start of the year of the [`TabularAlgorithm`].
+    /// `month_starts` contains the first day of the 13 months from al-Muḥarram of the
+    /// given year to al-Muḥarram of the following year (inclusive). See [`Date::to_rata_die`]
+    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar.
     ///
-    /// `month_lengths[n - 1]` is true if the nth month has 30 days, and false otherwise.
-    /// Either 6 or 7 months need to have 30 days.
-    pub fn try_new(
-        extended_year: i32,
-        start_day: RataDie,
-        month_lengths: [bool; 12],
-    ) -> Option<Self> {
+    /// The start of al-Muḥarram has to be within 5 days of the start of al-Muḥarram using
+    /// the [`TabularAlgorithm`].
+    ///
+    /// Months need to have either 29 or 30 days.
+    pub const fn try_new(extended_year: i32, month_starts: [RataDie; 13]) -> Option<Self> {
+        let mut month_lengths = [false; 12];
+
+        let mut i = 0;
+        #[allow(clippy::indexing_slicing)]
+        while i < 12 {
+            match month_starts[i + 1].to_i64_date() - month_starts[i].to_i64_date() {
+                29 => month_lengths[i] = false,
+                30 => month_lengths[i] = true,
+                _ => return None,
+            }
+            i += 1;
+        }
+
+        let Some(packed) =
+            PackedHijriYearData::try_new(extended_year, month_lengths, month_starts[0])
+        else {
+            return None;
+        };
+
         Some(Self {
-            packed: PackedHijriYearData::try_new(extended_year, month_lengths, start_day)?,
+            packed,
             extended_year,
         })
     }
@@ -519,7 +568,7 @@ impl HijriYear {
     }
 }
 
-/// The struct containing compiled Hijri YearInfo
+/// A packed [`HijriYear`]
 ///
 /// * `start_day` has to be within 5 days of the start of the year of the [`TabularAlgorithm`].
 /// * `month_lengths[n - 1]` has either 6 or 7 long months.
@@ -539,6 +588,8 @@ impl HijriYear {
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
 struct PackedHijriYearData(u16);
@@ -549,38 +600,22 @@ impl PackedHijriYearData {
         month_lengths: [bool; 12],
         start_day: RataDie,
     ) -> Option<Self> {
-        let start_offset = start_day.since(Self::mean_tabular_start_day(extended_year));
-
-        if !(-8 < start_offset && start_offset < 8
-            || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
-                .start
-                .to_i64_date()
-                > start_day.to_i64_date()
-            || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
-                .end
-                .to_i64_date()
-                < start_day.to_i64_date())
-        {
+        let start_offset @ -5..=5 = start_day.since(Self::mean_tabular_start_day(extended_year))
+        else {
             return None;
-        }
+        };
+
         let start_offset = start_offset as i8 & 0b1000_0111u8 as i8;
 
         let mut all = 0u16;
-
-        let mut num_days = 29 * 12;
 
         let mut i = 0;
         while i < 12 {
             #[expect(clippy::indexing_slicing)]
             if month_lengths[i] {
                 all |= 1 << i;
-                num_days += 1;
             }
             i += 1;
-        }
-
-        if !matches!(num_days, 354 | 355) {
-            return None;
         }
 
         if start_offset < 0 {
@@ -685,6 +720,7 @@ impl PackWithMD for HijriYear {
     }
 }
 
+#[allow(deprecated)]
 impl<A: AsCalendar<Calendar = Hijri<AstronomicalSimulation>>> Date<A> {
     /// Deprecated
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
@@ -814,7 +850,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month: types::Month,
+        month: Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
@@ -945,7 +981,7 @@ impl<R: Rules> Calendar for Hijri<R> {
         )
     }
 
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         self.0.calendar_algorithm()
     }
 }
@@ -1687,13 +1723,13 @@ mod test {
 
     #[test]
     fn test_hijri_packed_roundtrip() {
-        fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) -> Option<()> {
-            let packed = PackedHijriYearData::try_new(1600, month_lengths, start_day)?;
+        #[track_caller]
+        fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) {
+            let packed = PackedHijriYearData::try_new(1600, month_lengths, start_day).unwrap();
             for i in 0..12 {
                 assert_eq!(packed.month_len(i + 1) == 30, month_lengths[i as usize]);
             }
             assert_eq!(packed.new_year(1600), start_day);
-            Some(())
         }
 
         let l = true;
@@ -1704,16 +1740,16 @@ mod test {
         let mixed2 = [s, s, l, l, l, s, l, s, s, s, l, l];
 
         let start_1600 = PackedHijriYearData::mean_tabular_start_day(1600);
-        assert_eq!(single_roundtrip(all_short, start_1600), None);
-        assert_eq!(single_roundtrip(all_long, start_1600), None);
-        single_roundtrip(mixed1, start_1600).unwrap();
-        single_roundtrip(mixed2, start_1600).unwrap();
+        single_roundtrip(all_short, start_1600);
+        single_roundtrip(all_long, start_1600);
+        single_roundtrip(mixed1, start_1600);
+        single_roundtrip(mixed2, start_1600);
 
-        single_roundtrip(mixed1, start_1600 - 7).unwrap();
-        single_roundtrip(mixed2, start_1600 + 7).unwrap();
-        single_roundtrip(mixed2, start_1600 + 4).unwrap();
-        single_roundtrip(mixed2, start_1600 + 1).unwrap();
-        single_roundtrip(mixed2, start_1600 - 1).unwrap();
-        single_roundtrip(mixed2, start_1600 - 4).unwrap();
+        single_roundtrip(mixed1, start_1600 - 5);
+        single_roundtrip(mixed2, start_1600 + 5);
+        single_roundtrip(mixed2, start_1600 + 4);
+        single_roundtrip(mixed2, start_1600 + 1);
+        single_roundtrip(mixed2, start_1600 - 1);
+        single_roundtrip(mixed2, start_1600 - 4);
     }
 }

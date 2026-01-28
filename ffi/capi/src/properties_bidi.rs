@@ -23,11 +23,11 @@ pub mod ffi {
     #[diplomat::enum_convert(props::BidiPairedBracketType, needs_wildcard)]
     #[non_exhaustive]
     pub enum BidiPairedBracketType {
-        /// Represents Bidi_Paired_Bracket_Type=Open.
+        /// Represents `Bidi_Paired_Bracket_Type=Open`.
         Open,
-        /// Represents Bidi_Paired_Bracket_Type=Close.
+        /// Represents `Bidi_Paired_Bracket_Type=Close`.
         Close,
-        /// Represents Bidi_Paired_Bracket_Type=None.
+        /// Represents `Bidi_Paired_Bracket_Type=None`.
         // This is an output type, so the default mostly impacts deferred initialization.
         #[diplomat::attr(auto, default)]
         None,

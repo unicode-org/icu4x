@@ -7,7 +7,7 @@ use alloc::string::String;
 use core::fmt::Write;
 
 /// Represents a single unit in a measure unit.
-/// For example, the MeasureUnit `kilometer-per-square-second` contains two single units:
+/// For example, the [`MeasureUnit`](crate::measure::measureunit::MeasureUnit) `kilometer-per-square-second` contains two single units:
 ///    1. `kilometer` with power 1 and prefix 3 with base 10.
 ///    2. `second` with power -2 and prefix power equal to 0.
 #[zerovec::make_ule(SingleUnitULE)]

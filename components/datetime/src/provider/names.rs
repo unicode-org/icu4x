@@ -4,7 +4,6 @@
 
 //! Data structs and markers for datetime names.
 
-use crate::provider::pattern::runtime;
 use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
@@ -237,14 +236,12 @@ size_test!(YearNames, year_names_v1_size, 32);
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum YearNames<'data> {
-    /// This calendar has a small, fixed set of eras with numeric years, this stores the era names in chronological order.
+    /// This calendar has a small, fixed set of eras.
     ///
-    /// See FormattableEra for a definition of what chronological order is in this context.
+    /// See [`era_index`](icu_calendar::types::EraYear::era_index) for how this is keyed.
     FixedEras(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
     /// This calendar has a variable set of eras with numeric years, this stores the era names mapped from
     /// era code to the name.
-    ///
-    /// Only the Japanese calendars need this
     VariableEras(#[cfg_attr(feature = "serde", serde(borrow))] YearNamesMap<'data>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
@@ -392,35 +389,3 @@ pub use DatetimeNamesWeekdayV1 as WeekdayNamesV1;
 
 /// Re-export of day period names marker for more consistency
 pub use DatetimeNamesDayperiodV1 as DayPeriodNamesV1;
-
-size_test!(GluePattern, glue_pattern_v1_size, 24);
-
-/// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
-#[doc = glue_pattern_v1_size!()]
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct GluePattern<'data> {
-    /// The pattern
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: runtime::GenericPattern<'data>,
-}
-
-icu_provider::data_struct!(
-    GluePattern<'_>,
-    #[cfg(feature = "datagen")]
-);
-
-icu_provider::data_marker!(
-    /// `DatetimePatternsGlueV1`
-    DatetimePatternsGlueV1,
-    GluePattern<'static>
-);

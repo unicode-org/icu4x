@@ -15,7 +15,7 @@ use super::{
 };
 use crate::{
     assert_syntax,
-    core::EncodingType,
+    encoding::EncodingType,
     records::{
         FullPrecisionOffset, MinutePrecisionOffset, Sign, TimeZoneAnnotation, TimeZoneRecord,
         UtcOffsetRecord, UtcOffsetRecordOrZ,

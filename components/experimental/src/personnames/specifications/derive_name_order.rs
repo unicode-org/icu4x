@@ -10,8 +10,7 @@ use zerovec::VarZeroVec;
 
 use crate::personnames::api::FormattingOrder;
 
-///
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-order
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-order>
 pub fn name_order_derive(
     person_name_locale: &Locale,
     surname_first: &VarZeroVec<str>,

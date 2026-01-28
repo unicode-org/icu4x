@@ -25,7 +25,7 @@ pub struct LocalePreferences {
 }
 
 impl LocalePreferences {
-    /// Convert to a DataLocale, with region-based fallback priority
+    /// Convert to a [`DataLocale`], with region-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
     pub const fn to_data_locale_region_priority(self) -> DataLocale {
@@ -43,7 +43,7 @@ impl LocalePreferences {
         )
     }
 
-    /// Convert to a DataLocale, with language-based fallback priority
+    /// Convert to a `DataLocale`, with language-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
     pub const fn to_data_locale_language_priority(self) -> DataLocale {

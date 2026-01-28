@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! High-level entrypoints for Neo DateTime Formatter
+//! High-level entrypoints for Neo [`DateTimeFormatter`]
 
 use crate::error::DateTimeFormatterLoadError;
 use crate::external_loaders::*;
@@ -662,7 +662,7 @@ where
     pub fn format_same_calendar<I>(
         &self,
         datetime: &I,
-    ) -> Result<FormattedDateTime<'_>, crate::MismatchedCalendarError>
+    ) -> Result<FormattedDateTime<'_>, MismatchedCalendarError>
     where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {

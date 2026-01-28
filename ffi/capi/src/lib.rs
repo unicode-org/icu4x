@@ -27,6 +27,7 @@
 )]
 // libc is behind a negative feature
 #![allow(unused_crate_dependencies)]
+#![allow(unused_qualifications)]
 
 //! This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! C and C++ headers. ICU4X is also available for JavaScript/TypeScript through [`npm`](https://www.npmjs.com/package/icu), and for

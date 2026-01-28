@@ -22,7 +22,7 @@ use criterion::{
 };
 use icu_calendar::{
     options::{DateAddOptions, Overflow},
-    types, AsCalendar, Calendar, Date, Iso,
+    types, AsCalendar, Calendar, Date,
 };
 
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
@@ -48,7 +48,7 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     let _ = black_box(date.day_of_month());
 
     // Conversion to ISO.
-    let _ = black_box(date.to_calendar(Iso));
+    let _ = black_box(date.to_calendar(icu::calendar::cal::Iso));
 }
 
 fn bench_calendar<C: Clone + Calendar>(
@@ -209,6 +209,7 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d, c| Date::try_new_hijri_with_calendar(y, m, d, c).unwrap(),
     );
 
+    #[allow(deprecated)]
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",

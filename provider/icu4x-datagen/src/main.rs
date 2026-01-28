@@ -172,6 +172,17 @@ struct Cli {
     #[cfg(feature = "provider")]
     icuexport_root: Option<PathBuf>,
 
+    #[arg(long, value_name = "TAG", default_value = "17.0.0")]
+    #[arg(help = "Download versioned UCD from unicode.org.")]
+    #[cfg_attr(not(feature = "networking"), arg(hide = true))]
+    #[cfg(feature = "provider")]
+    ucd_tag: String,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(help = "Path to a local Unihan.zip file or directory.")]
+    #[cfg(feature = "provider")]
+    unihan_root: Option<PathBuf>,
+
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
@@ -424,6 +435,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
             );
         } else if SourceDataProvider::is_missing_segmenter_lstm_error(e) {
             eyre::bail!("Segmentation LSTM data is required for this invocation, set --segementer-lstm-path or --segementer-lstm-tag");
+        } else if SourceDataProvider::is_missing_unihan_error(e) {
+            eyre::bail!(
+                "Unihan data is required for this invocation, set --unihan-root or --unihan-tag"
+            );
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
             eyre::bail!(
                 "Timezone data is required for this invocation, set --tzdb-path or --tzdb-tag"
@@ -444,7 +459,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
         }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => {
-            let provider = icu_provider_blob::BlobDataProvider::try_new_from_blob(
+            let provider = BlobDataProvider::try_new_from_blob(
                 std::fs::read(cli.input_blob.unwrap())?.into(),
             )?;
             let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
@@ -499,6 +514,18 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_segmenter_lstm_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => p,
+            };
+
+            p = match (cli.unihan_root, cli.ucd_tag.as_str()) {
+                (Some(path), _) => p.with_unihan(&path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => {
+                    p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG)
+                }
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_unihan_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => p,
             };
@@ -772,7 +799,7 @@ use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;
 
 #[cfg(feature = "blob_input")]
-struct ReexportableBlobDataProvider(icu_provider_blob::BlobDataProvider);
+struct ReexportableBlobDataProvider(BlobDataProvider);
 
 #[cfg(feature = "blob_input")]
 impl<M: DataMarker> DataProvider<M> for ReexportableBlobDataProvider

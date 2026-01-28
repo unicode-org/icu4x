@@ -109,20 +109,17 @@ const _: () = {
 };
 
 #[cfg(feature = "compiled_data")]
-impl icu_provider::DataProvider<icu_time::provider::TimezonePeriodsV1> for Baked {
+impl DataProvider<icu_time::provider::TimezonePeriodsV1> for Baked {
     #[inline]
     fn load(
         &self,
-        req: icu_provider::DataRequest,
-    ) -> Result<
-        icu_provider::DataResponse<icu_time::provider::TimezonePeriodsV1>,
-        icu_provider::DataError,
-    > {
+        req: DataRequest,
+    ) -> Result<DataResponse<icu_time::provider::TimezonePeriodsV1>, DataError> {
         icu_time::provider::Baked.load(req)
     }
 }
 
-#[cfg(feature = "datagen")]
+#[cfg(any(feature = "datagen", feature = "compiled_data"))]
 use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
@@ -140,7 +137,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::TimezoneNamesEssentialsV1::INFO,
     names::DatetimeNamesWeekdayV1::INFO,
     names::DatetimeNamesDayperiodV1::INFO,
-    names::DatetimePatternsGlueV1::INFO,
     DatetimePatternsTimeV1::INFO,
     names::DatetimeNamesYearBuddhistV1::INFO,
     names::DatetimeNamesYearChineseV1::INFO,
@@ -166,6 +162,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     names::DatetimeNamesMonthJapaneseV1::INFO,
     names::DatetimeNamesMonthPersianV1::INFO,
     names::DatetimeNamesMonthRocV1::INFO,
+    semantic_skeletons::DatetimePatternsGlueV1::INFO,
     DatetimePatternsDateBuddhistV1::INFO,
     DatetimePatternsDateChineseV1::INFO,
     DatetimePatternsDateCopticV1::INFO,

@@ -9,6 +9,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(any(feature = "datagen", feature = "serde"))]
+use alloc::boxed::Box;
+#[cfg(feature = "datagen")]
+use alloc::{string::String, vec::Vec};
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
@@ -62,12 +66,6 @@ pub struct CompactPatterns<'a, P: PatternBackend>(
     pub VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>,
 );
 
-impl<P: PatternBackend> Default for CompactPatterns<'_, P> {
-    fn default() -> Self {
-        Self(VarZeroVec::new())
-    }
-}
-
 #[cfg(feature = "datagen")]
 impl<'data, P: PatternBackend> serde::Serialize for CompactPatterns<'data, P>
 where
@@ -85,7 +83,7 @@ where
 impl<'de, 'data, P: PatternBackend> serde::Deserialize<'de> for CompactPatterns<'data, P>
 where
     'de: 'data,
-    alloc::boxed::Box<Pattern<P>>: serde::Deserialize<'de>,
+    Box<Pattern<P>>: serde::Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -124,15 +122,10 @@ impl<P: PatternBackend> CompactPatterns<'static, P> {
     pub fn new(
         patterns: alloc::collections::BTreeMap<
             u8,
-            (
-                u8,
-                icu_plurals::PluralElements<alloc::boxed::Box<Pattern<P>>>,
-            ),
+            (u8, icu_plurals::PluralElements<Box<Pattern<P>>>),
         >,
         zero_magnitude: Option<&icu_plurals::PluralElements<&Pattern<P>>>,
-    ) -> Result<Self, alloc::string::String> {
-        use alloc::boxed::Box;
-        use alloc::vec::Vec;
+    ) -> Result<Self, String> {
         use icu_plurals::provider::FourBitMetadata;
         use icu_plurals::PluralElements;
         use zerovec::ule::encode_varule_to_box;

@@ -234,6 +234,7 @@ const LOW_ZEROS_MASK: u32 = 0xFFE0;
 /// combining class.
 ///
 /// See trie-value-format.md
+#[inline]
 fn trie_value_has_ccc(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFE00) == 0xD800
 }
@@ -1235,8 +1236,7 @@ where
                 return Some(starter);
             }
             // Now we need to check if composition with an upcoming starter is possible.
-            #[expect(clippy::unwrap_used)]
-            if self.decomposition.pending.is_some() {
+            if let Some(pending) = self.decomposition.pending.take() {
                 // We know that `pending_starter` decomposes to start with a starter.
                 // Otherwise, it would have been moved to `self.decomposition.buffer`
                 // by `self.decomposing_next()`. We do this set lookup here in order
@@ -1244,16 +1244,15 @@ where
                 // Note that this check has to happen _after_ checking that `pending`
                 // holds a character, because this flag isn't defined to be meaningful
                 // when `pending` isn't holding a character.
-                let pending = self.decomposition.pending.as_ref().unwrap();
                 if u32::from(pending.character) < self.composition_passthrough_bound
                     || !pending.can_combine_backwards()
                 {
                     // Won't combine backwards anyway.
+                    self.decomposition.pending = Some(pending);
                     return Some(starter);
                 }
-                // Consume what we peeked. `unwrap` OK, because we checked `is_some()`
-                // above.
-                undecomposed_starter = self.decomposition.pending.take().unwrap();
+                // Consume what we peeked.
+                undecomposed_starter = pending;
                 // The following line is OK, because we're about to loop back
                 // to `self.decomposition.decomposing_next(c);`, which will
                 // restore the between-`next()`-calls invariant of `pending`
@@ -1696,10 +1695,10 @@ impl DecomposingNormalizerBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfd() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
+            provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
+                + provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1707,8 +1706,8 @@ impl DecomposingNormalizerBorrowed<'static> {
         );
 
         DecomposingNormalizerBorrowed {
-            decompositions: crate::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1,
-            tables: crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1,
+            decompositions: provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1,
+            tables: provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1,
             supplementary_tables: None,
             decomposition_passthrough_bound: 0xC0,
             composition_passthrough_bound: 0x0300,
@@ -1723,16 +1722,16 @@ impl DecomposingNormalizerBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfkd() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
+            provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
+                + provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
                     .scalars24
                     .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
+                + provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
                     .scalars16
                     .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
+                + provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1740,27 +1739,27 @@ impl DecomposingNormalizerBorrowed<'static> {
         );
 
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap <= 0x0300,
+            provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap <= 0x0300,
             "invalid"
         );
 
         let decomposition_capped =
-            if crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap < 0xC0 {
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap
+            if provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap < 0xC0 {
+                provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap
             } else {
                 0xC0
             };
         let composition_capped =
-            if crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap < 0x0300 {
-                crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap
+            if provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap < 0x0300 {
+                provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap
             } else {
                 0x0300
             };
 
         DecomposingNormalizerBorrowed {
-            decompositions: crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1,
-            tables: crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1,
-            supplementary_tables: Some(crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1),
+            decompositions: provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1,
+            tables: provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1,
+            supplementary_tables: Some(provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1),
             decomposition_passthrough_bound: decomposition_capped as u8,
             composition_passthrough_bound: composition_capped,
         }
@@ -1769,16 +1768,16 @@ impl DecomposingNormalizerBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub(crate) const fn new_uts46_decomposed() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
+            provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
+                + provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
                     .scalars24
                     .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
+                + provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
                     .scalars16
                     .const_len()
-                + crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
+                + provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1786,29 +1785,27 @@ impl DecomposingNormalizerBorrowed<'static> {
         );
 
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap <= 0x0300,
+            provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap <= 0x0300,
             "invalid"
         );
 
         let decomposition_capped =
-            if crate::provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap < 0xC0 {
-                crate::provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap
+            if provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap < 0xC0 {
+                provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap
             } else {
                 0xC0
             };
-        let composition_capped = if crate::provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1
-            .passthrough_cap
-            < 0x0300
-        {
-            crate::provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap
-        } else {
-            0x0300
-        };
+        let composition_capped =
+            if provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap < 0x0300 {
+                provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap
+            } else {
+                0x0300
+            };
 
         DecomposingNormalizerBorrowed {
-            decompositions: crate::provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1,
-            tables: crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1,
-            supplementary_tables: Some(crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1),
+            decompositions: provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1,
+            tables: provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1,
+            supplementary_tables: Some(provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1),
             decomposition_passthrough_bound: decomposition_capped as u8,
             composition_passthrough_bound: composition_capped,
         }
@@ -2445,7 +2442,7 @@ impl ComposingNormalizerBorrowed<'static> {
     pub const fn new_nfc() -> Self {
         ComposingNormalizerBorrowed {
             decomposing_normalizer: DecomposingNormalizerBorrowed::new_nfd(),
-            canonical_compositions: crate::provider::Baked::SINGLETON_NORMALIZER_NFC_V1,
+            canonical_compositions: provider::Baked::SINGLETON_NORMALIZER_NFC_V1,
         }
     }
 
@@ -2458,7 +2455,7 @@ impl ComposingNormalizerBorrowed<'static> {
     pub const fn new_nfkc() -> Self {
         ComposingNormalizerBorrowed {
             decomposing_normalizer: DecomposingNormalizerBorrowed::new_nfkd(),
-            canonical_compositions: crate::provider::Baked::SINGLETON_NORMALIZER_NFC_V1,
+            canonical_compositions: provider::Baked::SINGLETON_NORMALIZER_NFC_V1,
         }
     }
 
@@ -2475,7 +2472,7 @@ impl ComposingNormalizerBorrowed<'static> {
     pub(crate) const fn new_uts46() -> Self {
         ComposingNormalizerBorrowed {
             decomposing_normalizer: DecomposingNormalizerBorrowed::new_uts46_decomposed(),
-            canonical_compositions: crate::provider::Baked::SINGLETON_NORMALIZER_NFC_V1,
+            canonical_compositions: provider::Baked::SINGLETON_NORMALIZER_NFC_V1,
         }
     }
 }

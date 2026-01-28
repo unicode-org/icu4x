@@ -13,7 +13,8 @@ use crate::provider::pattern::{
     GenericPatternItem, PatternItem,
 };
 use crate::provider::{
-    names::*, semantic_skeletons::*, ErasedPackedPatterns, PackedSkeletonVariant,
+    semantic_skeletons::{marker_attrs, DatetimePatternsGlueV1, GluePattern},
+    ErasedPackedPatterns, PackedSkeletonVariant,
 };
 use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
@@ -51,7 +52,7 @@ impl RawPreferences {
     #[inline]
     pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Self {
         Self {
-            hour_cycle: prefs.hour_cycle.map(fields::Hour::from_hour_cycle),
+            hour_cycle: fields::Hour::from_prefs(prefs),
         }
     }
 }

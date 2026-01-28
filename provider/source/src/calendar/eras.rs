@@ -156,7 +156,7 @@ fn test_calendar_eras() {
     use icu::datetime::preferences::CalendarAlgorithm;
     use icu::locale::extensions::unicode::Value;
 
-    let provider = crate::SourceDataProvider::new_testing();
+    let provider = SourceDataProvider::new_testing();
 
     let era_dates_map = &provider
         .cldr()

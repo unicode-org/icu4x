@@ -6,13 +6,14 @@
 
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
+use core::cmp::Ordering;
 use core::fmt;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::AsULE;
 
 // Export the duration types from here
 #[cfg(feature = "unstable")]
-pub use crate::duration::{DateDuration, DateDurationParseError, DateDurationUnit};
+pub use crate::duration::{DateDuration, DateDurationUnit};
 use crate::{calendar_arithmetic::ArithmeticDate, error::MonthCodeParseError};
 
 #[cfg(feature = "unstable")]
@@ -70,7 +71,7 @@ mod unstable {
         ///
         /// For an example, see [`Self::extended_year`].
         pub era_year: Option<i32>,
-        /// See [`Date::extended_year()`](crate::Date::extended_year).
+        /// See [`YearInfo::extended_year()`](crate::types::YearInfo::extended_year).
         ///
         /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
         /// refer to the same year.
@@ -147,7 +148,7 @@ mod unstable {
         ///
         /// # Examples
         ///
-        /// Either `month_code` or `ordinal_month` can be used in DateFields, but they
+        /// Either `month_code` or `ordinal_month` can be used in [`DateFields`], but they
         /// might not resolve to the same month number:
         ///
         /// ```
@@ -259,8 +260,16 @@ impl YearInfo {
         }
     }
 
-    /// Get the extended year (See [`Date::extended_year`](crate::Date::extended_year))
-    /// for more information
+    /// The "extended year".
+    ///
+    /// This year number can be used when you need a simple numeric representation
+    /// of the year, and can be meaningfully compared with extended years from other
+    /// eras or used in arithmetic.
+    ///
+    /// For calendars defined in Temporal, this will match the "arithmetic year"
+    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
+    /// This is typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar.
     pub fn extended_year(self) -> i32 {
         match self {
             YearInfo::Era(e) => e.extended_year,
@@ -456,6 +465,19 @@ pub(crate) enum LeapStatus {
     FormattingLeap,
 }
 
+impl LeapStatus {
+    fn cmp_lexicographic(self, other: LeapStatus) -> Ordering {
+        use LeapStatus::*;
+        // FormattingLeap is ignored in .code() (folded into Normal)
+        match (self, other) {
+            (Normal | FormattingLeap, Normal | FormattingLeap) => Ordering::Equal,
+            (Leap, Leap) => Ordering::Equal,
+            (Normal | FormattingLeap, Leap) => Ordering::Less,
+            (Leap, Normal | FormattingLeap) => Ordering::Greater,
+        }
+    }
+}
+
 impl Month {
     /// Constructs a non-leap [`Month`] with with the given number.
     ///
@@ -590,6 +612,33 @@ impl Month {
             ])
             .unwrap(),
         )
+    }
+
+    pub(crate) fn cmp_lexicographic(self, other: Self) -> Ordering {
+        self.number
+            .cmp(&other.number)
+            .then_with(|| self.leap_status.cmp_lexicographic(other.leap_status))
+    }
+}
+
+#[test]
+fn test_cmp_lexicographic() {
+    let months_in_order = [
+        Month::new(1),
+        Month::new(2),
+        Month::leap(2),
+        Month::new(3),
+        Month::new(10),
+        Month::leap(10),
+    ];
+    for i in 0..months_in_order.len() - 1 {
+        for j in i + 1..months_in_order.len() {
+            let a = months_in_order[i];
+            let b = months_in_order[j];
+            assert!(a.cmp_lexicographic(a).is_eq());
+            assert!(a.cmp_lexicographic(b).is_lt());
+            assert!(b.cmp_lexicographic(a).is_gt());
+        }
     }
 }
 

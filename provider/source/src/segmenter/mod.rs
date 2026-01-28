@@ -29,6 +29,7 @@ use zerovec::ZeroVec;
 
 mod dictionary;
 mod lstm;
+mod unihan;
 
 // state machine name define by builtin name
 // [[tables]]

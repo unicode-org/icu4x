@@ -239,7 +239,7 @@ impl WeekdayNameLength {
         let field_symbol = field_symbol.to_format_symbol();
         // UTS 35 says that "E..EEE" are all Abbreviated
         // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+        let field_length = if matches!(field_symbol, Weekday::Format) {
             field_length.numeric_to_abbr()
         } else {
             field_length
@@ -624,7 +624,7 @@ pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDa
     _calendar: PhantomData<C>,
 }
 
-/// Extra metadata associated with DateTimeNames but not DateTimeFormatter.
+/// Extra metadata associated with [`FixedCalendarDateTimeNames`] but not [`DateTimeFormatter`].
 #[derive(Debug, Clone)]
 pub(crate) struct DateTimeNamesMetadata {
     zone_checksum: Option<u64>,
@@ -638,7 +638,7 @@ impl DateTimeNamesMetadata {
             zone_checksum: None,
         }
     }
-    /// If mz_periods is already populated, we can't load anything else because
+    /// If `mz_periods` is already populated, we can't load anything else because
     /// we can't verify the checksum. Set a blank checksum in this case.
     #[inline]
     pub(crate) fn new_from_previous<M: DateTimeNamesMarker>(names: &RawDateTimeNames<M>) -> Self {
@@ -1356,7 +1356,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         length: YearNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1>,
     {
         self.load_year_names(&crate::provider::Baked, length)
     }
@@ -1422,7 +1422,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         length: MonthNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1>,
     {
         self.load_month_names(&crate::provider::Baked, length)
     }
@@ -2736,6 +2736,100 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 }
 
+#[cfg(feature = "unstable")]
+impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet>
+where
+    FSet::DayPeriodNames: NamesContainer<
+        DayPeriodNamesV1,
+        DayPeriodNameLength,
+        Container = DataPayloadWithVariables<DayPeriodNamesV1, DayPeriodNameLength>,
+    >,
+{
+    /// Gets the "AM" day period symbol for the specified length if the data is loaded.
+    ///
+    /// Returns `Some` if the data for the specified length is loaded, or `None` if not loaded.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::{DayPeriodNameLength, FixedCalendarDateTimeNames};
+    /// use icu::locale::locale;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into())
+    ///         .unwrap();
+    ///
+    /// // Before loading data, the getter returns None:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Abbreviated), None);
+    ///
+    /// // Load the day period names:
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
+    ///
+    /// // Now we can get the AM symbol for the loaded length:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Abbreviated), Some("AM"));
+    ///
+    /// // But other lengths are not loaded:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Wide), None);
+    /// ```
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+    /// </div>
+    pub fn get_am(&self, length: DayPeriodNameLength) -> Option<&str> {
+        let borrowed = self.inner.as_borrowed();
+        borrowed
+            .dayperiod_names
+            .get_with_variables(length)
+            .and_then(|names| names.am())
+    }
+
+    /// Gets the "PM" day period symbol for the specified length if the data is loaded.
+    ///
+    /// Returns `Some` if the data for the specified length is loaded, or `None` if not loaded.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::{DayPeriodNameLength, FixedCalendarDateTimeNames};
+    /// use icu::locale::locale;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into())
+    ///         .unwrap();
+    ///
+    /// // Before loading data, the getter returns None:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Wide), None);
+    ///
+    /// // Load the day period names:
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Wide)
+    ///     .unwrap();
+    ///
+    /// // Now we can get the PM symbol for the loaded length:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Wide), Some("PM"));
+    ///
+    /// // But other lengths are not loaded:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Abbreviated), None);
+    /// ```
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+    /// </div>
+    pub fn get_pm(&self, length: DayPeriodNameLength) -> Option<&str> {
+        let borrowed = self.inner.as_borrowed();
+        borrowed
+            .dayperiod_names
+            .get_with_variables(length)
+            .and_then(|names| names.pm())
+    }
+}
+
 impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     /// Maps a [`FixedCalendarDateTimeNames`] of a specific `FSet` to a more general `FSet`.
     ///
@@ -3744,11 +3838,10 @@ impl RawDateTimeNamesBorrowed<'_> {
             .ok_or(GetNameForEraError::NotLoaded)?;
 
         match year_names {
-            YearNames::VariableEras(era_names) => crate::provider::names::get_year_name_from_map(
-                era_names,
-                era_year.era.as_str().into(),
-            )
-            .ok_or(GetNameForEraError::InvalidEraCode),
+            YearNames::VariableEras(era_names) => {
+                get_year_name_from_map(era_names, era_year.era.as_str().into())
+                    .ok_or(GetNameForEraError::InvalidEraCode)
+            }
             YearNames::FixedEras(era_names) => era_names
                 .get(if let Some(i) = era_year.era_index {
                     i as usize

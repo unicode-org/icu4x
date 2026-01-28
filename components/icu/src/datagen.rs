@@ -77,7 +77,7 @@ fn test_markers_for_bin() {
             crate::datetime::provider::names::DayPeriodNamesV1::INFO,
             crate::datetime::provider::names::DatetimeNamesMonthGregorianV1::INFO,
             crate::datetime::provider::names::DatetimeNamesYearGregorianV1::INFO,
-            crate::datetime::provider::names::DatetimePatternsGlueV1::INFO,
+            crate::datetime::provider::semantic_skeletons::DatetimePatternsGlueV1::INFO,
             crate::datetime::provider::DatetimePatternsDateGregorianV1::INFO,
             crate::datetime::provider::DatetimePatternsTimeV1::INFO,
             crate::decimal::provider::DecimalSymbolsV1::INFO,

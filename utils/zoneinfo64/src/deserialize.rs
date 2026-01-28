@@ -10,7 +10,7 @@ use resb::binary::BinaryDeserializerError;
 use serde::de::*;
 use serde::Deserialize;
 
-/// Deserialize a ZoneInfo64
+/// Deserialize a [`ZoneInfo64`]
 pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryDeserializerError> {
     let ZoneInfo64Raw {
         zones,
@@ -140,7 +140,7 @@ pub enum TzZoneRaw<'a> {
 impl<'de: 'a, 'a> Deserialize<'de> for TzZoneRaw<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: serde::Deserializer<'de>,
+        D: Deserializer<'de>,
     {
         struct TzDataRuleEnumVisitor<'a> {
             phantom: PhantomData<TzZoneRaw<'a>>,
@@ -233,11 +233,8 @@ fn rules<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<(&'de str, Tz
         {
             let mut vec = Vec::new();
             while let Some((key, value)) = map.next_entry::<&str, &[u8]>()? {
-                if value
-                    .as_ptr()
-                    .align_offset(core::mem::align_of::<[i32; 11]>())
-                    != 0
-                    || value.len() != core::mem::size_of::<[i32; 11]>()
+                if value.as_ptr().align_offset(align_of::<[i32; 11]>()) != 0
+                    || value.len() != size_of::<[i32; 11]>()
                 {
                     return Err(A::Error::custom("Wrong length or align"));
                 }
@@ -271,7 +268,7 @@ fn regions<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<Region>, D:
         {
             let mut vec = Vec::new();
             while let Some(bytes) = seq.next_element::<&[u8]>()? {
-                let utf16 = potential_utf::PotentialUtf16::from_slice(
+                let utf16 = PotentialUtf16::from_slice(
                     // Safety: all byte representations are valid u16s
                     unsafe { resb::binary::helpers::cast_bytes_to_slice::<_, A::Error>(bytes)? },
                 );

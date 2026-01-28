@@ -36,7 +36,7 @@ use icu::calendar::{Date, Iso};
 use icu::time::zone::UtcOffset;
 use icu::time::Time;
 use icu_provider::prelude::*;
-use source::{AbstractFs, SerdeCache, TzdbCache};
+use source::{AbstractFs, SerdeCache, TzdbCache, UnihanCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::path::Path;
@@ -96,6 +96,7 @@ pub struct SourceDataProvider {
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
+    unihan_paths: Option<Arc<UnihanCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
     pub(crate) timezone_horizon: time_zones::Timestamp,
@@ -131,6 +132,9 @@ impl SourceDataProvider {
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
+    /// The UCD version tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_UCD_TAG: &'static str = "17.0.0";
+
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_TZDB_TAG: &'static str = "2025c";
 
@@ -146,7 +150,7 @@ impl SourceDataProvider {
     #[expect(clippy::new_without_default)]
     pub fn new() -> Self {
         // Singleton so that all instantiations share the same cache.
-        static SINGLETON: std::sync::OnceLock<SourceDataProvider> = std::sync::OnceLock::new();
+        static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
         SINGLETON
             .get_or_init(|| {
                 Self::new_custom()
@@ -154,6 +158,7 @@ impl SourceDataProvider {
                     .with_icuexport_for_tag(Self::TESTED_ICUEXPORT_TAG)
                     .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
                     .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
+                    .with_unihan_for_tag(Self::TESTED_UCD_TAG)
             })
             .clone()
     }
@@ -169,6 +174,7 @@ impl SourceDataProvider {
             icuexport_paths: None,
             segmenter_lstm_paths: None,
             tzdb_paths: None,
+            unihan_paths: None,
             trie_type: Default::default(),
             timezone_horizon: time_zones::Timestamp::try_offset_only_from_str(
                 "2015-01-01T00:00:00Z",
@@ -208,6 +214,18 @@ impl SourceDataProvider {
     pub fn with_segmenter_lstm(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
             segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
+            ..self
+        })
+    }
+
+    /// Adds segmenter LSTM source data to the provider. The path should point to the Unihan ZIP file
+    /// (see [Unicode Character Database](https://www.unicode.org/ucd/)).
+    pub fn with_unihan(self, root: &Path) -> Result<Self, DataError> {
+        Ok(Self {
+            unihan_paths: Some(Arc::new(UnihanCache {
+                root: AbstractFs::new(root)?,
+                irg_cache: Default::default(),
+            })),
             ..self
         })
     }
@@ -281,6 +299,25 @@ impl SourceDataProvider {
         }
     }
 
+    /// Adds UCD Unihan source data to the provider. The data will be downloaded from unicode.org
+    /// using the given version tag (see [Unicode Character Database](https://www.unicode.org/ucd/)).
+    ///
+    /// Also see: [`TESTED_UCD_TAG`](Self::TESTED_UCD_TAG)
+    ///
+    /// ✨ *Enabled with the `networking` Cargo feature.*
+    #[cfg(feature = "networking")]
+    pub fn with_unihan_for_tag(self, tag: &str) -> Self {
+        Self {
+            unihan_paths: Some(Arc::new(UnihanCache {
+                root: AbstractFs::new_from_url(format!(
+                    "https://www.unicode.org/Public/{tag}/ucd/Unihan.zip"
+                )),
+                irg_cache: Default::default(),
+            })),
+            ..self
+        }
+    }
+
     /// Adds timezone database source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub](https://github.com/eggert/tz)).
     ///
@@ -310,6 +347,9 @@ impl SourceDataProvider {
         "Missing segmenter data. Use `.with_segmenter_lstm[_for_tag]` to set segmenter data.",
     );
 
+    const MISSING_UNIHAN_ERROR: DataError =
+        DataError::custom("Missing Unihan data. Use `.with_unihan[_for_tag]` to set Unihan data.");
+
     const MISSING_TZDB_ERROR: DataError =
         DataError::custom("Missing tzdb data. Use `.with_tzdb[_for_tag]` to set tzdb data.");
 
@@ -337,6 +377,12 @@ impl SourceDataProvider {
         e == Self::MISSING_TZDB_ERROR
     }
 
+    /// Identifies errors that are due to missing UCD data.
+    pub fn is_missing_unihan_error(mut e: DataError) -> bool {
+        e.marker = None;
+        e == Self::MISSING_UNIHAN_ERROR
+    }
+
     fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths.as_deref().ok_or(Self::MISSING_CLDR_ERROR)
     }
@@ -351,6 +397,13 @@ impl SourceDataProvider {
         self.segmenter_lstm_paths
             .as_deref()
             .ok_or(Self::MISSING_SEGMENTER_LSTM_ERROR)
+    }
+
+    #[allow(dead_code)]
+    fn unihan(&self) -> Result<&UnihanCache, DataError> {
+        self.unihan_paths
+            .as_deref()
+            .ok_or(Self::MISSING_UNIHAN_ERROR)
     }
 
     fn tzdb(&self) -> Result<&TzdbCache, DataError> {
@@ -444,7 +497,7 @@ fn test_check_req() {
     }
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
-    impl crate::IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
+    impl IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
         fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
             Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
         }

@@ -11,7 +11,7 @@ use crate::personnames::api::{FieldLength, FieldModifier, NameField, PersonName}
 ///
 /// Derive missing initials from the name
 ///
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-initials
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-initials>
 pub fn derive_missing_initials(
     person_name: &dyn PersonName,
     requested_field: NameField,

@@ -30,7 +30,7 @@ namespace icu4x {
 /**
  * The raw canonical composition operation.
  *
- * Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
+ * Callers should generally use `ComposingNormalizer` unless they specifically need raw composition operations
  *
  * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
  */
@@ -38,14 +38,14 @@ class CanonicalComposition {
 public:
 
   /**
-   * Construct a new CanonicalComposition instance for NFC using compiled data.
+   * Construct a new `CanonicalComposition` instance for NFC using compiled data.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::CanonicalComposition> create();
 
   /**
-   * Construct a new CanonicalComposition instance for NFC using a particular data source.
+   * Construct a new `CanonicalComposition` instance for NFC using a particular data source.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
    */

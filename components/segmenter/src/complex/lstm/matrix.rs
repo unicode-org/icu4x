@@ -269,7 +269,7 @@ impl MatrixBorrowed<'_, 1> {
 impl MatrixBorrowedMut<'_, 1> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
-    /// Note: For better dot product efficiency, if `b` is MxN, then `a` should be N;
+    /// Note: For better dot product efficiency, if `b` is `MxN`, then `a` should be N;
     /// this is the opposite of standard practice.
     pub(super) fn add_dot_2d(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<2>) {
         let m = a.dim();
@@ -304,7 +304,7 @@ impl MatrixBorrowedMut<'_, 1> {
 impl MatrixBorrowedMut<'_, 2> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
-    /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
+    /// Self should be `MxN`; `a`, _O_; and `b`, `MxNxO`.
     pub(super) fn add_dot_3d_1(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
@@ -344,7 +344,7 @@ impl MatrixBorrowedMut<'_, 2> {
 
     /// Calculate the dot product of a and b, adding the result to self.
     ///
-    /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
+    /// Self should be `MxN`; `a`, `O`; and `b`, `MxNxO`.
     pub(super) fn add_dot_3d_2(&mut self, a: MatrixZero<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;

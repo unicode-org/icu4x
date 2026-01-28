@@ -56,7 +56,7 @@ impl WeekInformation {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, prefs: WeekPreferences) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::CalendarWeekV1> + ?Sized,
+        P: DataProvider<CalendarWeekV1> + ?Sized,
     {
         let locale = CalendarWeekV1::make_locale(prefs.locale_preferences);
         provider
@@ -107,13 +107,13 @@ impl WeekCalculator {
     ///
     /// # Arguments
     ///  - calendar: Calendar information used to compute the week number.
-    ///  - num_days_in_previous_unit: The number of days in the preceding month/year.
-    ///  - num_days_in_unit: The number of days in the month/year.
+    ///  - `num_days_in_previous_unit`: The number of days in the preceding month/year.
+    ///  - `num_days_in_unit`: The number of days in the month/year.
     ///  - day: 1-based day of month/year.
-    ///  - week_day: The weekday of `day`..
+    ///  - `week_day`: The weekday of `day`..
     ///
     /// # Error
-    /// If num_days_in_unit/num_days_in_previous_unit < MIN_UNIT_DAYS
+    /// If `num_days_in_unit/num_days_in_previous_unit` < `MIN_UNIT_DAYS`
     pub(crate) fn week_of(
         self,
         num_days_in_previous_unit: u16,
@@ -180,7 +180,7 @@ struct UnitInfo {
 }
 
 impl UnitInfo {
-    /// Creates a UnitInfo for a given year or month.
+    /// Creates a [`UnitInfo`] for a given year or month.
     fn new(first_day: Weekday, duration_days: u16) -> Result<UnitInfo, RangeError> {
         if duration_days < MIN_UNIT_DAYS {
             return Err(RangeError {
@@ -303,7 +303,7 @@ impl Iterator for WeekdaySetIterator {
             return Some(self.current_day);
         }
 
-        Option::None
+        None
     }
 }
 
@@ -401,12 +401,12 @@ mod tests {
     /// Uses enumeration & bucketing to assign each day of a month or year `unit` to a week.
     ///
     /// This alternative implementation serves as an exhaustive safety check
-    /// of relative_week() (in addition to the manual test points used
-    /// for testing week_of()).
+    /// of `relative_week()` (in addition to the manual test points used
+    /// for testing `week_of()`).
     fn classify_days_of_unit(calendar: WeekCalculator, unit: UnitInfo) -> Vec<RelativeWeek> {
         let mut weeks: Vec<Vec<Weekday>> = Vec::new();
         for day_index in 0..unit.duration_days {
-            let day = super::add_to_weekday(unit.first_day, i32::from(day_index));
+            let day = add_to_weekday(unit.first_day, i32::from(day_index));
             if day == calendar.first_weekday || weeks.is_empty() {
                 weeks.push(Vec::new());
             }
@@ -440,7 +440,7 @@ mod tests {
                     first_weekday: Weekday::from_days_since_sunday(start_of_week),
                     min_week_days,
                 };
-                for unit_duration in super::MIN_UNIT_DAYS..400 {
+                for unit_duration in MIN_UNIT_DAYS..400 {
                     for start_of_unit in 1..7 {
                         let unit = UnitInfo::new(
                             Weekday::from_days_since_sunday(start_of_unit),
@@ -631,12 +631,7 @@ fn test_weekdays_iter() {
 
     let multiple_contiguous_days = WeekdaySetIterator::new(
         Monday,
-        WeekdaySet::new(&[
-            Weekday::Tuesday,
-            Weekday::Wednesday,
-            Weekday::Thursday,
-            Weekday::Friday,
-        ]),
+        WeekdaySet::new(&[Tuesday, Wednesday, Thursday, Friday]),
     );
     assert_eq!(
         vec![Tuesday, Wednesday, Thursday, Friday],
@@ -646,12 +641,7 @@ fn test_weekdays_iter() {
     // Non-contiguous days and iterator yielding elements based off first_weekday
     let multiple_non_contiguous_days = WeekdaySetIterator::new(
         Wednesday,
-        WeekdaySet::new(&[
-            Weekday::Tuesday,
-            Weekday::Thursday,
-            Weekday::Friday,
-            Weekday::Sunday,
-        ]),
+        WeekdaySet::new(&[Tuesday, Thursday, Friday, Sunday]),
     );
     assert_eq!(
         vec![Thursday, Friday, Sunday, Tuesday],

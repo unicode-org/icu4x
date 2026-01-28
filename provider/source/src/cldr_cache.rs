@@ -11,9 +11,9 @@ use crate::CoverageLevel;
 use icu::locale::provider::{
     LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
+use icu::locale::subtags::Language;
 #[cfg(feature = "experimental")]
 use icu::locale::subtags::Region;
-#[cfg(feature = "experimental")]
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
@@ -200,7 +200,7 @@ impl CldrCache {
             return Ok(None);
         }
         let mut new_langid =
-            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
+            LanguageIdentifier::from((locale.language, locale.script, locale.region));
         self.extended_locale_expander()?.maximize(&mut new_langid);
         debug_assert!(
             new_langid.script.is_some(),
@@ -219,8 +219,7 @@ impl CldrCache {
         if locale.language.is_unknown() || locale.script.is_none() {
             return Ok(None);
         }
-        let mut langid =
-            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
+        let mut langid = LanguageIdentifier::from((locale.language, locale.script, locale.region));
         self.extended_locale_expander()?.minimize(&mut langid);
         if langid.script.is_some() || (locale.region.is_none() && langid.region.is_some()) {
             // Wasn't able to minimize the script, or had to add a region
@@ -250,17 +249,22 @@ impl CldrCache {
         Ok(lang_id.region.unwrap())
     }
 
-    /// Computes the likely script-based locale group for a given locale.
+    /// Computes the script-based locale group for a given locale.
+    ///
+    /// This finds the most likely language for the locale's script, then minimizes it
+    /// (keeping the script if it's not the default for that language).
     ///
     /// Example:
     /// - "en-US" -> "en-Latn-US" -> "und-Latn" -> "en-Latn-US" -> "en"
     /// - "es-US" ->  "es-Latn-US" -> "und-Latn" -> "en-Latn-US" -> "en"
     /// - "fr-FR" -> "fr-Latn-FR" -> "und-Latn" -> "en-Latn-US" -> "en"
     /// - "ar-SA" -> "ar-Arab-SA" -> "und-Arab" -> "ar-Arab-EG" -> "ar"
-    pub(crate) fn script_locale_group(&self, locale: &DataLocale) -> Result<DataLocale, DataError> {
-        use icu::locale::subtags::Language;
-        use icu::locale::LanguageIdentifier;
-
+    /// - "bm-Nkoo" -> "bm-Nkoo-ML" -> "und-Nkoo" -> "man-Nkoo-GN" -> "man-Nkoo"
+    /// - "nqo" -> "nqo-Nkoo-GN" -> "und-Nkoo" -> "man-Nkoo-GN" -> "man-Nkoo"
+    pub(crate) fn script_based_locale_group(
+        &self,
+        locale: &DataLocale,
+    ) -> Result<DataLocale, DataError> {
         let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
 
         // 1. Maximizes the input locale to get full language/script/region
@@ -274,10 +278,12 @@ impl CldrCache {
 
         // 3. Maximizes again to find the most likely language for that script
         //    (e.g. "und-Latn" -> "en-Latn-US")
+        //    (e.g. "und-Nkoo" -> "man-Nkoo-GN")
         self.extended_locale_expander()?.maximize(&mut group);
 
-        // 4. Minimizes to keep just the language
+        // 4. Minimizes the locale, keeping the script if it's not the default for the language
         //    (e.g. "en-Latn-US" -> "en")
+        //    (e.g. "man-Nkoo-GN" -> "man-Nkoo")
         self.extended_locale_expander()?
             .minimize_favor_script(&mut group);
         Ok(group.into())
@@ -351,4 +357,66 @@ impl<'a> CldrDirLang<'a> {
             Ok(false)
         }
     }
+}
+
+#[test]
+fn test_script_based_locale_group() {
+    use crate::SourceDataProvider;
+
+    let provider = SourceDataProvider::new_testing();
+    let cldr = provider.cldr().unwrap();
+
+    // Test cases from the documentation
+    // "en-US" -> "en"
+    let en_us = DataLocale::from_str("en-US").unwrap();
+    assert_eq!(
+        cldr.script_based_locale_group(&en_us).unwrap().to_string(),
+        "en"
+    );
+
+    // "es-US" -> "en" (Spanish uses Latin script, English is most common Latin-script language)
+    let es_us = DataLocale::from_str("es-US").unwrap();
+    assert_eq!(
+        cldr.script_based_locale_group(&es_us).unwrap().to_string(),
+        "en"
+    );
+
+    // "fr-FR" -> "en"
+    let fr_fr = DataLocale::from_str("fr-FR").unwrap();
+    assert_eq!(
+        cldr.script_based_locale_group(&fr_fr).unwrap().to_string(),
+        "en"
+    );
+
+    // "ar-SA" -> "ar" (Arabic uses Arabic script)
+    let ar_sa = DataLocale::from_str("ar-SA").unwrap();
+    assert_eq!(
+        cldr.script_based_locale_group(&ar_sa).unwrap().to_string(),
+        "ar"
+    );
+
+    // "nqo" -> "man-Nkoo" (N'Ko language uses N'Ko script, most likely language for N'Ko is Mandingo,
+    // but N'Ko is not Mandingo's default script so it's kept)
+    let nqo = DataLocale::from_str("nqo").unwrap();
+    assert_eq!(
+        cldr.script_based_locale_group(&nqo).unwrap().to_string(),
+        "man-Nkoo"
+    );
+
+    // "bm-Nkoo" -> "man-Nkoo" (Bambara in N'Ko script -> Mandingo is most likely for N'Ko script,
+    // but N'Ko is not Mandingo's default script so it's kept)
+    let bm_nkoo = DataLocale::from_str("bm-Nkoo").unwrap();
+    assert_eq!(
+        cldr.script_based_locale_group(&bm_nkoo)
+            .unwrap()
+            .to_string(),
+        "man-Nkoo"
+    );
+
+    // "man" -> "en" (Mandingo's default script is Latin, Latin's most likely language is English)
+    let man = DataLocale::from_str("man").unwrap();
+    assert_eq!(
+        cldr.script_based_locale_group(&man).unwrap().to_string(),
+        "en"
+    );
 }

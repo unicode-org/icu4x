@@ -14,7 +14,7 @@ use icu_calendar::Date;
 /// which are not officially recognized in any region and do not match sightings
 /// on the ground.
 ///
-/// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
+/// [^1]: See [`calendrical_calculations::islamic::observational_islamic_from_fixed`]
 #[derive(Debug, Clone, Copy)]
 struct ReingoldSimulation;
 
@@ -30,19 +30,16 @@ impl Rules for ReingoldSimulation {
             .year(extended_year);
         }
 
-        let first_days = core::array::from_fn::<_, 13, _>(|m| {
-            calendrical_calculations::islamic::fixed_from_observational_islamic(
-                extended_year + m as i32 / 12,
-                m as u8 % 12 + 1,
-                1,
-                calendrical_calculations::islamic::MECCA,
-            )
-        });
-
         HijriYear::try_new(
             extended_year,
-            first_days[0],
-            core::array::from_fn(|i| first_days[i + 1] - first_days[i] == 30),
+            core::array::from_fn::<_, 13, _>(|m| {
+                calendrical_calculations::islamic::fixed_from_observational_islamic(
+                    extended_year + m as i32 / 12,
+                    m as u8 % 12 + 1,
+                    1,
+                    calendrical_calculations::islamic::MECCA,
+                )
+            }),
         )
         .unwrap()
     }

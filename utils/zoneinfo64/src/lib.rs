@@ -46,6 +46,7 @@
 extern crate alloc;
 
 use alloc::boxed::Box;
+use alloc::string::String;
 use alloc::vec::Vec;
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt::Debug;
@@ -86,7 +87,7 @@ impl UtcOffset {
 }
 
 #[derive(Debug)]
-/// The primary type containing parsed ZoneInfo64 data
+/// The primary type containing parsed [`ZoneInfo64`] data
 pub struct ZoneInfo64<'a> {
     // Invariant: non-empty
     zones: Vec<TzZone<'a>>,
@@ -107,21 +108,21 @@ enum TzZone<'a> {
 
 #[derive(Clone)]
 struct TzZoneData<'a> {
-    /// Transitions before the epoch of i32::MIN
+    /// Transitions before the epoch of `i32::MIN`
     trans_pre32: &'a [(i32, i32)],
     /// Transitions with epoch values that can fit in an i32
     trans: &'a [i32],
-    /// Transitions after the epoch of i32::MAX
+    /// Transitions after the epoch of `i32::MAX`
     trans_post32: &'a [(i32, i32)],
-    /// Map to offset from transitions. Treat [trans_pre32, trans, trans_post32]
+    /// Map to offset from transitions. Treat [`trans_pre32`, trans, `trans_post32`]
     /// as a single array and use its corresponding index into this to get the index
-    /// in type_offsets. The index in type_offsets is the *new* offset after the
+    /// in `type_offsets`. The index in `type_offsets` is the *new* offset after the
     /// matching transition
     type_map: &'a [u8],
     /// Offsets. First entry is standard time, second entry is offset from standard time (if any)
     type_offsets: &'a [(i32, i32)],
     /// An index into the Rules table,
-    /// its standard_offset_seconds, and its starting year.
+    /// its `standard_offset_seconds`, and its starting year.
     final_rule_offset_year: Option<(u32, i32, i32)>,
     #[allow(dead_code)]
     links: &'a [u32],
@@ -171,7 +172,7 @@ impl Debug for TzZoneData<'_> {
 impl<'a> ZoneInfo64<'a> {
     /// Parse this object from 4-byte aligned data
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
-        crate::deserialize::deserialize(resb)
+        deserialize::deserialize(resb)
     }
     #[cfg(test)]
     fn is_alias(&self, iana: &str) -> bool {
@@ -265,10 +266,7 @@ impl Debug for Zone<'_> {
         f.debug_struct("Zone")
             .field("simple", self.simple())
             .field("rule", &self.simple().final_rule(&self.info.rules))
-            .field(
-                "name",
-                &self.name().chars().collect::<alloc::string::String>(),
-            )
+            .field("name", &self.name().chars().collect::<String>())
             .field("region", &self.region())
             .finish()
     }
