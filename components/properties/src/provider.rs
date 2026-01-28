@@ -636,103 +636,103 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// Data marker for the 'BidiClass' Unicode property
     PropertyEnumBidiClassV1,
-    PropertyCodePointMap<'static, crate::props::BidiClass>,
+    PropertyCodePointMap<'static, BidiClass>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'CanonicalCombiningClass' Unicode property
     PropertyEnumCanonicalCombiningClassV1,
-    PropertyCodePointMap<'static, crate::props::CanonicalCombiningClass>,
+    PropertyCodePointMap<'static, CanonicalCombiningClass>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'EastAsianWidth' Unicode property
     PropertyEnumEastAsianWidthV1,
-    PropertyCodePointMap<'static, crate::props::EastAsianWidth>,
+    PropertyCodePointMap<'static, EastAsianWidth>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'GeneralCategory' Unicode property
     PropertyEnumGeneralCategoryV1,
-    PropertyCodePointMap<'static, crate::props::GeneralCategory>,
+    PropertyCodePointMap<'static, GeneralCategory>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'GraphemeClusterBreak' Unicode property
     PropertyEnumGraphemeClusterBreakV1,
-    PropertyCodePointMap<'static, crate::props::GraphemeClusterBreak>,
+    PropertyCodePointMap<'static, GraphemeClusterBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'HangulSyllableType' Unicode property
     PropertyEnumHangulSyllableTypeV1,
-    PropertyCodePointMap<'static, crate::props::HangulSyllableType>,
+    PropertyCodePointMap<'static, HangulSyllableType>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'IndicConjunctBreak' Unicode property
     PropertyEnumIndicConjunctBreakV1,
-    PropertyCodePointMap<'static, crate::props::IndicConjunctBreak>,
+    PropertyCodePointMap<'static, IndicConjunctBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'IndicSyllabicCategory' Unicode property
     PropertyEnumIndicSyllabicCategoryV1,
-    PropertyCodePointMap<'static, crate::props::IndicSyllabicCategory>,
+    PropertyCodePointMap<'static, IndicSyllabicCategory>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'JoiningGroup' Unicode property
     PropertyEnumJoiningGroupV1,
-    PropertyCodePointMap<'static, crate::props::JoiningGroup>,
+    PropertyCodePointMap<'static, JoiningGroup>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'JoiningType' Unicode property
     PropertyEnumJoiningTypeV1,
-    PropertyCodePointMap<'static, crate::props::JoiningType>,
+    PropertyCodePointMap<'static, JoiningType>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'LineBreak' Unicode property
     PropertyEnumLineBreakV1,
-    PropertyCodePointMap<'static, crate::props::LineBreak>,
+    PropertyCodePointMap<'static, LineBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'NumericValue' Unicode property
     PropertyEnumNumericTypeV1,
-    PropertyCodePointMap<'static, crate::props::NumericType>,
+    PropertyCodePointMap<'static, NumericType>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'Script' Unicode property
     PropertyEnumScriptV1,
-    PropertyCodePointMap<'static, crate::props::Script>,
+    PropertyCodePointMap<'static, Script>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'SentenceBreak' Unicode property
     PropertyEnumSentenceBreakV1,
-    PropertyCodePointMap<'static, crate::props::SentenceBreak>,
+    PropertyCodePointMap<'static, SentenceBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'Vertical_Orientation' Unicode property
     PropertyEnumVerticalOrientationV1,
-    PropertyCodePointMap<'static, crate::props::VerticalOrientation>,
+    PropertyCodePointMap<'static, VerticalOrientation>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'WordBreak' Unicode property
     PropertyEnumWordBreakV1,
-    PropertyCodePointMap<'static, crate::props::WordBreak>,
+    PropertyCodePointMap<'static, WordBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'BidiMirroringGlyph' Unicode property
     PropertyEnumBidiMirroringGlyphV1,
-    PropertyCodePointMap<'static, crate::bidi::BidiMirroringGlyph>,
+    PropertyCodePointMap<'static, BidiMirroringGlyph>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
@@ -1175,10 +1175,10 @@ impl<'data> PropertyUnicodeSet<'data> {
 pub struct ScriptWithExtensionsProperty<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
-    /// Script_Extensions value, nearly matching the representation
+    /// `Script_Extensions` value, nearly matching the representation
     /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
     ///
-    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
+    /// | High order 2 bits value | Script                                                 | `Script_Extensions`                                              |
     /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
     /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
     /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
@@ -1190,10 +1190,10 @@ pub struct ScriptWithExtensionsProperty<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, ScriptWithExt>,
 
-    /// This companion structure stores Script_Extensions values, which are
+    /// This companion structure stores `Script_Extensions` values, which are
     /// themselves arrays / vectors. This structure only stores the values for
     /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
-    /// sub-vector represents the Script_Extensions array value for a code point,
+    /// sub-vector represents the `Script_Extensions` array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,

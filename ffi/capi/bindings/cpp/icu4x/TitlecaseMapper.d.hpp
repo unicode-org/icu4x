@@ -62,7 +62,7 @@ public:
   inline icu4x::diplomat::result<std::monostate, icu4x::diplomat::Utf8Error> titlecase_segment_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output) const;
 
   /**
-   * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+   * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a `TitlecaseMapper` object)
    *
    * The `v1` refers to the version of the options struct, which may change as we add more options
    *

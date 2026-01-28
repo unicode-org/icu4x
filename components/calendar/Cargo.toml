@@ -74,3 +74,6 @@ required-features = ["ixdtf"]
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true
+
+[lints]
+workspace = true

@@ -18,3 +18,6 @@ include.workspace = true
 [dev-dependencies]
 icu = { path = "../../components/icu", features = ["experimental"] }
 icu_provider = { workspace = true }
+
+[lints]
+workspace = true

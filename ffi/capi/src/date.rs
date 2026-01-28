@@ -8,7 +8,6 @@ use ffi::IsoWeekOfYear;
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
-    use alloc::sync::Arc;
     use core::fmt::Write;
     #[cfg(feature = "unstable")]
     use diplomat_runtime::DiplomatOption;
@@ -81,7 +80,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::to_any, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn to_any(&self) -> Box<Date> {
-            Box::new(Date(self.0.to_any().into_atomic_ref_counted()))
+            Box::new(Date(self.0.to_any()))
         }
 
         /// Returns this date's Rata Die
@@ -148,11 +147,11 @@ pub mod ffi {
         /// Returns the year number in the current era for this date
         ///
         /// For calendars without an era, returns the extended year
-        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum)]
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn year(&self) -> i32 {
-            self.0.extended_year()
+            self.0.year().extended_year()
         }
 
         /// Returns if the year is a leap year for this date
@@ -234,7 +233,7 @@ pub mod ffi {
     #[diplomat::transparent_convert]
     /// An ICU4X Date object capable of containing a date for any calendar.
     #[diplomat::rust_link(icu::calendar::Date, Struct)]
-    pub struct Date(pub icu_calendar::Date<Arc<icu_calendar::AnyCalendar>>);
+    pub struct Date(pub icu_calendar::Date<icu_calendar::AnyCalendar>);
 
     impl Date {
         /// Creates a new [`Date`] representing the ISO date
@@ -384,7 +383,7 @@ pub mod ffi {
         /// Returns 1-indexed number of the month of this date in its year
         ///
         /// Note that for lunar calendars this may not lead to the same month
-        /// having the same ordinal month across years; use month_code if you care
+        /// having the same ordinal month across years; use `month_code` if you care
         /// about month identity.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::ordinal, StructField)]
@@ -459,11 +458,11 @@ pub mod ffi {
         /// This year number can be used when you need a simple numeric representation
         /// of the year, and can be meaningfully compared with extended years from other
         /// eras or used in arithmetic.
-        #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
-            self.0.extended_year()
+            self.0.year().extended_year()
         }
 
         /// Returns the era for this date, or an empty string
@@ -509,7 +508,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::calendar_wrapper, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn calendar(&self) -> Box<Calendar> {
-            Box::new(Calendar(self.0.calendar_wrapper().clone()))
+            Box::new(Calendar(self.0.calendar().clone()))
         }
     }
 

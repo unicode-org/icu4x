@@ -208,8 +208,8 @@ impl Extensions {
             )>,
             &transform::Fields,
         ),
-        &private::Private,
-        &[other::Other],
+        &Private,
+        &[Other],
     ) {
         (
             self.unicode.as_tuple(),

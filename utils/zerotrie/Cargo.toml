@@ -80,3 +80,6 @@ required-features = ["alloc", "dense"]
 [[test]]
 name = "locale_aux_test"
 required-features = ["alloc", "litemap"]
+
+[lints]
+workspace = true

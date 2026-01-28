@@ -31,6 +31,7 @@ const ISO_DATE_PAIRS: &[(&str, &str, u64, (u32, u64), (u32, u64), (u32, u32, u64
     ("2022-03-01", "2020-02-29", 731,  (104, 3), (24, 1),  (2, 0, 1)),
 ];
 
+#[allow(clippy::trivially_copy_pass_by_ref)]
 fn check<A>(
     d0: &Date<A>,
     d1: &Date<A>,

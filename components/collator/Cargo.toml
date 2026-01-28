@@ -57,3 +57,6 @@ unstable = []
 [[bench]]
 name = "bench"
 harness = false
+
+[lints]
+workspace = true

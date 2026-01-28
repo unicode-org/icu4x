@@ -10,6 +10,7 @@ use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::{impl_display_with_writeable, Writeable};
 
+#[derive(Debug)]
 pub struct FormattedUnit<'l> {
     pub(crate) value: &'l Decimal,
     // TODO: review using options and essentials.
@@ -21,7 +22,7 @@ pub struct FormattedUnit<'l> {
 }
 
 impl Writeable for FormattedUnit<'_> {
-    fn write_to_parts<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to_parts<W>(&self, sink: &mut W) -> Result<(), core::fmt::Error>
     where
         W: writeable::PartsWrite + ?Sized,
     {

@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// Provider structs must be stable
-#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
@@ -17,6 +14,9 @@ use zerovec::{VarZeroVec, ZeroMap};
 #[cfg(feature = "serde")]
 use icu_pattern::DoublePlaceholder;
 use icu_pattern::DoublePlaceholderPattern;
+
+use crate::dimension::currency::options::Width;
+use crate::dimension::currency::CurrencyCode;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -61,13 +61,13 @@ pub struct CurrencyEssentials<'data> {
         feature = "serde",
         serde(
             borrow,
-            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
         )
     )]
-    pub standard_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
+    pub standard_pattern: Cow<'data, DoublePlaceholderPattern>,
 
     // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
-    /// The standard_alpha_next_to_number currency pattern used for formatting.
+    /// The `standard_alpha_next_to_number` currency pattern used for formatting.
     ///
     /// This pattern uses two placeholders:
     /// - `0`: The numeric currency value.
@@ -76,10 +76,10 @@ pub struct CurrencyEssentials<'data> {
         feature = "serde",
         serde(
             borrow,
-            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
         )
     )]
-    pub standard_alpha_next_to_number_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
+    pub standard_alpha_next_to_number_pattern: Cow<'data, DoublePlaceholderPattern>,
 
     /// A list of placeholders (strings), such as currency symbols, referenced by index.
     ///
@@ -105,7 +105,7 @@ pub enum PatternSelection {
     #[default]
     Standard = 0,
 
-    /// Use the standard_alpha_next_to_number pattern.
+    /// Use the `standard_alpha_next_to_number` pattern.
     StandardAlphaNextToNumber = 1,
 }
 
@@ -116,7 +116,7 @@ pub enum PatternSelection {
 #[repr(u16)]
 pub enum PlaceholderValue {
     /// The index of the place holder in the place holders list.
-    /// NOTE: the maximum value is MAX_PLACEHOLDER_INDEX which is 2045 (0b0111_1111_1101).
+    /// NOTE: the maximum value is `MAX_PLACEHOLDER_INDEX` which is 2045 (`0b0111_1111_1101`).
     Index(u16),
 
     /// The place holder is the iso code.
@@ -141,4 +141,44 @@ pub struct CurrencyPatternConfig {
     /// The index of the narrow pattern place holder in the place holders list.
     /// If the value is `None`, this means that the narrow pattern does not have a place holder.
     pub narrow_placeholder_value: Option<PlaceholderValue>,
+}
+
+impl<'a> CurrencyEssentials<'a> {
+    // Returns the currency placeholder value for the currency,
+    // and the currency pattern for the given width and currency
+    pub(crate) fn name_and_pattern(
+        &'a self,
+        width: Width,
+        currency: &'a CurrencyCode,
+    ) -> (&'a str, &'a DoublePlaceholderPattern, PatternSelection) {
+        let config = self
+            .pattern_config_map
+            .get_copied(&currency.0.to_unvalidated())
+            .unwrap_or(self.default_pattern_config);
+
+        let placeholder_index = match width {
+            Width::Short => config.short_placeholder_value,
+            Width::Narrow => config.narrow_placeholder_value,
+        };
+
+        let currency = match placeholder_index {
+            Some(PlaceholderValue::Index(index)) => self.placeholders.get(index.into()),
+            Some(PlaceholderValue::ISO) | None => None,
+        }
+        .unwrap_or(currency.0.as_str());
+
+        let pattern_selection = match width {
+            Width::Short => config.short_pattern_selection,
+            Width::Narrow => config.narrow_pattern_selection,
+        };
+
+        let pattern = match pattern_selection {
+            PatternSelection::Standard => &*self.standard_pattern,
+            PatternSelection::StandardAlphaNextToNumber => {
+                &*self.standard_alpha_next_to_number_pattern
+            }
+        };
+
+        (currency, pattern, pattern_selection)
+    }
 }

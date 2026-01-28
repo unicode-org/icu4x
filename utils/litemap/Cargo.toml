@@ -75,3 +75,6 @@ required-features = ["serde"]
 name = "litemap"
 harness = false
 required-features = ["serde"]
+
+[lints]
+workspace = true

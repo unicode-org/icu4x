@@ -8,9 +8,12 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::pattern;
 
-use icu::datetime::provider::neo::marker_attrs::GlueType;
-use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
-use icu::datetime::provider::neo::*;
+use icu::datetime::provider::names::*;
+use icu::datetime::provider::semantic_skeletons::marker_attrs::GlueType;
+use icu::datetime::provider::semantic_skeletons::marker_attrs::{
+    self, Context, Length, PatternLength,
+};
+use icu::datetime::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
@@ -30,7 +33,7 @@ const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::WIDE_STANDALONE,
 ];
 
-/// Lengths for month data (NORMAL_MARKER_LENGTHS + numeric)
+/// Lengths for month data (`NORMAL_MARKER_LENGTHS` + numeric)
 const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
@@ -227,10 +230,7 @@ fn eras_collect<'a>(
 
     for &(cldr, ref era) in all_eras {
         out.insert(
-            (
-                era.code.as_str(),
-                era.icu4x_era_index.unwrap_or(u8::MAX) as usize,
-            ),
+            (era.code.as_str(), era.icu4x_era_index.unwrap() as usize),
             &*eras.load(length)[&cldr.to_string()],
         );
     }
@@ -274,7 +274,9 @@ fn years_convert(
             .max()
             .unwrap_or_default();
 
-        if max_icu4x_era_index > 10 {
+        if calendar == DatagenCalendar::Japanese {
+            // The Japanese calendar didn't produce era indices until 2.2.0. To keep
+            // new-data-old-code working, we need to produce `YearNames::VariableEras`.
             let kv = eras
                 .iter()
                 .map(|(&(k, _), &v)| (PotentialUtf8::from_str(k), v))
@@ -496,11 +498,7 @@ fn datetimepattern_convert(
     length: PatternLength,
     glue_type: GlueType,
 ) -> Result<GluePattern<'static>, DataError> {
-    let append_tz = icu_pattern::DoublePlaceholderPattern::try_from_str(
-        &data.datetime_formats.append_items.timezone,
-        Default::default(),
-    )
-    .expect("failed to parse pattern");
+    let append_tz = &data.datetime_formats.append_items.timezone;
 
     // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
     let at_time = data

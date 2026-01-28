@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// Lookup of the Canonical_Combining_Class Unicode property
+/// Lookup of the `Canonical_Combining_Class` Unicode property
 ///
 /// See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
 final class CanonicalCombiningClassMap implements ffi.Finalizable {
@@ -26,7 +26,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CanonicalCombiningClassMap_destroy_mv1));
 
-  /// Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
+  /// Construct a new `CanonicalCombiningClassMap` instance for NFC using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
   factory CanonicalCombiningClassMap() {
@@ -34,7 +34,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     return CanonicalCombiningClassMap._fromFfi(result, []);
   }
 
-  /// Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
+  /// Construct a new `CanonicalCombiningClassMap` instance for NFC using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
   ///

@@ -191,8 +191,8 @@ impl LocaleFallbackerBorrowed<'static> {
     #[expect(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {
-            likely_subtags: crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
-            parents: crate::provider::Baked::SINGLETON_LOCALE_PARENTS_V1,
+            likely_subtags: Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
+            parents: Baked::SINGLETON_LOCALE_PARENTS_V1,
         }
     }
 
