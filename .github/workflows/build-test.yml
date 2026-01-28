@@ -336,7 +336,12 @@ jobs:
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
         # Keep in sync with artifacts-build.yml
-        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.11.0-46.0.dev' }}
+        sdk: 3.11.0-46.0.dev
+        # Currently disabled: There are a lot of incoming changes to Dart native-assets' JSON format,
+        # so we won't do nightly builds for now. The first failing build is 3.12.0-62.0.dev.
+        # Tracked upstream in https://github.com/orgs/dart-lang/projects/99
+        # Revisit in April 2026.
+        # sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.11.0-46.0.dev' }}
     - name: Install yq if Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: choco install yq
