@@ -332,6 +332,167 @@ export class Locale {
     }
 
     /**
+     * Writes a string representation of the {@link Locale} variants to `write`.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    variants() {
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+
+    wasm.icu4x_Locale_variants_mv1(this.ffiValue, write.buffer);
+
+        try {
+            return write.readString8();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            write.free();
+        }
+    }
+
+    /**
+     * Returns the number of variants in this {@link Locale}.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    get variantCount() {
+
+        const result = wasm.icu4x_Locale_variant_count_mv1(this.ffiValue);
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Writes the variant at the given index to `write`.
+     *
+     * Returns `None` if the index is out of bounds.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    variantAt(index) {
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+
+
+        const result = wasm.icu4x_Locale_variant_at_mv1(this.ffiValue, index, write.buffer);
+
+        try {
+            return result === 0 ? null : write.readString8();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            write.free();
+        }
+    }
+
+    /**
+     * Returns whether the {@link Locale} has a specific variant.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    hasVariant(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+
+        const result = wasm.icu4x_Locale_has_variant_mv1(this.ffiValue, sSlice.ptr);
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+        }
+    }
+
+    /**
+     * Adds a variant to the {@link Locale}.
+     *
+     * Does nothing if the variant is already present.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    addVariant(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_Locale_add_variant_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
+            }
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Removes a specific variant from the {@link Locale}.
+     *
+     * Does nothing if the variant is not present.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    removeVariant(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_Locale_remove_variant_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
+            }
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Clears all variants from the {@link Locale}.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    clearVariants() {
+    wasm.icu4x_Locale_clear_variants_mv1(this.ffiValue);
+
+        try {}
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
      * Normalizes a locale string.
      *
      * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.

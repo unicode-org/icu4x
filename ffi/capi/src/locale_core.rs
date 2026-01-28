@@ -149,6 +149,80 @@ pub mod ffi {
             Ok(())
         }
 
+        // --- Variants ---
+
+        /// Writes a string representation of the [`Locale`] variants to `write`.
+        #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
+        pub fn variants(&self, write: &mut diplomat_runtime::DiplomatWrite) {
+            let _infallible = self.0.id.variants.write_to(write);
+        }
+
+        /// Returns the number of variants in this [`Locale`].
+        #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
+        #[diplomat::attr(auto, getter)]
+        pub fn variant_count(&self) -> usize {
+            self.0.id.variants.len()
+        }
+
+        /// Writes the variant at the given index to `write`.
+        ///
+        /// Returns `None` if the index is out of bounds.
+        #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
+        pub fn variant_at(
+            &self,
+            index: usize,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Option<()> {
+            let _infallible = self.0.id.variants.get(index)?.write_to(write);
+            Some(())
+        }
+
+        /// Returns whether the [`Locale`] has a specific variant.
+        #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
+        pub fn has_variant(&self, s: &DiplomatStr) -> bool {
+            icu_locale_core::subtags::Variant::try_from_utf8(s)
+                .map(|v| self.0.id.variants.contains(&v))
+                .unwrap_or(false)
+        }
+
+        /// Adds a variant to the [`Locale`].
+        ///
+        /// Does nothing if the variant is already present.
+        #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
+        pub fn add_variant(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
+            let variant = icu_locale_core::subtags::Variant::try_from_utf8(s)?;
+            let mut variants = self.0.id.variants.to_vec();
+            if let Err(i) = variants.binary_search(&variant) {
+                variants.insert(i, variant);
+                self.0.id.variants =
+                    icu_locale_core::subtags::Variants::from_vec_unchecked(variants);
+            }
+            Ok(())
+        }
+
+        /// Removes a specific variant from the [`Locale`].
+        ///
+        /// Does nothing if the variant is not present.
+        #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
+        pub fn remove_variant(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
+            let variant = icu_locale_core::subtags::Variant::try_from_utf8(s)?;
+            let mut variants = self.0.id.variants.to_vec();
+            if let Ok(i) = variants.binary_search(&variant) {
+                variants.remove(i);
+                self.0.id.variants =
+                    icu_locale_core::subtags::Variants::from_vec_unchecked(variants);
+            }
+            Ok(())
+        }
+
+        /// Clears all variants from the [`Locale`].
+        #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
+        pub fn clear_variants(&mut self) {
+            self.0.id.variants = icu_locale_core::subtags::Variants::default();
+        }
+
+        // --- Other ---
+
         /// Normalizes a locale string.
         #[diplomat::rust_link(icu::locale::Locale::normalize, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::normalize_utf8, FnInStruct, hidden)]
@@ -197,5 +271,57 @@ pub mod ffi {
 impl ffi::Locale {
     pub fn to_datalocale(&self) -> icu_provider::DataLocale {
         (&self.0).into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_variants_basic() {
+        let mut locale =
+            ffi::Locale(icu_locale_core::Locale::try_from_utf8(b"en-US-valencia").unwrap());
+
+        assert_eq!(locale.variant_count(), 1);
+        assert!(locale.has_variant(b"valencia"));
+        assert!(!locale.has_variant(b"posix"));
+
+        locale.add_variant(b"posix").unwrap();
+        assert_eq!(locale.variant_count(), 2);
+        assert!(locale.has_variant(b"posix"));
+
+        locale.remove_variant(b"valencia").unwrap();
+        assert_eq!(locale.variant_count(), 1);
+        assert!(!locale.has_variant(b"valencia"));
+
+        locale.clear_variants();
+        assert_eq!(locale.variant_count(), 0);
+    }
+
+    #[test]
+    fn test_variants_sorting() {
+        let mut locale = ffi::Locale(icu_locale_core::Locale::UNKNOWN);
+
+        // Add out of order
+        locale.add_variant(b"posix").unwrap();
+        locale.add_variant(b"macos").unwrap();
+
+        // Verify canonical ordering
+        assert_eq!(locale.0.id.variants.to_string(), "macos-posix");
+        assert_eq!(locale.0.id.variants.get(0).unwrap().to_string(), "macos");
+        assert_eq!(locale.0.id.variants.get(1).unwrap().to_string(), "posix");
+    }
+
+    #[test]
+    fn test_variants_errors() {
+        let mut locale = ffi::Locale(icu_locale_core::Locale::UNKNOWN);
+
+        // Invalid subtag (length)
+        assert!(locale.add_variant(b"toolongsubtag").is_err());
+        // Invalid subtag (characters)
+        assert!(locale.add_variant(b"inv@lid").is_err());
+
+        assert_eq!(locale.variant_count(), 0);
     }
 }

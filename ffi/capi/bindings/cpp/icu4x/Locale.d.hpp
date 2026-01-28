@@ -133,6 +133,65 @@ public:
   inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> set_script(std::string_view s);
 
   /**
+   * Writes a string representation of the {@link Locale} variants to `write`.
+   *
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+   */
+  inline std::string variants() const;
+  template<typename W>
+  inline void variants_write(W& writeable_output) const;
+
+  /**
+   * Returns the number of variants in this {@link Locale}.
+   *
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+   */
+  inline size_t variant_count() const;
+
+  /**
+   * Writes the variant at the given index to `write`.
+   *
+   * Returns `None` if the index is out of bounds.
+   *
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+   */
+  inline std::optional<std::string> variant_at(size_t index) const;
+  template<typename W>
+  inline std::optional<std::monostate> variant_at_write(size_t index, W& writeable_output) const;
+
+  /**
+   * Returns whether the {@link Locale} has a specific variant.
+   *
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+   */
+  inline bool has_variant(std::string_view s) const;
+
+  /**
+   * Adds a variant to the {@link Locale}.
+   *
+   * Does nothing if the variant is already present.
+   *
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+   */
+  inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> add_variant(std::string_view s);
+
+  /**
+   * Removes a specific variant from the {@link Locale}.
+   *
+   * Does nothing if the variant is not present.
+   *
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+   */
+  inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> remove_variant(std::string_view s);
+
+  /**
+   * Clears all variants from the {@link Locale}.
+   *
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+   */
+  inline void clear_variants();
+
+  /**
    * Normalizes a locale string.
    *
    * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.
