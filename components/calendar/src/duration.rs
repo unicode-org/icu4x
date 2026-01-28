@@ -160,17 +160,6 @@ pub enum DateDurationUnit {
 }
 
 impl DateDuration {
-    /// Returns a new [`DateDuration`] representing a number of years.
-    pub fn for_years(years: i32) -> Self {
-        Self {
-            is_negative: years.is_negative(),
-            years: years.unsigned_abs(),
-            ..Default::default()
-        }
-    }
-}
-
-impl DateDuration {
     /// Parses an ISO 8601 date-only duration string into a [`DateDuration`].
     ///
     /// This is a wrapper around [`Self::try_from_utf8`] for UTF-8
@@ -280,6 +269,15 @@ impl DateDuration {
             weeks,
             days,
         })
+    }
+
+    /// Returns a new [`DateDuration`] representing a number of years.
+    pub fn for_years(years: i32) -> Self {
+        Self {
+            is_negative: years.is_negative(),
+            years: years.unsigned_abs(),
+            ..Default::default()
+        }
     }
 
     /// Returns a new [`DateDuration`] representing a number of months.
