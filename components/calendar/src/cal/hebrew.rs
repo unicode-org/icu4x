@@ -4,7 +4,8 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
+    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarRangeError, MonthCodeError,
+    UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -347,13 +348,38 @@ impl Calendar for Hebrew {
 }
 
 impl Date<Hebrew> {
-    /// This method uses an ordinal month, which is probably not what you want.
+    /// Construct a new Hebrew [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
     /// valid range of `-1,000,000..=1,000,000`.
     ///
-    /// Use [`Date::try_new_from_codes`]
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::Month;
+    ///
+    /// let date = Date::try_new_hebrew_fixed(5782, Month::new(6), 7)
+    ///     .expect("Failed to initialize Date instance.");
+    ///
+    /// assert_eq!(date.era_year().year, 5782);
+    /// // Adar I
+    /// assert_eq!(date.month().number(), 6);
+    /// assert_eq!(date.month().is_formatting_leap(), true);
+    /// assert_eq!(date.day_of_month().0, 7);
+    /// ```
+    pub fn try_new_hebrew_fixed(
+        year: i32,
+        month: Month,
+        day: u8,
+    ) -> Result<Date<Hebrew>, LunisolarRangeError> {
+        ArithmeticDate::try_from_ymd_lunisolar(year, month, day, &Hebrew)
+            .map(HebrewDateInner)
+            .map(|inner| Date::from_raw(inner, Hebrew))
+    }
+
+    /// This method uses an ordinal month, which is probably not what you want.
+    ///
+    /// Use [`Date::try_new_hebrew_fixed`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hebrew_fixed`")]
     pub fn try_new_hebrew(
         year: i32,
         ordinal_month: u8,
@@ -471,6 +497,15 @@ mod tests {
                     date.month().value.code(),
                     date.day_of_month().0,
                     Hebrew
+                ),
+                Ok(date)
+            );
+
+            assert_eq!(
+                Date::try_new_hebrew_fixed(
+                    date.era_year().year,
+                    date.month().value,
+                    date.day_of_month().0,
                 ),
                 Ok(date)
             );

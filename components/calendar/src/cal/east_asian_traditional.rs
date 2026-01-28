@@ -5,7 +5,8 @@
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
 use crate::calendar_arithmetic::{DateFieldsResolver, PackWithMD};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
+    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarRangeError, MonthCodeError,
+    UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -482,14 +483,40 @@ impl Rules for Korea {
     }
 }
 
-impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
-    /// This method uses an ordinal month, which is probably not what you want.
+impl Date<KoreanTraditional> {
+    /// Construct a new traditional Korean [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
     /// valid range of `-1,000,000..=1,000,000`.
     ///
-    /// Use [`Date::try_new_from_codes`]
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::Month;
+    ///
+    /// let date = Date::try_new_korean_traditional(2025, Month::new(5), 25)
+    ///     .expect("Failed to initialize Date instance.");
+    ///
+    /// assert_eq!(date.cyclic_year().related_iso, 2025);
+    /// assert_eq!(date.month().value, Month::new(5));
+    /// assert_eq!(date.day_of_month().0, 25);
+    /// ```
+    pub fn try_new_korean_traditional(
+        related_iso_year: i32,
+        month: types::Month,
+        day: u8,
+    ) -> Result<Date<KoreanTraditional>, LunisolarRangeError> {
+        let calendar = KoreanTraditional::new();
+        ArithmeticDate::try_from_ymd_lunisolar(related_iso_year, month, day, &calendar)
+            .map(ChineseDateInner)
+            .map(|inner| Date::from_raw(inner, calendar))
+    }
+}
+
+impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
+    /// This method uses an ordinal month, which is probably not what you want.
+    ///
+    /// Use [`Date::try_new_korean_traditional`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_korean_traditional`")]
     pub fn try_new_dangi_with_calendar(
         related_iso_year: i32,
         ordinal_month: u8,
@@ -799,14 +826,40 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     }
 }
 
-impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
-    /// This method uses an ordinal month, which is probably not what you want.
+impl Date<ChineseTraditional> {
+    /// Construct a new traditional Chinese [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
     /// valid range of `-1,000,000..=1,000,000`.
     ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::Month;
+    ///
+    /// let date = Date::try_new_chinese_traditional(2025, Month::new(5), 25)
+    ///     .expect("Failed to initialize Date instance.");
+    ///
+    /// assert_eq!(date.cyclic_year().related_iso, 2025);
+    /// assert_eq!(date.month().value, Month::new(5));
+    /// assert_eq!(date.day_of_month().0, 25);
+    /// ```
+    pub fn try_new_chinese_traditional(
+        related_iso_year: i32,
+        month: types::Month,
+        day: u8,
+    ) -> Result<Date<ChineseTraditional>, LunisolarRangeError> {
+        let calendar = ChineseTraditional::new();
+        ArithmeticDate::try_from_ymd_lunisolar(related_iso_year, month, day, &calendar)
+            .map(ChineseDateInner)
+            .map(|inner| Date::from_raw(inner, calendar))
+    }
+}
+
+impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
+    /// This method uses an ordinal month, which is probably not what you want.
+    ///
     /// Use [`Date::try_new_from_codes`]
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_chinese_traditional`")]
     pub fn try_new_chinese_with_calendar(
         related_iso_year: i32,
         ordinal_month: u8,
