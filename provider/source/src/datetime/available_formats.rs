@@ -184,15 +184,15 @@ mod test {
 
     #[rustfmt::skip]
     const SUPPORTED_STRING_SKELETONS: &[&str] = &[
-        "E", "dEEEE", "EHm", "EHms", "dE", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
-        "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM",
+        "E", "dEEEE", "Ed", "Eh", "EHm", "EHms", "dE", "Ehm", "Ehms", "EH", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
+        "MdEEEE", "MdE", "MEd", "MMM", "MMMdEEEE", "MMMdE", "MMMEd", "MMMM",
         "MMMMdEEEE", "MMMMdE", "MMMMd",
         "MMMMdd", "MMMd", "MMMdd", "MMd", "MMdd", "Md", "Mdd", "d", "h", "hm", "hms", "mmss", "ms",
-        "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
+        "y", "yM", "yMdEEEE", "yMdE", "yMEd", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMEd", "yMMMM", "yMMMMdEEEE",
         "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd",
-        "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
+        "Gy", "GyM", "GyMd", "GyMEd", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMEd", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
         // Time zones
-        "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
+        "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv", "Hv", "hv",
     ];
 
     // NOTE: If you are moving this to the SUPPORTED section, make sure to remove the match
