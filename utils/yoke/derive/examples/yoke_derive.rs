@@ -134,6 +134,17 @@ struct ManualMaybeSizedWrap<T, Q: ?Sized, U: ?Sized> {
     q: Q,
 }
 
+// TODO(#4119): Make this example compile
+/*
+#[derive(Yokeable)]
+struct MaybeSizedWrapWithLifetime<'a, T, Q: ?Sized, U: ?Sized> {
+    x: T,
+    y: Option<T>,
+    ignored: &'a U,
+    q: Q,
+}
+*/
+
 trait Trait {}
 impl Trait for u32 {}
 
@@ -186,16 +197,176 @@ struct ManualInvariantStatic<'a> {
     field: Invariant<'a, &'static str>,
 }
 
-// TODO(#4119): Make this example compile
-/*
 #[derive(Yokeable)]
-struct MaybeSizedWrapWithLifetime<'a, T, Q: ?Sized, U: ?Sized> {
-    x: T,
-    y: Option<T>,
-    ignored: &'a U,
-    q: Q,
+struct RawLifetime<'r#mod> {
+    field: &'r#mod str,
+    other: for<'r#yoke> fn(&'r#yoke ()),
 }
-*/
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualRawLifetime<'r#mod> {
+    field: &'r#mod str,
+    other: for<'r#yoke> fn(&'r#yoke ()),
+}
+
+#[derive(Yokeable)]
+struct MixedRawLifetime<'r#a> {
+    field: &'r#a &'a str,
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualMixedRawLifetime<'r#a> {
+    field: &'r#a &'a str,
+}
+
+#[derive(Yokeable)]
+struct YokeLifetime<'r#_yoke>(&'r#_yoke str, for<'yoke> fn(&'yoke ()));
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualYokeLifetime<'r#_yoke>(&'r#_yoke str, for<'yoke> fn(&'yoke ()));
+
+// TODO: make this compile
+// #[derive(Yokeable)]
+struct ConstGenerics<'a, const N: u32> {
+    field: &'a str,
+}
+
+// #[derive(Yokeable)]
+// #[yoke(prove_covariance_manually)]
+struct ManualConstGenerics<'a, const N: u32> {
+    field: &'a str,
+}
+
+#[derive(Yokeable)]
+struct Variadic<'a> {
+    field: fn(extern "C" fn(&'a (), u32, u32, ...)),
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+struct ManualVariadic<'a> {
+    // `fn(..)` does not implement `Yokeable`, even if the type is in fact covariant.
+    // Thus the extra `&'a`.
+    field: &'a fn(extern "C" fn(&'a (), u32, u32, ...)),
+}
+
+#[derive(Yokeable)]
+enum Enum {
+    A,
+    B,
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+enum ManualEnum {
+    A,
+    B,
+}
+
+#[derive(Yokeable)]
+enum Empty {}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+enum ManualEmpty {}
+
+#[derive(Yokeable)]
+enum Uninhabited<'a> {
+    Variant(Empty, &'a ()),
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+enum ManualUninhabited<'a> {
+    Variant(Empty, &'a ()),
+}
+
+// The random extra `r#`s are intentional
+#[derive(Yokeable)]
+enum AlmostEverything<'a, T, ULE: AsULE, r#W, /*const N: u32,*/ U = usize>
+where
+    W: Trait,
+{
+    X(String),
+    X2 {
+        x: u32,
+    },
+    Y(T),
+    Gen {
+        x: T,
+        y: U,
+    },
+    CowExample {
+        x: u8,
+        y: &'a str,
+        z: Cow<'a, str>,
+        w: Cow<'a, [u8]>,
+    },
+    ZeroVec {
+        var: VarZeroVec<'a, str>,
+        vec: ZeroVec<'a, u16>,
+    },
+    ZeroVecGen {
+        gen: r#ZeroVec<'a, ULE>,
+        vec: r#ZeroVec<'a, u16>,
+        bare: T,
+    },
+    Phantom(T, Option<T>, PhantomData<&'a ()>),
+    TraitBounds(W),
+    BoundFn(for<'yoke> fn(&'yoke ())),
+    RawLifetime(for<'r#_yoke> fn(&'r#_yoke ())),
+    MixedRawLifetime(&'r#a &'a str),
+    Variadic(fn(extern "C" fn(&'a (), u32, u32, ...))),
+}
+
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+enum ManualAlmostEverything<
+    'a,
+    T,
+    ULE: AsULE,
+    r#W,
+    Z: for<'b> ZeroMapKV<'b> + ?Sized,
+    // const N: u32,
+    U = usize,
+> where
+    W: Trait,
+{
+    X(String),
+    X2 {
+        x: u32,
+    },
+    Y(T),
+    Gen {
+        x: T,
+        y: U,
+    },
+    CowExample {
+        x: u8,
+        y: &'a str,
+        z: Cow<'a, str>,
+        w: Cow<'a, [u8]>,
+    },
+    ZeroVec {
+        var: VarZeroVec<'a, str>,
+        vec: ZeroVec<'a, u16>,
+    },
+    ZeroVecGen {
+        gen: r#ZeroVec<'a, ULE>,
+        vec: r#ZeroVec<'a, u16>,
+        bare: T,
+    },
+    Phantom(T, Option<T>, PhantomData<&'a ()>),
+    TraitBounds(W),
+    BoundFn(for<'yoke> fn(&'yoke ())),
+    RawLifetime(for<'r#_yoke> fn(&'r#_yoke ())),
+    MixedRawLifetime(&'r#a &'a str),
+    Variadic(&'a fn(extern "C" fn(&'a (), u32, u32, ...))),
+    Map(ZeroMap<'a, str, u16>, ZeroMap<'a, str, Z>),
+}
 
 struct AssertYokeable {
     string: Yoke<StringExample, Box<[u8]>>,
@@ -209,12 +380,21 @@ struct AssertYokeable {
     zv_gen1: Yoke<ZeroVecExampleWithGenerics<'static, u8>, Box<[u8]>>,
     zv_gen2: Yoke<ZeroVecExampleWithGenerics<'static, char>, Box<[u8]>>,
     maybe_sized_wrap: Yoke<MaybeSizedWrap<usize, usize, str>, Box<[u8]>>,
+    // TODO(#4119): Make this example compile
+    // maybe_sized_wrap_with_lt: Yoke<MaybeSizedWrapWithLifetime<'static, usize, usize, str>, Box<[u8]>>,
     trait_bounds: Yoke<WithTraitBounds<u32>, Box<[u8]>>,
     trait_bounds_where: Yoke<WithTraitBoundsInWhere<u32>, Box<[u8]>>,
     bound_fn: Yoke<BoundFn<'static>, Box<[u8]>>,
     invariant_static: Yoke<InvariantStatic<'static>, Box<[u8]>>,
-    // TODO(#4119): Make this example compile
-    // maybe_sized_wrap_with_lt: Yoke<MaybeSizedWrapWithLifetime<'static, usize, usize, str>, Box<[u8]>>,
+    raw: Yoke<RawLifetime<'static>, Box<[u8]>>,
+    mixed_raw: Yoke<MixedRawLifetime<'static>, Box<[u8]>>,
+    yoke_lt: Yoke<YokeLifetime<'static>, Box<[u8]>>,
+    // const_gen: Yoke<ConstGenerics<'static>, Box<[u8]>>,
+    variadic: Yoke<Variadic<'static>, Box<[u8]>>,
+    simple_enum: Yoke<Enum, Box<[u8]>>,
+    empty: Yoke<Empty, Box<[u8]>>,
+    uninhabited: Yoke<Uninhabited<'static>, Box<[u8]>>,
+    almost_everything: Yoke<AlmostEverything<'static, u8, u32, u32>, Box<[u8]>>,
 }
 
 struct AssertYokeableManual {
@@ -236,6 +416,15 @@ struct AssertYokeableManual {
     trait_bounds_where: Yoke<ManualWithTraitBoundsInWhere<u32>, Box<[u8]>>,
     bound_fn: Yoke<ManualBoundFn<'static>, Box<[u8]>>,
     invariant_static: Yoke<ManualInvariantStatic<'static>, Box<[u8]>>,
+    raw: Yoke<ManualRawLifetime<'static>, Box<[u8]>>,
+    mixed_raw: Yoke<ManualMixedRawLifetime<'static>, Box<[u8]>>,
+    yoke_lt: Yoke<ManualYokeLifetime<'static>, Box<[u8]>>,
+    // const_gen: Yoke<ManualConstGenerics<'static>, Box<[u8]>>,
+    variadic: Yoke<ManualVariadic<'static>, Box<[u8]>>,
+    simple_enum: Yoke<ManualEnum, Box<[u8]>>,
+    empty: Yoke<ManualEmpty, Box<[u8]>>,
+    uninhabited: Yoke<ManualUninhabited<'static>, Box<[u8]>>,
+    almost_everything: Yoke<ManualAlmostEverything<'static, u8, u32, u32, str>, Box<[u8]>>,
 }
 
 fn main() {}

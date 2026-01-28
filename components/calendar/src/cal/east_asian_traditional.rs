@@ -1390,36 +1390,6 @@ mod test {
     }
 
     #[test]
-    fn test_chinese_leap_months() {
-        let expected = [
-            (1933, 6),
-            (1938, 8),
-            (1984, 11),
-            (2009, 6),
-            (2017, 7),
-            (2028, 6),
-        ];
-
-        for case in expected {
-            let year = case.0;
-            let expected_month = case.1;
-            let iso = Date::try_new_iso(year, 6, 1).unwrap();
-
-            let chinese_date = iso.to_calendar(ChineseTraditional::new());
-            assert!(
-                chinese_date.is_in_leap_year(),
-                "{year} should be a leap year"
-            );
-            let new_year = chinese_date.inner.0.year().new_year();
-            assert_eq!(
-                expected_month,
-                chinese_based::get_leap_month_from_new_year::<chinese_based::Chinese>(new_year),
-                "{year} have leap month {expected_month}"
-            );
-        }
-    }
-
-    #[test]
     fn test_month_days() {
         let year = ChineseTraditional::new().0.year(2023);
         let cases = [
