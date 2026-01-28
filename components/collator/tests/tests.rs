@@ -49,7 +49,7 @@ fn assert_all_comparisons(
 ) {
     // UTF-8
     let result = collator.compare(left, right);
-    assert_eq!(result, expected);
+    assert_eq!(result, expected, "{left:?} ≟ {right:?}");
 
     // Sort keys
     let mut sort_key_left_buffer = Vec::new();
@@ -70,9 +70,6 @@ fn assert_all_comparisons(
 
     let result_utf16 = collator.compare_utf16(&left_encode, &right_encode);
     assert_eq!(result_utf16, expected);
-
-    // For checking UTF-8 == UTF-16
-    assert_eq!(result_utf16, result);
 }
 
 /// Parse a string of space-separated hexadecimal code points (ending in end of input or semicolon)
@@ -142,9 +139,9 @@ fn test_implicit_unihan() {
     options.strength = Some(Strength::Quaternary);
 
     let collator = Collator::try_new(Default::default(), options).unwrap();
-    assert_eq!(collator.compare("\u{4E00}", "\u{4E00}"), Ordering::Equal);
-    assert_eq!(collator.compare("\u{4E00}", "\u{4E01}"), Ordering::Less);
-    assert_eq!(collator.compare("\u{4E01}", "\u{4E00}"), Ordering::Greater);
+    assert_all_comparisons(&collator, "\u{4E00}", "\u{4E00}", Ordering::Equal);
+    assert_all_comparisons(&collator, "\u{4E00}", "\u{4E01}", Ordering::Less);
+    assert_all_comparisons(&collator, "\u{4E01}", "\u{4E00}", Ordering::Greater);
 
     assert_eq!(collator.compare("\u{4E18}", "\u{4E42}"), Ordering::Less);
     assert_all_comparisons(&collator, "\u{4E18}", "\u{4E42}", Ordering::Less);
@@ -185,54 +182,53 @@ fn test_bo() {
     let options = CollatorOptions::default();
     let collator = Collator::try_new(prefs, options).unwrap();
 
-    assert_eq!(
-        collator.compare(
-            "\u{0F40}\u{0F71}\u{0F62}\u{0F92}\u{0F72}",
-            "\u{0F40}\u{0F71}\u{0F62}\u{0F0B}\u{0F92}\u{0F72}"
-        ),
-        Ordering::Greater
+    assert_all_comparisons(
+        &collator,
+        "\u{0F40}\u{0F71}\u{0F62}\u{0F92}\u{0F72}",
+        "\u{0F40}\u{0F71}\u{0F62}\u{0F0B}\u{0F92}\u{0F72}",
+        Ordering::Greater,
     );
 
-    assert_eq!(
-        collator.compare(
-            "\u{0F40}\u{0F71}\u{0F62}\u{0F0B}\u{0F92}\u{0F72}",
-            "\u{0F40}\u{0F62}\u{0F92}\u{0F72}"
-        ),
-        Ordering::Greater
+    assert_all_comparisons(
+        &collator,
+        "\u{0F40}\u{0F71}\u{0F62}\u{0F0B}\u{0F92}\u{0F72}",
+        "\u{0F40}\u{0F62}\u{0F92}\u{0F72}",
+        Ordering::Greater,
     );
 
-    assert_eq!(
-        collator.compare(
-            "\u{0F40}\u{0F62}\u{0F92}\u{0F72}",
-            "\u{0F42}\u{0F7C}\u{0F51}\u{0F0B}"
-        ),
-        Ordering::Less
+    assert_all_comparisons(
+        &collator,
+        "\u{0F40}\u{0F62}\u{0F92}\u{0F72}",
+        "\u{0F42}\u{0F7C}\u{0F51}\u{0F0B}",
+        Ordering::Less,
     );
 
-    assert_eq!(
-        collator.compare(
-            "\u{0F42}\u{0F7C}\u{0F51}\u{0F0B}",
-            "\u{0F42}\u{0F7C}\u{0F51}"
-        ),
-        Ordering::Greater
+    assert_all_comparisons(
+        &collator,
+        "\u{0F42}\u{0F7C}\u{0F51}\u{0F0B}",
+        "\u{0F42}\u{0F7C}\u{0F51}",
+        Ordering::Greater,
     );
 
-    assert_eq!(
-        collator.compare("\u{0F42}\u{0F7C}\u{0F51}", "\u{0F40}\u{0FB1}\u{0F72}"),
-        Ordering::Greater
+    assert_all_comparisons(
+        &collator,
+        "\u{0F42}\u{0F7C}\u{0F51}",
+        "\u{0F40}\u{0FB1}\u{0F72}",
+        Ordering::Greater,
     );
 
-    assert_eq!(
-        collator.compare(
-            "\u{0F40}\u{0FB1}\u{0F72}",
-            "\u{0F40}\u{0F71}\u{0FB1}\u{0F72}"
-        ),
-        Ordering::Less
+    assert_all_comparisons(
+        &collator,
+        "\u{0F40}\u{0FB1}\u{0F72}",
+        "\u{0F40}\u{0F71}\u{0FB1}\u{0F72}",
+        Ordering::Less,
     );
 
-    assert_eq!(
-        collator.compare("\u{0F40}\u{0F71}\u{0FB1}\u{0F72}", "\u{0F40}\u{0F71}"),
-        Ordering::Greater
+    assert_all_comparisons(
+        &collator,
+        "\u{0F40}\u{0F71}\u{0FB1}\u{0F72}",
+        "\u{0F40}\u{0F71}",
+        Ordering::Greater,
     );
 }
 
@@ -827,7 +823,7 @@ fn test_region_fallback() {
     let prefs = locale!("fi-FI").into();
 
     let collator = Collator::try_new(prefs, Default::default()).unwrap();
-    assert_eq!(collator.compare("ä", "z"), Ordering::Greater);
+    assert_all_comparisons(&collator, "ä", "z", Ordering::Greater);
 }
 
 #[test]
@@ -1829,10 +1825,7 @@ fn test_case_level() {
     options.strength = Some(Strength::Primary);
     options.case_level = Some(CaseLevel::On);
     let collator_with_case = Collator::try_new(Default::default(), options).unwrap();
-    assert_eq!(
-        collator_with_case.compare("aA", "Aa"),
-        core::cmp::Ordering::Less
-    );
+    assert_all_comparisons(&collator_with_case, "aA", "Aa", Ordering::Less);
 }
 
 #[test]
