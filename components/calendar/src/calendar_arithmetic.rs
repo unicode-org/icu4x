@@ -283,13 +283,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             },
         };
 
-        if fields.month_code.is_none() && fields.ordinal_month.is_none() {
+        if fields.month_code.is_none() && fields.ordinal_month.is_none() && fields.month.is_none() {
             // We're returning this error early so that we return structural type
             // errors before range errors, see comment in the year code below.
             return Err(DateFromFieldsError::NotEnoughFields);
         }
 
-        let mut valid_month_code = None;
+        let mut valid_month = None;
 
         // NOTE: The year/extendedyear range check is important to avoid arithmetic
         // overflow in `year_info_from_era` and `year_info_from_extended`. It
@@ -311,10 +311,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                         return Err(DateFromFieldsError::NotEnoughFields)
                     }
                     MissingFieldsStrategy::Ecma => {
-                        match (fields.month_code, fields.ordinal_month) {
-                            (Some(month_code), None) => {
+                        match (fields.month, fields.month_code, fields.ordinal_month) {
+                            (Some(month), _, None) => {
+                                calendar.reference_year_from_month_day(month, day)?
+                            }
+                            (_, Some(month_code), None) => {
                                 let validated = Month::try_from_utf8(month_code)?;
-                                valid_month_code = Some(validated);
+                                valid_month = Some(validated);
                                 calendar.reference_year_from_month_day(validated, day)?
                             }
                             _ => return Err(DateFromFieldsError::NotEnoughFields),
@@ -339,9 +342,18 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             (Some(_), None) | (None, Some(_)) => return Err(DateFromFieldsError::NotEnoughFields),
         };
 
-        let month = match fields.month_code {
-            Some(month_code) => {
-                let validated = match valid_month_code {
+        let month = match (fields.month_code, fields.month) {
+            (_, Some(month)) => {
+                let computed_month = calendar.ordinal_from_month(year, month, options)?;
+                if let Some(ordinal_month) = fields.ordinal_month {
+                    if computed_month != ordinal_month {
+                        return Err(DateFromFieldsError::InconsistentMonth);
+                    }
+                }
+                computed_month
+            }
+            (Some(month_code), _) => {
+                let validated = match valid_month {
                     Some(validated) => validated,
                     None => Month::try_from_utf8(month_code)?,
                 };
@@ -353,7 +365,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 }
                 computed_month
             }
-            None => match fields.ordinal_month {
+            (None, None) => match fields.ordinal_month {
                 Some(month) => month,
                 None => {
                     debug_assert!(false, "Already checked above");

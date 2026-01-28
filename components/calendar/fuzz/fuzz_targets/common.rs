@@ -38,12 +38,10 @@ impl Ymd {
                 fields.ordinal_month = Some(self.month);
             }
             MonthInterpretation::CodeNormal => {
-                code = Month::new(self.month).code();
-                fields.month_code = Some(code.0.as_bytes());
+                fields.month = Some(Month::new(self.month));
             }
             MonthInterpretation::CodeLeap => {
-                code = Month::leap(self.month).code();
-                fields.month_code = Some(code.0.as_bytes());
+                fields.month = Some(Month::leap(self.month));
             }
         };
 
