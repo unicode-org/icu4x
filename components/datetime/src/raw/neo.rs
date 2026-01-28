@@ -350,6 +350,15 @@ impl TimePatternSelectionData {
         let prefer_keep_minutes = if matches!(time_precision, TimePrecision::MinuteOptional) {
             let standard_pattern = payload.get(options.length(), PackedSkeletonVariant::Standard);
             standard_pattern.metadata.prefer_keep_minutes()
+                || standard_pattern.items.iter().any(|item| {
+                    matches!(
+                        item,
+                        PatternItem::Field(Field {
+                            symbol: FieldSymbol::Hour(fields::Hour::H23),
+                            ..
+                        })
+                    )
+                })
         } else {
             false
         };

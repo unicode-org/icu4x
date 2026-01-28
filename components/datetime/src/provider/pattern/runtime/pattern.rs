@@ -4,7 +4,6 @@
 
 #![allow(clippy::exhaustive_structs)] // part of data struct and internal API
 
-
 use super::super::{reference, PatternError, PatternItem, TimeGranularity};
 use crate::provider::fields::{self, Field, FieldSymbol};
 use alloc::vec::Vec;
@@ -61,7 +60,6 @@ pub(crate) struct PatternBorrowed<'data> {
 pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
-
     pub(crate) const DEFAULT: PatternMetadata = Self::from_time_granularity(TimeGranularity::None);
     const PREFER_KEEP_MINUTES_MASK: u8 = 0x08;
 
@@ -122,7 +120,7 @@ impl PatternMetadata {
         Self(time_granularity.ordinal())
     }
 
-    /// Sets the prefer_keep_minutes flag.
+    /// Sets the `prefer_keep_minutes` flag.
     #[inline]
     pub const fn with_prefer_keep_minutes(self, prefer_keep_minutes: bool) -> Self {
         if prefer_keep_minutes {
@@ -312,12 +310,18 @@ fn test_prefer_keep_minutes() {
         length: FieldLength::Two,
     })];
     let metadata_h23 = PatternMetadata::from_items(&items_h23);
-    assert!(metadata_h23.prefer_keep_minutes(), "H23 should set prefer_keep_minutes");
+    assert!(
+        metadata_h23.prefer_keep_minutes(),
+        "H23 should set prefer_keep_minutes"
+    );
 
     let items_h12 = [PatternItem::Field(Field {
         symbol: FieldSymbol::Hour(fields::Hour::H12),
         length: FieldLength::Two,
     })];
     let metadata_h12 = PatternMetadata::from_items(&items_h12);
-    assert!(!metadata_h12.prefer_keep_minutes(), "H12 should NOT set prefer_keep_minutes");
+    assert!(
+        !metadata_h12.prefer_keep_minutes(),
+        "H12 should NOT set prefer_keep_minutes"
+    );
 }
