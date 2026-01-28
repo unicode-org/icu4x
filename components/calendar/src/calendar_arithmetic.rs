@@ -502,6 +502,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 
     /// Implements the Temporal abstract operation `CompareSurpasses` based on month code
+    #[allow(clippy::collapsible_else_if)] // to match the spec
     fn compare_surpasses_lexicographic(
         sign: i64,
         year: C::YearInfo,
@@ -550,6 +551,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 
     /// Implements the Temporal abstract operation `CompareSurpasses` based on month ordinal
+    #[allow(clippy::collapsible_else_if)] // to match the spec
     fn compare_surpasses_ordinal(
         sign: i64,
         year: C::YearInfo,
