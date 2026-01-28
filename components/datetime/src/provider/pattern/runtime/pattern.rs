@@ -61,6 +61,7 @@ pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
     pub(crate) const DEFAULT: PatternMetadata = Self::from_time_granularity(TimeGranularity::None);
+    const TIME_GRANULARITY_MASK: u8 = 0x07;
     const PREFER_KEEP_MINUTES_MASK: u8 = 0x08;
 
     #[inline]
