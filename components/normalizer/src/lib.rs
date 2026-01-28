@@ -935,7 +935,6 @@ where
                 ),
                 tables,
                 None,
-                0xC0,
             ),
         };
         let _ = ret.next();
@@ -968,7 +967,7 @@ where
     T: AbstractCodePointTrie<'data, u32> + 'data,
 {
     DecompositionInner::<'data, I, T, Uax15Policy>::new_with_supplements(
-        delegate, tables, None, 0xC0,
+        delegate, tables, None,
     )
 }
 
@@ -995,11 +994,6 @@ where
     scalars24: &'data ZeroSlice<char>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
     supplementary_scalars24: &'data ZeroSlice<char>,
-    /// The lowest character for which either of the following does
-    /// not hold:
-    /// 1. Decomposes to self.
-    /// 2. Decomposition starts with a non-starter
-    decomposition_passthrough_bound: u32, // never above 0xC0
     _phantom_p: PhantomData<P>,
     _phantom_t: PhantomData<T>,
 }
@@ -1024,7 +1018,6 @@ where
         delegate: I,
         tables: &'data DecompositionTables,
         supplementary_tables: Option<&'data DecompositionTables>,
-        decomposition_passthrough_bound: u8,
     ) -> Self {
         DecompositionInner::<I, T, P> {
             delegate,
@@ -1045,7 +1038,6 @@ where
             } else {
                 EMPTY_CHAR
             },
-            decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
             _phantom_p: PhantomData,
             _phantom_t: PhantomData,
         }
@@ -1474,12 +1466,6 @@ where
     /// wait for the next `next()` call (or a jump forward within the
     /// `next()` call).
     unprocessed_starter: Option<char>,
-    /// The lowest character for which any one of the following does
-    /// not hold:
-    /// 1. Roundtrips via decomposition and recomposition.
-    /// 2. Decomposition starts with a non-starter
-    /// 3. Is not a backward-combining starter
-    composition_passthrough_bound: u32,
 }
 
 impl<'data, I, T, P> CompositionInner<'data, I, T, P>
@@ -1492,13 +1478,11 @@ where
     fn new(
         decomposition: DecompositionInner<'data, I, T, P>,
         canonical_compositions: CanonicalCompositionsRef<'data>,
-        composition_passthrough_bound: u16,
     ) -> Self {
         Self {
             decomposition,
             canonical_compositions,
             unprocessed_starter: None,
-            composition_passthrough_bound: u32::from(composition_passthrough_bound),
         }
     }
 
@@ -1743,27 +1727,25 @@ macro_rules! composing_normalize_to {
      $text:ident,
      $sink:ident,
      $composition:ident,
-     $composition_passthrough_bound:ident,
      $undecomposed_starter:ident,
      $pending_slice:ident,
      $len_utf:ident,
+     $self:ident,
     ) => {
         $(#[$meta])*
         pub fn $normalize_to<W: $write + ?Sized>(
-            &self,
+            &$self,
             $text: $slice,
             $sink: &mut W,
         ) -> core::fmt::Result {
             $prolog
-            let mut $composition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars_with_trie(self.trie()));
+            let mut $composition = $self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars_with_trie($self.trie()));
             let _ = $composition.decomposition.init(); // Discard the U+0000.
 
             for cc in $composition.decomposition.buffer.drain(..) {
                 $sink.write_char(cc.character())?;
             }
 
-            // Try to get the compiler to hoist the bound to a register.
-            let $composition_passthrough_bound = $composition.composition_passthrough_bound;
             'outer: loop {
                 debug_assert_eq!($composition.decomposition.buffer_pos, 0);
                 let mut $undecomposed_starter =
@@ -1942,24 +1924,22 @@ macro_rules! decomposing_normalize_to {
      $text:ident,
      $sink:ident,
      $decomposition:ident,
-     $decomposition_passthrough_bound:ident,
      $undecomposed_starter:ident,
      $pending_slice:ident,
      $outer:lifetime, // loop labels use lifetime tokens
+     $self:ident,
     ) => {
         $(#[$meta])*
         pub fn $normalize_to<W: $write + ?Sized>(
-            &self,
+            &$self,
             $text: $slice,
             $sink: &mut W,
         ) -> core::fmt::Result {
             $prolog
 
-            let mut $decomposition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars_with_trie(self.trie()));
+            let mut $decomposition = $self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars_with_trie($self.trie()));
             let _ = $decomposition.init(); // Discard the U+0000.
 
-            // Try to get the compiler to hoist the bound to a register.
-            let $decomposition_passthrough_bound = $decomposition.decomposition_passthrough_bound;
             $outer: loop {
                 for cc in $decomposition.buffer.drain(..) {
                     $sink.write_char(cc.character())?;
@@ -2475,7 +2455,6 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
             iter,
             self.tables,
             self.supplementary_tables,
-            self.decomposition_passthrough_bound,
         )
     }
 
@@ -2499,10 +2478,11 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         },
         as_str,
         {
-            let decomposition_passthrough_byte_bound = if decomposition_passthrough_bound == 0xC0 {
+            // TODO: Consider just using the usual iterator once it statically returns default for ASCII.
+            let decomposition_passthrough_byte_bound = if self.decomposition_passthrough_bound == 0xC0 {
                 0xC3u8
             } else {
-                decomposition_passthrough_bound.min(0x80) as u8
+                self.decomposition_passthrough_bound.min(0x80)
             };
             // The attribute belongs on an inner statement, but Rust doesn't allow it there.
             #[expect(clippy::unwrap_used)]
@@ -2555,10 +2535,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         text,
         sink,
         decomposition,
-        decomposition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         'outer,
+        self,
     );
 
     decomposing_normalize_to!(
@@ -2577,7 +2557,8 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         },
         as_slice,
         {
-            let decomposition_passthrough_byte_bound = decomposition_passthrough_bound.min(0x80) as u8;
+            // TODO: Consider just using the usual iterator once it statically returns default for ASCII.
+            let decomposition_passthrough_byte_bound = self.decomposition_passthrough_bound.min(0x80);
             'fast: loop {
                 let mut code_unit_iter = decomposition.delegate.as_slice().iter();
                 'fastest: loop {
@@ -2656,10 +2637,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         text,
         sink,
         decomposition,
-        decomposition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         'outer,
+        self,
     );
 
     decomposing_normalize_to!(
@@ -2692,6 +2673,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                 // SAFETY: materializing a pointer immediately past the end of an
                 // allocation is OK.
                 let end: *const u16 = unsafe { ptr.add(delegate_as_slice.len()) };
+                let decomposition_passthrough_bound = u16::from(self.decomposition_passthrough_bound);
                 'fast: loop {
                     // if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     if likely(ptr != end) {
@@ -2704,7 +2686,6 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         // after, which is OK.
                         ptr = unsafe { ptr.add(1) };
 
-                        let mut upcoming32 = u32::from(upcoming_code_unit);
                         // The performance of what logically is supposed to be this
                         // branch is _incredibly_ brittle and what LLVM ends up doing
                         // that affects the performance of what's logically about this
@@ -2720,7 +2701,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         // this code is monomorphized over.
                         //
                         // What a terrible sink of developer time!
-                        if upcoming32 < decomposition_passthrough_bound {
+                        if upcoming_code_unit < decomposition_passthrough_bound {
                             continue 'fast;
                         }
                         // We might be doing a trie lookup by surrogate. Surrogates get
@@ -2729,6 +2710,8 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         if likely(starter_and_decomposes_to_self_impl(trie_value)) {
                             continue 'fast;
                         }
+
+                        let mut upcoming32 = u32::from(upcoming_code_unit);
 
                         // We might now be looking at a surrogate.
                         // The loop is only broken out of as goto forward
@@ -2912,10 +2895,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         text,
         sink,
         decomposition,
-        decomposition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         'outer,
+        self,
     );
 }
 
@@ -3226,10 +3209,8 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 iter,
                 self.decomposing_normalizer.tables,
                 self.decomposing_normalizer.supplementary_tables,
-                self.decomposing_normalizer.decomposition_passthrough_bound,
             ),
             self.canonical_compositions.to_ref(),
-            self.decomposing_normalizer.composition_passthrough_bound,
         )
     }
 
@@ -3252,13 +3233,12 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         true,
         as_str,
         {
-            // Let's hope LICM hoists this outside `'outer`.
-            let composition_passthrough_byte_bound = if composition_passthrough_bound == 0x300 {
+            let composition_passthrough_byte_bound = if self.decomposing_normalizer.composition_passthrough_bound == 0x300 {
                 0xCCu8
             } else {
                 // We can make this fancy if a normalization other than NFC where looking at
                 // non-ASCII lead bytes is worthwhile is ever introduced.
-                composition_passthrough_bound.min(0x80) as u8
+                self.decomposing_normalizer.composition_passthrough_bound.min(0x80) as u8
             };
             // Attributes have to be on blocks, so hoisting all the way here.
             #[expect(clippy::unwrap_used)]
@@ -3313,10 +3293,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         text,
         sink,
         composition,
-        composition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         len_utf8,
+        self,
     );
 
     composing_normalize_to!(
@@ -3337,15 +3317,6 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         {
             'fast: loop {
                 if let Some((upcoming, trie_val)) = composition.decomposition.delegate.next() {
-                    if u32::from(upcoming) < composition_passthrough_bound {
-                        // XXX Figure out what's an optimization and what is not. We already
-                        // read from the trie above. Does this branch even make sense anymore?
-                        // On the other hand, should we still seek to have some kind of fast-path
-                        // that doesn't read from the trie? For ASCII only perhaps?
-
-                        // Fast-track succeeded!
-                        continue 'fast;
-                    }
                     let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
                     if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
                         // Note: The trie value of the REPLACEMENT CHARACTER is
@@ -3404,10 +3375,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         text,
         sink,
         composition,
-        composition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         len_utf8,
+        self,
     );
 
     composing_normalize_to!(
@@ -3441,7 +3412,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 // SAFETY: materializing a pointer immediately past the end of an
                 // allocation is OK.
                 let end: *const u16 = unsafe { ptr.add(delegate_as_slice.len()) };
-
+                let composition_passthrough_bound = self.decomposing_normalizer.composition_passthrough_bound;
                 'fast: loop {
                     // Only broken out of as goto forward
                     'end: loop {
@@ -3456,8 +3427,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                             // after, which is OK.
                             ptr = unsafe { ptr.add(1) };
 
-                            let mut upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
-                            if likely(upcoming32 < composition_passthrough_bound) {
+                            if likely(upcoming_code_unit < composition_passthrough_bound) {
                                 // No need for surrogate or U+FFFD check, because
                                 // `composition_passthrough_bound` cannot be higher than
                                 // U+0300.
@@ -3476,6 +3446,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                             // than ICU4C for most real-world content. The result is not optimal for NFKC
                             // Latin, but let's take the NFC non-Latin win.
                             let mut trie_value;
+                            let mut upcoming32; // May be surrogate
                             loop {
                                 // We might be doing a trie lookup by surrogate. Surrogates get
                                 // a decomposition to U+FFFD.
@@ -3610,10 +3581,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         text,
         sink,
         composition,
-        composition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         len_utf16,
+        self,
     );
 }
 

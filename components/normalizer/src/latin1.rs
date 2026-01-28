@@ -124,7 +124,44 @@ static COMPATIBILITY_DECOMPOSITIONS: [u16; 20] = [
     0x2044, 0x0034, 0x0031, 0x2044, 0x0032, 0x0033, 0x2044, 0x0034,
 ];
 
-/// Writes the compatibility decompostion of `c` to `sink`.
+const NFKC_BITS: u32 = const {
+    let mut accu = 0;
+    let mut i = 0;
+    while i < 0x20 {
+        if TABLE[i] != 0 {
+            accu |= 1 << (i as u32);
+        }
+        i += 1;
+    }
+    accu
+};
+
+const NFD_BITS: u64 = const {
+    let mut accu = 0;
+    let mut i = 0x20;
+    while i < TABLE.len() {
+        if TABLE[i] != 0 {
+            accu |= 1 << ((i - 0x20) as u32);
+        }
+        i += 1;
+    }
+    accu
+};
+
+const NFKD_BITS: u128 = const {
+    let mut accu = 0;
+    let mut i = 0;
+    while i < TABLE.len() {
+        if TABLE[i] != 0 {
+            accu |= 1 << ((i + 0x20) as u32);
+        }
+        i += 1;
+    }
+    accu
+};
+
+/// Writes the compatibility decomposition of `c` to `sink`.
+#[inline]
 fn compatibility_decomposition(val: u16) -> &'static [u16] {
     debug_assert!(val <= 0xFF);
     let len = val & 0b11;
@@ -139,6 +176,7 @@ fn compatibility_decomposition(val: u16) -> &'static [u16] {
 }
 
 /// Normalize Latin1 `text` to NFD UTF-16 written to `sink`.
+#[inline]
 pub fn normalize_nfd_to<W: Write16 + ?Sized>(text: &[u16], sink: &mut W) -> core::fmt::Result {
     // Indexing is OK, because the index is statically in range.
     #[expect(clippy::indexing_slicing)]
@@ -167,6 +205,7 @@ pub fn normalize_nfd_to<W: Write16 + ?Sized>(text: &[u16], sink: &mut W) -> core
 }
 
 /// Normalize Latin1 `text` to NFKD UTF-16 written to `sink`.
+#[inline]
 pub fn normalize_nfkd_to<W: Write16 + ?Sized>(text: &[u16], sink: &mut W) -> core::fmt::Result {
     let mut text_left = text;
     let mut iter = text_left.iter();
@@ -197,6 +236,7 @@ pub fn normalize_nfkd_to<W: Write16 + ?Sized>(text: &[u16], sink: &mut W) -> cor
 }
 
 /// Normalize Latin1 `text` to NFKC UTF-16 written to `sink`.
+#[inline]
 pub fn normalize_nfkc_to<W: Write16 + ?Sized>(text: &[u16], sink: &mut W) -> core::fmt::Result {
     // Indexing is OK, because the index is statically in range.
     #[expect(clippy::indexing_slicing)]
@@ -205,7 +245,7 @@ pub fn normalize_nfkc_to<W: Write16 + ?Sized>(text: &[u16], sink: &mut W) -> cor
     let mut iter = text_left.iter();
     while let Some(u) = iter.next() {
         let c = *u;
-        if c < 0xC0 {
+        if c < 0xA0 {
             continue;
         }
         if let Some(val) = table.get(c.wrapping_sub(0xA0) as usize) {
@@ -227,81 +267,75 @@ pub fn normalize_nfkc_to<W: Write16 + ?Sized>(text: &[u16], sink: &mut W) -> cor
 /// Split Latin1 `text` into `(head, tail)` such that the first
 /// byte of `tail` is the first byte of input that is not in NFD.
 /// If `text` is fully in NFD, `tail` is empty.
+#[inline]
 pub fn split_normalized_nfd(text: &[u8]) -> (&[u8], &[u8]) {
-    // Indexing is OK, because the index is statically in range.
-    #[expect(clippy::indexing_slicing)]
-    let table = &TABLE[0x20..];
     let mut iter = text.iter();
-    loop {
-        if let Some(c) = iter.next() {
-            if let Some(val) = table.get(c.wrapping_sub(0xC0) as usize) {
-                if *val != 0 {
-                    let tail = iter.as_slice();
-                    return text
-                        .split_at_checked(text.len() - tail.len() - 1)
-                        .unwrap_or_else(|| {
-                            // Internal bug, not even GIGO, never supposed to happen
-                            debug_assert!(false);
-                            (&[], text)
-                        });
-                }
+    while let Some(c) = iter.next() {
+        let b = *c;
+        if let Some(shifted) = 1u64.checked_shl(u32::from(b.wrapping_sub(0xC0))) {
+            if (NFD_BITS & shifted) != 0 {
+                let tail = iter.as_slice();
+                return text
+                    .split_at_checked(text.len() - tail.len() - 1)
+                    .unwrap_or_else(|| {
+                        // Internal bug, not even GIGO, never supposed to happen
+                        debug_assert!(false);
+                        (&[], text)
+                    });
             }
-        } else {
-            return (text, &[]);
         }
     }
+    (text, &[])
 }
 
 /// Split Latin1 `text` into `(head, tail)` such that the first
 /// byte of `tail` is the first byte of input that is not in NFKD.
 /// If `text` is fully in NFKD, `tail` is empty.
+#[inline]
 pub fn split_normalized_nfkd(text: &[u8]) -> (&[u8], &[u8]) {
     let mut iter = text.iter();
-    loop {
-        if let Some(c) = iter.next() {
-            if let Some(val) = TABLE.get(c.wrapping_sub(0xA0) as usize) {
-                if *val != 0 {
-                    let tail = iter.as_slice();
-                    return text
-                        .split_at_checked(text.len() - tail.len() - 1)
-                        .unwrap_or_else(|| {
-                            // Internal bug, not even GIGO, never supposed to happen
-                            debug_assert!(false);
-                            (&[], text)
-                        });
-                }
+    while let Some(c) = iter.next() {
+        let b = *c;
+        if let Some(shifted) = 1u128.checked_shl(u32::from(b.wrapping_sub(0x80))) {
+            if (NFKD_BITS & shifted) != 0 {
+                let tail = iter.as_slice();
+                return text
+                    .split_at_checked(text.len() - tail.len() - 1)
+                    .unwrap_or_else(|| {
+                        // Internal bug, not even GIGO, never supposed to happen
+                        debug_assert!(false);
+                        (&[], text)
+                    });
             }
-        } else {
-            return (text, &[]);
         }
     }
+    (text, &[])
 }
 
 /// Split Latin1 `text` into `(head, tail)` such that the first
 /// byte of `tail` is the first byte of input that is not in NFKC.
 /// If `text` is fully in NFKC, `tail` is empty.
+#[inline]
 pub fn split_normalized_nfkc(text: &[u8]) -> (&[u8], &[u8]) {
-    // Indexing is OK, because the index is statically in range.
-    #[expect(clippy::indexing_slicing)]
-    let table = &TABLE[..0x20];
     let mut iter = text.iter();
-    loop {
-        if let Some(c) = iter.next() {
-            if let Some(val) = table.get(c.wrapping_sub(0xA0) as usize) {
-                let v = *val;
-                if v != 0 {
-                    let tail = iter.as_slice();
-                    return text
-                        .split_at_checked(text.len() - tail.len() - 1)
-                        .unwrap_or_else(|| {
-                            // Internal bug, not even GIGO, never supposed to happen
-                            debug_assert!(false);
-                            (&[], text)
-                        });
-                }
+    while let Some(c) = iter.next() {
+        let b = *c;
+        // Make ASCII go one instruction faster.
+        if b < 0xA0 {
+            continue;
+        }
+        if let Some(shifted) = 1u32.checked_shl(u32::from(b.wrapping_sub(0xA0))) {
+            if (NFKC_BITS & shifted) != 0 {
+                let tail = iter.as_slice();
+                return text
+                    .split_at_checked(text.len() - tail.len() - 1)
+                    .unwrap_or_else(|| {
+                        // Internal bug, not even GIGO, never supposed to happen
+                        debug_assert!(false);
+                        (&[], text)
+                    });
             }
-        } else {
-            return (text, &[]);
         }
     }
+    (text, &[])
 }
