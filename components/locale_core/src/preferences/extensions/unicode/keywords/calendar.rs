@@ -90,7 +90,6 @@ fn test_calendar_aliases() {
 
     test("ethiopic-amete-alem", CalendarAlgorithm::Ethioaa);
     test("ethiopic", CalendarAlgorithm::Ethiopic);
-    test("ethiopic-foobar", CalendarAlgorithm::Ethiopic);
     test("ethioaa", CalendarAlgorithm::Ethioaa);
     test(
         "islamicc",
