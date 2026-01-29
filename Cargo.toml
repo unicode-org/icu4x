@@ -340,6 +340,7 @@ inherits = "bench"
 debug = true
 
 [workspace.lints]
+clippy.branches-sharing-code = "warn"
 clippy.collection_is_never_read = "warn"
 clippy.dbg_macro = "warn"
 clippy.debug_assert_with_mut_call = "warn"
