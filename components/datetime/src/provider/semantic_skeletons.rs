@@ -4,6 +4,7 @@
 
 //! Data structs and markers for semantic skeletons.
 
+use crate::provider::packed_pattern::PackedPatterns;
 use crate::provider::pattern::runtime;
 use crate::size_test_macro::size_test;
 use icu_provider::prelude::*;
@@ -333,4 +334,70 @@ icu_provider::data_marker!(
     /// `DatetimePatternsGlueV1`
     DatetimePatternsGlueV1,
     GluePattern<'static>
+);
+
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateBuddhistV1`
+    DatetimePatternsDateBuddhistV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateChineseV1`
+    DatetimePatternsDateChineseV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateCopticV1`
+    DatetimePatternsDateCopticV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateDangiV1`
+    DatetimePatternsDateDangiV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateEthiopianV1`
+    DatetimePatternsDateEthiopianV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateGregorianV1`
+    DatetimePatternsDateGregorianV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateHebrewV1`
+    DatetimePatternsDateHebrewV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateIndianV1`
+    DatetimePatternsDateIndianV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateHijriV1`
+    DatetimePatternsDateHijriV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateJapaneseV1`
+    DatetimePatternsDateJapaneseV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDatePersianV1`
+    DatetimePatternsDatePersianV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateRocV1`
+    DatetimePatternsDateRocV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsTimeV1`
+    DatetimePatternsTimeV1,
+    PackedPatterns<'static>
 );

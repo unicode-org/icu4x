@@ -89,6 +89,14 @@ pub struct Hijri<S>(pub S);
 /// You may find the simulations in the [`calendrical_calculations`] crate to be useful,
 /// supplemented with data from human observations.
 ///
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+/// </div>
+///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
@@ -468,6 +476,13 @@ impl Hijri<TabularAlgorithm> {
 }
 
 /// Information about a Hijri year.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+/// </div>
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct HijriYear {
     packed: PackedHijriYearData,
@@ -573,6 +588,8 @@ impl HijriYear {
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
 struct PackedHijriYearData(u16);

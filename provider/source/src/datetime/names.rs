@@ -502,11 +502,7 @@ fn datetimepattern_convert(
     length: PatternLength,
     glue_type: GlueType,
 ) -> Result<GluePattern<'static>, DataError> {
-    let append_tz = icu_pattern::DoublePlaceholderPattern::try_from_str(
-        &data.datetime_formats.append_items.timezone,
-        Default::default(),
-    )
-    .expect("failed to parse pattern");
+    let append_tz = &data.datetime_formats.append_items.timezone;
 
     // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
     let at_time = data

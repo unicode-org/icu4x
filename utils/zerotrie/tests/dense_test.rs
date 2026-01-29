@@ -168,10 +168,149 @@ fn test_dense_sparse_window_selection() {
     let dense = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
     let trie = dense.as_borrowed();
 
+    assert_eq!(
+        format!("{:?}", trie),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [112, 128, 47, 144, 36, 195, 97, 104, 108, 2, 8, 144, 34, 105, 103, 104, 147, 241, 5, 111, 119, 128, 50, 128] }, suffixes: ZeroTrieSimpleAscii { store: [201, 97, 98, 99, 100, 101, 102, 103, 104, 108, 1, 2, 9, 10, 11, 12, 13, 18, 128, 129, 130, 194, 50, 51, 1, 131, 132, 133, 134, 135, 136, 137, 105, 103, 104, 138, 111, 119, 139, 50, 140] }, dense: ZeroVec([65535, 0, 1, 1, 1, 65530, 65531, 65532, 65533, 65534, 65535, 65535, 65535]), suffix_count: 13, delimiter: 47 }"
+    );
+
     check_data(&data, trie, true);
 
     let byte_len = check_encoding(dense.as_borrowed());
     assert_eq!(byte_len, 102);
     let simple_trie = make_simple_ascii_trie(&data);
     assert_eq!(simple_trie.byte_len(), 60);
+}
+
+#[test]
+fn test_dense_suffix_count_with_low_frequency_suffixes() {
+    // Create a dataset where many suffixes appear in only one prefix.
+    // This should result in fewer dense suffixes than if we included all.
+
+    let mut data: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+
+    // Common suffixes that appear in multiple prefixes
+    data.entry("en").or_default().insert("US", 1);
+    data.entry("en").or_default().insert("GB", 2);
+    data.entry("en").or_default().insert("CA", 3);
+
+    data.entry("fr").or_default().insert("FR", 4);
+    data.entry("fr").or_default().insert("CA", 5);
+    data.entry("fr").or_default().insert("BE", 6);
+
+    data.entry("de").or_default().insert("DE", 7);
+    data.entry("de").or_default().insert("AT", 8);
+    data.entry("de").or_default().insert("CH", 9);
+
+    // Low-frequency suffixes (appear in only one prefix each)
+    data.entry("en").or_default().insert("rare1", 100);
+    data.entry("fr").or_default().insert("rare2", 101);
+    data.entry("de").or_default().insert("rare3", 102);
+    data.entry("es").or_default().insert("rare4", 103);
+    data.entry("es").or_default().insert("ES", 104);
+
+    let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+
+    assert_eq!(
+        format!("{:?}", trie.as_borrowed()),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [195, 100, 101, 102, 22, 61, 101, 47, 196, 65, 67, 68, 114, 2, 4, 6, 84, 136, 72, 137, 69, 135, 97, 114, 101, 51, 144, 86, 194, 110, 115, 21, 47, 196, 67, 71, 85, 114, 2, 4, 6, 65, 131, 66, 130, 83, 129, 97, 114, 101, 49, 144, 84, 47, 194, 69, 114, 3, 83, 144, 88, 97, 114, 101, 52, 144, 87, 114, 47, 196, 66, 67, 70, 114, 2, 4, 6, 69, 134, 65, 133, 82, 132, 97, 114, 101, 50, 144, 85] }, suffixes: ZeroTrieSimpleAscii { store: [201, 65, 66, 67, 68, 69, 70, 71, 85, 114, 2, 4, 10, 12, 14, 16, 18, 20, 84, 128, 69, 129, 194, 65, 72, 1, 130, 131, 69, 132, 83, 133, 82, 134, 66, 135, 83, 136, 97, 114, 101, 196, 49, 50, 51, 52, 1, 2, 3, 137, 138, 139, 140] }, dense: ZeroVec([]), suffix_count: 13, delimiter: 47 }"
+    );
+
+    check_data(&data, trie.as_borrowed(), true);
+
+    // Non-existent lookups
+    let mut non_existent: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+    non_existent.entry("en").or_default().insert("FR", 0);
+    non_existent
+        .entry("nonexistent")
+        .or_default()
+        .insert("US", 0);
+    check_data(&non_existent, trie.as_borrowed(), false);
+}
+
+#[test]
+fn test_empty_dense_when_no_suffix_meets_threshold() {
+    // Create a dataset where NO suffix appears in enough prefixes to meet threshold.
+    // Dense matrix should be empty, all lookups use sparse path.
+
+    let mut data: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+
+    // Each suffix appears in only one prefix (0% overlap)
+    data.entry("a").or_default().insert("s1", 1);
+    data.entry("b").or_default().insert("s2", 2);
+    data.entry("c").or_default().insert("s3", 3);
+
+    let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+
+    assert_eq!(
+        format!("{:?}", trie.as_borrowed()),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [195, 97, 98, 99, 4, 8, 47, 115, 49, 129, 47, 115, 50, 130, 47, 115, 51, 131] }, suffixes: ZeroTrieSimpleAscii { store: [115, 195, 49, 50, 51, 1, 2, 128, 129, 130] }, dense: ZeroVec([]), suffix_count: 3, delimiter: 47 }"
+    );
+
+    check_data(&data, trie.as_borrowed(), true);
+
+    // Non-existent
+    let mut non_existent: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+    non_existent.entry("a").or_default().insert("s2", 0);
+    non_existent.entry("b").or_default().insert("s3", 0);
+    check_data(&non_existent, trie.as_borrowed(), false);
+}
+
+#[test]
+fn test_empty_input() {
+    let data: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+
+    let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+
+    check_data(&data, trie.as_borrowed(), true);
+}
+
+#[test]
+fn test_lookup_semantics_remain_correct() {
+    // Verify that both dense and sparse suffixes return correct values
+
+    let mut data: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+
+    // High-frequency suffix (will be dense)
+    for i in 0..10 {
+        let prefix = format!("p{}", i);
+        data.entry(prefix.leak() as &str)
+            .or_default()
+            .insert("common", 100 + i);
+    }
+
+    // Low-frequency suffix (will be sparse)
+    data.entry("p0").or_default().insert("rare", 999);
+
+    let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+
+    assert_eq!(
+        format!("{:?}", trie.as_borrowed()),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [112, 202, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 4, 8, 12, 16, 20, 24, 28, 32, 36, 128, 47, 144, 84, 129, 47, 144, 85, 130, 47, 144, 86, 131, 47, 144, 87, 132, 47, 144, 88, 133, 47, 144, 89, 134, 47, 144, 90, 135, 47, 144, 91, 136, 47, 144, 92, 137, 47, 144, 93] }, suffixes: ZeroTrieSimpleAscii { store: [194, 99, 114, 6, 111, 109, 109, 111, 110, 128, 97, 114, 101, 129] }, dense: ZeroVec([0, 899, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535]), suffix_count: 2, delimiter: 47 }"
+    );
+
+    check_data(&data, trie.as_borrowed(), true);
+
+    // Non-existent combinations
+    let mut non_existent: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+    non_existent.entry("p1").or_default().insert("rare", 0);
+    non_existent.entry("p99").or_default().insert("common", 0);
+    check_data(&non_existent, trie.as_borrowed(), false);
+}
+
+#[test]
+fn test_delimiter_validation() {
+    let mut data: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+
+    // Try to use delimiter in suffix
+    data.entry("test").or_default().insert("bad/suffix", 1);
+
+    let result = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/');
+    assert!(result.is_err());
+
+    // Try to use delimiter in prefix
+    let mut data2: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+    data2.entry("bad/prefix").or_default().insert("ok", 1);
+
+    let result2 = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data2, b'/');
+    assert!(result2.is_err());
 }

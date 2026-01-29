@@ -9,10 +9,11 @@ use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
 use icu::datetime::provider::fields::components;
+use icu::datetime::provider::packed_pattern::*;
 use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
+use icu::datetime::provider::semantic_skeletons::*;
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::skeleton::*;
-use icu::datetime::provider::*;
 use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
@@ -290,44 +291,42 @@ impl SourceDataProvider {
                     .map(runtime::Pattern::as_ref),
             },
             variant0: Some(LengthPluralElements {
-                long: long
-                    .variant0
-                    .map(|x| x.into_inner())
-                    .unwrap_or(long.standard.inner().as_ref().map(runtime::Pattern::as_ref)),
-                medium: medium.variant0.map(|x| x.into_inner()).unwrap_or(
+                long: long.variant0.map(|x| x.into_inner()).unwrap_or_else(|| {
+                    long.standard.inner().as_ref().map(runtime::Pattern::as_ref)
+                }),
+                medium: medium.variant0.map(|x| x.into_inner()).unwrap_or_else(|| {
                     medium
                         .standard
                         .inner()
                         .as_ref()
-                        .map(runtime::Pattern::as_ref),
-                ),
-                short: short.variant0.map(|x| x.into_inner()).unwrap_or(
+                        .map(runtime::Pattern::as_ref)
+                }),
+                short: short.variant0.map(|x| x.into_inner()).unwrap_or_else(|| {
                     short
                         .standard
                         .inner()
                         .as_ref()
-                        .map(runtime::Pattern::as_ref),
-                ),
+                        .map(runtime::Pattern::as_ref)
+                }),
             }),
             variant1: Some(LengthPluralElements {
-                long: long
-                    .variant1
-                    .map(|x| x.into_inner())
-                    .unwrap_or(long.standard.inner().as_ref().map(runtime::Pattern::as_ref)),
-                medium: medium.variant1.map(|x| x.into_inner()).unwrap_or(
+                long: long.variant1.map(|x| x.into_inner()).unwrap_or_else(|| {
+                    long.standard.inner().as_ref().map(runtime::Pattern::as_ref)
+                }),
+                medium: medium.variant1.map(|x| x.into_inner()).unwrap_or_else(|| {
                     medium
                         .standard
                         .inner()
                         .as_ref()
-                        .map(runtime::Pattern::as_ref),
-                ),
-                short: short.variant1.map(|x| x.into_inner()).unwrap_or(
+                        .map(runtime::Pattern::as_ref)
+                }),
+                short: short.variant1.map(|x| x.into_inner()).unwrap_or_else(|| {
                     short
                         .standard
                         .inner()
                         .as_ref()
-                        .map(runtime::Pattern::as_ref),
-                ),
+                        .map(runtime::Pattern::as_ref)
+                }),
             }),
         };
         Ok(builder.build())

@@ -75,7 +75,7 @@ impl SourceDataProvider {
 
     /// Produce `DataIdentifier`'s for all locale-numbering system pairs in the form <locale>/<numsys>
     /// This also includes a bare <locale>
-    fn iter_ids_for_numbers_with_locales(
+    pub(crate) fn iter_ids_for_numbers_with_locales(
         &self,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self

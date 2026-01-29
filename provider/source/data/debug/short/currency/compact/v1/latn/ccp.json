@@ -1,0 +1,126 @@
+{
+  "standard": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "K"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "M"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "G"
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "T"
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "alpha_next_to_number": [
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "G "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "T "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}

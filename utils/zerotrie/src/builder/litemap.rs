@@ -9,8 +9,8 @@ use crate::builder::bytestr::ByteStr;
 use crate::error::ZeroTrieBuildError;
 use crate::zerotrie::ZeroTrieSimpleAscii;
 use crate::ZeroTrie;
-use alloc::borrow::Borrow;
 use alloc::vec::Vec;
+use core::borrow::Borrow;
 use litemap::LiteMap;
 
 impl ZeroTrieSimpleAscii<Vec<u8>> {

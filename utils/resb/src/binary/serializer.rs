@@ -292,9 +292,9 @@ impl Serializer {
             repr_info,
         };
 
-        let root_descriptor = root.descriptor.ok_or(BinarySerializerError::unexpected(
-            "root descriptor was never populated",
-        ))?;
+        let root_descriptor = root.descriptor.ok_or_else(|| {
+            BinarySerializerError::unexpected("root descriptor was never populated")
+        })?;
         let bundle_struct = BinResBundle {
             header,
             root_descriptor,
@@ -510,12 +510,9 @@ impl Serializer {
                 // need to borrow as mutable, but we can safely unwrap.
                 #[expect(clippy::unwrap_used)]
                 let containing_string = data.borrow().containing_string.unwrap();
-                let containing_data =
-                    strings
-                        .get(containing_string)
-                        .ok_or(BinarySerializerError::unexpected(
-                            "containing string not present in string map",
-                        ))?;
+                let containing_data = strings.get(containing_string).ok_or_else(|| {
+                    BinarySerializerError::unexpected("containing string not present in string map")
+                })?;
 
                 // Update the offset of the suffix from a relative position in
                 // the containing string to an absolute position in the 16-bit
@@ -792,12 +789,9 @@ impl Serializer {
                 data.append(&mut (map.len() as u16).to_ne_bytes().to_vec());
 
                 for key in map.keys() {
-                    let position =
-                        key_position_map
-                            .get(key)
-                            .ok_or(BinarySerializerError::unexpected(
-                                "key not present in position map",
-                            ))?;
+                    let position = key_position_map.get(key).ok_or_else(|| {
+                        BinarySerializerError::unexpected("key not present in position map")
+                    })?;
                     data.append(&mut (*position as u16).to_ne_bytes().to_vec());
                 }
 
@@ -864,9 +858,9 @@ impl Serializer {
             data.resize(data.len() + (u32_size - position % u32_size), 0xaa);
         }
 
-        resource.descriptor.ok_or(BinarySerializerError::unexpected(
-            "resource descriptor has not been populated",
-        ))
+        resource.descriptor.ok_or_else(|| {
+            BinarySerializerError::unexpected("resource descriptor has not been populated")
+        })
     }
 
     /// Generates a vector of bytes representing the 32-bit resource block.
@@ -1148,23 +1142,17 @@ impl TryFrom<BinIndex> for Vec<u8> {
         }
 
         if value.field_count >= 6 {
-            let bundle_attributes =
-                value
-                    .bundle_attributes
-                    .ok_or(BinarySerializerError::unexpected(
-                        "no bundle attributes field provided",
-                    ))?;
+            let bundle_attributes = value.bundle_attributes.ok_or_else(|| {
+                BinarySerializerError::unexpected("no bundle attributes field provided")
+            })?;
 
             bytes.extend_from_slice(&bundle_attributes.to_ne_bytes());
         }
 
         if value.field_count >= 7 {
-            let data_16_bit_end =
-                value
-                    .data_16_bit_end
-                    .ok_or(BinarySerializerError::unexpected(
-                        "no 16-bit data end offset provided",
-                    ))?;
+            let data_16_bit_end = value.data_16_bit_end.ok_or_else(|| {
+                BinarySerializerError::unexpected("no 16-bit data end offset provided")
+            })?;
 
             bytes.extend_from_slice(&data_16_bit_end.to_ne_bytes());
         }
@@ -1172,9 +1160,7 @@ impl TryFrom<BinIndex> for Vec<u8> {
         if value.field_count >= 8 {
             let pool_checksum = value
                 .pool_checksum
-                .ok_or(BinarySerializerError::unexpected(
-                    "no pool checksum provided",
-                ))?;
+                .ok_or_else(|| BinarySerializerError::unexpected("no pool checksum provided"))?;
 
             bytes.extend_from_slice(&pool_checksum.to_ne_bytes());
         }
