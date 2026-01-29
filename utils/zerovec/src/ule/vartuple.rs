@@ -114,7 +114,7 @@ where
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let (sized_chunk, variable_chunk) = bytes
             .split_at_checked(size_of::<A::ULE>())
-            .ok_or(UleError::length::<Self>(bytes.len()))?;
+            .ok_or_else(|| UleError::length::<Self>(bytes.len()))?;
         A::ULE::validate_bytes(sized_chunk)?;
         V::validate_bytes(variable_chunk)?;
         Ok(())

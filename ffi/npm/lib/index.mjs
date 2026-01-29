@@ -132,6 +132,8 @@ export { PluralOperands } from "./PluralOperands.mjs"
 
 export { PluralRules } from "./PluralRules.mjs"
 
+export { PluralRulesWithRanges } from "./PluralRulesWithRanges.mjs"
+
 export { CodePointRangeIterator } from "./CodePointRangeIterator.mjs"
 
 export { CodePointMapData16 } from "./CodePointMapData16.mjs"

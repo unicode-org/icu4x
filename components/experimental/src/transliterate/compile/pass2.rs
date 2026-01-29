@@ -272,7 +272,9 @@ impl<'a, 'p> Pass2<'a, 'p> {
 
         Ok(ds::RuleBasedTransliterator {
             visibility: true,
-            filter: pass1.filter.unwrap_or(CodePointInversionList::all()),
+            filter: pass1
+                .filter
+                .unwrap_or(const { CodePointInversionList::all() }),
             id_group_list: VarZeroVec::from(&compiled_transform_groups),
             rule_group_list: VarZeroVec::from(&compiled_conversion_groups),
             variable_table: pass2.var_table.finalize(),

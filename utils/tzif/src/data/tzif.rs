@@ -132,7 +132,7 @@ impl TzifData {
     pub fn version_number(&self) -> usize {
         self.header2
             .as_ref()
-            .map_or(self.header1.version(), TzifHeader::version)
+            .map_or(self.header1.version, TzifHeader::version)
     }
 
     /// Returns the number of bytes per time object based on the version number.

@@ -140,6 +140,8 @@ Fully filled in up to 30c187f4b7
         - derive: Recognize only `yoke(prove_covariance_manually)`, not arbitrary `foo(prove_covariance_manually)` (unicode-org#7470)
         - derive: Prevent unusual unsizing coercions, deref coercions, and macros from causing unsoundness (unicode-org#7470)
         - derive: Handle types' lifetime parameters more precisely (unicode-org#7470)
+        - derive: Support raw generic parameters, raw lifetime parameters, and for-binders (unicode-org#7498)
+        - derive: Loosen bounds in `prove_covariance_manually` on lifetime-less field types `T` to `T: 'static` (unicode-org#7498)
     - `zerofrom`: No change (`0.1.6`)
     - `zerotrie`: `0.2.3 -> ???`
         - Add `ZeroAsciiDenseSparse2dTrie` for more efficient storage of data keys with many attributes (unicode-org#7264, unicode-org#7304, unicode-org#7305)

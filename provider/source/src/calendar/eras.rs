@@ -185,7 +185,13 @@ fn test_calendar_eras() {
         for (idx, (_, era)) in data.eras.iter().enumerate() {
             let (in_era_iso, not_in_era_iso) = match (era.start, era.end) {
                 (Some(start), None) => {
-                    let start = Date::try_new_iso(start.year, start.month, start.day).unwrap();
+                    let year = if era.code == "meiji" {
+                        // Meiji starts roundtripping only after Meiji 6
+                        start.year + 5
+                    } else {
+                        start.year
+                    };
+                    let start = Date::try_new_iso(year, start.month, start.day).unwrap();
                     (start, Date::from_rata_die(start.to_rata_die() - 1, Iso))
                 }
                 (None, Some(end)) => {
@@ -233,7 +239,16 @@ fn test_calendar_eras() {
             }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
-            assert_eq!(era_year.year, 1, "Didn't get correct year for {in_era:?}");
+            let expected_year = if era.code == "meiji" {
+                // We started at Meiji 6 for Meiji only, above
+                6
+            } else {
+                1
+            };
+            assert_eq!(
+                era_year.year, expected_year,
+                "Didn't get correct year for {in_era:?}"
+            );
 
             if calendar == "japanese" {
                 // Japanese is the only calendar that doesn't start eras on a new year

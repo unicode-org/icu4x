@@ -8,7 +8,6 @@ use tinystr::TinyAsciiStr;
 
 pub mod compact_format;
 pub mod compact_formatter;
-pub mod compact_options;
 pub mod format;
 pub mod formatter;
 pub mod long_compact_format;
