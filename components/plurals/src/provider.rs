@@ -283,7 +283,7 @@ mod ranges {
             impl Visitor<'_> for HumanReadableVisitor {
                 type Value = UnvalidatedPluralRange;
 
-                fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
+                fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                     write!(
                         formatter,
                         "a plural range of the form <PluralCategory>-<PluralCategory>",

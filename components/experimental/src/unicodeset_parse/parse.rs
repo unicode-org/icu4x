@@ -4,10 +4,10 @@
 
 use alloc::borrow::Cow;
 use alloc::collections::{BTreeMap, BTreeSet};
-use alloc::fmt::Display;
 use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
+use core::fmt::Display;
 use core::{iter::Peekable, str::CharIndices};
 
 use icu_collections::{

@@ -5,8 +5,10 @@
 //! Code for the [`MultiNamedPlaceholder`] pattern backend.
 
 #[cfg(feature = "alloc")]
-use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, str::FromStr, string::String};
+use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, string::String};
 use core::fmt;
+#[cfg(feature = "alloc")]
+use core::str::FromStr;
 #[cfg(feature = "litemap")]
 use litemap::LiteMap;
 use writeable::Writeable;

@@ -59,10 +59,10 @@
 //!
 //! **3a:** Exhaustively check the probabilities of all possible BIES for the string. This algorithm has exponential runtime.
 
+use core::default::Default;
+use core::fmt;
 use itertools::Itertools;
 use partial_min_max::max;
-use std::default::Default;
-use std::fmt;
 use strum::EnumIter;
 use writeable::{LengthHint, Writeable};
 
@@ -276,7 +276,7 @@ impl<'a> From<&'a Breakpoints> for BiesString<'a> {
 }
 
 impl Writeable for BiesString<'_> {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let mut write_bies_word = |i: usize, j: usize| -> fmt::Result {
             if i == j - 1 {
                 sink.write_char('s')?;

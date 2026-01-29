@@ -301,7 +301,7 @@ impl serde::Serialize for VariantOffsets {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            use alloc::fmt::Write;
+            use core::fmt::Write;
             let mut r = alloc::format!(
                 "{:+02}:{:02}",
                 self.standard.hours_part(),

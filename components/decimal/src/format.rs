@@ -107,7 +107,7 @@ impl Writeable for FormattedDecimal<'_> {
 writeable::impl_display_with_writeable!(FormattedDecimal<'_>, #[cfg(feature = "alloc")]);
 writeable::impl_display_with_writeable!(FormattedUnsignedDecimal<'_>, #[cfg(feature = "alloc")]);
 
-/// This trait is implemented for compatibility with [`fmt!`](alloc::fmt)
+/// This trait is implemented for compatibility with [`fmt!`](core::fmt)
 /// To create a string, [`Writeable::write_to_string`] is usually more efficient
 impl<T: Writeable> core::fmt::Display for FormattedSign<'_, T> {
     #[inline]
