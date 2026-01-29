@@ -83,7 +83,7 @@ impl PersonNamesFormatter {
         let effective_locale = specifications::effective_locale(
             &self.default_options.target_locale,
             person_name_locale,
-        )?;
+        );
 
         let data: DataResponse<PersonNamesFormatV1> = provider
             .load(DataRequest {

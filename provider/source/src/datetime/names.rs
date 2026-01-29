@@ -165,6 +165,7 @@ impl SourceDataProvider {
     }
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn weekday_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
@@ -190,6 +191,7 @@ fn weekday_convert(
     })
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn dayperiods_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
@@ -326,6 +328,7 @@ fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
     }
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn months_convert(
     _datagen: &SourceDataProvider,
     locale: &DataLocale,
@@ -493,6 +496,7 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
     })
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,

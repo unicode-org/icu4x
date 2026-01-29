@@ -279,7 +279,7 @@ impl<'p> Pass1<'p> {
 
         // first check global filter/global inverse filter.
         // after this check, they may not appear anywhere.
-        let rules = s.validate_global_filters(rules)?;
+        let rules = s.validate_global_filters(rules);
 
         // iterate through remaining rules and perform checks according to interim specification
 
@@ -305,10 +305,7 @@ impl<'p> Pass1<'p> {
         Pass1ResultGenerator::generate(s)
     }
 
-    fn validate_global_filters<'a>(
-        &mut self,
-        rules: &'a [parse::Rule],
-    ) -> Result<&'a [parse::Rule]> {
+    fn validate_global_filters<'a>(&mut self, rules: &'a [parse::Rule]) -> &'a [parse::Rule] {
         let rules = match rules {
             [parse::Rule::GlobalFilter(filter), rest @ ..] => {
                 self.forward_filter = Some(filter.clone());
@@ -317,16 +314,14 @@ impl<'p> Pass1<'p> {
             }
             _ => rules,
         };
-        let rules = match rules {
+        match rules {
             [rest @ .., parse::Rule::GlobalInverseFilter(filter)] => {
                 self.reverse_filter = Some(filter.clone());
 
                 rest
             }
             _ => rules,
-        };
-
-        Ok(rules)
+        }
     }
 
     fn validate_variable_definition(

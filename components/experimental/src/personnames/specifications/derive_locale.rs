@@ -20,13 +20,13 @@ use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterErr
 pub fn effective_locale<'a>(
     formatter_locale: &'a Locale,
     person_name_locale: &'a Locale,
-) -> Result<&'a Locale, PersonNamesFormatterError> {
+) -> &'a Locale {
     let name_script = person_name_locale.id.script.unwrap();
     let formatter_script = formatter_locale.id.script.unwrap();
     if !compatible_scripts(name_script, formatter_script) {
-        return Ok(person_name_locale);
+        return person_name_locale;
     }
-    Ok(formatter_locale)
+    formatter_locale
 }
 
 // TODO: proper handling of compatible scripts.
@@ -113,11 +113,11 @@ mod tests {
         lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("de-Latn-ch"), &locale),
-            Ok(&locale!("de-Latn-ch"))
+            &locale!("de-Latn-ch")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("de-Latn-ch")),
-            Ok(&locale!("fr-Latn-FR"))
+            &locale!("fr-Latn-FR")
         );
     }
 
@@ -128,11 +128,11 @@ mod tests {
         lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("de-Latn-ch"), &locale),
-            Ok(&locale!("ja-Jpan-JP"))
+            &locale!("ja-Jpan-JP")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("de-Latn-ch")),
-            Ok(&locale!("de-Latn-CH"))
+            &locale!("de-Latn-CH")
         );
     }
 
@@ -143,27 +143,27 @@ mod tests {
         lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("ja-Hani-JP"), &locale),
-            Ok(&locale!("ja-Hani-JP"))
+            &locale!("ja-Hani-JP")
         );
         assert_eq!(
             effective_locale(&locale!("ja-Kana-JP"), &locale),
-            Ok(&locale!("ja-Kana-JP"))
+            &locale!("ja-Kana-JP")
         );
         assert_eq!(
             effective_locale(&locale!("ja-Hira-JP"), &locale),
-            Ok(&locale!("ja-Hira-JP"))
+            &locale!("ja-Hira-JP")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("ja-Hani-JP")),
-            Ok(&locale!("ja-Jpan-JP"))
+            &locale!("ja-Jpan-JP")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("ja-Kana-JP")),
-            Ok(&locale!("ja-Jpan-JP"))
+            &locale!("ja-Jpan-JP")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("ja-Hira-JP")),
-            Ok(&locale!("ja-Jpan-JP"))
+            &locale!("ja-Jpan-JP")
         );
     }
 
