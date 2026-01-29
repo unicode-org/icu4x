@@ -30,7 +30,7 @@ pub fn vec_utf_16<'de, D: Deserializer<'de>>(
     impl<'de> Visitor<'de> for Utf16Visitor {
         type Value = Vec<&'de PotentialUtf16>;
 
-        fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
+        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
             write!(formatter, "a sequence of UTF-16 slices")
         }
 

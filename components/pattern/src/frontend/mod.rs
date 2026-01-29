@@ -17,7 +17,9 @@ use crate::Parser;
 #[cfg(feature = "alloc")]
 use crate::ParserOptions;
 #[cfg(feature = "alloc")]
-use alloc::{borrow::ToOwned, boxed::Box, str::FromStr, string::String};
+use alloc::{borrow::ToOwned, boxed::Box, string::String};
+#[cfg(feature = "alloc")]
+use core::str::FromStr;
 use core::{convert::Infallible, fmt, marker::PhantomData};
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 

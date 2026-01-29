@@ -166,7 +166,7 @@ impl MultiExporter {
 }
 
 impl core::fmt::Debug for MultiExporter {
-    fn fmt(&self, f: &mut alloc::fmt::Formatter<'_>) -> alloc::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("MultiExporter")
             .field("0", &format!("vec[len = {}]", self.0.len()))
             .finish()
