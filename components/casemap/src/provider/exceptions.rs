@@ -54,7 +54,7 @@ impl CaseMapExceptions<'_> {
         let exception = self.exceptions.get(idx.into());
         debug_assert!(exception.is_some());
 
-        exception.unwrap_or(ExceptionULE::empty_exception())
+        exception.unwrap_or(ExceptionULE::EMPTY_EXCEPTION)
     }
 
     #[cfg(any(feature = "serde", feature = "datagen"))]
@@ -132,8 +132,7 @@ pub struct Exception<'a> {
 }
 
 impl ExceptionULE {
-    #[inline]
-    fn empty_exception() -> &'static Self {
+    const EMPTY_EXCEPTION: &Self = {
         static EMPTY_BYTES: &[u8] = &[0, 0];
         // Safety:
         // ExceptionULE is a packed DST with `(u8, u8, unsized)` fields. All bit patterns are valid for the two u8s
@@ -143,7 +142,8 @@ impl ExceptionULE {
             let slice: *const [u8] = ptr::slice_from_raw_parts(EMPTY_BYTES.as_ptr(), 0);
             &*(slice as *const Self)
         }
-    }
+    };
+
     pub(crate) fn has_slot(&self, slot: ExceptionSlot) -> bool {
         self.slot_presence.has_slot(slot)
     }

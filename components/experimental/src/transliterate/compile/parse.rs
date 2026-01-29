@@ -516,9 +516,9 @@ where
         }
 
         // an empty forward rule, such as ":: (R) ;" is equivalent to ":: Any-Null (R) ;"
-        let forward_basic_id = forward_basic_id.unwrap_or(BasicId::default());
+        let forward_basic_id = forward_basic_id.unwrap_or_else(BasicId::default);
         // an empty reverse rule, such as ":: F () ;" is equivalent to ":: F (Any-Null) ;"
-        let reverse_basic_id = reverse_basic_id.unwrap_or(BasicId::default());
+        let reverse_basic_id = reverse_basic_id.unwrap_or_else(BasicId::default);
 
         let forward_single_id = SingleId {
             basic_id: forward_basic_id,
@@ -1225,7 +1225,9 @@ where
 
     // use this whenever an empty iterator would imply an Eof error
     fn must_next(&mut self) -> Result<(usize, char)> {
-        self.iter.next().ok_or(CompileErrorKind::Eof.into())
+        self.iter
+            .next()
+            .ok_or(CompileErrorKind::Eof.without_offset())
     }
 
     // see must_next
@@ -1238,7 +1240,7 @@ where
         self.iter
             .peek()
             .copied()
-            .ok_or(CompileErrorKind::Eof.into())
+            .ok_or(CompileErrorKind::Eof.without_offset())
     }
 
     // see must_peek

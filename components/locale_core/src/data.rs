@@ -241,10 +241,12 @@ impl DataLocale {
     fn region_and_subdivision(&self) -> Option<unicode_ext::SubdivisionId> {
         self.subdivision
             .and_then(|s| unicode_ext::SubdivisionId::try_from_str(s.as_str()).ok())
-            .or(self.region.map(|region| unicode_ext::SubdivisionId {
-                region,
-                suffix: unicode_ext::SubdivisionSuffix::UNKNOWN,
-            }))
+            .or_else(|| {
+                self.region.map(|region| unicode_ext::SubdivisionId {
+                    region,
+                    suffix: unicode_ext::SubdivisionSuffix::UNKNOWN,
+                })
+            })
     }
 
     fn as_tuple(

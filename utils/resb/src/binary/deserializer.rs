@@ -824,9 +824,11 @@ impl<'de> de::MapAccess<'de> for TableMapAccess<'de, '_> {
         self.keys = keys;
         self.remaining -= 1;
 
-        let input = get_subslice(self.de.keys, key as usize..).or(Err(
-            BinaryDeserializerError::invalid_data("unexpected end of data while deserializing key"),
-        ))?;
+        let input = get_subslice(self.de.keys, key as usize..).or(const {
+            Err(BinaryDeserializerError::invalid_data(
+                "unexpected end of data while deserializing key",
+            ))
+        })?;
 
         let de = KeyDeserializer::new(input);
         seed.deserialize(de).map(Some)
@@ -1053,9 +1055,10 @@ impl<'de> KeyDeserializer<'de> {
     fn read_key(self) -> Result<&'de str, BinaryDeserializerError> {
         // Keys are stored as null-terminated UTF-8 strings. Locate the
         // terminating byte and return as a borrowed string.
-        let terminator_pos = self.input.iter().position(|&byte| byte == 0).ok_or(
-            BinaryDeserializerError::invalid_data("unterminated key string"),
-        )?;
+        let terminator_pos =
+            self.input.iter().position(|&byte| byte == 0).ok_or(
+                const { BinaryDeserializerError::invalid_data("unterminated key string") },
+            )?;
 
         let input = get_subslice(self.input, 0..terminator_pos)?;
         core::str::from_utf8(input)
@@ -1116,9 +1119,13 @@ fn get_length_and_start_of_utf16_string(
             .chunks_exact(2)
             .take(40)
             .position(|chunk| chunk == [0, 0])
-            .ok_or(BinaryDeserializerError::invalid_data(
-                "unterminated string with implicit length",
-            ))?
+            .ok_or(
+                const {
+                    BinaryDeserializerError::invalid_data(
+                        "unterminated string with implicit length",
+                    )
+                },
+            )?
             + 1;
 
         (length, input)
@@ -1243,17 +1250,13 @@ fn read_u32(input: &[u8]) -> Result<(u32, &[u8]), BinaryDeserializerError> {
     #[expect(clippy::unwrap_used)]
     let bytes = input
         .get(0..size_of::<u32>())
-        .ok_or(BinaryDeserializerError::invalid_data(
-            "unexpected end of input",
-        ))?
+        .ok_or(const { BinaryDeserializerError::invalid_data("unexpected end of input") })?
         .try_into()
         .unwrap();
     let value = u32::from_le_bytes(bytes);
 
     let rest = input
         .get(size_of::<u32>()..)
-        .ok_or(BinaryDeserializerError::invalid_data(
-            "unexpected end of input",
-        ))?;
+        .ok_or(const { BinaryDeserializerError::invalid_data("unexpected end of input") })?;
     Ok((value, rest))
 }
