@@ -154,11 +154,18 @@ mod check_convenience_constructors {
     #[test]
     #[allow(deprecated)]
     fn chinese_traditional() {
-        let c = ChineseTraditional::new();
-        Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+        Date::try_new_chinese_traditional(*VALID_YEAR_RANGE.start() - 1, Month::new(1), 1)
             .unwrap_err();
-        Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c))
+        Date::try_new_chinese_traditional(*VALID_YEAR_RANGE.end() + 1, Month::new(1), 1)
             .unwrap_err();
+        #[allow(deprecated)]
+        {
+            let c = ChineseTraditional::new();
+            Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+                .unwrap_err();
+            Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c))
+                .unwrap_err();
+        }
     }
     #[test]
     fn coptic() {
@@ -166,12 +173,19 @@ mod check_convenience_constructors {
         Date::try_new_coptic(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
     }
     #[test]
-    #[allow(deprecated)]
     fn korean_traditional() {
-        let c = KoreanTraditional::new();
-        Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+        Date::try_new_korean_traditional(*VALID_YEAR_RANGE.start() - 1, Month::new(1), 1)
             .unwrap_err();
-        Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+        Date::try_new_korean_traditional(*VALID_YEAR_RANGE.end() + 1, Month::new(1), 1)
+            .unwrap_err();
+        #[allow(deprecated)]
+        {
+            let c = KoreanTraditional::new();
+            Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+                .unwrap_err();
+            Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c))
+                .unwrap_err();
+        }
     }
     #[test]
     fn ethiopian() {
@@ -213,10 +227,14 @@ mod check_convenience_constructors {
         Date::try_new_gregorian(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
     }
     #[test]
-    #[allow(deprecated)]
     fn hebrew() {
-        Date::try_new_hebrew(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
-        Date::try_new_hebrew(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+        Date::try_new_hebrew_fixed(*VALID_YEAR_RANGE.start() - 1, Month::new(1), 1).unwrap_err();
+        Date::try_new_hebrew_fixed(*VALID_YEAR_RANGE.end() + 1, Month::new(1), 1).unwrap_err();
+        #[allow(deprecated)]
+        {
+            Date::try_new_hebrew(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+            Date::try_new_hebrew(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+        }
     }
     #[test]
     fn hijri_tabular_friday() {
