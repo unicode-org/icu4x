@@ -170,7 +170,7 @@
             }
         }
     },
-{
+    {
         "description": "Full date time example with long generic time zone. For locale with non-default timezone appendItem (zh, {1}{0} rather than {1} {0}).",
         "input": {
             "value": "2020-01-21T08:25:07.000+05:00",
