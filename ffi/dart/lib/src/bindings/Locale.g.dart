@@ -164,6 +164,83 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     }
   }
 
+  /// Writes a string representation of the [Locale] variants to `write`.
+  ///
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+  String variants() {
+    final write = _Write();
+    _icu4x_Locale_variants_mv1(_ffi, write._ffi);
+    return write.finalize();
+  }
+
+  /// Returns the number of variants in this [Locale].
+  ///
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+  int get variantCount {
+    final result = _icu4x_Locale_variant_count_mv1(_ffi);
+    return result;
+  }
+
+  /// Writes the variant at the given index to `write`.
+  ///
+  /// Returns `None` if the index is out of bounds.
+  ///
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+  String? variantAt(int index) {
+    final write = _Write();
+    final result = _icu4x_Locale_variant_at_mv1(_ffi, index, write._ffi);
+    if (!result.isOk) {
+      return null;
+    }
+    return write.finalize();
+  }
+
+  /// Returns whether the [Locale] has a specific variant.
+  ///
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+  bool hasVariant(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_has_variant_mv1(_ffi, s._utf8AllocIn(temp.arena));
+    return result;
+  }
+
+  /// Adds a variant to the [Locale].
+  ///
+  /// Does nothing if the variant is already present.
+  ///
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+  ///
+  /// Throws [LocaleParseError] on failure.
+  void addVariant(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_add_variant_mv1(_ffi, s._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      throw LocaleParseError.values[result.union.err];
+    }
+  }
+
+  /// Removes a specific variant from the [Locale].
+  ///
+  /// Does nothing if the variant is not present.
+  ///
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+  ///
+  /// Throws [LocaleParseError] on failure.
+  void removeVariant(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_remove_variant_mv1(_ffi, s._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      throw LocaleParseError.values[result.union.err];
+    }
+  }
+
+  /// Clears all variants from the [Locale].
+  ///
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+  void clearVariants() {
+    _icu4x_Locale_clear_variants_mv1(_ffi);
+  }
+
   /// Normalizes a locale string.
   ///
   /// See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.
@@ -281,6 +358,41 @@ external _ResultVoidVoid _icu4x_Locale_script_mv1(ffi.Pointer<ffi.Opaque> self, 
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_set_script_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _icu4x_Locale_set_script_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
+
+@_DiplomatFfiUse('icu4x_Locale_variants_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_variants_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_Locale_variants_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
+
+@_DiplomatFfiUse('icu4x_Locale_variant_count_mv1')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_variant_count_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_Locale_variant_count_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@_DiplomatFfiUse('icu4x_Locale_variant_at_mv1')
+@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_variant_at_mv1')
+// ignore: non_constant_identifier_names
+external _ResultVoidVoid _icu4x_Locale_variant_at_mv1(ffi.Pointer<ffi.Opaque> self, int index, ffi.Pointer<ffi.Opaque> write);
+
+@_DiplomatFfiUse('icu4x_Locale_has_variant_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_has_variant_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_Locale_has_variant_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
+
+@_DiplomatFfiUse('icu4x_Locale_add_variant_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_add_variant_mv1')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _icu4x_Locale_add_variant_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
+
+@_DiplomatFfiUse('icu4x_Locale_remove_variant_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_remove_variant_mv1')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _icu4x_Locale_remove_variant_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
+
+@_DiplomatFfiUse('icu4x_Locale_clear_variants_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_clear_variants_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_Locale_clear_variants_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_Locale_normalize_mv1')
 @ffi.Native<_ResultVoidInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_normalize_mv1')

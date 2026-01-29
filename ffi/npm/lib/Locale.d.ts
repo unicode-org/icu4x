@@ -106,6 +106,61 @@ export class Locale {
     set script(s: string);
 
     /**
+     * Writes a string representation of the {@link Locale} variants to `write`.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    variants(): string;
+
+    /**
+     * Returns the number of variants in this {@link Locale}.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    get variantCount(): number;
+
+    /**
+     * Writes the variant at the given index to `write`.
+     *
+     * Returns `None` if the index is out of bounds.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    variantAt(index: number): string | null;
+
+    /**
+     * Returns whether the {@link Locale} has a specific variant.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    hasVariant(s: string): boolean;
+
+    /**
+     * Adds a variant to the {@link Locale}.
+     *
+     * Does nothing if the variant is already present.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    addVariant(s: string): void;
+
+    /**
+     * Removes a specific variant from the {@link Locale}.
+     *
+     * Does nothing if the variant is not present.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    removeVariant(s: string): void;
+
+    /**
+     * Clears all variants from the {@link Locale}.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+     */
+    clearVariants(): void;
+
+    /**
      * Normalizes a locale string.
      *
      * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.
