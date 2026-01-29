@@ -143,7 +143,6 @@ fn test_implicit_unihan() {
     assert_all_comparisons(&collator, "\u{4E00}", "\u{4E01}", Ordering::Less);
     assert_all_comparisons(&collator, "\u{4E01}", "\u{4E00}", Ordering::Greater);
 
-    assert_eq!(collator.compare("\u{4E18}", "\u{4E42}"), Ordering::Less);
     assert_all_comparisons(&collator, "\u{4E18}", "\u{4E42}", Ordering::Less);
 }
 
