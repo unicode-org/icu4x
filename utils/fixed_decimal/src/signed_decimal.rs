@@ -254,15 +254,16 @@ impl Decimal {
     /// assert_writeable_eq!(negative_zero, "-0");
     /// ```
     pub fn try_from_f64(float: f64, precision: FloatPrecision) -> Result<Self, LimitError> {
-        match float.is_sign_negative() {
-            true => Ok(Decimal {
+        if float.is_sign_negative() {
+            Ok(Decimal {
                 sign: Sign::Negative,
                 absolute: UnsignedDecimal::try_from_f64(-float, precision)?,
-            }),
-            false => Ok(Decimal {
+            })
+        } else {
+            Ok(Decimal {
                 sign: Sign::None,
                 absolute: UnsignedDecimal::try_from_f64(float, precision)?,
-            }),
+            })
         }
     }
 }
