@@ -63,6 +63,7 @@ struct SegmentLiteral {
 }
 
 impl SegmentLiteral {
+    #[allow(clippy::unnecessary_wraps)] // consistency
     fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
         if !self.literal.is_empty() {
             result.extend(self.literal.chars().map(PatternItem::from));
@@ -70,6 +71,7 @@ impl SegmentLiteral {
         Ok(())
     }
 
+    #[allow(clippy::unnecessary_wraps)] // consistency
     fn finish_generic(self, result: &mut Vec<GenericPatternItem>) -> Result<(), PatternError> {
         if !self.literal.is_empty() {
             result.extend(self.literal.chars().map(GenericPatternItem::from));
@@ -211,7 +213,7 @@ impl<'p> Parser<'p> {
         &mut self,
         ch: char,
         chars: &mut core::iter::Peekable<core::str::Chars>,
-    ) -> Result<bool, PatternError> {
+    ) -> bool {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
                 (Segment::Literal(literal), true) => {
@@ -223,16 +225,16 @@ impl<'p> Parser<'p> {
                 }
                 _ => unreachable!("Generic pattern has no symbols."),
             }
-            Ok(true)
+            true
         } else if let Segment::Literal(SegmentLiteral {
             ref mut literal,
             quoted: true,
         }) = self.state
         {
             literal.push(ch);
-            Ok(true)
+            true
         } else {
-            Ok(false)
+            false
         }
     }
 
@@ -333,7 +335,7 @@ impl<'p> Parser<'p> {
         let mut result = vec![];
 
         while let Some(ch) = chars.next() {
-            if !self.handle_generic_quoted_literal(ch, &mut chars)? {
+            if !self.handle_generic_quoted_literal(ch, &mut chars) {
                 if ch == '{' {
                     mem::replace(
                         &mut self.state,

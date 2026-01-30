@@ -1572,18 +1572,18 @@ impl<'data> CollatorBorrowed<'data> {
         }
 
         if self.options.case_level() {
+            let mut left_non_primary;
+            let mut right_non_primary;
+            let mut left_case;
+            let mut right_case;
+            let mut left_iter = left_ces.iter();
+            let mut right_iter = right_ces.iter();
             if self.options.strength() == Strength::Primary {
                 // Primary+caseLevel: Ignore case level weights of primary ignorables.
                 // Otherwise we would get a-umlaut > a
                 // which is not desirable for accent-insensitive sorting.
                 // Check for (lower 32 bits) == 0 as well because variable CEs are stored
                 // with only primary weights.
-                let mut left_non_primary;
-                let mut right_non_primary;
-                let mut left_case;
-                let mut right_case;
-                let mut left_iter = left_ces.iter();
-                let mut right_iter = right_ces.iter();
                 loop {
                     loop {
                         let ce = left_iter.next().unwrap_or_default();
@@ -1635,12 +1635,6 @@ impl<'data> CollatorBorrowed<'data> {
                 // but it's simpler to always ignore case weights of secondary ignorables,
                 // turning 0.0.ut into 0.0.0.t.
                 // (See LDML Collation, Case Parameters.)
-                let mut left_non_primary;
-                let mut right_non_primary;
-                let mut left_case;
-                let mut right_case;
-                let mut left_iter = left_ces.iter();
-                let mut right_iter = right_ces.iter();
                 loop {
                     loop {
                         left_non_primary = left_iter.next().unwrap_or_default().non_primary();

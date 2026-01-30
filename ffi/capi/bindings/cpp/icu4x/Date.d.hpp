@@ -198,7 +198,7 @@ public:
    * of the year, and can be meaningfully compared with extended years from other
    * eras or used in arithmetic.
    *
-   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.extended_year) for more information.
+   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
    */
   inline int32_t extended_year() const;
 
@@ -233,6 +233,13 @@ public:
    * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.days_in_year) for more information.
    */
   inline uint16_t days_in_year() const;
+
+  /**
+   * Returns if the year is a leap year for this date
+   *
+   * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+   */
+  inline bool is_in_leap_year() const;
 
   /**
    * Returns the {@link Calendar} object backing this date

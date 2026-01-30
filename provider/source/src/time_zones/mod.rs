@@ -130,7 +130,7 @@ impl SourceDataProvider {
                                         period
                                             .uses_meta_zone
                                             .from
-                                            .unwrap_or(Timestamp::from_epoch_milliseconds_and_utc_offset(0, Default::default())),
+                                            .unwrap_or_else(|| Timestamp::from_epoch_milliseconds_and_utc_offset(0, Default::default())),
                                         Some(&period.uses_meta_zone),
                                     )),
                                     // leave the metazone if there's a `to` date
@@ -197,7 +197,7 @@ impl SourceDataProvider {
                                                 .map(|(_, o)| o.total_offset())
                                                 .next()
                                             // Permanent DST
-                                            .unwrap_or(curr_offset.total_offset()),
+                                            .unwrap_or_else(|| curr_offset.total_offset()),
                                             Some(curr_offset.total_offset()),
                                         )
                                 } else {

@@ -41,72 +41,6 @@ pub struct PackedPatternsBuilder<'a> {
 
 size_test!(PackedPatterns, packed_skeleton_data_size, 32);
 
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateBuddhistV1`
-    DatetimePatternsDateBuddhistV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateChineseV1`
-    DatetimePatternsDateChineseV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateCopticV1`
-    DatetimePatternsDateCopticV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateDangiV1`
-    DatetimePatternsDateDangiV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateEthiopianV1`
-    DatetimePatternsDateEthiopianV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateGregorianV1`
-    DatetimePatternsDateGregorianV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateHebrewV1`
-    DatetimePatternsDateHebrewV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateIndianV1`
-    DatetimePatternsDateIndianV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateHijriV1`
-    DatetimePatternsDateHijriV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateJapaneseV1`
-    DatetimePatternsDateJapaneseV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDatePersianV1`
-    DatetimePatternsDatePersianV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsDateRocV1`
-    DatetimePatternsDateRocV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
-    /// `DatetimePatternsTimeV1`
-    DatetimePatternsTimeV1,
-    PackedPatterns<'static>
-);
-
 // Main data struct for packed datetime patterns.
 #[doc = packed_skeleton_data_size!()]
 ///
@@ -184,7 +118,7 @@ icu_provider::data_marker!(
 /// [`YearStyle::Auto`]: crate::options::YearStyle::Auto
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::packed_pattern))]
 pub struct PackedPatterns<'data> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
@@ -198,6 +132,8 @@ icu_provider::data_struct!(
     PackedPatterns<'_>,
     #[cfg(feature = "datagen")]
 );
+
+pub(crate) type ErasedPackedPatterns = icu_provider::marker::ErasedMarker<PackedPatterns<'static>>;
 
 mod constants {
     /// Value when standard long, medium, and short are all the same

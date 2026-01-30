@@ -141,7 +141,7 @@ impl RuleCollection {
                         }
                     }
                 })
-                .or_insert(id.clone());
+                .or_insert_with(|| id.clone());
         }
     }
 
@@ -627,6 +627,13 @@ impl CompileErrorKind {
     fn with_offset(self, offset: usize) -> CompileError {
         CompileError {
             offset: Some(offset),
+            kind: self,
+        }
+    }
+
+    const fn without_offset(self) -> CompileError {
+        CompileError {
+            offset: None,
             kind: self,
         }
     }

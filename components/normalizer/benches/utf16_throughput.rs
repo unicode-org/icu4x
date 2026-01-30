@@ -139,9 +139,9 @@ fn bench_lang(name: &str, data: &str, c: &mut Criterion) {
     }
 }
 
-static EL: &str = include_str!("./data/TestRandomWordsUDHR_el.txt");
+static EL: &str = include_str!("./data/Carroll-11-el.txt");
 static EN: &str = "The ICU4X normalizer is an implementation of Unicode Normalization Forms. ";
-static FR: &str = include_str!("./data/TestRandomWordsUDHR_fr.txt");
+static FR: &str = include_str!("./data/Carroll-11-fr.txt");
 static VI: &str = include_str!("./data/wotw.txt");
 static ZH: &str = "單父人呂公善沛令，辟仇，從之客，因家焉。沛中豪傑吏聞令有重客，皆往賀。";
 static KO: &str = "영어: 그 안에는 그렇게 특별한 것이 없었다. 앨리스는 토끼가 \"아이고! 아이고! 늦겠다!\"라고 중얼거리는 것을 듣고도 그다지 이상하게 생각하지 않았다.(그녀가 나중에 생각해 보니, 그녀가 그것에 대해 궁금해해야 했지만 당시에는 모든 것이 아주 자연스러워 보였다.) 하지만 토끼가 조끼 주머니에서 시계를 꺼내 보고 서둘러 가자 앨리스는 일어섰다. 조끼 주머니나 시계를 꺼낼 토끼를 이전에 본 적이 없다는 생각이 번쩍 들었기 때문이다. 호기심에 불타는 앨리스는 들판을 가로질러 토끼를 쫓아갔고, 다행히 울타리 아래의 큰 토끼굴로 토끼가 뛰어드는 것을 볼 수 있었다.";

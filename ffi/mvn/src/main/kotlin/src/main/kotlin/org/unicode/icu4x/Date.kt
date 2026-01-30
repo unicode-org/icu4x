@@ -28,6 +28,7 @@ internal interface DateLib: Library {
     fun icu4x_Date_months_in_year_mv1(handle: Pointer): FFIUint8
     fun icu4x_Date_days_in_month_mv1(handle: Pointer): FFIUint8
     fun icu4x_Date_days_in_year_mv1(handle: Pointer): FFIUint16
+    fun icu4x_Date_is_in_leap_year_mv1(handle: Pointer): Byte
     fun icu4x_Date_calendar_mv1(handle: Pointer): Pointer
 }
 /** An ICU4X Date object capable of containing a date for any calendar.
@@ -293,7 +294,7 @@ class Date internal constructor (
     *of the year, and can be meaningfully compared with extended years from other
     *eras or used in arithmetic.
     *
-    *See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.extended_year) for more information.
+    *See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
     */
     fun extendedYear(): Int {
         
@@ -343,6 +344,16 @@ class Date internal constructor (
         
         val returnVal = lib.icu4x_Date_days_in_year_mv1(handle);
         return (returnVal.toUShort())
+    }
+    
+    /** Returns if the year is a leap year for this date
+    *
+    *See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+    */
+    fun isInLeapYear(): Boolean {
+        
+        val returnVal = lib.icu4x_Date_is_in_leap_year_mv1(handle);
+        return (returnVal > 0)
     }
     
     /** Returns the [Calendar] object backing this date

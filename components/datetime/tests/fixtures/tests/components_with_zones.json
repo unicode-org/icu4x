@@ -169,5 +169,63 @@
                 "en-ZA": "week 17 of 2016, 08:25:07 GMT+05:00"
             }
         }
+    },
+    {
+        "description": "Full date time example with long generic time zone. For locale with non-default timezone appendItem (zh, {1}{0} rather than {1} {0}).",
+        "input": {
+            "value": "2020-01-21T08:25:07.000+05:00",
+            "options": {
+                "components": {
+                    "weekday": "long",
+                    "month": "long",
+                    "day": "numeric-day-of-month",
+                    "year": "numeric",
+                    "hour": "two-digit",
+                    "minute": "two-digit",
+                    "second": "two-digit",
+                    "time_zone_name": "short-specific"
+                },
+                "semantic": {
+                    "dateFields": "YMDE",
+                    "length": "long",
+                    "zoneStyle": "SpecificShort",
+                    "timePrecision": "second"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "zh-u-hc-h23": "GMT+52020年1月21日星期二 08:25:07"
+            }
+        }
+    },
+    {
+        "description": "Full date time example with short specific time zone. For locale with non-default timezone appendItem (cv, {0} {1} rather than {1} {0}).",
+        "input": {
+            "value": "2020-01-21T08:25:07.000+05:00",
+            "options": {
+                "components": {
+                    "weekday": "long",
+                    "month": "long",
+                    "day": "numeric-day-of-month",
+                    "year": "numeric",
+                    "hour": "two-digit",
+                    "minute": "two-digit",
+                    "second": "two-digit",
+                    "time_zone_name": "short-specific"
+                },
+                "semantic": {
+                    "dateFields": "YMDE",
+                    "length": "long",
+                    "zoneStyle": "SpecificShort",
+                    "timePrecision": "second"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "cv-u-hc-h23": "2020, кӑрлач, 21, ытлари кун, 08:25:07 (GMT+5)"
+            }
+        }
     }
 ]

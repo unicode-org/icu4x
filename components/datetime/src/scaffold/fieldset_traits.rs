@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::{names::*, time_zones::tz, *},
+    provider::semantic_skeletons::GluePattern,
+    provider::{names::*, packed_pattern::*, time_zones::tz},
     scaffold::*,
 };
 use icu_calendar::{

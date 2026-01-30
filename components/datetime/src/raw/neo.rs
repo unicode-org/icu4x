@@ -13,7 +13,8 @@ use crate::provider::pattern::{
     GenericPatternItem, PatternItem,
 };
 use crate::provider::{
-    names::*, semantic_skeletons::*, ErasedPackedPatterns, PackedSkeletonVariant,
+    packed_pattern::{ErasedPackedPatterns, PackedSkeletonVariant},
+    semantic_skeletons::{marker_attrs, DatetimePatternsGlueV1, GluePattern},
 };
 use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
@@ -104,10 +105,12 @@ pub(crate) struct ItemsAndOptions<'a> {
 }
 
 impl ItemsAndOptions<'_> {
-    fn new_empty() -> Self {
+    const fn new_empty() -> Self {
         Self {
             items: ZeroSlice::new_empty(),
-            ..Default::default()
+            alignment: None,
+            hour_cycle: None,
+            subsecond_digits: None,
         }
     }
 }
@@ -719,15 +722,15 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
                     Err(1) => self
                         .date_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     Err(0) => self
                         .time_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     Err(2) => self
                         .zone_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     _ => ItemsAndOptions::new_empty(),
                 },
             )

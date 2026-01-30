@@ -13,6 +13,7 @@ use icu::datetime::provider::semantic_skeletons::marker_attrs::GlueType;
 use icu::datetime::provider::semantic_skeletons::marker_attrs::{
     self, Context, Length, PatternLength,
 };
+use icu::datetime::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
@@ -164,6 +165,7 @@ impl SourceDataProvider {
     }
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn weekday_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
@@ -189,6 +191,7 @@ fn weekday_convert(
     })
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn dayperiods_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
@@ -325,6 +328,7 @@ fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
     }
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn months_convert(
     _datagen: &SourceDataProvider,
     locale: &DataLocale,
@@ -492,16 +496,13 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
     })
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
     glue_type: GlueType,
 ) -> Result<GluePattern<'static>, DataError> {
-    let append_tz = icu_pattern::DoublePlaceholderPattern::try_from_str(
-        &data.datetime_formats.append_items.timezone,
-        Default::default(),
-    )
-    .expect("failed to parse pattern");
+    let append_tz = &data.datetime_formats.append_items.timezone;
 
     // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
     let at_time = data

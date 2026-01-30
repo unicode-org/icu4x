@@ -4,7 +4,6 @@
 
 //! Data structs and markers for datetime names.
 
-use crate::provider::pattern::runtime;
 use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
@@ -390,35 +389,3 @@ pub use DatetimeNamesWeekdayV1 as WeekdayNamesV1;
 
 /// Re-export of day period names marker for more consistency
 pub use DatetimeNamesDayperiodV1 as DayPeriodNamesV1;
-
-size_test!(GluePattern, glue_pattern_v1_size, 24);
-
-/// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
-#[doc = glue_pattern_v1_size!()]
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct GluePattern<'data> {
-    /// The pattern
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: runtime::GenericPattern<'data>,
-}
-
-icu_provider::data_struct!(
-    GluePattern<'_>,
-    #[cfg(feature = "datagen")]
-);
-
-icu_provider::data_marker!(
-    /// `DatetimePatternsGlueV1`
-    DatetimePatternsGlueV1,
-    GluePattern<'static>
-);

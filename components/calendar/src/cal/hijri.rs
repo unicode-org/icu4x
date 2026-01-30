@@ -71,6 +71,8 @@ mod ummalqura_data;
 /// 2. [`TabularAlgorithm`] is based on a proleptic approximation of the length of a lunar year.
 ///    See the docs for information on the branches of Islam using it.
 ///
+/// To support other Hijri variants, use the [`Rules`] trait.
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
@@ -81,8 +83,19 @@ pub struct Hijri<S>(pub S);
 
 /// Defines a variant of the [`Hijri`] calendar.
 ///
-/// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`]
-/// rules, other rules can be implemented by users.
+/// This crate includes the [`UmmAlQura`] and [`TabularAlgorithm`] rules.
+///
+/// To support other Hijri variants, provide your own rules by implementing this trait.
+/// You may find the simulations in the [`calendrical_calculations`] crate to be useful,
+/// supplemented with data from human observations.
+///
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+/// </div>
 ///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
@@ -463,6 +476,13 @@ impl Hijri<TabularAlgorithm> {
 }
 
 /// Information about a Hijri year.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+/// </div>
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct HijriYear {
     packed: PackedHijriYearData,
@@ -568,6 +588,8 @@ impl HijriYear {
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
 struct PackedHijriYearData(u16);
@@ -721,7 +743,7 @@ fn computer_reference_years() {
         day: u8,
         cal: &C,
         year_info_from_extended: impl Fn(i32) -> C::YearInfo,
-    ) -> Result<C::YearInfo, DateError>
+    ) -> C::YearInfo
     where
         C: DateFieldsResolver,
     {
@@ -739,15 +761,15 @@ fn computer_reference_years() {
             };
         let year_info = year_info_from_extended(y3);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y2);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y1);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y0);
         // This function might be called with out-of-range days that are handled later.
@@ -758,12 +780,11 @@ fn computer_reference_years() {
                 "{ordinal_month}/{day}"
             );
         }
-        Ok(year_info)
+        year_info
     }
     for month in 1..=12 {
         for day in [30, 29] {
             let y = compute_hijri_reference_year(month, day, &Hijri(rules), |e| rules.year(e))
-                .unwrap()
                 .extended_year;
 
             if day == 30 {

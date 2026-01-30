@@ -75,6 +75,8 @@ namespace capi {
 
     uint16_t icu4x_Date_days_in_year_mv1(const icu4x::capi::Date* self);
 
+    bool icu4x_Date_is_in_leap_year_mv1(const icu4x::capi::Date* self);
+
     icu4x::capi::Calendar* icu4x_Date_calendar_mv1(const icu4x::capi::Date* self);
 
     void icu4x_Date_destroy_mv1(Date* self);
@@ -220,6 +222,11 @@ inline uint8_t icu4x::Date::days_in_month() const {
 
 inline uint16_t icu4x::Date::days_in_year() const {
     auto result = icu4x::capi::icu4x_Date_days_in_year_mv1(this->AsFFI());
+    return result;
+}
+
+inline bool icu4x::Date::is_in_leap_year() const {
+    auto result = icu4x::capi::icu4x_Date_is_in_leap_year_mv1(this->AsFFI());
     return result;
 }
 

@@ -6,7 +6,7 @@
 
 use core::num::NonZeroU8;
 
-use crate::core::EncodingType;
+use crate::encoding::EncodingType;
 
 /// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
@@ -356,6 +356,6 @@ impl Fraction {
     /// ```
     pub fn to_truncated_nanoseconds(&self) -> u32 {
         self.to_nanoseconds()
-            .unwrap_or((self.value / 10u64.pow(u32::from(self.digits.get() - 9))) as u32)
+            .unwrap_or_else(|| (self.value / 10u64.pow(u32::from(self.digits.get() - 9))) as u32)
     }
 }
