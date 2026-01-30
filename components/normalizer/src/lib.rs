@@ -109,7 +109,7 @@ use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::AbstractCodePointTrie;
 use icu_collections::codepointtrie::CharIterWithTrie;
-use icu_collections::codepointtrie::CharsWithTrieEx;
+use icu_collections::codepointtrie::CharsWithTrieDefaultForAsciiEx;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::FastCodePointTrie;
 use icu_collections::codepointtrie::WithTrie;
@@ -124,13 +124,11 @@ use provider::NormalizerNfdTablesV1;
 use provider::NormalizerNfkdTablesV1;
 use smallvec::SmallVec;
 #[cfg(feature = "utf16_iter")]
-use utf16_iter::Utf16CharsEx;
-#[cfg(feature = "utf16_iter")]
 use utf16_iter::Utf16CharsWithTrieEx;
 #[cfg(feature = "utf8_iter")]
 use utf8_iter::Utf8CharsEx;
 #[cfg(feature = "utf8_iter")]
-use utf8_iter::Utf8CharsWithTrieEx;
+use utf8_iter::Utf8CharsWithTrieDefaultForAsciiEx;
 use zerovec::{zeroslice, ZeroSlice};
 
 // The optimizations in the area where `likely` is used
@@ -764,7 +762,18 @@ fn starter_and_decomposes_to_self_impl(trie_val: u32) -> bool {
 
 /// See trie-value-format.md
 #[inline(always)]
-fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> bool {
+#[cfg(feature = "utf8_iter")]
+pub fn starter_and_decomposes_to_self_except_replacement(trie_val: u32) -> bool {
+    // This intentionally leaves `NON_ROUND_TRIP_MARKER` in the value
+    // to be compared with zero. U+FFFD has that flag set despite really
+    // being being round-tripping in order to make UTF-8 errors
+    // ineligible for passthrough.
+    (trie_val & !BACKWARD_COMBINING_MARKER) == 0
+}
+
+/// See trie-value-format.md
+#[inline(always)]
+fn potential_passthrough_and_cannot_combine_backwards(trie_val: u32) -> bool {
     (trie_val & (NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER)) == 0
 }
 
@@ -795,17 +804,6 @@ impl CharacterAndTrieValue {
 
     /// See trie-value-format.md
     #[inline(always)]
-    #[cfg(feature = "utf8_iter")]
-    pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
-        // This intentionally leaves `NON_ROUND_TRIP_MARKER` in the value
-        // to be compared with zero. U+FFFD has that flag set despite really
-        // being being round-tripping in order to make UTF-8 errors
-        // ineligible for passthrough.
-        (self.trie_val & !BACKWARD_COMBINING_MARKER) == 0
-    }
-
-    /// See trie-value-format.md
-    #[inline(always)]
     pub fn can_combine_backwards(&self) -> bool {
         (self.trie_val & BACKWARD_COMBINING_MARKER) != 0
     }
@@ -813,11 +811,6 @@ impl CharacterAndTrieValue {
     #[inline(always)]
     pub fn potential_passthrough(&self) -> bool {
         (self.trie_val & NON_ROUND_TRIP_MARKER) == 0
-    }
-    /// See trie-value-format.md
-    #[inline(always)]
-    pub fn potential_passthrough_and_cannot_combine_backwards(&self) -> bool {
-        potential_passthrough_and_cannot_combine_backwards_impl(self.trie_val)
     }
 }
 
@@ -966,9 +959,7 @@ where
     I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
     T: AbstractCodePointTrie<'data, u32> + 'data,
 {
-    DecompositionInner::<'data, I, T, Uax15Policy>::new_with_supplements(
-        delegate, tables, None,
-    )
+    DecompositionInner::<'data, I, T, Uax15Policy>::new_with_supplements(delegate, tables, None)
 }
 
 #[derive(Debug)]
@@ -1731,6 +1722,7 @@ macro_rules! composing_normalize_to {
      $pending_slice:ident,
      $len_utf:ident,
      $self:ident,
+     $chars_with_trie:ident,
     ) => {
         $(#[$meta])*
         pub fn $normalize_to<W: $write + ?Sized>(
@@ -1739,7 +1731,7 @@ macro_rules! composing_normalize_to {
             $sink: &mut W,
         ) -> core::fmt::Result {
             $prolog
-            let mut $composition = $self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars_with_trie($self.trie()));
+            let mut $composition = $self.normalize_iter_private::<_, Trie, Uax15Policy>($text.$chars_with_trie($self.trie()));
             let _ = $composition.decomposition.init(); // Discard the U+0000.
 
             for cc in $composition.decomposition.buffer.drain(..) {
@@ -1894,6 +1886,10 @@ macro_rules! composing_normalize_to {
                                 starter = composed;
                                 if is_lv && $composition.decomposition.buffer.is_empty() {
                                     starter_is_lv = true;
+                                    // TODO: Put a Hangul fast-path that deals with conjoining jamo and ASCII
+                                    // in a manner specialized for the UTF (i.e. not doing surrogate checks,
+                                    // since surrogates are neither conjoining jamo nor ASCII) here.
+                                    // https://github.com/unicode-org/icu4x/issues/7516
                                     continue;
                                 }
                             } else {
@@ -1928,6 +1924,7 @@ macro_rules! decomposing_normalize_to {
      $pending_slice:ident,
      $outer:lifetime, // loop labels use lifetime tokens
      $self:ident,
+     $chars_with_trie:ident,
     ) => {
         $(#[$meta])*
         pub fn $normalize_to<W: $write + ?Sized>(
@@ -1937,7 +1934,7 @@ macro_rules! decomposing_normalize_to {
         ) -> core::fmt::Result {
             $prolog
 
-            let mut $decomposition = $self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars_with_trie($self.trie()));
+            let mut $decomposition = $self.normalize_iter_private::<_, Trie, Uax15Policy>($text.$chars_with_trie($self.trie()));
             let _ = $decomposition.init(); // Discard the U+0000.
 
             $outer: loop {
@@ -2336,8 +2333,15 @@ impl DecomposingNormalizerBorrowed<'static> {
             "future extension"
         );
 
+        // TODO: Perhaps hard-code these?
+
         const _: () = assert!(
             provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap <= 0x0300,
+            "invalid"
+        );
+
+        const _: () = assert!(
+            provider::Baked::SINGLETON_NORMALIZER_NFKD_DATA_V1.passthrough_cap >= 0x80,
             "invalid"
         );
 
@@ -2386,6 +2390,8 @@ impl DecomposingNormalizerBorrowed<'static> {
             provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap <= 0x0300,
             "invalid"
         );
+
+        // Is less than 0x80!
 
         let decomposition_capped =
             if provider::Baked::SINGLETON_NORMALIZER_UTS46_DATA_V1.passthrough_cap < 0xC0 {
@@ -2451,11 +2457,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         &self,
         iter: I,
     ) -> DecompositionInner<'data, I, T, P> {
-        DecompositionInner::new_with_supplements(
-            iter,
-            self.tables,
-            self.supplementary_tables,
-        )
+        DecompositionInner::new_with_supplements(iter, self.tables, self.supplementary_tables)
     }
 
     fn trie<T: AbstractCodePointTrie<'data, u32>>(&self) -> &'data T
@@ -2478,58 +2480,83 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         },
         as_str,
         {
-            // TODO: Consider just using the usual iterator once it statically returns default for ASCII.
-            let decomposition_passthrough_byte_bound = if self.decomposition_passthrough_bound == 0xC0 {
-                0xC3u8
-            } else {
-                self.decomposition_passthrough_bound.min(0x80)
-            };
-            // The attribute belongs on an inner statement, but Rust doesn't allow it there.
-            #[expect(clippy::unwrap_used)]
             'fast: loop {
-                let mut code_unit_iter = decomposition.delegate.as_str().as_bytes().iter();
-                'fastest: loop {
-                    if let Some(&upcoming_byte) = code_unit_iter.next() {
-                        if upcoming_byte < decomposition_passthrough_byte_bound {
-                            // Fast-track succeeded!
-                            continue 'fastest;
-                        }
-                        // This deliberately isn't panic-free, since the code pattern
-                        // that was OK for the composing counterpart regressed
-                        // English and French performance if done here, too.
-                        decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars_with_trie(decomposition.delegate.trie());
-                        break 'fastest;
+                if let Some((mut upcoming, mut trie_val)) = decomposition.delegate.next() {
+                    if starter_and_decomposes_to_self_impl(trie_val) {
+                        continue 'fast;
                     }
-                    // End of stream
-                    sink.write_str(pending_slice)?;
-                    return Ok(());
-                }
 
-                // `unwrap()` OK, because the slice is valid UTF-8 and we know there
-                // is an upcoming byte.
-                let (upcoming, trie_val) = decomposition.delegate.next().unwrap();
-                let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
-                if upcoming_with_trie_value.starter_and_decomposes_to_self() {
-                    continue 'fast;
-                }
-                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
-                    - decomposition.delegate.as_str().len()
-                    - upcoming.len_utf8()];
-                sink.write_str(consumed_so_far_slice)?;
+                    // Try to handle a single  combining mark followed by a starter in a way
+                    // that avoids `decomposition.buffer`.
 
-                // Now let's figure out if we got a starter or a non-starter.
-                if decomposition_starts_with_non_starter(
-                    trie_val,
-                ) {
-                    // Let this trie value to be reprocessed in case it is
-                    // one of the rare decomposing ones.
-                    decomposition.pending = Some(upcoming_with_trie_value);
-                    decomposition.gather_and_sort_combining(0);
-                    continue 'outer;
+                    // This loop is only broken out of as goto forward.
+                    #[expect(clippy::never_loop)]
+                    loop {
+                        if likely(trie_value_indicates_non_decomposing_non_starter(trie_val)) {
+                            if let Some((after_mark, after_mark_trie_value)) = decomposition.delegate.next() {
+                                if likely(starter_and_decomposes_to_self_impl(after_mark_trie_value)) {
+                                    continue 'fast;
+                                }
+                                if likely(!decomposition_starts_with_non_starter(after_mark_trie_value)) {
+                                    // We have a decomposing starter.
+                                    upcoming = after_mark;
+                                    trie_val = after_mark_trie_value;
+                                    break;
+                                }
+                                // We have another combining mark.
+                                // We put the first combining mark, which we know doesn't decompose,
+                                // directly into the buffer. We put the second one, which might decompose,
+                                // into `decomposition.pending` for `gather_and_sort_combining` to deal
+                                // with.
+
+                                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                                    - decomposition.delegate.as_str().len()
+                                    - upcoming.len_utf8()
+                                    - after_mark.len_utf8()];
+                                sink.write_str(consumed_so_far_slice)?;
+
+                                debug_assert!(decomposition.buffer.is_empty());
+
+                                // Narrowing `trie_value` to `u8` is OK, because we already checked
+                                // `decomposition_starts_with_non_starter`.
+                                debug_assert!(trie_value_has_ccc(trie_val));
+                                decomposition.buffer.push(CharacterAndClass::new(upcoming, CanonicalCombiningClass::from_icu4c_value(trie_val as u8)));
+
+                                decomposition.pending = Some(CharacterAndTrieValue::new(after_mark, after_mark_trie_value));
+                                decomposition.gather_and_sort_combining(0);
+                                continue 'outer;
+                            }
+                            // End of stream
+                            sink.write_str(pending_slice)?;
+                            return Ok(());
+                        }
+                        break;
+                    }
+                    // End skipping over single combining mark
+
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
+                    let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                        - decomposition.delegate.as_str().len()
+                        - upcoming.len_utf8()];
+                    sink.write_str(consumed_so_far_slice)?;
+
+                    // Now let's figure out if we got a starter or a non-starter.
+                    if decomposition_starts_with_non_starter(
+                        trie_val,
+                    ) {
+                        // Let this trie value to be reprocessed in case it is
+                        // one of the rare decomposing ones.
+                        decomposition.pending = Some(upcoming_with_trie_value);
+                        decomposition.gather_and_sort_combining(0);
+                        continue 'outer;
+                    }
+                    undecomposed_starter = upcoming_with_trie_value;
+                    debug_assert!(decomposition.pending.is_none());
+                    break 'fast;
                 }
-                undecomposed_starter = upcoming_with_trie_value;
-                debug_assert!(decomposition.pending.is_none());
-                break 'fast;
+                // End of stream
+                sink.write_str(pending_slice)?;
+                return Ok(());
             }
         },
         text,
@@ -2539,6 +2566,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         pending_slice,
         'outer,
         self,
+        chars_with_trie_default_for_ascii,
     );
 
     decomposing_normalize_to!(
@@ -2557,81 +2585,114 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         },
         as_slice,
         {
-            // TODO: Consider just using the usual iterator once it statically returns default for ASCII.
-            let decomposition_passthrough_byte_bound = self.decomposition_passthrough_bound.min(0x80);
             'fast: loop {
-                let mut code_unit_iter = decomposition.delegate.as_slice().iter();
-                'fastest: loop {
-                    if let Some(&upcoming_byte) = code_unit_iter.next() {
-                        // TODO: Unclear if this is still an optimization.
-                        if upcoming_byte < decomposition_passthrough_byte_bound {
-                            // Fast-track succeeded!
-                            continue 'fastest;
-                        }
-                        break 'fastest;
+                if let Some((mut upcoming, mut trie_val)) = decomposition.delegate.next() {
+                    if starter_and_decomposes_to_self_except_replacement(trie_val) {
+                        // Note: The trie value of the REPLACEMENT CHARACTER is
+                        // intentionally formatted to fail the
+                        // `starter_and_decomposes_to_self` test even though it
+                        // really is a starter that decomposes to self. This
+                        // Allows moving the branch on REPLACEMENT CHARACTER
+                        // below this `continue`.
+                        continue 'fast;
                     }
-                    // End of stream
-                    sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) })?;
-                    return Ok(());
-                }
-                #[expect(clippy::indexing_slicing)]
-                {decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars_with_trie(decomposition.delegate.trie());}
 
-                // `unwrap()` OK, because the slice is valid UTF-8 and we know there
-                // is an upcoming byte.
-                #[expect(clippy::unwrap_used)]
-                let (upcoming, trie_val) = decomposition.delegate.next().unwrap();
-                let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
-                if upcoming_with_trie_value.starter_and_decomposes_to_self_except_replacement() {
-                    // Note: The trie value of the REPLACEMENT CHARACTER is
-                    // intentionally formatted to fail the
-                    // `starter_and_decomposes_to_self` test even though it
-                    // really is a starter that decomposes to self. This
-                    // Allows moving the branch on REPLACEMENT CHARACTER
-                    // below this `continue`.
-                    continue 'fast;
-                }
+                    // Try to handle a single  combining mark followed by a starter in a way
+                    // that avoids `decomposition.buffer`.
 
-                // TODO: Annotate as unlikely.
-                if upcoming == REPLACEMENT_CHARACTER {
-                    // We might have an error, so fall out of the fast path.
+                    // This loop is only broken out of as goto forward.
+                    #[expect(clippy::never_loop)]
+                    loop {
+                        if likely(trie_value_indicates_non_decomposing_non_starter(trie_val)) {
+                            if let Some((after_mark, after_mark_trie_value)) = decomposition.delegate.next() {
+                                if likely(starter_and_decomposes_to_self_except_replacement(after_mark_trie_value)) {
+                                    continue 'fast;
+                                }
+                                if likely(!decomposition_starts_with_non_starter(after_mark_trie_value)) {
+                                    // We have a decomposing starter.
+                                    upcoming = after_mark;
+                                    trie_val = after_mark_trie_value;
+                                    break;
+                                }
+                                // We have another combining mark.
+                                // We put the first combining mark, which we know doesn't decompose,
+                                // directly into the buffer. We put the second one, which might decompose,
+                                // into `decomposition.pending` for `gather_and_sort_combining` to deal
+                                // with.
 
-                    // Since the U+FFFD might signify an error, we can't
-                    // assume `upcoming.len_utf8()` for the backoff length.
+                                // `len_utf8` is OK, since knowing that we have two combining marks
+                                // means that neither is U+FFFD, so we didn't have a UTF-8 error.
+                                debug_assert_ne!(upcoming, '\u{FFFD}');
+                                debug_assert_ne!(after_mark, '\u{FFFD}');
+                                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                                    - decomposition.delegate.as_slice().len()
+                                    - upcoming.len_utf8()
+                                    - after_mark.len_utf8()];
+                                sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
+
+                                debug_assert!(decomposition.buffer.is_empty());
+
+                                // Narrowing `trie_value` to `u8` is OK, because we already checked
+                                // `decomposition_starts_with_non_starter`.
+                                debug_assert!(trie_value_has_ccc(trie_val));
+                                decomposition.buffer.push(CharacterAndClass::new(upcoming, CanonicalCombiningClass::from_icu4c_value(trie_val as u8)));
+
+                                decomposition.pending = Some(CharacterAndTrieValue::new(after_mark, after_mark_trie_value));
+                                decomposition.gather_and_sort_combining(0);
+                                continue 'outer;
+                            }
+                            // End of stream
+                            sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) } )?;
+                            return Ok(());
+                        }
+                        break;
+                    }
+                    // End skipping over single combining mark
+
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
+                    if unlikely(upcoming == REPLACEMENT_CHARACTER) {
+                        // We might have an error, so fall out of the fast path.
+
+                        // Since the U+FFFD might signify an error, we can't
+                        // assume `upcoming.len_utf8()` for the backoff length.
+                        #[expect(clippy::indexing_slicing)]
+                        let mut consumed_so_far = pending_slice[..pending_slice.len() - decomposition.delegate.as_slice().len()].chars();
+                        let back = consumed_so_far.next_back();
+                        debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
+                        let consumed_so_far_slice = consumed_so_far.as_slice();
+                        sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
+
+                        // We could call `gather_and_sort_combining` here and
+                        // `continue 'outer`, but this should be better for code
+                        // size.
+                        undecomposed_starter = upcoming_with_trie_value;
+                        debug_assert!(decomposition.pending.is_none());
+                        break 'fast;
+                    }
+
                     #[expect(clippy::indexing_slicing)]
-                    let mut consumed_so_far = pending_slice[..pending_slice.len() - decomposition.delegate.as_slice().len()].chars();
-                    let back = consumed_so_far.next_back();
-                    debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
-                    let consumed_so_far_slice = consumed_so_far.as_slice();
+                    let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                        - decomposition.delegate.as_slice().len()
+                        - upcoming.len_utf8()];
                     sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
-                    // We could call `gather_and_sort_combining` here and
-                    // `continue 'outer`, but this should be better for code
-                    // size.
+                    // Now let's figure out if we got a starter or a non-starter.
+                    if decomposition_starts_with_non_starter(
+                        upcoming_with_trie_value.trie_val,
+                    ) {
+                        // Let this trie value to be reprocessed in case it is
+                        // one of the rare decomposing ones.
+                        decomposition.pending = Some(upcoming_with_trie_value);
+                        decomposition.gather_and_sort_combining(0);
+                        continue 'outer;
+                    }
                     undecomposed_starter = upcoming_with_trie_value;
                     debug_assert!(decomposition.pending.is_none());
                     break 'fast;
                 }
-
-                #[expect(clippy::indexing_slicing)]
-                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
-                    - decomposition.delegate.as_slice().len()
-                    - upcoming.len_utf8()];
-                sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
-
-                // Now let's figure out if we got a starter or a non-starter.
-                if decomposition_starts_with_non_starter(
-                    upcoming_with_trie_value.trie_val,
-                ) {
-                    // Let this trie value to be reprocessed in case it is
-                    // one of the rare decomposing ones.
-                    decomposition.pending = Some(upcoming_with_trie_value);
-                    decomposition.gather_and_sort_combining(0);
-                    continue 'outer;
-                }
-                undecomposed_starter = upcoming_with_trie_value;
-                debug_assert!(decomposition.pending.is_none());
-                break 'fast;
+                // End of stream
+                sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) } )?;
+                return Ok(());
             }
         },
         text,
@@ -2641,6 +2702,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         pending_slice,
         'outer,
         self,
+        chars_with_trie_default_for_ascii,
     );
 
     decomposing_normalize_to!(
@@ -2758,6 +2820,19 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                                     // directly into the buffer. We put the second one, which might decompose,
                                     // into `decomposition.pending` for `gather_and_sort_combining` to deal
                                     // with.
+
+                                    let Some(consumed_so_far_slice) = pending_slice.get(..pending_slice.len() -
+                                        // code_unit_iter.as_slice().len()
+                                        // SAFETY: `ptr` and `end` have been derived from the same allocation
+                                        // and `ptr` is never greater than `end`.
+                                        unsafe { end.offset_from(ptr) as usize }
+                                        - 2) else {
+                                        // If we ever come here, it's a bug, but let's avoid panic code paths in release builds.
+                                        debug_assert!(false);
+                                        // Throw away the results of the fast path.
+                                        break 'fastwrap;
+                                    };
+                                    sink.write_slice(consumed_so_far_slice)?;
 
                                     // Our belief that `upcoming32` is not a surrogate is based on trie data,
                                     // which might be GIGO.
@@ -2899,6 +2974,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         pending_slice,
         'outer,
         self,
+        chars_with_trie,
     );
 }
 
@@ -2969,6 +3045,9 @@ impl DecomposingNormalizer {
         if cap > 0x0300 {
             return Err(DataError::custom("invalid").with_marker(NormalizerNfdDataV1::INFO));
         }
+        if cap < 0x80 {
+            return Err(DataError::custom("invalid").with_marker(NormalizerNfdDataV1::INFO));
+        }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
@@ -3036,6 +3115,9 @@ impl DecomposingNormalizer {
         if cap > 0x0300 {
             return Err(DataError::custom("invalid").with_marker(NormalizerNfkdDataV1::INFO));
         }
+        if cap < 0x80 {
+            return Err(DataError::custom("invalid").with_marker(NormalizerNfdDataV1::INFO));
+        }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
@@ -3100,6 +3182,7 @@ impl DecomposingNormalizer {
         if cap > 0x0300 {
             return Err(DataError::custom("invalid").with_marker(NormalizerUts46DataV1::INFO));
         }
+        // Can be below 0x80!
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
@@ -3242,52 +3325,98 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
             };
             // Attributes have to be on blocks, so hoisting all the way here.
             #[expect(clippy::unwrap_used)]
+            let mut code_unit_iter = composition.decomposition.delegate.as_str().as_bytes().iter();
             'fast: loop {
-                let mut code_unit_iter = composition.decomposition.delegate.as_str().as_bytes().iter();
-                'fastest: loop {
-                    if let Some(&upcoming_byte) = code_unit_iter.next() {
-                        if upcoming_byte < composition_passthrough_byte_bound {
-                            // Fast-track succeeded!
-                            continue 'fastest;
-                        }
-                        // TODO: We know `upcoming_byte` is a non-ASCII lead byte of a well-formed
-                        // UTF-8 sequence. That's enough to inline code from `CharsWithTrie` here
-                        // with confidence that `unsafe` and complexity isn't excessive.
-                        let Some(remaining_slice) = pending_slice.get(pending_slice.len() - code_unit_iter.as_slice().len() - 1..) else {
-                            // If we ever come here, it's an internal bug. Let's avoid panic code paths in release builds.
-                            debug_assert!(false);
-                            // Throw away the fastest-path result in case of an internal bug.
-                            break 'fastest;
-                        };
-                        composition.decomposition.delegate = remaining_slice.chars_with_trie(composition.decomposition.delegate.trie());
-                        break 'fastest;
+                if let Some(b) = code_unit_iter.next() {
+                    let upcoming_byte = *b;
+                    if upcoming_byte < composition_passthrough_byte_bound {
+                        // Fast-track succeeded!
+                        continue 'fast;
                     }
-                    // End of stream
-                    sink.write_str(pending_slice)?;
-                    return Ok(());
-                }
-                // `unwrap()` OK, because the slice is valid UTF-8 and we know there
-                // is an upcoming byte.
-                let (upcoming, trie_val) = composition.decomposition.delegate.next().unwrap();
-                let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
-                if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
-                    // Can't combine backwards, hence a plain (non-backwards-combining)
-                    // starter albeit past `composition_passthrough_bound`
+                    // Begin manual inlining from `CharsWithTrie`
 
-                    // Fast-track succeeded!
-                    continue 'fast;
-                }
-                // We need to fall off the fast path.
-                composition.decomposition.pending = Some(upcoming_with_trie_value);
+                    // SAFETY: Since `code_unit_iter` came from `str` and we always advance by a full UTF-8 sequence, we may assume that we
+                    // have a valid lead byte. We can assume that the lead byte won't be ASCII, because `composition_passthrough_byte_bound`
+                    // is never less than 0x80. Not need to check for other cases.
+                    let (upcoming, trie_val) = if upcoming_byte < 0xE0 {
+                        // Two-byte sequence.
+                        // SAFETY, since `code_unit_iter` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
+                        // presence of a trail byte.
+                        let trail = *unsafe { code_unit_iter.next().unwrap_unchecked() };
+                        let high_five = u32::from(upcoming_byte & 0b11_111);
+                        let low_six = u32::from(trail & 0b111_111);
+                        // SAFETY: By construction, `high_five` and `low_six` conform
+                        // to the invariant of `utf8_two_byte`.
+                        let v = unsafe { composition.decomposition.delegate.trie().utf8_two_byte(high_five, low_six) };
+                        // SAFETY: Since `code_unit_iter` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+                        // valid (not overlong) two-byte lead and `trail` must be a valid
+                        // trail. Therefore, the following shift and OR stays in the
+                        // scalar value range.
+                        let c = unsafe { char::from_u32_unchecked((high_five << 6) | low_six) };
+                        (c, v)
+                    } else if upcoming_byte < 0xF0 {
+                        // Three-byte sequence.
+                        // SAFETY, since `code_unit_iter` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
+                        // presence of two trail bytes.
+                        let second = *unsafe { code_unit_iter.next().unwrap_unchecked() };
+                        let third = *unsafe { code_unit_iter.next().unwrap_unchecked() };
+                        let high_ten = (u32::from(upcoming_byte & 0b1111) << 6) | u32::from(second & 0b111_111);
+                        let low_six = u32::from(third & 0b111_111);
+                        // SAFETY: By construction, `high_ten` and `low_six` conform
+                        // to the invariant of `utf8_three_byte`.
+                        let v = unsafe { composition.decomposition.delegate.trie().utf8_three_byte(high_ten, low_six) };
+                        // SAFETY: Since `code_unit_iter` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+                        // valid (not overlong) three-byte lead and `second` and `third`
+                        // must be valid trails. Therefore, the following shift and OR
+                        // stays in the scalar value range.
+                        let c = unsafe { char::from_u32_unchecked((high_ten << 6) | low_six) };
+                        (c, v)
+                    } else {
+                        // Four-byte sequence
+                        // SAFETY, since `code_unit_iter` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
+                        // presence of three trail bytes.
+                        let second = *unsafe { code_unit_iter.next().unwrap_unchecked() };
+                        let third = *unsafe { code_unit_iter.next().unwrap_unchecked() };
+                        let fourth = *unsafe { code_unit_iter.next().unwrap_unchecked() };
+                        // SAFETY: Since `code_unit_iter` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+                        // valid (not overlong or out-of-range) four-byte lead and `second`,
+                        // `third`, and `fourth` must be valid trails. Therefore, the
+                        // following shift and OR stays in the scalar value range.
+                        let c = unsafe {
+                            char::from_u32_unchecked(
+                                (u32::from(upcoming_byte & 0b111) << 18)
+                                    | (u32::from(second & 0b111_111) << 12)
+                                    | (u32::from(third & 0b111_111) << 6)
+                                    | u32::from(fourth & 0b111_111),
+                            )
+                        };
+                        (c, composition.decomposition.delegate.trie().supplementary(c as u32))
+                    };
 
-                // slicing and unwrap OK, because we've just evidently read enough previously.
-                let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars_with_trie(composition.decomposition.delegate.trie());
-                // `unwrap` OK, because we've previously manage to read the previous character
-                let (undecomposed, undecomposed_trie_val) = consumed_so_far.next_back().unwrap();
-                undecomposed_starter = CharacterAndTrieValue::new(undecomposed, undecomposed_trie_val);
-                let consumed_so_far_slice = consumed_so_far.as_str();
-                sink.write_str(consumed_so_far_slice)?;
-                break 'fast;
+                    // End manual inlining from `CharsWithTrie`
+                    if potential_passthrough_and_cannot_combine_backwards(trie_val) {
+                        continue 'fast;
+                    }
+                    // SAFETY: We've advanced `code_unit_iter` to a UTF-8 boundary.
+                    composition.decomposition.delegate = unsafe { core::str::from_utf8_unchecked(code_unit_iter.as_slice())}.chars_with_trie_default_for_ascii(composition.decomposition.delegate.trie());
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
+                    // We need to fall off the fast path.
+                    composition.decomposition.pending = Some(upcoming_with_trie_value);
+
+                    // slicing and unwrap OK, because we've just evidently read enough previously.
+                    let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars_with_trie_default_for_ascii(composition.decomposition.delegate.trie());
+                    // Whether we could do something better than `next_back()` below is
+                    // https://github.com/unicode-org/icu4x/issues/7525
+                    // `unwrap` OK, because we've previously manage to read the previous character
+                    let (undecomposed, undecomposed_trie_val) = consumed_so_far.next_back().unwrap();
+                    undecomposed_starter = CharacterAndTrieValue::new(undecomposed, undecomposed_trie_val);
+                    let consumed_so_far_slice = consumed_so_far.as_str();
+                    sink.write_str(consumed_so_far_slice)?;
+                    break 'fast;
+                }
+                // End of stream
+                sink.write_str(pending_slice)?;
+                return Ok(());
             }
         },
         text,
@@ -3297,6 +3426,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         pending_slice,
         len_utf8,
         self,
+        chars_with_trie_default_for_ascii,
     );
 
     composing_normalize_to!(
@@ -3317,8 +3447,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         {
             'fast: loop {
                 if let Some((upcoming, trie_val)) = composition.decomposition.delegate.next() {
-                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
-                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
+                    if potential_passthrough_and_cannot_combine_backwards(trie_val) {
                         // Note: The trie value of the REPLACEMENT CHARACTER is
                         // intentionally formatted to fail the
                         // `potential_passthrough_and_cannot_combine_backwards`
@@ -3330,8 +3459,8 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                     }
                     // We need to fall off the fast path.
 
-                    // TODO(#2006): Annotate as unlikely
-                    if upcoming == REPLACEMENT_CHARACTER {
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
+                    if unlikely(upcoming == REPLACEMENT_CHARACTER) {
                         // Can't tell if this is an error or a literal U+FFFD in
                         // the input. Assuming the former to be sure.
 
@@ -3352,14 +3481,11 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                     // slicing and unwrap OK, because we've just evidently read enough previously.
                     // `unwrap` OK, because we've previously manage to read the previous character
                     #[expect(clippy::indexing_slicing)]
-                    let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8()].chars_with_trie(composition.decomposition.delegate.trie());
+                    let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8()].chars_with_trie_default_for_ascii(composition.decomposition.delegate.trie());
                     #[expect(clippy::unwrap_used)]
                     {
-                        // TODO: If the previous character was below the passthrough bound,
-                        // we really need to read from the trie. Otherwise, we could maintain
-                        // the most-recent trie value. Need to measure what's more expensive:
-                        // Remembering the trie value on each iteration or re-reading the
-                        // last one after the fast-track run.
+                        // Whether we could do something better than `next_back()` below is
+                        // https://github.com/unicode-org/icu4x/issues/7525
                         let (undecomposed, undecomposed_trie_val) = consumed_so_far.next_back().unwrap();
                         undecomposed_starter = CharacterAndTrieValue::new(undecomposed, undecomposed_trie_val);
                     }
@@ -3379,6 +3505,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         pending_slice,
         len_utf8,
         self,
+        chars_with_trie_default_for_ascii,
     );
 
     composing_normalize_to!(
@@ -3451,7 +3578,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                 // We might be doing a trie lookup by surrogate. Surrogates get
                                 // a decomposition to U+FFFD.
                                 trie_value = composition.decomposition.delegate.trie().bmp(upcoming_code_unit);
-                                if likely(potential_passthrough_and_cannot_combine_backwards_impl(trie_value)) {
+                                if likely(potential_passthrough_and_cannot_combine_backwards(trie_value)) {
                                     // Can't combine backwards, hence a plain (non-backwards-combining)
                                     // starter albeit past `composition_passthrough_bound`
 
@@ -3515,7 +3642,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                                 #[cfg(not(feature = "serde"))]
                                                 {composition.decomposition.delegate.trie().supplementary(upcoming32)}
                                             };
-                                            if likely(potential_passthrough_and_cannot_combine_backwards_impl(trie_value)) {
+                                            if likely(potential_passthrough_and_cannot_combine_backwards(trie_value)) {
                                                 // Fast-track succeeded!
                                                 continue 'fast;
                                             }
@@ -3549,6 +3676,8 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                 break 'fastwrap;
                             };
                             let mut consumed_so_far = consumed_so_far_slice.chars_with_trie(composition.decomposition.delegate.trie());
+                            // Whether we could do something better than `next_back()` below is
+                            // https://github.com/unicode-org/icu4x/issues/7525
                             let Some((c_from_back, trie_val_from_back)) = consumed_so_far.next_back() else {
                                 // If we ever come here, it's a bug, but let's avoid panic code paths in release builds.
                                 debug_assert!(false);
@@ -3585,6 +3714,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         pending_slice,
         len_utf16,
         self,
+        chars_with_trie,
     );
 }
 
@@ -3738,8 +3868,8 @@ impl write16::Write16 for IsNormalizedSinkUtf16<'_> {
     }
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
-        let mut iter = self.expect.chars();
-        if iter.next() == Some(c) {
+        let mut iter = utf16_iter::ErrorReportingUtf16Chars::new(self.expect);
+        if iter.next() == Some(Ok(c)) {
             self.expect = iter.as_slice();
             Ok(())
         } else {
@@ -3780,8 +3910,8 @@ impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
     }
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
-        let mut iter = self.expect.chars();
-        if iter.next() == Some(c) {
+        let mut iter = utf8_iter::ErrorReportingUtf8Chars::new(self.expect);
+        if iter.next() == Some(Ok(c)) {
             self.expect = iter.as_slice();
             Ok(())
         } else {

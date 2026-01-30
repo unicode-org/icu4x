@@ -1726,16 +1726,16 @@ fn test_is_normalized() {
     assert!(nfkc.is_normalized_utf16(aaa16));
 
     let affa = b"a\xFFa";
-    assert!(nfd.is_normalized_utf8(affa));
-    assert!(nfkd.is_normalized_utf8(affa));
-    assert!(nfc.is_normalized_utf8(affa));
-    assert!(nfkc.is_normalized_utf8(affa));
+    assert!(!nfd.is_normalized_utf8(affa));
+    assert!(!nfkd.is_normalized_utf8(affa));
+    assert!(!nfc.is_normalized_utf8(affa));
+    assert!(!nfkc.is_normalized_utf8(affa));
 
     let a_surrogate_a = [0x0061u16, 0xD800u16, 0x0061u16].as_slice();
-    assert!(nfd.is_normalized_utf16(a_surrogate_a));
-    assert!(nfkd.is_normalized_utf16(a_surrogate_a));
-    assert!(nfc.is_normalized_utf16(a_surrogate_a));
-    assert!(nfkc.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfd.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfkd.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfc.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfkc.is_normalized_utf16(a_surrogate_a));
 
     let note = "a𝅗\u{1D165}a";
     assert!(nfd.is_normalized(note));
@@ -2209,4 +2209,70 @@ fn test_hangul_lv_t_nfc_iter() {
     assert!(nfc
         .normalize_iter("\u{AC00}\u{11A8}".chars())
         .eq("\u{AC01}".chars()));
+}
+
+#[test]
+fn test_nfd_skip_one_combining() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize("εα\u{0301}ο")[..], "εα\u{0301}ο");
+}
+
+#[test]
+fn test_nfd_skip_one_combining_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize_utf8("εα\u{0301}ο".as_bytes())[..], "εα\u{0301}ο");
+}
+
+#[test]
+fn test_nfd_skip_one_combining_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x03BF])[..], &[0x03B5u16, 0x03B1, 0x0301, 0x03BF]);
+}
+
+#[test]
+fn test_nfd_two_combining() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize("εα\u{0301}\u{0326}ο")[..], "εα\u{0326}\u{0301}ο");
+}
+
+#[test]
+fn test_nfd_two_combining_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize_utf8("εα\u{0301}\u{0326}ο".as_bytes())[..], "εα\u{0326}\u{0301}ο");
+}
+
+#[test]
+fn test_nfd_two_combining_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x0326, 0x03BF])[..], &[0x03B5u16, 0x03B1, 0x0326, 0x0301, 0x03BF]);
+}
+
+#[test]
+fn test_nfd_combining_error_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize_utf8(&[206u8, 181, 206, 177, 204, 129, 0xFF, 206, 191])[..], "εα\u{0301}\u{FFFD}ο");
+}
+
+#[test]
+fn test_nfd_combining_error_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0xD800, 0x03BF])[..], &[0x03B5u16, 0x03B1, 0x0301, 0xFFFD, 0x03BF]);
+}
+
+#[test]
+fn test_mixed_hangul() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize("\u{1100}\u{AC00}\u{11A8}")[..], "\u{1100}\u{1100}\u{1161}\u{11A8}");
+}
+
+#[test]
+fn test_mixed_hangul_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize_utf8(&[225, 132, 128, 234, 176, 128, 225, 134, 168])[..], "\u{1100}\u{1100}\u{1161}\u{11A8}");
+}
+
+#[test]
+fn test_mixed_hangul_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize_utf16(&[0x1100u16, 0xAC00, 0x11A8])[..], &[0x1100, 0x1100, 0x1161, 0x11A8]);
 }

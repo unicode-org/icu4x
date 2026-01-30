@@ -45,7 +45,7 @@ use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::{Infallible, TryFrom};
 use icu_collections::codepointtrie::AbstractCodePointTrie;
-use icu_collections::codepointtrie::CharsWithTrieEx;
+use icu_collections::codepointtrie::CharsWithTrieDefaultForAsciiEx;
 #[cfg(feature = "serde")]
 use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(not(feature = "serde"))]
@@ -61,7 +61,7 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsWithTrieEx;
-use utf8_iter::Utf8CharsWithTrieEx;
+use utf8_iter::Utf8CharsWithTrieDefaultForAsciiEx;
 use zerovec::ule::AsULE;
 
 #[cfg(feature = "serde")]
@@ -912,8 +912,8 @@ impl<'data> CollatorBorrowed<'data> {
         str,
         str,
         split_prefix,
-        chars_with_trie,
-        chars_with_trie,
+        chars_with_trie_default_for_ascii,
+        chars_with_trie_default_for_ascii,
     );
 
     compare!(
@@ -925,8 +925,8 @@ impl<'data> CollatorBorrowed<'data> {
         [u8],
         [u8],
         split_prefix_u8,
-        chars_with_trie,
-        chars_with_trie,
+        chars_with_trie_default_for_ascii,
+        chars_with_trie_default_for_ascii,
     );
 
     compare!(
@@ -1862,7 +1862,7 @@ impl<'data> CollatorBorrowed<'data> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars_with_trie(self.norm_trie()), sink)
+        self.write_sort_key_impl(s.chars_with_trie_default_for_ascii(self.norm_trie()), sink)
     }
 
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
@@ -1873,7 +1873,7 @@ impl<'data> CollatorBorrowed<'data> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars_with_trie(self.norm_trie()), sink)
+        self.write_sort_key_impl(s.chars_with_trie_default_for_ascii(self.norm_trie()), sink)
     }
 
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
