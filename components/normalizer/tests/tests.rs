@@ -2220,59 +2220,89 @@ fn test_nfd_skip_one_combining() {
 #[test]
 fn test_nfd_skip_one_combining_utf8() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize_utf8("εα\u{0301}ο".as_bytes())[..], "εα\u{0301}ο");
+    assert_eq!(
+        &nfd.normalize_utf8("εα\u{0301}ο".as_bytes())[..],
+        "εα\u{0301}ο"
+    );
 }
 
 #[test]
 fn test_nfd_skip_one_combining_utf16() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x03BF])[..], &[0x03B5u16, 0x03B1, 0x0301, 0x03BF]);
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0301, 0x03BF]
+    );
 }
 
 #[test]
 fn test_nfd_two_combining() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize("εα\u{0301}\u{0326}ο")[..], "εα\u{0326}\u{0301}ο");
+    assert_eq!(
+        &nfd.normalize("εα\u{0301}\u{0326}ο")[..],
+        "εα\u{0326}\u{0301}ο"
+    );
 }
 
 #[test]
 fn test_nfd_two_combining_utf8() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize_utf8("εα\u{0301}\u{0326}ο".as_bytes())[..], "εα\u{0326}\u{0301}ο");
+    assert_eq!(
+        &nfd.normalize_utf8("εα\u{0301}\u{0326}ο".as_bytes())[..],
+        "εα\u{0326}\u{0301}ο"
+    );
 }
 
 #[test]
 fn test_nfd_two_combining_utf16() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x0326, 0x03BF])[..], &[0x03B5u16, 0x03B1, 0x0326, 0x0301, 0x03BF]);
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x0326, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0326, 0x0301, 0x03BF]
+    );
 }
 
 #[test]
 fn test_nfd_combining_error_utf8() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize_utf8(&[206u8, 181, 206, 177, 204, 129, 0xFF, 206, 191])[..], "εα\u{0301}\u{FFFD}ο");
+    assert_eq!(
+        &nfd.normalize_utf8(&[206u8, 181, 206, 177, 204, 129, 0xFF, 206, 191])[..],
+        "εα\u{0301}\u{FFFD}ο"
+    );
 }
 
 #[test]
 fn test_nfd_combining_error_utf16() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0xD800, 0x03BF])[..], &[0x03B5u16, 0x03B1, 0x0301, 0xFFFD, 0x03BF]);
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0xD800, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0301, 0xFFFD, 0x03BF]
+    );
 }
 
 #[test]
 fn test_mixed_hangul() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize("\u{1100}\u{AC00}\u{11A8}")[..], "\u{1100}\u{1100}\u{1161}\u{11A8}");
+    assert_eq!(
+        &nfd.normalize("\u{1100}\u{AC00}\u{11A8}")[..],
+        "\u{1100}\u{1100}\u{1161}\u{11A8}"
+    );
 }
 
 #[test]
 fn test_mixed_hangul_utf8() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize_utf8(&[225, 132, 128, 234, 176, 128, 225, 134, 168])[..], "\u{1100}\u{1100}\u{1161}\u{11A8}");
+    assert_eq!(
+        &nfd.normalize_utf8(&[225, 132, 128, 234, 176, 128, 225, 134, 168])[..],
+        "\u{1100}\u{1100}\u{1161}\u{11A8}"
+    );
 }
 
 #[test]
 fn test_mixed_hangul_utf16() {
     let nfd = DecomposingNormalizerBorrowed::new_nfd();
-    assert_eq!(&nfd.normalize_utf16(&[0x1100u16, 0xAC00, 0x11A8])[..], &[0x1100, 0x1100, 0x1161, 0x11A8]);
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x1100u16, 0xAC00, 0x11A8])[..],
+        &[0x1100, 0x1100, 0x1161, 0x11A8]
+    );
 }

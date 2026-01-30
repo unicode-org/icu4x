@@ -2489,10 +2489,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     // Try to handle a single  combining mark followed by a starter in a way
                     // that avoids `decomposition.buffer`.
 
-                    // This loop is only broken out of as goto forward.
-                    #[expect(clippy::never_loop)]
-                    loop {
-                        if likely(trie_value_indicates_non_decomposing_non_starter(trie_val)) {
+                    if likely(trie_value_indicates_non_decomposing_non_starter(trie_val)) {
+                        // This loop is only broken out of as goto forward.
+                        #[expect(clippy::never_loop)]
+                        loop {
                             if let Some((after_mark, after_mark_trie_value)) = decomposition.delegate.next() {
                                 if likely(starter_and_decomposes_to_self_impl(after_mark_trie_value)) {
                                     continue 'fast;
@@ -2530,7 +2530,6 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                             sink.write_str(pending_slice)?;
                             return Ok(());
                         }
-                        break;
                     }
                     // End skipping over single combining mark
 
@@ -2600,10 +2599,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     // Try to handle a single  combining mark followed by a starter in a way
                     // that avoids `decomposition.buffer`.
 
-                    // This loop is only broken out of as goto forward.
-                    #[expect(clippy::never_loop)]
-                    loop {
-                        if likely(trie_value_indicates_non_decomposing_non_starter(trie_val)) {
+                    if likely(trie_value_indicates_non_decomposing_non_starter(trie_val)) {
+                        // This loop is only broken out of as goto forward.
+                        #[expect(clippy::never_loop)]
+                        loop {
                             if let Some((after_mark, after_mark_trie_value)) = decomposition.delegate.next() {
                                 if likely(starter_and_decomposes_to_self_except_replacement(after_mark_trie_value)) {
                                     continue 'fast;
@@ -2645,7 +2644,6 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                             sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) } )?;
                             return Ok(());
                         }
-                        break;
                     }
                     // End skipping over single combining mark
 
