@@ -123,29 +123,104 @@ use crate::scaffold::*;
 /// Format with a time of day and long time zone:
 ///
 /// ```
-/// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::{zone::SpecificLong, T};
-/// use icu::datetime::input::ZonedDateTime;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo};
+/// use icu::datetime::scaffold::{GetField, InFixedCalendar, UnstableSealed};
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::{
+///     iana::{self, IanaParser},
+///     models, UtcOffset, ZoneNameTimestamp,
+/// };
+/// use icu_calendar::{Date, Iso};
+/// use icu_time::DateTime;
 /// use writeable::assert_writeable_eq;
 ///
-/// let formatter = FixedCalendarDateTimeFormatter::try_new(
+/// // The user is expected to provide a type that encapsulates a time and a time zone.
+/// // See https://github.com/unicode-org/icu4x/issues/3438
+/// struct ZonedTime {
+///     time: Time,
+///     zone: TimeZoneInfo<models::AtTime>,
+/// }
+///
+/// impl UnstableSealed for ZonedTime {}
+/// impl InFixedCalendar<()> for ZonedTime {}
+///
+/// // The following illustrates how to implement the GetField trait
+/// // to provide the necessary information to the formatter.
+///
+/// impl GetField<icu::time::Hour> for ZonedTime {
+///     fn get_field(&self) -> icu::time::Hour {
+///         self.time.hour
+///     }
+/// }
+///
+/// impl GetField<icu::time::Minute> for ZonedTime {
+///     fn get_field(&self) -> icu::time::Minute {
+///         self.time.minute
+///     }
+/// }
+///
+/// impl GetField<icu::time::Second> for ZonedTime {
+///     fn get_field(&self) -> icu::time::Second {
+///         self.time.second
+///     }
+/// }
+///
+/// impl GetField<icu::time::Nanosecond> for ZonedTime {
+///     fn get_field(&self) -> icu::time::Nanosecond {
+///         self.time.subsecond
+///     }
+/// }
+///
+/// impl GetField<TimeZone> for ZonedTime {
+///     fn get_field(&self) -> TimeZone {
+///         self.zone.id()
+///     }
+/// }
+///
+/// impl GetField<ZoneNameTimestamp> for ZonedTime {
+///     fn get_field(&self) -> ZoneNameTimestamp {
+///         self.zone.zone_name_timestamp()
+///     }
+/// }
+///
+/// impl GetField<Option<icu::time::zone::UtcOffset>> for ZonedTime {
+///     fn get_field(&self) -> Option<icu::time::zone::UtcOffset> {
+///         self.zone.offset()
+///     }
+/// }
+///
+/// // Required for the `AllInputMarkers` trait bound
+/// impl GetField<()> for ZonedTime {
+///     fn get_field(&self) -> () {}
+/// }
+///
+/// let formatter = NoCalendarFormatter::try_new(
 ///     locale!("en-US").into(),
 ///     T::medium().with_zone(SpecificLong),
 /// )
 /// .unwrap();
 ///
-/// let zdt = ZonedDateTime::try_strict_from_str(
-///     "2024-10-18T15:44-0700[America/Los_Angeles]",
-///     Gregorian,
-///     IanaParser::new(),
-/// )
-/// .unwrap();
+/// let iana_parser = IanaParser::new();
+/// let time_zone_id = iana_parser.parse("America/Los_Angeles");
+/// let offset = "-0700".parse::<UtcOffset>().unwrap();
+///
+/// // Create a `TimeZoneInfo` with a timestamp to correctly resolve the time zone name.
+/// let time_zone_info = time_zone_id
+///     .with_offset(Some(offset))
+///     .at_date_time_iso(DateTime {
+///         date: Date::try_new_iso(2024, 10, 18).unwrap(),
+///         time: Time::try_new(15, 44, 0, 0).unwrap(),
+///     });
+///
+/// let zoned_time = ZonedTime {
+///     time: Time::try_new(15, 44, 0, 0).unwrap(),
+///     zone: time_zone_info,
+/// };
 ///
 /// assert_writeable_eq!(
-///     formatter.format(&zdt),
+///     formatter.format(&zoned_time),
 ///     "3:44:00 PM Pacific Daylight Time"
 /// );
 /// ```
