@@ -69,5 +69,9 @@ name = "bench"
 harness = false
 required-features = ["utf16_iter", "utf8_iter"]
 
+[[bench]]
+name = "issue_7525"
+harness = false
+required-features = ["utf16_iter", "utf8_iter"]
 [lints]
 workspace = true
