@@ -422,7 +422,7 @@ impl CanonicalCompositionsBorrowed<'static> {
 }
 
 impl<'data> CanonicalCompositionsBorrowed<'data> {
-    pub(crate) fn to_ref(&'data self) -> CanonicalCompositionsRef<'data> {
+    pub(crate) fn as_ref(&'data self) -> CanonicalCompositionsRef<'data> {
         match self {
             CanonicalCompositionsBorrowed::Current(s) => CanonicalCompositionsRef::Current(
                 <&CompositionTrie<'data>>::try_from(&s.trie)
@@ -923,6 +923,7 @@ where
             inner: DecompositionInner::new_with_supplements(
                 CharIterWithTrie::new(
                     delegate,
+                    #[allow(clippy::useless_conversion)]
                     <&Trie<'data>>::try_from(&decompositions.trie)
                         .unwrap_or_else(|_| unreachable!("Incompatible data")),
                 ),
@@ -2443,7 +2444,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         let mut ret = Decomposition {
             inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
         };
-        let _ = ret.inner.init(); // Discard the U+0000.
+        ret.inner.init(); // Discard the U+0000.
         ret
     }
 
@@ -2623,6 +2624,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                                 // means that neither is U+FFFD, so we didn't have a UTF-8 error.
                                 debug_assert_ne!(upcoming, '\u{FFFD}');
                                 debug_assert_ne!(after_mark, '\u{FFFD}');
+                                #[expect(clippy::indexing_slicing)]
                                 let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                                     - decomposition.delegate.as_slice().len()
                                     - upcoming.len_utf8()
@@ -3271,7 +3273,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         let mut ret = Composition {
             inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
         };
-        let _ = ret.inner.decomposition.init(); // Discard the U+0000.
+        ret.inner.decomposition.init(); // Discard the U+0000.
         ret
     }
 
@@ -3291,7 +3293,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 self.decomposing_normalizer.tables,
                 self.decomposing_normalizer.supplementary_tables,
             ),
-            self.canonical_compositions.to_ref(),
+            self.canonical_compositions.as_ref(),
         )
     }
 
@@ -3322,7 +3324,6 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 self.decomposing_normalizer.composition_passthrough_bound.min(0x80) as u8
             };
             // Attributes have to be on blocks, so hoisting all the way here.
-            #[expect(clippy::unwrap_used)]
             let mut code_unit_iter = composition.decomposition.delegate.as_str().as_bytes().iter();
             'fast: loop {
                 if let Some(b) = code_unit_iter.next() {
@@ -3406,6 +3407,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                     // Whether we could do something better than `next_back()` below is
                     // https://github.com/unicode-org/icu4x/issues/7525
                     // `unwrap` OK, because we've previously manage to read the previous character
+                    #[expect(clippy::unwrap_used)]
                     let (undecomposed, undecomposed_trie_val) = consumed_so_far.next_back().unwrap();
                     undecomposed_starter = CharacterAndTrieValue::new(undecomposed, undecomposed_trie_val);
                     let consumed_so_far_slice = consumed_so_far.as_str();

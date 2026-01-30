@@ -175,7 +175,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
 
     /// See [`Self::contains_str`]
     pub fn contains_utf8(&self, s: &[u8]) -> bool {
-        if let Ok(well_formed) = str::from_utf8(s) {
+        if let Ok(well_formed) = core::str::from_utf8(s) {
             self.contains_str(well_formed)
         } else {
             false

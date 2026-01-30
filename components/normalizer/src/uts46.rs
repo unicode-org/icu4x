@@ -114,7 +114,7 @@ impl Uts46MapperBorrowed<'_> {
                 .normalize_iter_private::<_, Trie46, Uts46MapNormalizePolicy>(
                     CharIterWithTrie::new(iter, self.normalizer.trie::<Trie46<'_>>()),
                 );
-        let _ = ret.decomposition.init(); // Discard the U+0000.
+        ret.decomposition.init(); // Discard the U+0000.
         ret
     }
 
@@ -156,7 +156,7 @@ impl Uts46MapperBorrowed<'_> {
             .normalize_iter_private::<_, Trie46, Uts46NormalizeValidatePolicy>(
                 CharIterWithTrie::new(iter, self.normalizer.trie::<Trie46<'_>>()),
             );
-        let _ = ret.decomposition.init(); // Discard the U+0000.
+        ret.decomposition.init(); // Discard the U+0000.
         ret
     }
 }

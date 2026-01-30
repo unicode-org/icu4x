@@ -104,7 +104,7 @@ impl CanonicalCompositionBorrowed<'_> {
     #[inline(always)]
     pub fn compose(self, starter: char, second: char) -> Option<char> {
         self.canonical_compositions
-            .to_ref()
+            .as_ref()
             .compose(starter, second)
     }
 }

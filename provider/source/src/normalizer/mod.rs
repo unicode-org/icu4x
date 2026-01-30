@@ -271,7 +271,7 @@ macro_rules! normalization_canonical_compositions_provider_new {
 
                 let mut hash: HashMap<char, Vec<(char, char, u64)>> = HashMap::new();
                 for c in '\u{0}'..=char::MAX {
-                    if c >= '\u{AC00}' && c <= '\u{D7AF}' {
+                    if ('\u{AC00}'..='\u{D7AF}').contains(&c) {
                         continue;
                     }
                     if let icu::normalizer::properties::Decomposed::Expansion(first, second) =

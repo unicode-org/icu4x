@@ -781,6 +781,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// violated or `high_ten` is out of range for three-byte WTF-8 (or UTF-8)
     /// sequence.
     #[inline(always)]
+    #[allow(clippy::unusual_byte_groupings)]
     pub unsafe fn get_utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
         debug_assert!(low_six <= 0b111_111); // Safety invariant.
         debug_assert!(high_ten <= 0b1111_111_111); // Not actually a _safety_ invariant for this impl.
@@ -1686,6 +1687,7 @@ pub trait TypedCodePointTrie<'trie, T: TrieValue>: Seal {
     /// violated or `high_ten` is out of range for three-byte WTF-8 (or UTF-8)
     /// sequence.
     #[inline(always)]
+    #[allow(clippy::unusual_byte_groupings)]
     unsafe fn get_utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
         debug_assert!(low_six <= 0b111_111); // Safety invariant.
         debug_assert!(high_ten <= 0b1111_111_111); // Not actually a _safety_ invariant for this impl.
@@ -1779,6 +1781,7 @@ impl<'trie, T: TrieValue> TypedCodePointTrie<'trie, T> for FastCodePointTrie<'tr
     /// violated or `high_ten` is out of range for three-byte WTF-8 (or UTF-8)
     /// sequence.
     #[inline(always)]
+    #[allow(clippy::unusual_byte_groupings)]
     unsafe fn get_utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
         debug_assert!(low_six <= 0b111_111); // Safety invariant.
         debug_assert!(high_ten <= 0b1111_111_111); // Safety invariant.

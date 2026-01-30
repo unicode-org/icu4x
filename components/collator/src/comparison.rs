@@ -901,6 +901,7 @@ impl<'data> CollatorBorrowed<'data> {
     }
 
     fn norm_trie(&self) -> &'data NormTrie<'data> {
+        #[allow(clippy::useless_conversion)]
         <&NormTrie<'data>>::try_from(&self.decompositions.trie)
             .unwrap_or_else(|_| unreachable!("Incompatible data"))
     }
