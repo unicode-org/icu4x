@@ -274,7 +274,6 @@ fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bo
 /// Checks if the trie signifies a non-decomposing non-starter.
 ///
 /// See trie-value-format.md
-#[cfg(feature = "utf16_iter")]
 fn trie_value_indicates_non_decomposing_non_starter(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFF00) == 0xD800
 }
