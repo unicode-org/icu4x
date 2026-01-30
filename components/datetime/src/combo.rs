@@ -125,7 +125,6 @@ use crate::scaffold::*;
 /// ```
 /// use icu::datetime::fieldsets::{zone::SpecificLong, T};
 /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo};
-/// use icu::datetime::scaffold::{GetField, InFixedCalendar, UnstableSealed};
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
 /// use icu::time::zone::{
@@ -134,67 +133,8 @@ use crate::scaffold::*;
 /// };
 /// use icu_calendar::{Date, Iso};
 /// use icu_time::DateTime;
+/// use icu::time::ZonedTime; // New import
 /// use writeable::assert_writeable_eq;
-///
-/// // The user is expected to provide a type that encapsulates a time and a time zone.
-/// // See https://github.com/unicode-org/icu4x/issues/3438
-/// struct ZonedTime {
-///     time: Time,
-///     zone: TimeZoneInfo<models::AtTime>,
-/// }
-///
-/// impl UnstableSealed for ZonedTime {}
-/// impl InFixedCalendar<()> for ZonedTime {}
-///
-/// // The following illustrates how to implement the GetField trait
-/// // to provide the necessary information to the formatter.
-///
-/// impl GetField<icu::time::Hour> for ZonedTime {
-///     fn get_field(&self) -> icu::time::Hour {
-///         self.time.hour
-///     }
-/// }
-///
-/// impl GetField<icu::time::Minute> for ZonedTime {
-///     fn get_field(&self) -> icu::time::Minute {
-///         self.time.minute
-///     }
-/// }
-///
-/// impl GetField<icu::time::Second> for ZonedTime {
-///     fn get_field(&self) -> icu::time::Second {
-///         self.time.second
-///     }
-/// }
-///
-/// impl GetField<icu::time::Nanosecond> for ZonedTime {
-///     fn get_field(&self) -> icu::time::Nanosecond {
-///         self.time.subsecond
-///     }
-/// }
-///
-/// impl GetField<TimeZone> for ZonedTime {
-///     fn get_field(&self) -> TimeZone {
-///         self.zone.id()
-///     }
-/// }
-///
-/// impl GetField<ZoneNameTimestamp> for ZonedTime {
-///     fn get_field(&self) -> ZoneNameTimestamp {
-///         self.zone.zone_name_timestamp()
-///     }
-/// }
-///
-/// impl GetField<Option<icu::time::zone::UtcOffset>> for ZonedTime {
-///     fn get_field(&self) -> Option<icu::time::zone::UtcOffset> {
-///         self.zone.offset()
-///     }
-/// }
-///
-/// // Required for the `AllInputMarkers` trait bound
-/// impl GetField<()> for ZonedTime {
-///     fn get_field(&self) -> () {}
-/// }
 ///
 /// let formatter = NoCalendarFormatter::try_new(
 ///     locale!("en-US").into(),

@@ -36,4 +36,4 @@ pub mod zone;
 pub use zone::{TimeZone, TimeZoneInfo};
 
 mod types;
-pub use types::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
+pub use types::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime, ZonedTime};
