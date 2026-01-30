@@ -7,7 +7,7 @@ use calendrical_calculations::rata_die::RataDie;
 use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::{
     range_check, range_check_with_overflow, DateFromFieldsError, EcmaReferenceYearError,
-    MonthCodeError, MonthCodeParseError, UnknownEraError,
+    LunisolarRangeError, MonthCodeError, MonthCodeParseError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
@@ -258,6 +258,28 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
         // date is in the valid year range, and therefore in the valid RD range
         Ok(ArithmeticDate::new_unchecked(year, month, day))
+    }
+
+    pub(crate) fn try_from_ymd_lunisolar(
+        year: i32,
+        month: Month,
+        day: u8,
+        calendar: &C,
+    ) -> Result<Self, LunisolarRangeError> {
+        let year = calendar.year_info_from_extended(range_check(year, "year", VALID_YEAR_RANGE)?);
+
+        let month = calendar
+            .ordinal_from_month(year, month, Default::default())
+            .map_err(|e| match e {
+                MonthCodeError::NotInCalendar | MonthCodeError::NotInYear => {
+                    LunisolarRangeError::InvalidMonth(month)
+                }
+            })?;
+
+        let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+
+        // date is in the valid year range, and therefore in the valid RD range
+        Ok(Self::new_unchecked(year, month, day))
     }
 
     pub(crate) fn from_fields(

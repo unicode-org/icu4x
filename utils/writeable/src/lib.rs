@@ -376,7 +376,7 @@ pub trait Writeable {
 #[macro_export]
 macro_rules! impl_display_with_writeable {
     (@display, $type:ty) => {
-        /// This trait is implemented for compatibility with [`fmt!`](alloc::fmt).
+        /// This trait is implemented for compatibility with [`fmt!`](core::fmt).
         /// To create a string, [`Writeable::write_to_string`] is usually more efficient.
         impl core::fmt::Display for $type {
             #[inline]

@@ -170,6 +170,7 @@ fn validate_dense(map: &BTreeMap<u16, &str>) -> Result<(), DataError> {
     Ok(())
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn convert_sparse(
     map: BTreeMap<u16, &str>,
 ) -> Result<PropertyEnumToValueNameSparseMap<'static>, DataError> {

@@ -743,7 +743,7 @@ fn computer_reference_years() {
         day: u8,
         cal: &C,
         year_info_from_extended: impl Fn(i32) -> C::YearInfo,
-    ) -> Result<C::YearInfo, DateError>
+    ) -> C::YearInfo
     where
         C: DateFieldsResolver,
     {
@@ -761,15 +761,15 @@ fn computer_reference_years() {
             };
         let year_info = year_info_from_extended(y3);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y2);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y1);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y0);
         // This function might be called with out-of-range days that are handled later.
@@ -780,12 +780,11 @@ fn computer_reference_years() {
                 "{ordinal_month}/{day}"
             );
         }
-        Ok(year_info)
+        year_info
     }
     for month in 1..=12 {
         for day in [30, 29] {
             let y = compute_hijri_reference_year(month, day, &Hijri(rules), |e| rules.year(e))
-                .unwrap()
                 .extended_year;
 
             if day == 30 {
