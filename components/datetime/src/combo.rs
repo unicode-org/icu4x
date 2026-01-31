@@ -124,15 +124,10 @@ use crate::scaffold::*;
 ///
 /// ```
 /// use icu::datetime::fieldsets::{zone::SpecificLong, T};
-/// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo};
+/// use icu::datetime::input::{Time, TimeZone};
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::{
-///     iana::{self, IanaParser},
-///     models, UtcOffset,
-/// };
-/// use icu_calendar::{Date, Iso};
-/// use icu_time::DateTime;
+/// use icu::time::zone::{iana::IanaParser, models, UtcOffset, ZoneNameTimestamp};
 /// use icu_time::ZonedTime;
 /// use writeable::assert_writeable_eq;
 ///
@@ -149,10 +144,7 @@ use crate::scaffold::*;
 /// // Create a `TimeZoneInfo` with a timestamp to correctly resolve the time zone name.
 /// let time_zone_info = time_zone_id
 ///     .with_offset(Some(offset))
-///     .at_date_time_iso(DateTime {
-///         date: Date::try_new_iso(2024, 10, 18).unwrap(),
-///         time: Time::try_new(15, 44, 0, 0).unwrap(),
-///     });
+///     .with_zone_name_timestamp(ZoneNameTimestamp::far_in_future());
 ///
 /// let zoned_time = ZonedTime {
 ///     time: Time::try_new(15, 44, 0, 0).unwrap(),

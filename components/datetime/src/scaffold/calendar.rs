@@ -15,7 +15,7 @@ use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use icu_time::{
     zone::{models::TimeZoneModel, UtcOffset},
-    DateTime, Time, TimeZoneInfo, ZonedDateTime, ZonedTime
+    DateTime, Time, TimeZoneInfo, ZonedDateTime, ZonedTime,
 };
 
 /// A calendar that can be found in CLDR.
