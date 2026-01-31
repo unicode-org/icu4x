@@ -287,6 +287,50 @@ where
     }
 }
 
+impl UnstableSealed for ZonedTime {}
+
+impl GetField<Hour> for ZonedTime {
+    fn get_field(&self) -> Hour {
+        self.time.hour
+    }
+}
+
+impl GetField<Minute> for ZonedTime {
+    fn get_field(&self) -> Minute {
+        self.time.minute
+    }
+}
+
+impl GetField<Second> for ZonedTime {
+    fn get_field(&self) -> Second {
+        self.time.second
+    }
+}
+
+impl GetField<Nanosecond> for ZonedTime {
+    fn get_field(&self) -> Nanosecond {
+        self.time.subsecond
+    }
+}
+
+impl GetField<Option<UtcOffset>> for ZonedTime {
+    fn get_field(&self) -> Option<UtcOffset> {
+        self.zone.offset()
+    }
+}
+
+impl GetField<TimeZone> for ZonedTime {
+    fn get_field(&self) -> TimeZone {
+        self.zone.id()
+    }
+}
+
+impl GetField<ZoneNameTimestamp> for ZonedTime {
+    fn get_field(&self) -> ZoneNameTimestamp {
+        self.zone.zone_name_timestamp()
+    }
+}
+
 impl UnstableSealed for UtcOffset {}
 
 impl GetField<Option<UtcOffset>> for UtcOffset {
@@ -346,51 +390,6 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for DateTime<A> {
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<()> for ZonedDateTime<A, Z> {
     #[inline]
     fn get_field(&self) {}
-}
-
-impl UnstableSealed for ZonedTime {}
-impl crate::scaffold::InFixedCalendar<()> for ZonedTime {}
-
-impl GetField<Hour> for ZonedTime {
-    fn get_field(&self) -> Hour {
-        self.time.hour
-    }
-}
-
-impl GetField<Minute> for ZonedTime {
-    fn get_field(&self) -> Minute {
-        self.time.minute
-    }
-}
-
-impl GetField<Second> for ZonedTime {
-    fn get_field(&self) -> Second {
-        self.time.second
-    }
-}
-
-impl GetField<Nanosecond> for ZonedTime {
-    fn get_field(&self) -> Nanosecond {
-        self.time.subsecond
-    }
-}
-
-impl GetField<TimeZone> for ZonedTime {
-    fn get_field(&self) -> TimeZone {
-        self.zone.id()
-    }
-}
-
-impl GetField<ZoneNameTimestamp> for ZonedTime {
-    fn get_field(&self) -> ZoneNameTimestamp {
-        self.zone.zone_name_timestamp()
-    }
-}
-
-impl GetField<Option<UtcOffset>> for ZonedTime {
-    fn get_field(&self) -> Option<UtcOffset> {
-        self.zone.offset()
-    }
 }
 
 // Required for the `AllInputMarkers` trait bound

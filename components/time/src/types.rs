@@ -306,20 +306,6 @@ where
 {
 }
 
-/// A time and time zone.
-///
-/// This type can be used with [`icu_datetime::NoCalendarFormatter`].
-///
-/// See the docs on [`icu_datetime::NoCalendarFormatter`] for more information and examples.
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct ZonedTime {
-    /// The time
-    pub time: Time,
-    /// The time zone information
-    pub zone: crate::zone::TimeZoneInfo<crate::zone::models::AtTime>,
-}
-
 const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
 impl Ord for ZonedDateTime<Iso, UtcOffset> {
@@ -423,4 +409,16 @@ impl ZonedDateTime<Iso, UtcOffset> {
     }
 }
 
-
+/// A time and time zone.
+///
+/// This type can be used with [`icu_datetime::NoCalendarFormatter`].
+///
+/// See the docs on [`icu_datetime::NoCalendarFormatter`] for more information and examples.
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
+pub struct ZonedTime {
+    /// The time
+    pub time: Time,
+    /// The time zone information
+    pub zone: crate::zone::TimeZoneInfo<crate::zone::models::AtTime>,
+}
