@@ -127,7 +127,7 @@ impl UtcOffset {
                 } else {
                     return Err(InvalidOffsetError);
                 }
-            },
+            }
             _ => return Err(InvalidOffsetError),
         };
 
@@ -145,7 +145,7 @@ impl UtcOffset {
                 } else {
                     return Err(InvalidOffsetError);
                 }
-            },
+            }
             [_, _, b':', m1, m2] => {
                 if let Some(m) = Self::try_get_time_component(m1, m2) {
                     if m < 60 {
@@ -156,7 +156,7 @@ impl UtcOffset {
                 } else {
                     return Err(InvalidOffsetError);
                 }
-            },
+            }
             _ => return Err(InvalidOffsetError),
         };
         Self::try_from_seconds(offset_sign * (hours * 60 + minutes) * 60)
