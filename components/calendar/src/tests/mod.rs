@@ -5,6 +5,7 @@
 mod continuity_test;
 mod exhaustive;
 mod extrema;
+mod arithmetic_exhaustive;
 mod not_enough_fields;
 
 macro_rules! test_all_cals {
