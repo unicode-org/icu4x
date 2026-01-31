@@ -411,7 +411,41 @@ impl ZonedDateTime<Iso, UtcOffset> {
 
 /// A time and time zone.
 ///
-/// This type can be used with [`icu_datetime::NoCalendarFormatter`].
+/// This type can be used with [`icu_datetime::NoCalendarFormatter`]. It represents a specific time of day
+/// in a particular time zone, without any associated date information. This is useful for formatting
+/// scenarios where only the time and time zone are relevant, and the calendar context is not needed.
+///
+/// This type is explicitly designed to be compatible with [`icu_datetime::NoCalendarFormatter`],
+/// which is used for field sets that do not contain date components.
+///
+/// # Examples
+///
+/// ```
+/// use icu::time::zone::iana::IanaParser;
+/// use icu::time::zone::{models, UtcOffset};
+/// use icu::time::{DateTime, Time, TimeZone, ZonedTime};
+/// use icu_calendar::{Date, Iso};
+///
+/// let iana_parser = IanaParser::new();
+/// let time_zone_id = iana_parser.parse("America/Los_Angeles");
+/// let offset = "-0700".parse::<UtcOffset>().unwrap();
+///
+/// // Create a `TimeZoneInfo` with a timestamp to correctly resolve the time zone name.
+/// let time_zone_info = time_zone_id
+///     .with_offset(Some(offset))
+///     .at_date_time_iso(DateTime {
+///         date: Date::try_new_iso(2024, 10, 18).unwrap(),
+///         time: Time::try_new(15, 44, 0, 0).unwrap(),
+///     });
+///
+/// let zoned_time = ZonedTime {
+///     time: Time::try_new(15, 44, 0, 0).unwrap(),
+///     zone: time_zone_info,
+/// };
+///
+/// assert_eq!(zoned_time.time.hour.number(), 15);
+/// assert_eq!(zoned_time.zone.id(), iana_parser.parse("America/Los_Angeles"));
+/// ```
 ///
 /// See the docs on [`icu_datetime::NoCalendarFormatter`] for more information and examples.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
