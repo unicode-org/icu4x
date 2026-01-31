@@ -447,11 +447,36 @@ impl ZonedDateTime<Iso, UtcOffset> {
 /// ```
 ///
 /// See the docs on [`icu_datetime::NoCalendarFormatter`] for more information and examples.
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct ZonedTime {
+pub struct ZonedTime<Z> {
     /// The time
     pub time: Time,
     /// The time zone information
-    pub zone: crate::zone::TimeZoneInfo<crate::zone::models::AtTime>,
+    pub zone: Z,
 }
+
+impl<Y, Z> PartialEq<ZonedTime<Z>> for ZonedTime<Y>
+where
+    Y: PartialEq<Z>,
+{
+    fn eq(&self, other: &ZonedTime<Z>) -> bool {
+        self.time.eq(&other.time) && self.zone.eq(&other.zone)
+    }
+}
+
+impl<Z> Eq for ZonedTime<Z> where Z: Eq {}
+
+impl<Z> Clone for ZonedTime<Z>
+where
+    Z: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            time: self.time,
+            zone: self.zone.clone(),
+        }
+    }
+}
+
+impl<Z> Copy for ZonedTime<Z> where Z: Copy {}

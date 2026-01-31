@@ -737,7 +737,7 @@ impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for DateTi
 
 impl<C: CldrCalendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C> for ZonedDateTime<A, Z> {}
 
-impl<C> InFixedCalendar<C> for ZonedTime {}
+impl<C, Z> InFixedCalendar<C> for ZonedTime<Z> {}
 
 impl<C> InFixedCalendar<C> for UtcOffset {}
 

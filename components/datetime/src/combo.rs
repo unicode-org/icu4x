@@ -129,11 +129,11 @@ use crate::scaffold::*;
 /// use icu::locale::locale;
 /// use icu::time::zone::{
 ///     iana::{self, IanaParser},
-///     models, UtcOffset, ZoneNameTimestamp,
+///     models, UtcOffset,
 /// };
 /// use icu_calendar::{Date, Iso};
 /// use icu_time::DateTime;
-/// use icu::time::ZonedTime; // New import
+/// use icu_time::ZonedTime;
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = NoCalendarFormatter::try_new(

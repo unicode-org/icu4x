@@ -287,47 +287,56 @@ where
     }
 }
 
-impl UnstableSealed for ZonedTime {}
+impl<Z> UnstableSealed for ZonedTime<Z> {}
 
-impl GetField<Hour> for ZonedTime {
+impl<Z> GetField<Hour> for ZonedTime<Z> {
     fn get_field(&self) -> Hour {
         self.time.hour
     }
 }
 
-impl GetField<Minute> for ZonedTime {
+impl<Z> GetField<Minute> for ZonedTime<Z> {
     fn get_field(&self) -> Minute {
         self.time.minute
     }
 }
 
-impl GetField<Second> for ZonedTime {
+impl<Z> GetField<Second> for ZonedTime<Z> {
     fn get_field(&self) -> Second {
         self.time.second
     }
 }
 
-impl GetField<Nanosecond> for ZonedTime {
+impl<Z> GetField<Nanosecond> for ZonedTime<Z> {
     fn get_field(&self) -> Nanosecond {
         self.time.subsecond
     }
 }
 
-impl GetField<Option<UtcOffset>> for ZonedTime {
+impl<Z> GetField<Option<UtcOffset>> for ZonedTime<Z>
+where
+    Z: GetField<Option<UtcOffset>>,
+{
     fn get_field(&self) -> Option<UtcOffset> {
-        self.zone.offset()
+        self.zone.get_field()
     }
 }
 
-impl GetField<TimeZone> for ZonedTime {
+impl<Z> GetField<TimeZone> for ZonedTime<Z>
+where
+    Z: GetField<TimeZone>,
+{
     fn get_field(&self) -> TimeZone {
-        self.zone.id()
+        self.zone.get_field()
     }
 }
 
-impl GetField<ZoneNameTimestamp> for ZonedTime {
+impl<Z> GetField<ZoneNameTimestamp> for ZonedTime<Z>
+where
+    Z: GetField<ZoneNameTimestamp>,
+{
     fn get_field(&self) -> ZoneNameTimestamp {
-        self.zone.zone_name_timestamp()
+        self.zone.get_field()
     }
 }
 
@@ -393,7 +402,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<()> for ZonedDateTime
 }
 
 // Required for the `AllInputMarkers` trait bound
-impl GetField<()> for ZonedTime {
+impl<Z> GetField<()> for ZonedTime<Z> {
     fn get_field(&self) -> () {}
 }
 
