@@ -403,7 +403,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<()> for ZonedDateTime
 
 // Required for the `AllInputMarkers` trait bound
 impl<Z> GetField<()> for ZonedTime<Z> {
-    fn get_field(&self) -> () {}
+    fn get_field(&self) {}
 }
 
 impl GetField<()> for UtcOffset {

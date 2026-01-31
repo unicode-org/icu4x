@@ -414,7 +414,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
 /// This is useful for formatting scenarios where only the time and time zone
 /// are relevant, and the calendar context is not needed.
 ///
-/// This type is compatible with [`icu::datetime::NoCalendarFormatter`], which
+/// This type is compatible with `NoCalendarFormatter`, which
 /// is used for field sets that do not contain date components.
 ///
 /// # Examples
@@ -446,7 +446,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
 /// assert_eq!(zoned_time.zone.id(), iana_parser.parse("America/Los_Angeles"));
 /// ```
 ///
-/// See the docs on [`icu_datetime::NoCalendarFormatter`] for more information and examples.
+/// See the docs on `NoCalendarFormatter` for more information and examples.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedTime<Z> {
