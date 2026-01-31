@@ -409,22 +409,21 @@ impl ZonedDateTime<Iso, UtcOffset> {
     }
 }
 
-/// A time and time zone.
+/// A time local to a specified time zone, without an associated date.
 ///
-/// This type can be used with [`icu_datetime::NoCalendarFormatter`]. It represents a specific time of day
-/// in a particular time zone, without any associated date information. This is useful for formatting
-/// scenarios where only the time and time zone are relevant, and the calendar context is not needed.
+/// This is useful for formatting scenarios where only the time and time zone
+/// are relevant, and the calendar context is not needed.
 ///
-/// This type is explicitly designed to be compatible with [`icu_datetime::NoCalendarFormatter`],
-/// which is used for field sets that do not contain date components.
+/// This type is compatible with [`icu::datetime::NoCalendarFormatter`], which
+/// is used for field sets that do not contain date components.
 ///
 /// # Examples
 ///
 /// ```
+/// use icu::calendar::{Date, Iso};
 /// use icu::time::zone::iana::IanaParser;
 /// use icu::time::zone::{models, UtcOffset};
 /// use icu::time::{DateTime, Time, TimeZone, ZonedTime};
-/// use icu_calendar::{Date, Iso};
 ///
 /// let iana_parser = IanaParser::new();
 /// let time_zone_id = iana_parser.parse("America/Los_Angeles");
