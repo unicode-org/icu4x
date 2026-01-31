@@ -57,12 +57,12 @@ impl UtcOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::zone::UtcOffset;
+    /// use icu::time::{utc_offset, zone::UtcOffset};
     ///
-    /// let offset0: UtcOffset = UtcOffset::try_from_str("Z").unwrap();
-    /// let offset1: UtcOffset = UtcOffset::try_from_str("+05").unwrap();
-    /// let offset2: UtcOffset = UtcOffset::try_from_str("+0500").unwrap();
-    /// let offset3: UtcOffset = UtcOffset::try_from_str("-05:00").unwrap();
+    /// let offset0: UtcOffset = utc_offset!("Z");
+    /// let offset1: UtcOffset = utc_offset!("+05");
+    /// let offset2: UtcOffset = utc_offset!("+0500");
+    /// let offset3: UtcOffset = utc_offset!("-05:00");
     ///
     /// let offset_err0 =
     ///     UtcOffset::try_from_str("0500").expect_err("Invalid input");
