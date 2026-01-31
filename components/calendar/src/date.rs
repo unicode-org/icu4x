@@ -124,8 +124,8 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// The year is interpreted as an [`extended_year`](Date::extended_year) if no era is provided.
     ///
-    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the `extended_year`
-    /// is also in the range `-1,000,000..=1,000,000`.
+    /// This function accepts years in the range `-500,000..=500,000`, where the `extended_year`
+    /// is also in the range `-500,000..=500,000`.
     #[inline]
     pub fn try_new_from_codes(
         era: Option<&str>,
@@ -146,8 +146,8 @@ impl<A: AsCalendar> Date<A> {
     /// and the month as either ordinal or month code. It can constrain out-of-bounds values
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
-    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the `extended_year`
-    /// is also in the range `-1,000,000..=1,000,000`.
+    /// This function accepts years in the range `-500,000..=500,000`, where the `extended_year`
+    /// is also in the range `-500,000..=500,000`.
     ///
     /// # Examples
     ///

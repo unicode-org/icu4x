@@ -351,7 +351,7 @@ impl Date<Hebrew> {
     /// Construct a new Hebrew [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-500,000..=500,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
