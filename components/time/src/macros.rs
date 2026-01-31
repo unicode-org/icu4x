@@ -1,10 +1,10 @@
-//! Macros for `icu_time`.
-
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// A macro allowing for compile-time construction of a [`UtcOffset`].
+//! Macros for `icu_time`.
+
+/// A macro allowing for compile-time construction of a [`UtcOffset`](crate::zone::UtcOffset).
 ///
 /// The macro will perform syntax validation of the offset string.
 ///
