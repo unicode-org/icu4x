@@ -55,7 +55,13 @@ impl GregorianYears for BuddhistEra {
             era_index: Some(0),
             year: extended_year,
             extended_year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
+            // Buddhist year = Gregorian year + 543
+            ambiguity: match extended_year {
+                ..=0 => types::YearAmbiguity::EraAndCenturyRequired,
+                1..=2492 => types::YearAmbiguity::CenturyRequired,
+                2493..=2592 => types::YearAmbiguity::Unambiguous,
+                2593.. => types::YearAmbiguity::CenturyRequired,
+            },
         }
     }
 
