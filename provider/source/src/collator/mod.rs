@@ -223,6 +223,7 @@ fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
     for i in 0..(char::MAX as u32) {
         values[i as usize] = trie.get32(i);
     }
+    #[expect(clippy::needless_range_loop)]
     for i in 0xAC00..=0xD7A3 {
         values[i] = default_value;
     }
