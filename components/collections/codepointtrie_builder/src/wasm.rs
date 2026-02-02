@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::CodePointTrieBuilder;
-use crate::CodePointTrieBuilderData;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::TrieValue;
@@ -221,13 +220,9 @@ where
         &error_code_ptr,
     );
 
-    let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
-    for (cp, value) in values.iter().enumerate() {
-        let num = value.to_u32();
-        if num != builder.default_value.to_u32() {
-            wasm.umutablecptrie_set(&trie_ptr, cp as u32, num, &error_code_ptr);
-        }
-    }
+    builder.for_each_code_point(|(cp, value)| {
+        wasm.umutablecptrie_set(&trie_ptr, cp, value.to_u32(), &error_code_ptr);
+    });
 
     let (trie_type, width) = crate::common::args_for_build_immutable::<T::ULE>(builder.trie_type);
 
