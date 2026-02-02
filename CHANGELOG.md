@@ -59,7 +59,6 @@ Fully filled in up to 30c187f4b7
         - Add docs discouraging direct conversion from Locale to DataLocale for locale fallback (unicode-org#7348)
     - `icu_locale_core`
         - Fix regional override `-u-rg` (unicode-org#7337) and regional subdivision `-u-sd` (unicode-org#7341) to fix region-priority data loading in other components
-        - (Macro-breaking) The `struct_keyword!` macro was changed to operate on references for conversions. This API is mostly used internally by ICU4X. (unicode-orgunicode-org#7361)
         - Add `From<&Value>` for struct preferences (unicode-org#7361)
         - Correctly parse `-u-ca-ethiopic-amete-alem` alias (#7413)
         - Add `LocalePreferences::from_locale_strict` (unicode-org#7377)
