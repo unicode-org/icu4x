@@ -15,6 +15,8 @@ use std::collections::HashSet;
 use std::convert::TryFrom;
 use writeable::Writeable;
 use zerovec::ZeroVec;
+use icu_codepointtrie_builder::CodePointTrieBuilder;
+use icu_codepointtrie_builder::CodePointTrieBuilderData;
 
 mod collator_serde;
 
@@ -213,13 +215,41 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
     }
 }
 
+fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
+    let default_value = trie.get('\u{10FFFF}');
+    let error_value = trie.get32(u32::MAX);
+    let mut values = vec![default_value; char::MAX as usize];
+
+    for i in 0..(char::MAX as u32) {
+        values[i as usize] = trie.get32(i);
+    }
+    for i in 0xAC00..=0xD7A3 {
+        values[i] = default_value;
+    }
+    let mut last_non_default = values.len() - 1;
+    while last_non_default != 0 {
+        if values[last_non_default] != default_value {
+            break;
+        }
+        last_non_default -= 1;
+    }
+    let high_start = last_non_default + 1;
+    CodePointTrieBuilder {
+        data: CodePointTrieBuilderData::ValuesByCodePoint(&values[..high_start]),
+        default_value,
+        error_value,
+        trie_type: icu::collections::codepointtrie::TrieType::Small,
+    }
+    .build()
+}
+
 impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationData<'static>, Self::Error> {
         Ok(CollationData {
-            trie: CodePointTrie::<u32>::try_from(&self.trie)
-                .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
+            trie: rebuild_data(CodePointTrie::<u32>::try_from(&self.trie)
+                .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?),
             contexts: ZeroVec::alloc_from_slice(&self.contexts),
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
             ces: self.ces.iter().map(|i| *i as u64).collect(),
