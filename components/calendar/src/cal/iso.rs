@@ -5,7 +5,7 @@
 use crate::cal::abstract_gregorian::{
     impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
 };
-use crate::calendar_arithmetic::ArithmeticDate;
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::UnknownEraError;
 use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
@@ -60,7 +60,7 @@ impl Date<Iso> {
     /// Construct a new ISO [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-500,000..=500,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -77,6 +77,55 @@ impl Date<Iso> {
             .map(ArithmeticDate::cast)
             .map(IsoDateInner)
             .map(|i| Date::from_raw(i, Iso))
+    }
+
+    /// Construct ISO dates without an ISO year range check
+    ///
+    /// This allows for construction in cases where interchange is needed, e.g. from IXDTF
+    #[cfg(feature = "ixdtf")]
+    pub(crate) fn try_new_iso_without_range_check(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<Iso>, RangeError> {
+        use crate::calendar_arithmetic::VALID_RD_RANGE;
+
+        // Month must be 1-12
+        if !(1..=12).contains(&month) {
+            return Err(RangeError {
+                field: "month",
+                value: i32::from(month),
+                min: 1,
+                max: 12,
+            });
+        }
+
+        // Day must be valid for the month and year
+        let days_in_month = AbstractGregorian::<IsoEra>::days_in_provided_month(year, month);
+        if !(1..=days_in_month).contains(&day) {
+            return Err(RangeError {
+                field: "day",
+                value: i32::from(day),
+                min: 1,
+                max: i32::from(days_in_month),
+            });
+        }
+
+        let date = Date::from_raw(
+            IsoDateInner(ArithmeticDate::new_unchecked(year, month, day)),
+            Iso,
+        );
+        let rd = date.to_rata_die();
+        if !VALID_RD_RANGE.contains(&rd) {
+            return Err(RangeError {
+                field: "RataDie",
+                value: rd.to_i64_date() as i32,
+                min: VALID_RD_RANGE.start().to_i64_date() as i32,
+                max: VALID_RD_RANGE.end().to_i64_date() as i32,
+            });
+        }
+        // Construct using new_unchecked, as we are explicitly not checking the year range
+        Ok(date)
     }
 }
 
@@ -109,18 +158,18 @@ mod test {
         let cases = [
             // Clamping RD
             TestCase {
-                year: -1005513,
-                month: 1,
-                day: 3,
+                year: -505503,
+                month: 4,
+                day: 10,
                 rd: *VALID_RD_RANGE.start() - 100000,
                 invalid_ymd: true,
                 clamping_rd: true,
             },
             // Lowest allowed RD
             TestCase {
-                year: -1005513,
-                month: 1,
-                day: 3,
+                year: -505503,
+                month: 4,
+                day: 10,
                 rd: *VALID_RD_RANGE.start(),
                 invalid_ymd: true,
                 clamping_rd: false,
@@ -130,7 +179,7 @@ mod test {
                 year: *VALID_YEAR_RANGE.start(),
                 month: 1,
                 day: 1,
-                rd: RataDie::new(-365242865),
+                rd: RataDie::new(-182621615),
                 invalid_ymd: false,
                 clamping_rd: false,
             },
@@ -139,13 +188,13 @@ mod test {
                 year: *VALID_YEAR_RANGE.end(),
                 month: 12,
                 day: 31,
-                rd: RataDie::new(365242500),
+                rd: RataDie::new(182621250),
                 invalid_ymd: false,
                 clamping_rd: false,
             },
             // Highest allowed RD
             TestCase {
-                year: 1001911,
+                year: 501911,
                 month: 12,
                 day: 31,
                 rd: *VALID_RD_RANGE.end(),
@@ -154,7 +203,7 @@ mod test {
             },
             // Clamping RD
             TestCase {
-                year: 1001911,
+                year: 501911,
                 month: 12,
                 day: 31,
                 rd: *VALID_RD_RANGE.end() + 100000,
@@ -168,9 +217,9 @@ mod test {
             let date_from_ymd = Date::try_new_iso(case.year, case.month, case.day);
 
             if !case.clamping_rd {
-                assert_eq!(date_from_rd.to_rata_die(), case.rd);
+                assert_eq!(date_from_rd.to_rata_die(), case.rd, "{case:?}");
             } else {
-                assert_ne!(date_from_rd.to_rata_die(), case.rd);
+                assert_ne!(date_from_rd.to_rata_die(), case.rd, "{case:?}");
             }
 
             if !case.invalid_ymd {

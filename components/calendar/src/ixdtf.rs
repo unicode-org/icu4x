@@ -95,7 +95,11 @@ impl<A: AsCalendar> Date<A> {
         calendar: A,
     ) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
-        let iso = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
+        let iso = Date::try_new_iso_without_range_check(
+            date_record.year,
+            date_record.month,
+            date_record.day,
+        )?;
 
         if let Some(ixdtf_calendar) = ixdtf_record.calendar {
             if let Some(expected_calendar) = calendar.as_calendar().calendar_algorithm() {
@@ -114,5 +118,39 @@ impl<A: AsCalendar> Date<A> {
             }
         }
         Ok(iso.to_calendar(calendar))
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cal::{Hijri, HijriTabularEpoch, HijriTabularLeapYears};
+
+    #[test]
+    fn test_parse_out_of_iso_year_range() {
+        // This test ensures that dates with large years, representable in a calendar
+        // like Islamic-tabular, can roundtrip through the IXDTF string format.
+        // It specifically verifies that the `Date::try_new_iso_without_range_check`
+        // function, used internally for IXDTF parsing, does not perform ISO year
+        // range validity checks (e.g., against VALID_YEAR_RANGE).
+
+        // Double check that +501000-01-01 is outside of the valid year range for ISO
+        assert!(Date::try_new_iso(501000, 1, 1).is_err());
+
+        // This date is within the RD range but outside of ISO's valid year range
+        // as verified above. It should parse.
+        //
+        // We picked Hijri here since Hijri lunar years are *much* shorter than solar years
+        // and the difference is more stark.
+        let valid_date_string = "+501000-01-01[u-ca=islamic-tbla]";
+        let calendar =
+            Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
+
+        Date::try_from_str(valid_date_string, calendar)
+            .expect("Should parse date string successfully");
+
+        // This date is outside of the valid year range, and should fail to parse
+        let invalid_date_string = "+501912-01-01[u-ca=islamic-tbla]";
+
+        Date::try_from_str(invalid_date_string, calendar).expect_err("Should be out of range");
     }
 }
