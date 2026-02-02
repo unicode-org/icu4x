@@ -4,11 +4,11 @@
 
 use crate::options::{DateAddOptions, DateDifferenceOptions, Overflow};
 use crate::types::{DateDuration, DateDurationUnit};
-use crate::{AsCalendar, Date, Iso};
+use crate::{AsCalendar, Date};
 
 super::test_all_cals!(
     #[ignore]
-    fn test_arithmetic_exhaustive<C: Calendar>(cal: Ref<C>) {
+    fn test_arithmetic<C: Calendar>(cal: Ref<C>) {
         fn new_duration(years: i32, months: i32, weeks: i32, days: i32) -> DateDuration {
             let is_negative = years < 0 || months < 0 || weeks < 0 || days < 0;
             // Verify no mixed signs
@@ -29,12 +29,12 @@ super::test_all_cals!(
         let mut durations = Vec::new();
 
         // Check +/- 65 days
-        for i in -65i32..=65 {
+        for i in -65..=65 {
             durations.push(new_duration(0, 0, 0, i));
         }
 
         // Check +/- 30 months
-        for i in -30i32..=30 {
+        for i in -30..=30 {
             durations.push(new_duration(0, i, 0, 0));
         }
 
@@ -45,7 +45,7 @@ super::test_all_cals!(
         }
 
         // Check +/- 10 years
-        for i in -10i32..=10 {
+        for i in -10..=10 {
             durations.push(new_duration(i, 0, 0, 0));
         }
 
@@ -72,8 +72,9 @@ super::test_all_cals!(
         let start_rd = start_date.to_rata_die();
         let end_rd = end_date.to_rata_die();
 
-        let mut add_options = DateAddOptions::default();
-        add_options.overflow = Some(Overflow::Constrain);
+        let add_options = DateAddOptions {
+            overflow: Some(Overflow::Constrain),
+        };
 
         for rd_offset in 0..=(end_rd - start_rd) {
             let date = Date::from_rata_die(start_rd + rd_offset, cal);
@@ -88,29 +89,30 @@ super::test_all_cals!(
                     diff_options.largest_unit = Some(DateDurationUnit::Days);
                 }
 
-                let added_date = match date.clone().try_added_with_options(*duration, add_options) {
-                    Ok(d) => d,
-                    Err(_) => {
+                let added_date = date
+                    .try_added_with_options(*duration, add_options)
+                    .unwrap_or_else(|_| {
                         panic!(
                             "Failed to add duration {:?} to date {:?} in calendar {:?}",
-                            duration, date, cal.as_calendar().debug_name()
-                        );
-                    }
-                };
+                            duration,
+                            date,
+                            cal.as_calendar().debug_name()
+                        )
+                    });
 
-                let calculated_duration =
-                    match date.try_until_with_options(&added_date, diff_options) {
-                        Ok(d) => d,
-                        Err(_) => {
-                            panic!(
-                                "Failed to calculate difference between {:?} and {:?} in calendar {:?}",
-                                date, added_date, cal.as_calendar().debug_name()
-                            );
-                        }
-                    };
+                let calculated_duration = date
+                    .try_until_with_options(&added_date, diff_options)
+                    .unwrap_or_else(|_| {
+                        panic!(
+                            "Failed to calculate difference between {:?} and {:?} in calendar {:?}",
+                            date,
+                            added_date,
+                            cal.as_calendar().debug_name()
+                        )
+                    });
 
                 // Round-trip check
-                let added_back = date.clone()
+                let added_back = date
                     .try_added_with_options(calculated_duration, add_options)
                     .unwrap();
                 assert_eq!(

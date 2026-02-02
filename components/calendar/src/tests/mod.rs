@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+mod arithmetic;
 mod continuity_test;
 mod exhaustive;
 mod extrema;
-mod arithmetic_exhaustive;
 mod not_enough_fields;
 
 macro_rules! test_all_cals {
