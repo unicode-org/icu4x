@@ -10,13 +10,13 @@ use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::locale::subtags::{language, script};
+use icu_codepointtrie_builder::CodePointTrieBuilder;
+use icu_codepointtrie_builder::CodePointTrieBuilderData;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use writeable::Writeable;
 use zerovec::ZeroVec;
-use icu_codepointtrie_builder::CodePointTrieBuilder;
-use icu_codepointtrie_builder::CodePointTrieBuilderData;
 
 mod collator_serde;
 
@@ -248,8 +248,10 @@ impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
 
     fn try_into(self) -> Result<CollationData<'static>, Self::Error> {
         Ok(CollationData {
-            trie: rebuild_data(CodePointTrie::<u32>::try_from(&self.trie)
-                .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?),
+            trie: rebuild_data(
+                CodePointTrie::<u32>::try_from(&self.trie)
+                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
+            ),
             contexts: ZeroVec::alloc_from_slice(&self.contexts),
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
             ces: self.ces.iter().map(|i| *i as u64).collect(),
