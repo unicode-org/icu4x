@@ -76,8 +76,7 @@ super::test_all_cals!(
         add_options.overflow = Some(Overflow::Constrain);
 
         for rd_offset in 0..=(end_rd - start_rd) {
-            let iso_date = Date::from_rata_die(start_rd + rd_offset, Iso);
-            let date = iso_date.to_calendar(cal);
+            let date = Date::from_rata_die(start_rd + rd_offset, cal);
 
             for duration in &durations {
                 let mut diff_options = DateDifferenceOptions::default();
