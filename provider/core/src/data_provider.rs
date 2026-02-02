@@ -33,10 +33,9 @@ where
                 if let Some(r) = self
                     .load(DataRequest {
                         id,
-                        metadata: {
-                            let mut m = DataRequestMetadata::default();
-                            m.silent = true;
-                            m
+                        metadata: DataRequestMetadata {
+                            silent: true,
+                            ..Default::default()
                         },
                     })
                     .allow_identifier_not_found()?
