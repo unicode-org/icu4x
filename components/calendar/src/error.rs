@@ -231,7 +231,7 @@ mod unstable {
         /// fields.extended_year = Some(5784);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
-        ///     .expect_err("month 6 is not the 6th month in leap year 5784");
+        ///     .expect_err("month M06 is not the 6th month in leap year 5784");
         ///
         /// assert_eq!(err, DateFromFieldsError::InconsistentMonth);
         /// ```
