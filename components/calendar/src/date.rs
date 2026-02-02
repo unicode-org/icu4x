@@ -113,7 +113,8 @@ impl<C> Deref for Ref<'_, C> {
 ///
 /// 1. Dates can always be converted between calendars
 /// 2. Dates can always be round-tripped through [`RataDie`]
-/// 3. Every possible Date can be constructed from an RFC 9557 string
+/// 3. Every date that is possible to acquire through usage of ICU4X APIs, including calendar
+///    conversion and arithmetic, can be constructed from an RFC 9557 string
 ///
 /// # Examples
 ///
