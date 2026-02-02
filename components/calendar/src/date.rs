@@ -108,7 +108,7 @@ impl<C> Deref for Ref<'_, C> {
 ///
 /// # Limits
 ///
-/// Constructors may impose limits on the largest or smallest date that they allow,
+/// Constructors may impose documented limits on the largest or smallest date that they allow,
 /// subject to the following invariants:
 ///
 /// 1. Dates can always be converted between calendars
