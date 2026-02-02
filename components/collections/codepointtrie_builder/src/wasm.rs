@@ -239,7 +239,10 @@ where
     let header = CodePointTrieHeader {
         high_start: wasm.read_ucptrie_highStart(&ucptrie_ptr),
         shifted12_high_start: wasm.read_ucptrie_shifted12HighStart(&ucptrie_ptr),
-        index3_null_offset: wasm.read_ucptrie_index3NullOffset(&ucptrie_ptr).try_into().expect("index3NullOffset should fit in u16"),
+        index3_null_offset: wasm
+            .read_ucptrie_index3NullOffset(&ucptrie_ptr)
+            .try_into()
+            .expect("index3NullOffset should fit in u16"),
         data_null_offset: wasm.read_ucptrie_dataNullOffset(&ucptrie_ptr),
         null_value: wasm.read_ucptrie_nullValue(&ucptrie_ptr),
         trie_type: builder.trie_type,
