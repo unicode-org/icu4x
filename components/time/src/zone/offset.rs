@@ -121,21 +121,11 @@ impl UtcOffset {
             /* ±hh */
             &[_, _] => Some(0),
             /* ±hhmm, ±hh:mm */
-            &[_, _, m1, m2] | &[_, _, b':', m1, m2] => {
-                if let Some(m) = try_get_time_component([m1, m2]) {
-                    if m < 60 {
-                        Some(m)
-                    } else {
-                        None
-                    }
-                } else {
-                    None
-                }
-            }
+            &[_, _, m1, m2] | &[_, _, b':', m1, m2] => try_get_time_component([m1, m2]),
             _ => None,
         };
 
-        let Some(minutes) = minutes else {
+        let Some(minutes @ ..60) = minutes else {
             return Err(InvalidOffsetError);
         };
 
