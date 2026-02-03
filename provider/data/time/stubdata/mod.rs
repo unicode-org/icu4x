@@ -18,7 +18,7 @@ include!("timezone_identifiers_iana_core_v1.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();

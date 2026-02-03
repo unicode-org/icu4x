@@ -17,9 +17,9 @@
 #[macro_export]
 macro_rules! __impl_collation_metadata_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl $provider {
             const DATA_COLLATION_METADATA_V1: icu_provider::baked::zerotrie::Data<icu::collator::provider::CollationMetadataV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1wabcdefghijklmnoprstuvwy\0\0\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x176DVw\x9B\xA1\xB7\xBD\xC7\xF4\xFD\x0F\x19\x1F(.Rg\xB2\xBA\xBC\xC5fmrsz\x01\x02\x0B\x0C\x80\x81\x82\x1Ecompat\x82\x82\x82\xC6eglnrs\x01\x02\x04\x0B\x0C\x82\x81o\x80\x82\x1Etrad\x82\x80\x82-Cyrl\x82\xC4ehsy\x02\x04\x05b\x80r\x81\x80\x80\xC3aes\x01\n\x83\x1Ephonebk\x80b\x80\xC6elnost\x01\x02\x0C\r\x14\x84\x81-US-posix\x80\x80\x80\x1Etrad\x80\x80\xC6afiory\x01\x07\x12\x13\x17\x82-Adlm\x80\x80\xC2\x1El\x05trad\x80\x80\x80-CA\x85\x80\xC2lu\x01\x80\x82\xC7aeirsuy\x01\x02\x03\x04\x06\x07\x80\x81\x82\x82b\x80\x80\x82\xC2gs\x01\x80\x80a\x82\x1Eunihan\x82\xC7akmnouy\x01\x08\t\x10\x1D\x1E\x81\x82-Arab\x82\x82\x82\x1Etrad\x82\x82\xC2\x1Ek\x07unihan\x82\x82\x82\x82\xC3otv\x01\x02\x81\x86\x80\xC6klnrty\x01\x02\x03\x04\x05\x82\x82\x81\x82\x83\x82\xC3eos\x01\x02\x81\x80o\x80\xC2mr\x01\x80\x82\xC3als\x01\x02\x82\x80\x82\xC2ou\x01\x80\x81\xC6iklqrv\x07\x08\t\n\x11\x82\x1Edict\x82\x80\x80\x80\x82-Latn\x82\x80\x1Etrad\x80\xC7aehknor\x01\x02\x03\x04\x05\x06\x82\x82\x87\x80\x80\x80\x80\xC5gknrz\x01\x02?@\x82\x82d\x88\xC2\x1E-\x0Be\xC2mo\x04oji\x88r\x88Han\xC3ist!\"\x1E\xC4psuz\x06\x0C\x12inyin\x82troke\x82nihan\x82huyin\x82\x82\x82\x82\x80i\x84\x1Etrad\x84o\x80o\x80" };
@@ -27,7 +27,7 @@ macro_rules! __impl_collation_metadata_v1 {
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationMetadataV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -53,7 +53,7 @@ macro_rules! __impl_collation_metadata_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_collation_metadata_v1!($provider);
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl icu_provider::IterableDataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_COLLATION_METADATA_V1).collect())

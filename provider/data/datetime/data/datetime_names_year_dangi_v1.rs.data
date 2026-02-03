@@ -18,9 +18,9 @@
 #[macro_export]
 macro_rules! __impl_datetime_names_year_dangi_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl $provider {
             const DATA_DATETIME_NAMES_YEAR_DANGI_V1: icu_provider::baked::zerotrie::Data<icu::datetime::provider::names::DatetimeNamesYearDangiV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xCBacfjkltuvyz\x05\x10 +6ALXc\x80st\x1E5\x89v\x1E\xC3345\x01\x02\x80\x80\x80f-Adlm\x1E\xC3345\x01\x02\x81\x81\x81a\x1E\xC3345\x01\x02\x82\x82\x82o\x1E\xC3345\x01\x02\x83\x83\x83o\x1E\xC3345\x01\x02\x84\x84\x84h\x1E\xC3345\x01\x02\x85\x88\x88nd\x1E\xC3345\x01\x02\x86\x86\x86i\x1E\xC3345\x01\x02\x87\x87\x87ue\xC2\x1E-\t\xC3345\x01\x02\x82\x82\x82Hans\x1E\xC3345\x01\x02\x82\x82\x82h\xC2\x1E-\t\xC3345\x01\x02\x82\x82\x82Hant\x1E\xC3345\x01\x02\x82\x82\x82" };
@@ -28,7 +28,7 @@ macro_rules! __impl_datetime_names_year_dangi_v1 {
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl icu_provider::DataProvider<icu::datetime::provider::names::DatetimeNamesYearDangiV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::names::DatetimeNamesYearDangiV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -54,7 +54,7 @@ macro_rules! __impl_datetime_names_year_dangi_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_datetime_names_year_dangi_v1!($provider);
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::names::DatetimeNamesYearDangiV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_DATETIME_NAMES_YEAR_DANGI_V1).collect())

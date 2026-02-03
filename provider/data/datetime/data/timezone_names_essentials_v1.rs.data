@@ -19,9 +19,9 @@
 #[macro_export]
 macro_rules! __impl_timezone_names_essentials_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl $provider {
             const DATA_TIMEZONE_NAMES_ESSENTIALS_V1: icu_provider::baked::zerotrie::Data<icu::datetime::provider::time_zones::TimezoneNamesEssentialsV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD3abcdefghiklmnosuvxy\x06\x18\x1B\x1D&79;ETWirt\x9D\xAA\xAD\xB1\xC2mr\x01\x80\x81\xC5glnrs\x01\x03\x04\x07\x82o\x83\x84\x85x\x86\x84eb\x84a\x87\xC3eot\x01\x02\x88\x85\x84\xC4afir\x01\x07\x08\x89-Adlm\x8A\x8B\x8Ca\x8De\x8E\xC3dei\x01\x02\x87\x8F\x90\0\xC2ms\x02\x90\x01\x90\x02-Deva\x90\x03ij\x8C\xC4alnr\x03\x05\x08i\x90\x04\x90\x05i\x90\x06\x90\x07\xC2dq\x02s\x8Co\x90\x08c\x8C\xC7adilruw\x05\x0E\x10\x12\x19\x1A\x90\tt\x90\n\x90\x0B-Deva\x90\x04\x90\x0C\x90\r\x87-Latn\x87\x87\x84\xC2nr\x03d\x90\x0E\x84-IN\x90\x0Eec\x85nr\x90\x0Fo\x90\x10" };
@@ -29,7 +29,7 @@ macro_rules! __impl_timezone_names_essentials_v1 {
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl icu_provider::DataProvider<icu::datetime::provider::time_zones::TimezoneNamesEssentialsV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::TimezoneNamesEssentialsV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -55,7 +55,7 @@ macro_rules! __impl_timezone_names_essentials_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_timezone_names_essentials_v1!($provider);
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.85"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::time_zones::TimezoneNamesEssentialsV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_TIMEZONE_NAMES_ESSENTIALS_V1).collect())
