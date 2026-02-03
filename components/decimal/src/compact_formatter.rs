@@ -61,15 +61,10 @@ use writeable::Writeable;
 /// assert_writeable_eq!(long_french.format_fixed_decimal(&1000i64.into()), "mille");
 /// ```
 #[derive(Debug)]
-#[non_exhaustive]
 pub struct CompactDecimalFormatter {
-    // TODO: currency formatters currently use these fields directly
-    #[doc(hidden)]
-    pub plural_rules: PluralRules,
-    #[doc(hidden)]
-    pub decimal_formatter: DecimalFormatter,
-    #[doc(hidden)]
-    pub compact_data:
+    plural_rules: PluralRules,
+    decimal_formatter: DecimalFormatter,
+    compact_data:
         DataPayload<ErasedMarker<<DecimalCompactLongV1 as DynamicDataMarker>::DataStruct>>,
 }
 
