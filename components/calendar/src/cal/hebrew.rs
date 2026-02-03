@@ -357,7 +357,7 @@ impl Date<Hebrew> {
     /// use icu::calendar::Date;
     /// use icu::calendar::types::Month;
     ///
-    /// let date = Date::try_new_hebrew_fixed(5782, Month::new(6), 7)
+    /// let date = Date::try_new_hebrew_v2(5782, Month::new(6), 7)
     ///     .expect("Failed to initialize Date instance.");
     ///
     /// assert_eq!(date.era_year().year, 5782);
@@ -366,7 +366,7 @@ impl Date<Hebrew> {
     /// assert_eq!(date.month().is_formatting_leap(), true);
     /// assert_eq!(date.day_of_month().0, 7);
     /// ```
-    pub fn try_new_hebrew_fixed(
+    pub fn try_new_hebrew_v2(
         year: i32,
         month: Month,
         day: u8,
@@ -378,8 +378,8 @@ impl Date<Hebrew> {
 
     /// This method uses an ordinal month, which is probably not what you want.
     ///
-    /// Use [`Date::try_new_hebrew_fixed`]
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hebrew_fixed`")]
+    /// Use [`Date::try_new_hebrew_v2`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hebrew_v2`")]
     pub fn try_new_hebrew(
         year: i32,
         ordinal_month: u8,
@@ -502,7 +502,7 @@ mod tests {
             );
 
             assert_eq!(
-                Date::try_new_hebrew_fixed(
+                Date::try_new_hebrew_v2(
                     date.era_year().year,
                     date.month().value,
                     date.day_of_month().0,
