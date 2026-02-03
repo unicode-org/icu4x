@@ -437,7 +437,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
             eyre::bail!("Segmentation LSTM data is required for this invocation, set --segementer-lstm-path or --segementer-lstm-tag");
         } else if SourceDataProvider::is_missing_unihan_error(e) {
             eyre::bail!(
-                "Unihan data is required for this invocation, set --unihan-root or --unihan-tag"
+                "Unihan data is required for this invocation, set --unihan-root or --ucd-tag"
             );
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
             eyre::bail!(

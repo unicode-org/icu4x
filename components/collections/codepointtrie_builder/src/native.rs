@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::CodePointTrieBuilder;
-use crate::CodePointTrieBuilderData;
 
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
@@ -94,21 +93,16 @@ where
         panic!("cpt builder returned error code {error}");
     }
 
-    let CodePointTrieBuilderData::ValuesByCodePoint(values) = cpt_builder.data;
-
-    for (cp, value) in values.iter().enumerate() {
-        let value = value.to_u32();
-        if value != cpt_builder.default_value.to_u32() {
-            unsafe {
-                // safety: builder is a valid UMutableCPTrie
-                // safety: we're passing a valid error pointer
-                umutablecptrie_set(builder, cp as u32, value, &mut error);
-            }
-            if error != 0 {
-                panic!("cpt builder returned error code {error}");
-            }
+    cpt_builder.for_each_code_point(|(cp, value)| {
+        unsafe {
+            // safety: builder is a valid UMutableCPTrie
+            // safety: we're passing a valid error pointer
+            umutablecptrie_set(builder, cp, value.to_u32(), &mut error);
         }
-    }
+        if error != 0 {
+            panic!("cpt builder returned error code {error}");
+        }
+    });
 
     let (trie_type, width) =
         crate::common::args_for_build_immutable::<T::ULE>(cpt_builder.trie_type);

@@ -6,17 +6,23 @@
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __enum_keyword_inner {
-    ($key:expr, $name:ident, $variant:ident) => {
+    ($key:expr, $name:ident, $variant:ident, $value:ident) => {{
+        if $value.get_subtag(1).is_some() {
+            return Err(Self::Error::InvalidKeywordValue);
+        }
         $name::$variant
-    };
+    }};
     ($key:expr, $name:ident, $variant:ident, $value:ident, $v2:ident, $($subk:expr => $subv:ident),*) => {{
         const _: () = assert!(!matches!($crate::subtags::subtag!($key), TRUE), "true value not allowed with second level");
+        if $value.get_subtag(2).is_some() {
+            return Err(Self::Error::InvalidKeywordValue);
+        }
         $name::$variant(match $value.get_subtag(1) {
             None => None,
             $(
                 Some(s) if s == &$crate::subtags::subtag!($subk) => Some($v2::$subv),
             )*
-            _ => None,
+            _ => return Err(Self::Error::InvalidKeywordValue),
         })
     }};
 }
@@ -140,7 +146,7 @@ macro_rules! __enum_keyword {
                 )?
                 Ok(match value.get_subtag(0).copied().unwrap_or(TRUE) {
                     $(
-                        s if s == $crate::subtags::subtag!($key) => $crate::__enum_keyword_inner!($key, $name, $variant $(,value, $v2, $($subk => $subv),*)?),
+                        s if s == $crate::subtags::subtag!($key) => $crate::__enum_keyword_inner!($key, $name, $variant, value$(, $v2, $($subk => $subv),*)?),
                     )*
                     _ => return Err(Self::Error::InvalidKeywordValue),
                 })
@@ -252,7 +258,7 @@ mod tests {
 
         let v = unicode::Value::from_str("foo").unwrap();
         let dk = DummyKeyword::try_from(&v);
-        assert!(dk.is_err());
+        dk.unwrap_err();
 
         assert_eq!(DummyKeyword::Standard.as_str(), "standard");
     }
@@ -281,7 +287,7 @@ mod tests {
 
         let v = unicode::Value::from_str("foo").unwrap();
         let dk = DummyKeyword::try_from(&v);
-        assert!(dk.is_err());
+        dk.unwrap_err();
 
         assert_eq!(DummyKeyword::Standard.as_str(), "standard");
     }
@@ -310,7 +316,7 @@ mod tests {
 
         let v = unicode::Value::from_str("foo").unwrap();
         let dk = DummyKeyword::try_from(&v);
-        assert!(dk.is_err());
+        dk.unwrap_err();
 
         let v = unicode::Value::from_str("sub-standard").unwrap();
         let dk = DummyKeyword::try_from(&v).unwrap();
@@ -323,9 +329,8 @@ mod tests {
         assert_eq!(unicode::Value::from(dk), v);
 
         let v = unicode::Value::from_str("sub-foo").unwrap();
-        let dk = DummyKeyword::try_from(&v).unwrap();
-        assert_eq!(dk, DummyKeyword::Sub(None));
-        assert_eq!(unicode::Value::from(dk), unicode::value!("sub"));
+        let dk = DummyKeyword::try_from(&v);
+        dk.unwrap_err();
 
         assert_eq!(
             DummyKeyword::Sub(Some(DummySubKeyword::Rare)).as_str(),
