@@ -5,7 +5,7 @@
 use std::convert::Infallible;
 
 use icu_calendar::{
-    cal::{ChineseTraditional, Hebrew},
+    cal::Hebrew,
     options::{DateAddOptions, DateDifferenceOptions, Overflow},
     types::{DateDuration, DateDurationUnit, Month},
     AsCalendar, Calendar, Date, Iso,
@@ -207,10 +207,6 @@ fn test_tricky_leap_months() {
         Date::try_new_from_codes(None, year, month.code(), day, Hebrew).unwrap()
     }
 
-    fn chinese_date(year: i32, month: Month, day: u8) -> Date<ChineseTraditional> {
-        Date::try_new_from_codes(None, year, month.code(), day, ChineseTraditional::new()).unwrap()
-    }
-
     // M06 + 1yr = M06 (common to leap)
     let date0 = hebrew_date(5783, Month::new(6), 20);
     let duration0 = DateDuration::for_years(1);
@@ -222,8 +218,8 @@ fn test_tricky_leap_months() {
     assert_eq!(duration0_actual, duration0);
 
     // M02L until M02 = 12mo
-    let cdate0 = chinese_date(2023, Month::leap(2), 1);
-    let cdate1 = chinese_date(2024, Month::new(2), 1);
+    let cdate0 = Date::try_new_chinese_traditional(2023, Month::leap(2), 1).unwrap();
+    let cdate1 = Date::try_new_chinese_traditional(2024, Month::new(2), 1).unwrap();
     let duration0a = DateDuration::for_months(12);
     let diff0 = cdate0
         .try_until_with_options(&cdate1, until_options)
