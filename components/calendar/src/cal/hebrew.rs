@@ -549,10 +549,7 @@ mod tests {
     #[test]
     fn test_weekdays() {
         // https://github.com/unicode-org/icu4x/issues/4893
-        let cal = Hebrew::new();
-        let era = "am";
-        let month = Month::new(1);
-        let dt = Date::try_new_from_codes(Some(era), 3760, month.code(), 1, cal).unwrap();
+        let dt = Date::try_new_hebrew_v2(3760, Month::new(1), 1).unwrap();
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1

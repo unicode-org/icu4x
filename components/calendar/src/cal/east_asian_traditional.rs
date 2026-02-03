@@ -858,7 +858,7 @@ impl Date<ChineseTraditional> {
 impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
     /// This method uses an ordinal month, which is probably not what you want.
     ///
-    /// Use [`Date::try_new_from_codes`]
+    /// Use [`Date::try_new_chinese_traditional`]
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_chinese_traditional`")]
     pub fn try_new_chinese_with_calendar(
         related_iso_year: i32,
@@ -1343,14 +1343,7 @@ mod test {
         ];
 
         for case in cases {
-            let date = Date::try_new_from_codes(
-                None,
-                case.year,
-                case.month.code(),
-                case.day,
-                ChineseTraditional::new(),
-            )
-            .unwrap();
+            let date = Date::try_new_chinese_traditional(case.year, case.month, case.day).unwrap();
             #[allow(deprecated)] // should still test
             {
                 assert_eq!(
@@ -1838,14 +1831,8 @@ mod test {
                     day_or_lunar_month.parse().unwrap()
                 };
 
-                let chinese = Date::try_new_from_codes(
-                    None,
-                    related_iso,
-                    lunar_month.code(),
-                    lunar_day,
-                    ChineseTraditional::new(),
-                )
-                .unwrap();
+                let chinese =
+                    Date::try_new_korean_traditional(related_iso, lunar_month, lunar_day).unwrap();
 
                 assert_eq!(
                     gregorian,
@@ -1859,13 +1846,13 @@ mod test {
     #[test]
     #[ignore] // network
     fn test_against_kasi_data() {
-        use crate::{cal::Gregorian, types::MonthCode, Date};
+        use crate::{cal::Gregorian, Date};
 
         // TODO: query KASI directly
         let uri = "https://gist.githubusercontent.com/Manishearth/d8c94a7df22a9eacefc4472a5805322e/raw/e1ea3b0aa52428686bb3a9cd0f262878515e16c1/resolved.json";
 
         #[derive(serde::Deserialize)]
-        struct Golden(BTreeMap<i32, BTreeMap<MonthCode, MonthData>>);
+        struct Golden(BTreeMap<i32, BTreeMap<String, MonthData>>);
 
         #[derive(serde::Deserialize)]
         struct MonthData {
@@ -1881,11 +1868,11 @@ mod test {
 
         let golden = serde_json::from_str::<Golden>(&json).unwrap();
 
-        for (&year, months) in &golden.0 {
+        for (year, months) in golden.0 {
             if year == 1899 || year == 2050 {
                 continue;
             }
-            for (&month, month_data) in months {
+            for (month_code, month_data) in months {
                 let mut gregorian = month_data.start_date.split('-');
                 let gregorian = Date::try_new_gregorian(
                     gregorian.next().unwrap().parse().unwrap(),
@@ -1895,9 +1882,13 @@ mod test {
                 .unwrap();
 
                 assert_eq!(
-                    Date::try_new_from_codes(None, year, month, 1, KoreanTraditional::new())
-                        .unwrap()
-                        .to_calendar(Gregorian),
+                    Date::try_new_korean_traditional(
+                        year,
+                        Month::try_from_str(&month_code).unwrap(),
+                        1
+                    )
+                    .unwrap()
+                    .to_calendar(Gregorian),
                     gregorian
                 );
             }
