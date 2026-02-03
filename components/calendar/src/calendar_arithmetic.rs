@@ -558,7 +558,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 return true;
             }
         } else {
-            let target_month = cal.month_from_ordinal(target.year(), target.month());
+            let target_month = cal.month_info_from_ordinal(target.year(), target.month()).value;
             if month != target_month {
                 let ordering = month.cmp_lexicographic(target_month);
                 if sign > 0 {
@@ -634,7 +634,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let y0 =
             cal.year_info_from_extended(duration.add_years_to(parts.year().to_extended_year()));
         // 1. If CompareSurpasses(_sign_, _y0_, _parts_.[[MonthCode]], _parts_.[[Day]], _calDate2_) is *true*, return *true*.
-        let base_month = cal.month_from_ordinal(parts.year(), parts.month());
+        let base_month = cal.month_info_from_ordinal(parts.year(), parts.month()).value;
         if Self::compare_surpasses_lexicographic(sign, y0, base_month, parts.day(), cal_date_2, cal)
         {
             return true;

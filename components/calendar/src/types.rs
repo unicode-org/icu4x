@@ -469,10 +469,10 @@ impl LeapStatus {
         use LeapStatus::*;
         // FormattingLeap is ignored in .code() (folded into Normal)
         match (self, other) {
-            (Normal | FormattingLeap, Normal | FormattingLeap) => Ordering::Equal,
+            (Normal, Normal) => Ordering::Equal,
             (Leap, Leap) => Ordering::Equal,
-            (Normal | FormattingLeap, Leap) => Ordering::Less,
-            (Leap, Normal | FormattingLeap) => Ordering::Greater,
+            (Normal, Leap) => Ordering::Less,
+            (Leap, Normal) => Ordering::Greater,
         }
     }
 }
@@ -584,22 +584,6 @@ impl Month {
                 b'0' + self.number / 10,
                 b'0' + self.number % 10,
                 if self.is_leap() { b'L' } else { 0 },
-            ])
-            .unwrap(),
-        )
-    }
-
-    /// Returns the formatting [`MonthCode`] for this month.
-    ///
-    /// See [`Self::is_formatting_leap`].
-    pub fn formatting_code(self) -> MonthCode {
-        #[allow(clippy::unwrap_used)] // by construction
-        MonthCode(
-            TinyAsciiStr::try_from_raw([
-                b'M',
-                b'0' + self.number / 10,
-                b'0' + self.number % 10,
-                if self.is_formatting_leap() { b'L' } else { 0 },
             ])
             .unwrap(),
         )
