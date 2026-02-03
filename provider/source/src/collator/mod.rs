@@ -223,6 +223,11 @@ fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
     for i in 0..(char::MAX as u32) {
         values[i as usize] = trie.get32(i);
     }
+    // Use the default value for Hangul syllables. We are not
+    // relying on the collation data to catch Hangul syllables.
+    // Furthermore, having non-default values in this range is
+    // bad for tailorings whose characters of interest are
+    // below the fast-access boundary for the small trie type.
     #[expect(clippy::needless_range_loop)]
     for i in 0xAC00..=0xD7A3 {
         values[i] = default_value;
