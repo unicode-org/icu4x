@@ -37,3 +37,70 @@ Object.values(RenderInfo.termini).toSorted((a, b) => a.funcName < b.funcName ? -
 
 document.querySelector("#loading").hidden = true;
 document.querySelector("#loaded").hidden = false;
+
+function updateFromHash() {
+    const hash = window.location.hash;
+    if (!hash || hash.length < 2) return;
+
+    const cleanHash = hash.substring(1);
+    const parts = cleanHash.split('?');
+    const funcName = parts[0];
+    const queryString = parts[1] || "";
+
+    if (!funcName) return;
+
+    const params = new URLSearchParams(queryString);
+
+    const terminusRender = document.getElementById(funcName);
+    if (!terminusRender) {
+        console.warn(`Function ${funcName} not found`);
+        return;
+    }
+
+    const details = terminusRender.closest('details');
+    if (details) {
+        details.open = true;
+        details.scrollIntoView();
+    }
+
+    const terminusParams = terminusRender.querySelector('terminus-params');
+    if (!terminusParams) return;
+
+    for (const paramElement of terminusParams.children) {
+        const nameSlot = paramElement.querySelector('[slot="param-name"]');
+        if (!nameSlot) continue;
+        const paramName = nameSlot.innerText;
+
+        if (params.has(paramName)) {
+            const valStr = params.get(paramName);
+            const tagName = paramElement.tagName.toLowerCase();
+            let valueToSet = valStr;
+
+            if (tagName === 'terminus-param-boolean') {
+                valueToSet = (valStr === 'true' || valStr === '1');
+            } else if (tagName === 'terminus-param-number') {
+                valueToSet = parseFloat(valStr);
+            } else if (tagName === 'terminus-param-codepoint') {
+                if (valStr.startsWith('0x') || valStr.startsWith('U+')) {
+                    valueToSet = parseInt(valStr.replace(/^U\+/, '0x'), 16);
+                } else if (/^\d+$/.test(valStr)) {
+                    valueToSet = parseInt(valStr, 10);
+                } else {
+                    valueToSet = valStr.codePointAt(0);
+                }
+            }
+            
+            if (paramElement.setValue) {
+                paramElement.setValue(valueToSet);
+                if (paramElement.inputElement) {
+                    paramElement.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+        }
+    }
+}
+
+window.addEventListener('hashchange', updateFromHash);
+if (window.location.hash) {
+    updateFromHash();
+}
