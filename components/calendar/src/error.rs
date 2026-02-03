@@ -92,10 +92,10 @@ pub enum LunisolarRangeError {
     /// use icu::calendar::Date;
     /// use icu::calendar::error::LunisolarRangeError;
     ///
-    /// Date::try_new_hebrew_fixed(5784, Month::leap(5), 1)
+    /// Date::try_new_hebrew_v2(5784, Month::leap(5), 1)
     ///     .expect("5784 is a leap year");
     ///
-    /// let err = Date::try_new_hebrew_fixed(5785, Month::leap(5), 1)
+    /// let err = Date::try_new_hebrew_v2(5785, Month::leap(5), 1)
     ///     .expect_err("5785 is a common year");
     ///
     /// assert!(matches!(err, LunisolarRangeError::InvalidMonth(_)));

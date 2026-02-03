@@ -204,14 +204,14 @@ fn test_tricky_leap_months() {
     until_options.largest_unit = Some(DateDurationUnit::Years);
 
     // M06 + 1yr = M06 (common to leap)
-    let date0 = Date::try_new_hebrew_fixed(5783, Month::new(6), 20).unwrap();
+    let date0 = Date::try_new_hebrew_v2(5783, Month::new(6), 20).unwrap();
     let duration0 = DateDuration::for_years(1);
     let date1 = date0
         .try_added_with_options(duration0, add_options)
         .unwrap();
     assert_eq!(
         date1,
-        Date::try_new_hebrew_fixed(5784, Month::new(6), 20).unwrap()
+        Date::try_new_hebrew_v2(5784, Month::new(6), 20).unwrap()
     );
     let duration0_actual = date0.try_until_with_options(&date1, until_options).unwrap();
     assert_eq!(duration0_actual, duration0);
@@ -232,7 +232,7 @@ fn test_tricky_leap_months() {
         .unwrap();
     assert_eq!(
         date2,
-        Date::try_new_hebrew_fixed(5784, Month::leap(5), 20).unwrap()
+        Date::try_new_hebrew_v2(5784, Month::leap(5), 20).unwrap()
     );
     let duration1_actual = date1.try_until_with_options(&date2, until_options).unwrap();
     assert_eq!(duration1_actual, duration1);
@@ -253,7 +253,7 @@ fn test_tricky_leap_months() {
         .unwrap();
     assert_eq!(
         date3,
-        Date::try_new_hebrew_fixed(5785, Month::new(7), 20).unwrap()
+        Date::try_new_hebrew_v2(5785, Month::new(7), 20).unwrap()
     );
     let duration2_actual = date2.try_until_with_options(&date3, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
@@ -264,7 +264,7 @@ fn test_tricky_leap_months() {
         .unwrap();
     assert_eq!(
         date4,
-        Date::try_new_hebrew_fixed(5785, Month::new(7), 20).unwrap()
+        Date::try_new_hebrew_v2(5785, Month::new(7), 20).unwrap()
     );
     let duration2_actual = date1.try_until_with_options(&date4, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
