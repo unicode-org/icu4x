@@ -274,9 +274,8 @@ mod tests {
     fn test_from_fields_monthday_constrain() {
         // M13-7 is not a real day, however this should resolve to M13-6
         // with Overflow::Constrain
-        let month = Month::new(13).code();
         let fields = DateFields {
-            month_code: Some(month.0.as_bytes()),
+            month: Some(Month::new(13)),
             day: Some(7),
             ..Default::default()
         };
