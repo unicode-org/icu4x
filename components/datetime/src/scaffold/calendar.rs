@@ -15,8 +15,10 @@ use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use icu_time::{
     zone::{models::TimeZoneModel, UtcOffset},
-    DateTime, Time, TimeZoneInfo, ZonedDateTime, ZonedTime,
+    DateTime, Time, TimeZoneInfo, ZonedDateTime,
 };
+#[cfg(feature = "unstable")]
+use icu_time::ZonedTime;
 
 /// A calendar that can be found in CLDR.
 ///
@@ -737,6 +739,7 @@ impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for DateTi
 
 impl<C: CldrCalendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C> for ZonedDateTime<A, Z> {}
 
+#[cfg(feature = "unstable")]
 impl<C, Z> InFixedCalendar<C> for ZonedTime<Z> {}
 
 impl<C> InFixedCalendar<C> for UtcOffset {}

@@ -9,8 +9,9 @@ use icu_calendar::{
 use icu_time::{
     zone::{models::TimeZoneModel, UtcOffset, ZoneNameTimestamp},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
-    ZonedTime,
 };
+#[cfg(feature = "unstable")]
+use icu_time::ZonedTime;
 
 use super::UnstableSealed;
 
@@ -287,32 +288,38 @@ where
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<Z> UnstableSealed for ZonedTime<Z> {}
 
+#[cfg(feature = "unstable")]
 impl<Z> GetField<Hour> for ZonedTime<Z> {
     fn get_field(&self) -> Hour {
         self.time.hour
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<Z> GetField<Minute> for ZonedTime<Z> {
     fn get_field(&self) -> Minute {
         self.time.minute
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<Z> GetField<Second> for ZonedTime<Z> {
     fn get_field(&self) -> Second {
         self.time.second
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<Z> GetField<Nanosecond> for ZonedTime<Z> {
     fn get_field(&self) -> Nanosecond {
         self.time.subsecond
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<Z> GetField<Option<UtcOffset>> for ZonedTime<Z>
 where
     Z: GetField<Option<UtcOffset>>,
@@ -322,6 +329,7 @@ where
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<Z> GetField<TimeZone> for ZonedTime<Z>
 where
     Z: GetField<TimeZone>,
@@ -331,6 +339,7 @@ where
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<Z> GetField<ZoneNameTimestamp> for ZonedTime<Z>
 where
     Z: GetField<ZoneNameTimestamp>,
@@ -402,6 +411,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<()> for ZonedDateTime
 }
 
 // Required for the `AllInputMarkers` trait bound
+#[cfg(feature = "unstable")]
 impl<Z> GetField<()> for ZonedTime<Z> {
     fn get_field(&self) {}
 }

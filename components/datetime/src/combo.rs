@@ -123,6 +123,7 @@ use crate::scaffold::*;
 /// Format with a time of day and long time zone:
 ///
 /// ```
+/// # #[cfg(feature = "unstable")] {
 /// use icu::datetime::fieldsets::{zone::SpecificLong, T};
 /// use icu::datetime::input::{Time, TimeZone};
 /// use icu::datetime::NoCalendarFormatter;
@@ -155,6 +156,7 @@ use crate::scaffold::*;
 ///     formatter.format(&zoned_time),
 ///     "3:44:00 PM Pacific Daylight Time"
 /// );
+/// # }
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Combo<DT, Z> {
