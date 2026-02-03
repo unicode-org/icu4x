@@ -124,7 +124,7 @@ impl CompactCurrencyFormatter {
         .cast();
 
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
-        
+
         Ok(Self {
             _short_currency_compact: short_currency_compact,
             essential,

@@ -9,7 +9,7 @@ use crate::{
     preferences::CompactDecimalFormatterPreferences, provider::*, DecimalFormatter,
 };
 use alloc::borrow::Cow;
-use fixed_decimal::{CompactDecimal, Decimal, UnsignedDecimal};
+use fixed_decimal::{Decimal, UnsignedDecimal};
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 use icu_plurals::PluralRules;
 use icu_provider::DataError;
@@ -50,15 +50,15 @@ use writeable::Writeable;
 ///
 /// /// Supports short and long notations:
 /// # // The following line contains U+00A0 NO-BREAK SPACE.
-/// assert_writeable_eq!(short_french.format_fixed_decimal(&35_357_670i64.into()), "35 M");
-/// assert_writeable_eq!(long_french.format_fixed_decimal(&35_357_670i64.into()), "35 millions");
+/// assert_writeable_eq!(short_french.format(&35_357_670i64.into()), "35 M");
+/// assert_writeable_eq!(long_french.format(&35_357_670i64.into()), "35 millions");
 /// /// The powers of ten used are locale-dependent:
-/// assert_writeable_eq!(long_japanese.format_fixed_decimal(&3535_7670i64.into()), "3536万");
+/// assert_writeable_eq!(long_japanese.format(&3535_7670i64.into()), "3536万");
 /// /// So are the digits:
-/// assert_writeable_eq!(long_bangla.format_fixed_decimal(&3_53_57_670i64.into()), "৩.৫ কোটি");
+/// assert_writeable_eq!(long_bangla.format(&3_53_57_670i64.into()), "৩.৫ কোটি");
 ///
 /// /// The output does not always contain digits:
-/// assert_writeable_eq!(long_french.format_fixed_decimal(&1000i64.into()), "mille");
+/// assert_writeable_eq!(long_french.format(&1000i64.into()), "mille");
 /// ```
 #[derive(Debug)]
 pub struct CompactDecimalFormatter {
@@ -241,71 +241,6 @@ impl CompactDecimalFormatter {
         })
     }
 
-    /// Formats a floating-point number in compact decimal notation using the default
-    /// precision settings.
-    ///
-    /// The result may have a fractional digit only if it is compact and its
-    /// significand is less than 10. Trailing fractional 0s are omitted, and
-    /// a sign is shown only for negative values.
-    ///
-    /// ✨ *Enabled with the `ryu` Cargo feature.*
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::decimal::CompactDecimalFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     locale!("en").into(),
-    ///     Default::default(),
-    /// )
-    /// .unwrap();
-    ///
-    /// assert_writeable_eq!(short_english.format_f64(0.0).unwrap(), "0");
-    /// assert_writeable_eq!(short_english.format_f64(2.0).unwrap(), "2");
-    /// assert_writeable_eq!(short_english.format_f64(843.0).unwrap(), "843");
-    /// assert_writeable_eq!(short_english.format_f64(2207.0).unwrap(), "2.2K");
-    /// assert_writeable_eq!(short_english.format_f64(15_127.0).unwrap(), "15K");
-    /// assert_writeable_eq!(short_english.format_f64(3_010_349.0).unwrap(), "3M");
-    /// assert_writeable_eq!(short_english.format_f64(-13_132.0).unwrap(), "-13K");
-    /// ```
-    ///
-    /// The result is the nearest such compact number, with halfway cases-
-    /// rounded towards the number with an even least significant digit.
-    ///
-    /// ```
-    /// # use icu::decimal::CompactDecimalFormatter;
-    /// # use icu::locale::locale;
-    /// # use writeable::assert_writeable_eq;
-    /// #
-    /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    locale!("en").into(),
-    /// #    Default::default(),
-    /// # ).unwrap();
-    /// assert_writeable_eq!(short_english.format_f64(999_499.99).unwrap(), "999K");
-    /// assert_writeable_eq!(short_english.format_f64(999_500.00).unwrap(), "1M");
-    /// assert_writeable_eq!(short_english.format_f64(1650.0).unwrap(), "1.6K");
-    /// assert_writeable_eq!(short_english.format_f64(1750.0).unwrap(), "1.8K");
-    /// assert_writeable_eq!(short_english.format_f64(1950.0).unwrap(), "2K");
-    /// assert_writeable_eq!(
-    ///     short_english.format_f64(-1_172_700.0).unwrap(),
-    ///     "-1.2M"
-    /// );
-    /// ```
-    #[cfg(feature = "ryu")]
-    pub fn format_f64(
-        &self,
-        value: f64,
-    ) -> Result<impl Writeable + Display + '_, fixed_decimal::LimitError> {
-        use fixed_decimal::FloatPrecision::RoundTrip;
-        // NOTE: This first gets the shortest representation of the f64, which
-        // manifests as double rounding.
-        let partly_rounded = Decimal::try_from_f64(value, RoundTrip)?;
-        Ok(self.format_fixed_decimal(&partly_rounded))
-    }
-
     /// Formats a [`Decimal`] by automatically scaling and rounding it.
     ///
     /// The result may have a fractional digit only if it is compact and its
@@ -317,8 +252,8 @@ impl CompactDecimalFormatter {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::Decimal;
     /// use icu::decimal::CompactDecimalFormatter;
+    /// use icu::decimal::input::{Decimal, FloatPrecision, SignDisplay};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -329,41 +264,49 @@ impl CompactDecimalFormatter {
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&Decimal::from(0)),
+    ///     short_english.format(&Decimal::from(0)),
     ///     "0"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&Decimal::from(2)),
+    ///     short_english.format(&Decimal::from(2)),
     ///     "2"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&Decimal::from(843)),
+    ///     short_english.format(&Decimal::from(843)),
     ///     "843"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&Decimal::from(2207)),
+    ///     short_english.format(&Decimal::from(2207)),
     ///     "2.2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&Decimal::from(15127)),
+    ///     short_english.format(&Decimal::from(15127)),
     ///     "15K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&Decimal::from(3010349)),
+    ///     short_english.format(&Decimal::from(3010349)),
     ///     "3M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&Decimal::from(-13132)),
+    ///     short_english.format(&Decimal::from(-13132)),
     ///     "-13K"
     /// );
     ///
     /// // The sign display on the Decimal is respected:
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(
+    ///     short_english.format(
     ///         &Decimal::from(2500)
-    ///             .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)
+    ///             .with_sign_display(SignDisplay::ExceptZero)
     ///     ),
     ///     "+2.5K"
+    /// );
+    ///
+    /// // Floating point inputs should use FloatPrecision::RoundTrip
+    /// assert_writeable_eq!(
+    ///     short_english.format(
+    ///         &Decimal::try_from_f64(999_499.99, FloatPrecision::RoundTrip).unwrap()
+    ///     ),
+    ///     "999K"
     /// );
     /// ```
     ///
@@ -380,35 +323,35 @@ impl CompactDecimalFormatter {
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&"999499.99".parse().unwrap()),
+    ///     short_english.format(&"999499.99".parse().unwrap()),
     ///     "999K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&"999500.00".parse().unwrap()),
+    ///     short_english.format(&"999500.00".parse().unwrap()),
     ///     "1M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&"1650".parse().unwrap()),
+    ///     short_english.format(&"1650".parse().unwrap()),
     ///     "1.6K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&"1750".parse().unwrap()),
+    ///     short_english.format(&"1750".parse().unwrap()),
     ///     "1.8K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&"1950".parse().unwrap()),
+    ///     short_english.format(&"1950".parse().unwrap()),
     ///     "2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&"-1172700".parse().unwrap()),
+    ///     short_english.format(&"-1172700".parse().unwrap()),
     ///     "-1.2M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&"0.2222".parse().unwrap()),
+    ///     short_english.format(&"0.2222".parse().unwrap()),
     ///     "0.22"
     /// );
     /// ```
-    pub fn format_fixed_decimal(&self, value: &Decimal) -> impl Writeable + Display + '_ {
+    pub fn format(&self, value: &Decimal) -> impl Writeable + Display + '_ {
         let (compact_pattern, significand) = self
             .compact_data
             .get()
@@ -424,32 +367,31 @@ impl CompactDecimalFormatter {
         )
     }
 
-    /// Formats a [`CompactDecimal`] object according to locale data.
+    /// Formats a [`Decimal`] with a given exponent according to locale data.
     ///
-    /// This is an advanced API; prefer using [`Self::format_fixed_decimal()`] in simple
+    /// This is an advanced API; prefer using [`Self::format()`] in simple
     /// cases.
     ///
     /// Since the caller specifies the exact digits that are displayed, this
     /// allows for arbitrarily complex rounding rules.
     /// However, contrary to [`DecimalFormatter::format()`], this operation
-    /// can fail, because the given [`CompactDecimal`] can be inconsistent with
+    /// can fail, because the given exponent can be inconsistent with
     /// the locale data; for instance, if the locale uses lakhs and crores and
     /// millions are requested, or vice versa, this function returns an error.
     ///
-    /// The given [`CompactDecimal`] should be constructed using
+    /// The given exponent should be constructed using
     /// [`Self::compact_exponent_for_magnitude()`] on the same
     /// [`CompactDecimalFormatter`] object.
-    /// Specifically, `formatter.format_compact_decimal(n)` requires that `n.exponent()`
-    /// be equal to `formatter.compact_exponent_for_magnitude(n.significand().nonzero_magnitude_start() + n.exponent())`.
+    /// Specifically, `formatter.format_with_exponent(s, e)` requires that `e`
+    /// be equal to `formatter.compact_exponent_for_magnitude(s.nonzero_magnitude_start() + e)`.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use icu::decimal::CompactDecimalFormatter;
+    /// # use icu::decimal::{CompactDecimalFormatter, input::Decimal};
     /// # use icu::locale::locale;
     /// # use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
-    /// use fixed_decimal::CompactDecimal;
     ///
     /// # let short_french = CompactDecimalFormatter::try_new_short(
     /// #    locale!("fr").into(),
@@ -464,41 +406,41 @@ impl CompactDecimalFormatter {
     /// #    Default::default()
     /// # ).unwrap();
     /// #
-    /// let about_a_million = CompactDecimal::from_str("1.20c6").unwrap();
-    /// let three_million = CompactDecimal::from_str("+3c6").unwrap();
-    /// let ten_lakhs = CompactDecimal::from_str("10c5").unwrap();
+    /// let one_point_two = Decimal::from_str("1.20").unwrap();
+    /// let three = Decimal::from_str("+3").unwrap();
+    /// let ten = 10.into();
     /// # // The following line contains U+00A0 NO-BREAK SPACE.
     /// assert_writeable_eq!(
     ///     short_french
-    ///         .format_compact_decimal(&about_a_million)
+    ///         .format_with_exponent(&one_point_two, 6)
     ///         .unwrap(),
     ///     "1,20 M"
     /// );
     /// assert_writeable_eq!(
     ///     long_french
-    ///         .format_compact_decimal(&about_a_million)
+    ///         .format_with_exponent(&one_point_two, 6)
     ///         .unwrap(),
     ///     "1,20 million"
     /// );
     ///
     /// # // The following line contains U+00A0 NO-BREAK SPACE.
     /// assert_writeable_eq!(
-    ///     short_french.format_compact_decimal(&three_million).unwrap(),
+    ///     short_french.format_with_exponent(&three, 6).unwrap(),
     ///     "+3 M"
     /// );
     /// assert_writeable_eq!(
-    ///     long_french.format_compact_decimal(&three_million).unwrap(),
+    ///     long_french.format_with_exponent(&three, 6).unwrap(),
     ///     "+3 millions"
     /// );
     ///
     /// assert_writeable_eq!(
-    ///     long_bangla.format_compact_decimal(&ten_lakhs).unwrap(),
+    ///     long_bangla.format_with_exponent(&ten, 5).unwrap(),
     ///     "১০ লাখ"
     /// );
     ///
     /// assert_eq!(
     ///     long_bangla
-    ///         .format_compact_decimal(&about_a_million)
+    ///         .format_with_exponent(&one_point_two, 6)
     ///         .err()
     ///         .unwrap()
     ///         .to_string(),
@@ -506,7 +448,7 @@ impl CompactDecimalFormatter {
     /// );
     /// assert_eq!(
     ///     long_french
-    ///         .format_compact_decimal(&ten_lakhs)
+    ///         .format_with_exponent(&ten, 5)
     ///         .err()
     ///         .unwrap()
     ///         .to_string(),
@@ -514,19 +456,19 @@ impl CompactDecimalFormatter {
     /// );
     ///
     /// /// Some patterns omit the digits; in those cases, the output does not
-    /// /// contain the sequence of digits specified by the CompactDecimal.
-    /// let a_thousand = CompactDecimal::from_str("1c3").unwrap();
+    /// /// contain the sequence of digits specified by the significand.
+    /// let one = 1.into();
     /// assert_writeable_eq!(
-    ///     long_french.format_compact_decimal(&a_thousand).unwrap(),
+    ///     long_french.format_with_exponent(&one, 3).unwrap(),
     ///     "mille"
     /// );
     /// ```
-    pub fn format_compact_decimal<'l>(
+    pub fn format_with_exponent<'l>(
         &'l self,
-        value: &'l CompactDecimal,
+        significand: &'l Decimal,
+        exponent: u8,
     ) -> Result<impl Writeable + Display + 'l, ExponentError> {
-        let log10_type =
-            value.significand().absolute.nonzero_magnitude_start() + i16::from(value.exponent());
+        let log10_type = significand.absolute.nonzero_magnitude_start() + i16::from(exponent);
 
         let (pattern, expected_exponent) = self
             .compact_data
@@ -538,26 +480,26 @@ impl CompactDecimalFormatter {
             .map(|t| {
                 (
                     t.variable
-                        .get((&value.significand().absolute).into(), &self.plural_rules)
+                        .get((&significand.absolute).into(), &self.plural_rules)
                         .1,
                     t.sized - t.variable.get_default().0.get(),
                 )
             })
             .unwrap_or((Pattern::<SinglePlaceholder>::PASS_THROUGH, 0));
 
-        if value.exponent() != expected_exponent {
+        if exponent != expected_exponent {
             return Err(ExponentError {
-                actual: value.exponent(),
+                actual: exponent,
                 expected: expected_exponent,
                 log10_type,
             });
         }
 
         Ok(self.decimal_formatter.format_sign(
-            value.significand().sign,
+            significand.sign,
             pattern.interpolate([self
                 .decimal_formatter
-                .format_unsigned(Cow::Borrowed(&value.significand().absolute))]),
+                .format_unsigned(Cow::Borrowed(&significand.absolute))]),
         ))
     }
 
@@ -722,9 +664,9 @@ mod tests {
                 CompactDecimalFormatter::try_new_long(locale!("en").into(), case.options.clone())
             }
             .unwrap();
-            let result1T = formatter.format_fixed_decimal(&1_000_000_000_000_000i64.into());
+            let result1T = formatter.format(&1_000_000_000_000_000i64.into());
             assert_writeable_eq!(result1T, case.expected1T, "{:?}", case);
-            let result10T = formatter.format_fixed_decimal(&10_000_000_000_000_000i64.into());
+            let result10T = formatter.format(&10_000_000_000_000_000i64.into());
             assert_writeable_eq!(result10T, case.expected10T, "{:?}", case);
         }
     }
@@ -735,9 +677,6 @@ mod tests {
             CompactDecimalFormatter::try_new_short(locale!("ar").into(), Default::default())
                 .unwrap();
 
-        assert_writeable_eq!(
-            formatter.format_fixed_decimal(&3_000_000i64.into()),
-            "3\u{a0}مليون"
-        );
+        assert_writeable_eq!(formatter.format(&3_000_000i64.into()), "3\u{a0}مليون");
     }
 }
