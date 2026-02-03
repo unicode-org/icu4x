@@ -79,86 +79,40 @@ impl UtcOffset {
     }
 
     const fn const_to_digit(c: u8) -> Option<i32> {
-        if c >= b'0' && c <= b'9' {
-            Some((c - b'0') as i32)
-        } else {
-            None
+        match c {
+            b'0'..=b'9' => Some((c - b'0') as i32),
+            _ => None,
         }
     }
 
     const fn try_get_time_component(tens: u8, ones: u8) -> Option<i32> {
-        let t = match Self::const_to_digit(tens) {
-            Some(val) => val,
-            None => return None,
-        };
-        let o = match Self::const_to_digit(ones) {
-            Some(val) => val,
-            None => return None,
-        };
-        Some(t * 10 + o)
+        match (Self::const_to_digit(tens), Self::const_to_digit(ones)) {
+            (Some(t), Some(o)) => Some(t * 10 + o),
+            _ => None,
+        }
     }
 
     /// See [`Self::try_from_str`]
     pub const fn try_from_utf8(mut code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
         let offset_sign = match code_units {
-            [b'+', rest @ ..] => {
-                code_units = rest;
-                1
-            }
-            [b'-', rest @ ..] => {
-                code_units = rest;
-                -1
-            }
-            // Unicode minus ("\u{2212}" == [226, 136, 146])
-            [226, 136, 146, rest @ ..] => {
-                code_units = rest;
-                -1
-            }
+            [b'+', rest @ ..] => { code_units = rest; 1 }
+            [b'-', rest @ ..] => { code_units = rest; -1 }
+            [226, 136, 146, rest @ ..] => { code_units = rest; -1 }
             [b'Z'] => return Ok(Self(0)),
             _ => return Err(InvalidOffsetError),
         };
 
-        let hours = match code_units {
-            /* ±hh */
-            &[h1, h2, ..] => {
-                if let Some(h) = Self::try_get_time_component(h1, h2) {
-                    h
-                } else {
-                    return Err(InvalidOffsetError);
-                }
-            }
+        let (h, m) = match *code_units {
+            [h1, h2] => (Self::try_get_time_component(h1, h2), Some(0)),
+            [h1, h2, m1, m2] => (Self::try_get_time_component(h1, h2), Self::try_get_time_component(m1, m2)),
+            [h1, h2, b':', m1, m2] => (Self::try_get_time_component(h1, h2), Self::try_get_time_component(m1, m2)),
             _ => return Err(InvalidOffsetError),
         };
 
-        let minutes = match *code_units {
-            /* ±hh */
-            [_, _] => 0,
-            /* ±hhmm, ±hh:mm */
-            [_, _, m1, m2] => {
-                if let Some(m) = Self::try_get_time_component(m1, m2) {
-                    if m < 60 {
-                        m
-                    } else {
-                        return Err(InvalidOffsetError);
-                    }
-                } else {
-                    return Err(InvalidOffsetError);
-                }
-            }
-            [_, _, b':', m1, m2] => {
-                if let Some(m) = Self::try_get_time_component(m1, m2) {
-                    if m < 60 {
-                        m
-                    } else {
-                        return Err(InvalidOffsetError);
-                    }
-                } else {
-                    return Err(InvalidOffsetError);
-                }
-            }
-            _ => return Err(InvalidOffsetError),
-        };
-        Self::try_from_seconds(offset_sign * (hours * 60 + minutes) * 60)
+        match (h, m) {
+            (Some(h), Some(m)) if m < 60 => Self::try_from_seconds(offset_sign * (h * 60 + m) * 60),
+            _ => Err(InvalidOffsetError),
+        }
     }
 
     /// Create a [`UtcOffset`] from a seconds input without checking bounds.
