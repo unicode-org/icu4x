@@ -208,14 +208,10 @@ impl Date<Japanese> {
     /// use icu::calendar::{Date, Ref};
     /// use tinystr::tinystr;
     ///
-    /// let japanese_calendar = Japanese::new();
-    /// // for easy sharing
-    /// let japanese_calendar = Ref(&japanese_calendar);
-    ///
     /// let era = "heisei";
     ///
     /// let date =
-    ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
+    ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, Japanese::new())
     ///         .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.era_year().era, era);
@@ -230,7 +226,7 @@ impl Date<Japanese> {
     ///     10,
     ///     1,
     ///     2,
-    ///     japanese_calendar,
+    ///     Japanese::new(),
     /// );
     /// assert!(fake_date.is_err());
     /// ```
