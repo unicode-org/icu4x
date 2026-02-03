@@ -128,6 +128,11 @@ experimental = [
     "dep:icu_experimental",
     "dep:icu_pattern",
 ]
+unstable = [
+    "icu_calendar/unstable",
+    "icu_datetime/unstable",
+    "icu_time/unstable",
+]
 sync = ["icu_provider/sync"]
 logging = ["icu_provider/logging", "icu_datetime/logging"]
 

@@ -123,12 +123,13 @@ use crate::scaffold::*;
 /// Format with a time of day and long time zone:
 ///
 /// ```
-/// # #[cfg(feature = "unstable")] {
+/// # #[cfg(all(feature = "unstable", feature = "ixdtf"))] {
+/// use icu::calendar::Iso;
 /// use icu::datetime::fieldsets::{zone::SpecificLong, T};
-/// use icu::datetime::input::{Time, TimeZone};
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::{iana::IanaParser, models, UtcOffset, ZoneNameTimestamp};
+/// use icu::time::zone::iana::IanaParser;
+/// use icu::time::ZonedDateTime;
 /// use icu_time::ZonedTime;
 /// use writeable::assert_writeable_eq;
 ///
@@ -138,18 +139,16 @@ use crate::scaffold::*;
 /// )
 /// .unwrap();
 ///
-/// let iana_parser = IanaParser::new();
-/// let time_zone_id = iana_parser.parse("America/Los_Angeles");
-/// let offset = "-0700".parse::<UtcOffset>().unwrap();
-///
-/// // Create a `TimeZoneInfo` with a timestamp to correctly resolve the time zone name.
-/// let time_zone_info = time_zone_id
-///     .with_offset(Some(offset))
-///     .with_zone_name_timestamp(ZoneNameTimestamp::far_in_future());
+/// let zdt = ZonedDateTime::try_strict_from_str(
+///     "2024-10-18T15:44:00-07:00[America/Los_Angeles]",
+///     Iso,
+///     IanaParser::new(),
+/// )
+/// .unwrap();
 ///
 /// let zoned_time = ZonedTime {
-///     time: Time::try_new(15, 44, 0, 0).unwrap(),
-///     zone: time_zone_info,
+///     time: zdt.time,
+///     zone: zdt.zone,
 /// };
 ///
 /// assert_writeable_eq!(

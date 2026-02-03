@@ -425,30 +425,25 @@ impl ZonedDateTime<Iso, UtcOffset> {
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::{Date, Iso};
+/// # #[cfg(feature = "ixdtf")] {
+/// use icu::calendar::Iso;
 /// use icu::time::zone::iana::IanaParser;
-/// use icu::time::zone::{models, UtcOffset};
-/// use icu::time::{DateTime, Time, TimeZone, ZonedTime};
+/// use icu::time::{ZonedDateTime, ZonedTime};
 ///
-/// let iana_parser = IanaParser::new();
-/// let time_zone_id = iana_parser.parse("America/Los_Angeles");
-/// let offset = "-0700".parse::<UtcOffset>().unwrap();
-///
-/// // Create a `TimeZoneInfo` with a timestamp to correctly resolve the time zone name.
-/// let time_zone_info = time_zone_id
-///     .with_offset(Some(offset))
-///     .at_date_time_iso(DateTime {
-///         date: Date::try_new_iso(2024, 10, 18).unwrap(),
-///         time: Time::try_new(15, 44, 0, 0).unwrap(),
-///     });
+/// let zdt = ZonedDateTime::try_strict_from_str(
+///     "2024-10-18T15:44:00-07:00[America/Los_Angeles]",
+///     Iso,
+///     IanaParser::new(),
+/// )
+/// .unwrap();
 ///
 /// let zoned_time = ZonedTime {
-///     time: Time::try_new(15, 44, 0, 0).unwrap(),
-///     zone: time_zone_info,
+///     time: zdt.time,
+///     zone: zdt.zone,
 /// };
 ///
 /// assert_eq!(zoned_time.time.hour.number(), 15);
-/// assert_eq!(zoned_time.zone.id(), iana_parser.parse("America/Los_Angeles"));
+/// # }
 /// ```
 ///
 /// See the docs on `NoCalendarFormatter` for more information and examples.
