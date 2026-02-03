@@ -21,8 +21,8 @@
 //!
 //! ```
 //! macro_rules! cb {
-//!     ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
-//!         // Do something for each marker, or each experimental marker
+//!     ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
+//!         // Do something for each marker, or each unstable marker
 //!     };
 //! }
 //! ```
@@ -270,7 +270,7 @@ macro_rules! registry(
             icu::datetime::provider::semantic_skeletons::DatetimePatternsDatePersianV1: DatetimePatternsDatePersianV1,
             icu::datetime::provider::semantic_skeletons::DatetimePatternsDateRocV1: DatetimePatternsDateRocV1,
             icu::datetime::provider::semantic_skeletons::DatetimePatternsTimeV1: DatetimePatternsTimeV1,
-            #[experimental]
+            #[unstable]
             icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1: LongCompactDecimalFormatDataV1,
             icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1: ShortCompactDecimalFormatDataV1,
             icu::experimental::dimension::provider::currency::compact::ShortCurrencyCompactV1: ShortCurrencyCompactV1,
@@ -337,7 +337,7 @@ macro_rules! registry(
 );
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         #[test]
         fn no_marker_collisions() {
             use icu_provider::prelude::*;

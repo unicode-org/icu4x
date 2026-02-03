@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::Decimal;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use icu_plurals::PluralOperands;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRulesOptions};
 use serde::Deserialize;
@@ -64,7 +64,7 @@ pub enum PluralOperandsInput {
     Number(isize),
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl From<PluralOperandsInput> for PluralOperands {
     fn from(input: PluralOperandsInput) -> Self {
         use icu_plurals::RawPluralOperands;

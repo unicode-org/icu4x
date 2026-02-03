@@ -61,7 +61,7 @@ icu_experimental_data = { workspace = true, optional = true }
 criterion = { workspace = true }
 
 [dev-dependencies]
-icu = { path = "../../components/icu", features = ["experimental"]}
+icu = { path = "../../components/icu", features = ["unstable"] }
 icu_provider = { path = "../../provider/core", features = ["std"]}
 
 icu_locale_data = { workspace = true }

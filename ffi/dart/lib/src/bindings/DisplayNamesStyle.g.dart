@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// 🚧 This API is experimental and may experience breaking changes outside major releases.
+/// 🚧 This API is unstable and may experience breaking changes outside major releases.
 ///
 /// See the [Rust documentation for `Style`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/enum.Style.html) for more information.
 enum DisplayNamesStyle {
