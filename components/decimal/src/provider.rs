@@ -240,7 +240,7 @@ impl DecimalSymbolStrsBuilder<'_> {
     }
 }
 
-/// Symbols and metadata required for formatting a [`Decimal`](crate::Decimal).
+/// Symbols and metadata required for formatting a [`Decimal`](crate::input::Decimal).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
