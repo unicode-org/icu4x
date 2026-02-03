@@ -242,6 +242,8 @@ impl From<u128> for PluralOperands {
         let i = if input < LIMIT_18_DIGITS as u128 {
             input as u64
         } else {
+            // Add LIMIT_18_DIGITS so that is_exactly_one and is_exactly_zero
+            // do not return true for large magnitude numbers like 1e18+1.
             (input % LIMIT_18_DIGITS as u128) as u64 + LIMIT_18_DIGITS
         };
         Self {
