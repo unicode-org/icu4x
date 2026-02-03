@@ -1,0 +1,67 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+Papadopoulos, Giorgos
+Papadopoulos, Konstantinos
+Papadopoulos, Dimitris
+Papadopoulos, Nikolaos
+Papadopoulos, Giannis
+Vlachos, Angelos
+Vlachos, Panagiotis
+Vlachos, Christos
+Nikolaidis, Nikos
+Nikolaidis, Petros
+Nikolaidis, Athanasios
+Georgiou, Giorgos
+Georgiou, Andreas
+Georgiou, Michalis
+Dimitriadis, Dimitris
+Dimitriadis, Alexandros
+Dimitriadis, Vasilios
+Socrates
+Plato
+Aristotle
+Herodotus
+Thucydides
+Xenophon
+Pythagoras
+Euclid
+Archimedes
+Hippocrates
+Pericles
+Leonidas
+Themistocles
+Solon
+Cleisthenes
+Alexander the Great
+Papadakis, Manolis
+Papadakis, Stelios
+Papadakis, Nikos
+Karagiannis, Giorgos
+Karagiannis, Kostas
+Karagiannis, Dimitris
+Makriskostas, Ioannis
+Makriskostas, Petros
+Makriskostas, Thanos
+Economou, Giannis
+Economou, Kostas
+Economou, Nikos
+Konstantinidis, Konstantinos
+Konstantinidis, Georgios
+Konstantinidis, Dimitrios
+Alexopoulos, Alexis
+Alexopoulos, Alexandros
+Alexopoulos, Alexios
+Vasiliadis, Vasilis
+Vasiliadis, Vasilios
+Vasiliadis, Vangelis
+Mitropoulos, Dimitris
+Mitropoulos, Mitsos
+Mitropoulos, Mimis
+Christodoulou, Christos
+Christodoulou, Christoforos
+Christodoulou, Christakis
+Ioannidis, Giannis
+Ioannidis, Ioannis
+Ioannidis, Yiangos
