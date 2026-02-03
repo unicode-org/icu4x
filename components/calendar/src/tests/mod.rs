@@ -4,6 +4,7 @@
 
 mod arithmetic;
 mod continuity_test;
+mod date_arithmetic_snapshot;
 mod exhaustive;
 mod extrema;
 mod not_enough_fields;

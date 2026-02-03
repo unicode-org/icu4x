@@ -1130,20 +1130,20 @@ impl PackedEastAsianTraditionalYearData {
 // Precalculates Chinese years, significant performance improvement for big tests
 #[cfg(test)]
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct EastAsianTraditionalYears(&'static [EastAsianTraditionalYear]);
+pub(crate) struct EastAsianTraditionalYears(&'static [EastAsianTraditionalYear], &'static str);
 
 #[cfg(test)]
 impl EastAsianTraditionalYears {
     pub fn china() -> Self {
         static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
             std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| China.year(i)).collect());
-        Self(&R)
+        Self(&R, "Chinese (China)")
     }
 
     pub fn korea() -> Self {
         static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
             std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| Korea.year(i)).collect());
-        Self(&R)
+        Self(&R, "Chinese (Korea)")
     }
 }
 
@@ -1153,6 +1153,10 @@ impl crate::cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
 impl Rules for EastAsianTraditionalYears {
     fn year(&self, related_iso: i32) -> EastAsianTraditionalYear {
         self.0[(related_iso + 1100000) as usize]
+    }
+
+    fn debug_name(&self) -> &'static str {
+        self.1
     }
 }
 
