@@ -115,7 +115,7 @@ impl LongCompactCurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
-            + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1>,
+            + DataProvider<crate::compactdecimal::provider::DecimalCompactLongV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
 

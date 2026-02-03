@@ -7,7 +7,7 @@ use core::fmt::Display;
 use crate::compactdecimal::{
     options::CompactDecimalFormatterOptions,
     preferences::CompactDecimalFormatterPreferences,
-    provider::{CompactPatterns, LongCompactDecimalFormatDataV1, ShortCompactDecimalFormatDataV1},
+    provider::{CompactPatterns, DecimalCompactLongV1, DecimalCompactShortV1},
     ExponentError,
 };
 use alloc::borrow::Cow;
@@ -58,9 +58,8 @@ use writeable::Writeable;
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) decimal_formatter: DecimalFormatter,
-    pub(crate) compact_data: DataPayload<
-        ErasedMarker<<LongCompactDecimalFormatDataV1 as DynamicDataMarker>::DataStruct>,
-    >,
+    pub(crate) compact_data:
+        DataPayload<ErasedMarker<<DecimalCompactLongV1 as DynamicDataMarker>::DataStruct>>,
 }
 
 impl CompactDecimalFormatter {
@@ -88,14 +87,14 @@ impl CompactDecimalFormatter {
         prefs: CompactDecimalFormatterPreferences,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
+        let locale = DecimalCompactShortV1::make_locale(prefs.locale_preferences);
         Ok(Self {
             decimal_formatter: DecimalFormatter::try_new(
                 (&prefs).into(),
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
-            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1>::load(
+            compact_data: DataProvider::<DecimalCompactShortV1>::load(
                 &crate::provider::Baked,
                 DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
@@ -124,13 +123,13 @@ impl CompactDecimalFormatter {
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<ShortCompactDecimalFormatDataV1>
+        D: DataProvider<DecimalCompactShortV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + ?Sized,
     {
-        let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
+        let locale = DecimalCompactShortV1::make_locale(prefs.locale_preferences);
         Ok(Self {
             decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
@@ -138,7 +137,7 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
-            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1>::load(
+            compact_data: DataProvider::<DecimalCompactShortV1>::load(
                 provider,
                 DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
@@ -174,14 +173,14 @@ impl CompactDecimalFormatter {
         prefs: CompactDecimalFormatterPreferences,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
+        let locale = DecimalCompactLongV1::make_locale(prefs.locale_preferences);
         Ok(Self {
             decimal_formatter: DecimalFormatter::try_new(
                 (&prefs).into(),
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
-            compact_data: DataProvider::<LongCompactDecimalFormatDataV1>::load(
+            compact_data: DataProvider::<DecimalCompactLongV1>::load(
                 &crate::provider::Baked,
                 DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
@@ -210,13 +209,13 @@ impl CompactDecimalFormatter {
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LongCompactDecimalFormatDataV1>
+        D: DataProvider<DecimalCompactLongV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + ?Sized,
     {
-        let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
+        let locale = DecimalCompactLongV1::make_locale(prefs.locale_preferences);
         Ok(Self {
             decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
@@ -224,7 +223,7 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
-            compact_data: DataProvider::<LongCompactDecimalFormatDataV1>::load(
+            compact_data: DataProvider::<DecimalCompactLongV1>::load(
                 provider,
                 DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),

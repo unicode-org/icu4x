@@ -59,8 +59,8 @@ pub mod provider {
         }
         make_provider!(Baked);
 
-        impl_long_compact_decimal_format_data_v1!(Baked);
-        impl_short_compact_decimal_format_data_v1!(Baked);
+        impl_decimal_compact_long_v1!(Baked);
+        impl_decimal_compact_short_v1!(Baked);
         impl_short_currency_compact_v1!(Baked);
         impl_currency_essentials_v1!(Baked);
         impl_currency_displayname_v1!(Baked);
@@ -127,10 +127,10 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const MARKERS: &[DataMarkerInfo] = &[
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
+        super::compactdecimal::provider::DecimalCompactLongV1::INFO,
+        super::compactdecimal::provider::DecimalCompactShortV1::INFO,
+        super::compactdecimal::provider::DecimalCompactLongV1::INFO,
+        super::compactdecimal::provider::DecimalCompactShortV1::INFO,
         super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
         super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
         super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,

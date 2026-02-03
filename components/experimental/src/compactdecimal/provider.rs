@@ -30,13 +30,13 @@ use zerovec::VarZeroVec;
 pub use crate::provider::Baked;
 
 icu_provider::data_marker!(
-    /// `LongCompactDecimalFormatDataV1`
-    LongCompactDecimalFormatDataV1,
+    /// `DecimalCompactLongV1`
+    DecimalCompactLongV1,
     CompactPatterns<'static, SinglePlaceholder>,
 );
 icu_provider::data_marker!(
-    /// `ShortCompactDecimalFormatDataV1`
-    ShortCompactDecimalFormatDataV1,
+    /// `DecimalCompactShortV1`
+    DecimalCompactShortV1,
     CompactPatterns<'static, SinglePlaceholder>,
 );
 
