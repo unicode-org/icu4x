@@ -95,17 +95,32 @@ impl UtcOffset {
     /// See [`Self::try_from_str`]
     pub const fn try_from_utf8(mut code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
         let offset_sign = match code_units {
-            [b'+', rest @ ..] => { code_units = rest; 1 }
-            [b'-', rest @ ..] => { code_units = rest; -1 }
-            [226, 136, 146, rest @ ..] => { code_units = rest; -1 }
+            [b'+', rest @ ..] => {
+                code_units = rest;
+                1
+            }
+            [b'-', rest @ ..] => {
+                code_units = rest;
+                -1
+            }
+            [226, 136, 146, rest @ ..] => {
+                code_units = rest;
+                -1
+            }
             [b'Z'] => return Ok(Self(0)),
             _ => return Err(InvalidOffsetError),
         };
 
         let (h, m) = match *code_units {
             [h1, h2] => (Self::try_get_time_component(h1, h2), Some(0)),
-            [h1, h2, m1, m2] => (Self::try_get_time_component(h1, h2), Self::try_get_time_component(m1, m2)),
-            [h1, h2, b':', m1, m2] => (Self::try_get_time_component(h1, h2), Self::try_get_time_component(m1, m2)),
+            [h1, h2, m1, m2] => (
+                Self::try_get_time_component(h1, h2),
+                Self::try_get_time_component(m1, m2),
+            ),
+            [h1, h2, b':', m1, m2] => (
+                Self::try_get_time_component(h1, h2),
+                Self::try_get_time_component(m1, m2),
+            ),
             _ => return Err(InvalidOffsetError),
         };
 
