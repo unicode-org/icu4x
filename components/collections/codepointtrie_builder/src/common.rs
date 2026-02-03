@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_collections::codepointtrie::TrieType;
+use icu_collections::codepointtrie::{TrieType, TrieValue};
+
+use crate::{CodePointTrieBuilder, CodePointTrieBuilderData};
 
 /// Returns the type and width arguments for `umutablecptrie_buildImmutable`
 pub(crate) fn args_for_build_immutable<U>(trie_type: TrieType) -> (u32, u32) {
@@ -17,4 +19,38 @@ pub(crate) fn args_for_build_immutable<U>(trie_type: TrieType) -> (u32, u32) {
         other => panic!("Don't know how to make trie with width {other}"),
     };
     (trie_type, width)
+}
+
+impl<T> CodePointTrieBuilder<'_, T>
+where
+    T: TrieValue,
+{
+    pub(crate) fn for_each_code_point(&self, mut f: impl FnMut((u32, T))) {
+        match self.data {
+            CodePointTrieBuilderData::ValuesByCodePoint(values) => {
+                for (cp, &value) in values.iter().enumerate() {
+                    if value != self.default_value {
+                        f((cp as u32, value))
+                    }
+                }
+            }
+            CodePointTrieBuilderData::ByCodePoint(ref r, ref v) => {
+                for cp in r.clone() {
+                    let Some(value) = v(cp) else {
+                        continue;
+                    };
+                    if value != self.default_value {
+                        f((cp, value))
+                    }
+                }
+            }
+            CodePointTrieBuilderData::Map(ref map) => {
+                for (&cp, &value) in map {
+                    if value != self.default_value {
+                        f((cp, value))
+                    }
+                }
+            }
+        }
+    }
 }
