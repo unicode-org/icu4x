@@ -1,0 +1,64 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+Chatterjee, Amit
+Roy, Rahul
+Das, Priya
+Sen, Anjali
+Ghosh, Suman
+Bose, Rahim
+Mitra, Fatima
+Dutta, Anita
+Banerjee, Sunita
+Mukherjee, Deepak
+Sarkar, Ayan
+Chakraborty, Ishan
+Bhattacharya, Kazi
+Saha, Nazrul
+Biswas, Rabindra
+Choudhury, Bankim
+Paul, Sarat
+Majumdar, Jiban
+Ray, Subhas
+De, Chittaranjan
+Vidyasagar, Ishwar Chandra
+Tagore, Rabindranath
+Nazrul, Islam
+Chattopadhyay, Bankim Chandra
+Ray, Satyajit
+Sen, Amartya
+Ganguly, Sourav
+Bose, Jagadish Chandra
+Bose, Subhas Chandra
+Roy, Ram Mohan
+Pal, Bipin Chandra
+Datta, Michael Madhusudan
+Sen, Keshab Chandra
+Mukherjee, Pranab
+Banerjee, Mamata
+Hasina, Sheikh
+Rahman, Sheikh Mujibur
+Zia, Khaleda
+Islam, Kazi Nazrul
+Ahmed, Humayun
+Sircar, Badal
+Ghosh, Rituparno
+Majumdar, Tarun
+Sen, Mrinal
+Ray, Sandip
+Chatterjee, Soumitra
+Uttam, Kumar
+Sen, Suchitra
+Mukherjee, Rani
+Balan, Vidya
+Ganguly, Kadambini
+Das, Bina
+Waddedar, Pritilata
+Sen, Surya
+Gupta, Badal
+Dutta, Dinesh
+Bagha, Jatin
+Bose, Khudiram
+Lahiri, Jhumpa
+Ghosh, Amitav

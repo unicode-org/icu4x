@@ -132,6 +132,14 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             .rev()
             .collect::<Vec<&str>>(),
     );
+    let content_bengali: (&str, Vec<&str>) = (
+        "TestNames_Bengali",
+        include_str!("data/TestNames_Bengali.txt")
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
+            .rev()
+            .collect::<Vec<&str>>(),
+    );
 
     // hsivonen@ : All five strengths are benched.
     // The default is tertiary, so it makes sense to bench that.
@@ -189,6 +197,11 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         (
             locale!("ko-KR"),
             vec![&content_latin, &content_korean],
+            &all_strength,
+        ),
+        (
+            locale!("bn"),
+            vec![&content_latin, &content_bengali],
             &all_strength,
         ),
     ];
