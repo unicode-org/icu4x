@@ -1711,10 +1711,9 @@ mod test {
 
     #[test]
     fn test_from_fields_constrain() {
-        let month = Month::new(1).code();
         let fields = DateFields {
             day: Some(31),
-            month_code: Some(month.0.as_bytes()),
+            month: Some(Month::new(1)),
             extended_year: Some(1972),
             ..Default::default()
         };
@@ -1732,10 +1731,9 @@ mod test {
         );
 
         // 2022 did not have M01L, the month should be constrained back down
-        let month = Month::leap(1).code();
         let fields = DateFields {
             day: Some(1),
-            month_code: Some(month.0.as_bytes()),
+            month: Some(Month::leap(1)),
             extended_year: Some(2022),
             ..Default::default()
         };

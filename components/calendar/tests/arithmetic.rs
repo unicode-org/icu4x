@@ -5,7 +5,7 @@
 use std::convert::Infallible;
 
 use icu_calendar::{
-    cal::{ChineseTraditional, Hebrew},
+    cal::Hebrew,
     options::{DateAddOptions, DateDifferenceOptions, Overflow},
     types::{DateDuration, DateDurationUnit, Month},
     AsCalendar, Calendar, Date, Iso,
@@ -203,27 +203,22 @@ fn test_tricky_leap_months() {
     let mut until_options = DateDifferenceOptions::default();
     until_options.largest_unit = Some(DateDurationUnit::Years);
 
-    fn hebrew_date(year: i32, month: Month, day: u8) -> Date<Hebrew> {
-        Date::try_new_from_codes(None, year, month.code(), day, Hebrew).unwrap()
-    }
-
-    fn chinese_date(year: i32, month: Month, day: u8) -> Date<ChineseTraditional> {
-        Date::try_new_from_codes(None, year, month.code(), day, ChineseTraditional::new()).unwrap()
-    }
-
     // M06 + 1yr = M06 (common to leap)
-    let date0 = hebrew_date(5783, Month::new(6), 20);
+    let date0 = Date::try_new_hebrew_v2(5783, Month::new(6), 20).unwrap();
     let duration0 = DateDuration::for_years(1);
     let date1 = date0
         .try_added_with_options(duration0, add_options)
         .unwrap();
-    assert_eq!(date1, hebrew_date(5784, Month::new(6), 20));
+    assert_eq!(
+        date1,
+        Date::try_new_hebrew_v2(5784, Month::new(6), 20).unwrap()
+    );
     let duration0_actual = date0.try_until_with_options(&date1, until_options).unwrap();
     assert_eq!(duration0_actual, duration0);
 
     // M02L until M02 = 12mo
-    let cdate0 = chinese_date(2023, Month::leap(2), 1);
-    let cdate1 = chinese_date(2024, Month::new(2), 1);
+    let cdate0 = Date::try_new_chinese_traditional(2023, Month::leap(2), 1).unwrap();
+    let cdate1 = Date::try_new_chinese_traditional(2024, Month::new(2), 1).unwrap();
     let duration0a = DateDuration::for_months(12);
     let diff0 = cdate0
         .try_until_with_options(&cdate1, until_options)
@@ -235,7 +230,10 @@ fn test_tricky_leap_months() {
     let date2 = date1
         .try_added_with_options(duration1, add_options)
         .unwrap();
-    assert_eq!(date2, hebrew_date(5784, Month::leap(5), 20));
+    assert_eq!(
+        date2,
+        Date::try_new_hebrew_v2(5784, Month::leap(5), 20).unwrap()
+    );
     let duration1_actual = date1.try_until_with_options(&date2, until_options).unwrap();
     assert_eq!(duration1_actual, duration1);
 
@@ -253,7 +251,10 @@ fn test_tricky_leap_months() {
     let date3 = date2
         .try_added_with_options(duration2, add_options)
         .unwrap();
-    assert_eq!(date3, hebrew_date(5785, Month::new(7), 20));
+    assert_eq!(
+        date3,
+        Date::try_new_hebrew_v2(5785, Month::new(7), 20).unwrap()
+    );
     let duration2_actual = date2.try_until_with_options(&date3, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
 
@@ -261,7 +262,10 @@ fn test_tricky_leap_months() {
     let date4 = date1
         .try_added_with_options(duration2, add_options)
         .unwrap();
-    assert_eq!(date4, hebrew_date(5785, Month::new(7), 20));
+    assert_eq!(
+        date4,
+        Date::try_new_hebrew_v2(5785, Month::new(7), 20).unwrap()
+    );
     let duration2_actual = date1.try_until_with_options(&date4, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
 }
