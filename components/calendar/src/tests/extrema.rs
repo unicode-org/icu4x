@@ -228,8 +228,8 @@ mod check_convenience_constructors {
     }
     #[test]
     fn hebrew() {
-        Date::try_new_hebrew_fixed(*VALID_YEAR_RANGE.start() - 1, Month::new(1), 1).unwrap_err();
-        Date::try_new_hebrew_fixed(*VALID_YEAR_RANGE.end() + 1, Month::new(1), 1).unwrap_err();
+        Date::try_new_hebrew_v2(*VALID_YEAR_RANGE.start() - 1, Month::new(1), 1).unwrap_err();
+        Date::try_new_hebrew_v2(*VALID_YEAR_RANGE.end() + 1, Month::new(1), 1).unwrap_err();
         #[allow(deprecated)]
         {
             Date::try_new_hebrew(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
