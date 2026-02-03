@@ -10,13 +10,10 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 use crate::dimension::currency::compact_formatter::CompactCurrencyFormatterPreferences;
-use crate::{
-    compactdecimal::options::CompactDecimalFormatterOptions,
-    compactdecimal::CompactDecimalFormatter,
-    dimension::provider::currency::{
-        extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
-    },
+use crate::dimension::provider::currency::{
+    extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
 };
+use icu_decimal::{options::CompactDecimalFormatterOptions, CompactDecimalFormatter};
 
 use super::CurrencyCode;
 
@@ -115,7 +112,7 @@ impl LongCompactCurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
-            + DataProvider<crate::compactdecimal::provider::DecimalCompactLongV1>,
+            + DataProvider<icu_decimal::provider::DecimalCompactLongV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
 

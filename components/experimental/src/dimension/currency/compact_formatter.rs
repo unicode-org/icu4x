@@ -4,17 +4,15 @@
 
 use core::fmt::Display;
 
-use crate::{
-    compactdecimal::{
-        options::CompactDecimalFormatterOptions, preferences::CompactDecimalFormatterPreferences,
-        CompactDecimalFormatter,
-    },
-    dimension::provider::{
-        currency::compact::ShortCurrencyCompactV1, currency::essentials::CurrencyEssentialsV1,
-    },
+use crate::dimension::provider::{
+    currency::compact::ShortCurrencyCompactV1, currency::essentials::CurrencyEssentialsV1,
 };
 use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatterPreferences;
+use icu_decimal::{
+    options::CompactDecimalFormatterOptions, preferences::CompactDecimalFormatterPreferences,
+    CompactDecimalFormatter,
+};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
@@ -132,7 +130,7 @@ impl CompactCurrencyFormatter {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<ShortCurrencyCompactV1>
-            + DataProvider<crate::compactdecimal::provider::DecimalCompactShortV1>
+            + DataProvider<icu_decimal::provider::DecimalCompactShortV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,

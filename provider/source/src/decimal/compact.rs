@@ -5,7 +5,7 @@
 use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::experimental::compactdecimal::provider::*;
+use icu::decimal::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;

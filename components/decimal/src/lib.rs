@@ -110,7 +110,11 @@ impl<'a, T> core::ops::Deref for Cow<'a, T> {
     }
 }
 
+#[cfg(feature = "unstable")]
+mod compact_formatter;
 mod decimal_formatter;
+#[cfg(feature = "unstable")]
+pub mod error;
 mod grouper;
 pub mod options;
 pub mod parts;
@@ -121,6 +125,9 @@ mod size_test_macro;
 pub use decimal_formatter::{
     DecimalFormatter, FormattedDecimal, FormattedSign, FormattedUnsignedDecimal,
 };
+
+#[cfg(feature = "unstable")]
+pub use compact_formatter::CompactDecimalFormatter;
 
 pub use preferences::DecimalFormatterPreferences;
 
