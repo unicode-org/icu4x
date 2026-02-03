@@ -195,10 +195,10 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges, Struct)]
     #[diplomat::opaque]
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     pub struct PluralRulesWithRanges(icu_plurals::PluralRulesWithRanges<icu_plurals::PluralRules>);
 
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     impl PluralRulesWithRanges {
         /// construct a [`PluralRulesWithRanges`] for the given locale, for cardinal numbers, using compiled data.
         #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new_cardinal, FnInStruct)]

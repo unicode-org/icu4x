@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
-
 //! Options for [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
 
 /// A collection of configuration options that determine the formatting behavior of

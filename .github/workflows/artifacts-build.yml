@@ -647,7 +647,7 @@ jobs:
             include_data: false
     runs-on: ${{ matrix.os }}
     env:
-      FEATURES: ${{ matrix.include_data == true && 'default_components,experimental,buffer_provider,compiled_data' || 'default_components,experimental,buffer_provider' }}
+      FEATURES: ${{ matrix.include_data == true && 'default_components,experimental,unstable,buffer_provider,compiled_data' || 'default_components,experimental,unstable,buffer_provider' }}
       FILENAME_SUFFIX: ${{ matrix.include_data == true && '-with_data' || '' }}
 
     steps:
