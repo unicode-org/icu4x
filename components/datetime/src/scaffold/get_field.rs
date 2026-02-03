@@ -6,12 +6,12 @@ use icu_calendar::{
     types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
     AsCalendar, Calendar, Date,
 };
+#[cfg(feature = "unstable")]
+use icu_time::ZonedTime;
 use icu_time::{
     zone::{models::TimeZoneModel, UtcOffset, ZoneNameTimestamp},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
-#[cfg(feature = "unstable")]
-use icu_time::ZonedTime;
 
 use super::UnstableSealed;
 

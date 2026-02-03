@@ -13,12 +13,12 @@ use icu_calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCal
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
+#[cfg(feature = "unstable")]
+use icu_time::ZonedTime;
 use icu_time::{
     zone::{models::TimeZoneModel, UtcOffset},
     DateTime, Time, TimeZoneInfo, ZonedDateTime,
 };
-#[cfg(feature = "unstable")]
-use icu_time::ZonedTime;
 
 /// A calendar that can be found in CLDR.
 ///
