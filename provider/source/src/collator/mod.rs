@@ -10,7 +10,9 @@ use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::locale::subtags::{language, script};
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilderData;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -140,12 +142,20 @@ macro_rules! collation_provider {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    self.check_req::<$marker>(req)?;
+                    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+                    return Err(DataError::custom(
+                        "icu_provider_source must be built with use_icu4c or use_wasm to build collation data",
+                    )
+                    .with_req($marker::INFO, req));
+                    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                    {
+                        self.check_req::<$marker>(req)?;
 
-                    Ok(DataResponse {
-                        metadata: Default::default(),
-                        payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, $suffix).and_then(TryInto::try_into).map_err(|e| e.with_req(<$marker>::INFO, req))?),
-                    })
+                        Ok(DataResponse {
+                            metadata: Default::default(),
+                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, $suffix).and_then(TryInto::try_into).map_err(|e| e.with_req(<$marker>::INFO, req))?),
+                        })
+                    }
                 }
             }
 
@@ -216,37 +226,44 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
 }
 
 fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
-    let default_value = trie.get('\u{10FFFF}');
-    let error_value = trie.get32(u32::MAX);
-    let mut values = vec![default_value; char::MAX as usize];
+    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+    {
+        unreachable!("Should have errored out earlier");
+    }
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    {
+        let default_value = trie.get('\u{10FFFF}');
+        let error_value = trie.get32(u32::MAX);
+        let mut values = vec![default_value; char::MAX as usize];
 
-    for i in 0..(char::MAX as u32) {
-        values[i as usize] = trie.get32(i);
-    }
-    // Use the default value for Hangul syllables. We are not
-    // relying on the collation data to catch Hangul syllables.
-    // Furthermore, having non-default values in this range is
-    // bad for tailorings whose characters of interest are
-    // below the fast-access boundary for the small trie type.
-    #[expect(clippy::needless_range_loop)]
-    for i in 0xAC00..=0xD7A3 {
-        values[i] = default_value;
-    }
-    let mut last_non_default = values.len() - 1;
-    while last_non_default != 0 {
-        if values[last_non_default] != default_value {
-            break;
+        for i in 0..(char::MAX as u32) {
+            values[i as usize] = trie.get32(i);
         }
-        last_non_default -= 1;
+        // Use the default value for Hangul syllables. We are not
+        // relying on the collation data to catch Hangul syllables.
+        // Furthermore, having non-default values in this range is
+        // bad for tailorings whose characters of interest are
+        // below the fast-access boundary for the small trie type.
+        #[expect(clippy::needless_range_loop)]
+        for i in 0xAC00..=0xD7A3 {
+            values[i] = default_value;
+        }
+        let mut last_non_default = values.len() - 1;
+        while last_non_default != 0 {
+            if values[last_non_default] != default_value {
+                break;
+            }
+            last_non_default -= 1;
+        }
+        let high_start = last_non_default + 1;
+        CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&values[..high_start]),
+            default_value,
+            error_value,
+            trie_type: icu::collections::codepointtrie::TrieType::Small,
+        }
+        .build()
     }
-    let high_start = last_non_default + 1;
-    CodePointTrieBuilder {
-        data: CodePointTrieBuilderData::ValuesByCodePoint(&values[..high_start]),
-        default_value,
-        error_value,
-        trie_type: icu::collections::codepointtrie::TrieType::Small,
-    }
-    .build()
 }
 
 impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
