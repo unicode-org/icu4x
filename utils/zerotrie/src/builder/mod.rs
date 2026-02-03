@@ -238,11 +238,8 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     pub const fn from_sorted_u8_tuples(tuples: &[(&[u8], usize)]) -> Self {
         use konst::*;
         let byte_str_slice = ByteStr::from_byte_slice_with_value(tuples);
-        let result = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
-        match result {
-            Ok(s) => Self::from_store(s.build_or_panic()),
-            Err(_) => panic!("Failed to build ZeroTrie"),
-        }
+        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
+        Self::from_store(s.build_or_panic())
     }
 
     /// **Const Constructor:** Creates an [`ZeroTrieSimpleAscii`] from a sorted slice of keys and values.
@@ -298,10 +295,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
         let byte_str_slice = ByteStr::from_str_slice_with_value(tuples);
         // 100 is the value of `K`, the size of the lengths stack. If compile errors are
         // encountered, this number may need to be increased.
-        let result = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
-        match result {
-            Ok(s) => Self::from_store(s.build_or_panic()),
-            Err(_) => panic!("Failed to build ZeroTrie"),
-        }
+        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
+        Self::from_store(s.build_or_panic())
     }
 }

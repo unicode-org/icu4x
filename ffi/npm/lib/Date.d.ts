@@ -213,6 +213,13 @@ export class Date {
     get daysInYear(): number;
 
     /**
+     * Returns if the year is a leap year for this date
+     *
+     * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+     */
+    get isInLeapYear(): boolean;
+
+    /**
      * Returns the {@link Calendar} object backing this date
      *
      * See the [Rust documentation for `calendar`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.calendar) for more information.

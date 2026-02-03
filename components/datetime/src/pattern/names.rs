@@ -2736,6 +2736,100 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 }
 
+#[cfg(feature = "unstable")]
+impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet>
+where
+    FSet::DayPeriodNames: NamesContainer<
+        DayPeriodNamesV1,
+        DayPeriodNameLength,
+        Container = DataPayloadWithVariables<DayPeriodNamesV1, DayPeriodNameLength>,
+    >,
+{
+    /// Gets the "AM" day period symbol for the specified length if the data is loaded.
+    ///
+    /// Returns `Some` if the data for the specified length is loaded, or `None` if not loaded.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::{DayPeriodNameLength, FixedCalendarDateTimeNames};
+    /// use icu::locale::locale;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into())
+    ///         .unwrap();
+    ///
+    /// // Before loading data, the getter returns None:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Abbreviated), None);
+    ///
+    /// // Load the day period names:
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
+    ///
+    /// // Now we can get the AM symbol for the loaded length:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Abbreviated), Some("AM"));
+    ///
+    /// // But other lengths are not loaded:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Wide), None);
+    /// ```
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+    /// </div>
+    pub fn get_am(&self, length: DayPeriodNameLength) -> Option<&str> {
+        let borrowed = self.inner.as_borrowed();
+        borrowed
+            .dayperiod_names
+            .get_with_variables(length)
+            .and_then(|names| names.am())
+    }
+
+    /// Gets the "PM" day period symbol for the specified length if the data is loaded.
+    ///
+    /// Returns `Some` if the data for the specified length is loaded, or `None` if not loaded.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::{DayPeriodNameLength, FixedCalendarDateTimeNames};
+    /// use icu::locale::locale;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into())
+    ///         .unwrap();
+    ///
+    /// // Before loading data, the getter returns None:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Wide), None);
+    ///
+    /// // Load the day period names:
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Wide)
+    ///     .unwrap();
+    ///
+    /// // Now we can get the PM symbol for the loaded length:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Wide), Some("PM"));
+    ///
+    /// // But other lengths are not loaded:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Abbreviated), None);
+    /// ```
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+    /// </div>
+    pub fn get_pm(&self, length: DayPeriodNameLength) -> Option<&str> {
+        let borrowed = self.inner.as_borrowed();
+        borrowed
+            .dayperiod_names
+            .get_with_variables(length)
+            .and_then(|names| names.pm())
+    }
+}
+
 impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     /// Maps a [`FixedCalendarDateTimeNames`] of a specific `FSet` to a more general `FSet`.
     ///
@@ -3335,6 +3429,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     }
 
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    #[allow(clippy::unnecessary_wraps)] // consistency
     pub(crate) fn load_time_zone_field_V(
         &mut self,
         _prefs: DateTimeFormatterPreferences,
@@ -3382,6 +3477,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     }
 
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    #[allow(clippy::unnecessary_wraps)] // consistency
     pub(crate) fn load_time_zone_field_X(
         &mut self,
         _prefs: DateTimeFormatterPreferences,

@@ -44,14 +44,14 @@ pub(crate) struct Predictor {
 }
 
 impl Predictor {
-    pub(crate) fn from_json(json: &str) -> Result<Self, Box<dyn std::error::Error>> {
+    pub(crate) fn from_json(json: &str) -> Self {
         let model: HashMap<String, HashMap<String, i16>> =
             serde_json::from_str(json).unwrap_or_default();
-        Ok(Self { model })
+        Self { model }
     }
 
     pub(crate) fn for_test() -> Self {
-        Self::from_json(MODEL_FOR_TEST).unwrap()
+        Self::from_json(MODEL_FOR_TEST)
     }
 
     pub(crate) fn predict(&self, sentence: &str) -> Vec<i16> {
@@ -150,7 +150,7 @@ fn python_test_output() -> Vec<i16> {
 }
 
 #[test]
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() {
     let predictor = Predictor::for_test();
 
     let sentence =
@@ -160,11 +160,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Input: {}", sentence);
     println!("Output: {:?}", mask);
-    Ok(())
 }
 
 #[test]
-fn rust_matches_python_probs() -> Result<(), Box<dyn std::error::Error>> {
+fn rust_matches_python_probs() {
     let python = python_test_output();
     let predictor = Predictor::for_test();
 
@@ -183,5 +182,4 @@ fn rust_matches_python_probs() -> Result<(), Box<dyn std::error::Error>> {
             "mismatch at index {i}: got={got:}, expected={expected:}, diff={diff:}"
         );
     }
-    Ok(())
 }

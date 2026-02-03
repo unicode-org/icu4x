@@ -4,7 +4,7 @@
 
 use crate::ule::AsULE;
 use crate::ZeroVec;
-use alloc::borrow::Borrow;
+use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::fmt;

@@ -4,10 +4,10 @@
 
 use alloc::borrow::Cow;
 use alloc::collections::{BTreeMap, BTreeSet};
-use alloc::fmt::Display;
 use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
+use core::fmt::Display;
 use core::{iter::Peekable, str::CharIndices};
 
 use icu_collections::{
@@ -699,7 +699,10 @@ where
                 }
                 // parse a literal char as the end of a range
                 (CharMinus, MT::Literal(Literal::CharKind(SMC::Single(c)))) => {
-                    let start = prev_char.ok_or(PEK::Internal.with_offset(tok_offset))?;
+                    let start = prev_char.ok_or(ParseError {
+                        offset: Some(tok_offset),
+                        kind: PEK::Internal,
+                    })?;
                     let end = c;
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
@@ -1295,19 +1298,28 @@ where
 
     // use this whenever an empty iterator would imply an Eof error
     fn must_next(&mut self) -> Result<(usize, char)> {
-        self.iter.next().ok_or(PEK::Eof.into())
+        self.iter.next().ok_or(ParseError {
+            offset: None,
+            kind: PEK::Eof,
+        })
     }
 
     // use this whenever an empty iterator would imply an Eof error
     fn must_peek(&mut self) -> Result<(usize, char)> {
-        self.iter.peek().copied().ok_or(PEK::Eof.into())
+        self.iter.peek().copied().ok_or(ParseError {
+            offset: None,
+            kind: PEK::Eof,
+        })
     }
 
     // must_peek, but looks two chars ahead. use sparingly
     fn must_peek_double(&mut self) -> Result<(usize, char)> {
         let mut copy = self.iter.clone();
         copy.next();
-        copy.next().ok_or(PEK::Eof.into())
+        copy.next().ok_or(ParseError {
+            offset: None,
+            kind: PEK::Eof,
+        })
     }
 
     // see must_peek
@@ -1383,10 +1395,10 @@ where
         // TODO(#3550): This could be cached; does not depend on name.
         let name_map = PropertyParser::<Script>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
-        name_map
-            .as_borrowed()
-            .get_loose(name)
-            .ok_or(PEK::UnknownProperty.into())
+        name_map.as_borrowed().get_loose(name).ok_or(ParseError {
+            offset: None,
+            kind: PEK::UnknownProperty,
+        })
     }
 
     fn try_load_script_set(&mut self, name: &str) -> Result<()> {

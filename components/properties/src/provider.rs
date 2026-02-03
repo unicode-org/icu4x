@@ -957,6 +957,7 @@ impl<'data> PropertyCodePointSet<'data> {
     }
 
     #[inline]
+    #[allow(clippy::unnecessary_wraps)] // extensibly designed
     pub(crate) fn as_code_point_inversion_list(
         &'_ self,
     ) -> Option<&'_ CodePointInversionList<'data>> {
@@ -1063,6 +1064,7 @@ impl<'data, T: TrieValue> PropertyCodePointMap<'data, T> {
     }
 
     #[inline]
+    #[allow(clippy::unnecessary_wraps)] // extensibly designed
     pub(crate) fn as_code_point_trie(&self) -> Option<&CodePointTrie<'data, T>> {
         match *self {
             Self::CodePointTrie(ref t) => Some(t),
@@ -1142,6 +1144,7 @@ impl<'data> PropertyUnicodeSet<'data> {
     }
 
     #[inline]
+    #[allow(clippy::unnecessary_wraps)] // extensibly designed
     pub(crate) fn as_code_point_inversion_list_string_list(
         &'_ self,
     ) -> Option<&'_ CodePointInversionListAndStringList<'data>> {

@@ -6,6 +6,7 @@
 
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
+use core::cmp::Ordering;
 use core::fmt;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::AsULE;
@@ -463,6 +464,19 @@ pub(crate) enum LeapStatus {
     Leap,
 }
 
+impl LeapStatus {
+    fn cmp_lexicographic(self, other: LeapStatus) -> Ordering {
+        use LeapStatus::*;
+        // FormattingLeap is ignored in .code() (folded into Normal)
+        match (self, other) {
+            (Normal | FormattingLeap, Normal | FormattingLeap) => Ordering::Equal,
+            (Leap, Leap) => Ordering::Equal,
+            (Normal | FormattingLeap, Leap) => Ordering::Less,
+            (Leap, Normal | FormattingLeap) => Ordering::Greater,
+        }
+    }
+}
+
 impl Month {
     /// Constructs a non-leap [`Month`] with with the given number.
     ///
@@ -573,6 +587,49 @@ impl Month {
             ])
             .unwrap(),
         )
+    }
+
+    /// Returns the formatting [`MonthCode`] for this month.
+    ///
+    /// See [`Self::is_formatting_leap`].
+    pub fn formatting_code(self) -> MonthCode {
+        #[allow(clippy::unwrap_used)] // by construction
+        MonthCode(
+            TinyAsciiStr::try_from_raw([
+                b'M',
+                b'0' + self.number / 10,
+                b'0' + self.number % 10,
+                if self.is_formatting_leap() { b'L' } else { 0 },
+            ])
+            .unwrap(),
+        )
+    }
+
+    pub(crate) fn cmp_lexicographic(self, other: Self) -> Ordering {
+        self.number
+            .cmp(&other.number)
+            .then_with(|| self.leap_status.cmp_lexicographic(other.leap_status))
+    }
+}
+
+#[test]
+fn test_cmp_lexicographic() {
+    let months_in_order = [
+        Month::new(1),
+        Month::new(2),
+        Month::leap(2),
+        Month::new(3),
+        Month::new(10),
+        Month::leap(10),
+    ];
+    for i in 0..months_in_order.len() - 1 {
+        for j in i + 1..months_in_order.len() {
+            let a = months_in_order[i];
+            let b = months_in_order[j];
+            assert!(a.cmp_lexicographic(a).is_eq());
+            assert!(a.cmp_lexicographic(b).is_lt());
+            assert!(b.cmp_lexicographic(a).is_gt());
+        }
     }
 }
 

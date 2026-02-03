@@ -793,6 +793,42 @@ let termini = Object.assign({
         ]
     },
 
+    "Date.isInLeapYear": {
+        func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).isInLeapYear,
+        // For avoiding webpacking minifying issues:
+        funcName: "Date.isInLeapYear",
+        expr: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => "icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).isInLeapYear".replace(/([\( ])selfIsoYear([,\) \n])/, '$1' + selfIsoYear + '$2').replace(/([\( ])selfIsoMonth([,\) \n])/, '$1' + selfIsoMonth + '$2').replace(/([\( ])selfIsoDay([,\) \n])/, '$1' + selfIsoDay + '$2').replace(/([\( ])selfCalendarKind([,\) \n])/, '$1' + selfCalendarKind + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "self_isoYear",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "self_isoMonth",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "self_isoDay",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "self_calendar_kind",
+                type: "CalendarKind",
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+            }
+            
+        ]
+    },
+
     "DateFormatter.formatIso": {
         func: (selfLocaleName, selfLength, selfAlignment, selfYearStyle, isoDateYear, isoDateMonth, isoDateDay) => icu.DateFormatter.createYmd(icu.Locale.fromString(selfLocaleName), selfLength, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay)),
         // For avoiding webpacking minifying issues:
@@ -1656,6 +1692,35 @@ let termini = Object.assign({
             
             {
                 name: "op_x_v",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "PluralRulesWithRanges.categoryForRange": {
+        func: (selfLocaleName, startXV, endXV) => icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).categoryForRange(icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(startXV)), icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(endXV))),
+        // For avoiding webpacking minifying issues:
+        funcName: "PluralRulesWithRanges.categoryForRange",
+        expr: (selfLocaleName, startXV, endXV) => "icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).categoryForRange(icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(startXV)), icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(endXV)))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])startXV([,\) \n])/, '$1' + startXV + '$2').replace(/([\( ])endXV([,\) \n])/, '$1' + endXV + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "start_x_v",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "end_x_v",
                 type: "string",
                 typeUse: "string"
             }

@@ -186,7 +186,7 @@ impl SourceDataProvider {
     }
 
     fn dedupe_group(&self, locale: DataLocale) -> Result<DataLocale, DataError> {
-        let group = self.cldr()?.script_locale_group(&locale)?;
+        let group = self.cldr()?.script_based_locale_group(&locale)?;
         if self
             .cldr()
             .unwrap()

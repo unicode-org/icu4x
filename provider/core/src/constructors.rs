@@ -106,7 +106,7 @@ macro_rules! gen_buffer_unstable_docs {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
             "provided by a [`BufferProvider`].\n\n",
-            "✨ *Enabled with the `serde` feature.*\n\n",
+            "✨ *Enabled with the `serde` Cargo feature.*\n\n",
             "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
     };

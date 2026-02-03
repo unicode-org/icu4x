@@ -307,7 +307,7 @@ where
             let bytes = <&[u8]>::deserialize(deserializer)?;
             let (tag, trie_bytes) = bytes
                 .split_first()
-                .ok_or(D::Error::custom("expected at least 1 byte for ZeroTrie"))?;
+                .ok_or_else(|| D::Error::custom("expected at least 1 byte for ZeroTrie"))?;
             let store = Store::from(trie_bytes);
             let zerotrie = if *tag == ZeroTrieSimpleAscii::<u8>::OPTIONS.to_u8_flags() {
                 ZeroTrieSimpleAscii::from_store(store).into_zerotrie()
