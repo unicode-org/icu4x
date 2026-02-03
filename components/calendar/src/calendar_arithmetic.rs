@@ -283,10 +283,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             },
         };
 
+        // We're returning these error early so that we return structural type
+        // errors before range errors, see comment in the year code below.
         if fields.month_code.is_none() && fields.ordinal_month.is_none() && fields.month.is_none() {
-            // We're returning this error early so that we return structural type
-            // errors before range errors, see comment in the year code below.
             return Err(DateFromFieldsError::NotEnoughFields);
+        }
+        if fields.month_code.is_some() && fields.month.is_some() {
+            return Err(DateFromFieldsError::InconsistentMonth);
         }
 
         let mut valid_month = None;

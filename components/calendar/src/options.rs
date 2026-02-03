@@ -442,9 +442,7 @@ mod tests {
             &["month"][..],
             &["ordinal_month"][..],
             &["month_code", "ordinal_month"][..],
-            &["month_code", "month"][..],
             &["month", "ordinal_month"][..],
-            &["month", "month_code", "ordinal_month"][..],
         ]
         .into_iter()
         .map(|field_names| field_names.iter().copied().collect())
@@ -485,14 +483,10 @@ mod tests {
             .collect::<BTreeSet<BTreeSet<&str>>>();
 
         // Field sets with month and day but without year that ECMA accepts
-        let field_sets_without_year = [
-            &["month_code", "day"][..],
-            &["month", "day"][..],
-            &["month", "month_code", "day"][..],
-        ]
-        .into_iter()
-        .map(|field_names| field_names.iter().copied().collect())
-        .collect::<Vec<BTreeSet<&str>>>();
+        let field_sets_without_year = [&["month_code", "day"][..], &["month", "day"][..]]
+            .into_iter()
+            .map(|field_names| field_names.iter().copied().collect())
+            .collect::<Vec<BTreeSet<&str>>>();
 
         // A map from field names to a function that sets that field
         let mut field_fns = BTreeMap::<&str, &dyn Fn(&mut DateFields)>::new();
@@ -530,7 +524,9 @@ mod tests {
                     should_succeed_rejecting,
                     "Succeeded, but should have rejected: {fields:?}"
                 ),
-                Err(DateFromFieldsError::NotEnoughFields) => assert!(
+                Err(
+                    DateFromFieldsError::NotEnoughFields | DateFromFieldsError::InconsistentMonth,
+                ) => assert!(
                     !should_succeed_rejecting,
                     "Rejected, but should have succeeded: {fields:?}"
                 ),
@@ -545,7 +541,9 @@ mod tests {
                     should_succeed_ecma,
                     "Succeeded, but should have rejected (ECMA): {fields:?}"
                 ),
-                Err(DateFromFieldsError::NotEnoughFields) => assert!(
+                Err(
+                    DateFromFieldsError::NotEnoughFields | DateFromFieldsError::InconsistentMonth,
+                ) => assert!(
                     !should_succeed_ecma,
                     "Rejected, but should have succeeded (ECMA): {fields:?}"
                 ),

@@ -114,44 +114,32 @@ mod unstable {
         /// assert_eq!(year_info.extended_year, 2025);
         /// ```
         pub extended_year: Option<i32>,
+        /// The month representing a valid month in this calendar year.
+        ///
+        /// Only one of [`Self::month`] and [`Self::month_code`] may be set.
+        ///
+        /// For a full example, see [`Self::ordinal_month`].
+        pub month: Option<crate::types::Month>,
         /// The month code representing a valid month in this calendar year,
         /// as a UTF-8 string.
         ///
         /// See [`MonthCode`](crate::types::MonthCode) for information on the syntax.
         ///
-        /// # Examples
-        ///
-        /// To set the month code field, use a byte string:
-        ///
-        /// ```
-        /// use icu::calendar::types::DateFields;
-        ///
-        /// let mut fields = DateFields::default();
-        ///
-        /// // As a byte string literal:
-        /// fields.month_code = Some(b"M02L");
-        ///
-        /// // Using str::as_bytes:
-        /// fields.month_code = Some("M02L".as_bytes());
-        /// ```
+        /// Only one of [`Self::month`] and [`Self::month_code`] may be set.
         ///
         /// For a full example, see [`Self::ordinal_month`].
         pub month_code: Option<&'a [u8]>,
-        /// The month representing a valid month in this calendar year.
-        ///
-        /// For a full example, see [`Self::ordinal_month`].
-        pub month: Option<crate::types::Month>,
         /// See [`MonthInfo::ordinal`](crate::types::MonthInfo::ordinal).
         ///
-        /// If both this and [`Self::month_code`] are set, they must refer to
+        /// If both this and [`Self::month`]/[`Self::month_code`] are set, they must refer to
         /// the same month.
         ///
-        /// Note: using [`Self::month_code`] is recommended, because the ordinal month numbers
-        /// can vary from year to year, as illustrated in the following example.
+        /// Note: using [`Self::month`]/[`Self::month_code`] is recommended, because the ordinal
+        /// month numbers can vary from year to year, as illustrated in the following example.
         ///
         /// # Examples
         ///
-        /// Either `month_code`, `month`, or `ordinal_month` can be used in [`DateFields`], but they
+        /// Either `month`/`month_code`, or `ordinal_month` can be used in [`DateFields`], but they
         /// might not resolve to the same month number:
         ///
         /// ```
