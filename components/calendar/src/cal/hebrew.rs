@@ -534,13 +534,13 @@ mod tests {
     fn test_negative_era_years() {
         let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
         let greg_year = greg_date.era_year();
-        assert_eq!(greg_date.inner.0.year(), -5000);
+        assert_eq!(greg_year.extended_year, -5000);
         assert_eq!(greg_year.era, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_year.year, 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         let hebr_year = hebr_date.era_year();
-        assert_eq!(hebr_date.inner.0.year().value, -1240);
+        assert_eq!(hebr_year.extended_year, -1240);
         assert_eq!(hebr_year.era, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
         assert_eq!(hebr_year.year, -1240);
