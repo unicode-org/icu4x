@@ -84,6 +84,11 @@
 //! [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
+use core::ops::RangeInclusive;
+use std::collections::HashMap;
+use std::panic::RefUnwindSafe;
+use std::panic::UnwindSafe;
+
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 
@@ -102,13 +107,31 @@ mod native;
 ///
 /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 #[non_exhaustive]
-#[derive(Debug)]
 pub enum CodePointTrieBuilderData<'a, T> {
     /// A list of values for each code point, starting from code point 0.
     ///
     /// For example, the value for U+0020 (space) should be at index 32 in the slice.
     /// Index 0 sets the value for the U+0000 (NUL).
     ValuesByCodePoint(&'a [T]),
+    /// A closure that returns a value for a code point.
+    ///
+    /// This is called for every code point in the given range
+    ByCodePoint(
+        RangeInclusive<u32>,
+        Box<dyn Fn(u32) -> Option<T> + Send + Sync + UnwindSafe + RefUnwindSafe + 'a>,
+    ),
+    /// A map from code points to values.
+    Map(HashMap<u32, T>),
+}
+
+impl<'a, T: std::fmt::Debug> std::fmt::Debug for CodePointTrieBuilderData<'a, T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ValuesByCodePoint(v) => f.debug_tuple("ValuesByCodePoint").field(v).finish(),
+            Self::ByCodePoint(r, _) => f.debug_tuple("ByCodePoint").field(r).finish(),
+            Self::Map(v) => f.debug_tuple("Map").field(v).finish(),
+        }
+    }
 }
 
 /// Settings for building a [`CodePointTrie`].
