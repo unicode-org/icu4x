@@ -33,9 +33,10 @@ impl UtcOffset {
     /// Returns [`InvalidOffsetError`] if the seconds are out of bounds.
     pub const fn try_from_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
         if seconds.unsigned_abs() > 18 * 60 * 60 {
-            return Err(InvalidOffsetError);
+            Err(InvalidOffsetError)
+        } else {
+            Ok(Self(seconds))
         }
-        Ok(Self(seconds))
     }
 
     /// Creates a [`UtcOffset`] of zero.
@@ -118,7 +119,7 @@ impl UtcOffset {
 
         let minutes = match code_units {
             /* ±hh */
-            &[_, _] => 0,
+            &[_, _] => Some(0),
             /* ±hhmm, ±hh:mm */
             &[_, _, m1, m2] | &[_, _, b':', m1, m2] => try_get_time_component([m1, m2]),
             _ => None,
