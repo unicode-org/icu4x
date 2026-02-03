@@ -96,12 +96,27 @@ impl<C> Deref for Ref<'_, C> {
 ///
 /// **The primary definition of this type is in the [`icu_calendar`](https://docs.rs/icu_calendar) crate. Other ICU4X crates re-export it for convenience.**
 ///
+/// Options to create one of these:
+///
+/// 1. Generically from fields via [`Self::try_from_fields()`] or [`Self::try_new_from_codes()`]
+/// 2. With calendar-specific constructors, typically named `try_new_xyz()`
+/// 3. From a RFC 9557 string via [`Self::try_from_str()`]
+/// 4. From a [`RataDie`] via [`Self::from_rata_die()`]
+///
 /// This can work with wrappers around [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
 ///
-/// This can be constructed  constructed
-/// from its fields via [`Self::try_new_from_codes()`], or can be constructed with one of the
-/// `new_<calendar>_date()` per-calendar methods (and then freely converted between calendars).
+/// # Limits
+///
+/// Constructors may impose documented limits on the largest or smallest date that they allow,
+/// subject to the following invariants:
+///
+/// 1. Dates can always be converted between calendars
+/// 2. Dates can always be round-tripped through [`RataDie`]
+/// 3. Every date that is possible to acquire through usage of ICU4X APIs, including calendar
+///    conversion and arithmetic, can be constructed from an RFC 9557 string
+///
+/// # Examples
 ///
 /// ```rust
 /// use icu::calendar::Date;
