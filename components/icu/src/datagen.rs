@@ -8,7 +8,7 @@ use alloc::collections::{BTreeMap, BTreeSet};
 use icu_provider::prelude::*;
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         /// Parses a compiled binary and returns a list of [`DataMarkerInfo`]s that it uses *at runtime*.
         ///
         /// This function is intended to be used for binaries that use `BufferProvider`,
@@ -41,9 +41,9 @@ macro_rules! cb {
                         (<$marker_ty>::INFO.id.hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
                     )+
                     $(
-                        #[cfg(feature = "experimental")]
+                        #[cfg(feature = "unstable")]
                         (<$emarker_ty>::INFO.id.hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
-                        #[cfg(not(feature = "experimental"))]
+                        #[cfg(not(feature = "unstable"))]
                         (icu_provider::marker::DataMarkerId::from_name(stringify!($emarker)).unwrap().hashed().to_bytes(), Err(stringify!($emarker))),
                     )+
 
@@ -59,7 +59,7 @@ macro_rules! cb {
                 .filter_map(|p| {
                     match lookup.get(p) {
                         Some(Ok(marker)) => Some(Ok(*marker)),
-                        Some(Err(p)) => Some(Err(DataError::custom("This marker requires the `experimental` Cargo feature").with_display_context(p))),
+                        Some(Err(p)) => Some(Err(DataError::custom("This marker requires the `unstable` Cargo feature").with_display_context(p))),
                         None => None,
                     }
                 })

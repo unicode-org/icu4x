@@ -106,7 +106,7 @@ pub mod unstable {
     pub mod datetime_options;
     #[cfg(feature = "decimal")]
     pub mod decimal;
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     pub mod displaynames;
     #[cfg(feature = "locale")]
     pub mod exemplar_chars;
