@@ -51,10 +51,11 @@ class ScriptWithExtensionsBorrowed internal constructor (
     *See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
     */
     fun getScriptExtensionsVal(ch: Int): ScriptExtensionsSet {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(handle, ch);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = ScriptExtensionsSet(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, ScriptExtensionsSet.ScriptExtensionsSetCleaner(handle, ScriptExtensionsSet.lib));

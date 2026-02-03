@@ -3398,15 +3398,15 @@ class CodePointSetData internal constructor (
         *See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
         */
         fun createForEcma262(propertyName: String): Result<CodePointSetData> {
-            val (propertyNameMem, propertyNameSlice) = PrimitiveArrayTools.borrowUtf8(propertyName)
+            val propertyNameSliceMemory = PrimitiveArrayTools.borrowUtf8(propertyName)
             
-            val returnVal = lib.icu4x_CodePointSetData_create_for_ecma262_mv1(propertyNameSlice);
+            val returnVal = lib.icu4x_CodePointSetData_create_for_ecma262_mv1(propertyNameSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = CodePointSetData(handle, selfEdges)
                 CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
-                if (propertyNameMem != null) propertyNameMem.close()
+                propertyNameSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
@@ -3419,15 +3419,15 @@ class CodePointSetData internal constructor (
         *See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
         */
         fun createForEcma262WithProvider(provider: DataProvider, propertyName: String): Result<CodePointSetData> {
-            val (propertyNameMem, propertyNameSlice) = PrimitiveArrayTools.borrowUtf8(propertyName)
+            val propertyNameSliceMemory = PrimitiveArrayTools.borrowUtf8(propertyName)
             
-            val returnVal = lib.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(provider.handle, propertyNameSlice);
+            val returnVal = lib.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(provider.handle, propertyNameSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = CodePointSetData(handle, selfEdges)
                 CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
-                if (propertyNameMem != null) propertyNameMem.close()
+                propertyNameSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
@@ -3450,10 +3450,11 @@ class CodePointSetData internal constructor (
     *See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
     */
     fun iterRanges(): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointSetData_iter_ranges_mv1(handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
@@ -3465,10 +3466,11 @@ class CodePointSetData internal constructor (
     *See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
     */
     fun iterRangesComplemented(): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointSetData_iter_ranges_complemented_mv1(handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));

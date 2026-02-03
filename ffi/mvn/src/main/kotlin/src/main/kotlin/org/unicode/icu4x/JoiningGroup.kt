@@ -164,9 +164,9 @@ enum class JoiningGroup {
         @JvmStatic
         
         fun tryFromStr(s: String): JoiningGroup? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_JoiningGroup_try_from_str_mv1(sSlice);
+            val returnVal = lib.icu4x_JoiningGroup_try_from_str_mv1(sSliceMemory.slice);
             
             val intermediateOption = returnVal.option() ?: return null
             return JoiningGroup.fromNative(intermediateOption)

@@ -73,16 +73,16 @@ class WindowsParser internal constructor (
     /** See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
     */
     fun parse(value: String, region: String): TimeZone? {
-        val (valueMem, valueSlice) = PrimitiveArrayTools.borrowUtf8(value)
-        val (regionMem, regionSlice) = PrimitiveArrayTools.borrowUtf8(region)
+        val valueSliceMemory = PrimitiveArrayTools.borrowUtf8(value)
+        val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
         
-        val returnVal = lib.icu4x_WindowsParser_parse_mv1(handle, valueSlice, regionSlice);
+        val returnVal = lib.icu4x_WindowsParser_parse_mv1(handle, valueSliceMemory.slice, regionSliceMemory.slice);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal ?: return null
         val returnOpaque = TimeZone(handle, selfEdges)
         CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
-        if (valueMem != null) valueMem.close()
-        if (regionMem != null) regionMem.close()
+        valueSliceMemory?.close()
+        regionSliceMemory?.close()
         return returnOpaque
     }
 

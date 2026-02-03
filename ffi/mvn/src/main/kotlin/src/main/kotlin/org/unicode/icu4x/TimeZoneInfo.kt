@@ -119,7 +119,6 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_zone_name_date_time_mv1(handle);
         
         val intermediateOption = returnVal.option() ?: return null
-
         val returnStruct = IsoDateTime.fromNative(intermediateOption)
         return returnStruct
                                 
