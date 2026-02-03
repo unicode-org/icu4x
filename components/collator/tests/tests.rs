@@ -119,13 +119,9 @@ fn check_expectations(
     right: &[&str],
     expectations: &[Ordering],
 ) {
-    let mut left_iter = left.iter();
-    let mut right_iter = right.iter();
-    let mut expect_iter = expectations.iter();
-    while let (Some(left_str), Some(right_str), Some(expectation)) =
-        (left_iter.next(), right_iter.next(), expect_iter.next())
+    for ((left_str, right_str), expected) in left.iter().zip(right.iter()).zip(expectations.iter())
     {
-        assert_eq!(collator.compare(left_str, right_str), *expectation);
+        assert_all_comparisons(collator, left_str, right_str, *expected);
     }
 }
 
@@ -1561,11 +1557,7 @@ fn test_basics() {
     {
         let collator = Collator::try_new(Default::default(), options).unwrap();
 
-        for ((left_str, right_str), expected) in
-            left.iter().zip(right.iter()).zip(expectations.iter())
-        {
-            assert_all_comparisons(&collator, left_str, right_str, *expected);
-        }
+        check_expectations(&collator, &left, &right, &expectations);
     }
 }
 
