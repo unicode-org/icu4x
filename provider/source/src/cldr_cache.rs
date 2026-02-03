@@ -12,7 +12,7 @@ use icu::locale::provider::{
     LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
 use icu::locale::subtags::Language;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use icu::locale::subtags::Region;
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
@@ -37,7 +37,7 @@ pub(crate) struct CldrCache {
             DataError,
         >,
     >,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     // used by transforms/mod.rs
     pub(crate) transforms: OnceLock<
         Result<std::sync::Mutex<icu::experimental::transliterate::RuleCollection>, DataError>,
@@ -52,7 +52,7 @@ impl CldrCache {
             dir_suffix: Default::default(),
             extended_locale_expander: Default::default(),
             calendar_eras: Default::default(),
-            #[cfg(feature = "experimental")]
+            #[cfg(feature = "unstable")]
             transforms: Default::default(),
             tz_caches: Default::default(),
         }
@@ -238,7 +238,7 @@ impl CldrCache {
     /// # Example
     ///  - "en-US" -> "US"
     ///  - "en" -> "US"
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
         if let Some(region) = locale.region {
             return Ok(region);

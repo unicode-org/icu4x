@@ -5,7 +5,7 @@
 .DEFAULT_GOAL := build
 FORCE:
 
-FEATURES ?= "compiled_data,buffer_provider,default_components,experimental,logging"
+FEATURES ?= "compiled_data,buffer_provider,default_components,experimental,unstable,logging"
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753

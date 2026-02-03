@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] Types for specifying fields in a classical datetime skeleton.
+//! 🚧 \[Unstable\] Types for specifying fields in a classical datetime skeleton.
 //!
 //! <div class="stab unstable">
-//! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+//! 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 //! </div>
@@ -44,8 +44,8 @@ use serde::{Deserialize, Serialize};
 /// See the [module-level](./index.html) docs for more information.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -343,8 +343,8 @@ impl Bag {
 /// and second.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -365,8 +365,8 @@ pub enum Numeric {
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -392,8 +392,8 @@ pub enum Text {
 /// Options for displaying a Year for the `components::`[`Bag`].
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -420,8 +420,8 @@ pub enum Year {
 /// Options for displaying a Month for the `components::`[`Bag`].
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -453,8 +453,8 @@ pub enum Month {
 /// Week numbers are relative to either a month or year, e.g. 'week 3 of January' or 'week 40 of 2000'.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -477,8 +477,8 @@ pub enum Week {
 /// Options for displaying the current day of the month or year.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -508,8 +508,8 @@ pub enum Day {
 /// options.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>

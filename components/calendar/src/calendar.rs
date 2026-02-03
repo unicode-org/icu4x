@@ -34,7 +34,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
     /// The type of error returned by `until`
-    type DifferenceError;
+    type DifferenceError: fmt::Debug;
 
     /// Construct a date from era/month codes and fields
     ///
