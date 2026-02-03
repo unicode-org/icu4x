@@ -32,11 +32,10 @@ impl UtcOffset {
     ///
     /// Returns [`InvalidOffsetError`] if the seconds are out of bounds.
     pub const fn try_from_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
-        if seconds < -18 * 60 * 60 || seconds > 18 * 60 * 60 {
-            Err(InvalidOffsetError)
-        } else {
-            Ok(Self(seconds))
+        if seconds.unsigned_abs() > 18 * 60 * 60 {
+            return Err(InvalidOffsetError);
         }
+        Ok(Self(seconds))
     }
 
     /// Creates a [`UtcOffset`] of zero.
