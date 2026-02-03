@@ -1,0 +1,52 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+Nguyễn Văn An
+Nguyễn Thị Bình
+Nguyễn Văn Cường
+Nguyễn Thị Dung
+Trần Văn Đức
+Trần Thị Hà
+Trần Văn Hùng
+Trần Thị Lan
+Lê Văn Minh
+Lê Thị Nga
+Lê Văn Phúc
+Lê Thị Quỳnh
+Phạm Văn Sơn
+Phạm Thị Tâm
+Phạm Văn Thắng
+Phạm Thị Uyên
+Hoàng Văn Vinh
+Hoàng Thị Xuân
+Hoàng Văn Yên
+Hoàng Thị Ánh
+Vũ Văn Bảo
+Vũ Thị Châu
+Vũ Văn Đạt
+Vũ Thị Giang
+Đặng Văn Hải
+Đặng Thị Hương
+Đặng Văn Khải
+Đặng Thị Linh
+Bùi Văn Long
+Bùi Thị Mai
+Bùi Văn Nam
+Bùi Thị Oanh
+Đỗ Văn Phong
+Đỗ Thị Quyên
+Đỗ Văn Sáng
+Đỗ Thị Thảo
+Ngô Văn Tuấn
+Ngô Thị Vân
+Ngô Văn Đông
+Ngô Thị Yến
+Dương Văn Anh
+Dương Thị Bích
+Dương Văn Cảnh
+Dương Thị Diệu
+Lý Văn Đức
+Lý Thị Hạnh
+Lý Văn Kiên
+Lý Thị Liên
