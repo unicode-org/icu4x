@@ -1129,13 +1129,21 @@ impl PackedEastAsianTraditionalYearData {
 
 // Precalculates Chinese years, significant performance improvement for big tests
 #[cfg(test)]
-#[derive(Debug, Clone)]
-pub(crate) struct EastAsianTraditionalYears(Vec<EastAsianTraditionalYear>);
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct EastAsianTraditionalYears(&'static [EastAsianTraditionalYear]);
 
 #[cfg(test)]
 impl EastAsianTraditionalYears {
-    pub fn new<R: Rules>(r: R) -> Self {
-        Self((-1100000..=1100000).map(|i| r.year(i)).collect())
+    pub fn china() -> Self {
+        static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
+            std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| China.year(i)).collect());
+        Self(&R)
+    }
+
+    pub fn korea() -> Self {
+        static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
+            std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| Korea.year(i)).collect());
+        Self(&R)
     }
 }
 

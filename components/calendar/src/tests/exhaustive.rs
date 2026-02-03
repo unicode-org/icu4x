@@ -8,7 +8,7 @@ use crate::*;
 // Check rd -> date -> iso -> date -> rd for whole range
 super::test_all_cals!(
     #[ignore] // takes about 200 seconds in release-with-assertions
-    fn check_round_trip<C: Calendar>(cal: Ref<C>) {
+    fn check_round_trip<C: Calendar + Copy>(cal: C) {
         let low = *VALID_RD_RANGE.start();
         let high = *VALID_RD_RANGE.end();
         let mut prev = Date::from_rata_die(low, cal);
@@ -32,7 +32,7 @@ super::test_all_cals!(
 
 super::test_all_cals!(
     #[ignore] // takes about 90 seconds in release-with-assertions
-    fn check_from_fields<C: Calendar>(cal: Ref<C>) {
+    fn check_from_fields<C: Calendar + Copy>(cal: C) {
         let months = (1..19)
             .flat_map(|i| [types::Month::new(i).code(), types::Month::leap(i).code()].into_iter())
             .collect::<Vec<_>>();
@@ -60,7 +60,7 @@ super::test_all_cals!(
                     for day in 1..50 {
                         fields.extended_year = Some(year);
                         fields.day = Some(day);
-                        let _ = Date::try_from_fields(fields, options, Ref(&cal));
+                        let _ = Date::try_from_fields(fields, options, cal);
                     }
                 }
             }
