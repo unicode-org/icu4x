@@ -8,7 +8,7 @@ use crate::{AsCalendar, Date};
 
 super::test_all_cals!(
     #[ignore]
-    fn test_arithmetic<C: Calendar>(cal: Ref<C>) {
+    fn test_arithmetic<C: Calendar + Copy>(cal: C) {
         fn new_duration(years: i32, months: i32, weeks: i32, days: i32) -> DateDuration {
             let is_negative = years < 0 || months < 0 || weeks < 0 || days < 0;
             // Verify no mixed signs

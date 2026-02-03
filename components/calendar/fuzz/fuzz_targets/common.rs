@@ -68,9 +68,6 @@ pub enum AnyCalendarKind {
     Hebrew,
     Indian,
     HijriTabularTypeIIFriday,
-    // Not needed by Temporal and has some bugs
-    // https://github.com/unicode-org/icu4x/issues/7049#issuecomment-3384358307
-    // HijriSimulatedMecca,
     HijriTabularTypeIIThursday,
     HijriUmmAlQura,
     Iso,
@@ -93,7 +90,6 @@ impl From<AnyCalendarKind> for icu_calendar::AnyCalendarKind {
             AnyCalendarKind::Hebrew => Self::Hebrew,
             AnyCalendarKind::Indian => Self::Indian,
             AnyCalendarKind::HijriTabularTypeIIFriday => Self::HijriTabularTypeIIFriday,
-            // AnyCalendarKind::HijriSimulatedMecca => Self::HijriSimulatedMecca,
             AnyCalendarKind::HijriTabularTypeIIThursday => Self::HijriTabularTypeIIThursday,
             AnyCalendarKind::HijriUmmAlQura => Self::HijriUmmAlQura,
             AnyCalendarKind::Iso => Self::Iso,

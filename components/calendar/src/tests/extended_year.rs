@@ -2,49 +2,46 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::types::Month;
-use icu_calendar::AnyCalendar;
-use icu_calendar::AnyCalendarKind;
-use icu_calendar::Date;
-
-#[cfg(test)]
-use std::rc::Rc;
+use crate::preferences::CalendarAlgorithm;
+use crate::types::Month;
+use crate::Calendar;
+use crate::Date;
 
 /// Reference: <https://tc39.es/proposal-intl-era-monthcode/#sec-temporal-calendardatearithmeticyear>
-static EXTENDED_EPOCHS: &[(AnyCalendarKind, i32)] = &[
-    (AnyCalendarKind::Buddhist, -543),
-    (AnyCalendarKind::Chinese, 0),
-    (AnyCalendarKind::Coptic, 283),
-    (AnyCalendarKind::Dangi, 0),
-    (AnyCalendarKind::Ethiopian, 7),
-    (AnyCalendarKind::EthiopianAmeteAlem, -5493),
-    (AnyCalendarKind::Gregorian, 0),
-    (AnyCalendarKind::Hebrew, -3761),
-    (AnyCalendarKind::Indian, 78),
-    (AnyCalendarKind::HijriTabularTypeIIFriday, 621),
-    (AnyCalendarKind::HijriSimulatedMecca, 621),
-    (AnyCalendarKind::HijriTabularTypeIIThursday, 621),
-    (AnyCalendarKind::HijriUmmAlQura, 621),
-    (AnyCalendarKind::Iso, 0),
-    (AnyCalendarKind::Japanese, 0),
-    (AnyCalendarKind::Persian, 621),
-    (AnyCalendarKind::Roc, 1911),
-];
+fn extended_epoch<C: Calendar>(c: &C) -> Option<i32> {
+    Some(match c.calendar_algorithm()?.as_str() {
+        "buddhist" => -543,
+        "chinese" => 0,
+        "coptic" => 283,
+        "dangi" => 0,
+        "ethioaa" => -5493,
+        "ethiopic" => 7,
+        "gregory" => 0,
+        "hebrew" => -3761,
+        "hijri-civil" => 621,
+        "hijri-tbla" => 621,
+        "hijri-umalqura" => 621,
+        "indian" => 78,
+        "japanese" => 0,
+        "persian" => 621,
+        "roc" => 1911,
+        _ => return None,
+    })
+}
 
-#[test]
-fn test_extended_year() {
-    let iso = icu_calendar::cal::Iso;
-    let m_01 = Month::new(1);
-    for (kind, extended_epoch) in EXTENDED_EPOCHS.iter() {
-        let calendar = Rc::new(AnyCalendar::new(*kind));
+super::test_all_cals!(
+    fn extended_year<C: Calendar + Copy>(cal: C) {
+        let Some(extended_epoch) = extended_epoch(&cal) else {
+            return;
+        };
 
         // Create the first date in the epoch year (extended_year = 0)
         let date_in_epoch_year =
-            Date::try_new_from_codes(None, 0, m_01.code(), 1, calendar.clone()).unwrap();
-        let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(iso);
+            Date::try_new_from_codes(None, 0, Month::new(1).code(), 1, cal).unwrap();
+        let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(crate::cal::Iso);
         assert_eq!(
             iso_date_in_epoch_year.year().extended_year(),
-            *extended_epoch,
+            extended_epoch,
             "Extended year for {date_in_epoch_year:?} should be {extended_epoch}"
         );
 
@@ -57,11 +54,11 @@ fn test_extended_year() {
         // property is strongly suggested by the specification as a rule of thumb
         // to follow where possible.
         let iso_date_in_2025 = Date::try_new_iso(2025, 1, 1).unwrap();
-        let date_in_2025 = iso_date_in_2025.to_calendar(calendar.clone());
+        let date_in_2025 = iso_date_in_2025.to_calendar(cal);
 
         // The extended year should align with the year in the modern era or related ISO.
         // There is a special case for Japanese since it has a modern era but uses ISO for the extended year.
-        if matches!(kind, AnyCalendarKind::Japanese) {
+        if matches!(cal.calendar_algorithm(), Some(CalendarAlgorithm::Japanese)) {
             assert_eq!(
                 date_in_2025.year().extended_year(),
                 2025,
@@ -78,4 +75,4 @@ fn test_extended_year() {
             );
         }
     }
-}
+);
