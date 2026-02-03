@@ -228,8 +228,8 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
 fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
     #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
     {
+        let _ = trie;
         unreachable!("Should have errored out earlier");
-        trie
     }
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     {
