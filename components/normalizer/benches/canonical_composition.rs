@@ -55,12 +55,12 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
             ),
         },
         BenchDataContent {
-            file_name: "TestRandomWordsUDHR_ar".to_owned(),
+            file_name: "Carroll-11-ar".to_owned(),
             #[cfg(debug_assertions)]
             pairs: Vec::new(),
             #[cfg(not(debug_assertions))]
             pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/TestRandomWordsUDHR_ar.txt"
+                "./data/Carroll-11-ar.txt"
             )))),
         },
         BenchDataContent {
@@ -88,9 +88,9 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
             ),
         },
         BenchDataContent {
-            file_name: "TestRandomWordsUDHR_he".to_owned(),
+            file_name: "Carroll-11-he".to_owned(),
             pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/TestRandomWordsUDHR_he.txt"
+                "./data/Carroll-11-he.txt"
             )))),
         },
         BenchDataContent {
