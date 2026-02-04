@@ -2,23 +2,27 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-Johansson, Åke
-Johansson, Anna
-Ahlström, Olof
-Hägglund, Frida
-Erikson, Daniel
-Johansson, Andreas
-Lind, Axel
-Johansson, André
+Söderholm, Carl
 Pettersson, Robert
-Sohlberg, Jonas
-Ericson, Lars
-Johansson, Annika
+Håg, Petter
+Erikson, Daniel
+Ericsson, Marie
 Sjöman, Olle
 Åberg, Carita
-Sjöberg, Cecilia
-Palme, Anders
-Håg, Petter
-Erixon, Ida
-Hagelstam, Stina
+Ericson, Lars
 Ericsson, Mona
+Hägglund, Frida
+Eriksson, John
+Palmén, Thomas
+Johansson, Åke
+Hagelstam, Stina
+Sjöberg, Cecilia
+Johansson, Andreas
+Johansson, André
+Palme, Anders
+Erixon, Ida
+Ahlström, Olof
+Lind, Axel
+Johansson, Annika
+Sohlberg, Jonas
+Johansson, Anna
