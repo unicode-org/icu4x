@@ -174,9 +174,9 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 /// have information on the language of the text being segmented, providing this hint can
 /// produce higher-quality results.
 ///
-/// If you have a content locale, use [`WordBreakOptions`] and a constructor begining with `new`.
+/// If you have a content locale, use [`WordBreakOptions`] and a constructor beginning with `try_new`.
 /// If you do not have a content locale use [`WordBreakInvariantOptions`] and a constructor
-/// beginning with `try_new`.
+/// beginning with `new`.
 ///
 /// # Examples
 ///
