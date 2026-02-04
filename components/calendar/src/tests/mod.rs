@@ -4,18 +4,20 @@
 
 mod arithmetic;
 mod continuity_test;
+mod date_arithmetic_snapshot;
 mod exhaustive;
+mod extended_year;
 mod extrema;
 mod not_enough_fields;
 
 macro_rules! test_all_cals {
-    ($(#[$meta:meta])* fn $name:ident<C: Calendar>($cal:ident: Ref<C>) $tt:tt) => {
+    ($(#[$meta:meta])* fn $name:ident<C: Calendar + Copy>($cal:ident: C) $tt:tt) => {
         mod $name {
             #[allow(unused_imports)]
             use super::*;
 
-            fn test<C: crate::Calendar>(cal: C) {
-                let $cal = crate::Ref(&cal);
+            fn test<C: crate::Calendar + Copy>(cal: C) {
+                let $cal = cal;
                 $tt
             }
 
@@ -28,7 +30,7 @@ macro_rules! test_all_cals {
             $(#[$meta])*
             #[test]
             fn chinese_traditional() {
-                test(crate::cal::east_asian_traditional::EastAsianTraditional(crate::cal::east_asian_traditional_internal::EastAsianTraditionalYears::new(crate::cal::east_asian_traditional::China::default())));
+                test(crate::cal::east_asian_traditional::EastAsianTraditional(crate::cal::east_asian_traditional_internal::EastAsianTraditionalYears::china()));
             }
 
             $(#[$meta])*
@@ -40,7 +42,7 @@ macro_rules! test_all_cals {
             $(#[$meta])*
             #[test]
             fn korean_traditional() {
-                test(crate::cal::east_asian_traditional::EastAsianTraditional(crate::cal::east_asian_traditional_internal::EastAsianTraditionalYears::new(crate::cal::east_asian_traditional::Korea::default())));
+                test(crate::cal::east_asian_traditional::EastAsianTraditional(crate::cal::east_asian_traditional_internal::EastAsianTraditionalYears::korea()));
             }
 
             $(#[$meta])*

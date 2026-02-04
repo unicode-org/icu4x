@@ -38,12 +38,10 @@ impl Ymd {
                 fields.ordinal_month = Some(self.month);
             }
             MonthInterpretation::CodeNormal => {
-                code = Month::new(self.month).code();
-                fields.month_code = Some(code.0.as_bytes());
+                fields.month = Some(Month::new(self.month));
             }
             MonthInterpretation::CodeLeap => {
-                code = Month::leap(self.month).code();
-                fields.month_code = Some(code.0.as_bytes());
+                fields.month = Some(Month::leap(self.month));
             }
         };
 
@@ -70,9 +68,6 @@ pub enum AnyCalendarKind {
     Hebrew,
     Indian,
     HijriTabularTypeIIFriday,
-    // Not needed by Temporal and has some bugs
-    // https://github.com/unicode-org/icu4x/issues/7049#issuecomment-3384358307
-    // HijriSimulatedMecca,
     HijriTabularTypeIIThursday,
     HijriUmmAlQura,
     Iso,
@@ -95,7 +90,6 @@ impl From<AnyCalendarKind> for icu_calendar::AnyCalendarKind {
             AnyCalendarKind::Hebrew => Self::Hebrew,
             AnyCalendarKind::Indian => Self::Indian,
             AnyCalendarKind::HijriTabularTypeIIFriday => Self::HijriTabularTypeIIFriday,
-            // AnyCalendarKind::HijriSimulatedMecca => Self::HijriSimulatedMecca,
             AnyCalendarKind::HijriTabularTypeIIThursday => Self::HijriTabularTypeIIThursday,
             AnyCalendarKind::HijriUmmAlQura => Self::HijriUmmAlQura,
             AnyCalendarKind::Iso => Self::Iso,

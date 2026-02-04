@@ -1,6 +1,8 @@
 // @generated
 include!("decimal_symbols_v1.rs.data");
 include!("decimal_digits_v1.rs.data");
+include!("decimal_compact_short_v1.rs.data");
+include!("decimal_compact_long_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -35,5 +37,7 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_decimal_symbols_v1!($provider);
         impl_decimal_digits_v1!($provider);
+        impl_decimal_compact_short_v1!($provider);
+        impl_decimal_compact_long_v1!($provider);
     };
 }

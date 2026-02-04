@@ -22,7 +22,7 @@ all-features = true
 [dependencies]
 ecma402_traits = "5"
 fixed_decimal = { workspace = true, features = ["ryu"] }
-icu = { workspace = true, features = ["compiled_data", "experimental"] }
+icu = { workspace = true, features = ["compiled_data", "unstable"] }
 icu_provider = { workspace = true }
 writeable = { workspace = true }
 

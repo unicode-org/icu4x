@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
  *
  * See the [Rust documentation for `Overflow`](https://docs.rs/icu/2.1.1/icu/calendar/options/enum.Overflow.html) for more information.
  */
