@@ -35,8 +35,8 @@ pub struct InvalidOffsetError;
 /// assert_eq!(OFFSET, offset);
 /// ```
 #[macro_export]
-#[doc(hidden)]
-macro_rules! time_zone_utc_offset {
+#[doc(hidden)] // macro
+macro_rules! __utc_offset {
     ($offset:literal) => {
         const {
             match $crate::zone::UtcOffset::try_from_str($offset) {
@@ -47,7 +47,7 @@ macro_rules! time_zone_utc_offset {
     };
 }
 #[doc(inline)]
-pub use time_zone_utc_offset as utc_offset;
+pub use __utc_offset as utc_offset;
 
 /// An offset from Coordinated Universal Time (UTC).
 ///
