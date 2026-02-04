@@ -225,7 +225,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// use icu::calendar::Date;
 /// use icu::locale::subtags::subtag;
 /// use icu::time::zone::IanaParser;
-/// use icu::time::zone::TimeZoneVariant;
+/// use icu::time::zone::{utc_offset, TimeZoneVariant};
 /// use icu::time::DateTime;
 /// use icu::time::Time;
 /// use icu::time::TimeZone;
@@ -237,7 +237,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// let id = TimeZone(subtag!("uschi"));
 ///
 /// // Create a TimeZoneInfo<Base> by associating the ID with an offset
-/// let time_zone = id.with_offset("-0600".parse().ok());
+/// let time_zone = id.with_offset(Some(utc_offset!("-0600")));
 ///
 /// // Extend to a TimeZoneInfo<AtTime> by adding a local time
 /// let time_zone_at_time = time_zone.at_date_time_iso(DateTime {
@@ -454,6 +454,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::locale::subtags::subtag;
+    /// use icu::time::zone::utc_offset;
     /// use icu::time::zone::TimeZoneVariant;
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::DateTime;
@@ -462,7 +463,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// // Chicago at UTC-6
     /// let info = TimeZone(subtag!("uschi"))
-    ///     .with_offset("-0600".parse().ok())
+    ///     .with_offset(Some(utc_offset!("-0600")))
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -473,7 +474,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// // Chicago at at UTC-5
     /// let info = TimeZone(subtag!("uschi"))
-    ///     .with_offset("-0500".parse().ok())
+    ///     .with_offset(Some(utc_offset!("-0500")))
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 6, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -484,7 +485,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// // Chicago at UTC-7
     /// let info = TimeZone(subtag!("uschi"))
-    ///     .with_offset("-0700".parse().ok())
+    ///     .with_offset(Some(utc_offset!("-0700")))
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -567,7 +568,7 @@ fn test_zone_info_equality() {
     // offset inferred
     assert_eq!(
         IanaParser::new().parse("Etc/GMT-8").with_offset(None),
-        TimeZone::UNKNOWN.with_offset(Some(UtcOffset::from_seconds_unchecked(8 * 60 * 60)))
+        TimeZone::UNKNOWN.with_offset(Some(utc_offset!("+08")))
     );
     assert_eq!(
         IanaParser::new().parse("Etc/UTC").with_offset(None),

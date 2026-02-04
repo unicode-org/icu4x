@@ -87,12 +87,12 @@ impl UtcOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::zone::{utc_offset, UtcOffset};
+    /// use icu::time::zone::UtcOffset;
     ///
-    /// let offset0: UtcOffset = utc_offset!("Z");
-    /// let offset1: UtcOffset = utc_offset!("+05");
-    /// let offset2: UtcOffset = utc_offset!("+0500");
-    /// let offset3: UtcOffset = utc_offset!("-05:00");
+    /// let offset0 = UtcOffset::try_from_str("Z").unwrap();
+    /// let offset1 = UtcOffset::try_from_str("+05").unwrap();
+    /// let offset2 = UtcOffset::try_from_str("+0500").unwrap();
+    /// let offset3 = UtcOffset::try_from_str("-05:00").unwrap();
     ///
     /// let offset_err0 =
     ///     UtcOffset::try_from_str("0500").expect_err("Invalid input");
@@ -363,7 +363,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::locale::subtags::subtag;
-    /// use icu::time::zone::UtcOffset;
+    /// use icu::time::zone::{utc_offset, UtcOffset};
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::zone::ZoneNameTimestamp;
     /// use icu::time::Time;
@@ -380,11 +380,11 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///     .unwrap();
     /// assert_eq!(
     ///     offsets.standard,
-    ///     UtcOffset::try_from_seconds(-7 * 3600).unwrap()
+    ///     utc_offset!("-07:00")
     /// );
     /// assert_eq!(
     ///     offsets.daylight,
-    ///     Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap())
+    ///     Some(utc_offset!("-06:00"))
     /// );
     ///
     /// // America/Phoenix does not
@@ -396,7 +396,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///     .unwrap();
     /// assert_eq!(
     ///     offsets.standard,
-    ///     UtcOffset::try_from_seconds(-7 * 3600).unwrap()
+    ///     utc_offset!("-07:00")
     /// );
     /// assert_eq!(offsets.daylight, None);
     /// ```
