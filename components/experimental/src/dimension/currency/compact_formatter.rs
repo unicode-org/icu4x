@@ -4,19 +4,14 @@
 
 use core::fmt::Display;
 
-use crate::{
-    compactdecimal::{
-        options::CompactDecimalFormatterOptions, preferences::CompactDecimalFormatterPreferences,
-        CompactDecimalFormatter,
-    },
-    dimension::provider::{
-        currency::compact::ShortCurrencyCompactV1, currency::essentials::CurrencyEssentialsV1,
-    },
+use crate::dimension::provider::{
+    currency::compact::ShortCurrencyCompactV1, currency::essentials::CurrencyEssentialsV1,
 };
 use fixed_decimal::Decimal;
-use icu_decimal::DecimalFormatterPreferences;
+use icu_decimal::preferences::CompactDecimalFormatterPreferences;
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
-use icu_plurals::PluralRulesPreferences;
+use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -62,8 +57,11 @@ pub struct CompactCurrencyFormatter {
     /// Essential data for the compact currency formatter.
     essential: DataPayload<CurrencyEssentialsV1>,
 
-    /// A [`CompactDecimalFormatter`] to format the currency value.
-    compact_decimal_formatter: CompactDecimalFormatter,
+    decimal_formatter: DecimalFormatter,
+
+    compact_data: DataPayload<icu_decimal::provider::DecimalCompactShortV1>,
+
+    plural_rules: PluralRules,
 
     /// Options bag for the compact currency formatter to determine the behavior of the formatter.
     /// for example: width.
@@ -109,15 +107,30 @@ impl CompactCurrencyFormatter {
             })?
             .payload;
 
-        let compact_decimal_formatter = CompactDecimalFormatter::try_new_short(
-            (&prefs).into(),
-            CompactDecimalFormatterOptions::default(),
-        )?;
+        let decimal_formatter = DecimalFormatter::try_new((&prefs).into(), Default::default())?;
+
+        let compact_data = DataProvider::<icu_decimal::provider::DecimalCompactShortV1>::load(
+            &icu_decimal::provider::Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_locale(
+                    &icu_decimal::provider::DecimalCompactShortV1::make_locale(
+                        prefs.locale_preferences,
+                    ),
+                ),
+                ..Default::default()
+            },
+        )?
+        .payload
+        .cast();
+
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         Ok(Self {
             _short_currency_compact: short_currency_compact,
             essential,
-            compact_decimal_formatter,
+            decimal_formatter,
+            compact_data,
+            plural_rules,
             options,
         })
     }
@@ -132,18 +145,31 @@ impl CompactCurrencyFormatter {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<ShortCurrencyCompactV1>
-            + DataProvider<crate::compactdecimal::provider::ShortCompactDecimalFormatDataV1>
+            + DataProvider<icu_decimal::provider::DecimalCompactShortV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
 
-        let compact_decimal_formatter = CompactDecimalFormatter::try_new_short_unstable(
+        let decimal_formatter =
+            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?;
+
+        let compact_data = DataProvider::<icu_decimal::provider::DecimalCompactShortV1>::load(
             provider,
-            (&prefs).into(),
-            CompactDecimalFormatterOptions::default(),
-        )?;
+            DataRequest {
+                id: DataIdentifierBorrowed::for_locale(
+                    &icu_decimal::provider::DecimalCompactShortV1::make_locale(
+                        prefs.locale_preferences,
+                    ),
+                ),
+                ..Default::default()
+            },
+        )?
+        .payload
+        .cast();
+
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         let short_currency_compact = provider
             .load(DataRequest {
@@ -162,7 +188,9 @@ impl CompactCurrencyFormatter {
         Ok(Self {
             _short_currency_compact: short_currency_compact,
             essential,
-            compact_decimal_formatter,
+            decimal_formatter,
+            compact_data,
+            plural_rules,
             options,
         })
     }
@@ -197,27 +225,20 @@ impl CompactCurrencyFormatter {
         // Therefore, in the next PR, we will add the code to handle using the compact currency patterns.
 
         let (compact_pattern, significand) = self
-            .compact_decimal_formatter
             .compact_data
             .get()
-            .get_pattern_and_significand(
-                &value.absolute,
-                &self.compact_decimal_formatter.plural_rules,
-            );
+            .get_pattern_and_significand(&value.absolute, &self.plural_rules);
 
-        self.compact_decimal_formatter
-            .decimal_formatter
-            .format_sign(
-                value.sign,
-                pattern.interpolate((
-                    compact_pattern
-                        .unwrap_or(icu_pattern::SinglePlaceholderPattern::PASS_THROUGH)
-                        .interpolate([self
-                            .compact_decimal_formatter
-                            .decimal_formatter
-                            .format_unsigned(icu_decimal::Cow::Owned(significand))]),
-                    currency_placeholder,
-                )),
-            )
+        self.decimal_formatter.format_sign(
+            value.sign,
+            pattern.interpolate((
+                compact_pattern
+                    .unwrap_or(icu_pattern::SinglePlaceholderPattern::PASS_THROUGH)
+                    .interpolate([self
+                        .decimal_formatter
+                        .format_unsigned(icu_decimal::Cow::Owned(significand))]),
+                currency_placeholder,
+            )),
+        )
     }
 }

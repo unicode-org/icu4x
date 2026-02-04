@@ -144,13 +144,13 @@ fn test_arithmetic_cases() {
 
 #[test]
 fn test_hebrew() {
-    let m06z_20 = Date::try_new_from_codes(None, 5783, Month::new(6).code(), 20, Hebrew).unwrap();
-    let m05l_15 = Date::try_new_from_codes(None, 5784, Month::leap(5).code(), 15, Hebrew).unwrap();
-    let m05l_30 = Date::try_new_from_codes(None, 5784, Month::leap(5).code(), 30, Hebrew).unwrap();
-    let m06a_29 = Date::try_new_from_codes(None, 5784, Month::new(6).code(), 29, Hebrew).unwrap();
-    let m07a_10 = Date::try_new_from_codes(None, 5784, Month::new(7).code(), 10, Hebrew).unwrap();
-    let m06b_15 = Date::try_new_from_codes(None, 5785, Month::new(6).code(), 15, Hebrew).unwrap();
-    let m07b_20 = Date::try_new_from_codes(None, 5785, Month::new(7).code(), 20, Hebrew).unwrap();
+    let m06z_20 = Date::try_new_hebrew_v2(5783, Month::new(6), 20).unwrap();
+    let m05l_15 = Date::try_new_hebrew_v2(5784, Month::leap(5), 15).unwrap();
+    let m05l_30 = Date::try_new_hebrew_v2(5784, Month::leap(5), 30).unwrap();
+    let m06a_29 = Date::try_new_hebrew_v2(5784, Month::new(6), 29).unwrap();
+    let m07a_10 = Date::try_new_hebrew_v2(5784, Month::new(7), 10).unwrap();
+    let m06b_15 = Date::try_new_hebrew_v2(5785, Month::new(6), 15).unwrap();
+    let m07b_20 = Date::try_new_hebrew_v2(5785, Month::new(7), 20).unwrap();
 
     #[rustfmt::skip]
     #[allow(clippy::type_complexity)]

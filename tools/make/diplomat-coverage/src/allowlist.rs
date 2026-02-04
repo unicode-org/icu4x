@@ -279,10 +279,14 @@ lazy_static::lazy_static! {
         // Serde-specific
         "icu::datetime::fieldsets::serde",
 
-        // Stuff that is experimental
+        // Stuff that is unstable
         //
         // We should occasionally review these
         // =========================
+
+        "icu::decimal::CompactDecimalFormatter",
+        "icu::decimal::error::ExponentError",
+        "icu::decimal::options::CompactDecimalFormatterOptions",
 
         "icu::experimental",
 

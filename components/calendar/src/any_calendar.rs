@@ -1800,33 +1800,6 @@ mod tests {
         single_test_roundtrip(roc, Some(("broc", Some(0))), 15, Month::new(1), 10);
         single_test_roundtrip(roc, None, 100, Month::new(10), 30);
         single_test_roundtrip(roc, None, -100, Month::new(10), 30);
-
-        let hijri_simulated: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriSimulatedMecca);
-        let hijri_simulated = Ref(&hijri_simulated);
-        single_test_roundtrip(
-            hijri_simulated,
-            Some(("ah", Some(0))),
-            477,
-            Month::new(3),
-            1,
-        );
-        single_test_roundtrip(hijri_simulated, None, 2083, Month::new(7), 21);
-        single_test_roundtrip(hijri_simulated, None, -100, Month::new(7), 21);
-        single_test_roundtrip(
-            hijri_simulated,
-            Some(("ah", Some(0))),
-            1600,
-            Month::new(12),
-            20,
-        );
-        single_test_error(
-            hijri_simulated,
-            Some(("ah", Some(0))),
-            100,
-            Month::new(50),
-            1,
-            DateError::UnknownMonthCode(Month::new(50).code()),
-        );
     }
 
     #[test]

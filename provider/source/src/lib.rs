@@ -27,8 +27,8 @@
 //!   * enables networking support to download CLDR and ICU source data from GitHub
 //! * `use_wasm` / `use_icu4c`
 //!   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
-//! * `experimental`
-//!   * enables markers defined in the unstable `icu::experimental` module
+//! * `unstable`
+//!   * enables unstable data markers
 
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
@@ -46,31 +46,31 @@ mod calendar;
 mod characters;
 mod cldr_serde;
 mod collator;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod currency;
 mod datetime;
 mod debug_provider;
 mod decimal;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod displaynames;
 mod duration;
 mod list;
 mod locale;
 mod normalizer;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod percent;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod personnames;
 mod plurals;
 mod properties;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod relativetime;
 mod segmenter;
 mod time_zones;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod transforms;
 mod ucase;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod units;
 
 mod cldr_cache;
@@ -110,10 +110,10 @@ pub struct SourceDataProvider {
 }
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         icu_provider::export::make_exportable_provider!(SourceDataProvider, [
             $($marker_ty,)+
-            $(#[cfg(feature = "experimental")] $emarker_ty,)+
+            $(#[cfg(feature = "unstable")] $emarker_ty,)+
         ]);
     }
 }

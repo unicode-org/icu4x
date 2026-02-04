@@ -67,7 +67,7 @@ zip = { workspace = true, features = ["deflate"] }
 # `networking` feature
 ureq = { workspace = true, optional = true}
 
-# `experimental` feature 
+# `unstable` feature 
 num-traits = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -76,7 +76,7 @@ icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_expo
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
-icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
+icu = { path = "../../components/icu", default-features = false, features = ["unstable"] }
 num-bigint = { workspace = true }
 num-rational = { workspace = true }
 
@@ -90,8 +90,8 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
-experimental = [
-    "icu/experimental",
+unstable = [
+    "icu/unstable",
     "dep:num-traits",
 ]
 

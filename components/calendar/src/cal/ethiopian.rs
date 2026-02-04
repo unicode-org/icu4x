@@ -250,7 +250,10 @@ impl Calendar for Ethiopian {
     }
 
     fn debug_name(&self) -> &'static str {
-        "Ethiopian"
+        match self.0 {
+            EthiopianEraStyle::AmeteMihret => "Ethiopian",
+            EthiopianEraStyle::AmeteAlem => "Ethiopian (Amete Alem)",
+        }
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {

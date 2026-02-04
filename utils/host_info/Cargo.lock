@@ -353,10 +353,12 @@ version = "2.1.2"
 name = "icu_decimal"
 version = "2.1.1"
 dependencies = [
+ "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
  "icu_locale",
  "icu_locale_core",
+ "icu_plurals",
  "icu_provider",
  "serde",
  "writeable",
