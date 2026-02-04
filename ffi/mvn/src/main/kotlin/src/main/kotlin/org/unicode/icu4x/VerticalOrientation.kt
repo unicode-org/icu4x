@@ -62,9 +62,9 @@ enum class VerticalOrientation {
         @JvmStatic
         
         fun tryFromStr(s: String): VerticalOrientation? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_VerticalOrientation_try_from_str_mv1(sSlice);
+            val returnVal = lib.icu4x_VerticalOrientation_try_from_str_mv1(sSliceMemory.slice);
             
             val intermediateOption = returnVal.option() ?: return null
             return VerticalOrientation.fromNative(intermediateOption)

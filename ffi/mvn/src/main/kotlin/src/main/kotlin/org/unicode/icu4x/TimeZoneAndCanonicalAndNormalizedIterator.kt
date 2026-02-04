@@ -34,12 +34,12 @@ class TimeZoneAndCanonicalAndNormalizedIterator internal constructor (
     /** See the [Rust documentation for `next`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html#method.next) for more information.
     */
     internal fun nextInternal(): TimeZoneAndCanonicalAndNormalized? {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1(handle);
         
         val intermediateOption = returnVal.option() ?: return null
-
-        val aEdges: List<Any?> = listOf(this)
         val returnStruct = TimeZoneAndCanonicalAndNormalized.fromNative(intermediateOption, aEdges)
         return returnStruct
                                 

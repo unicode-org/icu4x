@@ -74,24 +74,25 @@ class IanaParser internal constructor (
     /** See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.parse) for more information.
     */
     fun parse(value: String): TimeZone {
-        val (valueMem, valueSlice) = PrimitiveArrayTools.borrowUtf8(value)
+        val valueSliceMemory = PrimitiveArrayTools.borrowUtf8(value)
         
-        val returnVal = lib.icu4x_IanaParser_parse_mv1(handle, valueSlice);
+        val returnVal = lib.icu4x_IanaParser_parse_mv1(handle, valueSliceMemory.slice);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
         val returnOpaque = TimeZone(handle, selfEdges)
         CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
-        if (valueMem != null) valueMem.close()
+        valueSliceMemory?.close()
         return returnOpaque
     }
     
     /** See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
     */
     fun iter(): TimeZoneIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_IanaParser_iter_mv1(handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = TimeZoneIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, TimeZoneIterator.TimeZoneIteratorCleaner(handle, TimeZoneIterator.lib));

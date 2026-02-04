@@ -127,14 +127,14 @@ class Bidi internal constructor (
     *See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
     */
     fun reorderVisual(levels: UByteArray): ReorderedIndexMap {
-        val (levelsMem, levelsSlice) = PrimitiveArrayTools.borrow(levels)
+        val levelsSliceMemory = PrimitiveArrayTools.borrow(levels)
         
-        val returnVal = lib.icu4x_Bidi_reorder_visual_mv1(handle, levelsSlice);
+        val returnVal = lib.icu4x_Bidi_reorder_visual_mv1(handle, levelsSliceMemory.slice);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
         val returnOpaque = ReorderedIndexMap(handle, selfEdges)
         CLEANER.register(returnOpaque, ReorderedIndexMap.ReorderedIndexMapCleaner(handle, ReorderedIndexMap.lib));
-        if (levelsMem != null) levelsMem.close()
+        levelsSliceMemory?.close()
         return returnOpaque
     }
 
