@@ -8,6 +8,7 @@ Fully filled in up to 30c187f4b7
 - Components
     - General
         - Use HTTPS links in docs (unicode-org#7212)
+        - Update MSRV to 1.86 (unicode-org#7576)
     - `icu_calendar`
         - Introduce a new `Month` type, preferred over using month codes (unicode-org#7147)
         - Restrict the range of valid dates constructed via certain constructors (unicode-org#7219, unicode-org#7227)
