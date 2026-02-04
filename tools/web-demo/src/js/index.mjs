@@ -11,28 +11,28 @@ window.icu = window.top.icu = icu;
 
 // Renders all termini into the class="container" element
 Object.values(RenderInfo.termini).toSorted((a, b) => a.funcName < b.funcName ? -1 : 1).forEach((t) => {
-    let details = document.createElement("details");
-    let summary = document.createElement("summary");
-    summary.innerHTML = `<code>${t.funcName}</code>`;
-    details.appendChild(summary);
-    details.appendChild(document.createElement("br"));
-    details.appendChild(new TerminusRender(
-        RenderInfo.termini[t.funcName],
-        (el) => {
-            // Necessary for Prism to know the language to highlight for, and also
-            // to ensure CSS `white-space: pre-wrap` is applied from selector
-            el.classList.add("language-js");
-            el.textContent = beautify.js(el.textContent, {
-                indent_size: 2,
-                indent_char: " ",
-                break_chained_methods: true,
-                // brace_style: "collapse",
-                wrap_line_length: 45,
-            });
-            Prism.highlightElement(el);
-        },
-    ));
-    document.getElementsByClassName("container")[0].appendChild(details);
+	let details = document.createElement("details");
+	let summary = document.createElement("summary");
+	summary.innerHTML = `<code>${t.funcName}</code>`;
+	details.appendChild(summary);
+	details.appendChild(document.createElement("br"));
+	details.appendChild(new TerminusRender(
+		RenderInfo.termini[t.funcName],
+		(el) => {
+			// Necessary for Prism to know the language to highlight for, and also
+			// to ensure CSS `white-space: pre-wrap` is applied from selector
+			el.classList.add("language-js");
+			el.textContent = beautify.js(el.textContent, {
+				indent_size: 2,
+				indent_char: " ",
+				break_chained_methods: true,
+				// brace_style: "collapse",
+				wrap_line_length: 45,
+			});
+			Prism.highlightElement(el);
+		},
+	));
+	document.getElementsByClassName("container")[0].appendChild(details);
 });
 
 document.querySelector("#loading").hidden = true;
@@ -61,19 +61,18 @@ function updateFromHash() {
         details.scrollIntoView();
     }
 
-    // Optimization: If no query string, stop here.
+    const terminusParams = terminusRender.querySelector('terminus-params');
+    if (!terminusParams) return;
+
     if (!queryString) return;
 
     const params = new URLSearchParams(queryString);
-    const terminusParams = terminusRender.querySelector('terminus-params');
-    if (!terminusParams) return;
 
     for (const paramElement of terminusParams.children) {
         const nameSlot = paramElement.querySelector('[slot="param-name"]');
         if (!nameSlot) continue;
         const paramName = nameSlot.innerText;
 
-        // Optimization: Check existence and capability before calculating value
         if (params.has(paramName) && paramElement.setValue) {
             const valStr = params.get(paramName);
             const tagName = paramElement.tagName.toLowerCase();
