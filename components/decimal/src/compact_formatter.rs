@@ -5,8 +5,11 @@
 use core::fmt::Display;
 
 use crate::{
-    error::ExponentError, options::CompactDecimalFormatterOptions,
-    preferences::CompactDecimalFormatterPreferences, provider::*, DecimalFormatter,
+    error::ExponentError,
+    options::CompactDecimalFormatterOptions,
+    preferences::{CompactDecimalFormatterPreferences, DecimalFormatterPreferences},
+    provider::*,
+    DecimalFormatter,
 };
 use alloc::borrow::Cow;
 use fixed_decimal::{Decimal, UnsignedDecimal};
@@ -100,12 +103,12 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
-            compact_data: DataProvider::<DecimalCompactShortV1>::load(
+            compact_data: load_with_fallback::<DecimalCompactShortV1>(
                 &Baked,
-                DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    ..Default::default()
-                },
+                DecimalFormatterPreferences::from(&prefs)
+                    .nu_id(&locale)
+                    .into_iter()
+                    .chain([DataIdentifierBorrowed::for_locale(&locale)]),
             )?
             .payload
             .cast(),
@@ -143,12 +146,12 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
-            compact_data: DataProvider::<DecimalCompactShortV1>::load(
+            compact_data: load_with_fallback::<DecimalCompactShortV1>(
                 provider,
-                DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    ..Default::default()
-                },
+                DecimalFormatterPreferences::from(&prefs)
+                    .nu_id(&locale)
+                    .into_iter()
+                    .chain([DataIdentifierBorrowed::for_locale(&locale)]),
             )?
             .payload
             .cast(),
@@ -186,12 +189,12 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
-            compact_data: DataProvider::<DecimalCompactLongV1>::load(
+            compact_data: load_with_fallback::<DecimalCompactLongV1>(
                 &Baked,
-                DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    ..Default::default()
-                },
+                DecimalFormatterPreferences::from(&prefs)
+                    .nu_id(&locale)
+                    .into_iter()
+                    .chain([DataIdentifierBorrowed::for_locale(&locale)]),
             )?
             .payload
             .cast(),
@@ -229,12 +232,12 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
-            compact_data: DataProvider::<DecimalCompactLongV1>::load(
+            compact_data: load_with_fallback::<DecimalCompactLongV1>(
                 provider,
-                DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    ..Default::default()
-                },
+                DecimalFormatterPreferences::from(&prefs)
+                    .nu_id(&locale)
+                    .into_iter()
+                    .chain([DataIdentifierBorrowed::for_locale(&locale)]),
             )?
             .payload
             .cast(),
@@ -678,5 +681,22 @@ mod tests {
                 .unwrap();
 
         assert_writeable_eq!(formatter.format(&3_000_000i64.into()), "3\u{a0}مليون");
+    }
+
+    #[test]
+    fn numbering_system() {
+        let default =
+            CompactDecimalFormatter::try_new_short(locale!("lo").into(), Default::default())
+                .unwrap();
+        let lao = CompactDecimalFormatter::try_new_short(
+            locale!("lo-u-nu-laoo").into(),
+            Default::default(),
+        )
+        .unwrap();
+
+        // lo is one of the few locales that have different compact patterns per
+        // numbering system (they differ by a NBSP)
+        assert_writeable_eq!(default.format(&12345.into()), "12 ພັນ");
+        assert_writeable_eq!(lao.format(&12345.into()), "໑໒ພັນ");
     }
 }

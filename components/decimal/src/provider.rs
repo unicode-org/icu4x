@@ -507,3 +507,52 @@ impl<P: PatternBackend> CompactPatterns<'static, P> {
         ))
     }
 }
+
+pub(crate) fn load_with_fallback<'a, M: DataMarker>(
+    provider: &(impl DataProvider<M> + ?Sized),
+    ids: impl Iterator<Item = DataIdentifierBorrowed<'a>>,
+) -> Result<DataResponse<M>, DataError> {
+    let mut ids = ids.peekable();
+
+    while let Some(id) = ids.next() {
+        if ids.peek().is_some() {
+            if let Some(r) = provider
+                .load(DataRequest {
+                    id,
+                    metadata: {
+                        let mut m = DataRequestMetadata::default();
+                        m.silent = true;
+                        m
+                    },
+                })
+                .allow_identifier_not_found()?
+            {
+                return Ok(r);
+            }
+        } else {
+            return provider.load(DataRequest {
+                id,
+                metadata: DataRequestMetadata::default(),
+            });
+        }
+    }
+
+    Err(DataErrorKind::InvalidRequest.into_error())
+}
+
+impl crate::DecimalFormatterPreferences {
+    pub(crate) fn nu_id<'a>(
+        &'a self,
+        locale: &'a DataLocale,
+    ) -> Option<DataIdentifierBorrowed<'a>> {
+        self.numbering_system
+            .as_ref()
+            .map(|s| s.as_str())
+            .map(|nu| {
+                DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(nu),
+                    locale,
+                )
+            })
+    }
+}
