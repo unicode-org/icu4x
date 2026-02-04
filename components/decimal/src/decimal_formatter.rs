@@ -58,9 +58,6 @@ impl DecimalFormatter {
         prefs: DecimalFormatterPreferences,
         options: DecimalFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = DecimalSymbolsV1::make_locale(prefs.locale_preferences);
-        let provided_nu = prefs.numbering_system.as_ref().map(|s| s.as_str());
-
         // In case the user explicitly specified a numbering system, use digits from that numbering system. In case of explicitly specified numbering systems,
         // the resolved one may end up being different due to a lack of data or fallback, e.g. attempting to resolve en-u-nu-thai will likely produce en-u-nu-Latn data.
         //
@@ -81,82 +78,35 @@ impl DecimalFormatter {
         // | en-u-nu-wxyz | latn    | latn   | latn                                 |
         // | th-u-nu-wxyz | thai    | thai   | thai                                 |
 
-        if let Some(provided_nu) = provided_nu {
-            // Load symbols for the locale/numsys pair provided
-            let symbols: DataPayload<DecimalSymbolsV1> = provider
-                .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        DataMarkerAttributes::from_str_or_panic(provided_nu),
-                        &locale,
-                    ),
-                    ..Default::default()
-                })
-                // If it doesn't exist, fall back to the locale
-                .or_else(|_err| {
-                    provider.load(DataRequest {
-                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::empty(),
-                            &locale,
-                        ),
-                        ..Default::default()
-                    })
-                })?
-                .payload;
+        let locale = DecimalSymbolsV1::make_locale(prefs.locale_preferences);
 
-            let resolved_nu = symbols.get().numsys();
+        // Load symbols for the locale/numsys pair provided
+        let symbols = load_with_fallback::<DecimalSymbolsV1>(
+            provider,
+            // fall back to the locale
+            prefs
+                .nu_id(&locale)
+                .into_iter()
+                .chain([DataIdentifierBorrowed::for_locale(&locale)]),
+        )?
+        .payload;
 
-            // Attempt to load the provided numbering system first
-            let digits = provider
-                .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        DataMarkerAttributes::from_str_or_panic(provided_nu),
-                        &DataLocale::default(),
-                    ),
-                    ..Default::default()
-                })
-                .or_else(|_err| {
-                    provider.load(DataRequest {
-                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::from_str_or_panic(resolved_nu),
-                            &DataLocale::default(),
-                        ),
-                        ..Default::default()
-                    })
-                })?
-                .payload;
-            Ok(Self {
-                options,
-                symbols,
-                digits,
-            })
-        } else {
-            let symbols: DataPayload<DecimalSymbolsV1> = provider
-                .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        DataMarkerAttributes::empty(),
-                        &locale,
-                    ),
-                    ..Default::default()
-                })?
-                .payload;
+        let resolved_nu_id = DataIdentifierBorrowed::for_marker_attributes(
+            DataMarkerAttributes::from_str_or_panic(symbols.get().numsys()),
+        );
 
-            let resolved_nu = symbols.get().numsys();
+        let digits = load_with_fallback(
+            provider,
+            // fall back to the resolved numbering system
+            prefs.nu_id(&locale).into_iter().chain([resolved_nu_id]),
+        )?
+        .payload;
 
-            let digits = provider
-                .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        DataMarkerAttributes::from_str_or_panic(resolved_nu),
-                        &DataLocale::default(),
-                    ),
-                    ..Default::default()
-                })?
-                .payload;
-            Ok(Self {
-                options,
-                symbols,
-                digits,
-            })
-        }
+        Ok(Self {
+            options,
+            symbols,
+            digits,
+        })
     }
 
     /// Formats a [`Decimal`], returning a [`FormattedDecimal`].
