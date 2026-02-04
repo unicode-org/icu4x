@@ -38,8 +38,7 @@ prefs_convert!(
 );
 prefs_convert!(
     CompactCurrencyFormatterPreferences,
-    CompactDecimalFormatterPreferences,
-    { numbering_system }
+    CompactDecimalFormatterPreferences
 );
 prefs_convert!(CompactCurrencyFormatterPreferences, PluralRulesPreferences);
 
@@ -90,24 +89,20 @@ impl CompactCurrencyFormatter {
         prefs: CompactCurrencyFormatterPreferences,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
+        let short_locale = ShortCurrencyCompactV1::make_locale(prefs.locale_preferences);
+
         let short_currency_compact = crate::provider::Baked
-            .load_with_fallback(
-                DecimalFormatterPreferences::from(&prefs)
-                    .nu_id(&ShortCurrencyCompactV1::make_locale(
-                        prefs.locale_preferences,
-                    ))
-                    .into_iter()
-                    .chain([DataIdentifierBorrowed::for_locale(
-                        &ShortCurrencyCompactV1::make_locale(prefs.locale_preferences),
-                    )]),
-            )?
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&short_locale),
+                ..Default::default()
+            })?
             .payload;
+
+        let essential_locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
 
         let essential = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&CurrencyEssentialsV1::make_locale(
-                    prefs.locale_preferences,
-                )),
+                id: DataIdentifierBorrowed::for_locale(&essential_locale),
                 ..Default::default()
             })?
             .payload;
@@ -155,6 +150,8 @@ impl CompactCurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+
         let decimal_formatter =
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?;
 
@@ -175,23 +172,15 @@ impl CompactCurrencyFormatter {
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         let short_currency_compact = provider
-            .load_with_fallback(
-                DecimalFormatterPreferences::from(&prefs)
-                    .nu_id(&ShortCurrencyCompactV1::make_locale(
-                        prefs.locale_preferences,
-                    ))
-                    .into_iter()
-                    .chain([DataIdentifierBorrowed::for_locale(
-                        &ShortCurrencyCompactV1::make_locale(prefs.locale_preferences),
-                    )]),
-            )?
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&locale),
+                ..Default::default()
+            })?
             .payload;
 
         let essential = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&CurrencyEssentialsV1::make_locale(
-                    prefs.locale_preferences,
-                )),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;

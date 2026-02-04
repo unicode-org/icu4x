@@ -82,19 +82,4 @@ mod tests {
             "\u{61c}-\u{200f}١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"
         );
     }
-
-    #[test]
-    pub fn test_lo() {
-        let currency_code = CurrencyCode(tinystr!(3, "LAK"));
-        let value = "12345.67".parse().unwrap();
-
-        let fmt =
-            CompactCurrencyFormatter::try_new(locale!("lo").into(), Default::default()).unwrap();
-        assert_writeable_eq!(fmt.format_fixed_decimal(&value, &currency_code), "₭12 ພັນ");
-
-        let fmt =
-            CompactCurrencyFormatter::try_new(locale!("lo-u-nu-laoo").into(), Default::default())
-                .unwrap();
-        assert_writeable_eq!(fmt.format_fixed_decimal(&value, &currency_code), "₭໑໒ພັນ");
-    }
 }
