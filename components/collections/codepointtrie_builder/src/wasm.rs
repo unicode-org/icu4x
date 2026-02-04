@@ -2,16 +2,29 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::CodePointTrieBuilder;
+use core::marker::PhantomData;
+use core::ops::RangeInclusive;
+use std::sync::LazyLock;
+
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::CodePointTrieHeader;
+use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Val};
 use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
-const UCPTRIE_WRAP_WAT: &str = include_str!("../cpp/ucptrie_wrap.wat");
+static WASM_MODULE: LazyLock<Module> = LazyLock::new(|| {
+    Module::new(
+        &Engine::new(&Config::default()),
+        wat::parse_str(include_str!("../cpp/ucptrie_wrap.wat"))
+            .unwrap()
+            .as_slice(),
+    )
+    .unwrap()
+});
 
+#[derive(Debug)]
 pub(crate) struct WasmWrap {
     instance: Instance,
     store: Store<()>,
@@ -32,15 +45,10 @@ impl Wasmi32Ptr {
 #[allow(non_snake_case)] // keep function names the same as in WASM/C
 impl WasmWrap {
     pub(crate) fn create() -> Self {
-        let config = Config::default();
-        let engine = Engine::new(&config);
-        let wasm_bytes = wat::parse_str(UCPTRIE_WRAP_WAT).unwrap();
-        let module = Module::new(&engine, &wasm_bytes[..]).unwrap();
-        let linker = <Linker<()>>::new(&engine);
-        let mut store = Store::new(&engine, ());
+        let mut store = Store::new(WASM_MODULE.engine(), ());
 
-        let instance = linker
-            .instantiate(&mut store, &module)
+        let instance = <Linker<()>>::new(WASM_MODULE.engine())
+            .instantiate(&mut store, &WASM_MODULE)
             .unwrap()
             .start(&mut store)
             .unwrap();
@@ -205,81 +213,109 @@ impl WasmWrap {
     }
 }
 
-pub(crate) fn run_wasmi_ucptrie_wrap<T>(
-    builder: &CodePointTrieBuilder<T>,
-) -> CodePointTrie<'static, T>
-where
-    T: TrieValue,
-{
-    let mut wasm = WasmWrap::create();
+#[derive(Debug)]
+pub(crate) struct Builder<T: TrieValue> {
+    wasm: WasmWrap,
+    error_code_ptr: Wasmi32Ptr,
+    trie_ptr: Wasmi32Ptr,
+    _p: PhantomData<T>,
+}
 
-    let error_code_ptr = wasm.create_uerrorcode();
-    let trie_ptr = wasm.umutablecptrie_open(
-        builder.default_value.to_u32() as i32,
-        builder.error_value.to_u32() as i32,
-        &error_code_ptr,
-    );
+impl<T: TrieValue> Builder<T> {
+    pub(crate) fn create(default_value: T, error_value: T) -> Self {
+        let mut wasm = WasmWrap::create();
 
-    builder.for_each_code_point(|(cp, value)| {
-        wasm.umutablecptrie_set(&trie_ptr, cp, value.to_u32(), &error_code_ptr);
-    });
+        let error_code_ptr = wasm.create_uerrorcode();
+        let trie_ptr = wasm.umutablecptrie_open(
+            default_value.to_u32() as i32,
+            error_value.to_u32() as i32,
+            &error_code_ptr,
+        );
 
-    let (trie_type, width) = crate::common::args_for_build_immutable::<T::ULE>(builder.trie_type);
+        Self {
+            wasm,
+            error_code_ptr,
+            trie_ptr,
+            _p: PhantomData,
+        }
+    }
 
-    let ucptrie_ptr =
-        wasm.umutablecptrie_buildImmutable(&trie_ptr, trie_type, width, &error_code_ptr);
+    pub(crate) fn set_value(&mut self, cp: u32, value: T) {
+        self.wasm
+            .umutablecptrie_set(&self.trie_ptr, cp, value.to_u32(), &self.error_code_ptr);
+        assert_eq!(0, self.wasm.read_uerrorcode(&self.error_code_ptr));
+    }
 
-    assert_eq!(0, wasm.read_uerrorcode(&error_code_ptr));
+    pub(crate) fn set_range_value(&mut self, cps: RangeInclusive<u32>, value: T) {
+        // TODO: call umutablecptrie_setRange
+        for cp in cps {
+            self.set_value(cp, value);
+        }
+    }
 
-    let header = CodePointTrieHeader {
-        high_start: wasm.read_ucptrie_highStart(&ucptrie_ptr),
-        shifted12_high_start: wasm.read_ucptrie_shifted12HighStart(&ucptrie_ptr),
-        index3_null_offset: wasm
-            .read_ucptrie_index3NullOffset(&ucptrie_ptr)
-            .try_into()
-            .expect("index3NullOffset should fit in u16"),
-        data_null_offset: wasm.read_ucptrie_dataNullOffset(&ucptrie_ptr),
-        null_value: wasm.read_ucptrie_nullValue(&ucptrie_ptr),
-        trie_type: builder.trie_type,
-    };
+    pub(crate) fn build(mut self, trie_type: TrieType, width: u32) -> CodePointTrie<'static, T> {
+        let ucptrie_ptr = self.wasm.umutablecptrie_buildImmutable(
+            &self.trie_ptr,
+            trie_type as u32,
+            width,
+            &self.error_code_ptr,
+        );
+        assert_eq!(0, self.wasm.read_uerrorcode(&self.error_code_ptr));
 
-    let index_ptr = wasm.get_index_ptr(&ucptrie_ptr);
-    let index_length = wasm.get_index_length(&ucptrie_ptr);
-    let data_ptr = wasm.get_data_ptr(&ucptrie_ptr);
-    let data_length = wasm.get_data_length(&ucptrie_ptr);
+        let header = CodePointTrieHeader {
+            high_start: self.wasm.read_ucptrie_highStart(&ucptrie_ptr),
+            shifted12_high_start: self.wasm.read_ucptrie_shifted12HighStart(&ucptrie_ptr),
+            index3_null_offset: self
+                .wasm
+                .read_ucptrie_index3NullOffset(&ucptrie_ptr)
+                .try_into()
+                .expect("index3NullOffset should fit in u16"),
+            data_null_offset: self.wasm.read_ucptrie_dataNullOffset(&ucptrie_ptr),
+            null_value: self.wasm.read_ucptrie_nullValue(&ucptrie_ptr),
+            trie_type,
+        };
 
-    let index = ZeroSlice::<u16>::parse_bytes(
-        wasm.get_bytes_at_ptr(&index_ptr, index_length * size_of::<u16>()),
-    )
-    .unwrap()
-    .as_zerovec()
-    .into_owned();
+        let index_ptr = self.wasm.get_index_ptr(&ucptrie_ptr);
+        let index_length = self.wasm.get_index_length(&ucptrie_ptr);
+        let data_ptr = self.wasm.get_data_ptr(&ucptrie_ptr);
+        let data_length = self.wasm.get_data_length(&ucptrie_ptr);
 
-    let data = if size_of::<T::ULE>() == 3 {
-        // need to reallocate 32-bit trie as 24-bit zerovec
-        ZeroVec::<T>::parse_bytes(
-            &wasm
-                .get_bytes_at_ptr(&data_ptr, data_length * 4)
-                .iter()
-                .enumerate()
-                .filter(|(i, _)| i % 4 != 3)
-                .map(|(_, b)| *b)
-                .collect::<Vec<_>>(),
+        let index = ZeroSlice::<u16>::parse_bytes(
+            self.wasm
+                .get_bytes_at_ptr(&index_ptr, index_length * size_of::<u16>()),
         )
         .unwrap()
-        .into_owned()
-    } else {
-        ZeroVec::<T>::parse_bytes(
-            wasm.get_bytes_at_ptr(&data_ptr, data_length * size_of::<T::ULE>()),
-        )
-        .unwrap()
-        .into_owned()
-    };
+        .as_zerovec()
+        .into_owned();
 
-    let built_trie = CodePointTrie::try_new(header, index, data).expect("Failed to construct");
+        let data = if size_of::<T::ULE>() == 3 {
+            // need to reallocate 32-bit trie as 24-bit zerovec
+            ZeroVec::<T>::parse_bytes(
+                &self
+                    .wasm
+                    .get_bytes_at_ptr(&data_ptr, data_length * 4)
+                    .iter()
+                    .enumerate()
+                    .filter(|(i, _)| i % 4 != 3)
+                    .map(|(_, b)| *b)
+                    .collect::<Vec<_>>(),
+            )
+            .unwrap()
+            .into_owned()
+        } else {
+            ZeroVec::<T>::parse_bytes(
+                self.wasm
+                    .get_bytes_at_ptr(&data_ptr, data_length * size_of::<T::ULE>()),
+            )
+            .unwrap()
+            .into_owned()
+        };
 
-    wasm.ucptrie_close(&ucptrie_ptr);
-    wasm.umutablecptrie_close(&trie_ptr);
+        let built_trie = CodePointTrie::try_new(header, index, data).expect("Failed to construct");
 
-    built_trie
+        self.wasm.ucptrie_close(&ucptrie_ptr);
+        self.wasm.umutablecptrie_close(&self.trie_ptr);
+
+        built_trie
+    }
 }

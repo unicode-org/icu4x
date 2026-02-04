@@ -1303,7 +1303,7 @@ version = "2.1.1"
 
 [[package]]
 name = "icu_codepointtrie_builder"
-version = "0.5.1"
+version = "0.6.0-dev"
 dependencies = [
  "icu",
  "icu_collections",
