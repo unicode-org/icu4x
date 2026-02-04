@@ -60,6 +60,14 @@ extern "C" {
         value: u32,
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
+    #[cfg_attr(icu4c_enable_renaming, link_name = concat!("umutablecptrie_setRange_", env!("ICU4C_RENAME_VERSION")))]
+    fn umutablecptrie_setRange(
+        trie: *const UMutableCPTrie,
+        start: u32,
+        end: u32,
+        value: u32,
+        error_code: &mut u32,
+    ) -> *const UMutableCPTrie;
     #[cfg_attr(
         icu4c_enable_renaming,
         link_name = concat!("umutablecptrie_buildImmutable_", env!("ICU4C_RENAME_VERSION"))
@@ -117,9 +125,22 @@ impl<T: TrieValue> Builder<T> {
     }
 
     pub(crate) fn set_range_value(&mut self, cps: RangeInclusive<u32>, value: T) {
-        // TODO: call umutablecptrie_setRange
-        for cp in cps {
-            self.set_value(cp, value);
+        let mut error = 0;
+
+        unsafe {
+            // safety: builder is a valid UMutableCPTrie
+            // safety: we're passing a valid error pointer
+            umutablecptrie_setRange(
+                self.builder,
+                *cps.start(),
+                *cps.end(),
+                value.to_u32(),
+                &mut error,
+            );
+        }
+
+        if error != 0 {
+            panic!("cpt builder returned error code {error}");
         }
     }
 
