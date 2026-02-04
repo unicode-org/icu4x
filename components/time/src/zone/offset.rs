@@ -19,6 +19,33 @@ use super::ZoneNameTimestamp;
 #[allow(clippy::exhaustive_structs)]
 pub struct InvalidOffsetError;
 
+/// A macro allowing for compile-time construction of a [`UtcOffset`].
+///
+/// The macro will perform syntax validation of the offset string.
+///
+/// # Examples
+///
+/// ```
+/// use icu::time::{utc_offset, zone::UtcOffset};
+///
+/// const OFFSET: UtcOffset = utc_offset!("-07:00");
+///
+/// let offset: UtcOffset = "-07:00".parse().unwrap();
+///
+/// assert_eq!(OFFSET, offset);
+/// ```
+#[macro_export]
+macro_rules! utc_offset {
+    ($offset:literal) => {
+        const {
+            match $crate::zone::UtcOffset::try_from_str($offset) {
+                Ok(offset) => offset,
+                Err(_) => panic!(concat!("Invalid UTC offset string: ", $offset)),
+            }
+        }
+    };
+}
+
 /// An offset from Coordinated Universal Time (UTC).
 ///
 /// Supports ±18:00:00.
