@@ -124,6 +124,14 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             .rev()
             .collect::<Vec<&str>>(),
     );
+    let content_swedish: (&str, Vec<&str>) = (
+        "TestNames_Swedish",
+        include_str!("data/TestNames_Swedish.txt")
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
+            .rev()
+            .collect::<Vec<&str>>(),
+    );
     let content_thai: (&str, Vec<&str>) = (
         "TestNames_Thai",
         include_str!("data/TestNames_Thai.txt")
@@ -179,6 +187,11 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         (
             locale!("ru-RU"),
             vec![&content_latin, &content_russian],
+            &all_strength,
+        ),
+        (
+            locale!("sv"),
+            vec![&content_latin, &content_swedish],
             &all_strength,
         ),
         (
