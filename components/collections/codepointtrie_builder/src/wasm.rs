@@ -132,6 +132,27 @@ impl WasmWrap {
         );
     }
 
+    #[allow(dead_code)]
+    pub(crate) fn umutablecptrie_setRange(
+        &mut self,
+        trie_ptr: &Wasmi32Ptr,
+        start: u32,
+        end: u32,
+        Val: u32,
+        error_code_ptr: &Wasmi32Ptr,
+    ) {
+        self.call_return_void(
+            "umutablecptrie_setRange",
+            &[
+                trie_ptr.0.clone(),
+                Val::I32(start as i32),
+                Val::I32(end as i32),
+                Val::I32(Val as i32),
+                error_code_ptr.0.clone(),
+            ],
+        );
+    }
+
     pub(crate) fn umutablecptrie_buildImmutable(
         &mut self,
         trie_ptr: &Wasmi32Ptr,
