@@ -122,9 +122,9 @@ datagen = [
 serde_human = [
     "icu_list/serde_human"
 ]
-experimental = [
-    "icu_datetime/experimental",
-    "icu_plurals/experimental",
+unstable = [
+    "icu_datetime/unstable",
+    "icu_plurals/unstable",
     "dep:icu_experimental",
     "dep:icu_pattern",
 ]

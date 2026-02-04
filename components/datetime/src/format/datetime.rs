@@ -244,7 +244,7 @@ where
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
-            try_write_number(PART, w, decimal_formatter, month.ordinal.into(), l)?
+            try_write_number(PART, w, decimal_formatter, month.number().into(), l)?
         }
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
@@ -256,12 +256,12 @@ where
                 }
                 Ok(MonthPlaceholderValue::Numeric) => {
                     debug_assert!(l == FieldLength::One);
-                    try_write_number(PART, w, decimal_formatter, month.ordinal.into(), l)?
+                    try_write_number(PART, w, decimal_formatter, month.number().into(), l)?
                 }
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
                     debug_assert!(l == FieldLength::One);
                     if let Some(formatter) = decimal_formatter {
-                        let mut num = Decimal::from(month.ordinal);
+                        let mut num = Decimal::from(month.number());
                         num.pad_start(l.to_len() as i16);
                         w.with_part(PART, |w| {
                             substitution_pattern
@@ -274,7 +274,7 @@ where
                             w.with_part(Part::ERROR, |w| {
                                 substitution_pattern
                                     .interpolate([{
-                                        let mut num = Decimal::from(month.ordinal);
+                                        let mut num = Decimal::from(month.number());
                                         num.pad_start(l.to_len() as i16);
                                         num
                                     }])
