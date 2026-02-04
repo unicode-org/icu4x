@@ -308,7 +308,7 @@ syn = "2.0.21"
 synstructure = "0.13.0"
 ureq = "3.0.0"
 walkdir = "2.3.2"
-wasmi = "0.40.0"
+wasmi = "1.0.8"
 wat = "1"
 
 # Size optimized builds

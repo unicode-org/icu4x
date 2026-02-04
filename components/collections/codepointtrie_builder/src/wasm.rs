@@ -48,9 +48,7 @@ impl WasmWrap {
         let mut store = Store::new(WASM_MODULE.engine(), ());
 
         let instance = <Linker<()>>::new(WASM_MODULE.engine())
-            .instantiate(&mut store, &WASM_MODULE)
-            .unwrap()
-            .start(&mut store)
+            .instantiate_and_start(&mut store, &WASM_MODULE)
             .unwrap();
 
         Self { instance, store }
