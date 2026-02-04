@@ -1,0 +1,52 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+Abba
+Abbe
+Agda
+Ahlin
+Akra
+Alin
+Andersson, Anna
+Andersson, Agda
+Andersson, Ärta
+Andersson, Åsa
+Bengtsson, Bengt
+Berg, Anna
+Berg, Änne
+Berg, Åke
+Ericsen
+Ericson
+Ericsson
+Ericsun
+Eriksen
+Erikson
+Eriksson
+Eriksun
+Erixon
+Lundström, Bo
+Lundstrom, Bo
+Olofsson, Olle
+Olofsson, Örjan
+Sjöberg, Östen
+Sjoberg, Osten
+Åberg, Anders
+Ärlandsson, Bengt
+Öberg, Clara
+Åberg, Berit
+Ärlandsson, Anna
+Öberg, Anders
+Andersson, Åke
+Andersson, Ärlige
+Olofsson, Olov
+Olofsson, Östen
+Lundqvist, Åke
+Lundqvist, Anders
+Sjöberg, Anders
+Sjoberg, Anders
+Ericsson, Anders
+Ericson, Anders
+Eriksson, Anders
+Erikson, Anders
+Erixon, Anders
