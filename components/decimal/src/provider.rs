@@ -539,3 +539,20 @@ pub(crate) fn load_with_fallback<'a, M: DataMarker>(
 
     Err(DataErrorKind::InvalidRequest.into_error())
 }
+
+impl crate::DecimalFormatterPreferences {
+    pub(crate) fn nu_id<'a>(
+        &'a self,
+        locale: &'a DataLocale,
+    ) -> Option<DataIdentifierBorrowed<'a>> {
+        self.numbering_system
+            .as_ref()
+            .map(|s| s.as_str())
+            .map(|nu| {
+                DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(nu),
+                    locale,
+                )
+            })
+    }
+}
