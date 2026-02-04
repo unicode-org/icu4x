@@ -54,7 +54,7 @@ pub mod ffi {
         }
 
         /// Creates an offset from a string.
-        #[diplomat::rust_link(icu::time::utc_offset, Macro)]
+        #[diplomat::rust_link(icu::time::zone::utc_offset, Macro)]
         #[diplomat::rust_link(icu::time::zone::UtcOffset, Struct, compact)]
         #[diplomat::rust_link(icu::time::zone::UtcOffset::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::UtcOffset::try_from_utf8, FnInStruct, hidden)]

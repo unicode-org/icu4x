@@ -1788,7 +1788,7 @@ pub mod zone {
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::Location;
         /// use icu::datetime::input::UtcOffset;
-        /// use icu::time::utc_offset;
+        /// use icu::time::zone::utc_offset;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
@@ -1824,7 +1824,7 @@ pub mod zone {
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::ExemplarCity;
         /// use icu::datetime::input::UtcOffset;
-        /// use icu::time::utc_offset;
+        /// use icu::time::zone::utc_offset;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;

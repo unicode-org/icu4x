@@ -26,7 +26,7 @@ pub struct InvalidOffsetError;
 /// # Examples
 ///
 /// ```
-/// use icu::time::{utc_offset, zone::UtcOffset};
+/// use icu::time::zone::{utc_offset, UtcOffset};
 ///
 /// const OFFSET: UtcOffset = utc_offset!("-07:00");
 ///
@@ -35,7 +35,8 @@ pub struct InvalidOffsetError;
 /// assert_eq!(OFFSET, offset);
 /// ```
 #[macro_export]
-macro_rules! utc_offset {
+#[doc(hidden)]
+macro_rules! time_zone_utc_offset {
     ($offset:literal) => {
         const {
             match $crate::zone::UtcOffset::try_from_str($offset) {
@@ -45,6 +46,8 @@ macro_rules! utc_offset {
         }
     };
 }
+#[doc(inline)]
+pub use time_zone_utc_offset as utc_offset;
 
 /// An offset from Coordinated Universal Time (UTC).
 ///
@@ -84,7 +87,7 @@ impl UtcOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::{utc_offset, zone::UtcOffset};
+    /// use icu::time::zone::{utc_offset, UtcOffset};
     ///
     /// let offset0: UtcOffset = utc_offset!("Z");
     /// let offset1: UtcOffset = utc_offset!("+05");
