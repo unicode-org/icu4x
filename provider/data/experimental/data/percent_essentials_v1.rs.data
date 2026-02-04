@@ -19,9 +19,9 @@
 #[macro_export]
 macro_rules! __impl_percent_essentials_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.85"]
+        #[clippy::msrv = "1.86"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.85"]
+        #[clippy::msrv = "1.86"]
         impl $provider {
             const DATA_PERCENT_ESSENTIALS_V1: icu_provider::baked::zerotrie::Data<icu::experimental::dimension::provider::percent::PercentEssentialsV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD6abcdefghjklmnopqrstuwy\n\x1B$7cwy\x83\x85\x8B\x92\x94\xA0\xA3\xA5\xA7\xB0\xBC\xC5\xCC\xCFr\x80-S\xC2AO\x01\x81\x81\xC5elrsu\x01\x03\x04\x05\x82o\x83\x84\x85a\x84\xC3asv\x01\x02\x84\x84\x84\xC3aes\x01\x0B\x84\x82-\xC2CL\x02H\x85I\x85b\x82\xC5nostu\x19\x1A !-\xC5ADFNS\x02\x08\n\x0CT\x84\xC2EK\x01\x84\x84I\x84O\x84E\x84\x85\x84-419\x86\x87\x88\xC4aior\x01\x02\x03\x89\x8A\x8A\x8B-C\xC2AH\x01\x82\x8Cl\x84\xC3ers\x01\x02\x8D\x8Ab\x82a\x8E\xC2au\x01\x85\x8F\xC2bt\x01\x84\x90\0k\x82\xC3dno\x02\x04s\x84\x90\x01\x90\x02c\x90\x03s\x89u\x84\xC3mou\x01\x02\x85\x84\x82\xC4klqv\x01\x02\x03\x84\x8A\x85\x8A\xC3krt\x01\x02\x84\x8F\x84\xC2nr\x02d\x86\x8Do\x90\x04o\x90\x05-BJ\x90\x06" };
@@ -29,7 +29,7 @@ macro_rules! __impl_percent_essentials_v1 {
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.85"]
+        #[clippy::msrv = "1.86"]
         impl icu_provider::DataProvider<icu::experimental::dimension::provider::percent::PercentEssentialsV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::percent::PercentEssentialsV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -55,7 +55,7 @@ macro_rules! __impl_percent_essentials_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_percent_essentials_v1!($provider);
-        #[clippy::msrv = "1.85"]
+        #[clippy::msrv = "1.86"]
         impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::percent::PercentEssentialsV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_PERCENT_ESSENTIALS_V1).collect())

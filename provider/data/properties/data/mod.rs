@@ -151,7 +151,7 @@ include!("property_name_parse_canonical_combining_class_v1.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.85"]
+        #[clippy::msrv = "1.86"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
