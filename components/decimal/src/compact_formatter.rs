@@ -103,7 +103,7 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
-            compact_data: DataProvider::<DecimalCompactShortV1>::load_with_fallback(
+            compact_data: load_with_fallback::<DecimalCompactShortV1>(
                 &Baked,
                 DecimalFormatterPreferences::from(&prefs)
                     .nu_id(&locale)
@@ -146,7 +146,7 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
-            compact_data: DataProvider::<DecimalCompactShortV1>::load_with_fallback(
+            compact_data: load_with_fallback::<DecimalCompactShortV1>(
                 provider,
                 DecimalFormatterPreferences::from(&prefs)
                     .nu_id(&locale)
@@ -189,7 +189,7 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
-            compact_data: DataProvider::<DecimalCompactLongV1>::load_with_fallback(
+            compact_data: load_with_fallback::<DecimalCompactLongV1>(
                 &Baked,
                 DecimalFormatterPreferences::from(&prefs)
                     .nu_id(&locale)
@@ -232,7 +232,7 @@ impl CompactDecimalFormatter {
                 options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
-            compact_data: DataProvider::<DecimalCompactLongV1>::load_with_fallback(
+            compact_data: load_with_fallback::<DecimalCompactLongV1>(
                 provider,
                 DecimalFormatterPreferences::from(&prefs)
                     .nu_id(&locale)

@@ -20,38 +20,6 @@ where
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-
-    #[doc(hidden)]
-    fn load_with_fallback<'a>(
-        &self,
-        ids: impl Iterator<Item = DataIdentifierBorrowed<'a>>,
-    ) -> Result<DataResponse<M>, DataError> {
-        let mut ids = ids.peekable();
-
-        while let Some(id) = ids.next() {
-            if ids.peek().is_some() {
-                if let Some(r) = self
-                    .load(DataRequest {
-                        id,
-                        metadata: DataRequestMetadata {
-                            silent: true,
-                            ..Default::default()
-                        },
-                    })
-                    .allow_identifier_not_found()?
-                {
-                    return Ok(r);
-                }
-            } else {
-                return self.load(DataRequest {
-                    id,
-                    metadata: DataRequestMetadata::default(),
-                });
-            }
-        }
-
-        Err(DataErrorKind::InvalidRequest.into_error())
-    }
 }
 
 impl<M, P> DataProvider<M> for &P

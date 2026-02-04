@@ -81,8 +81,8 @@ impl DecimalFormatter {
         let locale = DecimalSymbolsV1::make_locale(prefs.locale_preferences);
 
         // Load symbols for the locale/numsys pair provided
-        let symbols = DataProvider::<DecimalSymbolsV1>::load_with_fallback(
-            &provider,
+        let symbols = load_with_fallback::<DecimalSymbolsV1>(
+            provider,
             // fall back to the locale
             prefs
                 .nu_id(&locale)
@@ -95,12 +95,12 @@ impl DecimalFormatter {
             DataMarkerAttributes::from_str_or_panic(symbols.get().numsys()),
         );
 
-        let digits = provider
-            .load_with_fallback(
-                // fall back to the resolved numbering system
-                prefs.nu_id(&locale).into_iter().chain([resolved_nu_id]),
-            )?
-            .payload;
+        let digits = load_with_fallback(
+            provider,
+            // fall back to the resolved numbering system
+            prefs.nu_id(&locale).into_iter().chain([resolved_nu_id]),
+        )?
+        .payload;
 
         Ok(Self {
             options,
