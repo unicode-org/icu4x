@@ -82,7 +82,7 @@ function updateFromHash() {
                 valueToSet = parseFloat(valStr);
             } else if (tagName === 'terminus-param-codepoint') {
                 if (valStr.startsWith('0x') || valStr.startsWith('U+')) {
-                    valueToSet = parseInt(valStr.replace(/^U\+/, '0x'), 16);
+                    valueToSet = parseInt(valStr.replace('U+', '0x'), 16);
                 } else if (/^[0-9]+$/.test(valStr)) {
                     valueToSet = parseInt(valStr, 10);
                 } else {
