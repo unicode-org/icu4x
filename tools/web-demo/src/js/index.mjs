@@ -45,7 +45,7 @@ function updateFromHash() {
     const cleanHash = hash.substring(1);
     const parts = cleanHash.split('?');
     const funcName = parts[0];
-    const queryString = parts[1] || "";
+    const queryString = parts[1];
 
     if (!funcName) return;
 
