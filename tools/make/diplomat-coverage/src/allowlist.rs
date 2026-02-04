@@ -284,6 +284,10 @@ lazy_static::lazy_static! {
         // We should occasionally review these
         // =========================
 
+        "icu::decimal::CompactDecimalFormatter",
+        "icu::decimal::error::ExponentError",
+        "icu::decimal::options::CompactDecimalFormatterOptions",
+
         "icu::experimental",
 
         "icu::pattern",

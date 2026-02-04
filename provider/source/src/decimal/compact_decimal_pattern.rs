@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde::numbers::DecimalFormat;
-use icu::experimental::compactdecimal::provider::CompactPatterns;
+use icu::decimal::provider::CompactPatterns;
 use icu::plurals::PluralElements;
 use icu_pattern::{QuoteMode, SinglePlaceholder, SinglePlaceholderPattern};
 use std::borrow::Cow;

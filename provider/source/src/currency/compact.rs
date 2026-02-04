@@ -9,7 +9,7 @@ use crate::SourceDataProvider;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use icu::experimental::compactdecimal::provider::CompactPatterns;
+use icu::decimal::provider::CompactPatterns;
 use icu::experimental::dimension::provider::currency::compact::*;
 use icu::plurals::PluralElements;
 use icu_pattern::DoublePlaceholderPattern;
