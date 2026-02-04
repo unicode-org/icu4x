@@ -31,6 +31,7 @@ pub(crate) struct PropertyValue<T> {
 
 pub(crate) mod enumerated {
     #[derive(serde::Deserialize)]
+    #[allow(dead_code)]
     pub(crate) struct EnumeratedPropertyMapRange<T> {
         pub(crate) a: u32,
         pub(crate) b: u32,
@@ -45,7 +46,6 @@ pub(crate) mod enumerated {
         #[serde(default)]
         pub(crate) values: Vec<super::PropertyValue<u16>>,
         pub(crate) ranges: Vec<EnumeratedPropertyMapRange<u16>>,
-        pub(crate) code_point_trie: super::CodePointTrieToml,
     }
 
     #[derive(serde::Deserialize)]
