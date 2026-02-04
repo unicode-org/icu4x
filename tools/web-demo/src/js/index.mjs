@@ -11,28 +11,28 @@ window.icu = window.top.icu = icu;
 
 // Renders all termini into the class="container" element
 Object.values(RenderInfo.termini).toSorted((a, b) => a.funcName < b.funcName ? -1 : 1).forEach((t) => {
-	let details = document.createElement("details");
-	let summary = document.createElement("summary");
-	summary.innerHTML = `<code>${t.funcName}</code>`;
-	details.appendChild(summary);
-	details.appendChild(document.createElement("br"));
-	details.appendChild(new TerminusRender(
-		RenderInfo.termini[t.funcName],
-		(el) => {
-			// Necessary for Prism to know the language to highlight for, and also
-			// to ensure CSS `white-space: pre-wrap` is applied from selector
-			el.classList.add("language-js");
-			el.textContent = beautify.js(el.textContent, {
-				indent_size: 2,
-				indent_char: " ",
-				break_chained_methods: true,
-				// brace_style: "collapse",
-				wrap_line_length: 45,
-			});
-			Prism.highlightElement(el);
-		},
-	));
-	document.getElementsByClassName("container")[0].appendChild(details);
+    let details = document.createElement("details");
+    let summary = document.createElement("summary");
+    summary.innerHTML = `<code>${t.funcName}</code>`;
+    details.appendChild(summary);
+    details.appendChild(document.createElement("br"));
+    details.appendChild(new TerminusRender(
+        RenderInfo.termini[t.funcName],
+        (el) => {
+            // Necessary for Prism to know the language to highlight for, and also
+            // to ensure CSS `white-space: pre-wrap` is applied from selector
+            el.classList.add("language-js");
+            el.textContent = beautify.js(el.textContent, {
+                indent_size: 2,
+                indent_char: " ",
+                break_chained_methods: true,
+                // brace_style: "collapse",
+                wrap_line_length: 45,
+            });
+            Prism.highlightElement(el);
+        },
+    ));
+    document.getElementsByClassName("container")[0].appendChild(details);
 });
 
 document.querySelector("#loading").hidden = true;
@@ -49,8 +49,6 @@ function updateFromHash() {
 
     if (!funcName) return;
 
-    const params = new URLSearchParams(queryString);
-
     const terminusRender = document.getElementById(funcName);
     if (!terminusRender) {
         console.warn(`Function ${funcName} not found`);
@@ -63,6 +61,10 @@ function updateFromHash() {
         details.scrollIntoView();
     }
 
+    // Optimization: If no query string, stop here.
+    if (!queryString) return;
+
+    const params = new URLSearchParams(queryString);
     const terminusParams = terminusRender.querySelector('terminus-params');
     if (!terminusParams) return;
 
@@ -71,30 +73,30 @@ function updateFromHash() {
         if (!nameSlot) continue;
         const paramName = nameSlot.innerText;
 
-        if (params.has(paramName)) {
+        // Optimization: Check existence and capability before calculating value
+        if (params.has(paramName) && paramElement.setValue) {
             const valStr = params.get(paramName);
             const tagName = paramElement.tagName.toLowerCase();
-            let valueToSet = valStr;
 
             if (tagName === 'terminus-param-boolean') {
-                valueToSet = (valStr === 'true' || valStr === '1');
+                paramElement.setValue(valStr === 'true' || valStr === '1');
             } else if (tagName === 'terminus-param-number') {
-                valueToSet = parseFloat(valStr);
+                paramElement.setValue(parseFloat(valStr));
             } else if (tagName === 'terminus-param-codepoint') {
                 if (valStr.startsWith('0x') || valStr.startsWith('U+')) {
-                    valueToSet = parseInt(valStr.replace('U+', '0x'), 16);
+                    paramElement.setValue(parseInt(valStr.replace('U+', '0x'), 16));
                 } else if (/^[0-9]+$/.test(valStr)) {
-                    valueToSet = parseInt(valStr, 10);
+                    paramElement.setValue(parseInt(valStr, 10));
                 } else {
-                    valueToSet = valStr.codePointAt(0);
+                    paramElement.setValue(valStr.codePointAt(0));
                 }
+            } else {
+                // Default/Enum fallback
+                paramElement.setValue(valStr);
             }
-            
-            if (paramElement.setValue) {
-                paramElement.setValue(valueToSet);
-                if (paramElement.inputElement) {
-                    paramElement.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-                }
+
+            if (paramElement.inputElement) {
+                paramElement.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }
     }
