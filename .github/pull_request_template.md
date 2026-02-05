@@ -9,8 +9,8 @@ information on contributing to ICU4X.
 Please fill in the following disclosure about your use of AI tools.
 -->
 
-Check one of the following boxes:
+AI tool disclosure:
 
-- [ ] All code in this pull request was written by me, a human.
-- [ ] This pull request was a collaboration between me, a human, and an AI agent.
-- [ ] This pull request was entirely written and orchestrated by aan AI agent.
+- [ ] I wrote this code myself, without help from an AI tool.
+- [ ] I wrote this code with help from an AI tool.
+- [ ] This pull request was entirely written and orchestrated by an AI tool.
