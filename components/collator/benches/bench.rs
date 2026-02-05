@@ -171,50 +171,50 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             vec![&content_latin, &content_photos],
             &all_strength,
         ),
-        (
-            locale!("da-DK"),
-            vec![&content_latin, &content_photos],
-            &all_strength,
-        ),
-        (locale!("fr-CA"), vec![&content_latin], &all_strength),
+        // (
+        //     locale!("da-DK"),
+        //     vec![&content_photos],
+        //     &all_strength,
+        // ),
+        // (locale!("fr-CA"), vec![&content_latin], &all_strength),
         (
             locale!("ja-JP"),
-            vec![&content_latin, &content_jp_h, &content_jp_k, &content_asian],
+            vec![&content_jp_h, &content_jp_k, &content_asian],
             &all_strength,
         ),
         (
             locale!("zh-u-co-pinyin"),
-            vec![&content_latin, &content_chinese],
+            vec![&content_chinese],
             &all_strength,
         ), // zh_CN
         (
             locale!("zh-u-co-stroke"),
-            vec![&content_latin, &content_chinese],
+            vec![&content_chinese],
             &all_strength,
         ), // zh_TW
         (
             locale!("ru-RU"),
-            vec![&content_latin, &content_russian],
+            vec![&content_russian],
             &all_strength,
         ),
         (
             locale!("sv"),
-            vec![&content_latin, &content_swedish],
+            vec![&content_swedish],
             &all_strength,
         ),
         (
             locale!("th"),
-            vec![&content_latin, &content_thai],
+            vec![&content_thai],
             &all_strength,
         ),
         (
             locale!("ko-KR"),
-            vec![&content_latin, &content_korean],
+            vec![&content_korean],
             &all_strength,
         ),
         (
             locale!("pl"),
-            vec![&content_latin, &content_polish],
+            vec![&content_polish],
             &all_strength,
         ),
     ];

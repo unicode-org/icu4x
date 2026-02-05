@@ -1503,120 +1503,107 @@ where
             // The wall of code before the "Slow path" is an attempt to
             // optimize based on that bet.
 
-            // XXX: Move Hangul syllables inwards as in the normalizer.
-            let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
-            if hangul_offset >= HANGUL_S_COUNT {
-                // See components/normalizer/trie-value-format.md
-                let decomposition = c_c_tv.trie_val;
-                if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
-                    // The character is its own decomposition
+            // See components/normalizer/trie-value-format.md
+            let decomposition = c_c_tv.trie_val;
+            if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
+                // The character is its own decomposition
 
-                    // XXX: This is a bad idea. Make sure the jamo are in the root trie and then
-                    // remove this special case.
-                    let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
-                    // Attribute belongs on an inner expression, but
-                    // https://github.com/rust-lang/rust/issues/15701
-                    #[expect(clippy::indexing_slicing)]
-                    if jamo_index >= self.jamo.len() {
-                        // XXX: Consider a cache from identical prefix lookup here.
-                        ce32 = data.ce32_for_char(c);
-                        if ce32 == FALLBACK_CE32 {
-                            data = self.root;
-                            ce32 = data.ce32_for_char(c);
-                        }
-                    } else {
-                        // The purpose of reading the CE32 from the jamo table instead
-                        // of the trie even in this case is to make it unnecessary
-                        // for all search collation tries to carry a copy of the Hangul
-                        // part of the search root. Instead, all non-Korean tailorings
-                        // can use a shared copy of the non-Korean search jamo table.
-                        //
-                        // TODO(#1941): This isn't actually true with the current jamo
-                        // search expansions!
-
-                        // TODO(#1941): Instead of having different jamo CE32 table for
-                        // "search" collations, we could instead decompose the archaic
-                        // jamo to the modern approximation sequences here and then map
-                        // those by looking up the modern jamo from the normal root.
-
-                        // We need to set data to root, because archaic jamo refer to
-                        // the root.
+                // XXX: This is a bad idea. Make sure the jamo are in the root trie and then
+                // remove this special case.
+                let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
+                // Attribute belongs on an inner expression, but
+                // https://github.com/rust-lang/rust/issues/15701
+                #[expect(clippy::indexing_slicing)]
+                if jamo_index >= self.jamo.len() {
+                    // XXX: Consider a cache from identical prefix lookup here.
+                    ce32 = data.ce32_for_char(c);
+                    if ce32 == FALLBACK_CE32 {
                         data = self.root;
-                        // Index in range by construction above. Not using `get` with
-                        // `if let` in order to put the likely branch first.
-                        ce32 = CollationElement32::new_from_ule(self.jamo[jamo_index]);
-                    }
-                    if self.is_next_decomposition_starts_with_starter() {
-                        if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
-                            self.prefix_push(c);
-                            return ce;
-                        } else if ce32.tag() == Tag::Contraction
-                            && ce32.every_suffix_starts_with_combining()
-                        {
-                            // Avoid falling onto the slow path e.g. that letters that
-                            // may contract with a diacritic when we know that it won't
-                            // contract with the next character.
-                            let default = data.get_default(ce32.index());
-                            if let Some(ce) = default.to_ce_simple_or_long_primary() {
-                                self.prefix_push(c);
-                                return ce;
-                            }
-                        }
-                        // TODO(2003): Figure out if it would be an optimization to
-                        // handle `Implicit` and `Offset` tags here.
+                        ce32 = data.ce32_for_char(c);
                     }
                 } else {
-                    let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
-                    let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
-                    if !high_zeros && !low_zeros {
-                        // Decomposition into two BMP characters: starter and non-starter
-                        c = char_from_u32(decomposition & 0x7FFF);
-                        ce32 = data.ce32_for_char(c);
-                        if ce32 == FALLBACK_CE32 {
-                            data = self.root;
-                            ce32 = data.ce32_for_char(c);
+                    // The purpose of reading the CE32 from the jamo table instead
+                    // of the trie even in this case is to make it unnecessary
+                    // for all search collation tries to carry a copy of the Hangul
+                    // part of the search root. Instead, all non-Korean tailorings
+                    // can use a shared copy of the non-Korean search jamo table.
+                    //
+                    // TODO(#1941): This isn't actually true with the current jamo
+                    // search expansions!
+
+                    // TODO(#1941): Instead of having different jamo CE32 table for
+                    // "search" collations, we could instead decompose the archaic
+                    // jamo to the modern approximation sequences here and then map
+                    // those by looking up the modern jamo from the normal root.
+
+                    // We need to set data to root, because archaic jamo refer to
+                    // the root.
+                    data = self.root;
+                    // Index in range by construction above. Not using `get` with
+                    // `if let` in order to put the likely branch first.
+                    ce32 = CollationElement32::new_from_ule(self.jamo[jamo_index]);
+                }
+                if self.is_next_decomposition_starts_with_starter() {
+                    if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
+                        self.prefix_push(c);
+                        return ce;
+                    } else if ce32.tag() == Tag::Contraction
+                        && ce32.every_suffix_starts_with_combining()
+                    {
+                        // Avoid falling onto the slow path e.g. that letters that
+                        // may contract with a diacritic when we know that it won't
+                        // contract with the next character.
+                        let default = data.get_default(ce32.index());
+                        if let Some(ce) = default.to_ce_simple_or_long_primary() {
+                            self.prefix_push(c);
+                            return ce;
                         }
-                        let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
-                        if self.is_next_decomposition_starts_with_starter() {
-                            let diacritic_index =
-                                (combining as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
-                            if let Some(secondary) = self.diacritics.get(diacritic_index) {
-                                debug_assert_ne!(combining, '\u{0344}', "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
-                                if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
-                                    let ce_for_combining =
-                                        CollationElement::new_from_secondary(secondary);
-                                    self.pending.push(ce_for_combining);
-                                    self.mark_prefix_unmatchable();
-                                    return ce;
-                                }
-                                if ce32.tag() == Tag::Contraction
-                                    && ce32.every_suffix_starts_with_combining()
-                                {
-                                    let (default, mut trie) =
-                                        data.get_default_and_trie(ce32.index());
-                                    match trie.next(combining) {
-                                        TrieResult::NoMatch | TrieResult::NoValue => {
-                                            if let Some(ce) = default.to_ce_simple_or_long_primary()
-                                            {
-                                                let ce_for_combining =
-                                                    CollationElement::new_from_secondary(secondary);
-                                                self.pending.push(ce_for_combining);
-                                                self.mark_prefix_unmatchable();
-                                                return ce;
-                                            }
+                    }
+                    // TODO(2003): Figure out if it would be an optimization to
+                    // handle `Implicit` and `Offset` tags here.
+                }
+            } else {
+                let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
+                let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+                if !high_zeros && !low_zeros {
+                    // Decomposition into two BMP characters: starter and non-starter
+                    c = char_from_u32(decomposition & 0x7FFF);
+                    ce32 = data.ce32_for_char(c);
+                    if ce32 == FALLBACK_CE32 {
+                        data = self.root;
+                        ce32 = data.ce32_for_char(c);
+                    }
+                    let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
+                    if self.is_next_decomposition_starts_with_starter() {
+                        let diacritic_index =
+                            (combining as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
+                        if let Some(secondary) = self.diacritics.get(diacritic_index) {
+                            debug_assert_ne!(combining, '\u{0344}', "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
+                            if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
+                                let ce_for_combining =
+                                    CollationElement::new_from_secondary(secondary);
+                                self.pending.push(ce_for_combining);
+                                self.mark_prefix_unmatchable();
+                                return ce;
+                            }
+                            if ce32.tag() == Tag::Contraction
+                                && ce32.every_suffix_starts_with_combining()
+                            {
+                                let (default, mut trie) =
+                                    data.get_default_and_trie(ce32.index());
+                                match trie.next(combining) {
+                                    TrieResult::NoMatch | TrieResult::NoValue => {
+                                        if let Some(ce) = default.to_ce_simple_or_long_primary()
+                                        {
+                                            let ce_for_combining =
+                                                CollationElement::new_from_secondary(secondary);
+                                            self.pending.push(ce_for_combining);
+                                            self.mark_prefix_unmatchable();
+                                            return ce;
                                         }
-                                        TrieResult::Intermediate(trie_ce32) => {
-                                            if !ce32.at_least_one_suffix_contains_starter() {
-                                                if let Some(ce) =
-                                                    CollationElement32::new(trie_ce32 as u32)
-                                                        .to_ce_simple_or_long_primary()
-                                                {
-                                                    self.mark_prefix_unmatchable();
-                                                    return ce;
-                                                }
-                                            }
-                                        }
-                                        TrieResult::FinalValue(trie_ce32) => {
+                                    }
+                                    TrieResult::Intermediate(trie_ce32) => {
+                                        if !ce32.at_least_one_suffix_contains_starter() {
                                             if let Some(ce) =
                                                 CollationElement32::new(trie_ce32 as u32)
                                                     .to_ce_simple_or_long_primary()
@@ -1626,211 +1613,225 @@ where
                                             }
                                         }
                                     }
+                                    TrieResult::FinalValue(trie_ce32) => {
+                                        if let Some(ce) =
+                                            CollationElement32::new(trie_ce32 as u32)
+                                                .to_ce_simple_or_long_primary()
+                                        {
+                                            self.mark_prefix_unmatchable();
+                                            return ce;
+                                        }
+                                    }
                                 }
                             }
                         }
-                        combining_characters
-                            .push(CharacterAndClass::new_with_placeholder(combining));
-                    } else if high_zeros {
-                        let singleton = decomposition as u16;
-                        debug_assert_ne!(
-                            singleton, FDFA_MARKER,
-                            "How come U+FDFA NFKD marker seen in NFD?"
-                        );
-                        // Decomposition into one BMP character
-                        c = char_from_u16(singleton);
-                        ce32 = data.ce32_for_char(c);
-                        if ce32 == FALLBACK_CE32 {
-                            data = self.root;
-                            ce32 = data.ce32_for_char(c);
-                        }
+                    }
+                    combining_characters
+                        .push(CharacterAndClass::new_with_placeholder(combining));
+                } else if high_zeros {
+                    // Do the Hangul check on the character instead of trusting
+                    // the trie value in order not to let GIGO cause unsafety.
+                    let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
+                    if hangul_offset < HANGUL_S_COUNT {
+                        // Hangul syllable
+                        // The math here comes from page 144 of Unicode 14.0
+                        let l = hangul_offset / HANGUL_N_COUNT;
+                        let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                        let t = hangul_offset % HANGUL_T_COUNT;
+
+                        // No prefix matches on Hangul
+                        self.mark_prefix_unmatchable();
+                        // Indexing OK, because indices in range by construction
+                        #[expect(clippy::indexing_slicing)]
                         if self.is_next_decomposition_starts_with_starter() {
-                            if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
-                                self.prefix_push(c);
-                                return ce;
+                            // TODO(#1941): Assuming self-contained CE32s is OK for the root,
+                            // but not currently OK for search collation, which at this time
+                            // do not support tailored Hangul.
+                            self.pending.push(
+                                CollationElement32::new_from_ule(
+                                    self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
+                                )
+                                .to_ce_self_contained_or_gigo(),
+                            );
+                            if t != 0 {
+                                self.pending.push(
+                                    CollationElement32::new_from_ule(
+                                        self.jamo[(HANGUL_T_BASE - HANGUL_L_BASE + t) as usize],
+                                    )
+                                    .to_ce_self_contained_or_gigo(),
+                                );
+                            }
+                            return CollationElement32::new_from_ule(self.jamo[l as usize])
+                                .to_ce_self_contained_or_gigo();
+                        }
+
+                        // Uphold the invariant that the upcoming character is a starter (or end of stream)
+                        // at the start of the next `next()` call. We uphold this invariant by leaving the
+                        // last jamo unmapped to `CollationElement` in `pending` and instead prepend it to
+                        // `upcoming`.
+                        //
+                        // Indexing OK, because indices in range by construction
+                        #[expect(clippy::indexing_slicing)]
+                        if t != 0 {
+                            self.pending.push(
+                                CollationElement32::new_from_ule(
+                                    self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
+                                )
+                                .to_ce_self_contained_or_gigo(),
+                            );
+                            self.upcoming.insert(
+                                0,
+                                // Safety: HANGUL_T_BASE is 0x11A7, t is < HANGUL_T_COUNT = 28, so this is definitely
+                                // in range for a char (≤ 0xD800)
+                                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
+                                    core::char::from_u32_unchecked(HANGUL_T_BASE + t)
+                                }),
+                            );
+                        } else {
+                            self.upcoming.insert(
+                                0,
+                                // Safety: HANGUL_V_BASE is 0x1161, v is < HANGUL_N_COUNT = 588, so this is definitely
+                                // in range for a char (≤ 0xD800)
+                                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
+                                    core::char::from_u32_unchecked(HANGUL_V_BASE + v)
+                                }),
+                            );
+                        }
+
+                        // Indexing OK, because indices in range by construction
+                        #[expect(clippy::indexing_slicing)]
+                        return CollationElement32::new_from_ule(self.jamo[l as usize])
+                            .to_ce_self_contained_or_gigo();
+                    }
+
+                    let singleton = decomposition as u16;
+                    debug_assert_ne!(
+                        singleton, FDFA_MARKER,
+                        "How come U+FDFA NFKD marker seen in NFD?"
+                    );
+                    // Decomposition into one BMP character
+                    c = char_from_u16(singleton);
+                    ce32 = data.ce32_for_char(c);
+                    if ce32 == FALLBACK_CE32 {
+                        data = self.root;
+                        ce32 = data.ce32_for_char(c);
+                    }
+                    if self.is_next_decomposition_starts_with_starter() {
+                        if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
+                            self.prefix_push(c);
+                            return ce;
+                        }
+                    }
+                } else {
+                    debug_assert!(low_zeros);
+                    // Only 12 of 14 bits used as of Unicode 16.
+                    let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+                    // Only 3 of 4 bits used as of Unicode 16.
+                    let len_bits = decomposition & 0b1111;
+                    let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
+                    if offset < self.scalars16.len() {
+                        let len = (len_bits + 2) as usize;
+                        let (starter, tail) = self
+                            .scalars16
+                            .get_subslice(offset..offset + len)
+                            .and_then(ZeroSlice::split_first)
+                            .map_or_else(
+                                || {
+                                    // GIGO case
+                                    debug_assert!(false);
+                                    (REPLACEMENT_CHARACTER, EMPTY_U16)
+                                },
+                                |(first, tail)| (char_from_u16(first), tail),
+                            );
+                        c = starter;
+                        if only_non_starters_in_trail {
+                            for u in tail.iter() {
+                                let char_from_u = char_from_u16(u);
+                                let trie_value = self.iter.trie().bmp(u);
+                                let ccc = ccc_from_trie_value(trie_value);
+                                combining_characters
+                                    .push(CharacterAndClass::new(char_from_u, ccc));
+                            }
+                        } else {
+                            let mut it = tail.iter();
+                            while let Some(u) = it.next() {
+                                let ch = char_from_u16(u);
+                                let ccc = ccc_from_trie_value(self.iter.trie().bmp(u));
+                                if ccc != CanonicalCombiningClass::NotReordered {
+                                    // As of Unicode 14, this branch is never taken.
+                                    // It exist for forward compatibility.
+                                    combining_characters.push(CharacterAndClass::new(ch, ccc));
+                                    continue;
+                                }
+
+                                // At this point, we might have a single newly-read
+                                // combining character in self.upcoming. In that case, we
+                                // need to buffer up the upcoming combining characters, too,
+                                // in order to make `prepend_and_sort_non_starter_prefix_of_suffix`
+                                // sort the right characters.
+                                self.maybe_gather_combining();
+
+                                while let Some(u) = it.next_back() {
+                                    let tail_char = char_from_u16(u);
+                                    let trie_value = self.iter.trie().bmp(u);
+                                    self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
+                                }
+                                self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(ch));
+                                break;
                             }
                         }
                     } else {
-                        debug_assert!(low_zeros);
-                        // Only 12 of 14 bits used as of Unicode 16.
-                        let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
-                        // Only 3 of 4 bits used as of Unicode 16.
-                        let len_bits = decomposition & 0b1111;
-                        let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
-                        if offset < self.scalars16.len() {
-                            let len = (len_bits + 2) as usize;
-                            let (starter, tail) = self
-                                .scalars16
-                                .get_subslice(offset..offset + len)
-                                .and_then(ZeroSlice::split_first)
-                                .map_or_else(
-                                    || {
-                                        // GIGO case
-                                        debug_assert!(false);
-                                        (REPLACEMENT_CHARACTER, EMPTY_U16)
-                                    },
-                                    |(first, tail)| (char_from_u16(first), tail),
-                                );
-                            c = starter;
-                            if only_non_starters_in_trail {
-                                for u in tail.iter() {
-                                    let char_from_u = char_from_u16(u);
-                                    let trie_value = self.iter.trie().bmp(u);
-                                    let ccc = ccc_from_trie_value(trie_value);
-                                    combining_characters
-                                        .push(CharacterAndClass::new(char_from_u, ccc));
-                                }
-                            } else {
-                                let mut it = tail.iter();
-                                while let Some(u) = it.next() {
-                                    let ch = char_from_u16(u);
-                                    let ccc = ccc_from_trie_value(self.iter.trie().bmp(u));
-                                    if ccc != CanonicalCombiningClass::NotReordered {
-                                        // As of Unicode 14, this branch is never taken.
-                                        // It exist for forward compatibility.
-                                        combining_characters.push(CharacterAndClass::new(ch, ccc));
-                                        continue;
-                                    }
+                        let len = (len_bits + 1) as usize;
+                        let offset32 = offset - self.scalars16.len();
+                        let (starter, tail) = self
+                            .scalars32
+                            .get_subslice(offset32..offset32 + len)
+                            .and_then(|slice| slice.split_first())
+                            .unwrap_or_else(|| {
+                                // GIGO case
+                                debug_assert!(false);
+                                (REPLACEMENT_CHARACTER, EMPTY_CHAR)
+                            });
 
-                                    // At this point, we might have a single newly-read
-                                    // combining character in self.upcoming. In that case, we
-                                    // need to buffer up the upcoming combining characters, too,
-                                    // in order to make `prepend_and_sort_non_starter_prefix_of_suffix`
-                                    // sort the right characters.
-                                    self.maybe_gather_combining();
-
-                                    while let Some(u) = it.next_back() {
-                                        let tail_char = char_from_u16(u);
-                                        let trie_value = self.iter.trie().bmp(u);
-                                        self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
-                                    }
-                                    self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(ch));
-                                    break;
-                                }
+                        c = starter;
+                        if only_non_starters_in_trail {
+                            for ch in tail.iter() {
+                                let trie_value = self.iter.trie().scalar(ch);
+                                let ccc = ccc_from_trie_value(trie_value);
+                                combining_characters.push(CharacterAndClass::new(ch, ccc));
                             }
                         } else {
-                            let len = (len_bits + 1) as usize;
-                            let offset32 = offset - self.scalars16.len();
-                            let (starter, tail) = self
-                                .scalars32
-                                .get_subslice(offset32..offset32 + len)
-                                .and_then(|slice| slice.split_first())
-                                .unwrap_or_else(|| {
-                                    // GIGO case
-                                    debug_assert!(false);
-                                    (REPLACEMENT_CHARACTER, EMPTY_CHAR)
-                                });
-
-                            c = starter;
-                            if only_non_starters_in_trail {
-                                for ch in tail.iter() {
-                                    let trie_value = self.iter.trie().scalar(ch);
-                                    let ccc = ccc_from_trie_value(trie_value);
+                            let mut it = tail.iter();
+                            while let Some(ch) = it.next() {
+                                let ccc = ccc_from_trie_value(self.iter.trie().scalar(ch));
+                                if ccc != CanonicalCombiningClass::NotReordered {
+                                    // As of Unicode 14, this branch is never taken.
+                                    // It exist for forward compatibility.
                                     combining_characters.push(CharacterAndClass::new(ch, ccc));
+                                    continue;
                                 }
-                            } else {
-                                let mut it = tail.iter();
-                                while let Some(ch) = it.next() {
-                                    let ccc = ccc_from_trie_value(self.iter.trie().scalar(ch));
-                                    if ccc != CanonicalCombiningClass::NotReordered {
-                                        // As of Unicode 14, this branch is never taken.
-                                        // It exist for forward compatibility.
-                                        combining_characters.push(CharacterAndClass::new(ch, ccc));
-                                        continue;
-                                    }
-                                    // At this point, we might have a single newly-read
-                                    // combining character in self.upcoming. In that case, we
-                                    // need to buffer up the upcoming combining characters, too,
-                                    // in order to make `prepend_and_sort_non_starter_prefix_of_suffix`
-                                    // sort the right characters.
-                                    self.maybe_gather_combining();
+                                // At this point, we might have a single newly-read
+                                // combining character in self.upcoming. In that case, we
+                                // need to buffer up the upcoming combining characters, too,
+                                // in order to make `prepend_and_sort_non_starter_prefix_of_suffix`
+                                // sort the right characters.
+                                self.maybe_gather_combining();
 
-                                    while let Some(tail_char) = it.next_back() {
-                                        let trie_value = self.iter.trie().scalar(tail_char);
-                                        self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
-                                    }
-                                    self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(ch));
-                                    break;
+                                while let Some(tail_char) = it.next_back() {
+                                    let trie_value = self.iter.trie().scalar(tail_char);
+                                    self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
                                 }
+                                self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(ch));
+                                break;
                             }
                         }
+                    }
+                    ce32 = data.ce32_for_char(c);
+                    if ce32 == FALLBACK_CE32 {
+                        data = self.root;
                         ce32 = data.ce32_for_char(c);
-                        if ce32 == FALLBACK_CE32 {
-                            data = self.root;
-                            ce32 = data.ce32_for_char(c);
-                        }
                     }
                 }
-            } else {
-                // Hangul syllable
-                // The math here comes from page 144 of Unicode 14.0
-                let l = hangul_offset / HANGUL_N_COUNT;
-                let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-                let t = hangul_offset % HANGUL_T_COUNT;
-
-                // No prefix matches on Hangul
-                self.mark_prefix_unmatchable();
-                // Indexing OK, because indices in range by construction
-                #[expect(clippy::indexing_slicing)]
-                if self.is_next_decomposition_starts_with_starter() {
-                    // TODO(#1941): Assuming self-contained CE32s is OK for the root,
-                    // but not currently OK for search collation, which at this time
-                    // do not support tailored Hangul.
-                    self.pending.push(
-                        CollationElement32::new_from_ule(
-                            self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
-                        )
-                        .to_ce_self_contained_or_gigo(),
-                    );
-                    if t != 0 {
-                        self.pending.push(
-                            CollationElement32::new_from_ule(
-                                self.jamo[(HANGUL_T_BASE - HANGUL_L_BASE + t) as usize],
-                            )
-                            .to_ce_self_contained_or_gigo(),
-                        );
-                    }
-                    return CollationElement32::new_from_ule(self.jamo[l as usize])
-                        .to_ce_self_contained_or_gigo();
-                }
-
-                // Uphold the invariant that the upcoming character is a starter (or end of stream)
-                // at the start of the next `next()` call. We uphold this invariant by leaving the
-                // last jamo unmapped to `CollationElement` in `pending` and instead prepend it to
-                // `upcoming`.
-                //
-                // Indexing OK, because indices in range by construction
-                #[expect(clippy::indexing_slicing)]
-                if t != 0 {
-                    self.pending.push(
-                        CollationElement32::new_from_ule(
-                            self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
-                        )
-                        .to_ce_self_contained_or_gigo(),
-                    );
-                    self.upcoming.insert(
-                        0,
-                        // Safety: HANGUL_T_BASE is 0x11A7, t is < HANGUL_T_COUNT = 28, so this is definitely
-                        // in range for a char (≤ 0xD800)
-                        CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
-                            core::char::from_u32_unchecked(HANGUL_T_BASE + t)
-                        }),
-                    );
-                } else {
-                    self.upcoming.insert(
-                        0,
-                        // Safety: HANGUL_V_BASE is 0x1161, v is < HANGUL_N_COUNT = 588, so this is definitely
-                        // in range for a char (≤ 0xD800)
-                        CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
-                            core::char::from_u32_unchecked(HANGUL_V_BASE + v)
-                        }),
-                    );
-                }
-
-                // Indexing OK, because indices in range by construction
-                #[expect(clippy::indexing_slicing)]
-                return CollationElement32::new_from_ule(self.jamo[l as usize])
-                    .to_ce_self_contained_or_gigo();
             }
             let mut may_have_contracted_starter = false;
             // Slow path
