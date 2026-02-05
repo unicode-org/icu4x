@@ -210,30 +210,8 @@ class TerminusParams extends HTMLElement {
     constructor(params, evaluateExternal) {
         super();
 
-        for (let i = 0; i < params.length; i++) {
-
+        for (var i = 0; i < params.length; i++) {
             let param = params[i];
-            
-            if (!("defaultValue" in param)) {
-                switch (param.typeUse) {
-                    case "string":
-                        param.defaultValue = "en";
-                        break;
-                    case "Array<string>":
-                        param.defaultValue = "a, b, c";
-                        break;
-                    case "number":
-                        param.defaultValue = 1;
-                        break;
-                    case "boolean":
-                        param.defaultValue = false;
-                        break;
-                    case "codepoint":
-                        param.defaultValue = "a".codePointAt(0);
-                        break;
-                }
-            }
-
             let paramName = document.createElement("span");
             paramName.slot = "param-name";
             paramName.innerText = param.name;
@@ -264,7 +242,7 @@ class TerminusParams extends HTMLElement {
                         this.#params[i] = value;
                     };
                     evaluateExternal(param, updateParamEvent);
-                    continue;
+                    break;
                 default:
                     console.error("Unrecognized parameter: ", param);
                     break;
