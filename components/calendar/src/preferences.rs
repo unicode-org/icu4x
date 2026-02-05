@@ -62,10 +62,10 @@ impl CalendarPreferences {
     /// #     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
     /// # );
     /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
-    /// #     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+    /// #     CalendarAlgorithm::Gregory
     /// # );
     /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-hebrew-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
-    /// #     CalendarAlgorithm::Hebrew
+    /// #     CalendarAlgorithm::Gregory
     /// # );
     /// ```
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {

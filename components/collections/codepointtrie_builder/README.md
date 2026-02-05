@@ -42,22 +42,18 @@ renamed ICU4C symbols.
 ## Examples
 
 ```rust
-use icu::collections::codepointtrie::CodePointTrie;
 use icu::collections::codepointtrie::TrieType;
 use icu_codepointtrie_builder::CodePointTrieBuilder;
-use icu_codepointtrie_builder::CodePointTrieBuilderData;
 
-let default_value = 1;
+let default_value = 1u8;
 let error_value = 2;
-let values_by_code_point = &[3, 4, 5, 6];
 
-let cpt: CodePointTrie<u8> = CodePointTrieBuilder {
-    data: CodePointTrieBuilderData::ValuesByCodePoint(values_by_code_point),
-    default_value,
-    error_value,
-    trie_type: TrieType::Small,
-}
-.build();
+let mut builder = CodePointTrieBuilder::new(default_value, error_value, TrieType::Small);
+builder.set_value(0, 3);
+builder.set_value(1, 4);
+builder.set_value(2, 5);
+builder.set_value(3, 6);
+let cpt = builder.build();
 
 assert_eq!(cpt.get32(0), 3);
 assert_eq!(cpt.get32(1), 4);

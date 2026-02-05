@@ -10,10 +10,10 @@ updating the collation test data files in ICU4X to the corresponding new version
 To run the full tests, replace the test data files in this directory with their full counterparts from the upstream repository.
 The latest correct versions of the full test files from upstream, as found in these commits :
 https://raw.githubusercontent.com/unicode-org/icu/289d9703a03494ef0d9dfec122169b22bd9fc84f/icu4c/source/test/testdata/riwords.txt
-https://raw.githubusercontent.com/unicode-org/cldr/3fca77eda21cb22fa3d201f50b975da15ec72b7c/common/uca/CollationTest_CLDR_NON_IGNORABLE.txt
-https://raw.githubusercontent.com/unicode-org/cldr/3fca77eda21cb22fa3d201f50b975da15ec72b7c/common/uca/CollationTest_CLDR_SHIFTED.txt
+https://raw.githubusercontent.com/unicode-org/cldr/d73bf81bd755f753eccc886871d2ae1b9786a17b/common/uca/CollationTest_CLDR_NON_IGNORABLE.txt
+https://raw.githubusercontent.com/unicode-org/cldr/d73bf81bd755f753eccc886871d2ae1b9786a17b/common/uca/CollationTest_CLDR_SHIFTED.txt
 
 
 The latest correct versions of the checked-in placeholder files ("short" version files) for the last two come from upstream, as found in these commits:
-https://raw.githubusercontent.com/unicode-org/cldr/3fca77eda21cb22fa3d201f50b975da15ec72b7c/common/uca/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt
-https://raw.githubusercontent.com/unicode-org/cldr/3fca77eda21cb22fa3d201f50b975da15ec72b7c/common/uca/CollationTest_CLDR_SHIFTED_SHORT.txt
+https://raw.githubusercontent.com/unicode-org/cldr/d73bf81bd755f753eccc886871d2ae1b9786a17b/common/uca/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt
+https://raw.githubusercontent.com/unicode-org/cldr/d73bf81bd755f753eccc886871d2ae1b9786a17b/common/uca/CollationTest_CLDR_SHIFTED_SHORT.txt

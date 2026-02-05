@@ -92,10 +92,10 @@ pub enum LunisolarRangeError {
     /// use icu::calendar::Date;
     /// use icu::calendar::error::LunisolarRangeError;
     ///
-    /// Date::try_new_hebrew_fixed(5784, Month::leap(5), 1)
+    /// Date::try_new_hebrew_v2(5784, Month::leap(5), 1)
     ///     .expect("5784 is a leap year");
     ///
-    /// let err = Date::try_new_hebrew_fixed(5785, Month::leap(5), 1)
+    /// let err = Date::try_new_hebrew_v2(5785, Month::leap(5), 1)
     ///     .expect_err("5785 is a common year");
     ///
     /// assert!(matches!(err, LunisolarRangeError::InvalidMonth(_)));
@@ -168,7 +168,7 @@ mod unstable {
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(2000);
-        /// fields.month_code = Some(b"????");
+        /// fields.month_code = Some(b"sep");
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Iso)
@@ -185,12 +185,12 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M13");
+        /// fields.month = Some(Month::new(13));
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
@@ -206,12 +206,12 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M05L");
+        /// fields.month = Some(Month::leap(5));
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
@@ -256,13 +256,13 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use tinystr::tinystr;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M06");
+        /// fields.month = Some(Month::new(6));
         /// fields.ordinal_month = Some(6);
         /// fields.day = Some(1);
         ///

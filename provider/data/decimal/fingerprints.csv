@@ -1,3 +1,421 @@
+decimal/compact/long/v1, <lookup>, 1297B, 209 identifiers
+decimal/compact/long/v1, <total>, 19093B, 15961B, 138 unique payloads
+decimal/compact/long/v1, af, 76B, 53B, 27934e5fadbac225
+decimal/compact/long/v1, ak, 89B, 66B, e7df9e1c1ef2e4f1
+decimal/compact/long/v1, am, 90B, 67B, 7ffba1229f34a4b7
+decimal/compact/long/v1, ar, 146B, 123B, f2ef1c47815fedeb
+decimal/compact/long/v1, ar-BH/latn, -> ar
+decimal/compact/long/v1, ar-DJ/latn, -> ar
+decimal/compact/long/v1, ar-EG/latn, -> ar
+decimal/compact/long/v1, ar-ER/latn, -> ar
+decimal/compact/long/v1, ar-IL/latn, -> ar
+decimal/compact/long/v1, ar-IQ/latn, -> ar
+decimal/compact/long/v1, ar-JO/latn, -> ar
+decimal/compact/long/v1, ar-KM/latn, -> ar
+decimal/compact/long/v1, ar-KW/latn, -> ar
+decimal/compact/long/v1, ar-LB/latn, -> ar
+decimal/compact/long/v1, ar-MR/latn, -> ar
+decimal/compact/long/v1, ar-OM/latn, -> ar
+decimal/compact/long/v1, ar-PS/latn, -> ar
+decimal/compact/long/v1, ar-QA/latn, -> ar
+decimal/compact/long/v1, ar-SA/latn, -> ar
+decimal/compact/long/v1, ar-SD/latn, -> ar
+decimal/compact/long/v1, ar-SO/latn, -> ar
+decimal/compact/long/v1, ar-SS/latn, -> ar
+decimal/compact/long/v1, ar-SY/latn, -> ar
+decimal/compact/long/v1, ar-TD/latn, -> ar
+decimal/compact/long/v1, ar-YE/latn, -> ar
+decimal/compact/long/v1, ar/arab, -> ar
+decimal/compact/long/v1, as, 143B, 120B, a886c3d687b60648
+decimal/compact/long/v1, as/latn, -> as
+decimal/compact/long/v1, ast, 117B, 94B, ee59fd16496b7798
+decimal/compact/long/v1, az, 71B, 48B, 928fc18356dbdfab
+decimal/compact/long/v1, ba, 100B, 77B, 6a51f15ae40b79f1
+decimal/compact/long/v1, bal-Latn, 49B, 26B, 3732c9a122ef2ace
+decimal/compact/long/v1, be, 325B, 303B, 4fb1e0f94c58b9c3
+decimal/compact/long/v1, bg, 259B, 237B, 53b6c95a363bb405
+decimal/compact/long/v1, bgc/latn, 48B, 25B, 53a54d486b26198a
+decimal/compact/long/v1, bho/latn, -> bgc/latn
+decimal/compact/long/v1, blo, 181B, 159B, fcbea78bbcb0a7ca
+decimal/compact/long/v1, bn, 106B, 83B, a0e75118b8cd0d09
+decimal/compact/long/v1, bn/latn, -> bn
+decimal/compact/long/v1, br, 195B, 173B, cc91c654379ba49a
+decimal/compact/long/v1, brx, 117B, 94B, e3432efce8b6d005
+decimal/compact/long/v1, brx/deva, -> brx
+decimal/compact/long/v1, bs, 144B, 121B, b6ca3481852325c8
+decimal/compact/long/v1, bs-Cyrl, 74B, 51B, 25e2e350b114a137
+decimal/compact/long/v1, ca, 203B, 181B, 8617dab61bfd8e6c
+decimal/compact/long/v1, ceb, 83B, 60B, e0704572ecda8ac2
+decimal/compact/long/v1, chr, 123B, 100B, 429331d8441043d6
+decimal/compact/long/v1, cs, 320B, 298B, ad6d57ceae2d1a08
+decimal/compact/long/v1, cv, 76B, 53B, 57404c5b25aa22e5
+decimal/compact/long/v1, cy, 135B, 112B, 54d3bf207235aef3
+decimal/compact/long/v1, da, 168B, 146B, 35cea24e13947c47
+decimal/compact/long/v1, de, 170B, 148B, f80dcb07d07bd63d
+decimal/compact/long/v1, doi/deva, -> bgc/latn
+decimal/compact/long/v1, dsb, 234B, 212B, f1721d2168966b06
+decimal/compact/long/v1, ee, 88B, 65B, f078eedc70c8e6d0
+decimal/compact/long/v1, el, 382B, 360B, d405972439dcc044
+decimal/compact/long/v1, en, 78B, 55B, 5b9a57253df17440
+decimal/compact/long/v1, en-IN, 83B, 60B, 8e9401fb1d01ef18
+decimal/compact/long/v1, eo, 148B, 125B, 699b6e8e2f882e0e
+decimal/compact/long/v1, es, 133B, 110B, 2f40135deb143cf7
+decimal/compact/long/v1, et, 161B, 139B, 84f36fb6b8a706ef
+decimal/compact/long/v1, eu, 48B, 25B, 2b53b25827a703a2
+decimal/compact/long/v1, fa, 104B, 81B, 1df68f2bbd20e6b2
+decimal/compact/long/v1, fa/latn, -> fa
+decimal/compact/long/v1, ff-Adlm, 172B, 150B, fd27cebb25e0eb4
+decimal/compact/long/v1, ff-Adlm/latn, -> ff-Adlm
+decimal/compact/long/v1, fi, 193B, 171B, aeea4e96e330e96e
+decimal/compact/long/v1, fil, 130B, 107B, d2d50c6c48929f69
+decimal/compact/long/v1, fo, 175B, 153B, 4922038781ff1cae
+decimal/compact/long/v1, fr, 151B, 128B, db22f6881e0d9580
+decimal/compact/long/v1, fr-CA, 118B, 95B, 79a0c1af8fe55f66
+decimal/compact/long/v1, fy, 75B, 52B, ba42c7080038af16
+decimal/compact/long/v1, ga, 372B, 350B, a1b93ec880e3ea44
+decimal/compact/long/v1, gd, 223B, 201B, 9ee8e84354334b42
+decimal/compact/long/v1, gl, 106B, 83B, 1497e36961d6cff3
+decimal/compact/long/v1, gu, 177B, 155B, 2e25e6b7dc987ad2
+decimal/compact/long/v1, gu/gujr, -> gu
+decimal/compact/long/v1, ha, 74B, 51B, 5af347884ec14562
+decimal/compact/long/v1, he, 106B, 83B, 56e58e413de9c060
+decimal/compact/long/v1, hi, 111B, 88B, 87858f832edc166
+decimal/compact/long/v1, hi/deva, -> hi
+decimal/compact/long/v1, hr, 148B, 125B, 73e4324d163475ac
+decimal/compact/long/v1, hsb, 237B, 215B, 561152056e4a87f6
+decimal/compact/long/v1, hu, 75B, 52B, 457951b8c9ead1ed
+decimal/compact/long/v1, hy, 98B, 75B, ad4ae9582cc1f627
+decimal/compact/long/v1, ia, 134B, 111B, 16bc829b1a4dc495
+decimal/compact/long/v1, id, 69B, 46B, e6ff7c4708bad086
+decimal/compact/long/v1, is, 132B, 109B, c0cdf3b31120f4ba
+decimal/compact/long/v1, it, 193B, 171B, aaa73cc71cbec9f1
+decimal/compact/long/v1, ja, 56B, 33B, 732e3374353ee411
+decimal/compact/long/v1, jv, 69B, 46B, ff8f895b6f290fb8
+decimal/compact/long/v1, jv/java, -> jv
+decimal/compact/long/v1, ka, 132B, 109B, de3b8bcd281461be
+decimal/compact/long/v1, kea, 76B, 53B, 6294809266bb2943
+decimal/compact/long/v1, kgp, 122B, 99B, c3e5df5e55838ea9
+decimal/compact/long/v1, kk, 100B, 77B, ec74889088b3587c
+decimal/compact/long/v1, kk-Arab, 100B, 77B, fafde0d79e662313
+decimal/compact/long/v1, km, 125B, 102B, e0f7a42de73b16b6
+decimal/compact/long/v1, km/khmr, -> km
+decimal/compact/long/v1, kn, 135B, 112B, 3885fd27578b3aa0
+decimal/compact/long/v1, kn/knda, -> kn
+decimal/compact/long/v1, ko, 56B, 33B, 27821ebc6715c728
+decimal/compact/long/v1, kok, 249B, 227B, c2ee506a30a3ecd7
+decimal/compact/long/v1, kok-Latn, 97B, 74B, 12cf672fd8f4bba3
+decimal/compact/long/v1, kok/deva, -> kok
+decimal/compact/long/v1, ks/latn, -> bgc/latn
+decimal/compact/long/v1, ku, 72B, 49B, b158d8dec10491e5
+decimal/compact/long/v1, kxv, 74B, 51B, f341e6a090250309
+decimal/compact/long/v1, kxv-Deva/deva, -> bgc/latn
+decimal/compact/long/v1, kxv-Orya/orya, -> bgc/latn
+decimal/compact/long/v1, kxv-Telu/telu, -> bgc/latn
+decimal/compact/long/v1, ky, 100B, 77B, 6c706bda31709aee
+decimal/compact/long/v1, lb, 175B, 153B, 701f7416412da955
+decimal/compact/long/v1, lo, 117B, 94B, 2869f3fb40fe789f
+decimal/compact/long/v1, lo/laoo, 110B, 87B, 21cb4efffb3d894e
+decimal/compact/long/v1, lt, 274B, 252B, f2dec0b55928844d
+decimal/compact/long/v1, lv, 305B, 283B, d8f674c95dca5618
+decimal/compact/long/v1, mai/deva, -> bgc/latn
+decimal/compact/long/v1, mk, 184B, 162B, f70e41b9a310886d
+decimal/compact/long/v1, ml, 126B, 103B, d079b513897105b
+decimal/compact/long/v1, ml/mlym, -> ml
+decimal/compact/long/v1, mn, 89B, 66B, a691f0bbf17a5886
+decimal/compact/long/v1, mni/latn, -> bgc/latn
+decimal/compact/long/v1, mr, 129B, 106B, 5fe0d74d53994aaf
+decimal/compact/long/v1, mr/latn, -> mr
+decimal/compact/long/v1, ms, 69B, 46B, 8f2f67ea4a5c572b
+decimal/compact/long/v1, my, 249B, 227B, 2a6a3dadcb9fd9be
+decimal/compact/long/v1, my/latn, -> my
+decimal/compact/long/v1, ne, 120B, 97B, 7a1d1442bde69261
+decimal/compact/long/v1, ne/latn, -> ne
+decimal/compact/long/v1, nl, 76B, 53B, cd889915ec6d7338
+decimal/compact/long/v1, nn, 167B, 145B, 9a6df6b71480805d
+decimal/compact/long/v1, no, 167B, 145B, a8bb484994c6225d
+decimal/compact/long/v1, nqo/latn, -> bgc/latn
+decimal/compact/long/v1, om, 104B, 81B, 7f68222bd47f2543
+decimal/compact/long/v1, or, 117B, 94B, d9bcccdd1c285da8
+decimal/compact/long/v1, or/orya, -> or
+decimal/compact/long/v1, pa, 123B, 100B, aa8bbdafb5c6feee
+decimal/compact/long/v1, pa/guru, -> pa
+decimal/compact/long/v1, pcm, 83B, 60B, 6b55c01cb383d019
+decimal/compact/long/v1, pl, 234B, 212B, db64d1944eb65270
+decimal/compact/long/v1, ps/latn, -> bgc/latn
+decimal/compact/long/v1, pt, 116B, 93B, 8ddc58fc47b165eb
+decimal/compact/long/v1, pt-PT, 133B, 110B, 48183beb0bc81a8e
+decimal/compact/long/v1, raj/latn, -> bgc/latn
+decimal/compact/long/v1, rm, 153B, 131B, f8784e997e409bf2
+decimal/compact/long/v1, ro, 183B, 161B, 637fbd4f1c2bf7c1
+decimal/compact/long/v1, ru, 282B, 260B, b57832496747df8f
+decimal/compact/long/v1, sa/latn, -> bgc/latn
+decimal/compact/long/v1, sah, 112B, 89B, 725648d4eb9b2883
+decimal/compact/long/v1, sat/latn, -> bgc/latn
+decimal/compact/long/v1, sc, 150B, 127B, fae7dacbc1ba5a96
+decimal/compact/long/v1, scn, 179B, 157B, ba912fd3e3ec9491
+decimal/compact/long/v1, sd, 124B, 101B, d7532f1cfb76575c
+decimal/compact/long/v1, sd/latn, -> sd
+decimal/compact/long/v1, shn, 246B, 224B, 53f6eaa06f983b1e
+decimal/compact/long/v1, si, 120B, 97B, 30a51363b617e3b3
+decimal/compact/long/v1, sk, 334B, 312B, 5d96b446b7847d68
+decimal/compact/long/v1, sl, 309B, 287B, f66038672c9a9dbb
+decimal/compact/long/v1, so, 89B, 66B, e0eed26dd46643e3
+decimal/compact/long/v1, sq, 72B, 49B, f9879feea0df7c0f
+decimal/compact/long/v1, sr, 207B, 185B, 40d089d7a7ea46a6
+decimal/compact/long/v1, sr-Latn, -> bs
+decimal/compact/long/v1, sv, 158B, 136B, 9bed2a9164c448cf
+decimal/compact/long/v1, sw, 74B, 51B, 84d1066aedc8db4
+decimal/compact/long/v1, ta, 153B, 131B, fee8f346e0bebe47
+decimal/compact/long/v1, ta/tamldec, -> ta
+decimal/compact/long/v1, te, 375B, 353B, 90b0b6135cfb8cf4
+decimal/compact/long/v1, te/telu, -> te
+decimal/compact/long/v1, tg, 104B, 81B, eeeb3f68cca07ac5
+decimal/compact/long/v1, th, 210B, 188B, 7c8e31f3d63711b4
+decimal/compact/long/v1, th/thai, -> th
+decimal/compact/long/v1, ti, 93B, 70B, e6fcc36d5a5b73ff
+decimal/compact/long/v1, tk, 76B, 53B, c5bb804397667bbd
+decimal/compact/long/v1, to, 92B, 69B, d9a60e2401b34969
+decimal/compact/long/v1, tr, 70B, 47B, f7dde4f835f5eb43
+decimal/compact/long/v1, tt, -> ba
+decimal/compact/long/v1, ug, 96B, 73B, 5d6a07300febc6ac
+decimal/compact/long/v1, ug/arabext, -> ug
+decimal/compact/long/v1, uk, 341B, 319B, 11231e380bcbdc8c
+decimal/compact/long/v1, und, -> bgc/latn
+decimal/compact/long/v1, ur, 110B, 87B, 2cda3e198319ab2f
+decimal/compact/long/v1, ur-IN/latn, -> ur
+decimal/compact/long/v1, ur/arabext, -> ur
+decimal/compact/long/v1, uz, 75B, 52B, bb40d202fab33eb9
+decimal/compact/long/v1, uz-Cyrl, 100B, 77B, 4d64da945183b178
+decimal/compact/long/v1, vec, 171B, 149B, 50225a123135ab97
+decimal/compact/long/v1, vi, 76B, 53B, 912a69709f5d738
+decimal/compact/long/v1, wo, 78B, 55B, bf0bc5c31f7f09b7
+decimal/compact/long/v1, xnr, 105B, 82B, c81f8aa09a6ed3ec
+decimal/compact/long/v1, xnr/deva, -> xnr
+decimal/compact/long/v1, yo, 103B, 80B, 71438a7933073507
+decimal/compact/long/v1, yo-BJ, 98B, 75B, 87e920a814796826
+decimal/compact/long/v1, yrl, 127B, 104B, d7b09d743ee8d1e1
+decimal/compact/long/v1, yrl-CO, 127B, 104B, 2b95a4c8e9d18035
+decimal/compact/long/v1, yrl-VE, -> yrl-CO
+decimal/compact/long/v1, yue, 56B, 33B, 18f71b1f326eae8b
+decimal/compact/long/v1, yue-Hans, 56B, 33B, 4197f75599705fd0
+decimal/compact/long/v1, yue-Hans/hanidec, -> yue-Hans
+decimal/compact/long/v1, yue/hanidec, -> yue
+decimal/compact/long/v1, zh, 51B, 28B, 9095a8785a75c523
+decimal/compact/long/v1, zh-HK, 48B, 25B, 78be63b13d20355f
+decimal/compact/long/v1, zh-HK/hanidec, -> zh-HK
+decimal/compact/long/v1, zh-Hant, 48B, 25B, 4d6668051088ae5f
+decimal/compact/long/v1, zh-Hant/hanidec, -> zh-Hant
+decimal/compact/long/v1, zh-MO, -> zh-HK
+decimal/compact/long/v1, zh-MO/hanidec, -> zh-HK
+decimal/compact/long/v1, zh/hanidec, -> zh
+decimal/compact/long/v1, zu, 96B, 73B, 94331c3ecbb9d2a9
+decimal/compact/short/v1, <lookup>, 1280B, 205 identifiers
+decimal/compact/short/v1, <total>, 8945B, 6280B, 116 unique payloads
+decimal/compact/short/v1, af, 59B, 36B, 16ab1f38336a9e04
+decimal/compact/short/v1, am, 64B, 41B, 5a8284dc64fec2ca
+decimal/compact/short/v1, ar, 118B, 95B, 57ff6eaf3cba27c2
+decimal/compact/short/v1, ar-BH/latn, -> ar
+decimal/compact/short/v1, ar-DJ/latn, -> ar
+decimal/compact/short/v1, ar-EG/latn, -> ar
+decimal/compact/short/v1, ar-ER/latn, -> ar
+decimal/compact/short/v1, ar-IL/latn, -> ar
+decimal/compact/short/v1, ar-IQ/latn, -> ar
+decimal/compact/short/v1, ar-JO/latn, -> ar
+decimal/compact/short/v1, ar-KM/latn, -> ar
+decimal/compact/short/v1, ar-KW/latn, -> ar
+decimal/compact/short/v1, ar-LB/latn, -> ar
+decimal/compact/short/v1, ar-MR/latn, -> ar
+decimal/compact/short/v1, ar-OM/latn, -> ar
+decimal/compact/short/v1, ar-PS/latn, -> ar
+decimal/compact/short/v1, ar-QA/latn, -> ar
+decimal/compact/short/v1, ar-SA/latn, -> ar
+decimal/compact/short/v1, ar-SD/latn, -> ar
+decimal/compact/short/v1, ar-SO/latn, -> ar
+decimal/compact/short/v1, ar-SS/latn, -> ar
+decimal/compact/short/v1, ar-SY/latn, -> ar
+decimal/compact/short/v1, ar-TD/latn, -> ar
+decimal/compact/short/v1, ar-YE/latn, -> ar
+decimal/compact/short/v1, ar/arab, -> ar
+decimal/compact/short/v1, as, 166B, 144B, 69436c567ef7f1b3
+decimal/compact/short/v1, as/latn, -> as
+decimal/compact/short/v1, az, 62B, 39B, 9d7597bc518dcc4d
+decimal/compact/short/v1, ba, 80B, 57B, de74bbc8a920d375
+decimal/compact/short/v1, bal-Latn, 49B, 26B, 3732c9a122ef2ace
+decimal/compact/short/v1, be, 81B, 58B, e97d08c076e74464
+decimal/compact/short/v1, bg, 84B, 61B, b7393f6d3b7f4a95
+decimal/compact/short/v1, bgc/latn, 48B, 25B, 53a54d486b26198a
+decimal/compact/short/v1, bho/latn, -> bgc/latn
+decimal/compact/short/v1, blo, 143B, 120B, e15e3da10d68f698
+decimal/compact/short/v1, bn, 135B, 112B, d7b5f433e2896ef8
+decimal/compact/short/v1, bn/latn, -> bn
+decimal/compact/short/v1, br, 48B, 25B, 5b04c71b777f7ff4
+decimal/compact/short/v1, brx, 68B, 45B, f784705619b9078f
+decimal/compact/short/v1, brx/deva, -> brx
+decimal/compact/short/v1, bs, 70B, 47B, 8b1552e6943554e6
+decimal/compact/short/v1, bs-Cyrl, 78B, 55B, d6f709209884d81d
+decimal/compact/short/v1, ca, 57B, 34B, 40df7dc805a469a8
+decimal/compact/short/v1, ceb, 48B, 25B, 78be63b13d20355f
+decimal/compact/short/v1, chr, -> ceb
+decimal/compact/short/v1, cs, 68B, 45B, b482908d0ae39857
+decimal/compact/short/v1, cv, 80B, 57B, a22a3d7853fa4f00
+decimal/compact/short/v1, cy, -> ceb
+decimal/compact/short/v1, da, 65B, 42B, bc70fa096cb1c709
+decimal/compact/short/v1, de, 57B, 34B, f66f360e05959bbf
+decimal/compact/short/v1, doi/deva, -> bgc/latn
+decimal/compact/short/v1, dsb, 68B, 45B, abc84a5621414bb8
+decimal/compact/short/v1, ee, -> ceb
+decimal/compact/short/v1, el, 80B, 57B, bfafd84416d752db
+decimal/compact/short/v1, en, -> ceb
+decimal/compact/short/v1, en-GB, 50B, 27B, 2616071d7a2618c8
+decimal/compact/short/v1, en-IN, 59B, 36B, 45687355c56b0885
+decimal/compact/short/v1, eo, -> br
+decimal/compact/short/v1, es, 63B, 40B, 83b317ffa14967ed
+decimal/compact/short/v1, es-419, 69B, 46B, 62d834430e3a5517
+decimal/compact/short/v1, es-MX, 61B, 38B, 3fd44eb677aac57c
+decimal/compact/short/v1, es-US, 61B, 38B, f66d78a54b954426
+decimal/compact/short/v1, et, 65B, 42B, be148e7564be88af
+decimal/compact/short/v1, eu, 40B, 17B, b13acc20f8692250
+decimal/compact/short/v1, fa, 100B, 77B, c59bea55346d1b58
+decimal/compact/short/v1, fa/latn, -> fa
+decimal/compact/short/v1, ff-Adlm, 64B, 41B, 5c627d0576a98223
+decimal/compact/short/v1, ff-Adlm/latn, -> ff-Adlm
+decimal/compact/short/v1, fi, 68B, 45B, b56bcc655521592c
+decimal/compact/short/v1, fil, -> ceb
+decimal/compact/short/v1, fo, 71B, 48B, 8a940b741e15f1ad
+decimal/compact/short/v1, fr, 58B, 35B, 9b6de521baa866c5
+decimal/compact/short/v1, fr-CA, 56B, 33B, be03eaf778bc54fd
+decimal/compact/short/v1, fy, 63B, 40B, 547c8d992741fa8c
+decimal/compact/short/v1, ga, 48B, 25B, 5cc47d8619210738
+decimal/compact/short/v1, gd, -> ceb
+decimal/compact/short/v1, gl, -> eu
+decimal/compact/short/v1, gu, 185B, 163B, fff1b4249b84d60a
+decimal/compact/short/v1, gu/gujr, -> gu
+decimal/compact/short/v1, ha, 54B, 31B, cde80691bfda9e05
+decimal/compact/short/v1, he, 60B, 37B, bc5179f20cb52849
+decimal/compact/short/v1, hi, 117B, 94B, 38f8d6dd82f92af9
+decimal/compact/short/v1, hi/deva, -> hi
+decimal/compact/short/v1, hr, 68B, 45B, 90915422d2c5ce19
+decimal/compact/short/v1, hsb, -> dsb
+decimal/compact/short/v1, hu, 58B, 35B, 25b1de5364de0e48
+decimal/compact/short/v1, hy, 80B, 57B, 26e524979a24072
+decimal/compact/short/v1, ia, 64B, 41B, 3cd918329eed9070
+decimal/compact/short/v1, id, 58B, 35B, 9be172155477b62c
+decimal/compact/short/v1, is, 62B, 39B, 34079000533292c5
+decimal/compact/short/v1, it, 60B, 37B, 231084e6b5bfeb84
+decimal/compact/short/v1, ja, 56B, 33B, 732e3374353ee411
+decimal/compact/short/v1, jv, 49B, 26B, 8904b4bc6bee6237
+decimal/compact/short/v1, jv/java, -> jv
+decimal/compact/short/v1, ka, 109B, 86B, e1d0d78aa08c9783
+decimal/compact/short/v1, kea, 60B, 37B, 8e77ac848d980dea
+decimal/compact/short/v1, kgp, 62B, 39B, 123f7a003728d039
+decimal/compact/short/v1, kk, 90B, 67B, 52818980224f0747
+decimal/compact/short/v1, kk-Arab, 147B, 124B, 2affd915c8859649
+decimal/compact/short/v1, km, 129B, 106B, ebaabf9c8127dc4b
+decimal/compact/short/v1, km/khmr, -> km
+decimal/compact/short/v1, kn, 74B, 51B, 9dbd50ac23dc9f0e
+decimal/compact/short/v1, kn/knda, -> kn
+decimal/compact/short/v1, ko, 56B, 33B, 27821ebc6715c728
+decimal/compact/short/v1, kok, 119B, 96B, bd8b41725b8a3ab5
+decimal/compact/short/v1, kok-Latn, 78B, 55B, c2ad8c520396430a
+decimal/compact/short/v1, kok/deva, -> kok
+decimal/compact/short/v1, ks/latn, -> bgc/latn
+decimal/compact/short/v1, ku, 51B, 28B, cd62891c393f7419
+decimal/compact/short/v1, kxv, 60B, 37B, f77cf5ea60741c1f
+decimal/compact/short/v1, kxv-Deva/deva, -> bgc/latn
+decimal/compact/short/v1, kxv-Orya/orya, -> bgc/latn
+decimal/compact/short/v1, kxv-Telu/telu, -> bgc/latn
+decimal/compact/short/v1, ky, 78B, 55B, 5a9c1539e07ab48f
+decimal/compact/short/v1, lb, 68B, 45B, 1020f745423af4b2
+decimal/compact/short/v1, lo, 117B, 94B, 50e3a3ed1439d893
+decimal/compact/short/v1, lo/laoo, 92B, 69B, 9a2011128be816da
+decimal/compact/short/v1, lt, 73B, 50B, 71620c190151cc31
+decimal/compact/short/v1, lv, 76B, 53B, 2dc694b2846b5001
+decimal/compact/short/v1, mai/deva, -> bgc/latn
+decimal/compact/short/v1, mk, 115B, 92B, 965e6a03b7c089a9
+decimal/compact/short/v1, ml, -> ceb
+decimal/compact/short/v1, ml/mlym, -> ceb
+decimal/compact/short/v1, mn, 99B, 76B, 42134744cb4155df
+decimal/compact/short/v1, mni/latn, -> bgc/latn
+decimal/compact/short/v1, mr, 126B, 103B, 31f476dcb93c894
+decimal/compact/short/v1, mr/latn, -> mr
+decimal/compact/short/v1, ms, 48B, 25B, f1224f8743009ea5
+decimal/compact/short/v1, my, 259B, 237B, 7e11cb76996998df
+decimal/compact/short/v1, my/latn, -> my
+decimal/compact/short/v1, ne, 126B, 103B, cd3389e86ac9c7b8
+decimal/compact/short/v1, ne/latn, -> ne
+decimal/compact/short/v1, nl, -> fy
+decimal/compact/short/v1, no, 65B, 42B, af4dc666394ed4d6
+decimal/compact/short/v1, nqo/latn, -> bgc/latn
+decimal/compact/short/v1, or, 71B, 48B, e39ba21a55c90b8
+decimal/compact/short/v1, or/orya, -> or
+decimal/compact/short/v1, pa, 129B, 106B, 568b9c3339019de8
+decimal/compact/short/v1, pa/guru, -> pa
+decimal/compact/short/v1, pcm, -> ceb
+decimal/compact/short/v1, pl, 65B, 42B, e1bf1420e9a3f1ce
+decimal/compact/short/v1, ps, 60B, 37B, d8158a0c15cc23b7
+decimal/compact/short/v1, ps/latn, -> ps
+decimal/compact/short/v1, pt, -> kgp
+decimal/compact/short/v1, pt-PT, 60B, 37B, ff5c65a6e3bf14ee
+decimal/compact/short/v1, raj/latn, -> bgc/latn
+decimal/compact/short/v1, rm, 80B, 57B, e5c1f3f18c064e77
+decimal/compact/short/v1, ro, 66B, 43B, 4a12f4494b75a69c
+decimal/compact/short/v1, ru, -> be
+decimal/compact/short/v1, sa/latn, -> bgc/latn
+decimal/compact/short/v1, sah, 81B, 58B, 1db70d74ac95fa1c
+decimal/compact/short/v1, sat/latn, -> bgc/latn
+decimal/compact/short/v1, sc, 65B, 42B, fd2edee277c66b59
+decimal/compact/short/v1, sd, 86B, 63B, 53cf2b9dfc7273b9
+decimal/compact/short/v1, sd/latn, -> sd
+decimal/compact/short/v1, si, 74B, 51B, 97149348daed2cbe
+decimal/compact/short/v1, sk, -> cs
+decimal/compact/short/v1, sl, 68B, 45B, 629da38df60b1d9b
+decimal/compact/short/v1, so, -> ceb
+decimal/compact/short/v1, sq, 66B, 43B, 3cfa38583368d8c7
+decimal/compact/short/v1, sr, 82B, 59B, 5184a01a3f141e6d
+decimal/compact/short/v1, sr-Latn, -> bs
+decimal/compact/short/v1, sv, 60B, 37B, 6857a4c80173b2f0
+decimal/compact/short/v1, sw, 53B, 30B, b274b84b13dee8ef
+decimal/compact/short/v1, sw-KE, 53B, 30B, 539c222b952e3bd5
+decimal/compact/short/v1, ta, 65B, 42B, afc0e9154e142d2b
+decimal/compact/short/v1, ta/tamldec, -> ta
+decimal/compact/short/v1, te, 74B, 51B, 20c785e94ff0b34b
+decimal/compact/short/v1, te/telu, -> te
+decimal/compact/short/v1, tg, 84B, 61B, 983eb79f60239c77
+decimal/compact/short/v1, th, -> ceb
+decimal/compact/short/v1, th/thai, -> ceb
+decimal/compact/short/v1, ti, 64B, 41B, 685fedfd550d2844
+decimal/compact/short/v1, tk, 68B, 45B, 550938d21eb15109
+decimal/compact/short/v1, to, 60B, 37B, cedb3009a7024845
+decimal/compact/short/v1, tr, 59B, 36B, 233880fe1d82f52d
+decimal/compact/short/v1, tt, 93B, 70B, daa30176a5f78977
+decimal/compact/short/v1, ug, 77B, 54B, 1608092538e028e1
+decimal/compact/short/v1, ug/arabext, -> ug
+decimal/compact/short/v1, uk, 81B, 58B, 8a8773c02c496eb9
+decimal/compact/short/v1, und, -> bgc/latn
+decimal/compact/short/v1, ur, 116B, 93B, b2501582d1605e65
+decimal/compact/short/v1, ur-IN/latn, -> ur
+decimal/compact/short/v1, ur/arabext, -> ur
+decimal/compact/short/v1, uz, 67B, 44B, c0d18022f98ac1f5
+decimal/compact/short/v1, uz-Cyrl, 74B, 51B, f1e4753aa65be9b9
+decimal/compact/short/v1, vec, 81B, 58B, 2e7b8d30e4ee5521
+decimal/compact/short/v1, vi, 58B, 35B, 19ecb4232751fe95
+decimal/compact/short/v1, wo, -> ceb
+decimal/compact/short/v1, xnr, 111B, 88B, b6d2e8c294da2f49
+decimal/compact/short/v1, xnr/deva, -> xnr
+decimal/compact/short/v1, yrl, 63B, 40B, c6f8cb93b4c8113c
+decimal/compact/short/v1, yue, 56B, 33B, 18f71b1f326eae8b
+decimal/compact/short/v1, yue-Hans, 56B, 33B, 4197f75599705fd0
+decimal/compact/short/v1, yue-Hans/hanidec, -> yue-Hans
+decimal/compact/short/v1, yue/hanidec, -> yue
+decimal/compact/short/v1, zh, 51B, 28B, 9095a8785a75c523
+decimal/compact/short/v1, zh-HK, -> ceb
+decimal/compact/short/v1, zh-HK/hanidec, -> ceb
+decimal/compact/short/v1, zh-Hant, 48B, 25B, 4d6668051088ae5f
+decimal/compact/short/v1, zh-Hant/hanidec, -> zh-Hant
+decimal/compact/short/v1, zh-MO, -> ceb
+decimal/compact/short/v1, zh-MO/hanidec, -> ceb
+decimal/compact/short/v1, zh/hanidec, -> zh
+decimal/compact/short/v1, zu, -> ceb
 decimal/digits/v1, <lookup>, 207B, 27 identifiers
 decimal/digits/v1, <total>, 1080B, 1060B, 27 unique payloads
 decimal/digits/v1, und/adlm, 40B, 50B, 3ea0af81a698e8ad

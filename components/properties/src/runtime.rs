@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] This module is experimental and currently crate-private. Let us know if you
+//! 🚧 \[Unstable\] This module is unstable and currently crate-private. Let us know if you
 //! have a use case for this!
 //!
 //! This module contains utilities for working with properties where the specific property in use
