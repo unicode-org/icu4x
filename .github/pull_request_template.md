@@ -12,5 +12,5 @@ Please fill in the following disclosure about your use of AI tools.
 AI tool disclosure:
 
 - [ ] I wrote this code myself, without help from an AI tool.
-- [ ] I wrote this code with help from an AI tool.
-- [ ] This pull request was entirely written and orchestrated by an AI tool.
+- [ ] I wrote this code with help from an AI tool (Copilot, Claude, Gemini CLI, Codex, ...) as human-in-the-loop.
+- [ ] This pull request was entirely written by an AI tool as human-over-the-loop.
