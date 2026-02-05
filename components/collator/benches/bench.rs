@@ -183,7 +183,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
     // In particular, to get full Japanese standard behavior, you need the identical strength.
     // Furthermore, CLDR used to default to quaternary for Japanese but now defaults to tertiary
     // as for every other language for performance reasons.
-    let all_strength = [
+    let _all_strength = [
         Strength::Primary,
         Strength::Secondary,
         Strength::Tertiary,
