@@ -21,7 +21,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         use icu::properties::props::BidiMirroringGlyph;
         use icu::properties::props::BidiPairedBracketType;
         use icu::properties::props::EnumeratedProperty;
-        use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+        use icu_codepointtrie_builder::CodePointTrieBuilder;
 
         self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
 
@@ -40,52 +40,49 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         let bpt_trie = bpt.build_codepointtrie::<u16>()?;
         let bpt_lookup = bpt.values_to_names_long();
 
-        let code_point_trie = CodePointTrieBuilder {
-            data: CodePointTrieBuilderData::ByCodePoint(
-                0..=(char::MAX as u32),
-                Box::new(|cp| {
-                    if !bidi_m_cpinvlist.contains32(cp) {
-                        return None;
-                    }
-                    Some(BidiMirroringGlyph {
-                        mirrored: true,
-                        mirroring_glyph: {
-                            let m = bmg_trie.get32(cp);
-                            if m as u32 == 0 {
-                                log::trace!(
-                                    "Missing mirroring glyph: U+{cp:X}: {}",
-                                    char::try_from_u32(cp).unwrap()
-                                );
-                                None
-                            } else {
-                                Some(m)
-                            }
-                        },
-                        paired_bracket_type: match bpt_lookup.get(&(bpt_trie.get32(cp))).copied() {
-                            Some("Open") => BidiPairedBracketType::Open,
-                            Some("Close") => BidiPairedBracketType::Close,
-                            Some("None") => BidiPairedBracketType::None,
-                            _ => {
-                                log::trace!(
-                                    "Missing paired-bracket-type: U+{cp:X}: {}",
-                                    char::try_from_u32(cp).unwrap()
-                                );
-                                BidiPairedBracketType::None
-                            }
-                        },
-                    })
-                }),
-            ),
-            default_value: BidiMirroringGlyph::default(),
-            error_value: BidiMirroringGlyph::default(),
-            trie_type: TrieType::Small,
+        let mut builder = CodePointTrieBuilder::new(
+            BidiMirroringGlyph::default(),
+            BidiMirroringGlyph::default(),
+            TrieType::Small,
+        );
+
+        for cp in 0..=(char::MAX as u32) {
+            if !bidi_m_cpinvlist.contains32(cp) {
+                continue;
+            }
+            let mirroring_glyph = Some(bmg_trie.get32(cp)).filter(|&m| m as u32 != 0);
+            if mirroring_glyph.is_none() {
+                log::trace!(
+                    "Missing mirroring glyph: U+{cp:X}: {}",
+                    char::try_from_u32(cp).unwrap()
+                );
+            };
+            let paired_bracket_type = match bpt_lookup.get(&(bpt_trie.get32(cp))).copied() {
+                Some("Open") => BidiPairedBracketType::Open,
+                Some("Close") => BidiPairedBracketType::Close,
+                Some("None") => BidiPairedBracketType::None,
+                _ => {
+                    log::trace!(
+                        "Missing paired-bracket-type: U+{cp:X}: {}",
+                        char::try_from_u32(cp).unwrap()
+                    );
+                    BidiPairedBracketType::None
+                }
+            };
+            builder.set_value(
+                cp,
+                BidiMirroringGlyph {
+                    mirrored: true,
+                    mirroring_glyph,
+                    paired_bracket_type,
+                },
+            );
         }
-        .build();
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
-                icu::properties::provider::PropertyCodePointMap::CodePointTrie(code_point_trie),
+                icu::properties::provider::PropertyCodePointMap::CodePointTrie(builder.build()),
             ),
         })
     }
@@ -97,7 +94,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
     ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
         self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
         return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",
+            "icu_provider_source must be built with `use_icu4c` or `use_wasm` to build enumerated properties data",
         ));
     }
 }

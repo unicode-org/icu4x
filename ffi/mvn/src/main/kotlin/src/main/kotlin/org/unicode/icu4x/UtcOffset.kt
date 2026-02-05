@@ -64,15 +64,15 @@ class UtcOffset internal constructor (
         *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.UtcOffset.html)
         */
         fun fromString(offset: String): Result<UtcOffset> {
-            val (offsetMem, offsetSlice) = PrimitiveArrayTools.borrowUtf8(offset)
+            val offsetSliceMemory = PrimitiveArrayTools.borrowUtf8(offset)
             
-            val returnVal = lib.icu4x_UtcOffset_from_string_mv1(offsetSlice);
+            val returnVal = lib.icu4x_UtcOffset_from_string_mv1(offsetSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = UtcOffset(handle, selfEdges)
                 CLEANER.register(returnOpaque, UtcOffset.UtcOffsetCleaner(handle, UtcOffset.lib));
-                if (offsetMem != null) offsetMem.close()
+                offsetSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return TimeZoneInvalidOffsetError().err()
