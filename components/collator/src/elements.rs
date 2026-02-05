@@ -978,44 +978,66 @@ where
             self.initialized = true;
         }
 
-        // Ensure the last item is a starter (unless)
-        // iter exhausted.
-        if let Some(last) = self.upcoming.last() {
-            if last.decomposition_starts_with_non_starter() {
-                // Not using `while let` to be able to set `iter_exhausted`
-                loop {
-                    if let Some(ch) = self.iter_next() {
-                        let starter = !ch.decomposition_starts_with_non_starter();
-                        self.upcoming.push(ch);
-                        if starter {
+        loop {
+            // Ensure the last item is a starter (unless)
+            // iter exhausted.
+            if let Some(last) = self.upcoming.last() {
+                if last.decomposition_starts_with_non_starter() {
+                    // Not using `while let` to be able to set `iter_exhausted`
+                    loop {
+                        if let Some(ch) = self.iter_next() {
+                            let starter = !ch.decomposition_starts_with_non_starter();
+                            self.upcoming.push(ch);
+                            if starter {
+                                break;
+                            }
+                        } else {
+                            #[cfg(debug_assertions)]
+                            {
+                                self.iter_exhausted = true;
+                            }
                             break;
                         }
-                    } else {
-                        #[cfg(debug_assertions)]
-                        {
-                            self.iter_exhausted = true;
-                        }
-                        break;
                     }
                 }
+                if let Some(first) = self.upcoming.first() {
+                    if !first.decomposition_starts_with_non_starter() {
+                        return;
+                    }
+                }
+            } else {
+                // Ensure that `upcoming` starts with a starter in the case where
+                // we get here with an empty `upcoming` due to the identical prefix
+                // code exiting right away, because the very first code units differ.
+                if let Some(ch) = self.iter_next() {
+                    let starter = !ch.decomposition_starts_with_non_starter();
+                    self.upcoming.push(ch);
+                    if starter {
+                        return;
+                    }
+                    // Loop back to uphoad the invariant that `upcoming` ends with
+                    // a character whose decomposition starts with a starter unless
+                    // the iterator has been exhausted.
+                    continue;
+                } else {
+                    #[cfg(debug_assertions)]
+                    {
+                        self.iter_exhausted = true;
+                    }
+                    return;
+                }
             }
+            break;
         }
 
-        let mut starts_with_starter = false;
-        if let Some(first) = self.upcoming.first() {
-            if !first.decomposition_starts_with_non_starter() {
-                starts_with_starter = true;
-            }
-        }
-        if !starts_with_starter {
-            // XXX: Must figure out something more efficient for the case
-            // where the identical prefix is the empty string.
-            self.upcoming.insert(
-                0,
-                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{FFFF}'),
-            ); // Make sure the process always begins with a starter
-            let _ = self.next(); // Remove the placeholder starter
-        }
+        // The case where upcoming does not start with a starter.
+        // Ideally, we'd have something more specialized here that would extract
+        // the code path that `self.next()` runs after dealing with the U+0000.
+        self.upcoming.insert(
+            0,
+            CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{0}'),
+        ); // Make sure the process always begins with a starter
+        let _ = self.next(); // Remove the placeholder starter
     }
 
     fn iter_next(&mut self) -> Option<CharacterAndClassAndTrieValue> {
@@ -1589,12 +1611,10 @@ where
                             if ce32.tag() == Tag::Contraction
                                 && ce32.every_suffix_starts_with_combining()
                             {
-                                let (default, mut trie) =
-                                    data.get_default_and_trie(ce32.index());
+                                let (default, mut trie) = data.get_default_and_trie(ce32.index());
                                 match trie.next(combining) {
                                     TrieResult::NoMatch | TrieResult::NoValue => {
-                                        if let Some(ce) = default.to_ce_simple_or_long_primary()
-                                        {
+                                        if let Some(ce) = default.to_ce_simple_or_long_primary() {
                                             let ce_for_combining =
                                                 CollationElement::new_from_secondary(secondary);
                                             self.pending.push(ce_for_combining);
@@ -1614,9 +1634,8 @@ where
                                         }
                                     }
                                     TrieResult::FinalValue(trie_ce32) => {
-                                        if let Some(ce) =
-                                            CollationElement32::new(trie_ce32 as u32)
-                                                .to_ce_simple_or_long_primary()
+                                        if let Some(ce) = CollationElement32::new(trie_ce32 as u32)
+                                            .to_ce_simple_or_long_primary()
                                         {
                                             self.mark_prefix_unmatchable();
                                             return ce;
@@ -1626,8 +1645,7 @@ where
                             }
                         }
                     }
-                    combining_characters
-                        .push(CharacterAndClass::new_with_placeholder(combining));
+                    combining_characters.push(CharacterAndClass::new_with_placeholder(combining));
                 } else if high_zeros {
                     // Do the Hangul check on the character instead of trusting
                     // the trie value in order not to let GIGO cause unsafety.
@@ -1683,18 +1701,18 @@ where
                                 0,
                                 // Safety: HANGUL_T_BASE is 0x11A7, t is < HANGUL_T_COUNT = 28, so this is definitely
                                 // in range for a char (≤ 0xD800)
-                                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
-                                    core::char::from_u32_unchecked(HANGUL_T_BASE + t)
-                                }),
+                                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
+                                    unsafe { core::char::from_u32_unchecked(HANGUL_T_BASE + t) },
+                                ),
                             );
                         } else {
                             self.upcoming.insert(
                                 0,
                                 // Safety: HANGUL_V_BASE is 0x1161, v is < HANGUL_N_COUNT = 588, so this is definitely
                                 // in range for a char (≤ 0xD800)
-                                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
-                                    core::char::from_u32_unchecked(HANGUL_V_BASE + v)
-                                }),
+                                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
+                                    unsafe { core::char::from_u32_unchecked(HANGUL_V_BASE + v) },
+                                ),
                             );
                         }
 
@@ -1749,8 +1767,7 @@ where
                                 let char_from_u = char_from_u16(u);
                                 let trie_value = self.iter.trie().bmp(u);
                                 let ccc = ccc_from_trie_value(trie_value);
-                                combining_characters
-                                    .push(CharacterAndClass::new(char_from_u, ccc));
+                                combining_characters.push(CharacterAndClass::new(char_from_u, ccc));
                             }
                         } else {
                             let mut it = tail.iter();
@@ -1776,7 +1793,11 @@ where
                                     let trie_value = self.iter.trie().bmp(u);
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
                                 }
-                                self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(ch));
+                                self.prepend_and_sort_non_starter_prefix_of_suffix(
+                                    CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
+                                        ch,
+                                    ),
+                                );
                                 break;
                             }
                         }
@@ -1821,7 +1842,11 @@ where
                                     let trie_value = self.iter.trie().scalar(tail_char);
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
                                 }
-                                self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(ch));
+                                self.prepend_and_sort_non_starter_prefix_of_suffix(
+                                    CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
+                                        ch,
+                                    ),
+                                );
                                 break;
                             }
                         }

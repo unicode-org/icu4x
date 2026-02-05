@@ -192,31 +192,11 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             vec![&content_chinese],
             &all_strength,
         ), // zh_TW
-        (
-            locale!("ru-RU"),
-            vec![&content_russian],
-            &all_strength,
-        ),
-        (
-            locale!("sv"),
-            vec![&content_swedish],
-            &all_strength,
-        ),
-        (
-            locale!("th"),
-            vec![&content_thai],
-            &all_strength,
-        ),
-        (
-            locale!("ko-KR"),
-            vec![&content_korean],
-            &all_strength,
-        ),
-        (
-            locale!("pl"),
-            vec![&content_polish],
-            &all_strength,
-        ),
+        (locale!("ru-RU"), vec![&content_russian], &all_strength),
+        (locale!("sv"), vec![&content_swedish], &all_strength),
+        (locale!("th"), vec![&content_thai], &all_strength),
+        (locale!("ko-KR"), vec![&content_korean], &all_strength),
+        (locale!("pl"), vec![&content_polish], &all_strength),
     ];
     for perf_parameter in performance_parameters {
         let (locale_under_bench, files_under_bench, benched_strength) = perf_parameter;
