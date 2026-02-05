@@ -1008,6 +1008,8 @@ where
             }
         }
         if !starts_with_starter {
+            // XXX: Must figure out something more efficient for the case
+            // where the identical prefix is the empty string.
             self.upcoming.insert(
                 0,
                 CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{FFFF}'),
@@ -1027,6 +1029,7 @@ where
         if self.upcoming.is_empty() {
             return None;
         }
+        // XXX: something more efficient here
         let ret = self.upcoming.remove(0);
         if self.upcoming.is_empty() {
             if let Some(c) = self.iter_next() {
@@ -1488,6 +1491,8 @@ where
             let mut c = c_c_tv.character();
             let mut ce32;
             let mut data: &CollationData = self.tailoring;
+            // XXX: Should this be a reusable buffer on the struct instead of
+            // getting re-created on the stack every time?
             let mut combining_characters: SmallVec<
                 [CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE],
             > = SmallVec::new(); // TODO(#2005): Figure out good length
@@ -1497,17 +1502,23 @@ where
             // fast in a way that offsets the lack of the canonical closure.
             // The wall of code before the "Slow path" is an attempt to
             // optimize based on that bet.
+
+            // XXX: Move Hangul syllables inwards as in the normalizer.
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
                 // See components/normalizer/trie-value-format.md
                 let decomposition = c_c_tv.trie_val;
                 if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
                     // The character is its own decomposition
+
+                    // XXX: This is a bad idea. Make sure the jamo are in the root trie and then
+                    // remove this special case.
                     let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
                     // Attribute belongs on an inner expression, but
                     // https://github.com/rust-lang/rust/issues/15701
                     #[expect(clippy::indexing_slicing)]
                     if jamo_index >= self.jamo.len() {
+                        // XXX: Consider a cache from identical prefix lookup here.
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
                             data = self.root;
