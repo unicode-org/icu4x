@@ -6,7 +6,8 @@ Reminder: try to use [Conventional Comments](https://conventionalcomments.org/) 
 Please see https://github.com/unicode-org/icu4x/blob/main/CONTRIBUTING.md for general
 information on contributing to ICU4X.
 
-Please fill in the following disclosure about your use of AI tools.
+AI tools can be helpful to learn new things and accelerate your work. At the same time, we seek to give
+mentorship to humans, not AI agents. Please fill in the following disclosure about your use of AI tools.
 -->
 
 AI tool disclosure:
