@@ -245,16 +245,8 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             vec![&content_latin, &content_polish],
             &tertiary_only,
         ),
-        (
-            locale!("en-US"),
-            vec![&content_secondary],
-            &secondary_only,
-        ),
-        (
-            locale!("en-US"),
-            vec![&content_tertiary],
-            &tertiary_only,
-        ),
+        (locale!("en-US"), vec![&content_secondary], &secondary_only),
+        (locale!("en-US"), vec![&content_tertiary], &tertiary_only),
         (
             locale!("en-US"),
             vec![&content_quaternary],
