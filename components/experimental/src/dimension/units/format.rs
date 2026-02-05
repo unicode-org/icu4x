@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
-
 use crate::dimension::provider::units::display_names::UnitsDisplayNames;
 use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatter;

@@ -77,12 +77,11 @@ class GeneralCategoryNameToGroupMapper internal constructor (
     *See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
     */
     fun getStrict(name: String): GeneralCategoryGroup {
-        val (nameMem, nameSlice) = PrimitiveArrayTools.borrowUtf8(name)
+        val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
         
-        val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(handle, nameSlice);
-        
+        val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(handle, nameSliceMemory.slice);
         val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
-        if (nameMem != null) nameMem.close()
+        nameSliceMemory?.close()
         return returnStruct
     }
     
@@ -93,12 +92,11 @@ class GeneralCategoryNameToGroupMapper internal constructor (
     *See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
     */
     fun getLoose(name: String): GeneralCategoryGroup {
-        val (nameMem, nameSlice) = PrimitiveArrayTools.borrowUtf8(name)
+        val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
         
-        val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(handle, nameSlice);
-        
+        val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(handle, nameSliceMemory.slice);
         val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
-        if (nameMem != null) nameMem.close()
+        nameSliceMemory?.close()
         return returnStruct
     }
 
