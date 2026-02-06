@@ -751,6 +751,19 @@ mod tests {
     use icu::time::zone::TimeZoneVariant;
 
     use super::*;
+    #[test]
+    #[should_panic(expected = "attempt to add with overflow")]
+    fn test_max_milliseconds_with_max_offset() {
+        let max_offset = UtcOffset::try_from_seconds(64800).unwrap();
+        let _ = Timestamp::from_epoch_milliseconds_and_utc_offset(i64::MAX, max_offset);
+    }
+
+    #[test]
+    #[should_panic(expected = "attempt to add with overflow")]
+    fn test_min_milliseconds_with_min_offset() {
+        let min_offset = UtcOffset::try_from_seconds(-64800).unwrap();
+        let _ = Timestamp::from_epoch_milliseconds_and_utc_offset(i64::MIN, min_offset);
+    }
 
     #[test]
     fn basic_cldr_time_zones() {
