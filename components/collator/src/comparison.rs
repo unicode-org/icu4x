@@ -18,6 +18,11 @@ use crate::elements::Tag;
 use crate::elements::BACKWARD_COMBINING_MARKER;
 use crate::elements::CE_BUFFER_SIZE;
 use crate::elements::FALLBACK_CE32;
+use crate::elements::HANGUL_N_COUNT;
+use crate::elements::HANGUL_S_BASE;
+use crate::elements::HANGUL_S_COUNT;
+use crate::elements::HANGUL_T_COUNT;
+use crate::elements::IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
 use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
     char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
@@ -44,18 +49,33 @@ use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::{Infallible, TryFrom};
+use icu_collections::codepointtrie::AbstractCodePointTrie;
+use icu_collections::codepointtrie::CharsWithTrieDefaultForAsciiEx;
+use icu_collections::codepointtrie::CharsWithTrieEx;
+#[cfg(feature = "serde")]
+use icu_collections::codepointtrie::CodePointTrie;
+#[cfg(not(feature = "serde"))]
+use icu_collections::codepointtrie::FastCodePointTrie;
+#[cfg(feature = "latin1")]
+use icu_collections::codepointtrie::Latin1CharsWithTrieEx;
+use icu_collections::codepointtrie::WithTrie;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
-use icu_normalizer::DecomposingNormalizerBorrowed;
-use icu_normalizer::Decomposition;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
-use utf16_iter::Utf16CharsEx;
-use utf8_iter::Utf8CharsEx;
+use utf16_iter::Utf16CharsWithTrieEx;
+use utf8_iter::Utf8CharsWithTrieDefaultForAsciiEx;
+use utf8_iter::Utf8CharsWithTrieEx;
 use zerovec::ule::AsULE;
+
+#[cfg(feature = "serde")]
+type NormTrie<'trie> = CodePointTrie<'trie, u32>;
+
+#[cfg(not(feature = "serde"))]
+type NormTrie<'trie> = FastCodePointTrie<'trie, u32>;
 
 // Special sort key bytes for all levels.
 const LEVEL_SEPARATOR_BYTE: u8 = 1;
@@ -185,21 +205,6 @@ impl AnyQuaternaryAccumulator {
 #[inline(always)]
 fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
     i.wrapping_sub(start) <= (end - start)
-}
-
-/// Helper trait for getting a `char` iterator from Latin1 data.
-///
-/// ✨ *Enabled with the `latin1` Cargo feature.*
-#[cfg(feature = "latin1")]
-trait Latin1Chars {
-    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char>;
-}
-
-#[cfg(feature = "latin1")]
-impl Latin1Chars for [u8] {
-    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char> {
-        self.iter().map(|b| char::from(*b))
-    }
 }
 
 /// Finds the identical prefix of `left` and `right` containing
@@ -697,6 +702,82 @@ impl Collator {
     }
 }
 
+macro_rules! quick_primary_compare {
+    ($left_ce32:ident,
+     $right_ce32:ident,
+     $variable_top:ident,
+     $self:ident,
+     $left_c:ident,
+     $right_c:ident,
+    ) => {
+        // We could handle more non-contextual ce32 types here if
+        // that is measured to be beneficial.
+        if let Some(mut left_primary) = $left_ce32.to_primary_simple_or_long_primary() {
+            if let Some(mut right_primary) = $right_ce32.to_primary_simple_or_long_primary() {
+                if (left_primary != right_primary)
+                    && (left_primary != 0)
+                    && (right_primary != 0)
+                    && !(left_primary < $variable_top && left_primary > MERGE_SEPARATOR_PRIMARY)
+                    && !(right_primary < $variable_top && right_primary > MERGE_SEPARATOR_PRIMARY)
+                {
+                    if let Some(reordering) = &$self.reordering {
+                        left_primary = reordering.reorder(left_primary);
+                        right_primary = reordering.reorder(right_primary);
+                    }
+                    if left_primary < right_primary {
+                        return Ordering::Less;
+                    }
+                    return Ordering::Greater;
+                }
+            }
+        } else {
+            // If both are Hangul syllables, do a quick compare.
+
+            // Optimization that looks ridiculously micro but is actually measurable:
+            // Since we are in the `else` branch of checking the left primary, checking
+            // the right side for being a Hangul syllable is statistically the better
+            // refutation order.
+            let right_hangul_offset = u32::from($right_c).wrapping_sub(HANGUL_S_BASE);
+            if right_hangul_offset < HANGUL_S_COUNT {
+                let left_hangul_offset = u32::from($left_c).wrapping_sub(HANGUL_S_BASE);
+                if left_hangul_offset < HANGUL_S_COUNT {
+                    let left_l = left_hangul_offset / HANGUL_N_COUNT;
+                    let right_l = right_hangul_offset / HANGUL_N_COUNT;
+                    if left_l != right_l {
+                        // We don't really support jamo tailoring, so let's
+                        // compare the jamo directly.
+                        if left_l < right_l {
+                            return Ordering::Less;
+                        }
+                        return Ordering::Greater;
+                    }
+                    let left_v = (left_hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                    let right_v = (right_hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                    if left_v != right_v {
+                        // We don't really support jamo tailoring, so let's
+                        // compare the jamo directly.
+                        if left_v < right_v {
+                            return Ordering::Less;
+                        }
+                        return Ordering::Greater;
+                    }
+                    let left_t = left_hangul_offset % HANGUL_T_COUNT;
+                    let right_t = right_hangul_offset % HANGUL_T_COUNT;
+                    // If either syllable is a two-jamo syllable, we fall through.
+                    if left_t != right_t && left_t != 0 && right_t != 0 {
+                        // We don't really support jamo tailoring, so let's
+                        // compare the jamo directly.
+                        if left_t < right_t {
+                            return Ordering::Less;
+                        }
+                        return Ordering::Greater;
+                    }
+                }
+            }
+        }
+    };
+}
+
 macro_rules! compare {
     ($(#[$meta:meta])*,
      $compare:ident,
@@ -705,17 +786,28 @@ macro_rules! compare {
      $split_prefix:ident,
      $left_to_iter:ident,
      $right_to_iter:ident,
+     $self:ident,
+     $left_tail:ident,
+     $right_tail:ident,
+     $primary_check:block,
+     $variable_top:ident,
     ) => {
         $(#[$meta])*
-        pub fn $compare(&self, left: &$left_slice, right: &$right_slice) -> Ordering {
-            let (head, left_tail, right_tail) = $split_prefix(left, right);
-            if left_tail.is_empty() && right_tail.is_empty() {
+        pub fn $compare(&$self, left: &$left_slice, right: &$right_slice) -> Ordering {
+            let (head, $left_tail, $right_tail) = $split_prefix(left, right);
+            if $left_tail.is_empty() && $right_tail.is_empty() {
                 return Ordering::Equal;
             }
-            let ret = self.compare_impl(left_tail.$left_to_iter(), right_tail.$right_to_iter(), head.$left_to_iter().rev());
-            if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-                return Decomposition::new(left_tail.$left_to_iter(), self.decompositions, self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
-                    Decomposition::new(right_tail.$right_to_iter(), self.decompositions, self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
+            let $variable_top = $self.variable_top();
+            if head.is_empty() {
+                $primary_check
+            }
+            let norm_trie = $self.norm_trie();
+            let ret = $self.compare_impl($left_tail.$left_to_iter(norm_trie), $right_tail.$right_to_iter(norm_trie), head.$left_to_iter(norm_trie).rev(), $variable_top);
+            if $self.options.strength() == Strength::Identical && ret == Ordering::Equal {
+                // We don't need to remove the leading U+0000, because it compares equal anyway.
+                return icu_normalizer::new_decomposition($left_tail.$left_to_iter(norm_trie), $self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
+                    icu_normalizer::new_decomposition($right_tail.$right_to_iter(norm_trie), $self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
                 );
             }
             ret
@@ -886,7 +978,6 @@ macro_rules! collation_elements {
             $tailoring,
             jamo,
             &$self.diacritics.secondaries,
-            $self.decompositions,
             $self.tables,
             $numeric_primary,
             $self.lithuanian_dot_above,
@@ -894,11 +985,17 @@ macro_rules! collation_elements {
     }};
 }
 
-impl CollatorBorrowed<'_> {
+impl<'data> CollatorBorrowed<'data> {
     /// The resolved options showing how the default options, the requested options,
     /// and the options from locale data were combined.
     pub fn resolved_options(&self) -> ResolvedCollatorOptions {
         self.options.into()
+    }
+
+    fn norm_trie(&self) -> &'data NormTrie<'data> {
+        #[allow(clippy::useless_conversion)]
+        <&NormTrie<'data>>::try_from(&self.decompositions.trie)
+            .unwrap_or_else(|_| unreachable!("Incompatible data"))
     }
 
     compare!(
@@ -908,8 +1005,30 @@ impl CollatorBorrowed<'_> {
         str,
         str,
         split_prefix,
-        chars,
-        chars,
+        chars_with_trie_default_for_ascii,
+        chars_with_trie_default_for_ascii,
+        self,
+        left_tail,
+        right_tail,
+        {
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some((left_c, left_u32)) = left_tail.chars_with_trie(tailoring_trie).next() {
+                if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
+                    let mut left_ce32 = CollationElement32::new(left_u32);
+                    let mut right_ce32 = CollationElement32::new(right_u32);
+                    if left_ce32 == FALLBACK_CE32 {
+                        left_ce32 = self.root.ce32_for_char(left_c);
+                    }
+                    if right_ce32 == FALLBACK_CE32 {
+                        right_ce32 = self.root.ce32_for_char(right_c);
+                    }
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_c, right_c,);
+                }
+            }
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
+        },
+        variable_top,
     );
 
     compare!(
@@ -921,8 +1040,31 @@ impl CollatorBorrowed<'_> {
         [u8],
         [u8],
         split_prefix_u8,
-        chars,
-        chars,
+        chars_with_trie_default_for_ascii,
+        chars_with_trie_default_for_ascii,
+        self,
+        left_tail,
+        right_tail,
+        {
+            // Direct copypaste from the `str` case.
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some((left_c, left_u32)) = left_tail.chars_with_trie(tailoring_trie).next() {
+                if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
+                    let mut left_ce32 = CollationElement32::new(left_u32);
+                    let mut right_ce32 = CollationElement32::new(right_u32);
+                    if left_ce32 == FALLBACK_CE32 {
+                        left_ce32 = self.root.ce32_for_char(left_c);
+                    }
+                    if right_ce32 == FALLBACK_CE32 {
+                        right_ce32 = self.root.ce32_for_char(right_c);
+                    }
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_c, right_c,);
+                }
+            }
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
+        },
+        variable_top,
     );
 
     compare!(
@@ -933,8 +1075,36 @@ impl CollatorBorrowed<'_> {
         [u16],
         [u16],
         split_prefix_u16,
-        chars,
-        chars,
+        chars_with_trie,
+        chars_with_trie,
+        self,
+        left_tail,
+        right_tail,
+        {
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some(left_u) = left_tail.first() {
+                if let Some(right_u) = right_tail.first() {
+                    let left_u16 = *left_u;
+                    let right_u16 = *right_u;
+                    let left_u32 = tailoring_trie.get16(left_u16);
+                    let right_u32 = tailoring_trie.get16(right_u16);
+                    let mut left_ce32 = CollationElement32::new(left_u32);
+                    let mut right_ce32 = CollationElement32::new(right_u32);
+                    if left_ce32 == FALLBACK_CE32 {
+                        let left_u32 = self.root.trie.get16(left_u16);
+                        left_ce32 = CollationElement32::new(left_u32);
+                    }
+                    if right_ce32 == FALLBACK_CE32 {
+                        let right_u32 = self.root.trie.get16(right_u16);
+                        right_ce32 = CollationElement32::new(right_u32);
+                    }
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_u16, right_u16,);
+                }
+            }
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
+        },
+        variable_top,
     );
 
     compare!(
@@ -947,8 +1117,62 @@ impl CollatorBorrowed<'_> {
         [u8],
         [u8],
         split_prefix_latin1,
-        latin1_chars,
-        latin1_chars,
+        latin1_chars_with_trie,
+        latin1_chars_with_trie,
+        self,
+        left_tail,
+        right_tail,
+        {
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some(left_u) = left_tail.first() {
+                let left_u8 = *left_u;
+                // The probability of getting a non-simple ce32 from
+                // the Latin1 part above ASCII is so high that let's
+                // only consider ASCII on the left for this fast path.
+
+                // SAFETY: Checking the invariant of `get7` here for left.
+                if left_u8 < 0x80 {
+                    if let Some(right_u) = right_tail.first() {
+                        let right_u8 = *right_u;
+                        // SAFETY: Checking the invariant of `get7` here for right.
+                        if right_u8 < 0x80 {
+                            // SAFETY: Invariant of `get7` checked above.
+                            let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
+                            // SAFETY: Invariant of `get7` checked above.
+                            let right_u32 = unsafe { tailoring_trie.get7(right_u8) };
+                            let left_ce32 = CollationElement32::new(left_u32);
+                            let right_ce32 = CollationElement32::new(right_u32);
+                            // ASCII is always copied into the tailoring, so fallback
+                            // can't happen unless GIGO.
+                            debug_assert_ne!(left_ce32, FALLBACK_CE32);
+                            debug_assert_ne!(right_ce32, FALLBACK_CE32);
+                            // Both sides must be Latin, so script reordering can't do
+                            // anything meaningful. Omit script reordering check instead
+                            // of using `quick_primary_compare!`. Also optimize away the
+                            // long primary cases for ASCII.
+                            if let Some(left_primary) = left_ce32.to_primary_simple() {
+                                if let Some(right_primary) = right_ce32.to_primary_simple() {
+                                    if (left_primary != right_primary)
+                                        && (left_primary != 0)
+                                        && (right_primary != 0)
+                                        && !(left_primary < variable_top && left_primary > MERGE_SEPARATOR_PRIMARY)
+                                        && !(right_primary < variable_top && right_primary > MERGE_SEPARATOR_PRIMARY)
+                                    {
+                                        if left_primary < right_primary {
+                                            return Ordering::Less;
+                                        }
+                                        return Ordering::Greater;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
+        },
+        variable_top,
     );
 
     compare!(
@@ -966,8 +1190,63 @@ impl CollatorBorrowed<'_> {
         [u8],
         [u16],
         split_prefix_latin1_utf16,
-        latin1_chars,
-        chars,
+        latin1_chars_with_trie,
+        chars_with_trie,
+        self,
+        left_tail,
+        right_tail,
+        {
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some(left_u) = left_tail.first() {
+                let left_u8 = *left_u;
+                // The probability of getting a non-simple ce32 from
+                // the Latin1 part above ASCII is so high that let's
+                // only consider ASCII on the left for this fast path.
+
+                // SAFETY: Checking the invariant of `get7` here.
+                if left_u8 < 0x80 {
+                    if let Some(right_u) = right_tail.first() {
+                        let right_u16 = *right_u;
+                        // SAFETY: Invariant of `get7` checked above.
+                        let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
+                        let right_u32 = tailoring_trie.get16(right_u16);
+                        let left_ce32 = CollationElement32::new(left_u32);
+                        let mut right_ce32 = CollationElement32::new(right_u32);
+                        // ASCII is always copied into the tailoring, so fallback
+                        // can't happen unless GIGO.
+                        debug_assert_ne!(left_ce32,FALLBACK_CE32);
+                        if right_ce32 == FALLBACK_CE32 {
+                            let right_u32 = self.root.trie.get16(right_u16);
+                            right_ce32 = CollationElement32::new(right_u32);
+                        }
+                        // Don't use the macro to micro-optimize away the long primary
+                        // case for ASCII.
+                        if let Some(mut left_primary) = left_ce32.to_primary_simple() {
+                            if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                                if (left_primary != right_primary)
+                                    && (left_primary != 0)
+                                    && (right_primary != 0)
+                                    && !(left_primary < variable_top && left_primary > MERGE_SEPARATOR_PRIMARY)
+                                    && !(right_primary < variable_top && right_primary > MERGE_SEPARATOR_PRIMARY)
+                                {
+                                    if let Some(reordering) = &self.reordering {
+                                        left_primary = reordering.reorder(left_primary);
+                                        right_primary = reordering.reorder(right_primary);
+                                    }
+                                    if left_primary < right_primary {
+                                        return Ordering::Less;
+                                    }
+                                    return Ordering::Greater;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
+        },
+        variable_top,
     );
 
     #[inline(always)]
@@ -1018,16 +1297,19 @@ impl CollatorBorrowed<'_> {
     /// `head_chars` is an iterator _backward_ over the identical
     /// prefix and `left_chars` and `right_chars` are iterators
     /// _forward_ over the parts after the identical prefix.
-    fn compare_impl<
-        L: Iterator<Item = char>,
-        R: Iterator<Item = char>,
-        H: Iterator<Item = char>,
-    >(
-        &self,
+    fn compare_impl<L, R, H, T>(
+        &'data self,
         left_chars: L,
         right_chars: R,
         mut head_chars: H,
-    ) -> Ordering {
+        variable_top: u32,
+    ) -> Ordering
+    where
+        L: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
+        R: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
+        H: Iterator<Item = (char, u32)> + 'data,
+        T: AbstractCodePointTrie<'data, u32> + 'data,
+    {
         // Sadly, it looks like variable CEs and backward second level
         // require us to store the full 64-bit CEs instead of storing only
         // the NonPrimary part.
@@ -1048,10 +1330,10 @@ impl CollatorBorrowed<'_> {
         // The algorithm comes from CollationCompare::compareUpToQuaternary in ICU4C.
 
         let mut any_variable = false;
-        let variable_top = self.variable_top();
 
         let tailoring = self.tailoring_or_root();
         let numeric_primary = self.numeric_primary();
+
         let mut left = collation_elements!(self, left_chars, tailoring, numeric_primary);
         let mut right = collation_elements!(self, right_chars, tailoring, numeric_primary);
 
@@ -1077,11 +1359,10 @@ impl CollatorBorrowed<'_> {
         // This loop is only broken out of as goto forward.
         #[expect(clippy::never_loop)]
         'prefix: loop {
-            if let Some(mut head_last_c) = head_chars.next() {
-                let norm_trie = &self.decompositions.trie;
+            if let Some((mut head_last_c, head_last_trie_val)) = head_chars.next() {
                 let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                     head_last_c,
-                    norm_trie.get(head_last_c),
+                    head_last_trie_val,
                 );
                 let mut head_last_ce32 = CollationElement32::default();
                 let mut head_last_ok = false;
@@ -1191,8 +1472,8 @@ impl CollatorBorrowed<'_> {
                                 // Let's take the starter
                                 left_c = char_from_u32(decomposition & 0x7FFF);
                             } else if decomposition == HANGUL_SYLLABLE_MARKER {
-                                left_c = '\u{0}';
-                                left_ce32 = FFFD_CE32;
+                                left_c = left_different.character();
+                                left_ce32 = IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
                             } else {
                                 break;
                             }
@@ -1210,8 +1491,8 @@ impl CollatorBorrowed<'_> {
                                 // Let's take the starter
                                 right_c = char_from_u32(decomposition & 0x7FFF);
                             } else if decomposition == HANGUL_SYLLABLE_MARKER {
-                                right_c = '\u{0}';
-                                right_ce32 = FFFD_CE32;
+                                right_c = right_different.character();
+                                right_ce32 = IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
                             } else {
                                 break;
                             }
@@ -1258,6 +1539,18 @@ impl CollatorBorrowed<'_> {
                                 break;
                             }
                             // We are at a good boundary!
+                            // Now check if we ce32s we have are simple enough to
+                            // make a quick decision here.
+                            quick_primary_compare!(
+                                left_ce32,
+                                right_ce32,
+                                variable_top,
+                                self,
+                                left_c,
+                                right_c,
+                            );
+                            // Note: It might look like a good idea to cache the CE32s, but
+                            // doing so actually make things slower.
                             break 'prefix;
                         }
                     }
@@ -1274,14 +1567,12 @@ impl CollatorBorrowed<'_> {
                     tail_first_ce32 = head_last_ce32;
                     tail_first_ok = head_last_ok;
 
-                    head_last_c = if let Some(head_last_c) = head_chars.next() {
-                        head_last_c
-                    } else {
+                    let Some((head_last_c_new, decomposition)) = head_chars.next() else {
                         // We need to step back beyond the start of the prefix.
                         // Treat as good boundary.
                         break 'prefix;
                     };
-                    let decomposition = norm_trie.get(head_last_c);
+                    head_last_c = head_last_c_new;
                     head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                         head_last_c,
                         decomposition,
@@ -1852,7 +2143,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink)
+        self.write_sort_key_impl(s.chars_with_trie_default_for_ascii(self.norm_trie()), sink)
     }
 
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
@@ -1863,7 +2154,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink)
+        self.write_sort_key_impl(s.chars_with_trie_default_for_ascii(self.norm_trie()), sink)
     }
 
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
@@ -1874,12 +2165,17 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink)
+        self.write_sort_key_impl(s.chars_with_trie(self.norm_trie()), sink)
     }
 
-    fn write_sort_key_impl<I, S>(&self, iter: I, sink: &mut S) -> Result<S::Output, S::Error>
+    fn write_sort_key_impl<I, T, S>(
+        &'data self,
+        iter: I,
+        sink: &mut S,
+    ) -> Result<S::Output, S::Error>
     where
-        I: Iterator<Item = char> + Clone,
+        I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + Clone + 'data,
+        T: AbstractCodePointTrie<'data, u32> + 'data,
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
@@ -1893,11 +2189,10 @@ impl CollatorBorrowed<'_> {
         self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
 
         if let Some(iter) = identical {
-            let nfd =
-                DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
             sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
 
-            let iter = nfd.normalize_iter(iter);
+            let mut iter = icu_normalizer::new_decomposition(iter, self.tables);
+            let _ = iter.next(); // Discard the U+0000.
             write_identical_level(iter, sink, &mut state)?;
         }
 
@@ -1908,14 +2203,15 @@ impl CollatorBorrowed<'_> {
     ///
     /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
     /// do not write a terminating zero as with a C string.
-    fn write_sort_key_up_to_quaternary<I, S>(
-        &self,
+    fn write_sort_key_up_to_quaternary<I, S, T>(
+        &'data self,
         iter: I,
         sink: &mut S,
         state: &mut S::State,
     ) -> Result<(), S::Error>
     where
-        I: Iterator<Item = char>,
+        I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + Clone + 'data,
+        T: AbstractCodePointTrie<'data, u32> + 'data,
         S: CollationKeySink + ?Sized,
     {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.

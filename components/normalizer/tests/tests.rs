@@ -45,7 +45,7 @@ fn test_nfd_owned() {
     assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}");
     assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ﾍﾞ"); // half-width unchanged
-    assert_eq!(normalizer.normalize("ﾍﾟ"), "ﾍﾟ"); // half-width unchanged
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ﾍﾟ"); // half-width unchanged9
     assert_eq!(normalizer.normalize("ﬁ"), "ﬁ"); // ligature unchanged
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{FDFA}"); // ligature unchanged
     assert_eq!(normalizer.normalize("㈎"), "㈎"); // parenthetical unchanged
@@ -1726,16 +1726,16 @@ fn test_is_normalized() {
     assert!(nfkc.is_normalized_utf16(aaa16));
 
     let affa = b"a\xFFa";
-    assert!(nfd.is_normalized_utf8(affa));
-    assert!(nfkd.is_normalized_utf8(affa));
-    assert!(nfc.is_normalized_utf8(affa));
-    assert!(nfkc.is_normalized_utf8(affa));
+    assert!(!nfd.is_normalized_utf8(affa));
+    assert!(!nfkd.is_normalized_utf8(affa));
+    assert!(!nfc.is_normalized_utf8(affa));
+    assert!(!nfkc.is_normalized_utf8(affa));
 
     let a_surrogate_a = [0x0061u16, 0xD800u16, 0x0061u16].as_slice();
-    assert!(nfd.is_normalized_utf16(a_surrogate_a));
-    assert!(nfkd.is_normalized_utf16(a_surrogate_a));
-    assert!(nfc.is_normalized_utf16(a_surrogate_a));
-    assert!(nfkc.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfd.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfkd.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfc.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfkc.is_normalized_utf16(a_surrogate_a));
 
     let note = "a𝅗\u{1D165}a";
     assert!(nfd.is_normalized(note));
@@ -2079,5 +2079,230 @@ fn test_is_normalized_up_to() {
             .0
             .len(),
         0
+    );
+}
+
+#[test]
+fn test_latin1_split_normalized_nfd() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfd(b"abc\xA8\xE4efg"),
+        (&b"abc\xA8"[..], &b"\xE4efg"[..])
+    );
+}
+
+#[test]
+fn test_latin1_split_normalized_nfkd() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfkd(b"abc\xA8\xE4efg"),
+        (&b"abc"[..], &b"\xA8\xE4efg"[..])
+    );
+}
+
+#[test]
+fn test_latin1_split_normalized_nfkc() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfkc(b"abc\xE4\xA8efg"),
+        (&b"abc\xE4"[..], &b"\xA8efg"[..])
+    );
+}
+
+#[test]
+fn test_latin1_normalize_nfd_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfd_to(&text, &mut normalized).is_ok());
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfd.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfd.is_normalized_utf16(&normalized));
+}
+
+#[test]
+fn test_latin1_normalize_nkfd_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfkd_to(&text, &mut normalized).is_ok());
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfkd.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfkd.is_normalized_utf16(&normalized));
+}
+
+#[test]
+fn test_latin1_normalize_nkfc_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfkc_to(&text, &mut normalized).is_ok());
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfkc.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfkc.is_normalized_utf16(&normalized));
+}
+
+#[test]
+fn test_hangul_enclosed_nfkc() {
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    assert_eq!(
+        &nfkc.normalize_utf16(&[0x320Eu16])[..],
+        &[0x0028u16, 0xAC00, 0x0029]
+    );
+}
+
+#[test]
+fn test_hangul_enclosed_nfkc_iter() {
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    assert!(nfkc
+        .normalize_iter("\u{320E}".chars())
+        .eq("(\u{AC00})".chars()));
+}
+
+#[test]
+fn test_hangul_l_v_t_nfc() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert_eq!(
+        &nfc.normalize_utf16(&[0x1100u16, 0x1161, 0x11A8])[..],
+        &[0xAC01u16]
+    );
+}
+
+#[test]
+fn test_hangul_l_v_t_nfc_iter() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert!(nfc
+        .normalize_iter("\u{1100}\u{1161}\u{11A8}".chars())
+        .eq("\u{AC01}".chars()));
+}
+
+#[test]
+fn test_hangul_lv_t_nfc() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert_eq!(&nfc.normalize_utf16(&[0xAC00u16, 0x11A8])[..], &[0xAC01u16]);
+}
+
+#[test]
+fn test_hangul_lv_t_nfc_iter() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert!(nfc
+        .normalize_iter("\u{AC00}\u{11A8}".chars())
+        .eq("\u{AC01}".chars()));
+}
+
+#[test]
+fn test_nfd_skip_one_combining() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize("εα\u{0301}ο")[..], "εα\u{0301}ο");
+}
+
+#[test]
+fn test_nfd_skip_one_combining_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf8("εα\u{0301}ο".as_bytes())[..],
+        "εα\u{0301}ο"
+    );
+}
+
+#[test]
+fn test_nfd_skip_one_combining_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0301, 0x03BF]
+    );
+}
+
+#[test]
+fn test_nfd_two_combining() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize("εα\u{0301}\u{0326}ο")[..],
+        "εα\u{0326}\u{0301}ο"
+    );
+}
+
+#[test]
+fn test_nfd_two_combining_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf8("εα\u{0301}\u{0326}ο".as_bytes())[..],
+        "εα\u{0326}\u{0301}ο"
+    );
+}
+
+#[test]
+fn test_nfd_two_combining_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x0326, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0326, 0x0301, 0x03BF]
+    );
+}
+
+#[test]
+fn test_nfd_combining_error_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf8(&[206u8, 181, 206, 177, 204, 129, 0xFF, 206, 191])[..],
+        "εα\u{0301}\u{FFFD}ο"
+    );
+}
+
+#[test]
+fn test_nfd_combining_error_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0xD800, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0301, 0xFFFD, 0x03BF]
+    );
+}
+
+#[test]
+fn test_mixed_hangul() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize("\u{1100}\u{AC00}\u{11A8}")[..],
+        "\u{1100}\u{1100}\u{1161}\u{11A8}"
+    );
+}
+
+#[test]
+fn test_mixed_hangul_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf8(&[225, 132, 128, 234, 176, 128, 225, 134, 168])[..],
+        "\u{1100}\u{1100}\u{1161}\u{11A8}"
+    );
+}
+
+#[test]
+fn test_mixed_hangul_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x1100u16, 0xAC00, 0x11A8])[..],
+        &[0x1100, 0x1100, 0x1161, 0x11A8]
     );
 }

@@ -248,7 +248,7 @@ impl RuleCollection {
             + DataProvider<NormalizerNfkdDataV1>
             + DataProvider<NormalizerNfdTablesV1>
             + DataProvider<NormalizerNfkdTablesV1>
-            + DataProvider<NormalizerNfcV1>,
+            + DataProvider<NormalizerNfcV2>,
         NC: ?Sized + DataProvider<CaseMapV1>,
     {
         Ok(RuleCollectionProvider {
@@ -434,7 +434,7 @@ redirect!(
     NormalizerNfkdDataV1,
     NormalizerNfdTablesV1,
     NormalizerNfkdTablesV1,
-    NormalizerNfcV1
+    NormalizerNfcV2
 );
 
 impl<PP: ?Sized, NP: ?Sized, NC: ?Sized + DataProvider<CaseMapV1>> DataProvider<CaseMapV1>
