@@ -54,9 +54,6 @@
 //! [`LiteMap`]: litemap::LiteMap
 //! [`BTreeMap`]: alloc::collections::BTreeMap
 
-// To back up the claim in the crate docs:
-#![cfg_attr(not(any(feature = "alloc", feature = "zerovec")), deny(unsafe_code))]
-
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
