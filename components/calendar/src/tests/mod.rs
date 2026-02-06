@@ -9,6 +9,7 @@ mod exhaustive;
 mod extended_year;
 mod extrema;
 mod not_enough_fields;
+mod too_many_fields;
 
 macro_rules! test_all_cals {
     ($(#[$meta:meta])* fn $name:ident<C: Calendar + Copy>($cal:ident: C) $tt:tt) => {

@@ -525,7 +525,9 @@ mod tests {
                     "Succeeded, but should have rejected: {fields:?}"
                 ),
                 Err(
-                    DateFromFieldsError::NotEnoughFields | DateFromFieldsError::InconsistentMonth,
+                    DateFromFieldsError::NotEnoughFields
+                    | DateFromFieldsError::InconsistentMonth
+                    | DateFromFieldsError::TooManyFields,
                 ) => assert!(
                     !should_succeed_rejecting,
                     "Rejected, but should have succeeded: {fields:?}"
@@ -542,7 +544,9 @@ mod tests {
                     "Succeeded, but should have rejected (ECMA): {fields:?}"
                 ),
                 Err(
-                    DateFromFieldsError::NotEnoughFields | DateFromFieldsError::InconsistentMonth,
+                    DateFromFieldsError::NotEnoughFields
+                    | DateFromFieldsError::InconsistentMonth
+                    | DateFromFieldsError::TooManyFields,
                 ) => assert!(
                     !should_succeed_ecma,
                     "Rejected, but should have succeeded (ECMA): {fields:?}"

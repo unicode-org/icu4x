@@ -311,7 +311,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             return Err(DateFromFieldsError::NotEnoughFields);
         }
         if fields.month_code.is_some() && fields.month.is_some() {
-            return Err(DateFromFieldsError::InconsistentMonth);
+            return Err(DateFromFieldsError::TooManyFields);
         }
 
         let mut valid_month = None;
