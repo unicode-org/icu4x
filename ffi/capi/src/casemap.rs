@@ -171,6 +171,36 @@ pub mod ffi {
                 .write_to(write);
         }
 
+        /// Returns the full titlecase mapping of the given string, performing head adjustment without
+        /// loading additional data, using compiled data (avoids having to allocate a `CaseMapper` object).
+        ///
+        /// (if head adjustment is enabled in the options)
+        ///
+        /// The `v1` refers to the version of the options struct, which may change as we add more options
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::titlecase_segment_with_only_case_data_to_string,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::titlecase_segment_with_only_case_data_to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_only_case_compiled_data")]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
+        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
+        pub fn titlecase_segment_with_only_case_compiled_data(
+            s: &str,
+            locale: &Locale,
+            options: TitlecaseOptionsV1,
+            write: &mut DiplomatWrite,
+        ) {
+            let _infallible = icu_casemap::CaseMapper::new()
+                .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
+                .write_to(write);
+        }
+
         /// Case-folds the characters in the given string
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::fold, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::fold_string, FnInStruct, hidden)]
