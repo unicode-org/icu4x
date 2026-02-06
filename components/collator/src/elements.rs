@@ -972,6 +972,7 @@ where
     }
 
     pub fn init(&mut self) {
+        // XXX: Consider removing the invariant that this method upholds.
         #[cfg(debug_assertions)]
         {
             debug_assert!(!self.initialized);
