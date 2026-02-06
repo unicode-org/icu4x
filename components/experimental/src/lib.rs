@@ -2,22 +2,31 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! 🚧 The experimental development module of the `ICU4X` project.
 //!
 //! This module is published as its own crate ([`icu_experimental`](https://docs.rs/icu_experimental/latest/icu_experimental/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
-//! It will usually undergo a major SemVer bump for every ICU4X release. Components in this
+//! It will usually undergo a major `SemVer` bump for every ICU4X release. Components in this
 //! crate will eventually stabilize and move to their own top-level components.
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-// No boilerplate, each module has their own
 #![allow(clippy::module_inception)]
 
 extern crate alloc;
 
-pub mod compactdecimal;
 pub mod dimension;
 pub mod displaynames;
 pub mod duration;
@@ -30,7 +39,11 @@ pub mod units;
 
 #[doc(hidden)] // compiled constructors look for the baked provider here
 pub mod provider {
+    // Provider structs must be stable
+    #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+
     #[cfg(feature = "compiled_data")]
+    #[derive(Debug)]
     pub struct Baked;
 
     #[cfg(feature = "compiled_data")]
@@ -40,19 +53,34 @@ pub mod provider {
         pub mod icu {
             pub use crate as experimental;
             pub use icu_collections as collections;
+            pub use icu_decimal as decimal;
             pub use icu_locale as locale;
             pub use icu_plurals as plurals;
         }
         make_provider!(Baked);
 
-        impl_long_compact_decimal_format_data_v1!(Baked);
-        impl_short_compact_decimal_format_data_v1!(Baked);
         impl_short_currency_compact_v1!(Baked);
         impl_currency_essentials_v1!(Baked);
         impl_currency_displayname_v1!(Baked);
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
-        impl_units_display_name_v1!(Baked);
+        impl_currency_fractions_v1!(Baked);
+        impl_units_display_names_v1!(Baked);
+        impl_units_names_area_core_v1!(Baked);
+        impl_units_names_area_extended_v1!(Baked);
+        impl_units_names_area_outlier_v1!(Baked);
+        impl_units_names_duration_core_v1!(Baked);
+        impl_units_names_duration_extended_v1!(Baked);
+        impl_units_names_duration_outlier_v1!(Baked);
+        impl_units_names_length_core_v1!(Baked);
+        impl_units_names_length_extended_v1!(Baked);
+        impl_units_names_length_outlier_v1!(Baked);
+        impl_units_names_mass_core_v1!(Baked);
+        impl_units_names_mass_extended_v1!(Baked);
+        impl_units_names_mass_outlier_v1!(Baked);
+        impl_units_names_volume_core_v1!(Baked);
+        impl_units_names_volume_extended_v1!(Baked);
+        impl_units_names_volume_outlier_v1!(Baked);
         impl_units_essentials_v1!(Baked);
         impl_language_display_names_v1!(Baked);
         impl_digital_duration_data_v1!(Baked);
@@ -97,18 +125,30 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const MARKERS: &[DataMarkerInfo] = &[
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
         super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
         super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
         super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
         super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
         super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
+        super::dimension::provider::currency::fractions::CurrencyFractionsV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
-        super::dimension::provider::units::display_name::UnitsDisplayNameV1::INFO,
+        super::dimension::provider::units::display_names::UnitsDisplayNamesV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeOutlierV1::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1::INFO,
         super::duration::provider::DigitalDurationDataV1::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1::INFO,

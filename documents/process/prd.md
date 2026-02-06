@@ -1,6 +1,6 @@
 # ICU4X 1.0 Product Requirement Document (PRD)
 
-[ICU4X is an effort](https://github.com/unicode-org/icu4x/blob/main/documents/process/charter.md) under [Unicode](https://unicode.org/) guidance to develop a set of [Unicode Components](http://site.icu-project.org/) with focus on modularity, composability, and FFI supporting the scope of [ECMA-402](https://tc39.es/ecma402/) and written in accordance with modern internationalization techniques and standards.
+[ICU4X is an effort](https://github.com/unicode-org/icu4x/blob/main/documents/process/charter.md) under [Unicode](https://unicode.org/) guidance to develop a set of [Unicode Components](https://icu.unicode.org/) with focus on modularity, composability, and FFI supporting the scope of [ECMA-402](https://tc39.es/ecma402/) and written in accordance with modern internationalization techniques and standards.
 
 The effort, currently driven mostly by engineering resources from Google and Mozilla, has been in development since February 2020 and we’re now looking to establish the criteria for evaluation of its value proposition and business fit.
 

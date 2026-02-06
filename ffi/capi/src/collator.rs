@@ -6,7 +6,6 @@ use icu_collator::options::{CollatorOptions, ResolvedCollatorOptions};
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -19,11 +18,13 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::collator::Collator, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorBorrowed, Struct, hidden)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct Collator(pub icu_collator::Collator);
 
     #[diplomat::rust_link(icu::collator::options::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::options::CollatorOptions::default, FnInStruct, hidden)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorOptions")]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct CollatorOptionsV1 {
         pub strength: DiplomatOption<CollatorStrength>,
         pub alternate_handling: DiplomatOption<CollatorAlternateHandling>,

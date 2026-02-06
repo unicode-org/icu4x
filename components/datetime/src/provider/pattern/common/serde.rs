@@ -154,7 +154,7 @@ mod runtime {
             E: de::Error,
         {
             // Parse a string into a list of fields.
-            let reference_deserializer = super::reference::DeserializePatternUTS35String;
+            let reference_deserializer = reference::DeserializePatternUTS35String;
             let pattern = reference_deserializer.visit_str(pattern_string)?;
 
             Ok(Self::Value::from(&pattern))

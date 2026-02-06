@@ -14,11 +14,9 @@ In most cases, the first step is to find or file a new issue related to your pla
 
 ### Installing dependencies
 
-To build ICU4X, you will need the following dependencies:
+ICU4X is written in Rust, so you will need a [Rust toolchain](https://rust-lang.org/tools/install/).
 
- - Rust (and Cargo) installed [via `rustup`](https://doc.rust-lang.org/book/ch01-01-installation.html)
- - `cargo-make` installed via `cargo install cargo-make`
- - `cargo-rdme` installed via `cargo install cargo-rdme`
+We use `cargo-make` for development scripts, install via `cargo install cargo-make`.
 
 Certain tests may need further dependencies, these are documented below in the [Testing](#testing) section.
 
@@ -99,7 +97,7 @@ Practically, this means that new components or improvements to existing componen
 
 If working on a new component, start it in the `components/experimental` crate. We allow contributions to that crate even if they don't yet meet all of our code quality requirements. Once finished, the code can be moved into its own crate as a separate pull request.
 
-If working on an improvement to an existing component that you wish to split into multiple smaller pieces, consider hiding it under the `"experimental"` feature in the crate. Doing so gives a signal to users and tooling that the code is not yet production-ready. Once finished, the `"experimental"` feature can be removed from the crate.
+If working on an improvement to an existing component that you wish to split into multiple smaller pieces, consider hiding it under the `"unstable"` feature in the crate. Doing so gives a signal to users and tooling that the code is not yet production-ready. Once finished, the `"unstable"` feature can be removed from the crate.
 
 When adding non-experimental code to main, also update the "unreleased" section of the changelog. This simplifies releases and gives us a better overview of what unreleased features we have.
 
@@ -139,8 +137,8 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `ci-job-clippy`: Runs `cargo clippy --all-targets --all-features` on all the crates.
  <br/>
 
- - `ci-job-msrv-check`: Runs `cargo check` on all the crates at our minimum supported Rust version (MSRV).
- - `ci-job-msrv-features`: Runs `cargo check-all-features` on all the crates at our MSRV. This checks all features combinations, which is fairly slow.
+ - `ci-job-check`: Runs `cargo check` on all the crates.
+ - `ci-job-features`: Runs `cargo check-all-features` on all the crates. This checks all features combinations, which is fairly slow.
      + Requires `cargo-all-features` to be installed: `cargo install cargo-all-features`.
  - `ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
 <br/>
@@ -160,8 +158,6 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
      + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
  - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.
  - `ci-job-diplomat`: Verifies that diplomat-generated bindings are up to date.
- - `ci-job-gn`: Verifies that the GN wrapper is up to date.
-     + Requires GN to be installed: `cargo make gn-install`.
  
 ### Structure of commits in a Pull Request
 
@@ -176,7 +172,7 @@ If the pull request is simple and short lived, it can be initialized with review
 If the pull request is more complex and is being developed over time, it may be beneficial to start it in a `Draft` state.
 This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
 
-If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `icu_experimental` crate, or (3) hiding the work behind the `"experimental"` feature flag. See the section above, "Release Readiness", for more details.
+If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `icu_experimental` crate, or (3) hiding the work behind the `"unstable"` feature flag. See the section above, "Release Readiness", for more details.
 
 By the end of this phase, and right before review is requested, it is helpful for the reviewers to have a clean list of commits in the pull request.
 

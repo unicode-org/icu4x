@@ -4,12 +4,13 @@
 
 use super::{ZeroSlice, ZeroVec};
 use crate::ule::*;
-use alloc::boxed::Box;
-use alloc::vec::Vec;
+#[cfg(feature = "alloc")]
+use alloc::{boxed::Box, vec::Vec};
 use core::fmt;
 use core::marker::PhantomData;
-use core::mem;
-use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
+#[cfg(feature = "alloc")]
+use serde::de::SeqAccess;
+use serde::de::{Deserialize, Deserializer, Error, Visitor};
 #[cfg(feature = "serde")]
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
@@ -37,11 +38,12 @@ where
 
     fn visit_borrowed_bytes<E>(self, bytes: &'de [u8]) -> Result<Self::Value, E>
     where
-        E: de::Error,
+        E: Error,
     {
-        ZeroVec::parse_bytes(bytes).map_err(de::Error::custom)
+        ZeroVec::parse_bytes(bytes).map_err(Error::custom)
     }
 
+    #[cfg(feature = "alloc")]
     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
     where
         A: SeqAccess<'de>,
@@ -99,6 +101,7 @@ where
 }
 
 /// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
+#[cfg(feature = "alloc")]
 impl<'de, T> Deserialize<'de> for Box<ZeroSlice<T>>
 where
     T: Deserialize<'de> + AsULE + 'static,
@@ -108,7 +111,7 @@ where
         D: Deserializer<'de>,
     {
         let mut zv = ZeroVec::<T>::deserialize(deserializer)?;
-        let vec = zv.with_mut(mem::take);
+        let vec = zv.with_mut(core::mem::take);
         Ok(ZeroSlice::from_boxed_slice(vec.into_boxed_slice()))
     }
 }
@@ -124,7 +127,7 @@ where
         D: Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            Err(de::Error::custom(
+            Err(Error::custom(
                 "&ZeroSlice cannot be deserialized from human-readable formats",
             ))
         } else {
@@ -132,7 +135,7 @@ where
             let borrowed = if let Some(b) = deserialized.as_maybe_borrowed() {
                 b
             } else {
-                return Err(de::Error::custom(
+                return Err(Error::custom(
                     "&ZeroSlice can only deserialize in zero-copy ways",
                 ));
             };
@@ -161,6 +164,10 @@ mod test {
     use crate::ZeroVec;
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[allow(
+        dead_code,
+        reason = "Tests compatibility of custom impl with Serde derive."
+    )]
     struct DeriveTest_ZeroVec<'data> {
         #[serde(borrow)]
         _data: ZeroVec<'data, u16>,

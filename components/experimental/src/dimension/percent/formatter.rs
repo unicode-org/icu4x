@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
-
 use fixed_decimal::Decimal;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
@@ -25,7 +23,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: super::super::preferences::NumberingSystem
+        numbering_system: crate::dimension::preferences::NumberingSystem
     }
 );
 
@@ -37,6 +35,7 @@ prefs_convert!(PercentFormatterPreferences, DecimalFormatterPreferences, {
 ///
 /// [`PercentFormatter`] supports:
 ///   1. Rendering in the locale's percent system.
+#[derive(Debug)]
 pub struct PercentFormatter<R> {
     /// Essential data for the percent formatter.
     essential: DataPayload<PercentEssentialsV1>,
@@ -83,7 +82,7 @@ impl PercentFormatter<DecimalFormatter> {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::percent::PercentEssentialsV1>
+            + DataProvider<PercentEssentialsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {

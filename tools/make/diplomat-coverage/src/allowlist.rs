@@ -53,6 +53,14 @@ lazy_static::lazy_static! {
         "Unpin",
         "UnwindSafe",
 
+        // harfbuzz-traits
+        "CombiningClassFunc",
+        "ComposeFunc",
+        "DecomposeFunc",
+        "GeneralCategoryFunc",
+        "MirroringFunc",
+        "ScriptFunc",
+
         // yoke/zerovec/etc internals
         "ULE",
         "AsULE",
@@ -94,7 +102,7 @@ lazy_static::lazy_static! {
     ].into_iter().collect();
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
-        ("Writeable", &["writeable_length_hint", "write_to_parts", "write_to_string"][..]),
+        ("Writeable", &["writeable_length_hint", "write_to_parts", "writeable_borrow", "write_to_string"][..]),
     ].into_iter().collect();
 
     // Ignore if this is a substring of any path
@@ -127,23 +135,20 @@ lazy_static::lazy_static! {
         "icu::calendar::IntoAnyCalendar",
         "icu::calendar::Date::try_new_buddhist",
         "icu::calendar::Date::try_new_chinese_with_calendar",
+        "icu::calendar::Date::try_new_chinese_traditional",
+        "icu::calendar::Date::try_new_korean_traditional",
         "icu::calendar::Date::try_new_coptic",
-        "icu::calendar::Date::try_new_dangi",
-        "icu::calendar::Date::try_new_dangi_with_calendar",
         "icu::calendar::Date::try_new_ethiopian",
         "icu::calendar::Date::try_new_gregorian",
         "icu::calendar::Date::try_new_hebrew",
-        "icu::calendar::Date::try_new_hebrew_with_calendar",
+        "icu::calendar::Date::try_new_hebrew_v2",
+        "icu::calendar::Date::try_new_hijri_with_calendar",
         "icu::calendar::Date::try_new_indian",
-        "icu::calendar::Date::try_new_hijri_civil_with_calendar",
-        "icu::calendar::Date::try_new_hijri_tabular_with_calendar",
         "icu::calendar::Date::try_new_japanese_with_calendar",
         "icu::calendar::Date::try_new_japanese_extended_with_calendar",
         "icu::calendar::Date::try_new_julian",
-        "icu::calendar::Date::try_new_simulated_hijri_with_calendar",
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
-        "icu::calendar::Date::try_new_ummalqura",
         "icu::datetime::DateTimeFormatter::calendar",
 
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
@@ -274,10 +279,14 @@ lazy_static::lazy_static! {
         // Serde-specific
         "icu::datetime::fieldsets::serde",
 
-        // Stuff that is experimental
+        // Stuff that is unstable
         //
         // We should occasionally review these
         // =========================
+
+        "icu::decimal::CompactDecimalFormatter",
+        "icu::decimal::error::ExponentError",
+        "icu::decimal::options::CompactDecimalFormatterOptions",
 
         "icu::experimental",
 
@@ -336,6 +345,8 @@ lazy_static::lazy_static! {
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
+        "icu::calendar::error::DateError",
+        "icu::calendar::error::RangeError",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
         "icu::time::zone::IanaParser",

@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod capi_datetime;
+mod capi_properties;
 
 fn main() {
     capi_datetime::main();
+    capi_properties::main();
 }

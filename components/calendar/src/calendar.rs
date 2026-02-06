@@ -5,8 +5,10 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
-use crate::error::DateError;
-use crate::{types, DateDuration, DateDurationUnit};
+use crate::error::{DateError, DateFromFieldsError};
+use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateDifferenceOptions};
+use crate::{types, Iso};
 use core::fmt;
 
 /// A calendar implementation
@@ -26,13 +28,17 @@ use core::fmt;
 /// </div>
 pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The internal type used to represent dates
-    type DateInner: Eq + Copy + fmt::Debug;
-    /// The type of YearInfo returned by the date
+    ///
+    /// Equality and ordering should observe normal calendar semantics.
+    type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
+    /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
+    /// The type of error returned by `until`
+    type DifferenceError: fmt::Debug;
 
     /// Construct a date from era/month codes and fields
     ///
-    /// The year is the [monotonic year](crate::Date::monotonic_year) if no era is provided
+    /// The year is the [extended year](crate::Date::extended_year) if no era is provided
     #[expect(clippy::wrong_self_convention)]
     fn from_codes(
         &self,
@@ -42,16 +48,52 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         day: u8,
     ) -> Result<Self::DateInner, DateError>;
 
-    /// Construct the date from an ISO date
+    /// Construct a date from a bag of date fields.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
     #[expect(clippy::wrong_self_convention)]
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner;
-    /// Obtain an ISO date from this date
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner;
+    #[cfg(feature = "unstable")]
+    fn from_fields(
+        &self,
+        fields: types::DateFields,
+        options: DateFromFieldsOptions,
+    ) -> Result<Self::DateInner, DateFromFieldsError>;
+
+    /// Whether `from_iso`/`to_iso` is more efficient
+    /// than `from_rata_die`/`to_rata_die`.
+    fn has_cheap_iso_conversion(&self) -> bool;
+
+    /// Construct the date from an ISO date.
+    ///
+    /// Only called if `HAS_CHEAP_ISO_CONVERSION` is set.
+    #[expect(clippy::wrong_self_convention)]
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        // `from_rata_die` precondition is satified by `to_rata_die`
+        self.from_rata_die(Iso.to_rata_die(&iso))
+    }
+    /// Obtain an ISO date from this date.
+    ///
+    /// Only called if `HAS_CHEAP_ISO_CONVERSION` is set.
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        // `from_rata_die` precondition is satified by `to_rata_die`
+        Iso.from_rata_die(self.to_rata_die(date))
+    }
 
     /// Construct the date from a [`RataDie`]
+    ///
+    /// Precondition: `rd` needs to be in the `VALID_RD_RANGE`
     #[expect(clippy::wrong_self_convention)]
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner;
     /// Obtain a [`RataDie`] from this date
+    ///
+    /// The result is guaranteed to be in `VALID_RD_RANGE`
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie;
 
     /// Count the number of months in a given year, specified by providing a date
@@ -68,14 +110,10 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Information about the year
     fn year_info(&self, date: &Self::DateInner) -> Self::Year;
-    /// (Deprecated)
-    ///
-    /// "extended year" is an old name, this method should not necessarily match ICU4C extended year,
-    /// and instead should attempt to align with
-    /// <https://tc39.es/proposal-intl-era-monthcode/> as much as possible.
-    #[deprecated(since = "2.1.0", note = "Use `Date::monotonic_year` instead")]
+
+    /// The [extended year](crate::Date::extended_year).
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        self.year_info(date).into().monotonic_year()
+        self.year_info(date).into().extended_year()
     }
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
@@ -84,22 +122,44 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
-    #[doc(hidden)] // unstable
-    /// Add `offset` to `date`
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>);
-    #[doc(hidden)] // unstable
+    /// Add `duration` to `date`
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "unstable")]
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError>;
+
     /// Calculate `date2 - date` as a duration
     ///
     /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
     /// differ on data, the data for the first calendar is used, and `date2` may be converted if necessary.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self>;
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

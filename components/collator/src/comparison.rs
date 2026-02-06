@@ -42,7 +42,6 @@ use crate::provider::CollationRootV1;
 use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
-use core::array;
 use core::cmp::Ordering;
 use core::convert::{Infallible, TryFrom};
 use icu_normalizer::provider::DecompositionData;
@@ -69,7 +68,7 @@ const MERGE_SEPARATOR: char = '\u{fffe}';
 const MERGE_SEPARATOR_BYTE: u8 = 2;
 const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000;
 
-/// Primary compression low terminator, must be greater than MERGE_SEPARATOR_BYTE.
+/// Primary compression low terminator, must be greater than [`MERGE_SEPARATOR_BYTE`].
 ///
 /// Reserved value in primary second byte if the lead byte is compressible.
 /// Otherwise usable in all CE weight bytes.
@@ -463,36 +462,34 @@ impl LocaleSpecificDataHolder {
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1> = provider
+        let metadata_payload: DataPayload<CollationMetadataV1> = provider
             .load(req)
             .or_else(|_| provider.load(fallback_req))?
             .payload;
 
         let metadata = metadata_payload.get();
 
-        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1>> =
-            if metadata.tailored() {
-                Some(
-                    provider
-                        .load(req)
-                        .or_else(|_| provider.load(fallback_req))?
-                        .payload,
-                )
-            } else {
-                None
-            };
+        let tailoring: Option<DataPayload<CollationTailoringV1>> = if metadata.tailored() {
+            Some(
+                provider
+                    .load(req)
+                    .or_else(|_| provider.load(fallback_req))?
+                    .payload,
+            )
+        } else {
+            None
+        };
 
-        let reordering: Option<DataPayload<crate::provider::CollationReorderingV1>> =
-            if metadata.reordering() {
-                Some(
-                    provider
-                        .load(req)
-                        .or_else(|_| provider.load(fallback_req))?
-                        .payload,
-                )
-            } else {
-                None
-            };
+        let reordering: Option<DataPayload<CollationReorderingV1>> = if metadata.reordering() {
+            Some(
+                provider
+                    .load(req)
+                    .or_else(|_| provider.load(fallback_req))?
+                    .payload,
+            )
+        } else {
+            None
+        };
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {
@@ -663,32 +660,25 @@ impl Collator {
             return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
         }
         let special_primaries = special_primaries.map_project(|csp, _| {
-            if csp.last_primaries.len()
-                == (MaxVariable::Currency as usize)
-                    + core::mem::size_of_val(
-                        &CollationSpecialPrimariesValidated::HARDCODED_FALLBACK.compressible_bytes,
-                    ) / core::mem::size_of::<u16>()
-            {
-                CollationSpecialPrimariesValidated {
-                    compressible_bytes: array::from_fn(|i| {
-                        #[expect(clippy::unwrap_used)] // protected by the if
-                        {
-                            csp.last_primaries
-                                .get((MaxVariable::Currency as usize) + i)
-                                .unwrap()
-                        }
-                    }),
-                    last_primaries: csp.last_primaries.truncated(MaxVariable::Currency as usize),
-                    numeric_primary: csp.numeric_primary,
-                }
-            } else {
-                // Data without compressible bytes, add hardcoded data
-                CollationSpecialPrimariesValidated {
-                    last_primaries: csp.last_primaries,
-                    compressible_bytes: CollationSpecialPrimariesValidated::HARDCODED_FALLBACK
-                        .compressible_bytes,
-                    numeric_primary: csp.numeric_primary,
-                }
+            let compressible_bytes = (csp.last_primaries.len()
+                == MaxVariable::Currency as usize + 16)
+                .then(|| {
+                    csp.last_primaries
+                        .as_maybe_borrowed()?
+                        .as_ule_slice()
+                        .get((MaxVariable::Currency as usize)..)?
+                        .try_into()
+                        .ok()
+                })
+                .flatten()
+                .unwrap_or(
+                    CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK,
+                );
+
+            CollationSpecialPrimariesValidated {
+                last_primaries: csp.last_primaries.truncated(MaxVariable::Currency as usize),
+                numeric_primary: csp.numeric_primary,
+                compressible_bytes,
             }
         });
 
@@ -769,30 +759,70 @@ impl CollatorBorrowed<'static> {
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
 
         // TODO: redesign Korean search collation handling
-        if jamo.ce32s.len() != JAMO_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
-        }
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1
+                .ce32s
+                .as_slice()
+                .len()
+                == JAMO_COUNT
+        );
 
-        let special_primaries = crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
         // `variant_count` isn't stable yet:
         // https://github.com/rust-lang/rust/issues/73662
-        if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
-            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
-        } else if CollationSpecialPrimariesValidated::HARDCODED_FALLBACK.numeric_primary
-            != special_primaries.numeric_primary
-            || CollationSpecialPrimariesValidated::HARDCODED_FALLBACK
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
                 .last_primaries
-                .iter()
-                .zip(special_primaries.last_primaries.iter())
-                .any(|(a, b)| a != b)
-        {
-            // Baked data without compressible bits, but not matching hardcoded data
-            return Err(
-                DataError::custom("cannot fall back to hardcoded compressible data")
-                    .with_marker(CollationSpecialPrimariesV1::INFO),
-            );
-        }
-        let special_primaries = CollationSpecialPrimariesValidated::HARDCODED_FALLBACK;
+                .as_slice()
+                .len()
+                > (MaxVariable::Currency as usize)
+        );
+
+        let special_primaries = const {
+            &CollationSpecialPrimariesValidated {
+                last_primaries: zerovec::ZeroSlice::from_ule_slice(
+                    crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                        .last_primaries
+                        .as_slice()
+                        .as_ule_slice()
+                        .split_at(MaxVariable::Currency as usize)
+                        .0,
+                )
+                .as_zerovec(),
+                numeric_primary: crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                    .numeric_primary,
+                compressible_bytes: {
+                    const C: &[<u16 as AsULE>::ULE] =
+                        crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                            .last_primaries
+                            .as_slice()
+                            .as_ule_slice();
+                    if C.len() == MaxVariable::Currency as usize + 16 {
+                        let i = MaxVariable::Currency as usize;
+                        #[allow(clippy::indexing_slicing)] // protected, const
+                        &[
+                            C[i],
+                            C[i + 1],
+                            C[i + 2],
+                            C[i + 3],
+                            C[i + 4],
+                            C[i + 5],
+                            C[i + 6],
+                            C[i + 7],
+                            C[i + 8],
+                            C[i + 9],
+                            C[i + 10],
+                            C[i + 11],
+                            C[i + 12],
+                            C[i + 13],
+                            C[i + 14],
+                            C[i + 15],
+                        ]
+                    } else {
+                        CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK
+                    }
+                },
+            }
+        };
 
         // Attribute belongs closer to `unwrap`, but
         // https://github.com/rust-lang/rust/issues/15701
@@ -1537,18 +1567,18 @@ impl CollatorBorrowed<'_> {
         }
 
         if self.options.case_level() {
+            let mut left_non_primary;
+            let mut right_non_primary;
+            let mut left_case;
+            let mut right_case;
+            let mut left_iter = left_ces.iter();
+            let mut right_iter = right_ces.iter();
             if self.options.strength() == Strength::Primary {
                 // Primary+caseLevel: Ignore case level weights of primary ignorables.
                 // Otherwise we would get a-umlaut > a
                 // which is not desirable for accent-insensitive sorting.
                 // Check for (lower 32 bits) == 0 as well because variable CEs are stored
                 // with only primary weights.
-                let mut left_non_primary;
-                let mut right_non_primary;
-                let mut left_case;
-                let mut right_case;
-                let mut left_iter = left_ces.iter();
-                let mut right_iter = right_ces.iter();
                 loop {
                     loop {
                         let ce = left_iter.next().unwrap_or_default();
@@ -1600,12 +1630,6 @@ impl CollatorBorrowed<'_> {
                 // but it's simpler to always ignore case weights of secondary ignorables,
                 // turning 0.0.ut into 0.0.0.t.
                 // (See LDML Collation, Case Parameters.)
-                let mut left_non_primary;
-                let mut right_non_primary;
-                let mut left_case;
-                let mut right_case;
-                let mut left_iter = left_ces.iter();
-                let mut right_iter = right_ces.iter();
                 loop {
                     loop {
                         left_non_primary = left_iter.next().unwrap_or_default().non_primary();
@@ -1777,6 +1801,10 @@ impl CollatorBorrowed<'_> {
 
     /// Given valid UTF-8, write the sort key bytes up to the collator's strength.
     ///
+    /// The bytes are written to an implementor of [`CollationKeySink`], a no-std version of `std::io::Write`.
+    /// This trait is currently unstable, but it is implemented by `Vec<u8>`, `VecDeque<u8>`,
+    /// `SmallVec<[u8; N]>`, and `&mut [u8]` (returning an error if the slice is too small).
+    ///
     /// If two sort keys generated at the same strength are compared bytewise, the result is
     /// the same as a collation comparison of the original strings at that strength.
     ///
@@ -1803,8 +1831,11 @@ impl CollatorBorrowed<'_> {
     /// # Example
     ///
     /// ```
+    /// use icu_collator::{
+    ///     options::{CollatorOptions, Strength},
+    ///     Collator,
+    /// };
     /// use icu_locale::locale;
-    /// use icu_collator::{Collator, options::{CollatorOptions, Strength}};
     /// let locale = locale!("utf").into();
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);
@@ -2267,15 +2298,20 @@ impl CollatorBorrowed<'_> {
 
             // Write pairs of nibbles as bytes, except separator bytes as themselves.
             let mut b = 0;
-            for c in &cases.buf {
-                debug_assert_eq!(*c & 0xf, 0);
-                debug_assert_ne!(*c, 0);
-                if b == 0 {
-                    b = *c;
-                } else {
-                    sink.write_byte(state, b | (*c >> 4))?;
-                    b = 0;
+            if let Some((last, head)) = cases.buf.split_last() {
+                debug_assert_eq!(*last, 1); // The trailing NO_CE
+                for c in head {
+                    debug_assert_eq!(*c & 0xf, 0);
+                    debug_assert_ne!(*c, 0);
+                    if b == 0 {
+                        b = *c;
+                    } else {
+                        sink.write_byte(state, b | (*c >> 4))?;
+                        b = 0;
+                    }
                 }
+            } else {
+                debug_assert!(false);
             }
             if b != 0 {
                 sink.write_byte(state, b)?;
@@ -2305,6 +2341,16 @@ impl TooSmall {
 /// A [`std::io::Write`]-like trait for writing to a buffer-like object.
 ///
 /// (This crate does not have access to [`std`].)
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement or call methods on this trait
+/// unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #7178](https://github.com/unicode-org/icu4x/issues/7178).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
 pub trait CollationKeySink {
     /// The type of error the sink may return.
     type Error;
@@ -2576,6 +2622,14 @@ mod test {
         Collator::try_new(locale, options).unwrap()
     }
 
+    fn collator_en_case_level(strength: Strength) -> CollatorBorrowed<'static> {
+        let locale = locale!("en").into();
+        let mut options = CollatorOptions::default();
+        options.strength = Some(strength);
+        options.case_level = Some(crate::options::CaseLevel::On);
+        Collator::try_new(locale, options).unwrap()
+    }
+
     fn keys(strength: Strength) -> (Key, Key, Key) {
         let collator = collator_en(strength);
 
@@ -2761,6 +2815,20 @@ mod test {
         let collator = collator_en(Strength::Secondary);
         let mut k = Vec::new();
         let Ok(()) = collator.write_sort_key_to(&"a".repeat(300), &mut k);
+    }
+
+    #[test]
+    fn sort_key_case_level() {
+        let collator = collator_en_case_level(Strength::Tertiary);
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("aBc", &mut k);
+    }
+
+    #[test]
+    fn sort_key_case_level_empty() {
+        let collator = collator_en_case_level(Strength::Tertiary);
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("", &mut k);
     }
 
     fn check_sort_key_less(a: &[u16], b: &[u16]) {

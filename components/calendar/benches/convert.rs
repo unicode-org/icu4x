@@ -2,14 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod fixtures;
-
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::{Calendar, Date, Ref};
+use icu_calendar::{Calendar, Date};
 
-fn bench_calendar<C: Clone + Calendar>(
+fn bench_calendar<C: Copy + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
     calendar: C,
@@ -17,7 +15,7 @@ fn bench_calendar<C: Clone + Calendar>(
     let iso = Date::try_new_iso(2023, 8, 16).unwrap();
     group.bench_function(name, |b| {
         b.iter(|| {
-            let converted = black_box(iso).to_calendar(Ref(&calendar));
+            let converted = black_box(iso).to_calendar(calendar);
             let year = black_box(converted.year());
             let month = black_box(converted.month());
             let day = black_box(converted.day_of_month());
@@ -51,14 +49,8 @@ fn convert_benches(c: &mut Criterion) {
 
     bench_calendar(
         &mut group,
-        "calendar/chinese_calculating",
-        icu::calendar::cal::Chinese::new_always_calculating(),
-    );
-
-    bench_calendar(
-        &mut group,
         "calendar/chinese_cached",
-        icu::calendar::cal::Chinese::new(),
+        icu::calendar::cal::ChineseTraditional::new(),
     );
 
     bench_calendar(
@@ -69,33 +61,34 @@ fn convert_benches(c: &mut Criterion) {
 
     bench_calendar(&mut group, "calendar/hebrew", icu::calendar::cal::Hebrew);
 
+    #[allow(deprecated)]
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",
-        icu::calendar::cal::HijriSimulated::new_mecca_always_calculating(),
+        icu::calendar::cal::Hijri::new_simulated_mecca(),
     );
 
     bench_calendar(
         &mut group,
         "calendar/islamic/civil",
-        icu::calendar::cal::HijriTabular::new(
-            icu::calendar::cal::HijriTabularLeapYears::TypeII,
-            icu::calendar::cal::HijriTabularEpoch::Friday,
+        icu::calendar::cal::Hijri::new_tabular(
+            icu::calendar::cal::hijri::TabularAlgorithmLeapYears::TypeII,
+            icu::calendar::cal::hijri::TabularAlgorithmEpoch::Friday,
         ),
     );
 
     bench_calendar(
         &mut group,
         "calendar/islamic/ummalqura",
-        icu::calendar::cal::HijriUmmAlQura::new(),
+        icu::calendar::cal::Hijri::new_umm_al_qura(),
     );
 
     bench_calendar(
         &mut group,
         "calendar/islamic/tabular",
-        icu::calendar::cal::HijriTabular::new(
-            icu::calendar::cal::HijriTabularLeapYears::TypeII,
-            icu::calendar::cal::HijriTabularEpoch::Thursday,
+        icu::calendar::cal::Hijri::new_tabular(
+            icu::calendar::cal::hijri::TabularAlgorithmLeapYears::TypeII,
+            icu::calendar::cal::hijri::TabularAlgorithmEpoch::Thursday,
         ),
     );
 

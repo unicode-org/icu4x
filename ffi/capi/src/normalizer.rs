@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -17,7 +16,7 @@ pub mod ffi {
     pub struct ComposingNormalizer(pub icu_normalizer::ComposingNormalizer);
 
     impl ComposingNormalizer {
-        /// Construct a new ComposingNormalizer instance for NFC using compiled data.
+        /// Construct a new `ComposingNormalizer` instance for NFC using compiled data.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfc,
@@ -32,7 +31,7 @@ pub mod ffi {
                 icu_normalizer::ComposingNormalizer::new_nfc().static_to_owned(),
             ))
         }
-        /// Construct a new ComposingNormalizer instance for NFC using a particular data source.
+        /// Construct a new `ComposingNormalizer` instance for NFC using a particular data source.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfc,
@@ -50,7 +49,7 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Construct a new ComposingNormalizer instance for NFKC using compiled data.
+        /// Construct a new `ComposingNormalizer` instance for NFKC using compiled data.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfkc,
@@ -64,7 +63,7 @@ pub mod ffi {
                 icu_normalizer::ComposingNormalizer::new_nfkc().static_to_owned(),
             ))
         }
-        /// Construct a new ComposingNormalizer instance for NFKC using a particular data source.
+        /// Construct a new `ComposingNormalizer` instance for NFKC using a particular data source.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfkc,
@@ -175,7 +174,7 @@ pub mod ffi {
     pub struct DecomposingNormalizer(pub icu_normalizer::DecomposingNormalizer);
 
     impl DecomposingNormalizer {
-        /// Construct a new DecomposingNormalizer instance for NFD using compiled data.
+        /// Construct a new `DecomposingNormalizer` instance for NFD using compiled data.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfd,
@@ -191,7 +190,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new DecomposingNormalizer instance for NFD using a particular data source.
+        /// Construct a new `DecomposingNormalizer` instance for NFD using a particular data source.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfd,
@@ -210,7 +209,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a new DecomposingNormalizer instance for NFKD using compiled data.
+        /// Construct a new `DecomposingNormalizer` instance for NFKD using compiled data.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd,
@@ -225,7 +224,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
+        /// Construct a new `DecomposingNormalizer` instance for NFKD using a particular data source.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd,
@@ -286,7 +285,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "is_normalized")]
-        pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
+        #[diplomat::abi_rename = "icu4x_DecomposingNormalizer_is_normalized_mv1"] // TODO(3.0): remove
+        pub fn is_normalized_utf8(&self, s: &DiplomatStr) -> bool {
             self.0.as_borrowed().is_normalized_utf8(s)
         }
 
@@ -315,7 +315,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "is_normalized_up_to")]
-        pub fn is_normalized_up_to(&self, s: &DiplomatStr) -> usize {
+        #[diplomat::abi_rename = "icu4x_DecomposingNormalizer_is_normalized_up_to_mv1"] // TODO(3.0): remove
+        pub fn is_normalized_utf8_up_to(&self, s: &DiplomatStr) -> usize {
             self.0.as_borrowed().split_normalized_utf8(s).0.len()
         }
 

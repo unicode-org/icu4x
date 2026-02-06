@@ -1,5 +1,5 @@
-#ifndef icu4x_TrailingCase_D_HPP
-#define icu4x_TrailingCase_D_HPP
+#ifndef ICU4X_TrailingCase_D_HPP
+#define ICU4X_TrailingCase_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -25,28 +25,28 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.0.0/icu/casemap/options/enum.TrailingCase.html) for more information.
+ * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.1.1/icu/casemap/options/enum.TrailingCase.html) for more information.
  */
 class TrailingCase {
 public:
-  enum Value {
-    Lower = 0,
-    Unchanged = 1,
-  };
+    enum Value {
+        Lower = 0,
+        Unchanged = 1,
+    };
 
-  TrailingCase(): value(Value::Lower) {}
+    TrailingCase(): value(Value::Lower) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr TrailingCase(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr TrailingCase(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::TrailingCase AsFFI() const;
-  inline static icu4x::TrailingCase FromFFI(icu4x::capi::TrailingCase c_enum);
+    inline icu4x::capi::TrailingCase AsFFI() const;
+    inline static icu4x::TrailingCase FromFFI(icu4x::capi::TrailingCase c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_TrailingCase_D_HPP
+#endif // ICU4X_TrailingCase_D_HPP

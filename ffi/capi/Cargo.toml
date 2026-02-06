@@ -7,15 +7,16 @@ name = "icu_capi"
 description = "C interface to ICU4X"
 license = "Unicode-3.0"
 include = [
-    "bindings/**/*",
-    "!bindings/dart/**/*", # not yet stable
+    "bindings/c/**/*",
+    "bindings/cpp/**/*",
+    "bindings/js/**/*", # todo: remove, published through NPM
     "src/**/*",
     "tests/**/*",
     "Cargo.toml",
     "LICENSE",
     "README.md"
 ]
-version = "2.0.2"
+version.workspace = true
 
 authors.workspace = true
 categories.workspace = true
@@ -38,7 +39,6 @@ default = ["compiled_data", "default_components", "logging", "simple_logger", "s
 any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",
-    "dep:serde",
     "icu_calendar?/serde",
     "icu_casemap?/serde",
     "icu_collator?/serde",
@@ -51,13 +51,12 @@ buffer_provider = [
     "icu_plurals?/serde",
     "icu_properties?/serde",
     "icu_provider/serde",
-    "icu_provider_adapters/serde",
     "icu_segmenter?/serde",
     "icu_time?/serde",
     "icu_experimental?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider", "std"]
-logging = ["icu_provider/logging", "dep:log", "diplomat-runtime/log", "std"]
+logging = ["icu_provider/logging", "diplomat-runtime/log", "std"]
 simple_logger = ["dep:simple_logger", "logging"]
 
 # Components
@@ -76,20 +75,23 @@ default_components = [
     "timezone"
 ]
 
-calendar = ["dep:icu_calendar", "dep:icu_time"]
+calendar = ["dep:icu_calendar", "dep:icu_time", "dep:tinystr"]
 casemap = ["dep:icu_casemap"]
 collator = ["dep:icu_collator"]
 # collections = ["dep:icu_collections"] # Not useful on its own: use properties
-datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_time", "dep:icu_decimal", "dep:icu_plurals", "icu_datetime?/experimental"]
-decimal = ["dep:icu_decimal", "dep:fixed_decimal"]
+datetime = ["calendar", "dep:icu_datetime"]
+decimal = ["dep:icu_decimal", "dep:fixed_decimal", "dep:zerovec"]
 experimental = ["dep:icu_experimental"]
-list = ["dep:icu_list"]
+list = ["dep:icu_list", "dep:potential_utf"]
 locale = ["dep:icu_locale"]
 normalizer = ["dep:icu_normalizer", "icu_normalizer?/utf8_iter", "icu_normalizer?/utf16_iter"]
 plurals = ["dep:icu_plurals", "dep:fixed_decimal"]
 properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi"]
 segmenter = ["dep:icu_segmenter"]
-timezone = ["dep:icu_time", "dep:icu_calendar"]
+timezone = ["calendar"]
+
+# Unstable features on individual components
+unstable = ["icu_calendar?/unstable", "icu_datetime?/unstable", "icu_plurals?/unstable"]
 
 compiled_data = [
     "icu_calendar?/compiled_data",
@@ -115,12 +117,8 @@ libc_alloc = ["dep:libc_alloc"]
 
 [dependencies]
 # Mandatory ICU4X components and utils
-icu_locale_core = { workspace = true }
+icu_locale_core = { workspace = true, features = ["alloc"] }
 icu_provider = { workspace = true }
-icu_provider_adapters = { workspace = true }
-
-tinystr = { workspace = true }
-potential_utf = { workspace = true, features = ["writeable"]}
 writeable = { workspace = true }
 
 # Diplomat
@@ -145,11 +143,13 @@ icu_time = { workspace = true, features = ["alloc", "ixdtf"], optional = true }
 icu_experimental = { workspace = true, optional = true }
 
 # Optional ICU4X features (not components)
+icu_provider_adapters = { workspace = true, features = ["serde"] } # should be optional
 icu_provider_blob = { workspace = true, features = ["alloc"], optional = true }
-serde = { workspace = true, optional = true }
+# log = { workspace = true, optional = true }
+potential_utf = { workspace = true, features = ["writeable"], optional = true }
+tinystr = { workspace = true, optional = true }
 unicode-bidi = { workspace = true, optional = true }
-log = { workspace = true, optional = true }
-zerovec = { workspace = true }
+zerovec = { workspace = true, optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Logging uses diplomat_runtime bindings in wasm, we only need this for native
@@ -160,4 +160,7 @@ libc_alloc = { workspace = true, features = ["global"], optional = true }
 icu_provider_fs = { workspace = true, optional = true }
 
 [package.metadata.cargo-semver-checks.lints]
+workspace = true
+
+[lints]
 workspace = true

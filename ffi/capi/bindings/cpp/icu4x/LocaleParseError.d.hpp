@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleParseError_D_HPP
-#define icu4x_LocaleParseError_D_HPP
+#ifndef ICU4X_LocaleParseError_D_HPP
+#define ICU4X_LocaleParseError_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -27,30 +27,30 @@ namespace capi {
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/2.0.0/icu/locale/enum.ParseError.html)
+ * Additional information: [1](https://docs.rs/icu/2.1.1/icu/locale/enum.ParseError.html)
  */
 class LocaleParseError {
 public:
-  enum Value {
-    Unknown = 0,
-    Language = 1,
-    Subtag = 2,
-    Extension = 3,
-  };
+    enum Value {
+        Unknown = 0,
+        Language = 1,
+        Subtag = 2,
+        Extension = 3,
+    };
 
-  LocaleParseError(): value(Value::Unknown) {}
+    LocaleParseError(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LocaleParseError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LocaleParseError(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LocaleParseError AsFFI() const;
-  inline static icu4x::LocaleParseError FromFFI(icu4x::capi::LocaleParseError c_enum);
+    inline icu4x::capi::LocaleParseError AsFFI() const;
+    inline static icu4x::LocaleParseError FromFFI(icu4x::capi::LocaleParseError c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_LocaleParseError_D_HPP
+#endif // ICU4X_LocaleParseError_D_HPP

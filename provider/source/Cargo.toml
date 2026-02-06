@@ -17,7 +17,7 @@ include = [
     "LICENSE",
     "README.md",
 ]
-version = "2.0.2"
+version = "2.1.2"
 
 authors.workspace = true
 categories.workspace = true
@@ -37,12 +37,9 @@ icu = { workspace = true, features = ["datagen"] }
 icu_time = { workspace = true, features = ["ixdtf"] }
 
 # ICU infrastructure
-calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
-icu_collections = { workspace = true, features = ["serde"] }
 icu_pattern = { workspace = true, features = ["alloc", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
-icu_provider_adapters = { workspace = true }
 icu_provider_registry = { workspace = true }
 litemap = { workspace = true, features = ["serde"] }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
@@ -53,7 +50,6 @@ zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies
 displaydoc = { workspace = true }
-either = { workspace = true }
 elsa = { workspace = true }
 flate2 = { workspace = true }
 itertools = { workspace = true }
@@ -71,10 +67,7 @@ zip = { workspace = true, features = ["deflate"] }
 # `networking` feature
 ureq = { workspace = true, optional = true}
 
-# `experimental` feature 
-icu_experimental = { workspace = true, features = ["datagen"], optional = true }
-num-bigint = { workspace = true, optional = true }
-num-rational = { workspace = true, optional = true }
+# `unstable` feature 
 num-traits = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -83,7 +76,9 @@ icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_expo
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
-icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
+icu = { path = "../../components/icu", default-features = false, features = ["unstable"] }
+num-bigint = { workspace = true }
+num-rational = { workspace = true }
 
 [features]
 default = ["use_wasm", "networking"]
@@ -95,13 +90,17 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
-experimental = [
-    "icu/experimental",
-    "dep:num-bigint",
-    "dep:num-rational",
+unstable = [
+    "icu/unstable",
     "dep:num-traits",
 ]
+
+# added by accident
+icu_experimental = []
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
+
+[lints]
+workspace = true

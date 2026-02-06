@@ -1,5 +1,5 @@
-#ifndef icu4x_DecimalGroupingStrategy_D_HPP
-#define icu4x_DecimalGroupingStrategy_D_HPP
+#ifndef ICU4X_DecimalGroupingStrategy_D_HPP
+#define ICU4X_DecimalGroupingStrategy_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -27,30 +27,30 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.0.0/icu/decimal/options/enum.GroupingStrategy.html) for more information.
+ * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.1.1/icu/decimal/options/enum.GroupingStrategy.html) for more information.
  */
 class DecimalGroupingStrategy {
 public:
-  enum Value {
-    Auto = 0,
-    Never = 1,
-    Always = 2,
-    Min2 = 3,
-  };
+    enum Value {
+        Auto = 0,
+        Never = 1,
+        Always = 2,
+        Min2 = 3,
+    };
 
-  DecimalGroupingStrategy(): value(Value::Auto) {}
+    DecimalGroupingStrategy(): value(Value::Auto) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DecimalGroupingStrategy(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DecimalGroupingStrategy(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DecimalGroupingStrategy AsFFI() const;
-  inline static icu4x::DecimalGroupingStrategy FromFFI(icu4x::capi::DecimalGroupingStrategy c_enum);
+    inline icu4x::capi::DecimalGroupingStrategy AsFFI() const;
+    inline static icu4x::DecimalGroupingStrategy FromFFI(icu4x::capi::DecimalGroupingStrategy c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_DecimalGroupingStrategy_D_HPP
+#endif // ICU4X_DecimalGroupingStrategy_D_HPP

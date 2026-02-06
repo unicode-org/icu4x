@@ -2,10 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! `icu` is the main meta-crate of the `ICU4X` project.
 //!
 //! It provides a comprehensive selection of functionality found in
-//! [International Components for Unicode](http://icu.unicode.org/)
+//! [International Components for Unicode](https://icu.unicode.org/)
 //! in their canonical configurations intended to enable software
 //! internationalization capabilities.
 //!
@@ -112,7 +125,7 @@
 //! are on track to be eventually stabilized into this crate.
 //!
 //!
-//! [CLDR]: http://cldr.unicode.org/
+//! [CLDR]: https://cldr.unicode.org/
 //! [`DataProvider`]: icu_provider::DataProvider
 //! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
@@ -121,26 +134,8 @@
 //! [`Locale`]: crate::locale::Locale
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data-provider-runtime.md#loading-additional-data-at-runtime
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
-
-#[cfg(doc)]
 // Needed for intra-doc link to work, since icu_provider is otherwise never mentioned in this crate
-extern crate icu_provider;
+use icu_provider as _;
 
 #[doc(inline)]
 pub use icu_calendar as calendar;
@@ -182,11 +177,11 @@ pub use icu_segmenter as segmenter;
 pub use icu_time as time;
 
 #[doc(inline)]
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub use icu_experimental as experimental;
 
 #[doc(inline)]
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub use icu_pattern as pattern;
 
 #[cfg(feature = "datagen")]

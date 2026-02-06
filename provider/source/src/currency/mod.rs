@@ -6,4 +6,5 @@ pub(crate) mod compact;
 pub(crate) mod displayname;
 pub(crate) mod essentials;
 pub(crate) mod extended;
+pub(crate) mod fractions;
 pub(crate) mod patterns;

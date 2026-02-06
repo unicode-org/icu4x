@@ -56,7 +56,9 @@ mod zone_name_timestamp;
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
 pub use offset::VariantOffsets;
+#[allow(deprecated)]
 pub use offset::VariantOffsetsCalculator;
+#[allow(deprecated)]
 pub use offset::VariantOffsetsCalculatorBorrowed;
 
 #[doc(no_inline)]
@@ -74,7 +76,6 @@ use icu_calendar::Iso;
 use icu_locale_core::subtags::{subtag, Subtag};
 use icu_provider::prelude::yoke;
 use zerovec::ule::{AsULE, ULE};
-use zerovec::{ZeroSlice, ZeroVec};
 
 /// Time zone data model choices.
 pub mod models {
@@ -203,9 +204,10 @@ impl AsULE for TimeZone {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
-    type Container = ZeroVec<'a, TimeZone>;
-    type Slice = ZeroSlice<TimeZone>;
+    type Container = zerovec::ZeroVec<'a, TimeZone>;
+    type Slice = zerovec::ZeroSlice<TimeZone>;
     type GetType = TimeZone;
     type OwnedType = TimeZone;
 }
@@ -297,10 +299,65 @@ where
 
 impl TimeZone {
     /// Associates this [`TimeZone`] with a UTC offset, returning a [`TimeZoneInfo`].
-    pub const fn with_offset(self, offset: Option<UtcOffset>) -> TimeZoneInfo<models::Base> {
+    pub const fn with_offset(self, mut offset: Option<UtcOffset>) -> TimeZoneInfo<models::Base> {
+        let mut id = self;
+
+        #[allow(clippy::identity_op, clippy::neg_multiply)]
+        let correct_offset = match self.0.as_str().as_bytes() {
+            b"utc" | b"gmt" => Some(UtcOffset::zero()),
+            b"utce01" => Some(UtcOffset::from_seconds_unchecked(1 * 60 * 60)),
+            b"utce02" => Some(UtcOffset::from_seconds_unchecked(2 * 60 * 60)),
+            b"utce03" => Some(UtcOffset::from_seconds_unchecked(3 * 60 * 60)),
+            b"utce04" => Some(UtcOffset::from_seconds_unchecked(4 * 60 * 60)),
+            b"utce05" => Some(UtcOffset::from_seconds_unchecked(5 * 60 * 60)),
+            b"utce06" => Some(UtcOffset::from_seconds_unchecked(6 * 60 * 60)),
+            b"utce07" => Some(UtcOffset::from_seconds_unchecked(7 * 60 * 60)),
+            b"utce08" => Some(UtcOffset::from_seconds_unchecked(8 * 60 * 60)),
+            b"utce09" => Some(UtcOffset::from_seconds_unchecked(9 * 60 * 60)),
+            b"utce10" => Some(UtcOffset::from_seconds_unchecked(10 * 60 * 60)),
+            b"utce11" => Some(UtcOffset::from_seconds_unchecked(11 * 60 * 60)),
+            b"utce12" => Some(UtcOffset::from_seconds_unchecked(12 * 60 * 60)),
+            b"utce13" => Some(UtcOffset::from_seconds_unchecked(13 * 60 * 60)),
+            b"utce14" => Some(UtcOffset::from_seconds_unchecked(14 * 60 * 60)),
+            b"utcw01" => Some(UtcOffset::from_seconds_unchecked(-1 * 60 * 60)),
+            b"utcw02" => Some(UtcOffset::from_seconds_unchecked(-2 * 60 * 60)),
+            b"utcw03" => Some(UtcOffset::from_seconds_unchecked(-3 * 60 * 60)),
+            b"utcw04" => Some(UtcOffset::from_seconds_unchecked(-4 * 60 * 60)),
+            b"utcw05" => Some(UtcOffset::from_seconds_unchecked(-5 * 60 * 60)),
+            b"utcw06" => Some(UtcOffset::from_seconds_unchecked(-6 * 60 * 60)),
+            b"utcw07" => Some(UtcOffset::from_seconds_unchecked(-7 * 60 * 60)),
+            b"utcw08" => Some(UtcOffset::from_seconds_unchecked(-8 * 60 * 60)),
+            b"utcw09" => Some(UtcOffset::from_seconds_unchecked(-9 * 60 * 60)),
+            b"utcw10" => Some(UtcOffset::from_seconds_unchecked(-10 * 60 * 60)),
+            b"utcw11" => Some(UtcOffset::from_seconds_unchecked(-11 * 60 * 60)),
+            b"utcw12" => Some(UtcOffset::from_seconds_unchecked(-12 * 60 * 60)),
+            _ => None,
+        };
+
+        match (correct_offset, offset) {
+            // The Etc/* zones have fixed defined offsets. By setting them here,
+            // they won't format as UTC+?.
+            (Some(c), None) => {
+                offset = Some(c);
+
+                // The Etc/GMT+X zones do not have display names, so they format
+                // exactly like UNKNOWN with the same offset. For the sake of
+                // equality, set the ID to UNKNOWN as well.
+                if id.0.as_str().len() > 3 {
+                    id = Self::UNKNOWN;
+                }
+            }
+            // Garbage offset for a fixed zone, now we know nothing
+            (Some(c), Some(o)) if c.to_seconds() != o.to_seconds() => {
+                offset = None;
+                id = Self::UNKNOWN;
+            }
+            _ => {}
+        }
+
         TimeZoneInfo {
+            id,
             offset,
-            id: self,
             zone_name_timestamp: (),
             variant: (),
         }
@@ -308,24 +365,29 @@ impl TimeZone {
 
     /// Converts this [`TimeZone`] into a [`TimeZoneInfo`] without an offset.
     pub const fn without_offset(self) -> TimeZoneInfo<models::Base> {
-        TimeZoneInfo {
-            offset: None,
-            id: self,
-            zone_name_timestamp: (),
-            variant: (),
-        }
+        self.with_offset(None)
     }
 }
 
 impl TimeZoneInfo<models::Base> {
     /// Creates a time zone info with no information.
     pub const fn unknown() -> Self {
-        TimeZone::UNKNOWN.with_offset(None)
+        Self {
+            id: TimeZone::UNKNOWN,
+            offset: None,
+            zone_name_timestamp: (),
+            variant: (),
+        }
     }
 
     /// Creates a new [`TimeZoneInfo`] for the UTC time zone.
     pub const fn utc() -> Self {
-        TimeZone(subtag!("utc")).with_offset(Some(UtcOffset::zero()))
+        TimeZoneInfo {
+            id: TimeZone(subtag!("utc")),
+            offset: Some(UtcOffset::zero()),
+            zone_name_timestamp: (),
+            variant: (),
+        }
     }
 
     /// Sets the [`ZoneNameTimestamp`] field.
@@ -497,4 +559,43 @@ impl TimeZoneVariant {
             TimeZoneVariant::Standard
         }
     }
+}
+
+#[test]
+fn test_zone_info_equality() {
+    // offset inferred
+    assert_eq!(
+        IanaParser::new().parse("Etc/GMT-8").with_offset(None),
+        TimeZone::UNKNOWN.with_offset(Some(UtcOffset::from_seconds_unchecked(8 * 60 * 60)))
+    );
+    assert_eq!(
+        IanaParser::new().parse("Etc/UTC").with_offset(None),
+        TimeZoneInfo::utc()
+    );
+    assert_eq!(
+        IanaParser::new().parse("Etc/GMT").with_offset(None),
+        IanaParser::new()
+            .parse("Etc/GMT")
+            .with_offset(Some(UtcOffset::zero()))
+    );
+
+    // bogus offset removed
+    assert_eq!(
+        IanaParser::new()
+            .parse("Etc/GMT-8")
+            .with_offset(Some(UtcOffset::from_seconds_unchecked(123))),
+        TimeZoneInfo::unknown()
+    );
+    assert_eq!(
+        IanaParser::new()
+            .parse("Etc/UTC")
+            .with_offset(Some(UtcOffset::from_seconds_unchecked(123))),
+        TimeZoneInfo::unknown(),
+    );
+    assert_eq!(
+        IanaParser::new()
+            .parse("Etc/GMT")
+            .with_offset(Some(UtcOffset::from_seconds_unchecked(123))),
+        TimeZoneInfo::unknown()
+    );
 }

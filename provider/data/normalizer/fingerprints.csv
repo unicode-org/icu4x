@@ -1,7 +1,7 @@
 normalizer/nfc/v1, <singleton>, 5332B, 5310B, dd048e68b718a993
-normalizer/nfd/data/v1, <singleton>, 27948B, 27884B, 3931c41532b0befe
+normalizer/nfd/data/v1, <singleton>, 34912B, 34848B, 933447e5c056e49c
 normalizer/nfd/supplement/v1, <singleton>, 4486B, 4403B, a587960aa6faa95c
 normalizer/nfd/tables/v1, <singleton>, 2177B, 2133B, 8818c6d23b22796a
-normalizer/nfkd/data/v1, <singleton>, 43132B, 43068B, ee74fbe0e451077d
-normalizer/nfkd/tables/v1, <singleton>, 5790B, 5746B, fff268445f2e8786
-normalizer/uts46/data/v1, <singleton>, 56200B, 56141B, 178de54c1820e67d
+normalizer/nfkd/data/v1, <singleton>, 51488B, 51424B, a5a4848d32dd13f8
+normalizer/nfkd/tables/v1, <singleton>, 5865B, 5821B, 7f50ce23df00365d
+normalizer/uts46/data/v1, <singleton>, 56552B, 56493B, 2f3422c2c9cc708b

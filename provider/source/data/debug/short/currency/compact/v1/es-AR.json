@@ -1,220 +1,211 @@
 {
-  "compact_patterns": [
-    [
-      [
-        3,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤0 K"
-    ],
-    [
-      [
-        3,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 0 K"
-    ],
-    [
-      [
-        4,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤00 K"
-    ],
-    [
-      [
-        4,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 00 K"
-    ],
-    [
-      [
-        5,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤000 K"
-    ],
-    [
-      [
-        5,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 000 K"
-    ],
-    [
-      [
-        6,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤0 M"
-    ],
-    [
-      [
-        6,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 0 M"
-    ],
-    [
-      [
-        7,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤00 M"
-    ],
-    [
-      [
-        7,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 00 M"
-    ],
-    [
-      [
-        8,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤000 M"
-    ],
-    [
-      [
-        8,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 000 M"
-    ],
-    [
-      [
-        9,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤0000 M"
-    ],
-    [
-      [
-        9,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 0000 M"
-    ],
-    [
-      [
-        10,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤00 MRD"
-    ],
-    [
-      [
-        10,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 00 MRD"
-    ],
-    [
-      [
-        11,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤000 MRD"
-    ],
-    [
-      [
-        11,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 000 MRD"
-    ],
-    [
-      [
-        12,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤0 B"
-    ],
-    [
-      [
-        12,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 0 B"
-    ],
-    [
-      [
-        13,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤00 B"
-    ],
-    [
-      [
-        13,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 00 B"
-    ],
-    [
-      [
-        14,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "¤000 B"
-    ],
-    [
-      [
-        14,
-        {
-          "AlphaNextToNumber": "Other"
-        }
-      ],
-      "¤ 000 B"
-    ]
+  "standard": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " K"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 4,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " k"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " M"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 10,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " mil M"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " B"
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "alpha_next_to_number": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " K"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 4,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " k"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " M"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 10,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " mil M"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " B"
+            }
+          ]
+        ]
+      }
+    }
   ]
 }

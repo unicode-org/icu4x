@@ -10,7 +10,7 @@ use syn::spanned::Spanned;
 use syn::{Data, DeriveInput, Error, Ident};
 
 /// Implementation for derive(VarULE). `custom_varule_validator` validates the last field bytes `last_field_bytes`
-/// if specified, if not, the VarULE implementation will be used.
+/// if specified, if not, the `VarULE` implementation will be used.
 pub fn derive_impl(
     input: &DeriveInput,
     custom_varule_validator: Option<TokenStream2>,

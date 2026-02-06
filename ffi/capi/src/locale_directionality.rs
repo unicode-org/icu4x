@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -30,7 +29,7 @@ pub mod ffi {
     pub struct LocaleDirectionality(pub icu_locale::LocaleDirectionality);
 
     impl LocaleDirectionality {
-        /// Construct a new LocaleDirectionality instance using compiled data.
+        /// Construct a new `LocaleDirectionality` instance using compiled data.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_common, FnInStruct)]
         #[diplomat::attr(supports = constructors, constructor)]
         #[cfg(feature = "compiled_data")]
@@ -40,7 +39,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new LocaleDirectionality instance using a particular data source.
+        /// Construct a new `LocaleDirectionality` instance using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_common, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
@@ -53,7 +52,7 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Construct a new LocaleDirectionality instance using compiled data.
+        /// Construct a new `LocaleDirectionality` instance using compiled data.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_extended, FnInStruct)]
         #[diplomat::rust_link(
             icu::locale::LocaleDirectionality::new_with_expander,
@@ -68,7 +67,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new LocaleDirectionality instance using a particular data source.
+        /// Construct a new `LocaleDirectionality` instance using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_extended, FnInStruct)]
         #[diplomat::rust_link(
             icu::locale::LocaleDirectionality::new_with_expander,
@@ -87,7 +86,7 @@ pub mod ffi {
             )))
         }
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::get, FnInStruct)]
-        #[diplomat::attr(auto, indexer)]
+        #[diplomat::attr(all(supports = indexing, not(kotlin)), indexer)] // Kotlin doesn't support non-integral indexers
         pub fn get(&self, locale: &Locale) -> LocaleDirection {
             match self.0.get(&locale.0.id) {
                 Some(icu_locale::Direction::LeftToRight) => LocaleDirection::LeftToRight,

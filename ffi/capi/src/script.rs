@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -14,19 +13,19 @@ pub mod ffi {
     use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
-    /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
+    /// An ICU4X `ScriptWithExtensions` map object, capable of holding a map of codepoints to scriptextensions values
     #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions, Struct)]
     pub struct ScriptWithExtensions(pub icu_properties::script::ScriptWithExtensions);
 
     #[diplomat::opaque]
-    /// A slightly faster ScriptWithExtensions object
+    /// A slightly faster `ScriptWithExtensions` object
     #[diplomat::rust_link(icu::properties::script::ScriptWithExtensionsBorrowed, Struct)]
     #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct ScriptWithExtensionsBorrowed<'a>(
         pub icu_properties::script::ScriptWithExtensionsBorrowed<'a>,
     );
     #[diplomat::opaque]
-    /// An object that represents the Script_Extensions property for a single character
+    /// An object that represents the `Script_Extensions` property for a single character
     #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet, Struct)]
     #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct ScriptExtensionsSet<'a>(pub icu_properties::script::ScriptExtensionsSet<'a>);
@@ -80,7 +79,7 @@ pub mod ffi {
             self.0.as_borrowed().get_script_val32(ch).to_icu4c_value()
         }
 
-        /// Check if the Script_Extensions property of the given code point covers the given script
+        /// Check if the `Script_Extensions` property of the given code point covers the given script
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::has_script,
             FnInStruct
@@ -106,7 +105,7 @@ pub mod ffi {
             Box::new(ScriptWithExtensionsBorrowed(self.0.as_borrowed()))
         }
 
-        /// Get a list of ranges of code points that contain this script in their Script_Extensions values
+        /// Get a list of ranges of code points that contain this script in their `Script_Extensions` values
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges,
             FnInStruct
@@ -151,7 +150,7 @@ pub mod ffi {
         pub fn get_script_extensions_val(&self, ch: DiplomatChar) -> Box<ScriptExtensionsSet<'a>> {
             Box::new(ScriptExtensionsSet(self.0.get_script_extensions_val32(ch)))
         }
-        /// Check if the Script_Extensions property of the given code point covers the given script
+        /// Check if the `Script_Extensions` property of the given code point covers the given script
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::has_script,
             FnInStruct
@@ -166,8 +165,8 @@ pub mod ffi {
                 .has_script32(ch, icu_properties::props::Script::from_icu4c_value(script))
         }
 
-        /// Build the CodePointSetData corresponding to a codepoints matching a particular script
-        /// in their Script_Extensions
+        /// Build the `CodePointSetData` corresponding to a codepoints matching a particular script
+        /// in their `Script_Extensions`
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set,
             FnInStruct
@@ -182,7 +181,7 @@ pub mod ffi {
         }
     }
     impl<'a> ScriptExtensionsSet<'a> {
-        /// Check if the Script_Extensions property of the given code point covers the given script
+        /// Check if the `Script_Extensions` property of the given code point covers the given script
         #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::contains, FnInStruct)]
         pub fn contains(&self, script: u16) -> bool {
             self.0

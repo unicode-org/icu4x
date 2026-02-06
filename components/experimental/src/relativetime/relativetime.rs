@@ -21,13 +21,29 @@ define_preferences!(
     /// The preferences for relative time formatting.
     [Copy]
     RelativeTimeFormatterPreferences,
-    {}
+    {
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved numbering system, you can inspect the data provider.
+        /// See the [`provider`] module for an example.
+        numbering_system: preferences::NumberingSystem
+    }
 );
 prefs_convert!(
     RelativeTimeFormatterPreferences,
-    DecimalFormatterPreferences
+    DecimalFormatterPreferences,
+    { numbering_system }
 );
 prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
+
+/// Locale preferences used by this crate
+pub mod preferences {
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}
 
 /// A formatter to render locale-sensitive relative time.
 ///
@@ -68,11 +84,12 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
+/// let mut options = RelativeTimeFormatterOptions::default();
+/// options.numeric = Numeric::Auto;
+///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
 ///     locale!("es").into(),
-///     RelativeTimeFormatterOptions {
-///         numeric: Numeric::Auto,
-///     },
+///     options,
 /// )
 /// .expect("locale should be present");
 ///
@@ -118,6 +135,7 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 ///     "১৫ বছর পূর্বে"
 /// );
 /// ```
+#[derive(Debug)]
 pub struct RelativeTimeFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) rt: DataPayload<ErasedMarker<RelativeTimePatternData<'static>>>,

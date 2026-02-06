@@ -5,8 +5,10 @@
 //! Code for the [`MultiNamedPlaceholder`] pattern backend.
 
 #[cfg(feature = "alloc")]
-use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, str::FromStr, string::String};
+use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, string::String};
 use core::fmt;
+#[cfg(feature = "alloc")]
+use core::str::FromStr;
 #[cfg(feature = "litemap")]
 use litemap::LiteMap;
 use writeable::Writeable;
@@ -36,13 +38,9 @@ use crate::Error;
 ///     pattern.iter().cmp(
 ///         [
 ///             PatternItem::Literal("Hello, "),
-///             PatternItem::Placeholder(MultiNamedPlaceholderKey(
-///                 "person0".into()
-///             )),
+///             PatternItem::Placeholder(MultiNamedPlaceholderKey("person0")),
 ///             PatternItem::Literal(" and "),
-///             PatternItem::Placeholder(MultiNamedPlaceholderKey(
-///                 "person1".into()
-///             )),
+///             PatternItem::Placeholder(MultiNamedPlaceholderKey("person1")),
 ///             PatternItem::Literal("!")
 ///         ]
 ///         .into_iter()
@@ -166,7 +164,7 @@ where
 /// The literals and placeholders are stored in context. A placeholder is encoded as a name length
 /// in octal code points followed by the placeholder name.
 ///
-/// For example, consider the pattern: "Hello, {user} and {someone_else}!"
+/// For example, consider the pattern: `Hello, {user} and {someone_else}!`
 ///
 /// The encoding for this would be:
 ///
@@ -246,7 +244,7 @@ where
 /// use litemap::LiteMap;
 /// use writeable::TryWriteable;
 ///
-/// static placeholder_value_map: LiteMap<&str, usize, &[(&str, usize)]> =
+/// static PLACEHOLDER_VALUE_MAP: LiteMap<&str, usize, &[(&str, usize)]> =
 ///     LiteMap::from_sorted_store_unchecked(&[("seven", 11)]);
 ///
 /// // Note: String allocates, but this could be a non-allocating sink
@@ -254,7 +252,7 @@ where
 ///
 /// MultiNamedPlaceholderPattern::try_from_str("{seven}", Default::default())
 ///     .unwrap()
-///     .try_interpolate(&placeholder_value_map)
+///     .try_interpolate(&PLACEHOLDER_VALUE_MAP)
 ///     .try_write_to(&mut sink)
 ///     .unwrap()
 ///     .unwrap();

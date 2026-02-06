@@ -123,7 +123,7 @@ where
         }
         // Release the lock to invoke the inner provider
         let response = self.provider.load(req)?;
-        let owned_cache_key = CacheKeyWrap(CacheKey(M::INFO, Cow::Owned(req.id.locale.clone())));
+        let owned_cache_key = CacheKeyWrap(CacheKey(M::INFO, Cow::Owned(*req.id.locale)));
         // Second lock: cache storage
         Ok(self.cache.lock()
             .unwrap()

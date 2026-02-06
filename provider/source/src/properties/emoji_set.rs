@@ -5,6 +5,7 @@
 use crate::SourceDataProvider;
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu::properties::props::EmojiSet;
 use icu::properties::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -13,22 +14,50 @@ use zerovec::VarZeroVec;
 impl SourceDataProvider {
     fn get_binary_prop_for_unicodeset<'a>(
         &'a self,
-        key: &str,
+        name: &str,
+        short_name: &str,
     ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
-        self.icuexport()?
+        let data = self
+            .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
                 "uprops/{}/{}.toml",
                 self.trie_type(),
-                key
+                short_name
             ))?
             .binary_property
             .first()
-            .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())?;
+
+        if name != data.long_name
+            || short_name != data.short_name.as_ref().unwrap_or(&data.long_name)
+        {
+            return Err(DataError::custom("Property name mismatch").with_display_context(name));
+        }
+
+        Ok(data)
+    }
+}
+
+impl super::uprops_serde::binary::BinaryProperty {
+    fn build_uniset(&self) -> Result<CodePointInversionListAndStringList<'static>, DataError> {
+        let mut builder = CodePointInversionListBuilder::new();
+        for (start, end) in &self.ranges {
+            builder.add_range32(start..=end);
+        }
+        let inv_list = builder.build();
+
+        let strings = self.strings.as_ref().ok_or(DataError::custom(
+            "Error in deserializing strings from BinaryProperty source data",
+        ))?;
+        let string_list = VarZeroVec::<str>::from(strings);
+
+        CodePointInversionListAndStringList::try_from(inv_list, string_list)
+            .map_err(|_| DataError::custom("Error in constructing CodePointInversionListAndStringList from deserialized BinaryProperty data"))
     }
 }
 
 macro_rules! expand {
-    ($(($marker:ident, $prop_name:literal)),+) => {
+    ($(($prop:ty, $marker:ident)),+) => {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(
@@ -36,33 +65,20 @@ macro_rules! expand {
                     req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let data = self.get_binary_prop_for_unicodeset($prop_name)?;
-
-                    let mut builder = CodePointInversionListBuilder::new();
-                    for (start, end) in &data.ranges {
-                        builder.add_range32(start..=end);
-                    }
-                    let inv_list = builder.build();
-
-                    let strings = data.strings.as_ref().ok_or(DataError::custom("Error in deserializing strings from BinaryProperty source data"))?;
-                    let string_list = VarZeroVec::<str>::from(strings);
-
-                    let uniset = CodePointInversionListAndStringList::try_from(inv_list, string_list)
-                        .map_err(|_| DataError::custom("Error in constructing CodePointInversionListAndStringList from deserialized BinaryProperty data"))?;
+                    let data = self.get_binary_prop_for_unicodeset(
+                        core::str::from_utf8(<$prop as EmojiSet>::NAME).unwrap(),
+                        core::str::from_utf8(<$prop as EmojiSet>::SHORT_NAME).unwrap()
+                    )?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
-                        payload: DataPayload::from_owned(
-                            PropertyUnicodeSet::CPInversionListStrList(uniset),
-                        ),
+                        payload: DataPayload::from_owned(PropertyUnicodeSet::CPInversionListStrList(data.build_uniset()?)),
                     })
                 }
             }
 
             impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
                 fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                    self.get_binary_prop_for_unicodeset($prop_name)?;
-
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -70,7 +86,10 @@ macro_rules! expand {
     };
 }
 
-expand!((PropertyBinaryBasicEmojiV1, "Basic_Emoji"));
+expand!((
+    icu::properties::props::BasicEmoji,
+    PropertyBinaryBasicEmojiV1
+));
 
 #[test]
 fn test_basic() {

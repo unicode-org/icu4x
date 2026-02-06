@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] Types for specifying fields in a classical datetime skeleton.
+//! 🚧 \[Unstable\] Types for specifying fields in a classical datetime skeleton.
 //!
 //! <div class="stab unstable">
-//! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+//! 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 //! </div>
@@ -36,6 +36,7 @@ use crate::{
 };
 
 use crate::pattern::DateTimePattern;
+use alloc::vec::Vec;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -43,8 +44,8 @@ use serde::{Deserialize, Serialize};
 /// See the [module-level](./index.html) docs for more information.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -77,6 +78,9 @@ pub struct Bag {
     pub time_zone_name: Option<TimeZoneName>,
 
     /// An override of the hour cycle.
+    //
+    // TODO: This should probably not be the preferences [HourCycle] type. It directly sets the
+    // hour cycle, without support for Clock12 and Clock24, which will panic.
     pub hour_cycle: Option<HourCycle>,
 }
 
@@ -106,7 +110,7 @@ impl Bag {
         }
     }
 
-    /// Converts the components::Bag into a `Vec<Field>`. The fields will be ordered in from most
+    /// Converts the [`Bag`] into a [`Vec<Field>`]. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
     ///
@@ -114,8 +118,8 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> alloc::vec::Vec<Field> {
-        let mut fields = alloc::vec::Vec::new();
+    pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> Vec<Field> {
+        let mut fields = Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
                 symbol: FieldSymbol::Era,
@@ -182,7 +186,10 @@ impl Bag {
         }
 
         if let Some(week) = self.week {
-            #[allow(unreachable_code)]
+            #[allow(
+                unreachable_code,
+                reason = "Uninhabited MultipleVariants (due to pivot_field), see #7118"
+            )]
             fields.push(Field {
                 symbol: FieldSymbol::Week(match week {
                     Week::WeekOfMonth => unimplemented!("#5643 fields::Week::WeekOfMonth"),
@@ -205,15 +212,17 @@ impl Bag {
                     Day::NumericDayOfMonth | Day::TwoDigitDayOfMonth => fields::Day::DayOfMonth,
                     Day::DayOfWeekInMonth => fields::Day::DayOfWeekInMonth,
                     Day::DayOfYear => fields::Day::DayOfYear,
+                    Day::ModifiedJulianDay => fields::Day::ModifiedJulianDay,
                 }),
                 length: match day {
                     // d    1 	  Numeric day of month: minimum digits
                     // dd   01 	  Numeric day of month: 2 digits, zero pad if needed
                     // F    1  	  Numeric day of week in month: minimum digits
                     // D    1     Numeric day of year: minimum digits
-                    Day::NumericDayOfMonth | Day::DayOfWeekInMonth | Day::DayOfYear => {
-                        FieldLength::One
-                    }
+                    Day::NumericDayOfMonth
+                    | Day::DayOfWeekInMonth
+                    | Day::DayOfYear
+                    | Day::ModifiedJulianDay => FieldLength::One,
                     Day::TwoDigitDayOfMonth => FieldLength::Two,
                 },
             });
@@ -334,8 +343,8 @@ impl Bag {
 /// and second.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -356,8 +365,8 @@ pub enum Numeric {
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -383,8 +392,8 @@ pub enum Text {
 /// Options for displaying a Year for the `components::`[`Bag`].
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -411,8 +420,8 @@ pub enum Year {
 /// Options for displaying a Month for the `components::`[`Bag`].
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -444,8 +453,8 @@ pub enum Month {
 /// Week numbers are relative to either a month or year, e.g. 'week 3 of January' or 'week 40 of 2000'.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -468,8 +477,8 @@ pub enum Week {
 /// Options for displaying the current day of the month or year.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -489,6 +498,8 @@ pub enum Day {
     DayOfWeekInMonth,
     /// The day of year (numeric).
     DayOfYear,
+    /// The modified Julian day (numeric)
+    ModifiedJulianDay,
 }
 
 /// Options for displaying a time zone for the `components::`[`Bag`].
@@ -497,8 +508,8 @@ pub enum Day {
 /// options.
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -657,6 +668,7 @@ impl Bag {
                         },
                         fields::Day::DayOfYear => Day::DayOfYear,
                         fields::Day::DayOfWeekInMonth => Day::DayOfWeekInMonth,
+                        fields::Day::ModifiedJulianDay => Day::ModifiedJulianDay,
                     });
                 }
                 FieldSymbol::Weekday(weekday) => {

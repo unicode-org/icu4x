@@ -1,5 +1,5 @@
-#ifndef icu4x_CollatorAlternateHandling_D_HPP
-#define icu4x_CollatorAlternateHandling_D_HPP
+#ifndef ICU4X_CollatorAlternateHandling_D_HPP
+#define ICU4X_CollatorAlternateHandling_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -25,28 +25,28 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.AlternateHandling.html) for more information.
+ * See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/2.1.1/icu/collator/options/enum.AlternateHandling.html) for more information.
  */
 class CollatorAlternateHandling {
 public:
-  enum Value {
-    NonIgnorable = 0,
-    Shifted = 1,
-  };
+    enum Value {
+        NonIgnorable = 0,
+        Shifted = 1,
+    };
 
-  CollatorAlternateHandling(): value(Value::NonIgnorable) {}
+    CollatorAlternateHandling(): value(Value::NonIgnorable) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr CollatorAlternateHandling(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr CollatorAlternateHandling(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::CollatorAlternateHandling AsFFI() const;
-  inline static icu4x::CollatorAlternateHandling FromFFI(icu4x::capi::CollatorAlternateHandling c_enum);
+    inline icu4x::capi::CollatorAlternateHandling AsFFI() const;
+    inline static icu4x::CollatorAlternateHandling FromFFI(icu4x::capi::CollatorAlternateHandling c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_CollatorAlternateHandling_D_HPP
+#endif // ICU4X_CollatorAlternateHandling_D_HPP

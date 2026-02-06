@@ -1,5 +1,5 @@
-#ifndef icu4x_TimePrecision_HPP
-#define icu4x_TimePrecision_HPP
+#ifndef ICU4X_TimePrecision_HPP
+#define ICU4X_TimePrecision_HPP
 
 #include "TimePrecision.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -26,32 +26,32 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::TimePrecision icu4x::TimePrecision::AsFFI() const {
-  return static_cast<icu4x::capi::TimePrecision>(value);
+    return static_cast<icu4x::capi::TimePrecision>(value);
 }
 
 inline icu4x::TimePrecision icu4x::TimePrecision::FromFFI(icu4x::capi::TimePrecision c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::TimePrecision_Hour:
-    case icu4x::capi::TimePrecision_Minute:
-    case icu4x::capi::TimePrecision_MinuteOptional:
-    case icu4x::capi::TimePrecision_Second:
-    case icu4x::capi::TimePrecision_Subsecond1:
-    case icu4x::capi::TimePrecision_Subsecond2:
-    case icu4x::capi::TimePrecision_Subsecond3:
-    case icu4x::capi::TimePrecision_Subsecond4:
-    case icu4x::capi::TimePrecision_Subsecond5:
-    case icu4x::capi::TimePrecision_Subsecond6:
-    case icu4x::capi::TimePrecision_Subsecond7:
-    case icu4x::capi::TimePrecision_Subsecond8:
-    case icu4x::capi::TimePrecision_Subsecond9:
-      return static_cast<icu4x::TimePrecision::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::TimePrecision_Hour:
+        case icu4x::capi::TimePrecision_Minute:
+        case icu4x::capi::TimePrecision_MinuteOptional:
+        case icu4x::capi::TimePrecision_Second:
+        case icu4x::capi::TimePrecision_Subsecond1:
+        case icu4x::capi::TimePrecision_Subsecond2:
+        case icu4x::capi::TimePrecision_Subsecond3:
+        case icu4x::capi::TimePrecision_Subsecond4:
+        case icu4x::capi::TimePrecision_Subsecond5:
+        case icu4x::capi::TimePrecision_Subsecond6:
+        case icu4x::capi::TimePrecision_Subsecond7:
+        case icu4x::capi::TimePrecision_Subsecond8:
+        case icu4x::capi::TimePrecision_Subsecond9:
+            return static_cast<icu4x::TimePrecision::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 
 inline std::optional<icu4x::TimePrecision> icu4x::TimePrecision::from_subsecond_digits(uint8_t digits) {
-  auto result = icu4x::capi::icu4x_TimePrecision_from_subsecond_digits_mv1(digits);
-  return result.is_ok ? std::optional<icu4x::TimePrecision>(icu4x::TimePrecision::FromFFI(result.ok)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_TimePrecision_from_subsecond_digits_mv1(digits);
+    return result.is_ok ? std::optional<icu4x::TimePrecision>(icu4x::TimePrecision::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_TimePrecision_HPP
+#endif // ICU4X_TimePrecision_HPP

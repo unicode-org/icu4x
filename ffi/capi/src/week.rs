@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -14,7 +13,7 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
 
-    /// A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
+    /// A Week calculator, useful to be passed in to `week_of_year()` on Date and `DateTime` types
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::calendar::week::WeekInformation, Struct)]
     pub struct WeekInformation(pub icu_calendar::week::WeekInformation);

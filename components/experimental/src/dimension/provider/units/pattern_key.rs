@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// Provider structs must be stable
-#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-
 use zerovec::{
     maps::ZeroMapKV,
     ule::{AsULE, UleError, ULE},
@@ -14,8 +11,7 @@ use crate::dimension::provider::units::essentials::CompoundCount;
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::pattern_key))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[repr(u8)]
 pub enum PowerValue {
     Two,
@@ -24,8 +20,7 @@ pub enum PowerValue {
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::pattern_key))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub enum PatternKey {
     Binary(u8),
     Decimal(i8),
@@ -74,7 +69,7 @@ pub struct PatternKeyULE(u8);
 //  5. The other ULE methods use the default impl.
 //  6. PatternKeyULE byte equality is semantic equality.
 unsafe impl ULE for PatternKeyULE {
-    fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for &byte in bytes.iter() {
             // Ensure the first two bits (b7 & b6) are not 11.
             if (byte & 0b1100_0000) == 0b1100_0000 {

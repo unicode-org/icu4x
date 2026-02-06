@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
-
 use fixed_decimal::Decimal;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
@@ -13,7 +11,7 @@ use icu_provider::DataPayload;
 
 use super::format::FormattedUnit;
 use super::options::{UnitsFormatterOptions, Width};
-use crate::dimension::provider::units::display_name::UnitsDisplayNameV1;
+use crate::dimension::provider::units::display_names::UnitsDisplayNamesV1;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 
@@ -27,7 +25,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: super::super::preferences::NumberingSystem
+        numbering_system: crate::dimension::preferences::NumberingSystem
     }
 );
 prefs_convert!(UnitsFormatterPreferences, DecimalFormatterPreferences, {
@@ -35,6 +33,7 @@ prefs_convert!(UnitsFormatterPreferences, DecimalFormatterPreferences, {
 });
 prefs_convert!(UnitsFormatterPreferences, PluralRulesPreferences);
 
+// TODO(#6900): Remove the units formatter after migrating all the code to the categorized formatter.
 /// A formatter for measurement unit values.
 ///
 /// [`UnitsFormatter`] supports:
@@ -42,6 +41,7 @@ prefs_convert!(UnitsFormatterPreferences, PluralRulesPreferences);
 ///   2. Locale-sensitive grouping separator positions.
 ///
 /// Read more about the options in the [`super::options`] module.
+#[derive(Debug)]
 pub struct UnitsFormatter {
     /// Options bag for the units formatter to determine the behavior of the formatter.
     /// for example: width of the units.
@@ -50,7 +50,7 @@ pub struct UnitsFormatter {
     // /// Essential data for the units formatter.
     // essential: DataPayload<UnitsEssentialsV1>,
     /// Display name for the units.
-    display_name: DataPayload<UnitsDisplayNameV1>,
+    display_name: DataPayload<UnitsDisplayNamesV1>,
 
     /// A [`DecimalFormatter`] to format the unit value.
     decimal_formatter: DecimalFormatter,
@@ -61,7 +61,7 @@ pub struct UnitsFormatter {
 
 impl UnitsFormatter {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: UnitsFormatterPreferences, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
+        (prefs: UnitsFormatterPreferences, unit: &str, options: UnitsFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_buffer_provider,
@@ -93,9 +93,9 @@ impl UnitsFormatter {
     pub fn try_new(
         prefs: UnitsFormatterPreferences,
         unit: &str,
-        options: super::options::UnitsFormatterOptions,
+        options: UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
+        let locale = UnitsDisplayNamesV1::make_locale(prefs.locale_preferences);
         let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
@@ -129,16 +129,16 @@ impl UnitsFormatter {
         provider: &D,
         prefs: UnitsFormatterPreferences,
         unit: &str,
-        options: super::options::UnitsFormatterOptions,
+        options: UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::units::display_name::UnitsDisplayNameV1>
+            + DataProvider<UnitsDisplayNamesV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
+        let locale = UnitsDisplayNamesV1::make_locale(prefs.locale_preferences);
         let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),

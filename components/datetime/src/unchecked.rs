@@ -267,6 +267,8 @@ pub enum MissingInputFieldKind {
     DayOfMonth,
     /// Day of year
     DayOfYear,
+    /// Rata Die
+    RataDie,
     /// Hour
     Hour,
     /// Minute

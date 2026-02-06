@@ -22,6 +22,7 @@ use icu_locale_core::Locale;
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
+#[derive(Debug)]
 pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,
     swe: ScriptWithExtensions,
@@ -50,7 +51,7 @@ impl PersonNamesFormatter {
             + DataProvider<icu_locale::provider::LocaleLikelySubtagsLanguageV1>
             + DataProvider<icu_locale::provider::LocaleParentsV1>,
     {
-        let swe = icu_properties::script::ScriptWithExtensions::try_new_unstable(provider)?;
+        let swe = ScriptWithExtensions::try_new_unstable(provider)?;
         let scripts = PropertyNamesShort::try_new_unstable(provider)?;
         let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
         Ok(PersonNamesFormatter {
@@ -82,7 +83,7 @@ impl PersonNamesFormatter {
         let effective_locale = specifications::effective_locale(
             &self.default_options.target_locale,
             person_name_locale,
-        )?;
+        );
 
         let data: DataResponse<PersonNamesFormatV1> = provider
             .load(DataRequest {
@@ -209,7 +210,7 @@ impl PersonNamesFormatter {
 
 /// Validate that the provided fields are valid.
 /// If the person name is not valid, it will not be formatted.
-pub(crate) fn validate_person_name(available_name_fields: &[&NameField]) -> bool {
+pub(crate) fn validate_person_name(available_name_fields: &[NameField]) -> bool {
     available_name_fields
         .iter()
         .any(|field| field.kind == NameFieldKind::Given || field.kind == NameFieldKind::Surname)

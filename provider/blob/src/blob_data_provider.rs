@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobSchema;
+#[cfg(feature = "alloc")]
+use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::Cart;
@@ -94,8 +96,10 @@ impl core::fmt::Debug for BlobDataProvider {
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
-    pub fn try_new_from_blob(blob: alloc::boxed::Box<[u8]>) -> Result<Self, DataError> {
+    pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
             data: Cart::try_make_yoke(blob, |bytes| {
                 BlobSchema::deserialize_and_check(&mut postcard::Deserializer::from_bytes(bytes))
@@ -151,6 +155,7 @@ impl DynamicDryDataProvider<BufferMarker> for BlobDataProvider {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
     fn iter_ids_for_marker(

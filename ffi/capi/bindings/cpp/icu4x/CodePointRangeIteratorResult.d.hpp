@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointRangeIteratorResult_D_HPP
-#define icu4x_CodePointRangeIteratorResult_D_HPP
+#ifndef ICU4X_CodePointRangeIteratorResult_D_HPP
+#define ICU4X_CodePointRangeIteratorResult_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,13 +36,13 @@ namespace icu4x {
  * values if and only if `done=false`.
  */
 struct CodePointRangeIteratorResult {
-  char32_t start;
-  char32_t end;
-  bool done;
+    char32_t start;
+    char32_t end;
+    bool done;
 
-  inline icu4x::capi::CodePointRangeIteratorResult AsFFI() const;
-  inline static icu4x::CodePointRangeIteratorResult FromFFI(icu4x::capi::CodePointRangeIteratorResult c_struct);
+    inline icu4x::capi::CodePointRangeIteratorResult AsFFI() const;
+    inline static icu4x::CodePointRangeIteratorResult FromFFI(icu4x::capi::CodePointRangeIteratorResult c_struct);
 };
 
 } // namespace
-#endif // icu4x_CodePointRangeIteratorResult_D_HPP
+#endif // ICU4X_CodePointRangeIteratorResult_D_HPP

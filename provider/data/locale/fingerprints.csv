@@ -1,6 +1,6 @@
-locale/aliases/v1, <singleton>, 8466B, 8014B, d89c768acbd505a7
-locale/exemplar/characters/auxiliary/v1, <lookup>, 806B, 164 identifiers
-locale/exemplar/characters/auxiliary/v1, <total>, 34115B, 26314B, 145 unique payloads
+locale/aliases/v1, <singleton>, 8474B, 8022B, fc4ed52f228a3e29
+locale/exemplar/characters/auxiliary/v1, <lookup>, 824B, 168 identifiers
+locale/exemplar/characters/auxiliary/v1, <total>, 34390B, 26427B, 148 unique payloads
 locale/exemplar/characters/auxiliary/v1, af, 92B, 38B, ae09150252a2a416
 locale/exemplar/characters/auxiliary/v1, ak, 134B, 80B, 3590dbafc28c9a16
 locale/exemplar/characters/auxiliary/v1, ar, 128B, 74B, f1ac97bbcec6caf4
@@ -13,16 +13,17 @@ locale/exemplar/characters/auxiliary/v1, be, 116B, 62B, beacbbed78540a54
 locale/exemplar/characters/auxiliary/v1, bg, 128B, 74B, cf9bdf1df9ef839c
 locale/exemplar/characters/auxiliary/v1, bgc, 62B, 8B, 6941ee8c314a93eb
 locale/exemplar/characters/auxiliary/v1, bho, 74B, 20B, 71b5b471be80581d
-locale/exemplar/characters/auxiliary/v1, blo, 502B, 450B, e4f1097613eef3af
+locale/exemplar/characters/auxiliary/v1, blo, 508B, 456B, 7d97174783f2204e
 locale/exemplar/characters/auxiliary/v1, bn, 68B, 14B, fadc15acfc6142e7
 locale/exemplar/characters/auxiliary/v1, br, 176B, 122B, 6ad2434366be6ed2
 locale/exemplar/characters/auxiliary/v1, brx, 62B, 8B, 3810989ab42aacf2
 locale/exemplar/characters/auxiliary/v1, bs, 68B, 14B, c397d6c8f79c7390
+locale/exemplar/characters/auxiliary/v1, bua, 110B, 56B, b0e7b8eaacce8e16
 locale/exemplar/characters/auxiliary/v1, ca, 188B, 135B, 46eb8e3b30c93c87
 locale/exemplar/characters/auxiliary/v1, ceb, 104B, 50B, f35db5521976e660
 locale/exemplar/characters/auxiliary/v1, cs, 200B, 147B, 3eb621d0bf371071
 locale/exemplar/characters/auxiliary/v1, csw, 62B, 8B, b28aac99d4acccc8
-locale/exemplar/characters/auxiliary/v1, cv, 110B, 56B, b0e7b8eaacce8e16
+locale/exemplar/characters/auxiliary/v1, cv, -> bua
 locale/exemplar/characters/auxiliary/v1, cy, 176B, 122B, e3f70f31e2a13c38
 locale/exemplar/characters/auxiliary/v1, da, 122B, 68B, 4bc6f1c62c027200
 locale/exemplar/characters/auxiliary/v1, de, 170B, 116B, 6220b9c5064acd60
@@ -77,7 +78,7 @@ locale/exemplar/characters/auxiliary/v1, km, 92B, 38B, fe839bf242708eab
 locale/exemplar/characters/auxiliary/v1, kn, 68B, 14B, 198c108919c267dd
 locale/exemplar/characters/auxiliary/v1, ko, 4448B, 4395B, 8b842dbbc0eade0e
 locale/exemplar/characters/auxiliary/v1, kok, -> hi
-locale/exemplar/characters/auxiliary/v1, kok-Latn, 170B, 116B, cca5d854154eebc8
+locale/exemplar/characters/auxiliary/v1, kok-Latn, 170B, 116B, d929fbdf54ccc7db
 locale/exemplar/characters/auxiliary/v1, ks, 86B, 32B, a1b30a2aef8e3f7d
 locale/exemplar/characters/auxiliary/v1, ks-Deva, -> brx
 locale/exemplar/characters/auxiliary/v1, ku, 164B, 110B, 48f4cc0622261c57
@@ -106,22 +107,25 @@ locale/exemplar/characters/auxiliary/v1, nqo, 62B, 8B, bd9e3bc82554ab16
 locale/exemplar/characters/auxiliary/v1, nso, 80B, 26B, 2b605d49126d7eed
 locale/exemplar/characters/auxiliary/v1, oc, 176B, 122B, b69847bb30fb508e
 locale/exemplar/characters/auxiliary/v1, or, -> brx
-locale/exemplar/characters/auxiliary/v1, pa, 76B, 22B, 8859acc51fdada1d
+locale/exemplar/characters/auxiliary/v1, pa, 68B, 14B, cc973368a8178922
 locale/exemplar/characters/auxiliary/v1, pcm, 118B, 64B, 6be0be5d8005e9a7
 locale/exemplar/characters/auxiliary/v1, pl, 134B, 80B, 4c1e2addf3d6da11
+locale/exemplar/characters/auxiliary/v1, pms, 62B, 8B, 27ce4849123595b
 locale/exemplar/characters/auxiliary/v1, ps, 68B, 14B, e1a3ae75a2d109b7
 locale/exemplar/characters/auxiliary/v1, ps-PK, 62B, 8B, 54c25bf53197b507
 locale/exemplar/characters/auxiliary/v1, pt, 188B, 135B, 6078d405c74fa70
-locale/exemplar/characters/auxiliary/v1, qu, 194B, 141B, be5a61a25220ee3
+locale/exemplar/characters/auxiliary/v1, qu, 207B, 154B, 5710f5b585971c85
 locale/exemplar/characters/auxiliary/v1, raj, 74B, 20B, 8217c79bb7f68833
 locale/exemplar/characters/auxiliary/v1, rm, 182B, 128B, 52a9e36bd57f0492
 locale/exemplar/characters/auxiliary/v1, ro, 104B, 50B, 27c28dc6e974f2d5
-locale/exemplar/characters/auxiliary/v1, ru, -> cv
+locale/exemplar/characters/auxiliary/v1, ru, -> bua
 locale/exemplar/characters/auxiliary/v1, sa, 86B, 32B, 3140c592bb2cbb52
 locale/exemplar/characters/auxiliary/v1, sah, 104B, 50B, 63a4fea00d15f4b3
 locale/exemplar/characters/auxiliary/v1, sc, 146B, 92B, d6580ff326918f58
+locale/exemplar/characters/auxiliary/v1, scn, 110B, 56B, 45834657a9c0ab23
 locale/exemplar/characters/auxiliary/v1, sd, 68B, 14B, 1eb306fb90c95356
 locale/exemplar/characters/auxiliary/v1, sd-Deva, -> brx
+locale/exemplar/characters/auxiliary/v1, shn, 92B, 38B, fd18d39934357151
 locale/exemplar/characters/auxiliary/v1, si, 80B, 26B, 3c09f7e1ddac1f5a
 locale/exemplar/characters/auxiliary/v1, sk, 200B, 147B, a49f72ff39cb55e
 locale/exemplar/characters/auxiliary/v1, sl, 182B, 128B, 8ba8e97573e8d01
@@ -165,8 +169,8 @@ locale/exemplar/characters/auxiliary/v1, yue-Hans, 374B, 321B, b586017ffccc55b4
 locale/exemplar/characters/auxiliary/v1, zh, 7934B, 7881B, b3aa6d9c6dc9b5fc
 locale/exemplar/characters/auxiliary/v1, zh-Hant, 2924B, 2871B, 6c9978e80b4fde3
 locale/exemplar/characters/auxiliary/v1, zu, -> en
-locale/exemplar/characters/index/v1, <lookup>, 668B, 141 identifiers
-locale/exemplar/characters/index/v1, <total>, 12837B, 6901B, 110 unique payloads
+locale/exemplar/characters/index/v1, <lookup>, 690B, 146 identifiers
+locale/exemplar/characters/index/v1, <total>, 13345B, 7193B, 114 unique payloads
 locale/exemplar/characters/index/v1, af, 62B, 8B, e5424e495f6a6037
 locale/exemplar/characters/index/v1, ak, 74B, 20B, 5c90d94fee1b7d62
 locale/exemplar/characters/index/v1, am, 284B, 231B, 363ff8bb95e65821
@@ -174,10 +178,11 @@ locale/exemplar/characters/index/v1, ar, 80B, 26B, 9215ab4736770b09
 locale/exemplar/characters/index/v1, as, 116B, 62B, 5ad18c7623385d03
 locale/exemplar/characters/index/v1, ast, 80B, 26B, e6ae12a6f3a2bf63
 locale/exemplar/characters/index/v1, az, 104B, 50B, df6e8ec710dacaa5
+locale/exemplar/characters/index/v1, ba, 122B, 68B, 5a8a274e0ee0bc5f
 locale/exemplar/characters/index/v1, bal-Latn, 136B, 82B, 482b19550e64eb7d
 locale/exemplar/characters/index/v1, be, 86B, 32B, 35c7e7bddcbfdb7a
 locale/exemplar/characters/index/v1, bg, 68B, 14B, 68580a53982dcdd2
-locale/exemplar/characters/index/v1, bn, 103B, 49B, 42e0d7fa8814aab6
+locale/exemplar/characters/index/v1, bn, 115B, 61B, f80937c9c03ac469
 locale/exemplar/characters/index/v1, br, 68B, 14B, ef04e7e8c9388ce1
 locale/exemplar/characters/index/v1, brx, 112B, 58B, b5573787521bd3ca
 locale/exemplar/characters/index/v1, bs, 99B, 45B, 7ffe3f4a58241964
@@ -196,7 +201,7 @@ locale/exemplar/characters/index/v1, dsb, 108B, 54B, 95076c5b3434b1fe
 locale/exemplar/characters/index/v1, ee, 116B, 62B, ea02dcf12d40ac07
 locale/exemplar/characters/index/v1, el, 68B, 14B, d00af513efb56c0f
 locale/exemplar/characters/index/v1, en, -> af
-locale/exemplar/characters/index/v1, eo, 110B, 56B, 7fa28244e742cdc8
+locale/exemplar/characters/index/v1, eo, 104B, 50B, 3b0daf404b5d3a26
 locale/exemplar/characters/index/v1, es, 68B, 14B, 59b3c4aa44961614
 locale/exemplar/characters/index/v1, et, 92B, 38B, 9aa5f5131fbfc129
 locale/exemplar/characters/index/v1, eu, -> af
@@ -231,6 +236,7 @@ locale/exemplar/characters/index/v1, ka, 62B, 8B, b3ed207af0bee3e1
 locale/exemplar/characters/index/v1, kea, 86B, 32B, 46f538d5e7a2feba
 locale/exemplar/characters/index/v1, kgp, 86B, 32B, 6bcf5b743ab99db
 locale/exemplar/characters/index/v1, kk, 122B, 68B, f20c4025a344bd46
+locale/exemplar/characters/index/v1, kk-Arab, 158B, 104B, a6afb2a5c7baaf50
 locale/exemplar/characters/index/v1, km, 86B, 32B, ddee49a4474abc51
 locale/exemplar/characters/index/v1, kn, 98B, 44B, 7c77f09de0552d71
 locale/exemplar/characters/index/v1, ko, 104B, 50B, 52b71ac5a814d16c
@@ -256,13 +262,13 @@ locale/exemplar/characters/index/v1, ne, -> hi
 locale/exemplar/characters/index/v1, nl, -> af
 locale/exemplar/characters/index/v1, no, -> da
 locale/exemplar/characters/index/v1, om, -> af
-locale/exemplar/characters/index/v1, or, 103B, 49B, 434c5431bde2b163
-locale/exemplar/characters/index/v1, pa, 104B, 50B, 6516d8b9dbdc2fc8
+locale/exemplar/characters/index/v1, or, 115B, 61B, 543db2dfc1f9082
+locale/exemplar/characters/index/v1, pa, 112B, 58B, fb8ffe6b38311ca3
 locale/exemplar/characters/index/v1, pcm, 84B, 30B, 2ed7c869627b86d1
 locale/exemplar/characters/index/v1, pl, 98B, 44B, 28276cfc5c902f78
 locale/exemplar/characters/index/v1, ps, 164B, 110B, d1c3e16d2ca5ffdd
 locale/exemplar/characters/index/v1, pt, -> af
-locale/exemplar/characters/index/v1, qu, 112B, 58B, a1d8f7b4c83ae6fd
+locale/exemplar/characters/index/v1, qu, 106B, 52B, 3729b1a663f30703
 locale/exemplar/characters/index/v1, rm, 92B, 38B, 93794cd26b0fd511
 locale/exemplar/characters/index/v1, ro, 92B, 38B, a3ce94f22555d9c3
 locale/exemplar/characters/index/v1, ru, 80B, 26B, d46396277f53c6bb
@@ -270,7 +276,9 @@ locale/exemplar/characters/index/v1, rw, -> af
 locale/exemplar/characters/index/v1, sa, -> doi
 locale/exemplar/characters/index/v1, sah, 140B, 86B, f5cf71e868d471f1
 locale/exemplar/characters/index/v1, sc, 66B, 12B, 626f2c48367b481b
+locale/exemplar/characters/index/v1, scn, 74B, 20B, 6255a0fe50b9b363
 locale/exemplar/characters/index/v1, sd, 188B, 134B, 497c9c0dc66c462e
+locale/exemplar/characters/index/v1, shn, 134B, 80B, cefa3db74f4bfdc0
 locale/exemplar/characters/index/v1, si, 98B, 44B, ce352d26d575b249
 locale/exemplar/characters/index/v1, sk, 114B, 60B, d9bbd760c8eaf42b
 locale/exemplar/characters/index/v1, sl, 92B, 38B, ab93002f7e4d5bcd
@@ -292,6 +300,7 @@ locale/exemplar/characters/index/v1, tk, 128B, 74B, a94996830bcc7afa
 locale/exemplar/characters/index/v1, to, 96B, 42B, 26b70d5546904371
 locale/exemplar/characters/index/v1, tr, 92B, 38B, ed33e6c41f80ce4e
 locale/exemplar/characters/index/v1, tt, 104B, 50B, c0e54d3d45e5fd80
+locale/exemplar/characters/index/v1, tyv, -> ky
 locale/exemplar/characters/index/v1, ug, 212B, 158B, f054e0a2fee6c3eb
 locale/exemplar/characters/index/v1, uk, 86B, 32B, db98fefd481920fe
 locale/exemplar/characters/index/v1, und, 56B, 2B, 3a6d9523170345d0
@@ -308,8 +317,8 @@ locale/exemplar/characters/index/v1, za, -> af
 locale/exemplar/characters/index/v1, zh, -> af
 locale/exemplar/characters/index/v1, zh-Hant, 1340B, 1287B, 974910b31430c6ca
 locale/exemplar/characters/index/v1, zu, -> af
-locale/exemplar/characters/main/v1, <lookup>, 864B, 174 identifiers
-locale/exemplar/characters/main/v1, <total>, 73378B, 64809B, 159 unique payloads
+locale/exemplar/characters/main/v1, <lookup>, 896B, 181 identifiers
+locale/exemplar/characters/main/v1, <total>, 74297B, 65350B, 166 unique payloads
 locale/exemplar/characters/main/v1, af, 98B, 44B, d73fc42a75b51bdd
 locale/exemplar/characters/main/v1, ak, 104B, 50B, 75856fb4a06dafbb
 locale/exemplar/characters/main/v1, am, 176B, 122B, a95d77a59cc8ebc4
@@ -317,6 +326,7 @@ locale/exemplar/characters/main/v1, ar, 74B, 20B, 23ccf9e5949fbd0e
 locale/exemplar/characters/main/v1, as, 163B, 109B, 400212979f61d23
 locale/exemplar/characters/main/v1, ast, 128B, 74B, adfab02948997166
 locale/exemplar/characters/main/v1, az, 110B, 56B, 861648198edfb2c0
+locale/exemplar/characters/main/v1, ba, 122B, 68B, ea37d6b453135119
 locale/exemplar/characters/main/v1, bal-Latn, 136B, 82B, e7ebce837c11414c
 locale/exemplar/characters/main/v1, be, 104B, 50B, d90513a36065a3fc
 locale/exemplar/characters/main/v1, bg, 74B, 20B, 73d21a421969eb89
@@ -328,6 +338,7 @@ locale/exemplar/characters/main/v1, br, 102B, 48B, 402e4c98d77dfcb
 locale/exemplar/characters/main/v1, brx, 148B, 94B, ad111a6a0b379921
 locale/exemplar/characters/main/v1, bs, 117B, 63B, f58ed26609290054
 locale/exemplar/characters/main/v1, bs-Cyrl, 86B, 32B, a9c3438a3ed985a5
+locale/exemplar/characters/main/v1, bua, 86B, 32B, 117f8663ccde0540
 locale/exemplar/characters/main/v1, ca, 110B, 56B, 7b1806fe97eebaf7
 locale/exemplar/characters/main/v1, ceb, 98B, 44B, c11fc28d6186ee6f
 locale/exemplar/characters/main/v1, chr, 68B, 14B, 1952a55450e28e55
@@ -381,11 +392,12 @@ locale/exemplar/characters/main/v1, ka, 62B, 8B, b3ed207af0bee3e1
 locale/exemplar/characters/main/v1, kea, 102B, 48B, c7de7a4a569de31
 locale/exemplar/characters/main/v1, kgp, 134B, 80B, d04afc15540a755b
 locale/exemplar/characters/main/v1, kk, 122B, 68B, 50fac5a343fcb4d0
+locale/exemplar/characters/main/v1, kk-Arab, 158B, 104B, a6afb2a5c7baaf50
 locale/exemplar/characters/main/v1, km, 120B, 66B, d7b0197e09cb90b8
 locale/exemplar/characters/main/v1, kn, 122B, 68B, f18a9fb540cde214
 locale/exemplar/characters/main/v1, ko, 62B, 8B, cff6f1ce07b074fd
 locale/exemplar/characters/main/v1, kok, 198B, 144B, 796368c7c49f96e9
-locale/exemplar/characters/main/v1, kok-Latn, 104B, 50B, 16c6ffe13daa4ce3
+locale/exemplar/characters/main/v1, kok-Latn, 110B, 56B, 7ddbcd3f3aa9ba90
 locale/exemplar/characters/main/v1, ks, 188B, 135B, 24c750752c7bda06
 locale/exemplar/characters/main/v1, ks-Deva, 186B, 132B, 5b0f88a3496aa161
 locale/exemplar/characters/main/v1, ku, 92B, 38B, fcbb6be9f4d1687c
@@ -420,9 +432,10 @@ locale/exemplar/characters/main/v1, nso, 98B, 44B, 830ba530ef6f3e0c
 locale/exemplar/characters/main/v1, oc, 104B, 50B, 9e2d851f40f2907a
 locale/exemplar/characters/main/v1, om, -> en
 locale/exemplar/characters/main/v1, or, 161B, 107B, 3f04cf8b47e24f7
-locale/exemplar/characters/main/v1, pa, 174B, 120B, 8fc980fcda8e7ac2
+locale/exemplar/characters/main/v1, pa, 188B, 134B, ee0414fa01b72999
 locale/exemplar/characters/main/v1, pcm, 156B, 102B, 5d165e4b5005e50
 locale/exemplar/characters/main/v1, pl, 134B, 80B, bdb3daa02d955a6c
+locale/exemplar/characters/main/v1, pms, 143B, 89B, f171f8d5c8a667f7
 locale/exemplar/characters/main/v1, ps, 188B, 135B, d800e92e58ac2ae6
 locale/exemplar/characters/main/v1, ps-PK, 194B, 141B, c650f71e1b88d287
 locale/exemplar/characters/main/v1, pt, 98B, 44B, 7c8118e8689f4460
@@ -436,8 +449,10 @@ locale/exemplar/characters/main/v1, sa, 128B, 74B, 80a449fdb466562d
 locale/exemplar/characters/main/v1, sah, 140B, 86B, ef5547c0375697a9
 locale/exemplar/characters/main/v1, sat, 62B, 8B, 48a2875d62e22825
 locale/exemplar/characters/main/v1, sc, 110B, 56B, 52651c7a24f7f10a
+locale/exemplar/characters/main/v1, scn, 140B, 86B, 40884ce07e2f6a86
 locale/exemplar/characters/main/v1, sd, 194B, 140B, 3860d30d4432f9e0
 locale/exemplar/characters/main/v1, sd-Deva, 134B, 80B, 366d876469a71e0d
+locale/exemplar/characters/main/v1, shn, 164B, 110B, 2afa3b7e04cdee69
 locale/exemplar/characters/main/v1, si, 134B, 80B, e9548d2f503c3b18
 locale/exemplar/characters/main/v1, sk, 171B, 117B, b802b3408988ab60
 locale/exemplar/characters/main/v1, sl, 92B, 38B, ea507318c32220d3
@@ -463,6 +478,7 @@ locale/exemplar/characters/main/v1, tn, 98B, 44B, 25ed7a6c7573757d
 locale/exemplar/characters/main/v1, to, 156B, 102B, 3bd1d89aeab23154
 locale/exemplar/characters/main/v1, tr, 110B, 56B, e060196b7df5178f
 locale/exemplar/characters/main/v1, tt, 104B, 50B, b1c94de32605219b
+locale/exemplar/characters/main/v1, tyv, 86B, 32B, 7cb382de2706c3c0
 locale/exemplar/characters/main/v1, ug, 212B, 158B, f054e0a2fee6c3eb
 locale/exemplar/characters/main/v1, uk, 98B, 44B, d296cc3c828b957b
 locale/exemplar/characters/main/v1, und, 56B, 2B, 3a6d9523170345d0
@@ -484,9 +500,8 @@ locale/exemplar/characters/main/v1, za, -> en
 locale/exemplar/characters/main/v1, zh, 10346B, 10293B, eaeb380c74d27fe3
 locale/exemplar/characters/main/v1, zh-Hant, 10862B, 10809B, 6228bf8b8d851e60
 locale/exemplar/characters/main/v1, zu, 208B, 155B, 153a1bfa1781e39f
-locale/exemplar/characters/numbers/v1, <lookup>, 465B, 94 identifiers
-locale/exemplar/characters/numbers/v1, <total>, 3120B, 1392B, 32 unique payloads
-locale/exemplar/characters/numbers/v1, af, 86B, 32B, 7e863eaf847ae93c
+locale/exemplar/characters/numbers/v1, <lookup>, 484B, 97 identifiers
+locale/exemplar/characters/numbers/v1, <total>, 3566B, 1622B, 36 unique payloads
 locale/exemplar/characters/numbers/v1, ar, 110B, 56B, 37da6e5b7a925dd9
 locale/exemplar/characters/numbers/v1, ar-DZ, 92B, 38B, 15e5491d2b25cb36
 locale/exemplar/characters/numbers/v1, ar-LB, -> ar-DZ
@@ -497,24 +512,24 @@ locale/exemplar/characters/numbers/v1, ar-SA, 92B, 38B, f246ab7f371b244f
 locale/exemplar/characters/numbers/v1, ar-SO, -> ar-SA
 locale/exemplar/characters/numbers/v1, ar-TN, -> ar-DZ
 locale/exemplar/characters/numbers/v1, as, 92B, 38B, f4290b9b94c56261
-locale/exemplar/characters/numbers/v1, be, -> af
-locale/exemplar/characters/numbers/v1, bg, -> af
+locale/exemplar/characters/numbers/v1, be, 86B, 32B, 7e863eaf847ae93c
+locale/exemplar/characters/numbers/v1, bg, -> be
 locale/exemplar/characters/numbers/v1, bgc, 92B, 38B, 6021050812c4d6ee
 locale/exemplar/characters/numbers/v1, bho, -> bgc
 locale/exemplar/characters/numbers/v1, blo, 107B, 53B, 831e3983f1180d89
 locale/exemplar/characters/numbers/v1, bn, -> as
-locale/exemplar/characters/numbers/v1, br, -> af
-locale/exemplar/characters/numbers/v1, cs, -> af
-locale/exemplar/characters/numbers/v1, cv, -> af
-locale/exemplar/characters/numbers/v1, de-AT, -> af
+locale/exemplar/characters/numbers/v1, br, -> be
+locale/exemplar/characters/numbers/v1, cs, -> be
+locale/exemplar/characters/numbers/v1, cv, -> be
+locale/exemplar/characters/numbers/v1, de-AT, -> be
 locale/exemplar/characters/numbers/v1, de-CH, 98B, 44B, 6053f135ef46022f
 locale/exemplar/characters/numbers/v1, de-LI, -> de-CH
-locale/exemplar/characters/numbers/v1, en-FI, -> af
-locale/exemplar/characters/numbers/v1, en-NO, -> af
-locale/exemplar/characters/numbers/v1, en-SE, -> af
-locale/exemplar/characters/numbers/v1, en-ZA, -> af
+locale/exemplar/characters/numbers/v1, en-FI, -> be
+locale/exemplar/characters/numbers/v1, en-NO, -> be
+locale/exemplar/characters/numbers/v1, en-SE, -> be
+locale/exemplar/characters/numbers/v1, en-ZA, -> be
 locale/exemplar/characters/numbers/v1, eo, 86B, 32B, 267d93081e484d00
-locale/exemplar/characters/numbers/v1, es-CR, -> af
+locale/exemplar/characters/numbers/v1, es-CR, -> be
 locale/exemplar/characters/numbers/v1, et, -> eo
 locale/exemplar/characters/numbers/v1, eu, 92B, 38B, c20d8f17fa83a80f
 locale/exemplar/characters/numbers/v1, fa, 116B, 62B, 604effcfff596f40
@@ -526,24 +541,24 @@ locale/exemplar/characters/numbers/v1, fr-LU, 86B, 32B, 4ea0d0e05d39624c
 locale/exemplar/characters/numbers/v1, fr-MA, -> fr-LU
 locale/exemplar/characters/numbers/v1, he, -> ar-DZ
 locale/exemplar/characters/numbers/v1, hi, -> bgc
-locale/exemplar/characters/numbers/v1, hu, -> af
-locale/exemplar/characters/numbers/v1, hy, -> af
+locale/exemplar/characters/numbers/v1, hu, -> be
+locale/exemplar/characters/numbers/v1, hy, -> be
 locale/exemplar/characters/numbers/v1, ie, 92B, 38B, bca05b90fd17a196
 locale/exemplar/characters/numbers/v1, ii, 115B, 61B, 24cf93dbfff55f98
 locale/exemplar/characters/numbers/v1, it-CH, -> de-CH
-locale/exemplar/characters/numbers/v1, ka, -> af
-locale/exemplar/characters/numbers/v1, kea, -> af
-locale/exemplar/characters/numbers/v1, kk, -> af
+locale/exemplar/characters/numbers/v1, ka, -> be
+locale/exemplar/characters/numbers/v1, kea, -> be
+locale/exemplar/characters/numbers/v1, kk, -> be
 locale/exemplar/characters/numbers/v1, kn, 92B, 38B, e8881550592a1add
 locale/exemplar/characters/numbers/v1, kok, -> bgc
 locale/exemplar/characters/numbers/v1, ks, 104B, 50B, b2d302b49a54c547
 locale/exemplar/characters/numbers/v1, kxv-Deva, 92B, 38B, 2b90a705a8961177
 locale/exemplar/characters/numbers/v1, kxv-Orya, 92B, 38B, 478481e267188f29
 locale/exemplar/characters/numbers/v1, kxv-Telu, 92B, 38B, ede7ec2e17f78fa5
-locale/exemplar/characters/numbers/v1, ky, -> af
+locale/exemplar/characters/numbers/v1, ky, -> be
 locale/exemplar/characters/numbers/v1, lij, 110B, 56B, e811eba1e9e8eb23
 locale/exemplar/characters/numbers/v1, lt, -> eo
-locale/exemplar/characters/numbers/v1, lv, -> af
+locale/exemplar/characters/numbers/v1, lv, -> be
 locale/exemplar/characters/numbers/v1, mni, -> as
 locale/exemplar/characters/numbers/v1, mr, -> bgc
 locale/exemplar/characters/numbers/v1, my, 92B, 38B, 2a6d8b4491d8012b
@@ -552,60 +567,66 @@ locale/exemplar/characters/numbers/v1, no, -> eo
 locale/exemplar/characters/numbers/v1, nqo, 98B, 44B, 1e7b4f215d67045e
 locale/exemplar/characters/numbers/v1, or, 92B, 38B, 88746f358a55ab33
 locale/exemplar/characters/numbers/v1, pa, 92B, 38B, 274026f9043f848e
-locale/exemplar/characters/numbers/v1, pl, -> af
+locale/exemplar/characters/numbers/v1, pl, -> be
 locale/exemplar/characters/numbers/v1, ps, 116B, 62B, 79ae7aa1be8f4872
-locale/exemplar/characters/numbers/v1, pt-PT, -> af
+locale/exemplar/characters/numbers/v1, pt-PT, -> be
 locale/exemplar/characters/numbers/v1, raj, -> bgc
 locale/exemplar/characters/numbers/v1, rm, 98B, 44B, 36b01d34ee3f731f
-locale/exemplar/characters/numbers/v1, ru, -> af
+locale/exemplar/characters/numbers/v1, ru, -> be
 locale/exemplar/characters/numbers/v1, sa, -> bgc
-locale/exemplar/characters/numbers/v1, sah, -> af
+locale/exemplar/characters/numbers/v1, sah, -> be
 locale/exemplar/characters/numbers/v1, sat, 86B, 32B, 1e8aace74421ca78
-locale/exemplar/characters/numbers/v1, sk, -> af
+locale/exemplar/characters/numbers/v1, scn, 104B, 50B, c105de4df9dde368
+locale/exemplar/characters/numbers/v1, shn, 98B, 44B, 4bbd0bc2ede86e94
+locale/exemplar/characters/numbers/v1, sk, -> be
 locale/exemplar/characters/numbers/v1, sl, -> eu
-locale/exemplar/characters/numbers/v1, sq, -> af
+locale/exemplar/characters/numbers/v1, sq, -> be
+locale/exemplar/characters/numbers/v1, sr-Latn, -> fr-LU
 locale/exemplar/characters/numbers/v1, sv, -> eo
 locale/exemplar/characters/numbers/v1, syr, -> ar
-locale/exemplar/characters/numbers/v1, szl, -> af
+locale/exemplar/characters/numbers/v1, szl, -> be
 locale/exemplar/characters/numbers/v1, ta, 92B, 38B, 9d8d37594d7d1109
 locale/exemplar/characters/numbers/v1, te, 92B, 38B, 61b1eda289bde9f3
-locale/exemplar/characters/numbers/v1, tk, -> af
-locale/exemplar/characters/numbers/v1, uk, -> af
-locale/exemplar/characters/numbers/v1, und, -> fr-LU
+locale/exemplar/characters/numbers/v1, th, -> fr-LU
+locale/exemplar/characters/numbers/v1, tk, -> be
+locale/exemplar/characters/numbers/v1, uk, -> be
+locale/exemplar/characters/numbers/v1, und, 92B, 38B, 284e7cb93bc3c56b
 locale/exemplar/characters/numbers/v1, ur, -> ks
-locale/exemplar/characters/numbers/v1, uz, -> af
-locale/exemplar/characters/numbers/v1, uz-Cyrl, -> af
+locale/exemplar/characters/numbers/v1, uz, -> be
+locale/exemplar/characters/numbers/v1, uz-Cyrl, -> be
 locale/exemplar/characters/numbers/v1, xnr, -> bgc
 locale/exemplar/characters/numbers/v1, yue, 146B, 92B, 489c004c9c03d756
 locale/exemplar/characters/numbers/v1, yue-Hans, -> yue
-locale/exemplar/characters/numbers/v1, zh, -> yue
+locale/exemplar/characters/numbers/v1, zh, 152B, 98B, 11039a8b229e58e0
 locale/exemplar/characters/numbers/v1, zh-Hant, -> yue
-locale/exemplar/characters/punctuation/v1, <lookup>, 716B, 157 identifiers
-locale/exemplar/characters/punctuation/v1, <total>, 12779B, 7978B, 89 unique payloads
+locale/exemplar/characters/punctuation/v1, <lookup>, 749B, 164 identifiers
+locale/exemplar/characters/punctuation/v1, <total>, 13615B, 8545B, 94 unique payloads
 locale/exemplar/characters/punctuation/v1, af, 146B, 92B, 598fb8b71c82bbb8
 locale/exemplar/characters/punctuation/v1, am, 134B, 80B, ad144f7c484b013d
 locale/exemplar/characters/punctuation/v1, ar, 140B, 86B, e28cf39e81e6d217
 locale/exemplar/characters/punctuation/v1, as, 152B, 98B, 312c81602d45172b
 locale/exemplar/characters/punctuation/v1, ast, 164B, 110B, 11519db1150a4bba
 locale/exemplar/characters/punctuation/v1, az, -> af
+locale/exemplar/characters/punctuation/v1, ba, 152B, 98B, a7a56b4ad3bbb4a6
 locale/exemplar/characters/punctuation/v1, bal-Latn, 98B, 44B, 6f2cccdd18a1c05f
 locale/exemplar/characters/punctuation/v1, be, 110B, 56B, 560e70c83dd7a820
 locale/exemplar/characters/punctuation/v1, bg, 158B, 104B, ba9257a47143e2bf
 locale/exemplar/characters/punctuation/v1, bgc, 134B, 80B, 2f10b786bc1d06ba
 locale/exemplar/characters/punctuation/v1, bho, -> af
 locale/exemplar/characters/punctuation/v1, blo, 176B, 122B, eb8c29947ef5e53e
-locale/exemplar/characters/punctuation/v1, bn, -> af
+locale/exemplar/characters/punctuation/v1, bn, 152B, 98B, a810ac4bc6a9c1b3
 locale/exemplar/characters/punctuation/v1, brx, -> af
 locale/exemplar/characters/punctuation/v1, bs, 140B, 86B, cbea68faec91fa8b
+locale/exemplar/characters/punctuation/v1, bua, -> ba
 locale/exemplar/characters/punctuation/v1, ca, -> ast
 locale/exemplar/characters/punctuation/v1, ceb, 128B, 74B, a7bdfb18dfececf7
 locale/exemplar/characters/punctuation/v1, chr, -> af
 locale/exemplar/characters/punctuation/v1, cs, 152B, 98B, 4b7181c279426ab1
 locale/exemplar/characters/punctuation/v1, csw, 152B, 98B, 87de7bd33789ac79
-locale/exemplar/characters/punctuation/v1, cv, 152B, 98B, a7a56b4ad3bbb4a6
+locale/exemplar/characters/punctuation/v1, cv, 140B, 86B, f8655c05c656bf07
 locale/exemplar/characters/punctuation/v1, cy, -> af
 locale/exemplar/characters/punctuation/v1, da, 146B, 92B, 7c6ce303dadd549f
-locale/exemplar/characters/punctuation/v1, de, -> cv
+locale/exemplar/characters/punctuation/v1, de, -> ba
 locale/exemplar/characters/punctuation/v1, doi, 140B, 86B, c1bab5a7fb5f11fa
 locale/exemplar/characters/punctuation/v1, dsb, 146B, 92B, 5264a68e6bbb9a9a
 locale/exemplar/characters/punctuation/v1, ee, 140B, 86B, a8a81a325b08acd5
@@ -641,17 +662,18 @@ locale/exemplar/characters/punctuation/v1, ie, 152B, 98B, 39d3d7ed79f19083
 locale/exemplar/characters/punctuation/v1, ig, 110B, 56B, 18b1d7ac7c183be
 locale/exemplar/characters/punctuation/v1, ii, 302B, 249B, 36647eb6b4e6af2d
 locale/exemplar/characters/punctuation/v1, is, 158B, 104B, 66d5b1ec6aa1c629
-locale/exemplar/characters/punctuation/v1, it, 134B, 80B, 49d251e084f0060
+locale/exemplar/characters/punctuation/v1, it, 134B, 80B, 8c669d76213ca8e5
 locale/exemplar/characters/punctuation/v1, ja, 266B, 213B, 8e3ee20a3c169657
 locale/exemplar/characters/punctuation/v1, ka, 182B, 128B, fe3283914894629b
 locale/exemplar/characters/punctuation/v1, kea, 152B, 98B, fb1f8cc3b0eb258a
 locale/exemplar/characters/punctuation/v1, kgp, -> af
-locale/exemplar/characters/punctuation/v1, kk, 140B, 86B, f8655c05c656bf07
+locale/exemplar/characters/punctuation/v1, kk, -> cv
+locale/exemplar/characters/punctuation/v1, kk-Arab, 158B, 104B, 53e974adb7e781f1
 locale/exemplar/characters/punctuation/v1, km, 116B, 62B, b14d64a3dd433d6d
 locale/exemplar/characters/punctuation/v1, kn, -> af
 locale/exemplar/characters/punctuation/v1, ko, 272B, 219B, 401e6003cb76e7b7
 locale/exemplar/characters/punctuation/v1, kok, -> af
-locale/exemplar/characters/punctuation/v1, kok-Latn, -> af
+locale/exemplar/characters/punctuation/v1, kok-Latn, 158B, 104B, db6a311037827727
 locale/exemplar/characters/punctuation/v1, ks, -> af
 locale/exemplar/characters/punctuation/v1, ks-Deva, -> af
 locale/exemplar/characters/punctuation/v1, ku, -> af
@@ -659,10 +681,10 @@ locale/exemplar/characters/punctuation/v1, kxv, -> af
 locale/exemplar/characters/punctuation/v1, kxv-Deva, -> af
 locale/exemplar/characters/punctuation/v1, kxv-Orya, -> af
 locale/exemplar/characters/punctuation/v1, kxv-Telu, -> af
-locale/exemplar/characters/punctuation/v1, ky, -> cv
-locale/exemplar/characters/punctuation/v1, lb, -> cv
+locale/exemplar/characters/punctuation/v1, ky, -> ba
+locale/exemplar/characters/punctuation/v1, lb, -> ba
 locale/exemplar/characters/punctuation/v1, lij, -> fr
-locale/exemplar/characters/punctuation/v1, lmo, -> it
+locale/exemplar/characters/punctuation/v1, lmo, 134B, 80B, 49d251e084f0060
 locale/exemplar/characters/punctuation/v1, lo, -> af
 locale/exemplar/characters/punctuation/v1, lt, 122B, 68B, 4e7587262c70cb9
 locale/exemplar/characters/punctuation/v1, lv, 146B, 92B, 70827463eb622e57
@@ -675,7 +697,7 @@ locale/exemplar/characters/punctuation/v1, mr, 134B, 80B, 2801844fe920f160
 locale/exemplar/characters/punctuation/v1, ms, -> af
 locale/exemplar/characters/punctuation/v1, mt, 110B, 56B, 33e99112300a19f7
 locale/exemplar/characters/punctuation/v1, my, 128B, 74B, 2b5618a5a032865f
-locale/exemplar/characters/punctuation/v1, nds, -> cv
+locale/exemplar/characters/punctuation/v1, nds, -> ba
 locale/exemplar/characters/punctuation/v1, nds-NL, -> af
 locale/exemplar/characters/punctuation/v1, ne, 122B, 68B, 1b6313bebb88bddc
 locale/exemplar/characters/punctuation/v1, nl, -> af
@@ -684,22 +706,25 @@ locale/exemplar/characters/punctuation/v1, nqo, 62B, 8B, 1854f45eb412f530
 locale/exemplar/characters/punctuation/v1, oc, 164B, 110B, 34d6b547718eeb84
 locale/exemplar/characters/punctuation/v1, oc-ES, 158B, 104B, 106bcf8a838d7a3a
 locale/exemplar/characters/punctuation/v1, om, 134B, 80B, 95ed72b5ad5fb132
-locale/exemplar/characters/punctuation/v1, or, -> af
+locale/exemplar/characters/punctuation/v1, or, -> as
 locale/exemplar/characters/punctuation/v1, pa, 128B, 74B, 7b1db63111353fdc
 locale/exemplar/characters/punctuation/v1, pcm, -> af
 locale/exemplar/characters/punctuation/v1, pl, 158B, 104B, b7d5cb1c7077da80
+locale/exemplar/characters/punctuation/v1, pms, -> lmo
 locale/exemplar/characters/punctuation/v1, ps, 104B, 50B, 5b83aaf4c505062
 locale/exemplar/characters/punctuation/v1, pt, -> af
 locale/exemplar/characters/punctuation/v1, pt-PT, 152B, 98B, b3135f0f7cbc8782
 locale/exemplar/characters/punctuation/v1, qu, -> af
 locale/exemplar/characters/punctuation/v1, raj, 134B, 80B, 714cd3ef8320b623
 locale/exemplar/characters/punctuation/v1, ro, 140B, 86B, 2f4e95b2923445e1
-locale/exemplar/characters/punctuation/v1, ru, -> cv
+locale/exemplar/characters/punctuation/v1, ru, -> ba
 locale/exemplar/characters/punctuation/v1, sa, -> mai
 locale/exemplar/characters/punctuation/v1, sah, 62B, 8B, 5445398404b3b05a
 locale/exemplar/characters/punctuation/v1, sc, 158B, 104B, 620308057a4ad970
-locale/exemplar/characters/punctuation/v1, sd, 110B, 56B, a2e9f328c1743f08
+locale/exemplar/characters/punctuation/v1, scn, -> af
+locale/exemplar/characters/punctuation/v1, sd, 146B, 92B, 1bfd73688fe6fec6
 locale/exemplar/characters/punctuation/v1, sd-Deva, -> af
+locale/exemplar/characters/punctuation/v1, shn, -> my
 locale/exemplar/characters/punctuation/v1, si, -> af
 locale/exemplar/characters/punctuation/v1, sk, -> cs
 locale/exemplar/characters/punctuation/v1, sl, 128B, 74B, 9efae0185a979022
@@ -717,14 +742,15 @@ locale/exemplar/characters/punctuation/v1, ta, -> af
 locale/exemplar/characters/punctuation/v1, te, 110B, 56B, b4daa119ce99c9c8
 locale/exemplar/characters/punctuation/v1, tg, 159B, 105B, 2bd90817534afdd9
 locale/exemplar/characters/punctuation/v1, th, 134B, 80B, 99dda0341211085d
-locale/exemplar/characters/punctuation/v1, tk, 122B, 68B, cf742bf91d57a9f8
+locale/exemplar/characters/punctuation/v1, tk, 126B, 72B, 39195e0d1905b235
 locale/exemplar/characters/punctuation/v1, tn, -> af
 locale/exemplar/characters/punctuation/v1, to, -> af
 locale/exemplar/characters/punctuation/v1, tr, -> af
 locale/exemplar/characters/punctuation/v1, tt, 140B, 86B, c2d940b97e2cb250
+locale/exemplar/characters/punctuation/v1, tyv, -> kok-Latn
 locale/exemplar/characters/punctuation/v1, ug, 116B, 62B, 763d4d1e6781030
 locale/exemplar/characters/punctuation/v1, uk, 146B, 92B, 2fbe8e2870e0eae8
-locale/exemplar/characters/punctuation/v1, und, 98B, 44B, dfce6df0d863411b
+locale/exemplar/characters/punctuation/v1, und, 98B, 44B, 90d312a97020e1c3
 locale/exemplar/characters/punctuation/v1, ur, 116B, 62B, aa0365e7bedfc97e
 locale/exemplar/characters/punctuation/v1, uz, -> af
 locale/exemplar/characters/punctuation/v1, vec, 152B, 98B, 5a62949b8c94d5ae
@@ -737,10 +763,10 @@ locale/exemplar/characters/punctuation/v1, yrl, -> ast
 locale/exemplar/characters/punctuation/v1, yue, 296B, 243B, c253935e7d69dfc0
 locale/exemplar/characters/punctuation/v1, yue-Hans, 296B, 243B, 6f5dc7c33d9cb214
 locale/exemplar/characters/punctuation/v1, za, -> af
-locale/exemplar/characters/punctuation/v1, zh, -> yue-Hans
+locale/exemplar/characters/punctuation/v1, zh, 194B, 141B, 20b2b9bed2f9a6ff
 locale/exemplar/characters/punctuation/v1, zh-Hant, -> yue
-locale/likely/subtags/extended/v1, <singleton>, 72418B, 72150B, a95576f55ee5c93b
-locale/likely/subtags/language/v1, <singleton>, 2310B, 2171B, cd4fe07b1028d8ad
-locale/likely/subtags/script/region/v1, <singleton>, 3304B, 3172B, d955ac1bc856facc
-locale/parents/v1, <singleton>, 2846B, 2802B, 20f2dd2d3f0748bd
-locale/script/direction/v1, <singleton>, 740B, 696B, b43c5a46f6b655d7
+locale/likely/subtags/extended/v1, <singleton>, 72738B, 72471B, 4eda8a3670eace63
+locale/likely/subtags/language/v1, <singleton>, 2440B, 2301B, faed3c3a8af59151
+locale/likely/subtags/script/region/v1, <singleton>, 3284B, 3152B, f3ebaca57ac48d2d
+locale/parents/v1, <singleton>, 2941B, 2897B, ab9253c648d0b632
+locale/script/direction/v1, <singleton>, 756B, 712B, f564e6942ca6b4fd

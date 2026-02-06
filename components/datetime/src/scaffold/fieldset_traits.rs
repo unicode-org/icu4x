@@ -3,12 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::{neo::*, time_zones::tz, *},
+    provider::semantic_skeletons::GluePattern,
+    provider::{names::*, packed_pattern::*, time_zones::tz},
     scaffold::*,
 };
 use icu_calendar::{
-    provider::{CalendarChineseV1, CalendarDangiV1, CalendarJapaneseModernV1},
-    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
+    provider::CalendarJapaneseModernV1,
+    types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
@@ -35,7 +36,9 @@ pub trait DateInputMarkers: UnstableSealed {
     type DayOfMonthInput: IntoOption<DayOfMonth>;
     /// Marker for resolving the day-of-year input field.
     type DayOfYearInput: IntoOption<DayOfYear>;
-    /// Marker for resolving the day-of-week input field.
+    /// Marker for resolving the day-of-year input field.
+    type RataDieInput: IntoOption<RataDie>;
+    /// Marker for resolving the weekday input field.
     type DayOfWeekInput: IntoOption<Weekday>;
 }
 
@@ -89,13 +92,13 @@ pub trait DateDataMarkers: UnstableSealed {
 /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
 pub trait TimeMarkers: UnstableSealed {
-    /// Marker for resolving the day-of-month input field.
+    /// Marker for resolving the hour input field.
     type HourInput: IntoOption<Hour>;
-    /// Marker for resolving the day-of-week input field.
+    /// Marker for resolving the minute input field.
     type MinuteInput: IntoOption<Minute>;
-    /// Marker for resolving the day-of-year input field.
+    /// Marker for resolving the second input field.
     type SecondInput: IntoOption<Second>;
-    /// Marker for resolving the any-calendar-kind input field.
+    /// Marker for resolving the nanosecond input field.
     type NanosecondInput: IntoOption<Nanosecond>;
     /// Marker for loading time skeleton patterns.
     type TimeSkeletonPatternsV1: DataMarker<DataStruct = PackedPatterns<'static>>;
@@ -193,6 +196,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
     + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
+    + GetField<<R::D as DateInputMarkers>::RataDieInput>
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
@@ -218,6 +222,7 @@ where
         + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
         + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
+        + GetField<<R::D as DateInputMarkers>::RataDieInput>
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
@@ -496,9 +501,7 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 /// for datetime formatting with any calendar.
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
-    DataProvider<CalendarChineseV1>
-    + DataProvider<CalendarDangiV1>
-    + DataProvider<CalendarJapaneseModernV1>
+    DataProvider<CalendarJapaneseModernV1>
     + DataProvider<DecimalSymbolsV1>
     + DataProvider<DecimalDigitsV1>
 {
@@ -506,8 +509,6 @@ pub trait AllAnyCalendarExternalDataMarkers:
 
 impl<T> AllAnyCalendarExternalDataMarkers for T where
     T: ?Sized
-        + DataProvider<CalendarChineseV1>
-        + DataProvider<CalendarDangiV1>
         + DataProvider<CalendarJapaneseModernV1>
         + DataProvider<DecimalSymbolsV1>
         + DataProvider<DecimalDigitsV1>
@@ -519,6 +520,7 @@ impl DateInputMarkers for () {
     type MonthInput = ();
     type DayOfMonthInput = ();
     type DayOfYearInput = ();
+    type RataDieInput = ();
     type DayOfWeekInput = ();
 }
 
@@ -578,9 +580,6 @@ macro_rules! datetime_marker_helper {
     (@dates/typed, yes) => {
         C::SkeletaV1
     };
-    (@dates/typed,) => {
-        NeverMarker<PackedPatterns<'static>>
-    };
     (@calmarkers, yes) => {
         FullDataCalMarkers
     };
@@ -596,23 +595,14 @@ macro_rules! datetime_marker_helper {
     (@dayperiods, yes) => {
         DayPeriodNamesV1
     };
-    (@dayperiods,) => {
-        NeverMarker<LinearNames<'static>>
-    };
     (@times, yes) => {
         DatetimePatternsTimeV1
-    };
-    (@times,) => {
-        NeverMarker<ErasedPackedPatterns>
     };
     (@glue, yes) => {
         DatetimePatternsGlueV1
     };
     (@glue,) => {
         NeverMarker<GluePattern<'static>>
-    };
-    (@option/length, yes) => {
-        Length
     };
     (@option/length, long) => {
         Length
@@ -632,9 +622,6 @@ macro_rules! datetime_marker_helper {
     (@option/timeprecision, yes) => {
         Option<TimePrecision>
     };
-    (@option/$any:ident,) => {
-        ()
-    };
     (@input/year, yes) => {
         YearInfo
     };
@@ -644,11 +631,14 @@ macro_rules! datetime_marker_helper {
     (@input/day_of_month, yes) => {
         DayOfMonth
     };
-    (@input/day_of_week, yes) => {
+    (@input/weekday, yes) => {
         Weekday
     };
     (@input/day_of_year, yes) => {
         DayOfYear
+    };
+    (@input/rata_die, yes) => {
+        RataDie
     };
     (@input/hour, yes) => {
         Hour
@@ -793,9 +783,6 @@ macro_rules! datetime_marker_helper {
     };
     (@names/zone/$any:ident,) => {
         ()
-    };
-    () => {
-        unreachable!() // prevent bugs
     };
 }
 pub(crate) use datetime_marker_helper;

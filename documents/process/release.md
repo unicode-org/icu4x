@@ -13,48 +13,73 @@ This is a checklist of things that should be done in the weeks leading to the re
 
 * [ ] Verify that the milestone and checklist are complete
 * [ ] Verify with component owners that they're ready for release
+* [ ] Verify that the semver breakages (listed by the build-test job) are acceptable
 * [ ] Take a bird-eye view at:
   * [ ] READMEs
   * [ ] Documentation
-  * [ ] Coverage
-  * [ ] Performance / Memory / Size benchmarks
+  * [ ] Coverage ([coveralls](https://coveralls.io/github/unicode-org/icu4x?branch=main) and [codecov](https://app.codecov.io/gh/unicode-org/icu4x/tree/main))
+  * [ ] [Performance / Memory / Size benchmarks](https://unicode-org.github.io/icu4x/benchmarks/index.html)
   * [ ] Cargo.toml files
     * [ ] All dependencies from the workspace should use `workspace = true` rather than their version number or path 
     * [ ] Cargo.toml files need to specify versions for each non-workspace entry in `dependencies`, or use `workspace = true`.
     * [ ] Ensure that any new packages have version number `0.0.0`, this will making bumping during the release easier.
     * [ ] Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
         * These should mostly use workspace inheritance
+* [ ] Run `RUSTDOCFLAGS="--no-run --nocapture --test-builder clippy-driver -Z unstable-options" cargo +nightly test --doc --all-features --no-fail-fast` and fix relevant Clippy issues in the docs (deprecated APIs, unused imports, etc.)
 * [ ] Run `cargo +nightly fmt -- --config=format_code_in_doc_comments=true --config=doc_comment_code_block_width=80` to prettify our docs
-* [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies
-* [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future
+* [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies. A helpful snippet is `find . -name Cargo.lock | while read lockfile; do cd $(dirname $lockfile); cargo update; done`, though it is best run from `examples/` since you may have other lockfiles in target/cargo-semver-checks directories.
+* [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future. In case of unstable APIs, it is okay to leave things in the missing_apis file for now, see unicode-org#7181.
 * [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Get all contributors to complete the changelog (see below)
-* [ ] Draft the text for the GitHub release. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
-* [ ] Prepare a PR to update tutorials using the upcoming release. The PR should pass `cargo make test-tutorials-local`, but can fail `cargo make test-tutorials-cratesio` prior to release
+* [ ] Draft the text for the GitHub release and circulate to the WG at least 18 hours in advance of the release, but ideally sooner. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
+* [ ] Consider making earlier drafts of the changelog (see below), noting a Git commit that the changelog is accurate up to.
 
 ## Release steps
 
 Once the release checklist is complete, the assigned release driver will perform the following steps, in order:
 
-* Land the changelog (see below)
-  * Note: Do this _before_ tagging the release so that it is included in the tag
-* Remove all `-dev` prelease tags from `Cargo.toml`s
-* Go through the prerelease checklist again, ensuring that no problems were reintroduced in the PRs that landed since the opening of the checklist. (Things like doc prettification will likely need to be rerun!)
-* Release utils (see section below). Get the version bumps reviewed and checked in before releasing.
-* Update ICU4X package versions as needed. Most of this can be done by updating `workspace.package` in the root `Cargo.toml` and the `workspace.dependencies` entries there. Some `icu_*` crates do not follow the ICU4X versioning scheme like `icu_codepointtrie_builder` or experimental crates.
-* Get this reviewed and checked in before continuing
-* Publish each `icu_*` crate
-  * Use `cargo workspaces publish --from-git` to automatically publish the crates in the correct order if you would like
-  * Add `icu4x-release` group as owners to each new component you're publishing
-    * `cargo owner -a github:unicode-org:icu4x-release`
-* Merge the tutorials PR. `cargo make test-tuturials-cratesio` should now pass
-  * If there are any errors, please fix them before advertising the release
-* [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
-* Create a branch named `release/x.y` on the release tag and push it to the upstream
-* Announce the release to public
-  * (All releases) Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
-  * (All releases) Blog post on Unicode blog
-  * (Major releases only) Submit to This Week In Rust
+* [ ] Land the changelog (see below)
+* [ ] Go through the prerelease checklist again, ensuring that no problems were reintroduced in the PRs that landed since the opening of the checklist. (Things like doc prettification will likely need to be rerun!)
+* [ ] Prepare a PR with updated versions
+  * [ ] Remove all `-dev` prelease tags from `Cargo.toml`s
+  * [ ] Update all ICU4X crate versions
+    * [ ] Update the workspace version to the new version
+    * [ ] Some `icu_*` crates do not follow the ICU4X versioning scheme: `icu_codepointtrie_builder`, `icu_pattern`, and `icu_experimental`. Be sure to give them an appropriate version based on the changelog. Major releases are always paired with a `0.x.0` release of `icu_experimental`.
+    * [ ] Find all ICU4X component/provider crates that have an overridden version in their `Cargo.toml` and reset it to `version.workspace = true`.
+    * [ ] Update all ICU4X `~` dependencies in the toplevel `Cargo.toml`'s `workspace.dependencies`.
+    * [ ] Update `icu_locale_core`, `icu_provider`, and `icu_pattern`'s non-`~` dependency in `Cargo.toml`'s `workspace.dependencies`
+      * Note: These are in a different section and easy to miss!
+  * [ ] Update all relevant utils versions
+    * [ ] The changelog should already mention the new versions of each util crate that needs to be published. Use those, and double-check that they are accurate.
+    * [ ] For utils that have had substantiative changes (new APIs, etc), update them in `workspace.dependencies`. When unsure, just update.
+* [ ] Get this PR reviewed and checked in.
+* [ ] Perform the release.
+  * The best way to do this is to use `cargo workspaces publish --from-git --no-remove-dev-deps`.
+  * If the release fails at some point and needs a fix, make a PR for the fix and get it merged. You *may* bypass requirements if necessary, but prefer to wait for most CI and an approval.
+  * `cargo publish` does not like cyclic dev-deps and [will fail](https://github.com/rust-lang/cargo/issues/4242) on some crates.
+    * `cargo workspaces publish` will automatically edit out dev-deps to handle this. Unfortunately, it [dirties the tree](https://github.com/pksunkara/cargo-workspaces/issues/202) when it does this. Hopefully that issue is fixed.
+    * If not, you can instead perform a release by running `cargo publish` on individual folders (going back to `cargo workspaces publish` after the problematic crate is published)
+    * When required to remove a dev-dependency, make a commit that replaces it with a path dependency, and then `cargo publish` from the clean git tree.
+    * Be sure to push such commits to `main` (you may need to temporarily change branch protection to do so: do not change the ruleset, just remove the default branch from our branch protection ruleset).
+    * It is very important to only publish from commits that are reachable from `main` (or other repo branches). It is less important to ensure that the publishes are not "dirty", but it is ideal to try and maintain that.
+* [ ] Add the `icu4x-release` group as owners to each brand new crate that was published
+  * `cargo owner -a github:unicode-org:icu4x-release`
+* [ ] [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
+* [ ] Update and publish FFI packages
+  * [ ] Dart
+    * [ ] update version in `ffi/dart/pubspec.yaml`
+    * [ ] update the artifacts tag in `ffi/dart/lib/src/hook_helpers/version.dart` to the tag created above, and run `regenerate_hashes.dart`
+    * [ ] get this checked in, then `cd ffi/dart && dart pub publish`
+  * [ ] JS
+    * [ ] update version in `icu4x/ffi/npm/package.json`
+    * [ ] get this checked in, then `cd ffi/npm && npm publish`
+* [ ] Create a branch named `release/x.y` including the release tag and FFI commits and push it to the upstream
+* [ ] Update the website
+  * [ ] In the `icu4x-docs` repo, run `node tools/github-to-astro.ts` and follow the instructions
+* [ ] Announce the release to public
+  * [ ] (All releases) Blog post on Unicode blog (email Unicode Edcom)
+  * [ ] (All releases) Update https://www.unicode.org/releases/ (email Ken Whistler)
+  * [ ] (Major releases only) Submit to This Week In Rust
 * Keep the main branch relatively stable for 7-14 days following the release to make things easier in case a patch release is needed.
   * It's okay to land smaller or incremental changes, but avoid breaking changes during this period.
 
@@ -96,7 +121,21 @@ This can all be done in a separate PR to chunk out the work but there should be 
 
 ## Writing a changelog
 
-In general, the *Unreleased* section of the changelog should be updated with each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. Before the release, rename the *Unreleased* section to the appropriate version.
+In general, the *Unreleased* section of the changelog should be updated with each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. It is also productive to spend some time mid-release to compile a comprehensive "changelog so far". Before the release, rename the *Unreleased* section to the appropriate version.
+
+When making a release, it is important to include version changes for all util and other non-ICU4X-versioned crates. If a util crate is not changed, it should have an entry saying `utilname: No change`.
+
+One convenient way to generate a changelog is to go component by component and run a command like `git log --oneline icu@2.1.0 -- components/calendar/`, pulling out changes actually relevant to the changelog. Note that this will often turn up PRs that primarily changed other components but had minor fallback in this one, be sure to ensure these changes are categorized correctly.
+
+API and behavior changes (including deprecations) MUST go in the changelog. Optimizations and nontrivial docs changes SHOULD go in the changelog, but use your judgement. Internal refactors MAY go in the changelog based on changelog author's discretion.
+
+Each changelog entry may refer to multiple PRs: you are encouraged to merge related PRs into a combined entry. You are also encouraged to order the changelog according to importance: API changes first, then behavior changes, then optimizations, then the rest.
+
+Similarly, a changelog entry may show up multiple times in the changelog if multiple crates were central to it.
+
+Some changes affect most crates, like Rust version upgrades or cross-cutting docs improvements. We use a "General changes" section of the changelog to cover these. Sometimes a crate's changelog entry will just say "General changes only" to indicate that the crate did get some changes, it just didn't have any crate-specific changes.
+
+We organize the changelog in the following sections, based on toplevel ICU4X folder: "Components", "Data model and providers" (`provider/`), "FFI", and "Utils".
 
 Out-of-cycle changelogs should use a single entry for each individual crate released, e.g. something like this:
 

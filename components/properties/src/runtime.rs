@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] This module is experimental and currently crate-private. Let us know if you
+//! 🚧 \[Unstable\] This module is unstable and currently crate-private. Let us know if you
 //! have a use case for this!
 //!
 //! This module contains utilities for working with properties where the specific property in use
@@ -25,7 +25,7 @@ use icu_provider::prelude::*;
 /// This is intended to be used in situations where the exact unicode property needed is
 /// only known at runtime, for example in regex engines.
 ///
-/// The values are intended to be identical to ICU4C's UProperty enum
+/// The values are intended to be identical to ICU4C's `UProperty` enum
 #[non_exhaustive]
 #[allow(missing_docs)]
 #[allow(dead_code)]
@@ -64,15 +64,19 @@ enum BinaryProperty {
     GraphemeLink = 12,
     HexDigit = 13,
     Hyphen = 14,
+    IdCompatMathContinue = 65,
+    IdCompatMathStart = 66,
     IdContinue = 15,
     Ideographic = 17,
     IdsBinaryOperator = 18,
     IdStart = 16,
     IdsTrinaryOperator = 19,
+    IdsUnaryOperator = 67,
     JoinControl = 20,
     LogicalOrderException = 21,
     Lowercase = 22,
     Math = 23,
+    ModifierCombiningMark = 68,
     NfcInert = 39,
     NfdInert = 37,
     NfkcInert = 40,
@@ -103,7 +107,7 @@ enum BinaryProperty {
 /// This is intended to be used in situations where the exact unicode property needed is
 /// only known at runtime, for example in regex engines.
 ///
-/// The values are intended to be identical to ICU4C's UProperty enum
+/// The values are intended to be identical to ICU4C's `UProperty` enum
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 #[allow(dead_code)]
@@ -123,7 +127,7 @@ enum StringBinaryProperty {
 /// This is intended to be used in situations where the exact unicode property needed is
 /// only known at runtime, for example in regex engines.
 ///
-/// The values are intended to be identical to ICU4C's UProperty enum
+/// The values are intended to be identical to ICU4C's `UProperty` enum
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 #[allow(dead_code)]
@@ -162,7 +166,7 @@ enum EnumeratedProperty {
 /// This is intended to be used in situations where the exact unicode property needed is
 /// only known at runtime, for example in regex engines.
 ///
-/// The values are intended to be identical to ICU4C's UProperty enum
+/// The values are intended to be identical to ICU4C's `UProperty` enum
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 #[allow(dead_code)]
@@ -176,7 +180,7 @@ enum MaskProperty {
 /// This is intended to be used in situations where the exact unicode property needed is
 /// only known at runtime, for example in regex engines.
 ///
-/// The values are intended to be identical to ICU4C's UProperty enum
+/// The values are intended to be identical to ICU4C's `UProperty` enum
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 #[allow(dead_code)]
@@ -190,7 +194,7 @@ enum NumericProperty {
 /// This is intended to be used in situations where the exact unicode property needed is
 /// only known at runtime, for example in regex engines.
 ///
-/// The values are intended to be identical to ICU4C's UProperty enum
+/// The values are intended to be identical to ICU4C's `UProperty` enum
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 #[allow(dead_code)]

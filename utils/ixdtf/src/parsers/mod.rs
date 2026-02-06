@@ -4,8 +4,9 @@
 
 //! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
-use crate::core::{EncodingType, Utf16, Utf8};
-use crate::{core::Cursor, ParserResult};
+use crate::core::Cursor;
+use crate::encoding::{EncodingType, Utf16, Utf8};
+use crate::ParserResult;
 
 #[cfg(feature = "duration")]
 use crate::records::DurationParseRecord;
@@ -116,7 +117,8 @@ impl<'a, T: EncodingType> IxdtfParser<'a, T> {
     /// Parses the source as an [extended Date/Time string][rfc9557].
     ///
     /// This is the baseline parse method for `ixdtf`. For this method, the
-    /// TimeRecord, UTCOffsetRecord, and all annotations are optional.
+    /// [`TimeRecord`](crate::records::TimeRecord), [`UtcOffsetRecord`],
+    /// and all annotations are optional.
     ///
     /// # Example
     ///
@@ -159,7 +161,7 @@ impl<'a, T: EncodingType> IxdtfParser<'a, T> {
         self.parse_year_month_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an extended YearMonth string with an Annotation handler.
+    /// Parses the source as an extended `YearMonth` string with an Annotation handler.
     ///
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_year_month_with_annotation_handler(
@@ -192,7 +194,7 @@ impl<'a, T: EncodingType> IxdtfParser<'a, T> {
         self.parse_month_day_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an extended MonthDay string with an Annotation handler.
+    /// Parses the source as an extended `MonthDay` string with an Annotation handler.
     ///
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_month_day_with_annotation_handler(
@@ -296,14 +298,19 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// use ixdtf::{parsers::TimeZoneParser, records::TimeZoneRecord};
     ///
     /// let identifier = "Europe/London";
-    /// let record = TimeZoneParser::from_str(identifier).parse_identifier().unwrap();
+    /// let record = TimeZoneParser::from_str(identifier)
+    ///     .parse_identifier()
+    ///     .unwrap();
     /// assert_eq!(record, TimeZoneRecord::Name(identifier.as_bytes()))
     /// ```
     ///
     /// ## Minute precision offset example
     ///
     /// ```rust
-    /// use ixdtf::{parsers::TimeZoneParser, records::{MinutePrecisionOffset, TimeZoneRecord, Sign}};
+    /// use ixdtf::{
+    ///     parsers::TimeZoneParser,
+    ///     records::{MinutePrecisionOffset, Sign, TimeZoneRecord},
+    /// };
     ///
     /// let identifier = "+00:00";
     /// let offset = match TimeZoneParser::from_str(identifier).parse_identifier() {
@@ -325,14 +332,18 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// use [`Self::parse_offset`].
     ///
     /// ```rust
-    /// use ixdtf::{ParseError, parsers::TimeZoneParser};
+    /// use ixdtf::{parsers::TimeZoneParser, ParseError};
     ///
     /// let identifier = "+00:00:00";
-    /// let err = TimeZoneParser::from_str(identifier).parse_identifier().unwrap_err();
+    /// let err = TimeZoneParser::from_str(identifier)
+    ///     .parse_identifier()
+    ///     .unwrap_err();
     /// assert_eq!(err, ParseError::InvalidMinutePrecisionOffset);
     ///
     /// let identifier = "+00:00.1";
-    /// let err = TimeZoneParser::from_str(identifier).parse_identifier().unwrap_err();
+    /// let err = TimeZoneParser::from_str(identifier)
+    ///     .parse_identifier()
+    ///     .unwrap_err();
     /// assert_eq!(err, ParseError::InvalidEnd);
     /// ```
     pub fn parse_identifier(&mut self) -> ParserResult<TimeZoneRecord<'a, T>> {
@@ -349,7 +360,7 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// ## Minute precision offset example
     ///
     /// ```rust
-    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
+    /// use ixdtf::{parsers::TimeZoneParser, records::Sign};
     ///
     /// let offset_src = "-05:00";
     /// let parse_result =
@@ -364,7 +375,7 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// ## Full precision offset example
     ///
     /// ```rust
-    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
+    /// use ixdtf::{parsers::TimeZoneParser, records::Sign};
     ///
     /// let offset_src = "-05:00:30.123456789";
     /// let parse_result =
@@ -387,7 +398,7 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     ///
     ///
     /// ```rust
-    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
+    /// use ixdtf::{parsers::TimeZoneParser, records::Sign};
     ///
     /// let iana_identifier = "America/Chicago";
     /// let parse_result = TimeZoneParser::from_str(iana_identifier)

@@ -6,11 +6,7 @@ mod fixtures;
 mod patterns;
 
 use fixtures::TestOutputItem;
-use icu_calendar::cal::{
-    Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew,
-    HijriSimulated, HijriTabular, HijriTabularEpoch, HijriTabularLeapYears, HijriUmmAlQura, Indian,
-    Iso, Japanese, JapaneseExtended, Persian, Roc,
-};
+use icu_calendar::cal::*;
 use icu_calendar::AnyCalendarKind;
 use icu_datetime::fieldsets::enums::*;
 use icu_datetime::scaffold::CldrCalendar;
@@ -72,7 +68,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 ),
                 CalendarAlgorithm::Chinese => assert_fixture_element(
                     prefs,
-                    Chinese::new(),
+                    ChineseTraditional::new(),
                     input,
                     &expected,
                     field_set,
@@ -83,7 +79,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 }
                 CalendarAlgorithm::Dangi => assert_fixture_element(
                     prefs,
-                    Dangi::new(),
+                    KoreanTraditional::new(),
                     input,
                     &expected,
                     field_set,
@@ -122,17 +118,10 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
                     assert_fixture_element(
                         prefs,
-                        HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday),
-                        input,
-                        &expected,
-                        field_set,
-                        &description,
-                    )
-                }
-                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => {
-                    assert_fixture_element(
-                        prefs,
-                        HijriSimulated::new_mecca_always_calculating(),
+                        Hijri::new_tabular(
+                            hijri::TabularAlgorithmLeapYears::TypeII,
+                            hijri::TabularAlgorithmEpoch::Friday,
+                        ),
                         input,
                         &expected,
                         field_set,
@@ -142,9 +131,9 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
                     assert_fixture_element(
                         prefs,
-                        HijriTabular::new(
-                            HijriTabularLeapYears::TypeII,
-                            HijriTabularEpoch::Thursday,
+                        Hijri::new_tabular(
+                            hijri::TabularAlgorithmLeapYears::TypeII,
+                            hijri::TabularAlgorithmEpoch::Thursday,
                         ),
                         input,
                         &expected,
@@ -155,27 +144,16 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => {
                     assert_fixture_element(
                         prefs,
-                        HijriUmmAlQura::new(),
+                        Hijri::new_umm_al_qura(),
                         input,
                         &expected,
                         field_set,
                         &description,
                     )
                 }
-                CalendarAlgorithm::Japanese if locale.extensions.private.is_empty() => {
-                    assert_fixture_element(
-                        prefs,
-                        Japanese::new(),
-                        input,
-                        &expected,
-                        field_set,
-                        &description,
-                    )
-                }
-                // -u-ca-japanese-x-extended
                 CalendarAlgorithm::Japanese => assert_fixture_element(
                     prefs,
-                    JapaneseExtended::new(),
+                    Japanese::new(),
                     input,
                     &expected,
                     field_set,
@@ -243,7 +221,7 @@ fn assert_fixture_element<C>(
 
     if matches!(
         input.date.calendar().kind(),
-        AnyCalendarKind::JapaneseExtended | AnyCalendarKind::HijriSimulatedMecca
+        AnyCalendarKind::HijriSimulatedMecca
     ) {
         // Not supported with FormattableAnyCalendar
         return;
@@ -477,13 +455,13 @@ fn test_lengths_with_preferences() {
     );
 }
 
-/// Tests simple component::Bag.
+/// Tests simple components.
 #[test]
 fn test_components() {
     test_fixture("components", include_str!("fixtures/tests/components.json"));
 }
 
-/// Tests component::Bag configurations that have exact matches to CLDR skeletons.
+/// Tests components configurations that have exact matches to CLDR skeletons.
 #[test]
 fn test_components_exact_matches() {
     test_fixture(
@@ -509,7 +487,7 @@ fn test_components_with_zones() {
     );
 }
 
-/// Tests that component::Bags can adjust for width differences in the final pattern.
+/// Tests that components can adjust for width differences in the final pattern.
 #[test]
 fn test_components_width_differences() {
     test_fixture(
@@ -518,7 +496,7 @@ fn test_components_width_differences() {
     );
 }
 
-/// Tests that combine component::Bags options that don't exactly match a pattern.
+/// Tests that combine components options that don't exactly match a pattern.
 #[test]
 fn test_components_partial_matches() {
     test_fixture(
@@ -527,7 +505,7 @@ fn test_components_partial_matches() {
     );
 }
 
-/// Tests that component::Bags can combine a date skeleton, and a time skeleton.
+/// Tests that components can combine a date skeleton, and a time skeleton.
 #[test]
 fn test_components_combine_datetime() {
     test_fixture(

@@ -5,6 +5,8 @@
 use crate::asciibyte::AsciiByte;
 use crate::int_ops::{Aligned4, Aligned8};
 use crate::ParseError;
+#[cfg(feature = "alloc")]
+use alloc::string::String;
 use core::borrow::Borrow;
 use core::fmt;
 use core::ops::Deref;
@@ -39,7 +41,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Creates a `TinyAsciiStr<N>` from a UTF-8 slice, replacing invalid code units.
     ///
     /// Invalid code units, as well as null or non-ASCII code points
-    /// (i.e. those outside the range U+0001..=U+007F`)
+    /// (i.e. those outside the range `U+0001..=U+007F`)
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
@@ -74,7 +76,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Creates a `TinyAsciiStr<N>` from a UTF-16 slice, replacing invalid code units.
     ///
     /// Invalid code units, as well as null or non-ASCII code points
-    /// (i.e. those outside the range U+0001..=U+007F`)
+    /// (i.e. those outside the range `U+0001..=U+007F`)
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
@@ -124,7 +126,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     ///     TinyAsciiStr::<3>::try_from_raw(*b"USD"),
     ///     Ok(tinystr!(3, "USD"))
     /// );
-    /// assert!(matches!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"), Err(_)));
+    /// assert!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0").is_err());
     /// ```
     pub const fn try_from_raw(raw: [u8; N]) -> Result<Self, ParseError> {
         Self::try_from_utf8_inner(&raw, true)
@@ -229,8 +231,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s0_4 = TinyAsciiStr::<4>::new_unsigned_decimal(0).unwrap();
     /// let s456_4 = TinyAsciiStr::<4>::new_unsigned_decimal(456).unwrap();
@@ -246,11 +248,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Example with saturating the value:
     ///
     /// ```
-    /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
+    /// use tinystr::TinyAsciiStr;
     ///
-    /// let str_truncated = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or_else(|s| s);
-    /// let str_saturated = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or(tinystr!(2, "99"));
+    /// let str_truncated =
+    ///     TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or_else(|s| s);
+    /// let str_saturated = TinyAsciiStr::<2>::new_unsigned_decimal(456)
+    ///     .unwrap_or(tinystr!(2, "99"));
     ///
     /// assert_eq!(str_truncated, tinystr!(2, "56"));
     /// assert_eq!(str_saturated, tinystr!(2, "99"));
@@ -856,14 +860,14 @@ impl<const N: usize> PartialEq<&str> for TinyAsciiStr<N> {
 }
 
 #[cfg(feature = "alloc")]
-impl<const N: usize> PartialEq<alloc::string::String> for TinyAsciiStr<N> {
-    fn eq(&self, other: &alloc::string::String) -> bool {
+impl<const N: usize> PartialEq<String> for TinyAsciiStr<N> {
+    fn eq(&self, other: &String) -> bool {
         self.deref() == other.deref()
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
+impl<const N: usize> PartialEq<TinyAsciiStr<N>> for String {
     fn eq(&self, other: &TinyAsciiStr<N>) -> bool {
         self.deref() == other.deref()
     }
@@ -930,7 +934,7 @@ mod test {
     where
         F1: Fn(&str) -> T,
         F2: Fn(TinyAsciiStr<N>) -> T,
-        T: core::fmt::Debug + core::cmp::PartialEq,
+        T: fmt::Debug + PartialEq,
     {
         for s in STRINGS
             .into_iter()

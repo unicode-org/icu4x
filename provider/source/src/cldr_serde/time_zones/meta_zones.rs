@@ -7,9 +7,9 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
+use crate::time_zones::Timestamp;
 use icu::locale::subtags::Region;
-use icu::time::zone::ZoneNameTimestamp;
-use icu_time::ZonedDateTime;
+use icu::time::Time;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -18,9 +18,9 @@ pub(crate) struct UsesMetazone {
     #[serde(rename = "_mzone")]
     pub(crate) mzone: Option<String>,
     #[serde(rename = "_from", default, deserialize_with = "deserialize_date")]
-    pub(crate) from: Option<ZoneNameTimestamp>,
+    pub(crate) from: Option<Timestamp>,
     #[serde(rename = "_to", default, deserialize_with = "deserialize_date")]
-    pub(crate) to: Option<ZoneNameTimestamp>,
+    pub(crate) to: Option<Timestamp>,
     #[serde(rename = "_stdOffset")]
     pub(crate) std_offset: Option<String>,
     #[serde(rename = "_dstOffset")]
@@ -120,7 +120,7 @@ impl TimeZonePeriod {
 
 fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
     deserializer: D,
-) -> Result<Option<ZoneNameTimestamp>, D::Error> {
+) -> Result<Option<Timestamp>, D::Error> {
     use icu::calendar::Iso;
     use icu::time::zone::UtcOffset;
     use icu::time::DateTime;
@@ -130,14 +130,17 @@ fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
         return Ok(None);
     };
 
-    let DateTime { date, time } = DateTime::try_from_str(&timestamp, Iso)
+    let DateTime { date, mut time } = DateTime::try_from_str(&timestamp, Iso)
         .map_err(|_| D::Error::custom("Invalid metazone timestamp"))?;
 
-    Ok(Some(ZoneNameTimestamp::from_zoned_date_time_iso(
-        ZonedDateTime {
-            date,
-            time,
-            zone: UtcOffset::zero(),
-        },
-    )))
+    // https://unicode-org.atlassian.net/browse/CLDR-18988
+    if time == Time::try_new(0, 45, 0, 0).unwrap() {
+        time = Time::try_new(0, 44, 30, 0).unwrap()
+    }
+
+    Ok(Some(Timestamp {
+        date,
+        time,
+        zone: UtcOffset::zero(),
+    }))
 }

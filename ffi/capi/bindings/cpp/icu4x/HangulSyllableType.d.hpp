@@ -1,5 +1,5 @@
-#ifndef icu4x_HangulSyllableType_D_HPP
-#define icu4x_HangulSyllableType_D_HPP
+#ifndef ICU4X_HangulSyllableType_D_HPP
+#define ICU4X_HangulSyllableType_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class HangulSyllableType;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -33,51 +33,85 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
+ * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
  */
 class HangulSyllableType {
 public:
-  enum Value {
-    NotApplicable = 0,
-    LeadingJamo = 1,
-    VowelJamo = 2,
-    TrailingJamo = 3,
-    LeadingVowelSyllable = 4,
-    LeadingVowelTrailingSyllable = 5,
-  };
+    enum Value {
+        /**
+         * See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
+         */
+        NotApplicable = 0,
+        /**
+         * See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
+         */
+        LeadingJamo = 1,
+        /**
+         * See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
+         */
+        VowelJamo = 2,
+        /**
+         * See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
+         */
+        TrailingJamo = 3,
+        /**
+         * See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+         */
+        LeadingVowelSyllable = 4,
+        /**
+         * See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+         */
+        LeadingVowelTrailingSyllable = 5,
+    };
 
-  HangulSyllableType(): value(Value::NotApplicable) {}
+    HangulSyllableType(): value(Value::NotApplicable) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr HangulSyllableType(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr HangulSyllableType(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::HangulSyllableType for_char(char32_t ch);
 
   /**
-   * Convert to an integer value usable with ICU4C and CodePointMapData
+   * Get the "long" name of this property value (returns empty if property value is unknown)
    *
-   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> long_name() const;
+
+  /**
+   * Get the "short" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> short_name() const;
+
+  /**
+   * Convert to an integer value usable with ICU4C and `CodePointMapData`
+   *
+   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
    */
   inline uint8_t to_integer_value() const;
 
   /**
-   * Convert from an integer value from ICU4C or CodePointMapData
+   * Convert from an integer value from ICU4C or `CodePointMapData`
    *
-   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
+   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::HangulSyllableType> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::HangulSyllableType AsFFI() const;
-  inline static icu4x::HangulSyllableType FromFFI(icu4x::capi::HangulSyllableType c_enum);
+  inline static std::optional<icu4x::HangulSyllableType> try_from_str(std::string_view s);
+
+    inline icu4x::capi::HangulSyllableType AsFFI() const;
+    inline static icu4x::HangulSyllableType FromFFI(icu4x::capi::HangulSyllableType c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_HangulSyllableType_D_HPP
+#endif // ICU4X_HangulSyllableType_D_HPP

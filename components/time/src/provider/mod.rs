@@ -16,10 +16,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::zone::{UtcOffset, VariantOffsets, ZoneNameTimestamp};
+use crate::zone::{UtcOffset, ZoneNameTimestamp};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::maps::ZeroMapKV;
 use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::ule::{AsULE, NichedOption, RawBytesULE};
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
@@ -71,6 +70,7 @@ const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV))]
 #[non_exhaustive]
 pub enum TimeZoneVariant {
     /// The variant corresponding to `"standard"` in CLDR.
@@ -100,6 +100,27 @@ pub enum MetazoneMembershipKind {
     CustomTransitions,
 }
 
+/// Represents the different offsets in use for a time zone
+// warning: stable (deprecated) type through reexport in crate::zone::offset
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
+pub struct VariantOffsets {
+    /// The standard offset.
+    pub standard: UtcOffset,
+    /// The daylight-saving offset, if used.
+    pub daylight: Option<UtcOffset>,
+}
+
+impl VariantOffsets {
+    /// Creates a new [`VariantOffsets`] from a [`UtcOffset`] representing standard time.
+    pub fn from_standard(standard: UtcOffset) -> Self {
+        Self {
+            standard,
+            daylight: None,
+        }
+    }
+}
+
 /// A [`VariantOffsets`] and a [`MetazoneMembershipKind`] packed into one byte.
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub struct VariantOffsetsWithMetazoneMembershipKind {
@@ -115,7 +136,11 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
     fn from_unaligned([std, dst]: Self::ULE) -> Self {
         Self {
             offsets: VariantOffsets {
-                standard: UtcOffset::from_seconds_unchecked(
+                standard: UtcOffset::from_seconds_unchecked(if std == i8::MAX {
+                    // Special bit pattern for value that appears in TZDB but is not
+                    // representable by our schema.
+                    -2670
+                } else {
                     std as i32 * SECONDS_TO_EIGHTS_OF_HOURS
                         + match std % 8 {
                             // 7.5, 37.5, representing 10, 40
@@ -126,8 +151,8 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                             -3 | -7 => 150,
                             // 0, 15, 30, 45
                             _ => 0,
-                        },
-                ),
+                        }
+                }),
                 daylight: match dst as u8 & 0b0011_1111 {
                     0 => None,
                     1 => Some(0),
@@ -158,9 +183,13 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
     }
 
     fn to_unaligned(self) -> Self::ULE {
+        let offset = self.offsets.standard.to_seconds();
         [
-            {
-                let offset = self.offsets.standard.to_seconds();
+            if offset == -2670 {
+                // Special bit pattern for value that appears in TZDB but is not
+                // representable by our schema.
+                i8::MAX
+            } else {
                 debug_assert_eq!(offset.abs() % 60, 0);
                 let scaled = match offset.abs() / 60 % 60 {
                     0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
@@ -177,7 +206,7 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                         offset / SECONDS_TO_EIGHTS_OF_HOURS
                     }
                 };
-                debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
+                debug_assert!(i8::MIN as i32 <= scaled && scaled < i8::MAX as i32);
                 scaled as i8
             },
             match self
@@ -257,7 +286,8 @@ fn offsets_ule() {
     assert_round_trip(UtcOffset::try_from_str("-01:50").unwrap());
 }
 
-impl<'a> ZeroMapKV<'a> for VariantOffsets {
+#[cfg(feature = "alloc")]
+impl<'a> zerovec::maps::ZeroMapKV<'a> for VariantOffsets {
     type Container = ZeroVec<'a, Self>;
     type Slice = ZeroSlice<Self>;
     type GetType = <Self as AsULE>::ULE;
@@ -271,21 +301,29 @@ impl serde::Serialize for VariantOffsets {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            serializer.serialize_str(&if let Some(dst) = self.daylight {
-                alloc::format!(
-                    "{:+02}:{:02}/{:+02}:{:02}",
-                    self.standard.hours_part(),
-                    self.standard.minutes_part(),
+            use core::fmt::Write;
+            let mut r = alloc::format!(
+                "{:+02}:{:02}",
+                self.standard.hours_part(),
+                self.standard.minutes_part(),
+            );
+            if self.standard.seconds_part() != 0 {
+                let _infallible = write!(&mut r, ":{:02}", self.standard.seconds_part());
+            }
+            if let Some(dst) = self.daylight {
+                let _infallible = write!(
+                    &mut r,
+                    "/{:+02}:{:02}",
                     dst.hours_part(),
                     dst.minutes_part(),
-                )
-            } else {
-                alloc::format!(
-                    "{:+02}:{:02}",
-                    self.standard.hours_part(),
-                    self.standard.minutes_part(),
-                )
-            })
+                );
+
+                if dst.seconds_part() != 0 {
+                    let _infallible = write!(&mut r, ":{:02}", dst.seconds_part());
+                }
+            }
+
+            serializer.serialize_str(&r)
         } else {
             self.to_unaligned().serialize(serializer)
         }
@@ -357,11 +395,11 @@ pub struct TimezonePeriods<'a> {
 
     /// The deduplicated list of offsets.
     ///
-    /// There are currently 99 unique VariantOffsetsWithMetazoneMembershipKind, so storing the index as a u8 is plenty enough.
+    /// There are currently 99 unique [`VariantOffsetsWithMetazoneMembershipKind`], so storing the index as a `u8` is plenty enough.
     pub offsets: ZeroVec<'a, VariantOffsetsWithMetazoneMembershipKind>,
 }
 
-/// Encodes ZoneNameTimestamp in 3 bytes by dropping the unused metadata
+/// Encodes [`ZoneNameTimestamp`] in 3 bytes by dropping the unused metadata
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
@@ -558,64 +596,65 @@ icu_provider::data_marker!(
     has_checksum = true
 );
 
+impl AsULE for VariantOffsets {
+    type ULE = [i8; 2];
+
+    fn from_unaligned([std, dst]: Self::ULE) -> Self {
+        fn decode(encoded: i8) -> i32 {
+            encoded as i32 * SECONDS_TO_EIGHTS_OF_HOURS
+                + match encoded % 8 {
+                    // 7.5, 37.5, representing 10, 40
+                    1 | 5 => 150,
+                    -1 | -5 => -150,
+                    // 22.5, 52.5, representing 20, 50
+                    3 | 7 => -150,
+                    -3 | -7 => 150,
+                    // 0, 15, 30, 45
+                    _ => 0,
+                }
+        }
+
+        Self {
+            standard: UtcOffset::from_seconds_unchecked(decode(std)),
+            daylight: (dst != 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + dst))),
+        }
+    }
+
+    fn to_unaligned(self) -> Self::ULE {
+        fn encode(offset: i32) -> i8 {
+            debug_assert_eq!(offset.abs() % 60, 0);
+            let scaled = match offset.abs() / 60 % 60 {
+                0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
+                10 | 40 => {
+                    // stored as 7.5, 37.5, truncating div
+                    offset / SECONDS_TO_EIGHTS_OF_HOURS
+                }
+                20 | 50 => {
+                    // stored as 22.5, 52.5, need to add one
+                    offset / SECONDS_TO_EIGHTS_OF_HOURS + offset.signum()
+                }
+                _ => {
+                    debug_assert!(false, "{offset:?}");
+                    offset / SECONDS_TO_EIGHTS_OF_HOURS
+                }
+            };
+            debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
+            scaled as i8
+        }
+        [
+            encode(self.standard.to_seconds()),
+            self.daylight
+                .map(|d| encode(d.to_seconds() - self.standard.to_seconds()))
+                .unwrap_or_default(),
+        ]
+    }
+}
+
 // remove in 3.0
+#[cfg(feature = "alloc")]
 pub(crate) mod legacy {
     use super::*;
     use zerovec::ZeroMap2d;
-
-    impl AsULE for VariantOffsets {
-        type ULE = [i8; 2];
-
-        fn from_unaligned([std, dst]: Self::ULE) -> Self {
-            fn decode(encoded: i8) -> i32 {
-                encoded as i32 * SECONDS_TO_EIGHTS_OF_HOURS
-                    + match encoded % 8 {
-                        // 7.5, 37.5, representing 10, 40
-                        1 | 5 => 150,
-                        -1 | -5 => -150,
-                        // 22.5, 52.5, representing 20, 50
-                        3 | 7 => -150,
-                        -3 | -7 => 150,
-                        // 0, 15, 30, 45
-                        _ => 0,
-                    }
-            }
-
-            Self {
-                standard: UtcOffset::from_seconds_unchecked(decode(std)),
-                daylight: (dst != 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + dst))),
-            }
-        }
-
-        fn to_unaligned(self) -> Self::ULE {
-            fn encode(offset: i32) -> i8 {
-                debug_assert_eq!(offset.abs() % 60, 0);
-                let scaled = match offset.abs() / 60 % 60 {
-                    0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
-                    10 | 40 => {
-                        // stored as 7.5, 37.5, truncating div
-                        offset / SECONDS_TO_EIGHTS_OF_HOURS
-                    }
-                    20 | 50 => {
-                        // stored as 22.5, 52.5, need to add one
-                        offset / SECONDS_TO_EIGHTS_OF_HOURS + offset.signum()
-                    }
-                    _ => {
-                        debug_assert!(false, "{offset:?}");
-                        offset / SECONDS_TO_EIGHTS_OF_HOURS
-                    }
-                };
-                debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
-                scaled as i8
-            }
-            [
-                encode(self.standard.to_seconds()),
-                self.daylight
-                    .map(|d| encode(d.to_seconds() - self.standard.to_seconds()))
-                    .unwrap_or_default(),
-            ]
-        }
-    }
 
     icu_provider::data_marker!(
         /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as

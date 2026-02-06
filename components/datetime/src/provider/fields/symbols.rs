@@ -5,9 +5,12 @@
 use crate::options::SubsecondDigits;
 #[cfg(feature = "datagen")]
 use crate::provider::fields::FieldLength;
+use crate::DateTimeFormatterPreferences;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+use icu_locale_core::subtags::region;
+use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, UleError, ULE};
 
@@ -146,7 +149,7 @@ impl FieldSymbol {
         })
     }
 
-    /// Returns the index associated with this FieldSymbol.
+    /// Returns the index associated with this [`FieldSymbol`].
     #[cfg(feature = "datagen")]
     fn idx_for_skeleton(self) -> u8 {
         match self {
@@ -167,7 +170,7 @@ impl FieldSymbol {
     /// Compares this enum with other solely based on the enum variant,
     /// ignoring the enum's data.
     ///
-    /// Second and DecimalSecond are considered equal.
+    /// [`Second`] and [`DecimalSecond`] are considered equal.
     #[cfg(feature = "datagen")]
     pub(crate) fn skeleton_cmp(self, other: Self) -> Ordering {
         self.idx_for_skeleton().cmp(&other.idx_for_skeleton())
@@ -270,13 +273,14 @@ impl FieldSymbol {
     /// when serializing them to present them in a consistent order.
     ///
     /// This ordering is taken by the order of the fields listed in the [UTS 35 Date Field Symbol Table]
-    /// (https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table), and are generally
+    /// (<https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>), and are generally
     /// ordered most significant to least significant.
     fn get_canonical_order(self) -> u8 {
         match self {
             Self::Era => 0,
             Self::Year(Year::Calendar) => 1,
             // Self::Year(Year::WeekOf) => 2,
+            Self::Year(Year::Extended) => 2,
             Self::Year(Year::Cyclic) => 3,
             Self::Year(Year::RelatedIso) => 4,
             Self::Month(Month::Format) => 5,
@@ -288,7 +292,7 @@ impl FieldSymbol {
             Self::Day(Day::DayOfMonth) => 9,
             Self::Day(Day::DayOfYear) => 10,
             Self::Day(Day::DayOfWeekInMonth) => 11,
-            // Self::Day(Day::ModifiedJulianDay) => 12,
+            Self::Day(Day::ModifiedJulianDay) => 12,
             Self::Weekday(Weekday::Format) => 13,
             Self::Weekday(Weekday::Local) => 14,
             Self::Weekday(Weekday::StandAlone) => 15,
@@ -507,10 +511,12 @@ field_type! (
         'U' => Cyclic = 1,
         /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
         'r' => RelatedIso = 2,
+        /// Field symbol for extended year
+        'u' => Extended = 3,
         // /// Field symbol for year in "week of year".
         // ///
         // /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
-        // 'Y' => WeekOf = 3,
+        // 'Y' => WeekOf = 4,
     };
     YearULE
 );
@@ -563,10 +569,10 @@ field_type!(
         ///
         /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
         'F' => DayOfWeekInMonth = 2,
-        // /// Field symbol for the modified Julian day (numeric).
-        // ///
-        // /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
-        // 'g' => ModifiedJulianDay = 3,
+        /// Field symbol for the modified Julian day (numeric).
+        ///
+        /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
+        'g' => ModifiedJulianDay = 3,
     };
     Numeric;
     DayULE
@@ -587,13 +593,122 @@ field_type!(
 );
 
 impl Hour {
-    pub(crate) fn from_hour_cycle(hour_cycle: HourCycle) -> Self {
-        match hour_cycle {
+    /// Picks the best [`Hour`] given the preferences.
+    ///
+    /// If `-u-hc-h**` is specified, that field is used. Otherwise, the field is selected
+    /// based on the locale, using `-u-hc-c**`, if present, as a hint.
+    pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Option<Self> {
+        let field = match prefs.hour_cycle? {
             HourCycle::H11 => Self::H11,
             HourCycle::H12 => Self::H12,
             HourCycle::H23 => Self::H23,
+            HourCycle::Clock12 => {
+                let region = prefs
+                    .locale_preferences
+                    .to_data_locale_region_priority()
+                    .region;
+                // TODO(#7415): Test that this fallback stays consistent with CLDR.
+                // This is derived from timeData. Currently the only region using
+                // something other than h12/h23 is JP.
+                const JP: Region = region!("JP");
+                match region {
+                    Some(JP) => Self::H11,
+                    _ => Self::H12,
+                }
+            }
+            // Note: ICU4X does not support H24.
+            HourCycle::Clock24 => Self::H23,
             _ => unreachable!(),
-        }
+        };
+        Some(field)
+    }
+}
+
+#[test]
+fn test_hour_cycle_selection() {
+    struct TestCase {
+        locale: &'static str,
+        expected: Option<Hour>,
+    }
+    let cases = [
+        TestCase {
+            locale: "en-US",
+            expected: None,
+        },
+        TestCase {
+            locale: "en-US-u-hc-h11",
+            expected: Some(Hour::H11),
+        },
+        TestCase {
+            locale: "en-US-u-hc-h12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "en-US-u-hc-h23",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "en-US-u-hc-c12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "en-US-u-hc-c24",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "fr-FR",
+            expected: None,
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-h11",
+            expected: Some(Hour::H11),
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-h12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-h23",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-c12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-c24",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "ja-JP",
+            expected: None,
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-h11",
+            expected: Some(Hour::H11),
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-h12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-h23",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-c12",
+            expected: Some(Hour::H11),
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-c24",
+            expected: Some(Hour::H23),
+        },
+    ];
+    for TestCase { locale, expected } in cases {
+        let locale = icu_locale_core::Locale::try_from_str(locale).unwrap();
+        let prefs = DateTimeFormatterPreferences::from(&locale);
+        let actual = Hour::from_prefs(prefs);
+        assert_eq!(expected, actual, "{}", locale);
     }
 }
 
@@ -674,13 +789,13 @@ impl Week {
 field_type!(
     /// An enum for the possible symbols of a weekday field in a date pattern.
     Weekday;  {
-        /// Field symbol for day of week (text format only).
+        /// Field symbol for the weekday (text format only).
         'E' => Format = 0,
-        /// Field symbol for day of week; numeric formats produce a locale-dependent ordinal weekday number.
+        /// Field symbol for the weekday; numeric formats produce a locale-dependent ordinal weekday number.
         ///
         /// For example, in de-DE, Monday is the 1st day of the week.
         'e' => Local = 1,
-        /// Field symbol for stand-alone local day of week number/name.
+        /// Field symbol for stand-alone local weekday number/name.
         ///
         /// The stand-alone weekday name is used when the weekday is displayed by itself. This may differ from the standard form based on the language and context.
         'c' => StandAlone = 2,

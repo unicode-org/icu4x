@@ -5,7 +5,7 @@
 use crate::provider::fields;
 use displaydoc::Display;
 
-/// These strings follow the recommendations for the serde::de::Unexpected::Other type.
+/// These strings follow the recommendations for the [`serde::de::Unexpected::Other`] type.
 /// <https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other>
 ///
 /// Serde will generate an error such as:
@@ -68,12 +68,8 @@ impl From<fields::SymbolError> for SkeletonError {
                     'B'
                     // TODO(#501) - Quarters
                     | 'Q' | 'q'
-                    // Extended year
-                    | 'u'
                     // TODO(#5643) - Weeks
                     | 'Y' | 'w' | 'W'
-                    // Modified Julian Day
-                    | 'g'
                     => Self::SymbolUnimplemented(ch),
                     _ => Self::SymbolUnknown(ch),
                 }

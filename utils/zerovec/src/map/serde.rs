@@ -66,7 +66,7 @@ where
     }
 }
 
-/// Modified example from https://serde.rs/deserialize-map.html
+/// Modified example from <https://serde.rs/deserialize-map.html>
 struct ZeroMapMapVisitor<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized + Ord,
@@ -236,12 +236,20 @@ mod test {
     use crate::{map::ZeroMapBorrowed, ZeroMap};
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[expect(
+        dead_code,
+        reason = "Tests compatibility of custom impl with Serde derive."
+    )]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
         _data: ZeroMap<'data, str, [u8]>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[expect(
+        dead_code,
+        reason = "Tests compatibility of custom impl with Serde derive."
+    )]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMapBorrowed<'data, str, [u8]>,

@@ -71,6 +71,8 @@ impl PotentialUtf8 {
     }
 
     /// Create a [`PotentialUtf8`] from boxed bytes.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     #[cfg(feature = "alloc")]
     pub fn from_boxed_bytes(other: Box<[u8]>) -> Box<Self> {
@@ -79,13 +81,15 @@ impl PotentialUtf8 {
     }
 
     /// Create a [`PotentialUtf8`] from a boxed `str`.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     #[cfg(feature = "alloc")]
     pub fn from_boxed_str(other: Box<str>) -> Box<Self> {
         Self::from_boxed_bytes(other.into_boxed_bytes())
     }
 
-    /// Get the bytes from a [`PotentialUtf8].
+    /// Get the bytes from a [`PotentialUtf8`].
     #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
         &self.0
@@ -188,12 +192,12 @@ unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
 
 /// This impl requires enabling the optional `serde` Cargo feature
 #[cfg(feature = "serde")]
-impl serde::Serialize for PotentialUtf8 {
+impl serde_core::Serialize for PotentialUtf8 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer,
+        S: serde_core::Serializer,
     {
-        use serde::ser::Error;
+        use serde_core::ser::Error;
         let s = self
             .try_as_str()
             .map_err(|_| S::Error::custom("invalid UTF-8 in PotentialUtf8"))?;
@@ -207,10 +211,10 @@ impl serde::Serialize for PotentialUtf8 {
 
 /// This impl requires enabling the optional `serde` Cargo feature
 #[cfg(all(feature = "serde", feature = "alloc"))]
-impl<'de> serde::Deserialize<'de> for Box<PotentialUtf8> {
+impl<'de> serde_core::Deserialize<'de> for Box<PotentialUtf8> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: serde::Deserializer<'de>,
+        D: serde_core::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
             let boxed_str = Box::<str>::deserialize(deserializer)?;
@@ -224,13 +228,13 @@ impl<'de> serde::Deserialize<'de> for Box<PotentialUtf8> {
 
 /// This impl requires enabling the optional `serde` Cargo feature
 #[cfg(feature = "serde")]
-impl<'de, 'a> serde::Deserialize<'de> for &'a PotentialUtf8
+impl<'de, 'a> serde_core::Deserialize<'de> for &'a PotentialUtf8
 where
     'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: serde::Deserializer<'de>,
+        D: serde_core::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
             let s = <&str>::deserialize(deserializer)?;
@@ -242,6 +246,9 @@ where
     }
 }
 
+/// A `u16` slice that is expected to be a UTF-16 string but does not enforce that invariant.
+///
+/// See [`PotentialUtf8`] for more info.
 #[repr(transparent)]
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // transparent newtype
@@ -268,6 +275,9 @@ impl PotentialUtf16 {
         unsafe { core::mem::transmute(other) }
     }
 
+    /// Iterates the characters of the string.
+    ///
+    /// Returns [`char::REPLACEMENT_CHARACTER`] if invalid surrogates are encountered.
     pub fn chars(&self) -> impl Iterator<Item = char> + '_ {
         char::decode_utf16(self.0.iter().copied()).map(|c| c.unwrap_or(char::REPLACEMENT_CHARACTER))
     }

@@ -20,11 +20,10 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { workspace = true }
 icu_collections = { workspace = true, features = ["alloc"] }
 icu_locale_core = { workspace = true, features = ["alloc"] }
 icu_properties = { workspace = true }
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["alloc"] }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
@@ -65,3 +64,6 @@ required-features = ["compiled_data", "datagen"] # datagen bound can be removed 
 name = "casemap"
 harness = false
 required-features = ["compiled_data"]
+
+[lints]
+workspace = true

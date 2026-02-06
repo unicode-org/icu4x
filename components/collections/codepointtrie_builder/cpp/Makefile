@@ -58,6 +58,7 @@ ucptrie_wrap.wasm: $(wasm_obj_files)
 		-Wl,--strip-all \
 		-Wl,--export=umutablecptrie_open \
 		-Wl,--export=umutablecptrie_set \
+		-Wl,--export=umutablecptrie_setRange \
 		-Wl,--export=umutablecptrie_buildImmutable \
 		-Wl,--export=ucptrie_close \
 		-Wl,--export=umutablecptrie_close \

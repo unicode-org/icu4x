@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -20,6 +19,9 @@ pub mod ffi {
     #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator, Struct)]
     #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculatorBorrowed, Struct, hidden)]
     #[diplomat::opaque]
+    #[deprecated(note = "this API is a bad approximation of a time zone database")]
+    #[diplomat::attr(dart, disable)]
+    #[allow(deprecated)]
     pub struct VariantOffsetsCalculator(pub icu_time::zone::VariantOffsetsCalculator);
 
     #[diplomat::opaque]
@@ -115,6 +117,7 @@ pub mod ffi {
         }
     }
 
+    #[allow(deprecated)]
     impl VariantOffsetsCalculator {
         /// Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
         #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator::new, FnInStruct)]

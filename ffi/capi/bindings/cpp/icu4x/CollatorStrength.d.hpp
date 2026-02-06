@@ -1,5 +1,5 @@
-#ifndef icu4x_CollatorStrength_D_HPP
-#define icu4x_CollatorStrength_D_HPP
+#ifndef ICU4X_CollatorStrength_D_HPP
+#define ICU4X_CollatorStrength_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -28,31 +28,31 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `Strength`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.Strength.html) for more information.
+ * See the [Rust documentation for `Strength`](https://docs.rs/icu/2.1.1/icu/collator/options/enum.Strength.html) for more information.
  */
 class CollatorStrength {
 public:
-  enum Value {
-    Primary = 0,
-    Secondary = 1,
-    Tertiary = 2,
-    Quaternary = 3,
-    Identical = 4,
-  };
+    enum Value {
+        Primary = 0,
+        Secondary = 1,
+        Tertiary = 2,
+        Quaternary = 3,
+        Identical = 4,
+    };
 
-  CollatorStrength(): value(Value::Primary) {}
+    CollatorStrength(): value(Value::Primary) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr CollatorStrength(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr CollatorStrength(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::CollatorStrength AsFFI() const;
-  inline static icu4x::CollatorStrength FromFFI(icu4x::capi::CollatorStrength c_enum);
+    inline icu4x::capi::CollatorStrength AsFFI() const;
+    inline static icu4x::CollatorStrength FromFFI(icu4x::capi::CollatorStrength c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_CollatorStrength_D_HPP
+#endif // ICU4X_CollatorStrength_D_HPP

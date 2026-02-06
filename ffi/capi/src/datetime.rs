@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Iso;
@@ -14,7 +13,7 @@ pub mod ffi {
     use crate::unstable::errors::ffi::Rfc9557ParseError;
     use crate::unstable::time::ffi::Time;
 
-    /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+    /// An ICU4X `DateTime` object capable of containing a ISO-8601 date and time.
     #[diplomat::rust_link(icu::time::DateTime, Struct)]
     #[diplomat::out]
     pub struct IsoDateTime {
@@ -37,7 +36,7 @@ pub mod ffi {
         }
     }
 
-    /// An ICU4X DateTime object capable of containing a date and time for any calendar.
+    /// An ICU4X `DateTime` object capable of containing a date and time for any calendar.
     #[diplomat::rust_link(icu::time::DateTime, Struct)]
     #[diplomat::out]
     pub struct DateTime {

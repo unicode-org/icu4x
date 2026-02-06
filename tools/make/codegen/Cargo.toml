@@ -10,4 +10,9 @@ edition = "2021"
 
 [dependencies]
 askama = { workspace = true }
-icu = { workspace = true }
+icu = { workspace = true, features = ["compiled_data"] }
+heck = "0.4"
+
+[package.metadata.cargo-all-features]
+# Unpublished internal tool; skip
+skip_package = true

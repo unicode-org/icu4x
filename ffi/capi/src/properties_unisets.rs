@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -25,12 +24,14 @@ pub mod ffi {
     impl EmojiSetData {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed::contains_str, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::EmojiSetDataBorrowed::contains_utf8,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = method_overloading, rename = "contains")]
         pub fn contains_str(&self, s: &DiplomatStr) -> bool {
-            let Ok(s) = core::str::from_utf8(s) else {
-                return false;
-            };
-            self.0.as_borrowed().contains_str(s)
+            self.0.as_borrowed().contains_utf8(s)
         }
         /// Checks whether the code point is in the set.
         #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed::contains, FnInStruct)]
@@ -65,6 +66,20 @@ pub mod ffi {
                     &provider.get_unstable()?,
                 )?,
             )))
+        }
+
+        /// Get the `Basic_Emoji` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::EmojiSet::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn basic_emoji_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::EmojiSetData::new::<BasicEmoji>().contains32(ch)
+        }
+
+        /// Get the `Basic_Emoji` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::EmojiSet::for_str, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn basic_emoji_for_str(s: &DiplomatStr) -> bool {
+            icu_properties::EmojiSetData::new::<BasicEmoji>().contains_utf8(s)
         }
     }
 }

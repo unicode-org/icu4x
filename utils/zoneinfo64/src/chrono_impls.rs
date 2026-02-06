@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::UtcOffset;
 use crate::{Offset, PossibleOffset, Zone};
 use chrono::{
     Datelike, FixedOffset, MappedLocalTime, NaiveDate, NaiveDateTime, TimeZone, Timelike,
 };
-use icu_time::zone::UtcOffset;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ChronoOffset<'a>(Offset, Zone<'a>);
@@ -27,7 +27,8 @@ impl ChronoOffset<'_> {
 
 impl<'a> chrono::Offset for ChronoOffset<'a> {
     fn fix(&self) -> FixedOffset {
-        FixedOffset::east_opt(self.0.offset.to_seconds()).unwrap()
+        #[allow(clippy::unwrap_used)] // in range for chrono
+        FixedOffset::east_opt(self.0.offset.0.clamp(-86_399, 86_399)).unwrap()
     }
 }
 
@@ -47,10 +48,10 @@ impl<'a> TimeZone for Zone<'a> {
             0,
             0,
         ) {
-            PossibleOffset::None => chrono::MappedLocalTime::None,
-            PossibleOffset::Single(o) => chrono::MappedLocalTime::Single(ChronoOffset(o, *self)),
-            PossibleOffset::Ambiguous(a, b) => {
-                MappedLocalTime::Ambiguous(ChronoOffset(a, *self), ChronoOffset(b, *self))
+            PossibleOffset::None { .. } => MappedLocalTime::None,
+            PossibleOffset::Single(o) => MappedLocalTime::Single(ChronoOffset(o, *self)),
+            PossibleOffset::Ambiguous { before, after, .. } => {
+                MappedLocalTime::Ambiguous(ChronoOffset(before, *self), ChronoOffset(after, *self))
             }
         }
     }
@@ -64,10 +65,10 @@ impl<'a> TimeZone for Zone<'a> {
             local.minute() as u8,
             local.second() as u8,
         ) {
-            PossibleOffset::None => chrono::MappedLocalTime::None,
-            PossibleOffset::Single(o) => chrono::MappedLocalTime::Single(ChronoOffset(o, *self)),
-            PossibleOffset::Ambiguous(a, b) => {
-                MappedLocalTime::Ambiguous(ChronoOffset(a, *self), ChronoOffset(b, *self))
+            PossibleOffset::None { .. } => MappedLocalTime::None,
+            PossibleOffset::Single(o) => MappedLocalTime::Single(ChronoOffset(o, *self)),
+            PossibleOffset::Ambiguous { before, after, .. } => {
+                MappedLocalTime::Ambiguous(ChronoOffset(before, *self), ChronoOffset(after, *self))
             }
         }
     }

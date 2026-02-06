@@ -8,17 +8,14 @@ use crate::SourceDataProvider;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
 use icu::datetime::provider::time_zones::*;
-use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
-use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
 use icu_time::zone::VariantOffsets;
 use icu_time::zone::ZoneNameTimestamp;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
-use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::NichedOption;
@@ -32,10 +29,7 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
         let time_zone_names = &self
             .cldr()?
             .dates("gregorian")
-            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
-                "timeZoneNames.json",
-            )?
+            .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
             .dates
@@ -49,14 +43,7 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero: time_zone_names.gmt_zero_format.clone().into(),
-                // TODO: get this from CLDR
-                offset_unknown: time_zone_names
-                    .gmt_format
-                    .0
-                    .interpolate(["+?"])
-                    .write_to_string()
-                    .into_owned()
-                    .into(),
+                offset_unknown: time_zone_names.gmt_unknown_format.clone().into(),
             }),
         })
     }
@@ -71,10 +58,7 @@ impl SourceDataProvider {
         let time_zone_names = &self
             .cldr()?
             .dates("gregorian")
-            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                locale,
-                "timeZoneNames.json",
-            )?
+            .read_and_parse::<Resource>(locale, "timeZoneNames.json")?
             .main
             .value
             .dates
@@ -202,19 +186,7 @@ impl SourceDataProvider {
     }
 
     fn dedupe_group(&self, locale: DataLocale) -> Result<DataLocale, DataError> {
-        let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
-        self.cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut group);
-        group.language = Language::UNKNOWN;
-        group.region = Default::default();
-        self.cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut group);
-        self.cldr()?
-            .extended_locale_expander()?
-            .minimize_favor_script(&mut group);
-        let group = DataLocale::from(group);
+        let group = self.cldr()?.script_based_locale_group(&locale)?;
         if self
             .cldr()
             .unwrap()
@@ -245,10 +217,7 @@ impl DataProvider<TimezoneNamesLocationsOverrideV1> for SourceDataProvider {
         let time_zone_names = &self
             .cldr()?
             .dates("gregorian")
-            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
-                "timeZoneNames.json",
-            )?
+            .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
             .dates
@@ -387,8 +356,12 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                 .into_keys()
                 .map(|ps| {
                     let convert = |&(t, os, mz)| {
+                        let t2 = ZoneNameTimestamp::from_zoned_date_time_iso(t);
+                        if t2.to_zoned_date_time_iso() != t {
+                            log::warn!("{t:?} does not round-trip through ZoneNameTimestamp");
+                        }
                         (
-                            Timestamp24(t),
+                            Timestamp24(t2),
                             offset_index[&pack_offsets_and_mzmsk(os, mz)],
                             NichedOption(mz.map(|i| i.id)),
                         )
@@ -429,10 +402,7 @@ impl DataProvider<TimezoneNamesGenericLongV1> for SourceDataProvider {
         let time_zone_names_resource = &self
             .cldr()?
             .dates("gregorian")
-            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
-                "timeZoneNames.json",
-            )?
+            .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
             .dates
@@ -491,10 +461,7 @@ impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
         let time_zone_names_resource = &self
             .cldr()?
             .dates("gregorian")
-            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
-                "timeZoneNames.json",
-            )?
+            .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
             .dates
@@ -557,10 +524,7 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
         let time_zone_names_resource = &self
             .cldr()?
             .dates("gregorian")
-            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
-                "timeZoneNames.json",
-            )?
+            .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
             .dates
@@ -645,10 +609,7 @@ impl DataProvider<TimezoneNamesGenericShortV1> for SourceDataProvider {
         let time_zone_names_resource = &self
             .cldr()?
             .dates("gregorian")
-            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
-                "timeZoneNames.json",
-            )?
+            .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
             .dates
@@ -682,10 +643,7 @@ impl DataProvider<TimezoneNamesSpecificShortV1> for SourceDataProvider {
         let time_zone_names_resource = &self
             .cldr()?
             .dates("gregorian")
-            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
-                "timeZoneNames.json",
-            )?
+            .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
             .dates
@@ -770,11 +728,11 @@ fn iter_mz_overrides<'a>(
         })
 }
 
-/// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
-/// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
+/// Performs part 1 of type fallback as specified in the UTS-35 spec for `TimeZone` Goals:
+/// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals>
 ///
-/// Part 2 of type fallback requires access to the IANA TimeZone Database
-/// as well as a specific datetime context, so it is not relevant to DataProvider.
+/// Part 2 of type fallback requires access to the IANA `TimeZone` Database
+/// as well as a specific datetime context, so it is not relevant to `DataProvider`.
 fn variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
     zone_format
         .0

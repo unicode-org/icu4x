@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dimension::provider::units::display_name::UnitsDisplayNameV1;
+use crate::dimension::provider::units::display_names::UnitsDisplayNamesV1;
 use crate::dimension::units::formatter::{UnitsFormatter, UnitsFormatterPreferences};
 use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 use crate::duration::options::FieldStyle;
@@ -52,6 +52,7 @@ prefs_convert!(DurationFormatterPreferences, ListFormatterPreferences);
 /// Read more about the options in the [`options`](super::options) module.
 ///
 /// See the crate-level documentation for examples.
+#[derive(Debug)]
 pub struct DurationFormatter {
     /// Options for configuring the formatter.
     pub(crate) options: ValidatedDurationFormatterOptions,
@@ -61,6 +62,7 @@ pub struct DurationFormatter {
     pub(crate) fdf: DecimalFormatter,
 }
 
+#[derive(Debug)]
 pub(crate) struct DurationUnitFormatter {
     pub(crate) year: UnitsFormatter,
     pub(crate) month: UnitsFormatter,
@@ -135,9 +137,9 @@ impl DurationUnitFormatter {
 
     fn try_new_unstable<
         D: ?Sized
-            + DataProvider<UnitsDisplayNameV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<UnitsDisplayNamesV1>
+            + DataProvider<DecimalSymbolsV1>
+            + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     >(
         provider: &D,
@@ -231,7 +233,7 @@ impl DurationFormatter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::DigitalDurationDataV1>
-            + DataProvider<UnitsDisplayNameV1>
+            + DataProvider<UnitsDisplayNamesV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>

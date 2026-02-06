@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// Provider structs must be stable
-#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
@@ -24,7 +21,7 @@ use icu_provider::prelude::*;
 /// </div>
 pub use crate::provider::Baked;
 
-use super::pattern_key::PatternKey;
+use crate::dimension::provider::units::pattern_key::PatternKey;
 
 icu_provider::data_marker!(
    /// `UnitsEssentialsV1`

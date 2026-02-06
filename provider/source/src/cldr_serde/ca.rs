@@ -9,7 +9,8 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
-use icu::datetime::provider::neo::marker_attrs::{Context, Length, PatternLength};
+use icu::datetime::provider::semantic_skeletons::marker_attrs::{Context, Length, PatternLength};
+use icu_pattern::DoublePlaceholder;
 use icu_pattern::PatternString;
 use icu_pattern::SinglePlaceholder;
 use serde::Deserialize;
@@ -161,7 +162,7 @@ pub(crate) struct Eras {
 impl Eras {
     /// Load the era corresponding to a [`Length`] value
     ///
-    /// Panics on Length::Short
+    /// Panics on [`Length::Short`]
     pub(crate) fn load(&self, length: Length) -> &HashMap<String, String> {
         match length {
             Length::Abbr => &self.abbr,
@@ -190,14 +191,49 @@ pub(crate) struct DateTimeFormats {
     pub(crate) short: LengthPattern,
     #[serde(rename = "availableFormats")]
     pub(crate) available_formats: AvailableFormats,
+    #[serde(rename = "appendItems")]
+    pub(crate) append_items: AppendItems,
 }
 
-impl DateTimeFormats {
+#[derive(PartialEq, Debug, Deserialize, Clone)]
+#[allow(dead_code)]
+pub struct AppendItems {
+    #[serde(rename = "Day")]
+    pub(crate) day: String,
+    #[serde(rename = "Day-Of-Week")]
+    pub(crate) day_of_week: String,
+    #[serde(rename = "Era")]
+    pub(crate) era: String,
+    #[serde(rename = "Hour")]
+    pub(crate) hour: String,
+    #[serde(rename = "Minute")]
+    pub(crate) minute: String,
+    #[serde(rename = "Month")]
+    pub(crate) month: String,
+    #[serde(rename = "Quarter")]
+    pub(crate) quarter: String,
+    #[serde(rename = "Second")]
+    pub(crate) second: String,
+    #[serde(rename = "Timezone")]
+    pub(crate) timezone: PatternString<DoublePlaceholder>,
+    #[serde(rename = "Week")]
+    pub(crate) week: String,
+    #[serde(rename = "Year")]
+    pub(crate) year: String,
+}
+
+/// dateTimeFormats-atTime, dateTimeFormats-relative
+#[derive(PartialEq, Debug, Deserialize, Clone)]
+pub(crate) struct DateTimeFormatsVariant {
+    pub(crate) standard: LengthPatterns,
+}
+
+impl DateTimeFormatsVariant {
     pub(crate) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
         match length {
-            PatternLength::Long => &self.long,
-            PatternLength::Medium => &self.medium,
-            PatternLength::Short => &self.short,
+            PatternLength::Long => &self.standard.long,
+            PatternLength::Medium => &self.standard.medium,
+            PatternLength::Short => &self.standard.short,
         }
     }
 }
@@ -236,6 +272,8 @@ pub(crate) struct Dates {
     pub(crate) time_skeletons: LengthPatterns,
     #[serde(rename = "dateTimeFormats")]
     pub(crate) datetime_formats: DateTimeFormats,
+    #[serde(rename = "dateTimeFormats-atTime")]
+    pub(crate) datetime_formats_at_time: DateTimeFormatsVariant,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

@@ -17,7 +17,7 @@
 //! use icu::decimal::parts as decimal_parts;
 //! use icu::locale::locale;
 //! use icu::datetime::input::{ZonedDateTime, Time};
-//! use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
+//! use icu::time::zone::IanaParser;
 //! use writeable::assert_writeable_parts_eq;
 //!
 //! let dtf = DateTimeFormatter::try_new(
@@ -26,7 +26,7 @@
 //! )
 //! .unwrap();
 //!
-//! let dtz = ZonedDateTime::try_full_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar(), IanaParser::new(), VariantOffsetsCalculator::new()).unwrap();
+//! let dtz = ZonedDateTime::try_strict_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar(), IanaParser::new()).unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(
@@ -90,6 +90,18 @@ pub const MONTH: Part = Part {
 pub const DAY: Part = Part {
     category: "datetime",
     value: "day",
+};
+
+/// A [`Part`] used by [`FormattedDateTime`](super::FormattedDateTime).
+pub const EXTENDED_YEAR: Part = Part {
+    category: "datetime",
+    value: "extendedYear",
+};
+
+/// A [`Part`] used by [`FormattedDateTime`](super::FormattedDateTime).
+pub const JULIAN_DAY: Part = Part {
+    category: "datetime",
+    value: "julianDay",
 };
 
 /// A [`Part`] used by [`FormattedDateTime`](super::FormattedDateTime).

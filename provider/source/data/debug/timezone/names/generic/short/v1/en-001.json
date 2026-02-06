@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "53": "GMT"
+    "52": "GMT"
   },
   "overrides": {
     "utc": "UTC"

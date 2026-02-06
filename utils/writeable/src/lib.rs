@@ -11,12 +11,9 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
 //! This crate defines [`Writeable`], a trait representing an object that can be written to a
 //! sink implementing `std::fmt::Write`. It is an alternative to `std::fmt::Display` with the
@@ -76,23 +73,32 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 mod cmp;
+mod concat;
 #[cfg(feature = "either")]
 mod either;
 mod impls;
 mod ops;
 mod parts_write_adapter;
+#[cfg(feature = "alloc")]
 mod testing;
+#[cfg(feature = "alloc")]
 mod to_string_or_borrow;
 mod try_writeable;
 
+#[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
+
+#[cfg(feature = "alloc")]
 use alloc::string::String;
 use core::fmt;
 
 pub use cmp::{cmp_str, cmp_utf8};
+pub use concat::concat_writeable;
+#[cfg(feature = "alloc")]
 pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;
 
@@ -100,11 +106,14 @@ pub use try_writeable::TryWriteable;
 pub mod adapters {
     use super::*;
 
+    pub use concat::Concat;
     pub use parts_write_adapter::CoreWriteAsPartsWrite;
     pub use parts_write_adapter::WithPart;
     pub use try_writeable::TryWriteableInfallibleAsWriteable;
     pub use try_writeable::WriteableAsTryWriteableInfallible;
 
+    /// A lossy wrapper for a [`TryWriteable`] that implements [`Writeable`]
+    /// and ignores any errors.
     #[derive(Debug)]
     #[allow(clippy::exhaustive_structs)] // newtype
     pub struct LossyWrap<T>(pub T);
@@ -130,8 +139,11 @@ pub mod adapters {
 
 #[doc(hidden)] // for testing and macros
 pub mod _internal {
+    #[cfg(feature = "alloc")]
     pub use super::testing::try_writeable_to_parts_for_test;
+    #[cfg(feature = "alloc")]
     pub use super::testing::writeable_to_parts_for_test;
+    #[cfg(feature = "alloc")]
     pub use alloc::string::String;
 }
 
@@ -150,6 +162,7 @@ pub mod _internal {
 pub struct LengthHint(pub usize, pub Option<usize>);
 
 impl LengthHint {
+    /// Unknown
     pub fn undefined() -> Self {
         Self(0, None)
     }
@@ -223,6 +236,7 @@ impl LengthHint {
 /// formatters should expose the `Part`s they produces as constants.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // stable
+#[allow(missing_docs)] // behavior not defined, explained in type docs
 pub struct Part {
     pub category: &'static str,
     pub value: &'static str,
@@ -240,6 +254,7 @@ impl Part {
 
 /// A sink that supports annotating parts of the string with [`Part`]s.
 pub trait PartsWrite: fmt::Write {
+    /// The recursive sink
     type SubPartsWrite: PartsWrite + ?Sized;
 
     /// Annotates all strings written by the closure with the given [`Part`].
@@ -273,17 +288,23 @@ pub trait Writeable {
         LengthHint::undefined()
     }
 
-    /// Creates a new `String` with the data from this `Writeable`. Like `ToString`,
-    /// but smaller and faster.
+    /// Returns a `&str` that matches the output of `write_to`, if possible.
     ///
-    /// The default impl allocates an owned `String`. However, if it is possible to return a
-    /// borrowed string, overwrite this method to return a `Cow::Borrowed`.
+    /// This method is used to avoid materializing a [`String`] in `write_to_string`.
+    fn writeable_borrow(&self) -> Option<&str> {
+        None
+    }
+
+    /// Creates a new string with the data from this `Writeable`.
+    ///
+    /// Unlike [`to_string`](ToString::to_string), this does not pull in `core::fmt`
+    /// code, and borrows the string if possible.
     ///
     /// To remove the `Cow` wrapper, call `.into_owned()` or `.as_str()` as appropriate.
     ///
     /// # Examples
     ///
-    /// Inspect a `Writeable` before writing it to the sink:
+    /// Inspect a [`Writeable`] before writing it to the sink:
     ///
     /// ```
     /// use core::fmt::{Result, Write};
@@ -312,7 +333,27 @@ pub trait Writeable {
     ///     w.write_to_string().into_owned()
     /// }
     /// ```
+    ///
+    /// # Note to implementors
+    ///
+    /// This method has a default implementation in terms of `writeable_borrow`,
+    /// `writeable_length_hint`, and `write_to`. The only case
+    /// where this should be implemented is if the computation of `writeable_borrow`
+    /// requires a full invocation of `write_to`. In this case, implement this
+    /// using [`to_string_or_borrow`].
+    ///
+    /// # `alloc` Cargo feature
+    ///
+    /// Calling or implementing this method requires the `alloc` Cargo feature.
+    /// However, as all the methods required by the default implementation do
+    /// not require the `alloc` Cargo feature, a caller that uses the feature
+    /// can still call this on types from crates that don't use the `alloc`
+    /// Cargo feature.
+    #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
+        if let Some(borrow) = self.writeable_borrow() {
+            return Cow::Borrowed(borrow);
+        }
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Cow::Borrowed("");
@@ -335,7 +376,7 @@ pub trait Writeable {
 #[macro_export]
 macro_rules! impl_display_with_writeable {
     (@display, $type:ty) => {
-        /// This trait is implemented for compatibility with [`fmt!`](alloc::fmt).
+        /// This trait is implemented for compatibility with [`fmt!`](core::fmt).
         /// To create a string, [`Writeable::write_to_string`] is usually more efficient.
         impl core::fmt::Display for $type {
             #[inline]
@@ -344,8 +385,9 @@ macro_rules! impl_display_with_writeable {
             }
         }
     };
-    ($type:ty) => {
+    ($type:ty $(, #[$alloc_feature:meta])? ) => {
         $crate::impl_display_with_writeable!(@display, $type);
+        $(#[$alloc_feature])?
         impl $type {
             /// Converts the given value to a `String`.
             ///
@@ -420,6 +462,7 @@ macro_rules! impl_display_with_writeable {
 ///
 /// [`*_parts_eq`]: assert_writeable_parts_eq
 #[macro_export]
+#[cfg(feature = "alloc")]
 macro_rules! assert_writeable_eq {
     ($actual_writeable:expr, $expected_str:expr $(,)?) => {
         $crate::assert_writeable_eq!($actual_writeable, $expected_str, "")
@@ -432,7 +475,12 @@ macro_rules! assert_writeable_eq {
         let (actual_str, actual_parts) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
         let actual_len = actual_str.len();
         assert_eq!(actual_str, $expected_str, $($arg)*);
-        assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
+        let cow = $crate::Writeable::write_to_string(actual_writeable);
+        assert_eq!(actual_str, cow, $($arg)+);
+        if let Some(borrowed) = ($crate::Writeable::writeable_borrow(&actual_writeable)) {
+            assert_eq!(borrowed, $expected_str, $($arg)*);
+            assert!(matches!(cow, std::borrow::Cow::Borrowed(_)), $($arg)*);
+        }
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
         let lower = length_hint.0;
         assert!(
@@ -447,13 +495,14 @@ macro_rules! assert_writeable_eq {
                 format!($($arg)*),
             );
         }
-        assert_eq!(actual_writeable.to_string(), $expected_str);
+        assert_eq!(actual_writeable.to_string(), $expected_str, $($arg)*);
         actual_parts // return for assert_writeable_parts_eq
     }};
 }
 
 /// See [`assert_writeable_eq`].
 #[macro_export]
+#[cfg(feature = "alloc")]
 macro_rules! assert_writeable_parts_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
         $crate::assert_writeable_parts_eq!($actual_writeable, $expected_str, $expected_parts, "")

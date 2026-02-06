@@ -20,7 +20,6 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { workspace = true }
 icu_provider = { workspace = true, features = ["serde", "std", "export"] }
 serde = { workspace = true, features = ["derive", "alloc"] }
 serde-json-core = { workspace = true, features = ["std"] }
@@ -28,7 +27,6 @@ serde-json-core = { workspace = true, features = ["std"] }
 # Dependencies for the export feature
 bincode = { workspace = true, optional = true }
 crlify = { workspace = true, optional = true }
-log = {workspace = true, optional = true }
 postcard = { workspace = true, features = ["alloc"], optional = true }
 serde_json = { workspace = true, features = ["std"], optional = true }
 
@@ -46,7 +44,6 @@ criterion = { workspace = true }
 export = [
     "dep:bincode",
     "dep:crlify",
-    "dep:log",
     "dep:postcard",
     "dep:serde_json",
     "icu_provider/export",
@@ -58,3 +55,6 @@ export = [
 [[bench]]
 name = "provider_fs"
 harness = false
+
+[lints]
+workspace = true

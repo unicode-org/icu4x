@@ -32,6 +32,14 @@ where
         }
     }
 
+    fn writeable_borrow(&self) -> Option<&str> {
+        match self {
+            Either::Left(w) => w.writeable_borrow(),
+            Either::Right(w) => w.writeable_borrow(),
+        }
+    }
+
+    #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
         match self {
             Either::Left(w) => w.write_to_string(),

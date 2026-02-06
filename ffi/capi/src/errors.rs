@@ -6,7 +6,6 @@ use ffi::*;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     #[cfg(feature = "datetime")]
     use diplomat_runtime::DiplomatOption;
@@ -19,6 +18,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
     #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
     pub enum DataError {
         Unknown = 0x00,
         MarkerNotFound = 0x01,
@@ -35,6 +35,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::locale::ParseError, Enum, compact)]
     #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
     pub enum LocaleParseError {
         Unknown = 0x00,
         Language = 0x01,
@@ -47,6 +48,7 @@ pub mod ffi {
     #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
     #[cfg(any(feature = "decimal", feature = "plurals"))]
     #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
     pub enum DecimalParseError {
         Unknown = 0x00,
         Limit = 0x01,
@@ -56,14 +58,18 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
     #[cfg(feature = "decimal")]
+    #[diplomat::attr(auto, error)]
     pub struct DecimalLimitError;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[diplomat::rust_link(icu::calendar::error::LunisolarRangeError, Enum, hidden)]
+    #[diplomat::rust_link(icu::calendar::error::MonthCodeParseError, Enum, compact)]
+    #[cfg(feature = "calendar")]
     #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
     pub enum CalendarError {
         Unknown = 0x00,
         OutOfRange = 0x01,
@@ -73,10 +79,29 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::error::DateFromFieldsError, Enum, compact)]
+    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
+    pub enum CalendarDateFromFieldsError {
+        Unknown = 0x00,
+        OutOfRange = 0x01,
+        UnknownEra = 0x02,
+        MonthCodeInvalidSyntax = 0x03,
+        MonthCodeNotInCalendar = 0x04,
+        MonthCodeNotInYear = 0x05,
+        InconsistentYear = 0x06,
+        InconsistentMonth = 0x07,
+        NotEnoughFields = 0x08,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
     pub enum Rfc9557ParseError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
@@ -87,7 +112,8 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(icu::time::zone::InvalidOffsetError, Struct, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
+    #[diplomat::attr(auto, error)]
     pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
@@ -97,6 +123,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
     #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
@@ -117,6 +144,8 @@ pub mod ffi {
 
     #[cfg(feature = "datetime")]
     #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
+    #[diplomat::attr(auto, error)]
     pub struct DateTimeMismatchedCalendarError {
         pub this_kind: CalendarKind,
         pub date_kind: DiplomatOption<CalendarKind>,
@@ -134,6 +163,7 @@ pub mod ffi {
         compact
     )]
     #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
         /// Unused
@@ -161,14 +191,24 @@ impl From<icu_provider::DataError> for DataError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::RangeError> for CalendarError {
     fn from(_: icu_calendar::RangeError) -> Self {
         Self::OutOfRange
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
+impl From<icu_calendar::error::MonthCodeParseError> for CalendarError {
+    fn from(value: icu_calendar::error::MonthCodeParseError) -> Self {
+        match value {
+            icu_calendar::error::MonthCodeParseError::InvalidSyntax => Self::UnknownMonthCode,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::DateError> for CalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
         match e {
@@ -180,7 +220,31 @@ impl From<icu_calendar::DateError> for CalendarError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
+#[cfg(all(feature = "unstable", feature = "calendar"))]
+impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsError {
+    fn from(e: icu_calendar::error::DateFromFieldsError) -> Self {
+        match e {
+            icu_calendar::error::DateFromFieldsError::Range(_) => Self::OutOfRange,
+            icu_calendar::error::DateFromFieldsError::UnknownEra => Self::UnknownEra,
+            icu_calendar::error::DateFromFieldsError::MonthCodeInvalidSyntax => {
+                Self::MonthCodeInvalidSyntax
+            }
+            icu_calendar::error::DateFromFieldsError::MonthCodeNotInCalendar => {
+                Self::MonthCodeNotInCalendar
+            }
+            icu_calendar::error::DateFromFieldsError::MonthCodeNotInYear => {
+                Self::MonthCodeNotInYear
+            }
+            icu_calendar::error::DateFromFieldsError::InconsistentYear => Self::InconsistentYear,
+            icu_calendar::error::DateFromFieldsError::InconsistentMonth => Self::InconsistentMonth,
+            icu_calendar::error::DateFromFieldsError::NotEnoughFields => Self::NotEnoughFields,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {
@@ -193,7 +257,7 @@ impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_time::ParseError> for Rfc9557ParseError {
     fn from(e: icu_time::ParseError) -> Self {
         match e {
@@ -317,7 +381,7 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
     }
 }
 
-#[cfg(any(feature = "timezone", feature = "datetime"))]
+#[cfg(feature = "datetime")]
 impl From<icu_time::zone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
     fn from(_: icu_time::zone::InvalidOffsetError) -> Self {
         Self

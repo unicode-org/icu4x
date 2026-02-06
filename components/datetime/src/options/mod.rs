@@ -57,11 +57,11 @@ use icu_time::scaffold::IntoOption;
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     serde(rename_all = "lowercase")
 )]
 #[non_exhaustive]
@@ -129,11 +129,11 @@ impl IntoOption<Length> for Length {
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     serde(rename_all = "lowercase")
 )]
 #[non_exhaustive]
@@ -259,11 +259,11 @@ impl IntoOption<Alignment> for Alignment {
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     serde(rename_all = "camelCase")
 )]
 #[non_exhaustive]
@@ -333,7 +333,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::SubsecondDigits;
 /// use icu::datetime::options::TimePrecision;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
@@ -345,7 +345,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     TimePrecision::MinuteOptional,
 /// ]
 /// .map(|time_precision| {
-///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
+///     NoCalendarFormatter::try_new(
 ///         locale!("en-US").into(),
 ///         T::short().with_time_precision(time_precision),
 ///     )
@@ -383,11 +383,11 @@ impl IntoOption<YearStyle> for YearStyle {
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     serde(from = "TimePrecisionSerde", into = "TimePrecisionSerde")
 )]
 #[non_exhaustive]
@@ -445,7 +445,7 @@ impl IntoOption<TimePrecision> for TimePrecision {
     }
 }
 
-#[cfg(all(feature = "serde", feature = "experimental"))]
+#[cfg(all(feature = "serde", feature = "unstable"))]
 #[derive(Copy, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 enum TimePrecisionSerde {
@@ -464,7 +464,7 @@ enum TimePrecisionSerde {
     MinuteOptional,
 }
 
-#[cfg(all(feature = "serde", feature = "experimental"))]
+#[cfg(all(feature = "serde", feature = "unstable"))]
 impl From<TimePrecision> for TimePrecisionSerde {
     fn from(value: TimePrecision) -> Self {
         match value {
@@ -485,7 +485,7 @@ impl From<TimePrecision> for TimePrecisionSerde {
     }
 }
 
-#[cfg(all(feature = "serde", feature = "experimental"))]
+#[cfg(all(feature = "serde", feature = "unstable"))]
 impl From<TimePrecisionSerde> for TimePrecision {
     fn from(value: TimePrecisionSerde) -> Self {
         match value {

@@ -58,3 +58,6 @@ baked_exporter = ["dep:icu_provider_baked"]
 blob_exporter = ["dep:icu_provider_blob"]
 fs_exporter = ["dep:icu_provider_fs"]
 rayon = ["dep:rayon"]
+
+[lints]
+workspace = true

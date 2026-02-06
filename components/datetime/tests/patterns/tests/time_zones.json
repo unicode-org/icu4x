@@ -39,7 +39,7 @@
       "zzzz": "heure normale d’Europe centrale",
 
       "v": "heure : Algérie",
-      "vvvv": "heure d’Europe centrale (Algérie)"
+      "vvvv": "heure d’Europe centrale"
     }
   },
   {
@@ -49,8 +49,8 @@
       "z": "CST",
       "zzzz": "Central Standard Time",
 
-      "v": "CT (Regina)",
-      "vvvv": "Central Time (Regina)"
+      "v": "CT",
+      "vvvv": "Central Time"
     }
   },
   {
@@ -296,7 +296,7 @@
       "v": "GMT-7",
       "vvvv": "GMT-07:00",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT-07:00",
 
       "O": "GMT-7",
@@ -316,7 +316,7 @@
       "v": "GMT-7",
       "vvvv": "GMT-07:00",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT-07:00",
 
       "O": "GMT-7",
@@ -336,7 +336,7 @@
       "v": "GMT+?",
       "vvvv": "GMT+?",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT+?",
 
       "O": "GMT+?",
@@ -356,7 +356,7 @@
       "v": "UTC",
       "vvvv": "Coordinated Universal Time",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT+00:00",
 
       "O": "GMT+0",
@@ -376,7 +376,7 @@
       "v": "GMT",
       "vvvv": "Greenwich Mean Time",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT+00:00",
 
       "O": "GMT+0",
@@ -384,6 +384,26 @@
 
       "xxxx": "+0000",
       "XXXXX": "Z"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000[Etc/GMT+7]",
+    "expectations": {
+      "z": "GMT-7",
+      "zzzz": "GMT-07:00",
+
+      "v": "GMT-7",
+      "vvvv": "GMT-07:00",
+
+      "VVV": "Unknown Location",
+      "VVVV": "GMT-07:00",
+
+      "O": "GMT-7",
+      "OOOO": "GMT-07:00",
+
+      "xxxx": "-0700",
+      "XXXXX": "-07:00"
     }
   }
 ]

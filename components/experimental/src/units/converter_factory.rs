@@ -22,7 +22,8 @@ use num_traits::{One, Zero};
 use zerovec::ZeroSlice;
 
 use super::convertible::Convertible;
-/// ConverterFactory is responsible for creating converters.
+/// `ConverterFactory` is responsible for creating converters.
+#[derive(Debug)]
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
     payload: DataPayload<provider::UnitsInfoV1>,
@@ -34,6 +35,13 @@ impl From<Sign> for num_bigint::Sign {
             Sign::Positive => num_bigint::Sign::Plus,
             Sign::Negative => num_bigint::Sign::Minus,
         }
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for ConverterFactory {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -71,14 +79,14 @@ impl ConverterFactory {
     }
 
     /// Calculates the offset between two units by performing the following steps:
-    /// 1. Identify the conversion rate from the first unit to the base unit as ConversionRate1: N1/D1 with an Offset1: OffsetN1/OffsetD1.
-    /// 2. Identify the conversion rate from the second unit to the base unit as ConversionRate2: N2/D2 with an Offset2: OffsetN2/OffsetD2.
-    /// 3. The conversion from the base unit to the second unit is represented by ConversionRateBaseToUnit2: (D2/N2) and an OffsetBaseToUnit2: - (OffsetN2/OffsetD2) * (D2/N2).
-    /// 4. To convert a value V from the first unit to the second unit, first convert V to the base unit using ConversionRate1:
-    ///    (V * N1/D1) + OffsetN1/OffsetD1, referred to as V_TO_Base.
-    /// 5. Then, convert V_TO_Base to the second unit using the formula: CR: (D2/N2) and Offset: - (OffsetN2/OffsetD2) * (D2/N2).
-    ///    The result is: (V_TO_Base * (D2/N2)) - (OffsetN2/OffsetD2) * (D2/N2).
-    /// 6. By inserting V_TO_Base from step 4 into step 5, the equation becomes:
+    /// 1. Identify the conversion rate from the first unit to the base unit as `ConversionRate1`: N1/D1 with an Offset1: OffsetN1/OffsetD1.
+    /// 2. Identify the conversion rate from the second unit to the base unit as `ConversionRate2`: N2/D2 with an Offset2: OffsetN2/OffsetD2.
+    /// 3. The conversion from the base unit to the second unit is represented by `ConversionRateBaseToUnit2`: (D2/N2) and an `OffsetBaseToUnit2`: - (OffsetN2/OffsetD2) * (D2/N2).
+    /// 4. To convert a value V from the first unit to the second unit, first convert V to the base unit using `ConversionRate1`:
+    ///    (V * N1/D1) + OffsetN1/OffsetD1, referred to as `V_TO_Base`.
+    /// 5. Then, convert `V_TO_Base` to the second unit using the formula: CR: (D2/N2) and Offset: - (OffsetN2/OffsetD2) * (D2/N2).
+    ///    The result is: (`V_TO_Base` * (D2/N2)) - (OffsetN2/OffsetD2) * (D2/N2).
+    /// 6. By inserting `V_TO_Base` from step 4 into step 5, the equation becomes:
     ///    (((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2) - (OffsetN2/OffsetD2) * (D2/N2).
     /// 7. Simplifying the equation gives:
     ///    (V * (N1/D1) * (D2/N2)) + (OffsetN1/OffsetD1 * (D2/N2)) - (OffsetN2/OffsetD2) * (D2/N2).
@@ -251,7 +259,7 @@ impl ConverterFactory {
         }
     }
 
-    fn compute_conversion_term(&self, unit_item: &SingleUnit, sign: i8) -> Option<IcuRatio> {
+    fn compute_conversion_term(&self, unit_item: SingleUnit, sign: i8) -> Option<IcuRatio> {
         let conversion_info = self
             .payload
             .get()
@@ -289,7 +297,7 @@ impl ConverterFactory {
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        for input_single_unit in input_unit.single_units.as_slice() {
+        for &input_single_unit in input_unit.single_units.as_slice() {
             conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
         }
 
@@ -297,7 +305,7 @@ impl ConverterFactory {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
         }
 
-        for output_single_unit in output_unit.single_units.as_slice() {
+        for &output_single_unit in output_unit.single_units.as_slice() {
             conversion_rate *= Self::compute_conversion_term(
                 self,
                 output_single_unit,

@@ -2,42 +2,58 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! This crate contains utilities for working with ICU4C's zoneinfo64 format
 //!
 //! ```rust
-//! # use icu_time::zone::UtcOffset;
-//! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64};
+//! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64, UtcOffset};
 //!
 //! // Needs to be u32-aligned
-//! let resb = resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res");
+//! let resb = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
 //! // Then we parse the data
 //! let zoneinfo = ZoneInfo64::try_from_u32s(resb)
-//!            .expect("Error processing resource bundle file");
+//!     .expect("Error processing resource bundle file");
 //!
 //! let pacific = zoneinfo.get("America/Los_Angeles").unwrap();
 //! // Calculate the timezone offset for 2024-01-01
 //! let offset = pacific.for_timestamp(1704067200000);
-//! let offset_seven = UtcOffset::try_from_seconds(-7 * 3600).unwrap();
+//! let offset_seven = UtcOffset::from_seconds(-7 * 3600);
 //! assert_eq!(offset.offset, offset_seven);
 //!
 //! // Calculate possible offsets at 2025-11-02T01:00:00
 //! // This is during a DST switchover and is ambiguous
-//! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
-//! let offset_eight = UtcOffset::try_from_seconds(-8 * 3600).unwrap();
-//! assert_eq!(possible, PossibleOffset::Ambiguous(
-//!     Offset { offset: offset_seven, rule_applies: true },
-//!     Offset { offset: offset_eight, rule_applies: false }
-//! ));
+//! let PossibleOffset::Ambiguous { before, after, transition } = pacific.for_date_time(2025, 11, 2, 1, 0, 0) else { panic!() };
+//! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
+//! assert_eq!(before.offset, offset_seven);
+//! assert!(before.rule_applies);
+//! assert_eq!(after.offset, offset_eight);
+//! assert!(!after.rule_applies);
+//! assert_eq!(transition, 1762074000);
 //! ```
 
-use std::fmt::Debug;
+extern crate alloc;
 
+use alloc::boxed::Box;
+use alloc::string::String;
+use alloc::vec::Vec;
 use calendrical_calculations::rata_die::RataDie;
+use core::fmt::Debug;
 use potential_utf::PotentialUtf16;
 use resb::binary::BinaryDeserializerError;
 
 use icu_locale_core::subtags::Region;
-use icu_time::zone::UtcOffset;
 
 #[cfg(feature = "chrono")]
 mod chrono_impls;
@@ -46,11 +62,32 @@ mod rule;
 use rule::*;
 mod deserialize;
 
-const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+/// A bundled zoneinfo64.res that can be used for testing. No guarantee is made
+/// as to the version in use; though we will try to keep it up to date.
+pub const ZONEINFO64_RES_FOR_TESTING: &[u32] = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
+
+const EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
+/// An offset from UTC time (stored to seconds precision)
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[non_exhaustive] // newtype
+pub struct UtcOffset(i32);
+
+impl UtcOffset {
+    /// Construct an offset from a number of seconds
+    pub fn from_seconds(x: i32) -> Self {
+        Self(x)
+    }
+
+    /// Return the number of seconds of this offset
+    pub fn seconds(self) -> i32 {
+        self.0
+    }
+}
+
 #[derive(Debug)]
-/// The primary type containing parsed ZoneInfo64 data
+/// The primary type containing parsed [`ZoneInfo64`] data
 pub struct ZoneInfo64<'a> {
     // Invariant: non-empty
     zones: Vec<TzZone<'a>>,
@@ -71,32 +108,35 @@ enum TzZone<'a> {
 
 #[derive(Clone)]
 struct TzZoneData<'a> {
-    /// Transitions before the epoch of i32::MIN
+    /// Transitions before the epoch of `i32::MIN`
     trans_pre32: &'a [(i32, i32)],
     /// Transitions with epoch values that can fit in an i32
     trans: &'a [i32],
-    /// Transitions after the epoch of i32::MAX
+    /// Transitions after the epoch of `i32::MAX`
     trans_post32: &'a [(i32, i32)],
-    /// Map to offset from transitions. Treat [trans_pre32, trans, trans_post32]
+    /// Map to offset from transitions. Treat [`trans_pre32`, trans, `trans_post32`]
     /// as a single array and use its corresponding index into this to get the index
-    /// in type_offsets. The index in type_offsets is the *new* offset after the
+    /// in `type_offsets`. The index in `type_offsets` is the *new* offset after the
     /// matching transition
     type_map: &'a [u8],
     /// Offsets. First entry is standard time, second entry is offset from standard time (if any)
     type_offsets: &'a [(i32, i32)],
     /// An index into the Rules table,
-    /// its standard_offset_seconds, and its starting year.
+    /// its `standard_offset_seconds`, and its starting year.
     final_rule_offset_year: Option<(u32, i32, i32)>,
     #[allow(dead_code)]
     links: &'a [u32],
 }
 
 impl Debug for TzZoneData<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        #![allow(clippy::indexing_slicing)] // by invariants
+
         write!(f, "TzZoneData {{ ")?;
 
-        fn dbg_timestamp(f: &mut std::fmt::Formatter<'_>, t: i64) -> std::fmt::Result {
+        fn dbg_timestamp(f: &mut core::fmt::Formatter<'_>, t: i64) -> core::fmt::Result {
             #[cfg(feature = "chrono")]
+            #[allow(clippy::unwrap_used)] // in range for chrono
             let t = chrono::DateTime::from_timestamp(t, 0).unwrap();
             write!(f, "{t:?}, ")
         }
@@ -132,7 +172,7 @@ impl Debug for TzZoneData<'_> {
 impl<'a> ZoneInfo64<'a> {
     /// Parse this object from 4-byte aligned data
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
-        crate::deserialize::deserialize(resb)
+        deserialize::deserialize(resb)
     }
     #[cfg(test)]
     fn is_alias(&self, iana: &str) -> bool {
@@ -222,7 +262,7 @@ impl<'a> Zone<'a> {
 }
 
 impl Debug for Zone<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("Zone")
             .field("simple", self.simple())
             .field("rule", &self.simple().final_rule(&self.info.rules))
@@ -249,6 +289,7 @@ impl PartialEq for Zone<'_> {
 
 /// A resolved offset for a given point in time
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[non_exhaustive]
 pub struct Offset {
     /// The offset from UTC of this time zone
     pub offset: UtcOffset,
@@ -258,6 +299,7 @@ pub struct Offset {
 
 /// A transition
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub struct Transition {
     /// When the transition starts
     pub since: i64,
@@ -278,16 +320,34 @@ impl From<Transition> for Offset {
 
 /// Possible offsets for a local datetime
 #[derive(Debug, PartialEq)]
+#[non_exhaustive]
 pub enum PossibleOffset {
     /// There is a single possible offset
     Single(Offset),
-    /// There are multiple possible offsets (sorted based on which transition comes first)
+    /// There are multiple possible offsets, because we are inside a backward transition
     ///
     /// Note: Temporal requires these to be in ascending order of offset, Temporal consumers should sort them
     // <https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds>
-    Ambiguous(Offset, Offset),
-    /// There is no possible offset, this is a gap transition
-    None,
+    Ambiguous {
+        /// The offset before the transition
+        before: Offset,
+        /// The offset after the transition
+        after: Offset,
+        /// The transition epoch in seconds
+        transition: i64,
+    },
+    /// There is no possible offset, because we are at a forward transition
+    None {
+        /// The offset before this transition
+        ///
+        /// This is useful when performing fallback behavior on hitting a
+        /// transition where the local time has a gap.
+        before: Offset,
+        /// The offset after this transition
+        after: Offset,
+        /// The transition epoch in seconds
+        transition: i64,
+    },
 }
 
 impl<'a> TzZoneData<'a> {
@@ -346,7 +406,7 @@ impl<'a> TzZoneData<'a> {
             let &(standard, rule_additional) = self.type_offsets.first().unwrap();
             return Transition {
                 since: i64::MIN,
-                offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
+                offset: UtcOffset(standard + rule_additional),
                 rule_applies: rule_additional > 0,
             };
         }
@@ -374,7 +434,7 @@ impl<'a> TzZoneData<'a> {
 
         Transition {
             since,
-            offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
+            offset: UtcOffset(standard + rule_additional),
             rule_applies: rule_additional > 0,
         }
     }
@@ -410,9 +470,9 @@ impl<'a> Zone<'a> {
         minute: u8,
         second: u8,
     ) -> PossibleOffset {
-        let day_before_year = calendrical_calculations::iso::day_before_year(year);
+        let day_before_year = calendrical_calculations::gregorian::day_before_year(year);
         let seconds_since_local_epoch = (day_before_year
-            + calendrical_calculations::iso::days_before_month(year, month) as i64
+            + calendrical_calculations::gregorian::days_before_month(year, month) as i64
             + day as i64
             - EPOCH)
             * SECONDS_IN_UTC_DAY
@@ -455,9 +515,8 @@ impl<'a> Zone<'a> {
 
         // There's only an actual transition into `first_candidate` if there's an offset before it.
         if let Some(before_first_candidate) = before_first_candidate {
-            let wall_before =
-                first_candidate.since + before_first_candidate.offset.to_seconds() as i64;
-            let wall_after = first_candidate.since + first_candidate.offset.to_seconds() as i64;
+            let wall_before = first_candidate.since + i64::from(before_first_candidate.offset.0);
+            let wall_after = first_candidate.since + i64::from(first_candidate.offset.0);
 
             match (
                 seconds_since_local_epoch < wall_before,
@@ -471,13 +530,20 @@ impl<'a> Zone<'a> {
                     // there can be no repeated local times.
                     debug_assert_ne!(before_first_candidate.offset, first_candidate.offset);
 
-                    return PossibleOffset::Ambiguous(
-                        before_first_candidate,
-                        first_candidate.into(),
-                    );
+                    return PossibleOffset::Ambiguous {
+                        before: before_first_candidate,
+                        after: first_candidate.into(),
+                        transition: first_candidate.since,
+                    };
                 }
                 // We are in the first candidate's gap
-                (false, true) => return PossibleOffset::None,
+                (false, true) => {
+                    return PossibleOffset::None {
+                        before: before_first_candidate,
+                        after: first_candidate.into(),
+                        transition: first_candidate.since,
+                    }
+                }
                 // We are after the first candidate, try the second
                 (false, false) => {}
             }
@@ -492,8 +558,8 @@ impl<'a> Zone<'a> {
         };
 
         if let Some(second_candidate) = second_candidate {
-            let wall_before = second_candidate.since + first_candidate.offset.to_seconds() as i64;
-            let wall_after = second_candidate.since + second_candidate.offset.to_seconds() as i64;
+            let wall_before = second_candidate.since + i64::from(first_candidate.offset.0);
+            let wall_after = second_candidate.since + i64::from(second_candidate.offset.0);
 
             match (
                 seconds_since_local_epoch < wall_before,
@@ -507,13 +573,20 @@ impl<'a> Zone<'a> {
                     // there can be no repeated local times.
                     debug_assert_ne!(first_candidate.offset, second_candidate.offset);
 
-                    return PossibleOffset::Ambiguous(
-                        first_candidate.into(),
-                        second_candidate.into(),
-                    );
+                    return PossibleOffset::Ambiguous {
+                        before: first_candidate.into(),
+                        after: second_candidate.into(),
+                        transition: second_candidate.since,
+                    };
                 }
                 // We are in the second candidate's gap
-                (false, true) => return PossibleOffset::None,
+                (false, true) => {
+                    return PossibleOffset::None {
+                        before: first_candidate.into(),
+                        after: second_candidate.into(),
+                        transition: second_candidate.since,
+                    }
+                }
                 // We are after the second candidate
                 (false, false) => return PossibleOffset::Single(second_candidate.into()),
             }
@@ -628,13 +701,13 @@ impl<'a> Zone<'a> {
         })
     }
 
-    // Returns the name of the timezone
+    /// Returns the name of the timezone
     pub fn name(&self) -> &'a PotentialUtf16 {
         #[expect(clippy::indexing_slicing)] // idx is a valid index into info.names
         self.info.names[self.idx as usize]
     }
 
-    // Returns the region of the timezone
+    /// Returns the region of the timezone
     pub fn region(&self) -> Region {
         #[expect(clippy::indexing_slicing)]
         // idx is a valid index into info.names, which has the same length as info.regions
@@ -650,7 +723,7 @@ mod tests {
     use std::{str::FromStr, sync::LazyLock};
 
     pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
-        ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
+        ZoneInfo64::try_from_u32s(ZONEINFO64_RES_FOR_TESTING)
             .expect("Error processing resource bundle file")
     });
 
@@ -684,8 +757,8 @@ mod tests {
                 .map(|idx| zoneinfo64.transition_offset_at(idx))
                 .tuple_windows::<(_, _)>()
             {
-                let prev_wall = prev.since.saturating_add(prev.offset.to_seconds() as i64);
-                let curr_wall = curr.since.saturating_add(curr.offset.to_seconds() as i64);
+                let prev_wall = prev.since.saturating_add(i64::from(prev.offset.0));
+                let curr_wall = curr.since.saturating_add(i64::from(curr.offset.0));
 
                 assert!(
                     prev_wall < curr_wall,
@@ -772,7 +845,7 @@ mod tests {
             .preceding(jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap())
             .map(|t| Transition {
                 since: t.timestamp().as_second(),
-                offset: UtcOffset::from_seconds_unchecked(t.offset().seconds()),
+                offset: UtcOffset(t.offset().seconds()),
                 rule_applies: t.dst().is_dst(),
             })
             .collect::<Vec<_>>();
@@ -783,9 +856,9 @@ mod tests {
         transitions.retain(|t| {
             let before = tz.to_offset_info(jiff::Timestamp::from_second(t.since - 1).unwrap());
             if require_offset_change {
-                before.offset().seconds() != t.offset.to_seconds()
+                before.offset().seconds() != t.offset.0
             } else {
-                before.offset().seconds() != t.offset.to_seconds()
+                before.offset().seconds() != t.offset.0
                 || before.dst().is_dst() != t.rule_applies
                 // This is a super weird transition that would be removed by our rule,
                 // but we want to keep it because it's in zoneinfo64.

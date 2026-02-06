@@ -170,21 +170,30 @@ pub struct BakedExporter {
         Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, BTreeSet<&'static str>, Statistics)>>,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug, Clone)]
+#[allow(clippy::exhaustive_structs)] // forgot in 2.0
+/// Size heuristics for a data marker
 pub struct Statistics {
+    /// The sum of all deduplicated structs' sizes, in bytes
     pub structs_total_size: usize,
+    /// The number of unique structs
     pub structs_count: usize,
+    /// The size of the lookup struct, in bytes
     pub lookup_struct_size: usize,
+    /// The number of [`DataIdentifierCow`]s in the lookup struct
     pub identifiers_count: usize,
 }
 
 impl std::fmt::Debug for BakedExporter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // skip formatting intermediate data
+        let _ = &self.data;
+        let _ = &self.impl_data;
         f.debug_struct("BakedExporter")
             .field("mod_directory", &self.mod_directory)
             .field("pretty", &self.pretty)
             .field("use_separate_crates", &self.use_separate_crates)
-            // skip formatting intermediate data
+            .field("use_internal_fallback", &self.use_internal_fallback)
             .finish()
     }
 }
@@ -606,8 +615,8 @@ impl DataExporter for BakedExporter {
 
             // Safety invariant upheld: the only values being added to the trie are `index`
             // values, which come from enumerating `values`
-            let trie = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii::from_iter(
-                values.clone().flat_map(|(index, (_payload, ids))| {
+            let trie = zerotrie::ZeroTrieSimpleAscii::from_iter(values.clone().flat_map(
+                |(index, (_payload, ids))| {
                     ids.iter().map(move |id| {
                         let mut encoded = id.locale.to_string().into_bytes();
                         if !id.marker_attributes.is_empty() {
@@ -616,10 +625,10 @@ impl DataExporter for BakedExporter {
                         }
                         (encoded, index)
                     })
-                }),
-            );
+                },
+            ));
 
-            stats.lookup_struct_size = core::mem::size_of::<
+            stats.lookup_struct_size = size_of::<
                 icu_provider::baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1>,
             >() + trie.as_borrowed_slice().borrows_size();
 
@@ -640,7 +649,7 @@ impl DataExporter for BakedExporter {
                     // Safety invariant upheld: see above
                     const #data_ident: icu_provider::baked::zerotrie::DataForVarULEs<#marker_bake> = {
                         const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked:: #baked_trie;
-                        const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct> = #vzv_tokens;
+                        const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct, zerovec::vecs::Index32> = #vzv_tokens;
                         unsafe {
                             icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES)
                         }
@@ -892,6 +901,8 @@ impl DataExporter for BakedExporter {
 }
 
 /// Metadata of a bake export
+#[derive(Debug, Clone)]
+#[allow(clippy::exhaustive_structs)] // forgot in 2.0
 pub struct BakedExporterCloseMetadata {
     /// Per-marker size heuristics
     pub statistics: BTreeMap<DataMarkerInfo, Statistics>,
@@ -900,7 +911,7 @@ pub struct BakedExporterCloseMetadata {
 }
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
             if marker.id == icu_provider::hello_world::HelloWorldV1::INFO.id {
                 return databake::quote!(icu_provider::hello_world::HelloWorldV1);

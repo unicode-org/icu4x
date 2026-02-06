@@ -7,7 +7,6 @@
 #[rustfmt::skip]
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use writeable::Writeable;
@@ -31,6 +30,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::NoCalendarFormatter, Typedef)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct TimeFormatter(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             (),

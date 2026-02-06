@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data and APIs for supporting Script_Extensions property
+//! Data and APIs for supporting `Script_Extensions` property
 //! values in an efficient structure.
 
 use crate::props::Script;
@@ -15,6 +15,9 @@ use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice};
+
+#[cfg(feature = "harfbuzz_traits")]
+pub use crate::harfbuzz::{HarfbuzzScriptData, HarfbuzzScriptDataBorrowed};
 
 /// The number of bits at the low-end of a `ScriptWithExt` value used for
 /// storing the `Script` value (or `extensions` index).
@@ -64,7 +67,7 @@ impl AsULE for ScriptWithExt {
 
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsProperty` constructor
 impl ScriptWithExt {
-    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// Returns whether the [`ScriptWithExt`] value has `Script_Extensions` and
     /// also indicates a Script value of [`Script::Common`].
     ///
     /// # Examples
@@ -88,7 +91,7 @@ impl ScriptWithExt {
         self.0 >> SCRIPT_VAL_LENGTH == 1
     }
 
-    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// Returns whether the [`ScriptWithExt`] value has `Script_Extensions` and
     /// also indicates a Script value of [`Script::Inherited`].
     ///
     /// # Examples
@@ -112,7 +115,7 @@ impl ScriptWithExt {
         self.0 >> SCRIPT_VAL_LENGTH == 2
     }
 
-    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// Returns whether the [`ScriptWithExt`] value has `Script_Extensions` and
     /// also indicates that the Script value is neither [`Script::Common`] nor
     /// [`Script::Inherited`].
     ///
@@ -137,7 +140,7 @@ impl ScriptWithExt {
         self.0 >> SCRIPT_VAL_LENGTH == 3
     }
 
-    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions.
+    /// Returns whether the [`ScriptWithExt`] value has `Script_Extensions`.
     ///
     /// # Examples
     ///
@@ -231,7 +234,7 @@ impl<'a> ScriptExtensionsSet<'a> {
     }
 }
 
-/// A struct that represents the data for the Script and Script_Extensions properties.
+/// A struct that represents the data for the Script and `Script_Extensions` properties.
 ///
 /// ✨ *Enabled with the `compiled_data` Cargo feature.*
 ///
@@ -446,14 +449,14 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     }
     /// Return the `Script_Extensions` property value for this code point.
     ///
-    /// If `code_point` has Script_Extensions, then return the Script codes in
-    /// the Script_Extensions. In this case, the Script property value
-    /// (normally Common or Inherited) is not included in the [`ScriptExtensionsSet`].
+    /// If `code_point` has `Script_Extensions`, then return the Script codes in
+    /// the `Script_Extensions`. In this case, the [`Script`] property value
+    /// (normally `Common` or `Inherited`) is not included in the [`ScriptExtensionsSet`].
     ///
-    /// If c does not have Script_Extensions, then the one Script code is put
+    /// If `c` does not have `Script_Extensions`, then the one [`Script`] code is put
     /// into the [`ScriptExtensionsSet`] and also returned.
     ///
-    /// If c is not a valid code point, then return an empty [`ScriptExtensionsSet`].
+    /// If `c` is not a valid code point, then return an empty [`ScriptExtensionsSet`].
     ///
     /// # Examples
     ///
@@ -504,13 +507,13 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
         }
     }
 
-    /// Returns whether `script` is contained in the Script_Extensions
-    /// property value if the code_point has Script_Extensions, otherwise
-    /// if the code point does not have Script_Extensions then returns
+    /// Returns whether `script` is contained in the `Script_Extensions`
+    /// property value if the `code_point` has `Script_Extensions`, otherwise
+    /// if the code point does not have `Script_Extensions` then returns
     /// whether the Script property value matches.
     ///
     /// Some characters are commonly used in multiple scripts. For more information,
-    /// see UAX #24: <http://www.unicode.org/reports/tr24/>.
+    /// see UAX #24: <https://www.unicode.org/reports/tr24/>.
     ///
     /// # Examples
     ///
@@ -579,10 +582,9 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     0x0303..=0x0304, // COMBINING TILDE..COMBINING MACRON
     ///     0x0307..=0x0308, // COMBINING DOT ABOVE..COMBINING DIAERESIS
     ///     0x030A..=0x030A, // COMBINING RING ABOVE
-    ///     0x0320..=0x0320, // COMBINING MINUS SIGN BELOW
     ///     0x0323..=0x0325, // COMBINING DOT BELOW..COMBINING RING BELOW
     ///     0x032D..=0x032E, // COMBINING CIRCUMFLEX ACCENT BELOW..COMBINING BREVE BELOW
-    ///     0x0330..=0x0330, // COMBINING TILDE BELOW
+    ///     0x0330..=0x0331, // COMBINING TILDE BELOW..COMBINING MACRON BELOW
     ///     0x060C..=0x060C, // ARABIC COMMA
     ///     0x061B..=0x061C, // ARABIC SEMICOLON, ARABIC LETTER MARK
     ///     0x061F..=0x061F, // ARABIC QUESTION MARK
@@ -624,6 +626,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
 
     /// Returns a [`CodePointInversionList`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -672,7 +676,7 @@ impl ScriptWithExtensionsBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
-            data: crate::provider::Baked::SINGLETON_PROPERTY_SCRIPT_WITH_EXTENSIONS_V1,
+            data: Baked::SINGLETON_PROPERTY_SCRIPT_WITH_EXTENSIONS_V1,
         }
     }
 
@@ -691,7 +695,7 @@ impl ScriptWithExtensionsBorrowed<'static> {
 mod tests {
     use super::*;
     #[test]
-    /// Regression test for https://github.com/unicode-org/icu4x/issues/6041
+    /// Regression test for <https://github.com/unicode-org/icu4x/issues/6041>
     fn test_scx_regression_6041() {
         let scripts = ScriptWithExtensions::new()
             .get_script_extensions_val('\u{2bc}')

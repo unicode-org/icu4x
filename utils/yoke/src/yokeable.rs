@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(unused_qualifications)]
+
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
 use core::{marker::PhantomData, mem};
@@ -214,7 +216,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///     cow: Cow<'static, str>,
     /// }
     ///
-    /// fn sound<'a>(foo: &'a mut Foo) {
+    /// fn sound(foo: &mut Foo) {
     ///     foo.cow.transform_mut(move |cow| cow.to_mut().push('a'));
     /// }
     /// ```
@@ -230,7 +232,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///    non-static lifetimes reachable from Self<'a>, so this is fine.
     ///  - one of f's captures: since F: 'static, the resulting reference must refer
     ///    to 'static data.
-    ///  - a static or thread_local variable: ditto.
+    ///  - a static or `thread_local` variable: ditto.
     fn transform_mut<F>(&'a mut self, f: F)
     where
         // be VERY CAREFUL changing this signature, it is very nuanced (see above)
@@ -259,7 +261,7 @@ where
         // i hate this
         // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
         // are the same
-        debug_assert!(mem::size_of::<Cow<'a, T>>() == mem::size_of::<Self>());
+        debug_assert!(size_of::<Cow<'a, T>>() == size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         let _ = core::mem::ManuallyDrop::new(from);
         // Safety: `ptr` is certainly valid, aligned and points to a properly initialized value, as

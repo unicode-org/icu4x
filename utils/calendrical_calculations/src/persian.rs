@@ -57,7 +57,7 @@ pub fn fixed_from_arithmetic_persian(year: i32, month: u8, day: u8) -> RataDie {
     )
 }
 
-/// fixed_from_arithmetic_persian, modified to use the more correct 33-year rule
+/// [`fixed_from_arithmetic_persian`], modified to use the more correct 33-year rule
 pub fn fixed_from_fast_persian(year: i32, month: u8, day: u8) -> RataDie {
     let p_year = i64::from(year);
     let month = i64::from(month);
@@ -95,7 +95,7 @@ pub fn arithmetic_persian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32
     Ok((year, month, day))
 }
 
-/// arithmetic_persian_from_fixed, modified to use the 33-year rule method
+/// [`arithmetic_persian_from_fixed`], modified to use the 33-year rule method
 pub fn fast_persian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     let year = fast_persian_year_from_fixed(date);
     let mut year = i64_to_i32(year)?;
@@ -136,13 +136,13 @@ fn arithmetic_persian_year_from_fixed(date: RataDie) -> i64 {
     }
 }
 
-/// arithmetic_persian_year_from_fixed modified for the 33-year rule
+/// [`arithmetic_persian_year_from_fixed`] modified for the 33-year rule
 fn fast_persian_year_from_fixed(date: RataDie) -> i64 {
     let days_since_epoch = date - FIXED_PERSIAN_EPOCH + 1;
     1 + (33 * days_since_epoch + 3).div_euclid(12053)
 }
 
-/// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4789
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4789>
 /// Not used, but kept for comparative purposes
 #[allow(dead_code)]
 fn is_arithmetic_leap_year(p_year: i32) -> bool {
@@ -177,15 +177,15 @@ mod tests {
     #[test]
     fn test_persian_epoch() {
         let epoch = FIXED_PERSIAN_EPOCH.to_i64_date();
-        // Iso year of Persian Epoch
-        let epoch_year_from_fixed = crate::iso::iso_year_from_fixed(RataDie::new(epoch)).unwrap();
-        // 622 is the correct ISO year for the Persian Epoch
+        // Proleptic Gregorian year of Persian Epoch
+        let epoch_year_from_fixed = crate::gregorian::year_from_fixed(RataDie::new(epoch)).unwrap();
+        // 622 is the correct proleptic Gregorian year for the Persian Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
 
-    // Persian New Year occurring in March of Gregorian year (g_year) to fixed date
+    // Persian New Year occurring in March of proleptic Gregorian year (g_year) to fixed date
     fn nowruz(g_year: i32) -> RataDie {
-        let (y, _m, _d) = crate::iso::iso_from_fixed(FIXED_PERSIAN_EPOCH).unwrap();
+        let (y, _m, _d) = crate::gregorian::gregorian_from_fixed(FIXED_PERSIAN_EPOCH).unwrap();
         let persian_year = g_year - y + 1;
         let year = if persian_year <= 0 {
             persian_year - 1
@@ -203,8 +203,8 @@ mod tests {
 
         for year in nowruz_test_year_start..=nowruz_test_year_end {
             let two_thousand_eight_to_fixed = nowruz(year).to_i64_date();
-            let iso_date = crate::iso::fixed_from_iso(year, 3, 21);
-            let (persian_year, _m, _d) = fast_persian_from_fixed(iso_date).unwrap();
+            let gregorian_date = crate::gregorian::fixed_from_gregorian(year, 3, 21);
+            let (persian_year, _m, _d) = fast_persian_from_fixed(gregorian_date).unwrap();
             assert_eq!(
                 fast_persian_from_fixed(RataDie::new(two_thousand_eight_to_fixed))
                     .unwrap()
