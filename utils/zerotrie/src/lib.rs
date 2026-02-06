@@ -30,7 +30,6 @@
 //! A small amount of unsafe Rust is used in these situations:
 //!
 //! - Casting references after checking for invariants
-//! - In the builder code
 //! - Implementing unsafe traits when the `zerovec` feature is enabled
 //!
 //! # Examples
