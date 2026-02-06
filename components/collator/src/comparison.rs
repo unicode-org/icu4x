@@ -46,6 +46,7 @@ use core::cmp::Ordering;
 use core::convert::{Infallible, TryFrom};
 use icu_collections::codepointtrie::AbstractCodePointTrie;
 use icu_collections::codepointtrie::CharsWithTrieDefaultForAsciiEx;
+use icu_collections::codepointtrie::CharsWithTrieEx;
 #[cfg(feature = "serde")]
 use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(not(feature = "serde"))]
@@ -62,6 +63,7 @@ use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsWithTrieEx;
 use utf8_iter::Utf8CharsWithTrieDefaultForAsciiEx;
+use utf8_iter::Utf8CharsWithTrieEx;
 use zerovec::ule::AsULE;
 
 #[cfg(feature = "serde")]
@@ -695,6 +697,36 @@ impl Collator {
     }
 }
 
+macro_rules! quick_primary_compare {
+    ($left_ce32:ident,
+     $right_ce32:ident,
+     $variable_top:ident,
+     $self:ident,
+    ) => {
+        // We could handle more non-contextual ce32 types here if
+        // that is measured to be beneficial.
+        if let Some(mut left_primary) = $left_ce32.to_primary_simple_or_long_primary() {
+            if let Some(mut right_primary) = $right_ce32.to_primary_simple_or_long_primary() {
+                if (left_primary != right_primary)
+                    && (left_primary != 0)
+                    && (right_primary != 0)
+                    && !(left_primary < $variable_top && left_primary > MERGE_SEPARATOR_PRIMARY)
+                    && !(right_primary < $variable_top && right_primary > MERGE_SEPARATOR_PRIMARY)
+                {
+                    if let Some(reordering) = &$self.reordering {
+                        left_primary = reordering.reorder(left_primary);
+                        right_primary = reordering.reorder(right_primary);
+                    }
+                    if left_primary < right_primary {
+                        return Ordering::Less;
+                    }
+                    return Ordering::Greater;
+                }
+            }
+        }
+    };
+}
+
 macro_rules! compare {
     ($(#[$meta:meta])*,
      $compare:ident,
@@ -703,19 +735,28 @@ macro_rules! compare {
      $split_prefix:ident,
      $left_to_iter:ident,
      $right_to_iter:ident,
+     $self:ident,
+     $left_tail:ident,
+     $right_tail:ident,
+     $primary_check:block,
+     $variable_top:ident,
     ) => {
         $(#[$meta])*
-        pub fn $compare(&self, left: &$left_slice, right: &$right_slice) -> Ordering {
-            let (head, left_tail, right_tail) = $split_prefix(left, right);
-            if left_tail.is_empty() && right_tail.is_empty() {
+        pub fn $compare(&$self, left: &$left_slice, right: &$right_slice) -> Ordering {
+            let (head, $left_tail, $right_tail) = $split_prefix(left, right);
+            if $left_tail.is_empty() && $right_tail.is_empty() {
                 return Ordering::Equal;
             }
-            let norm_trie = self.norm_trie();
-            let ret = self.compare_impl(left_tail.$left_to_iter(norm_trie), right_tail.$right_to_iter(norm_trie), head.$left_to_iter(norm_trie).rev());
-            if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
+            let $variable_top = $self.variable_top();
+            if head.is_empty() {
+                $primary_check
+            }
+            let norm_trie = $self.norm_trie();
+            let ret = $self.compare_impl($left_tail.$left_to_iter(norm_trie), $right_tail.$right_to_iter(norm_trie), head.$left_to_iter(norm_trie).rev(), $variable_top);
+            if $self.options.strength() == Strength::Identical && ret == Ordering::Equal {
                 // We don't need to remove the leading U+0000, because it compares equal anyway.
-                return icu_normalizer::new_decomposition(left_tail.$left_to_iter(norm_trie), self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
-                    icu_normalizer::new_decomposition(right_tail.$right_to_iter(norm_trie), self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
+                return icu_normalizer::new_decomposition($left_tail.$left_to_iter(norm_trie), $self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
+                    icu_normalizer::new_decomposition($right_tail.$right_to_iter(norm_trie), $self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
                 );
             }
             ret
@@ -915,6 +956,27 @@ impl<'data> CollatorBorrowed<'data> {
         split_prefix,
         chars_with_trie_default_for_ascii,
         chars_with_trie_default_for_ascii,
+        self,
+        left_tail,
+        right_tail,
+        {
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some((left_c, left_u32)) = left_tail.chars_with_trie(tailoring_trie).next() {
+                if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
+                    let mut left_ce32 = CollationElement32::new(left_u32);
+                    let mut right_ce32 = CollationElement32::new(right_u32);
+                    if left_ce32 == FALLBACK_CE32 {
+                        left_ce32 = self.root.ce32_for_char(left_c);
+                    }
+                    if right_ce32 == FALLBACK_CE32 {
+                        right_ce32 = self.root.ce32_for_char(right_c);
+                    }
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self,);
+                }
+            }
+            // TODO: Consider caching the ce32s
+        },
+        variable_top,
     );
 
     compare!(
@@ -928,6 +990,28 @@ impl<'data> CollatorBorrowed<'data> {
         split_prefix_u8,
         chars_with_trie_default_for_ascii,
         chars_with_trie_default_for_ascii,
+        self,
+        left_tail,
+        right_tail,
+        {
+            // Direct copypaste from the `str` case.
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some((left_c, left_u32)) = left_tail.chars_with_trie(tailoring_trie).next() {
+                if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
+                    let mut left_ce32 = CollationElement32::new(left_u32);
+                    let mut right_ce32 = CollationElement32::new(right_u32);
+                    if left_ce32 == FALLBACK_CE32 {
+                        left_ce32 = self.root.ce32_for_char(left_c);
+                    }
+                    if right_ce32 == FALLBACK_CE32 {
+                        right_ce32 = self.root.ce32_for_char(right_c);
+                    }
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self,);
+                }
+            }
+            // TODO: Consider caching the ce32s
+        },
+        variable_top,
     );
 
     compare!(
@@ -940,6 +1024,33 @@ impl<'data> CollatorBorrowed<'data> {
         split_prefix_u16,
         chars_with_trie,
         chars_with_trie,
+        self,
+        left_tail,
+        right_tail,
+        {
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some(left_u) = left_tail.first() {
+                if let Some(right_u) = right_tail.first() {
+                    let left_u16 = *left_u;
+                    let right_u16 = *right_u;
+                    let left_u32 = tailoring_trie.get16(left_u16);
+                    let right_u32 = tailoring_trie.get16(right_u16);
+                    let mut left_ce32 = CollationElement32::new(left_u32);
+                    let mut right_ce32 = CollationElement32::new(right_u32);
+                    if left_ce32 == FALLBACK_CE32 {
+                        let left_u32 = self.root.trie.get16(left_u16);
+                        left_ce32 = CollationElement32::new(left_u32);
+                    }
+                    if right_ce32 == FALLBACK_CE32 {
+                        let right_u32 = self.root.trie.get16(right_u16);
+                        right_ce32 = CollationElement32::new(right_u32);
+                    }
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self,);
+                }
+            }
+            // TODO: Consider caching the ce32s
+        },
+        variable_top,
     );
 
     compare!(
@@ -954,6 +1065,59 @@ impl<'data> CollatorBorrowed<'data> {
         split_prefix_latin1,
         latin1_chars_with_trie,
         latin1_chars_with_trie,
+        self,
+        left_tail,
+        right_tail,
+        {
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some(left_u) = left_tail.first() {
+                let left_u8 = *left_u;
+                // The probability of getting a non-simple ce32 from
+                // the Latin1 part above ASCII is so high that let's
+                // only consider ASCII on the left for this fast path.
+
+                // SAFETY: Checking the invariant of `get7` here for left.
+                if left_u8 < 0x80 {
+                    if let Some(right_u) = right_tail.first() {
+                        let right_u8 = *right_u;
+                        // SAFETY: Checking the invariant of `get7` here for right.
+                        if right_u8 < 0x80 {
+                            // SAFETY: Invariant of `get7` checked above.
+                            let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
+                            // SAFETY: Invariant of `get7` checked above.
+                            let right_u32 = unsafe { tailoring_trie.get7(right_u8) };
+                            let left_ce32 = CollationElement32::new(left_u32);
+                            let right_ce32 = CollationElement32::new(right_u32);
+                            // ASCII is always copied into the tailoring, so fallback
+                            // can't happen unless GIGO.
+                            debug_assert_ne!(left_ce32, FALLBACK_CE32);
+                            debug_assert_ne!(right_ce32, FALLBACK_CE32);
+                            // Both sides must be Latin, so script reordering can't do
+                            // anything meaningful. Omit script reordering check instead
+                            // of using `quick_primary_compare!`. Also optimize away the
+                            // long primary cases for ASCII.
+                            if let Some(left_primary) = left_ce32.to_primary_simple() {
+                                if let Some(right_primary) = right_ce32.to_primary_simple() {
+                                    if (left_primary != right_primary)
+                                        && (left_primary != 0)
+                                        && (right_primary != 0)
+                                        && !(left_primary < variable_top && left_primary > MERGE_SEPARATOR_PRIMARY)
+                                        && !(right_primary < variable_top && right_primary > MERGE_SEPARATOR_PRIMARY)
+                                    {
+                                        if left_primary < right_primary {
+                                            return Ordering::Less;
+                                        }
+                                        return Ordering::Greater;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // TODO: Consider caching the ce32s
+        },
+        variable_top,
     );
 
     compare!(
@@ -973,6 +1137,60 @@ impl<'data> CollatorBorrowed<'data> {
         split_prefix_latin1_utf16,
         latin1_chars_with_trie,
         chars_with_trie,
+        self,
+        left_tail,
+        right_tail,
+        {
+            let tailoring_trie = &self.tailoring_or_root().trie;
+            if let Some(left_u) = left_tail.first() {
+                let left_u8 = *left_u;
+                // The probability of getting a non-simple ce32 from
+                // the Latin1 part above ASCII is so high that let's
+                // only consider ASCII on the left for this fast path.
+
+                // SAFETY: Checking the invariant of `get7` here.
+                if left_u8 < 0x80 {
+                    if let Some(right_u) = right_tail.first() {
+                        let right_u16 = *right_u;
+                        // SAFETY: Invariant of `get7` checked above.
+                        let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
+                        let right_u32 = tailoring_trie.get16(right_u16);
+                        let left_ce32 = CollationElement32::new(left_u32);
+                        let mut right_ce32 = CollationElement32::new(right_u32);
+                        // ASCII is always copied into the tailoring, so fallback
+                        // can't happen unless GIGO.
+                        debug_assert_ne!(left_ce32,FALLBACK_CE32);
+                        if right_ce32 == FALLBACK_CE32 {
+                            let right_u32 = self.root.trie.get16(right_u16);
+                            right_ce32 = CollationElement32::new(right_u32);
+                        }
+                        // Don't use the macro to micro-optimize away the long primary
+                        // case for ASCII.
+                        if let Some(mut left_primary) = left_ce32.to_primary_simple() {
+                            if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                                if (left_primary != right_primary)
+                                    && (left_primary != 0)
+                                    && (right_primary != 0)
+                                    && !(left_primary < variable_top && left_primary > MERGE_SEPARATOR_PRIMARY)
+                                    && !(right_primary < variable_top && right_primary > MERGE_SEPARATOR_PRIMARY)
+                                {
+                                    if let Some(reordering) = &self.reordering {
+                                        left_primary = reordering.reorder(left_primary);
+                                        right_primary = reordering.reorder(right_primary);
+                                    }
+                                    if left_primary < right_primary {
+                                        return Ordering::Less;
+                                    }
+                                    return Ordering::Greater;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // TODO: Consider caching the ce32s
+        },
+        variable_top,
     );
 
     #[inline(always)]
@@ -1028,6 +1246,7 @@ impl<'data> CollatorBorrowed<'data> {
         left_chars: L,
         right_chars: R,
         mut head_chars: H,
+        variable_top: u32,
     ) -> Ordering
     where
         L: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
@@ -1055,7 +1274,6 @@ impl<'data> CollatorBorrowed<'data> {
         // The algorithm comes from CollationCompare::compareUpToQuaternary in ICU4C.
 
         let mut any_variable = false;
-        let variable_top = self.variable_top();
 
         let tailoring = self.tailoring_or_root();
         let numeric_primary = self.numeric_primary();
@@ -1266,34 +1484,8 @@ impl<'data> CollatorBorrowed<'data> {
                             }
                             // We are at a good boundary!
                             // Now check if we ce32s we have are simple enough to
-                            // make a quick decision here. We could handle more
-                            // non-contextual ce32 types here if that is measured
-                            // to be beneficial.
-                            if let Some(mut left_primary) =
-                                left_ce32.to_primary_simple_or_long_primary()
-                            {
-                                if let Some(mut right_primary) =
-                                    right_ce32.to_primary_simple_or_long_primary()
-                                {
-                                    if (left_primary != right_primary)
-                                        && (left_primary != 0)
-                                        && (right_primary != 0)
-                                        && !(left_primary < variable_top
-                                            && left_primary > MERGE_SEPARATOR_PRIMARY)
-                                        && !(right_primary < variable_top
-                                            && right_primary > MERGE_SEPARATOR_PRIMARY)
-                                    {
-                                        if let Some(reordering) = &self.reordering {
-                                            left_primary = reordering.reorder(left_primary);
-                                            right_primary = reordering.reorder(right_primary);
-                                        }
-                                        if left_primary < right_primary {
-                                            return Ordering::Less;
-                                        }
-                                        return Ordering::Greater;
-                                    }
-                                }
-                            }
+                            // make a quick decision here.
+                            quick_primary_compare!(left_ce32, right_ce32, variable_top, self,);
                             // TODO: Consider caching the ce32s.
                             break 'prefix;
                         }

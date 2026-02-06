@@ -424,6 +424,18 @@ impl CollationElement32 {
         unsafe { core::mem::transmute(self.low_byte() & 0xF) }
     }
 
+    /// Simple-only version of `to_primary_simple_or_long_primary`.
+    #[inline(always)]
+    pub fn to_primary_simple(self) -> Option<u32> {
+        let t = self.low_byte();
+        if t < SPECIAL_CE32_LOW_BYTE {
+            // Not special
+            Some(self.0 & 0xFFFF0000)
+        } else {
+            None
+        }
+    }
+
     /// Primary-only counterpart of `to_ce_simple_or_long_primary`.
     #[inline(always)]
     pub fn to_primary_simple_or_long_primary(self) -> Option<u32> {
