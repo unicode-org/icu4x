@@ -190,7 +190,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_only_case_compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
         #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
-        pub fn titlecase_segment_with_only_case_compiled_data(
+        pub fn titlecase_segment_with_only_case_compiled_data_v1(
             s: &str,
             locale: &Locale,
             options: TitlecaseOptionsV1,

@@ -110,7 +110,7 @@ final class CaseMapper implements ffi.Finalizable {
   static String titlecaseSegmentWithOnlyCaseCompiledData(String s, Locale locale, TitlecaseOptions options) {
     final temp = _FinalizedArena();
     final write = _Write();
-    _icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_mv1(s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
+    _icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1(s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
     return write.finalize();
   }
 
@@ -292,10 +292,10 @@ external void _icu4x_CaseMapper_uppercase_with_compiled_data_mv1(_SliceUtf8 s, f
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_mv1')
-@ffi.Native<ffi.Void Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_mv1')
+@_DiplomatFfiUse('icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1')
+@ffi.Native<ffi.Void Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_fold_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_fold_mv1')
