@@ -1025,7 +1025,8 @@ impl<'data> CollatorBorrowed<'data> {
                     quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_c, right_c,);
                 }
             }
-            // TODO: Consider caching the ce32s
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
         },
         variable_top,
     );
@@ -1060,7 +1061,8 @@ impl<'data> CollatorBorrowed<'data> {
                     quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_c, right_c,);
                 }
             }
-            // TODO: Consider caching the ce32s
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
         },
         variable_top,
     );
@@ -1099,7 +1101,8 @@ impl<'data> CollatorBorrowed<'data> {
                     quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_u16, right_u16,);
                 }
             }
-            // TODO: Consider caching the ce32s
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
         },
         variable_top,
     );
@@ -1166,7 +1169,8 @@ impl<'data> CollatorBorrowed<'data> {
                     }
                 }
             }
-            // TODO: Consider caching the ce32s
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
         },
         variable_top,
     );
@@ -1239,7 +1243,8 @@ impl<'data> CollatorBorrowed<'data> {
                     }
                 }
             }
-            // TODO: Consider caching the ce32s
+            // Note: It might look like a good idea to cache the CE32s, but
+            // doing so actually make things slower.
         },
         variable_top,
     );
@@ -1536,7 +1541,6 @@ impl<'data> CollatorBorrowed<'data> {
                             // We are at a good boundary!
                             // Now check if we ce32s we have are simple enough to
                             // make a quick decision here.
-                            // TODO: Re-think `left_c` and `right_c` for Hangul syllables.
                             quick_primary_compare!(
                                 left_ce32,
                                 right_ce32,
@@ -1545,7 +1549,8 @@ impl<'data> CollatorBorrowed<'data> {
                                 left_c,
                                 right_c,
                             );
-                            // TODO: Consider caching the ce32s.
+                            // Note: It might look like a good idea to cache the CE32s, but
+                            // doing so actually make things slower.
                             break 'prefix;
                         }
                     }
