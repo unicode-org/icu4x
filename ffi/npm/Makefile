@@ -23,7 +23,7 @@ lib/index.mjs: FORCE
 	# -Zunstable-options: enables other unstable flags
 	# -Cpanic=immediate-abort: removes unwind machinery and panic strings
 	# -Copt-level=s: tells llvm to optimize for size
-	# -C link-args=-zstack-size=${WASM_STACK_SIZE}: the default is too large and contributes to high runtime memory
+	# -C link-args=-zstack-size=${WASM_STACK_SIZE}: see https://github.com/unicode-org/icu4x/issues/2753
 	# -Clto: run link-time optimization when building object files
 	# -Cembed-bitcode: retain llvm bitcode in the object files
 	# -Zwasm-c-abi=spec: use the new standard Rust-Wasm interface
