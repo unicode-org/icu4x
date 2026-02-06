@@ -73,6 +73,7 @@ macro_rules! registry(
             icu::locale::provider::LocaleParentsV1: LocaleParentsV1,
             icu::locale::provider::LocaleScriptDirectionV1: LocaleScriptDirectionV1,
             icu::normalizer::provider::NormalizerNfcV1: NormalizerNfcV1,
+            icu::normalizer::provider::NormalizerNfcV2: NormalizerNfcV2,
             icu::normalizer::provider::NormalizerNfdDataV1: NormalizerNfdDataV1,
             icu::normalizer::provider::NormalizerNfdTablesV1: NormalizerNfdTablesV1,
             icu::normalizer::provider::NormalizerNfkdDataV1: NormalizerNfkdDataV1,

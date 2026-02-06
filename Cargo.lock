@@ -1360,7 +1360,6 @@ dependencies = [
  "serde",
  "serde_json",
  "toml",
- "utf8_iter",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1571,6 +1570,7 @@ dependencies = [
  "utf16_iter",
  "utf8_iter",
  "write16",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -3361,14 +3361,16 @@ checksum = "09cc8ee72d2a9becf2f2febe0205bbed8fc6615b7cb429ad062dc7b7ddd036a9"
 [[package]]
 name = "utf16_iter"
 version = "1.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8232dd3cdaed5356e0f716d285e4b40b932ac434100fe9b7e0e8e935b9e6246"
+dependencies = [
+ "icu_collections",
+]
 
 [[package]]
 name = "utf8_iter"
 version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
+dependencies = [
+ "icu_collections",
+]
 
 [[package]]
 name = "utf8parse"
@@ -3848,8 +3850,6 @@ checksum = "f17a85883d4e6d00e8a97c586de764dabcc06133f7f1d55dce5cdc070ad7fe59"
 [[package]]
 name = "write16"
 version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 dependencies = [
  "arrayvec",
  "smallvec",
