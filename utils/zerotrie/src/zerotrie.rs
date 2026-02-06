@@ -120,7 +120,7 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTrieSimpleAscii<Store> {
-    #[allow(unsafe_code)]
+    #[allow(unsafe_code)] // approved in crate-level safety docs
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
@@ -188,7 +188,7 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroAsciiIgnoreCaseTrie<Store> {
-    #[allow(unsafe_code)]
+    #[allow(unsafe_code)] // approved in crate-level safety docs
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
@@ -234,7 +234,7 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTriePerfectHash<Store> {
-    #[allow(unsafe_code)]
+    #[allow(unsafe_code)] // approved in crate-level safety docs
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
@@ -265,7 +265,7 @@ pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTrieExtendedCapacity<Store> {
-    #[allow(unsafe_code)]
+    #[allow(unsafe_code)] // approved in crate-level safety docs
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
