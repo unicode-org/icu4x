@@ -154,13 +154,13 @@ fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
 }
 
 // These constants originate from page 143 of Unicode 14.0
-const HANGUL_S_BASE: u32 = 0xAC00;
-const HANGUL_L_BASE: u32 = 0x1100;
-const HANGUL_V_BASE: u32 = 0x1161;
-const HANGUL_T_BASE: u32 = 0x11A7;
-const HANGUL_T_COUNT: u32 = 28;
-const HANGUL_N_COUNT: u32 = 588;
-const HANGUL_S_COUNT: u32 = 11172;
+pub(crate) const HANGUL_S_BASE: u32 = 0xAC00;
+pub(crate) const HANGUL_L_BASE: u32 = 0x1100;
+pub(crate) const HANGUL_V_BASE: u32 = 0x1161;
+pub(crate) const HANGUL_T_BASE: u32 = 0x11A7;
+pub(crate) const HANGUL_T_COUNT: u32 = 28;
+pub(crate) const HANGUL_N_COUNT: u32 = 588;
+pub(crate) const HANGUL_S_COUNT: u32 = 11172;
 
 pub(crate) const JAMO_COUNT: usize = 256; // 0x1200 - 0x1100
 
@@ -180,6 +180,11 @@ const SPECIAL_CE32_LOW_BYTE: u8 = 0xC0;
 pub(crate) const FALLBACK_CE32: CollationElement32 =
     CollationElement32(SPECIAL_CE32_LOW_BYTE as u32);
 const LONG_PRIMARY_CE32_LOW_BYTE: u8 = 0xC1; // SPECIAL_CE32_LOW_BYTE | LONG_PRIMARY_TAG
+/// Used only as a placeholder on the indentical prefix path.
+/// The requirement is that this CE32 fails the quick mapping to a primary,
+/// which is does, because the tag byte is higher than
+/// `LONG_PRIMARY_CE32_LOW_BYTE`.
+pub(crate) const IDENTICAL_PREFIX_HANGUL_MARKER_CE32: CollationElement32 = CollationElement32(0xC2);
 const COMMON_SECONDARY_CE: u64 = 0x05000000;
 const COMMON_TERTIARY_CE: u64 = 0x0500;
 const COMMON_SEC_AND_TER_CE: u64 = COMMON_SECONDARY_CE | COMMON_TERTIARY_CE;
@@ -425,6 +430,7 @@ impl CollationElement32 {
     }
 
     /// Simple-only version of `to_primary_simple_or_long_primary`.
+    #[cfg(feature = "latin1")]
     #[inline(always)]
     pub fn to_primary_simple(self) -> Option<u32> {
         let t = self.low_byte();

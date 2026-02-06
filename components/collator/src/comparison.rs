@@ -18,6 +18,11 @@ use crate::elements::Tag;
 use crate::elements::BACKWARD_COMBINING_MARKER;
 use crate::elements::CE_BUFFER_SIZE;
 use crate::elements::FALLBACK_CE32;
+use crate::elements::HANGUL_N_COUNT;
+use crate::elements::HANGUL_S_BASE;
+use crate::elements::HANGUL_S_COUNT;
+use crate::elements::HANGUL_T_COUNT;
+use crate::elements::IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
 use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
     char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
@@ -702,6 +707,8 @@ macro_rules! quick_primary_compare {
      $right_ce32:ident,
      $variable_top:ident,
      $self:ident,
+     $left_c:ident,
+     $right_c:ident,
     ) => {
         // We could handle more non-contextual ce32 types here if
         // that is measured to be beneficial.
@@ -721,6 +728,50 @@ macro_rules! quick_primary_compare {
                         return Ordering::Less;
                     }
                     return Ordering::Greater;
+                }
+            }
+        } else {
+            // If both are Hangul syllables, do a quick compare.
+
+            // Optimization that looks ridiculously micro but is actually measurable:
+            // Since we are in the `else` branch of checking the left primary, checking
+            // the right side for being a Hangul syllable is statistically the better
+            // refutation order.
+            let right_hangul_offset = u32::from($right_c).wrapping_sub(HANGUL_S_BASE);
+            if right_hangul_offset < HANGUL_S_COUNT {
+                let left_hangul_offset = u32::from($left_c).wrapping_sub(HANGUL_S_BASE);
+                if left_hangul_offset < HANGUL_S_COUNT {
+                    let left_l = left_hangul_offset / HANGUL_N_COUNT;
+                    let right_l = right_hangul_offset / HANGUL_N_COUNT;
+                    if left_l != right_l {
+                        // We don't really support jamo tailoring, so let's
+                        // compare the jamo directly.
+                        if left_l < right_l {
+                            return Ordering::Less;
+                        }
+                        return Ordering::Greater;
+                    }
+                    let left_v = (left_hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                    let right_v = (right_hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                    if left_v != right_v {
+                        // We don't really support jamo tailoring, so let's
+                        // compare the jamo directly.
+                        if left_v < right_v {
+                            return Ordering::Less;
+                        }
+                        return Ordering::Greater;
+                    }
+                    let left_t = left_hangul_offset % HANGUL_T_COUNT;
+                    let right_t = right_hangul_offset % HANGUL_T_COUNT;
+                    // If either syllable is a two-jamo syllable, we fall through.
+                    if left_t != right_t && left_t != 0 && right_t != 0 {
+                        // We don't really support jamo tailoring, so let's
+                        // compare the jamo directly.
+                        if left_t < right_t {
+                            return Ordering::Less;
+                        }
+                        return Ordering::Greater;
+                    }
                 }
             }
         }
@@ -971,7 +1022,7 @@ impl<'data> CollatorBorrowed<'data> {
                     if right_ce32 == FALLBACK_CE32 {
                         right_ce32 = self.root.ce32_for_char(right_c);
                     }
-                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self,);
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_c, right_c,);
                 }
             }
             // TODO: Consider caching the ce32s
@@ -1006,7 +1057,7 @@ impl<'data> CollatorBorrowed<'data> {
                     if right_ce32 == FALLBACK_CE32 {
                         right_ce32 = self.root.ce32_for_char(right_c);
                     }
-                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self,);
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_c, right_c,);
                 }
             }
             // TODO: Consider caching the ce32s
@@ -1045,7 +1096,7 @@ impl<'data> CollatorBorrowed<'data> {
                         let right_u32 = self.root.trie.get16(right_u16);
                         right_ce32 = CollationElement32::new(right_u32);
                     }
-                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self,);
+                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_u16, right_u16,);
                 }
             }
             // TODO: Consider caching the ce32s
@@ -1416,8 +1467,8 @@ impl<'data> CollatorBorrowed<'data> {
                                 // Let's take the starter
                                 left_c = char_from_u32(decomposition & 0x7FFF);
                             } else if decomposition == HANGUL_SYLLABLE_MARKER {
-                                left_c = '\u{0}';
-                                left_ce32 = FFFD_CE32;
+                                left_c = left_different.character();
+                                left_ce32 = IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
                             } else {
                                 break;
                             }
@@ -1435,8 +1486,8 @@ impl<'data> CollatorBorrowed<'data> {
                                 // Let's take the starter
                                 right_c = char_from_u32(decomposition & 0x7FFF);
                             } else if decomposition == HANGUL_SYLLABLE_MARKER {
-                                right_c = '\u{0}';
-                                right_ce32 = FFFD_CE32;
+                                right_c = right_different.character();
+                                right_ce32 = IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
                             } else {
                                 break;
                             }
@@ -1485,7 +1536,15 @@ impl<'data> CollatorBorrowed<'data> {
                             // We are at a good boundary!
                             // Now check if we ce32s we have are simple enough to
                             // make a quick decision here.
-                            quick_primary_compare!(left_ce32, right_ce32, variable_top, self,);
+                            // TODO: Re-think `left_c` and `right_c` for Hangul syllables.
+                            quick_primary_compare!(
+                                left_ce32,
+                                right_ce32,
+                                variable_top,
+                                self,
+                                left_c,
+                                right_c,
+                            );
                             // TODO: Consider caching the ce32s.
                             break 'prefix;
                         }
