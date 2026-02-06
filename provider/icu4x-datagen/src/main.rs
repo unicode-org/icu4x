@@ -137,7 +137,8 @@ struct Cli {
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
-                    Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                    Use 'latest' for the latest version verified to work with this version of the binary, \
+                    and 'latest-tag' for the literal tag 'latest' on GitHub.\n\
                     Ignored if '--cldr-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default).\n\
                     Note that some markers do not support versions before 41.0.0."
     )]
@@ -156,7 +157,8 @@ struct Cli {
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download ICU data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
-                  Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                  Use 'latest' for the latest version verified to work with this version of the binary, \
+                  and 'latest-tag' for the literal tag 'latest' on GitHub.\n\
                   Ignored if '--icuexport-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default).\n\
                   Note that some markers do not support versions before release-71-1."
     )]
@@ -173,7 +175,9 @@ struct Cli {
     icuexport_root: Option<PathBuf>,
 
     #[arg(long, value_name = "TAG", default_value = "17.0.0")]
-    #[arg(help = "Download versioned UCD from unicode.org.")]
+    #[arg(help = "Download versioned UCD from unicode.org. \
+                  Use 'latest' for the latest version verified to work with this version of the binary, \
+                  and 'latest-tag' for the literal tag 'latest' on unicode.org.")]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
     #[cfg(feature = "provider")]
     ucd_tag: String,
@@ -186,7 +190,8 @@ struct Cli {
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
-                  Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                  Use 'latest' for the latest version verified to work with this version of the binary, \
+                  and 'latest-tag' for the literal tag 'latest' on GitHub.\n\
                   Ignored if '--segmenter-lstm-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
@@ -203,7 +208,8 @@ struct Cli {
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download tzdb from this IANA tag (https://data.iana.org/time-zones/releases/)\n\
-                  Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                  Use 'latest' for the latest version verified to work with this version of the binary, \
+                  and 'latest-tag' for the literal tag 'latest' on IANA.\n\
                   Ignored if '--tzdb-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
@@ -489,6 +495,8 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 #[cfg(feature = "networking")]
                 (_, "latest") => p.with_cldr_for_tag(SourceDataProvider::TESTED_CLDR_TAG),
                 #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_cldr_for_tag("latest"),
+                #[cfg(feature = "networking")]
                 (_, tag) => p.with_cldr_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => p,
@@ -500,6 +508,8 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 (_, "latest") => {
                     p.with_icuexport_for_tag(SourceDataProvider::TESTED_ICUEXPORT_TAG)
                 }
+                #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_icuexport_for_tag("latest"),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_icuexport_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
@@ -513,6 +523,8 @@ fn run(cli: Cli) -> eyre::Result<()> {
                     p.with_segmenter_lstm_for_tag(SourceDataProvider::TESTED_SEGMENTER_LSTM_TAG)
                 }
                 #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_segmenter_lstm_for_tag("latest"),
+                #[cfg(feature = "networking")]
                 (_, tag) => p.with_segmenter_lstm_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => p,
@@ -525,6 +537,8 @@ fn run(cli: Cli) -> eyre::Result<()> {
                     p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG)
                 }
                 #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_unihan_for_tag("latest"),
+                #[cfg(feature = "networking")]
                 (_, tag) => p.with_unihan_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => p,
@@ -536,6 +550,8 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 (_, "latest") => {
                     p.with_tzdb_for_tag(SourceDataProvider::TESTED_TZDB_TAG)
                 }
+                #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_tzdb_for_tag("latest"),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_tzdb_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
