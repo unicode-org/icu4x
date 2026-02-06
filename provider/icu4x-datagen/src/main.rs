@@ -428,20 +428,20 @@ fn run(cli: Cli) -> eyre::Result<()> {
     fn missing_data_message<T>(e: DataError) -> Result<T, eyre::Report> {
         #[cfg(feature = "provider")]
         if SourceDataProvider::is_missing_cldr_error(e) {
-            eyre::bail!("CLDR data is required for this invocation, set --cldr-path or --cldr-tag");
+            eyre::bail!("CLDR data is required for this invocation, set --cldr-root or --cldr-tag");
         } else if SourceDataProvider::is_missing_icuexport_error(e) {
             eyre::bail!(
-                "ICU data is required for this invocation, set --icuexport-path or --icuexport-tag"
+                "ICU data is required for this invocation, set --icuexport-root or --icuexport-tag"
             );
         } else if SourceDataProvider::is_missing_segmenter_lstm_error(e) {
-            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segementer-lstm-path or --segementer-lstm-tag");
+            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segmenter-lstm-root or --segmenter-lstm-tag");
         } else if SourceDataProvider::is_missing_unihan_error(e) {
             eyre::bail!(
                 "Unihan data is required for this invocation, set --unihan-root or --ucd-tag"
             );
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
             eyre::bail!(
-                "Timezone data is required for this invocation, set --tzdb-path or --tzdb-tag"
+                "Timezone data is required for this invocation, set --tzdb-root or --tzdb-tag"
             );
         }
 

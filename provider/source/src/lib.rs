@@ -218,7 +218,7 @@ impl SourceDataProvider {
         })
     }
 
-    /// Adds segmenter LSTM source data to the provider. The path should point to the Unihan ZIP file
+    /// Adds Unihan source data to the provider. The path should point to the Unihan ZIP file
     /// (see [Unicode Character Database](https://www.unicode.org/ucd/)).
     pub fn with_unihan(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
