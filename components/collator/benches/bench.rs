@@ -159,11 +159,11 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
     // Furthermore, CLDR used to default to quaternary for Japanese but now defaults to tertiary
     // as for every other language for performance reasons.
     let all_strength = [
-        // Strength::Primary,
-        // Strength::Secondary,
+        Strength::Primary,
+        Strength::Secondary,
         Strength::Tertiary,
-        // Strength::Quaternary,
-        // Strength::Identical,
+        Strength::Quaternary,
+        Strength::Identical,
     ];
     let performance_parameters = [
         (
@@ -171,32 +171,52 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             vec![&content_latin, &content_photos],
             &all_strength,
         ),
-        // (
-        //     locale!("da-DK"),
-        //     vec![&content_photos],
-        //     &all_strength,
-        // ),
-        // (locale!("fr-CA"), vec![&content_latin], &all_strength),
+        (
+            locale!("da-DK"),
+            vec![&content_latin, &content_photos],
+            &all_strength,
+        ),
+        (locale!("fr-CA"), vec![&content_latin], &all_strength),
         (
             locale!("ja-JP"),
-            vec![&content_jp_h, &content_jp_k, &content_asian],
+            vec![&content_latin, &content_jp_h, &content_jp_k, &content_asian],
             &all_strength,
         ),
         (
             locale!("zh-u-co-pinyin"),
-            vec![&content_chinese],
+            vec![&content_latin, &content_chinese],
             &all_strength,
         ), // zh_CN
         (
             locale!("zh-u-co-stroke"),
-            vec![&content_chinese],
+            vec![&content_latin, &content_chinese],
             &all_strength,
         ), // zh_TW
-        (locale!("ru-RU"), vec![&content_russian], &all_strength),
-        (locale!("sv"), vec![&content_swedish], &all_strength),
-        (locale!("th"), vec![&content_thai], &all_strength),
-        (locale!("ko-KR"), vec![&content_korean], &all_strength),
-        (locale!("pl"), vec![&content_polish], &all_strength),
+        (
+            locale!("ru-RU"),
+            vec![&content_latin, &content_russian],
+            &all_strength,
+        ),
+        (
+            locale!("sv"),
+            vec![&content_latin, &content_swedish],
+            &all_strength,
+        ),
+        (
+            locale!("th"),
+            vec![&content_latin, &content_thai],
+            &all_strength,
+        ),
+        (
+            locale!("ko-KR"),
+            vec![&content_latin, &content_korean],
+            &all_strength,
+        ),
+        (
+            locale!("pl"),
+            vec![&content_latin, &content_polish],
+            &all_strength,
+        ),
     ];
     for perf_parameter in performance_parameters {
         let (locale_under_bench, files_under_bench, benched_strength) = perf_parameter;
@@ -205,7 +225,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
         for content_under_bench in files_under_bench {
             let (file_name, elements) = black_box(content_under_bench);
-            // baseline_bench(&mut group, file_name, elements);
+            baseline_bench(&mut group, file_name, elements);
 
             // index to keep order of strength in the html report
             for (index, strength) in benched_strength.iter().enumerate() {
