@@ -30,6 +30,10 @@
 //! A small amount of unsafe Rust is used in the builder code as well as for implementing
 //! unsafe traits when the `zerovec` feature is enabled.
 //!
+//! `transmute` is allowed for zero-copy conversions between `repr(transparent)` types.
+//! These transmutes are used to provide a ergonomic API while maintaining zero-copy
+//! performance.
+//!
 //! # Examples
 //!
 //! ```
