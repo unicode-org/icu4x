@@ -13,6 +13,7 @@ use alloc::boxed::Box;
 pub(crate) struct ByteStr([u8]);
 
 impl ByteStr {
+    #[allow(unsafe_code)] // approved in crate-level safety docs
     pub const fn from_byte_slice_with_value<'a, 'l>(
         input: &'l [(&'a [u8], usize)],
     ) -> &'l [(&'a ByteStr, usize)] {
@@ -20,6 +21,7 @@ impl ByteStr {
         unsafe { core::mem::transmute(input) }
     }
 
+    #[allow(unsafe_code)] // approved in crate-level safety docs
     pub const fn from_str_slice_with_value<'a, 'l>(
         input: &'l [(&'a str, usize)],
     ) -> &'l [(&'a ByteStr, usize)] {
@@ -27,12 +29,14 @@ impl ByteStr {
         unsafe { core::mem::transmute(input) }
     }
 
+    #[allow(unsafe_code)] // approved in crate-level safety docs
     pub fn from_bytes(input: &[u8]) -> &Self {
         // Safety: [u8] and ByteStr have the same layout and invariants
         unsafe { core::mem::transmute(input) }
     }
 
     #[cfg(feature = "serde")]
+    #[allow(unsafe_code)] // approved in crate-level safety docs
     pub fn from_boxed_bytes(input: Box<[u8]>) -> Box<Self> {
         // Safety: [u8] and ByteStr have the same layout and invariants
         unsafe { core::mem::transmute(input) }

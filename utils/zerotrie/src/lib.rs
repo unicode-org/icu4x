@@ -23,6 +23,15 @@
 //!
 //! There are multiple variants of [`ZeroTrie`] optimized for different use cases.
 //!
+//! # Safe Rust
+//!
+//! All runtime lookup code in this crate is 100% safe Rust.
+//!
+//! A small amount of unsafe Rust is used in these situations:
+//!
+//! - Casting references after checking for invariants
+//! - Implementing unsafe traits when the `zerovec` feature is enabled
+//!
 //! # Examples
 //!
 //! ```
@@ -46,6 +55,9 @@
 //!
 //! [`LiteMap`]: litemap::LiteMap
 //! [`BTreeMap`]: alloc::collections::BTreeMap
+
+// To back up the claim in the docs:
+#![cfg_attr(not(feature = "zerovec"), deny(unsafe_code))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
