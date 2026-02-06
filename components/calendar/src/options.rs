@@ -524,12 +524,12 @@ mod tests {
                     should_succeed_rejecting,
                     "Succeeded, but should have rejected: {fields:?}"
                 ),
-                Err(
-                    DateFromFieldsError::NotEnoughFields | DateFromFieldsError::TooManyFields,
-                ) => assert!(
-                    !should_succeed_rejecting,
-                    "Rejected, but should have succeeded: {fields:?}"
-                ),
+                Err(DateFromFieldsError::NotEnoughFields | DateFromFieldsError::TooManyFields) => {
+                    assert!(
+                        !should_succeed_rejecting,
+                        "Rejected, but should have succeeded: {fields:?}"
+                    )
+                }
                 Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
             }
 
@@ -541,12 +541,12 @@ mod tests {
                     should_succeed_ecma,
                     "Succeeded, but should have rejected (ECMA): {fields:?}"
                 ),
-                Err(
-                    DateFromFieldsError::NotEnoughFields | DateFromFieldsError::TooManyFields,
-                ) => assert!(
-                    !should_succeed_ecma,
-                    "Rejected, but should have succeeded (ECMA): {fields:?}"
-                ),
+                Err(DateFromFieldsError::NotEnoughFields | DateFromFieldsError::TooManyFields) => {
+                    assert!(
+                        !should_succeed_ecma,
+                        "Rejected, but should have succeeded (ECMA): {fields:?}"
+                    )
+                }
                 Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
             }
         }
