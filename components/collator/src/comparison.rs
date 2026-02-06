@@ -1265,6 +1265,36 @@ impl<'data> CollatorBorrowed<'data> {
                                 break;
                             }
                             // We are at a good boundary!
+                            // Now check if we ce32s we have are simple enough to
+                            // make a quick decision here. We could handle more
+                            // non-contextual ce32 types here if that is measured
+                            // to be beneficial.
+                            if let Some(mut left_primary) =
+                                left_ce32.to_primary_simple_or_long_primary()
+                            {
+                                if let Some(mut right_primary) =
+                                    right_ce32.to_primary_simple_or_long_primary()
+                                {
+                                    if (left_primary != right_primary)
+                                        && (left_primary != 0)
+                                        && (right_primary != 0)
+                                        && !(left_primary < variable_top
+                                            && left_primary > MERGE_SEPARATOR_PRIMARY)
+                                        && !(right_primary < variable_top
+                                            && right_primary > MERGE_SEPARATOR_PRIMARY)
+                                    {
+                                        if let Some(reordering) = &self.reordering {
+                                            left_primary = reordering.reorder(left_primary);
+                                            right_primary = reordering.reorder(right_primary);
+                                        }
+                                        if left_primary < right_primary {
+                                            return Ordering::Less;
+                                        }
+                                        return Ordering::Greater;
+                                    }
+                                }
+                            }
+                            // TODO: Consider caching the ce32s.
                             break 'prefix;
                         }
                     }
