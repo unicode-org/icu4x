@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
-
 use crate::dimension::units::format::FormattedUnit;
 use crate::dimension::units::options::Width;
 use crate::measure::category::CategorizedMeasureUnit;
@@ -54,6 +52,7 @@ prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
 /// A [`CategorizedFormatter`] is used to format specific units.
 ///
 /// This is useful for type inference and for ensuring that the correct units are used.
+#[derive(Debug)]
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     _category: PhantomData<C>,
     display_name:

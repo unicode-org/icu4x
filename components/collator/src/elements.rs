@@ -112,7 +112,7 @@ pub(crate) const LOW_ZEROS_MASK: u32 = 0xFFE0;
 /// See components/normalizer/trie-value-format.md
 const FDFA_MARKER: u16 = 1;
 
-/// Marker value for Hangul syllables. (Unified with `FDFA_MARKER``,
+/// Marker value for Hangul syllables. (Unified with `FDFA_MARKER`,
 /// but they differ by `NON_ROUND_TRIP_MARKER`.)
 ///
 /// See components/normalizer/trie-value-format.md
@@ -266,10 +266,10 @@ fn in_inclusive_range(c: char, start: char, end: char) -> bool {
 #[repr(u8)] // This repr is necessary for transmute safety
 pub(crate) enum Tag {
     /// Fall back to the base collator.
-    /// This is the tag value in SPECIAL_CE32_LOW_BYTE and FALLBACK_CE32.
+    /// This is the tag value in [`SPECIAL_CE32_LOW_BYTE`] and [`FALLBACK_CE32`].
     /// Bits 31..8: Unused, 0.
     Fallback = 0,
-    /// Long-primary CE with COMMON_SEC_AND_TER_CE.
+    /// Long-primary CE with [`COMMON_SEC_AND_TER_CE`].
     /// Bits 31..8: Three-byte primary.
     LongPrimary = 1,
     /// Long-secondary CE with zero primary.
@@ -277,7 +277,7 @@ pub(crate) enum Tag {
     /// Bits 15.. 8: Tertiary weight.
     LongSecondary = 2,
     /// Unused.
-    /// May be used in the future for single-byte secondary CEs (SHORT_SECONDARY_TAG),
+    /// May be used in the future for single-byte secondary CEs (`SHORT_SECONDARY_TAG`),
     /// storing the secondary in bits 31..24, the ccc in bits 23..16,
     /// and the tertiary in bits 15..8.
     Reserved3 = 3,
@@ -288,20 +288,20 @@ pub(crate) enum Tag {
     /// Unused by ICU4X, may get repurposed for jamo expansions is Korean search.
     LatinExpansion = 4,
     /// Points to one or more simple/long-primary/long-secondary 32-bit CE32s.
-    /// Bits 31..13: Index into uint32_t table.
+    /// Bits 31..13: Index into `uint32_t` table.
     /// Bits 12.. 8: Length=1..31.
     Expansion32 = 5,
     /// Points to one or more 64-bit CEs.
     /// Bits 31..13: Index into CE table.
     /// Bits 12.. 8: Length=1..31.
     Expansion = 6,
-    /// Builder data, used only in the CollationDataBuilder, not in runtime data.
+    /// Builder data, used only in the `CollationDataBuilder`, not in runtime data.
     ///
     /// If bit 8 is 0: Builder context, points to a list of context-sensitive mappings.
-    /// Bits 31..13: Index to the builder's list of ConditionalCE32 for this character.
+    /// Bits 31..13: Index to the builder's list of `ConditionalCE32` for this character.
     /// Bits 12.. 9: Unused, 0.
     ///
-    /// If bit 8 is 1 (IS_BUILDER_JAMO_CE32): Builder-only jamoCE32 value.
+    /// If bit 8 is 1 (`IS_BUILDER_JAMO_CE32`): Builder-only jamoCE32 value.
     /// The builder fetches the Jamo CE32 from the trie.
     /// Bits 31..13: Jamo code point.
     /// Bits 12.. 9: Unused, 0.
@@ -313,12 +313,12 @@ pub(crate) enum Tag {
     /// Points to contraction data.
     /// Bits 31..13: Index into prefix/contraction data.
     /// Bits 12..11: Unused, 0.
-    /// Bit      10: CONTRACT_TRAILING_CCC flag.
-    /// Bit       9: CONTRACT_NEXT_CCC flag.
-    /// Bit       8: CONTRACT_SINGLE_CP_NO_MATCH flag.
+    /// Bit      10: `CONTRACT_TRAILING_CCC` flag.
+    /// Bit       9: `CONTRACT_NEXT_CCC` flag.
+    /// Bit       8: `CONTRACT_SINGLE_CP_NO_MATCH` flag.
     Contraction = 9,
     /// Decimal digit.
-    /// Bits 31..13: Index into uint32_t table for non-numeric-collation CE32.
+    /// Bits 31..13: Index into `uint32_t` table for non-numeric-collation CE32.
     /// Bit      12: Unused, 0.
     /// Bits 11.. 8: Digit value 0..9.
     Digit = 10,
@@ -329,7 +329,7 @@ pub(crate) enum Tag {
     U0000 = 11,
     /// Tag for a Hangul syllable.
     /// Bits 31..9: Unused, 0.
-    /// Bit      8: HANGUL_NO_SPECIAL_JAMO flag.
+    /// Bit      8: `HANGUL_NO_SPECIAL_JAMO` flag.
     /// Not used by ICU4X, may get reused for compressing Hanja expansions.
     Hangul = 12,
     /// Tag for a lead surrogate code unit.
@@ -351,7 +351,7 @@ pub(crate) enum Tag {
     ///       6.. 0: Per-code point primary-weight increment.
     Offset = 14,
     /// Implicit CE tag. Compute an unassigned-implicit CE.
-    /// All bits are set (UNASSIGNED_CE32=0xffffffff).
+    /// All bits are set (`UNASSIGNED_CE32=0xffffffff`).
     Implicit = 15,
 }
 

@@ -238,9 +238,6 @@ jobs:
 
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
-      with:
-        # Keep in sync with build-test.yml
-        sdk: 3.10.0-186.0.dev
         
     - name: Build docs
       run: |
@@ -267,6 +264,55 @@ jobs:
       run: |
         echo "📖 Dart docs"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/dartdoc/index.html"
+
+  kotlin-docs:
+    name: "Kotlin docs"
+    needs: credentials
+    runs-on: "ubuntu-latest"
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # GCP Boilerplate for jobs in main or forked repository (needs credentials)
+    - id: gcp-auth
+      if: github.ref != 'refs/heads/main' || github.repository != 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with JSON Credentials"
+      uses: google-github-actions/auth@71fee32a0bb7e97b4d33d548e7d957010649d8fa # v2.1.3
+      with:
+        credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@71fee32a0bb7e97b4d33d548e7d957010649d8fa # v2.1.3
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
+    - name: "Set up Google Cloud SDK"
+      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+        
+    - name: Build docs
+      run: |
+        cd ffi/mvn
+        mvn dokka:dokka
+        cd ../..
+
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: kdoc
+        path: ffi/mvn/target/dokka
+
+    - name: Upload docs to Google Cloud Storage (non-main)
+      run: |
+        gsutil -m cp -r ffi/mvn/target/dokka gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/kdoc
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r ffi/mvn/target/dokka/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/kdoc
+
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
+      run: |
+        echo "📖 Kotlin docs"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/kdoc/index.html"
 
   wasm-demo:
     # This is too expensive to run on every push, so only run it on main.
@@ -601,8 +647,8 @@ jobs:
             include_data: false
     runs-on: ${{ matrix.os }}
     env:
-      FEATURES: ${{ matrix.include_data == true && 'default_components,experimental,buffer_provider,compiled_data' || 'default_components,experimental,buffer_provider' }}
-      FILENAME_SUFFIX: ${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}
+      FEATURES: ${{ matrix.include_data == true && 'default_components,experimental,unstable,buffer_provider,compiled_data' || 'default_components,experimental,unstable,buffer_provider' }}
+      FILENAME_SUFFIX: ${{ matrix.include_data == true && '-with_data' || '' }}
 
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -615,13 +661,10 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
     
-    - uses: dart-lang/setup-dart@e51d8e571e22473a2ddebf0ef8a2123f0ab2c02c
-      with:
-        sdk: main
-
     - name: Setup additional linkers
       if: matrix.os == 'ubuntu-latest'
       run: |
+        sudo apt-get update
         sudo apt-get install gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-riscv64-linux-gnu gcc-i686-linux-gnu
         mkdir -p .cargo
         echo "[target]" >> .cargo/config.toml
@@ -637,18 +680,16 @@ jobs:
     - name: Build Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
-        (cd ffi/dart && dart pub get)
-
         mkdir bin
-        
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-linux-androideabi --target armv7-linux-androideabi --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-linux-android --target aarch64-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-linux-android --target i686-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-linux-android --target x86_64-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-unknown-linux-gnueabihf --target armv7-unknown-linux-gnueabihf --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-unknown-linux-gnu --target aarch64-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-riscv64gc-unknown-linux-gnu --target riscv64gc-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-unknown-linux-gnu --target x86_64-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--armv7-linux-androideabi" TARGET="armv7-linux-androideabi" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--aarch64-linux-android" TARGET="aarch64-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--i686-linux-android" TARGET="i686-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--x86_64-linux-android" TARGET="x86_64-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--armv7-unknown-linux-gnueabihf" TARGET="armv7-unknown-linux-gnueabihf" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--aarch64-unknown-linux-gnu" TARGET="aarch64-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--riscv64gc-unknown-linux-gnu" TARGET="riscv64gc-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--x86_64-unknown-linux-gnu" TARGET="x86_64-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
 
     - name: Build Linux data
       if: matrix.os == 'ubuntu-latest' && matrix.compiletype == 'static' && matrix.include_data == false
@@ -669,14 +710,12 @@ jobs:
     - name: Build Mac
       if: matrix.os == 'macos-latest'
       run: |
-        (cd ffi/dart && dart pub get)
-
         mkdir bin
 
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-ios --target aarch64-apple-ios --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-ios --target x86_64-apple-ios --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-darwin --target aarch64-apple-darwin --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-darwin --target x86_64-apple-darwin --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-ios" TARGET="aarch64-apple-ios" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-ios" TARGET="x86_64-apple-ios" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-darwin" TARGET="aarch64-apple-darwin" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-darwin" TARGET="x86_64-apple-darwin" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
 
     - name: Build Mac data
       if: matrix.os == 'macos-latest' && matrix.compiletype == 'static' && matrix.include_data == false
@@ -695,20 +734,15 @@ jobs:
   
     - name: Build Windows
       if: matrix.os == 'windows-latest'
+      shell: bash
       run: |
-        pushd ffi/dart
-        dart pub get
-        popd
-
         mkdir bin
         
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-pc-windows-msvc --target aarch64-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-pc-windows-msvc --target i686-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-pc-windows-msvc --target x86_64-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-pc-windows-msvc" TARGET="aarch64-pc-windows-msvc" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-pc-windows-msvc" TARGET="i686-pc-windows-msvc" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-pc-windows-msvc" TARGET="x86_64-pc-windows-msvc" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
 
-        DEL bin\*.dll.exp
-        DEL bin\*.dll.lib
-        DEL bin\*.pdb
+        rm -f bin/*{.dll.exp,.dll.lib,.pdb}
 
     - name: Build Windows data
       if: matrix.os == 'windows-latest' && matrix.compiletype == 'static' && matrix.include_data == false

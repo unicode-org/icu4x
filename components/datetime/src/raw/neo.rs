@@ -12,7 +12,10 @@ use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
 };
-use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
+use crate::provider::{
+    packed_pattern::{ErasedPackedPatterns, PackedSkeletonVariant},
+    semantic_skeletons::{marker_attrs, DatetimePatternsGlueV1, GluePattern},
+};
 use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
 use icu_provider::prelude::*;
@@ -49,7 +52,7 @@ impl RawPreferences {
     #[inline]
     pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Self {
         Self {
-            hour_cycle: prefs.hour_cycle.map(fields::Hour::from_hour_cycle),
+            hour_cycle: fields::Hour::from_prefs(prefs),
         }
     }
 }
@@ -102,10 +105,12 @@ pub(crate) struct ItemsAndOptions<'a> {
 }
 
 impl ItemsAndOptions<'_> {
-    fn new_empty() -> Self {
+    const fn new_empty() -> Self {
         Self {
             items: ZeroSlice::new_empty(),
-            ..Default::default()
+            alignment: None,
+            hour_cycle: None,
+            subsecond_digits: None,
         }
     }
 }
@@ -717,15 +722,15 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
                     Err(1) => self
                         .date_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     Err(0) => self
                         .time_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     Err(2) => self
                         .zone_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     _ => ItemsAndOptions::new_empty(),
                 },
             )

@@ -69,6 +69,20 @@ public:
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError> create_basic_with_provider(const icu4x::DataProvider& provider);
 
+  /**
+   * Get the `Basic_Emoji` value for a given character, using compiled data
+   *
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
+   */
+  inline static bool basic_emoji_for_char(char32_t ch);
+
+  /**
+   * Get the `Basic_Emoji` value for a given character, using compiled data
+   *
+   * See the [Rust documentation for `for_str`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
+   */
+  inline static bool basic_emoji_for_str(std::string_view s);
+
     inline const icu4x::capi::EmojiSetData* AsFFI() const;
     inline icu4x::capi::EmojiSetData* AsFFI();
     inline static const icu4x::EmojiSetData* FromFFI(const icu4x::capi::EmojiSetData* ptr);

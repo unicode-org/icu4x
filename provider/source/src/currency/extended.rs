@@ -9,7 +9,7 @@ use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl DataProvider<CurrencyExtendedDataV1> for crate::SourceDataProvider {
+impl DataProvider<CurrencyExtendedDataV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyExtendedDataV1>, DataError> {
         self.check_req::<CurrencyExtendedDataV1>(req)?;
 

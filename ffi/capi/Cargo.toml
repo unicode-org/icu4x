@@ -7,8 +7,9 @@ name = "icu_capi"
 description = "C interface to ICU4X"
 license = "Unicode-3.0"
 include = [
-    "bindings/**/*",
-    "!bindings/dart/**/*", # not yet stable
+    "bindings/c/**/*",
+    "bindings/cpp/**/*",
+    "bindings/js/**/*", # todo: remove, published through NPM
     "src/**/*",
     "tests/**/*",
     "Cargo.toml",
@@ -78,7 +79,7 @@ calendar = ["dep:icu_calendar", "dep:icu_time", "dep:tinystr"]
 casemap = ["dep:icu_casemap"]
 collator = ["dep:icu_collator"]
 # collections = ["dep:icu_collections"] # Not useful on its own: use properties
-datetime = ["calendar", "dep:icu_datetime", "icu_datetime/experimental"]
+datetime = ["calendar", "dep:icu_datetime"]
 decimal = ["dep:icu_decimal", "dep:fixed_decimal", "dep:zerovec"]
 experimental = ["dep:icu_experimental"]
 list = ["dep:icu_list", "dep:potential_utf"]
@@ -90,7 +91,7 @@ segmenter = ["dep:icu_segmenter"]
 timezone = ["calendar"]
 
 # Unstable features on individual components
-unstable = ["icu_calendar?/unstable"]
+unstable = ["icu_calendar?/unstable", "icu_datetime?/unstable", "icu_plurals?/unstable"]
 
 compiled_data = [
     "icu_calendar?/compiled_data",
@@ -159,4 +160,7 @@ libc_alloc = { workspace = true, features = ["global"], optional = true }
 icu_provider_fs = { workspace = true, optional = true }
 
 [package.metadata.cargo-semver-checks.lints]
+workspace = true
+
+[lints]
 workspace = true

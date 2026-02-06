@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::fmt::Write;
+use core::fmt::Write;
 
 use fixed_decimal::Decimal;
 use writeable::Writeable;
@@ -25,6 +25,7 @@ pub mod parts {
 
 /// An intermediate structure returned by [`RelativeTimeFormatter`](crate::relativetime::RelativeTimeFormatter).
 /// This structure can be consumed via [`Writeable`](Writeable) trait to a string or buffer.
+#[derive(Debug)]
 pub struct FormattedRelativeTime<'a> {
     pub(crate) formatter: &'a RelativeTimeFormatter,
     pub(crate) options: &'a RelativeTimeFormatterOptions,

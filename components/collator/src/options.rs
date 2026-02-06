@@ -15,13 +15,55 @@ use crate::{
     CollatorPreferences,
 };
 
-/// The collation strength that indicates how many levels to compare.
+/// The collation strength that indicates how many levels to compare. The primary
+/// level considers base letters, i.e. 'a' and 'b' are unequal but 'E' and 'é'
+/// are equal, with further levels dealing with distinctions such as accents
+/// and case.
+///
+/// Note that what constitutes a base letter depends on the language and
+/// not on Unicode character properties. For example, 'ö' is analyzed as a base letter
+/// for various languages (e.g. Estonian, Finnish, Icelandic, Swedish, and Turkish),
+/// so it is distinct from 'o' even on the primary level in such languages.
+/// Inputs that are equal in fold case (as tailored for e.g. Turkish) are expected
+/// to be equal on the primary level. For example, "ß" is primary-equal with "ss".
+/// Characters that are graphically ligature-like can be primary-equal with what
+/// they appear to be ligatures of. For example, in the root collation (but not
+/// in e.g. Danish and Norwegian) "æ" is primary-equal with "ae".
 ///
 /// If an earlier level isn't equal, the earlier level is decisive.
 /// If the result is equal on a level, but the strength is higher,
 /// the comparison proceeds to the next level.
 ///
-/// Note: The bit layout of `CollatorOptions` requires `Strength`
+/// Note that lowering the strength means that more user-perceptible differences
+/// compare as equal. This may make sense when sorting more complex structures
+/// where the string to be compared is just one field, and ties between strings
+/// that differ only in case, accent, or similar are resolved by comparing some
+/// secondary field in the larger structure to be sorted.
+///
+/// Therefore, if the sort is just a string sort without some other field for
+/// resolving ties, lowering the strength means that factors that don't make
+/// sense to the user (such as the order of items prior to sorting with a stable
+/// sort algorithm or the internal details of a sorting algorithm that doesn't
+/// provide the stability property) affect the relative order of strings that
+/// do have user-perceptible differences particularly in accents or case.
+///
+/// Lowering the strength is less of a perfomance optimization that it may seem
+/// directly from the above description. As described above, in the case
+/// of identical strings to be compared, the algorithm has to work though all
+/// the levels included in the strength without an early exit. However, this
+/// collator implements an identical prefix optimization, which examines the
+/// code units of the strings to be compared to skip the identical prefix before
+/// starting the actual collation algorithm. When the strings to be compared
+/// are identical on the byte level, they are found to be equal without the
+/// actual collation algorithm running at all! Therefore, the strength setting
+/// only has an effect (whether order effect or performance effect) for
+/// comparisons where the strings to be compared are not equal on the byte level
+/// but are equal on the primary level/strength. The common cases are that
+/// a comparison is decided on the primary level or the strings are byte
+/// equal, which narrows the performance effect of lowering the strength
+/// setting.
+///
+/// Note: The bit layout of `CollatorOptionsBitField` requires `Strength`
 /// to fit in 3 bits.
 #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
 #[repr(u8)]
@@ -433,9 +475,9 @@ impl CollatorOptionsBitField {
     ///             other tertiary values)
     ///             unless case level is on (when they are *moved* into the separate case level).
     ///             By default, the case bits are removed from the tertiary weight (ignored).
-    ///             When CASE_FIRST is off, UPPER_FIRST must be off too, corresponding to
-    ///             the tri-value UCOL_CASE_FIRST attribute: UCOL_OFF vs. UCOL_LOWER_FIRST vs.
-    ///             UCOL_UPPER_FIRST.
+    ///             When `CASE_FIRST` is off, `UPPER_FIRST` must be off too, corresponding to
+    ///             the tri-value `UCOL_CASE_FIRST` attribute: `UCOL_OFF` vs. `UCOL_LOWER_FIRST` vs.
+    ///             `UCOL_UPPER_FIRST`.
     const CASE_FIRST_MASK: u32 = 1 << 9;
     /// Bit    10 : Insert the case level between the secondary and tertiary levels.
     const CASE_LEVEL_MASK: u32 = 1 << 10;

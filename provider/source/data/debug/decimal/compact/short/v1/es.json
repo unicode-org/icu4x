@@ -1,0 +1,66 @@
+[
+  {
+    "sized": 3,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " mil"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " M"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 10,
+    "variable": {
+      "other": [
+        1,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " mil M"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " B"
+          }
+        ]
+      ]
+    }
+  }
+]

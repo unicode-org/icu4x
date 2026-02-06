@@ -51,3 +51,6 @@ alloc = ["zerotrie/alloc", "serde?/alloc", "zerovec/alloc"]
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true
+
+[lints]
+workspace = true

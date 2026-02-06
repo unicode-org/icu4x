@@ -137,7 +137,7 @@ pub enum AsciiByte {
 }
 
 impl AsciiByte {
-    /// Convert [u8; N] to [AsciiByte; N]
+    /// Convert `[u8; N]` to `[AsciiByte; N]`
     ///
     /// # Safety
     ///

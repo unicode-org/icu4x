@@ -4,122 +4,27 @@
 
 #![no_main]
 
+mod common;
+
+use common::{Ymd, AnyCalendarKind};
+
 use arbitrary::Arbitrary;
-use icu_calendar::options::*;
-use icu_calendar::types::{DateFields, MonthCode};
-use icu_calendar::{AnyCalendar, Date};
 use libfuzzer_sys::fuzz_target;
 
 #[derive(Arbitrary, Debug)]
 struct FuzzInput {
-    year: i32,
-    month: u8,
-    day: u8,
-    month_interpretation: MonthInterpretation,
+    ymd: Ymd,
     overflow_constrain: bool,
     cal: AnyCalendarKind,
 }
 
-#[derive(Arbitrary, Debug)]
-enum MonthInterpretation {
-    Ordinal,
-    CodeNormal,
-    CodeLeap,
-}
-
-#[derive(Arbitrary, Debug)]
-pub enum AnyCalendarKind {
-    Buddhist,
-    Chinese,
-    Coptic,
-    Dangi,
-    Ethiopian,
-    EthiopianAmeteAlem,
-    Gregorian,
-    Hebrew,
-    Indian,
-    HijriTabularTypeIIFriday,
-    // Not needed by Temporal and has some bugs
-    // https://github.com/unicode-org/icu4x/issues/7049#issuecomment-3384358307
-    // HijriSimulatedMecca,
-    HijriTabularTypeIIThursday,
-    HijriUmmAlQura,
-    Iso,
-    Japanese,
-    JapaneseExtended,
-    Persian,
-    Roc,
-    // Note: This doesn't cover Julian, since it's not in AnyCalendar
-}
-
-impl From<AnyCalendarKind> for icu_calendar::AnyCalendarKind {
-    fn from(other: AnyCalendarKind) -> Self {
-        match other {
-            AnyCalendarKind::Buddhist => Self::Buddhist,
-            AnyCalendarKind::Chinese => Self::Chinese,
-            AnyCalendarKind::Coptic => Self::Coptic,
-            AnyCalendarKind::Dangi => Self::Dangi,
-            AnyCalendarKind::Ethiopian => Self::Ethiopian,
-            AnyCalendarKind::EthiopianAmeteAlem => Self::EthiopianAmeteAlem,
-            AnyCalendarKind::Gregorian => Self::Gregorian,
-            AnyCalendarKind::Hebrew => Self::Hebrew,
-            AnyCalendarKind::Indian => Self::Indian,
-            AnyCalendarKind::HijriTabularTypeIIFriday => Self::HijriTabularTypeIIFriday,
-            // AnyCalendarKind::HijriSimulatedMecca => Self::HijriSimulatedMecca,
-            AnyCalendarKind::HijriTabularTypeIIThursday => Self::HijriTabularTypeIIThursday,
-            AnyCalendarKind::HijriUmmAlQura => Self::HijriUmmAlQura,
-            AnyCalendarKind::Iso => Self::Iso,
-            AnyCalendarKind::Japanese => Self::Japanese,
-            AnyCalendarKind::JapaneseExtended => Self::JapaneseExtended,
-            AnyCalendarKind::Persian => Self::Persian,
-            AnyCalendarKind::Roc => Self::Roc,
-        }
-    }
-}
-
-macro_rules! unwrap_or_return(
-    ($e:expr) => {
-        {
-            let Some(r) = $e else {
-                return;
-            };
-            r
-        }
-    }
-);
-
 fuzz_target!(|data: FuzzInput| {
-    let calendar = AnyCalendar::new(data.cal.into());
-
-    let mut options = DateFromFieldsOptions::default();
-
-    options.overflow = if data.overflow_constrain {
-        Some(Overflow::Constrain)
-    } else {
-        Some(Overflow::Reject)
-    };
-
-    let mut fields = DateFields::default();
-    fields.extended_year = Some(data.year);
-    fields.day = Some(data.day);
-    match data.month_interpretation {
-        MonthInterpretation::Ordinal => {
-            fields.ordinal_month = Some(data.month);
-        }
-        MonthInterpretation::CodeNormal => {
-            fields.month_code = Some(unwrap_or_return!(MonthCode::new_normal(data.month)));
-        }
-        MonthInterpretation::CodeLeap => {
-            fields.month_code = Some(unwrap_or_return!(MonthCode::new_leap(data.month)));
-        }
-    };
-    if let Ok(date) = Date::try_from_fields(fields, options, calendar) {
+    if let Some(date) = data.ymd.to_date(data.cal, data.overflow_constrain) {
         let _ = date.day_of_month();
-        let _ = date.day_of_week();
+        let _ = date.weekday();
         let _ = date.day_of_year();
         let _ = date.days_in_month();
         let _ = date.days_in_year();
-        let _ = date.extended_year();
         let _ = date.is_in_leap_year();
         let _ = date.month();
         let _ = date.months_in_year();

@@ -26,8 +26,10 @@ icu_provider_registry = { workspace = true }
 icu_provider_blob = { workspace = true, features = ["alloc"], optional = true }
 
 clap = { workspace = true, features = ["derive"] }
+displaydoc = { workspace = true }
 eyre = { workspace = true }
 log = { workspace = true }
+regex = { workspace = true }
 simple_logger = { workspace = true }
 
 [features]
@@ -45,7 +47,7 @@ use_wasm = ["icu_provider_source?/use_wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_provider_source?/use_icu4c"]
 networking = ["icu_provider_source?/networking"]
-experimental = ["icu_provider_source?/experimental", "icu/experimental"]
+unstable = ["icu_provider_source?/unstable", "icu/unstable"]
 rayon = ["icu_provider_export/rayon"]
 
 [package.metadata.cargo-all-features]
@@ -54,3 +56,6 @@ skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # We have a *lot* of features here
 max_combination_size = 2
+
+[lints]
+workspace = true

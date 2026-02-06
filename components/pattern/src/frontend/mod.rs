@@ -17,7 +17,9 @@ use crate::Parser;
 #[cfg(feature = "alloc")]
 use crate::ParserOptions;
 #[cfg(feature = "alloc")]
-use alloc::{borrow::ToOwned, boxed::Box, str::FromStr, string::String};
+use alloc::{borrow::ToOwned, boxed::Box, string::String};
+#[cfg(feature = "alloc")]
+use core::str::FromStr;
 use core::{convert::Infallible, fmt, marker::PhantomData};
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
@@ -77,7 +79,7 @@ impl<B: PatternBackend> PartialEq for Pattern<B> {
     }
 }
 
-impl<B: PatternBackend> core::fmt::Debug for Pattern<B> {
+impl<B: PatternBackend> fmt::Debug for Pattern<B> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Pattern")
             .field("_backend", &self._backend)

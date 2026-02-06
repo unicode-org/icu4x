@@ -301,7 +301,7 @@ impl serde::Serialize for VariantOffsets {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            use alloc::fmt::Write;
+            use core::fmt::Write;
             let mut r = alloc::format!(
                 "{:+02}:{:02}",
                 self.standard.hours_part(),
@@ -395,11 +395,11 @@ pub struct TimezonePeriods<'a> {
 
     /// The deduplicated list of offsets.
     ///
-    /// There are currently 99 unique VariantOffsetsWithMetazoneMembershipKind, so storing the index as a u8 is plenty enough.
+    /// There are currently 99 unique [`VariantOffsetsWithMetazoneMembershipKind`], so storing the index as a `u8` is plenty enough.
     pub offsets: ZeroVec<'a, VariantOffsetsWithMetazoneMembershipKind>,
 }
 
-/// Encodes ZoneNameTimestamp in 3 bytes by dropping the unused metadata
+/// Encodes [`ZoneNameTimestamp`] in 3 bytes by dropping the unused metadata
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]

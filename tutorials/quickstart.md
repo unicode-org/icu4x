@@ -1,6 +1,6 @@
 # Introduction to ICU4X for Rust
 
-`ICU4X` is an implementation of [Internationalization Components of Unicode](http://site.icu-project.org/) (ICU) intended to be modular, performant and flexible.
+`ICU4X` is an implementation of [Internationalization Components of Unicode](https://icu.unicode.org/) (ICU) intended to be modular, performant and flexible.
 
 The library provides a layer of APIs for all software to enable internationalization capabilities.
 

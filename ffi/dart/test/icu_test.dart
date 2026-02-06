@@ -290,10 +290,9 @@ void main() {
       ).formatIso(
         zonedDateTimeIso.date,
         zonedDateTimeIso.time,
-        TimeZoneInfo(
-          TimeZone.fromBcp47('uslax'),
-          offset: UtcOffset.fromSeconds(-420),
-        ),
+        IanaParser()
+            .parse('America/Los_Angeles')
+            .withOffset(UtcOffset.fromSeconds(-420)),
       ),
       '15.07., 14:32:12 GMT-00:07',
     );

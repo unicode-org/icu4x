@@ -34,6 +34,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct ZonedDateTimeFormatter(
         pub  icu_datetime::DateTimeFormatter<
             icu_datetime::fieldsets::enums::ZonedDateAndTimeFieldSet
@@ -613,6 +614,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct ZonedDateTimeFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,

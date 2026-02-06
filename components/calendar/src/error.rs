@@ -4,13 +4,16 @@
 
 //! Error types for functions in the calendar crate
 
-use crate::{options::Overflow, types::MonthCode};
+use crate::{
+    options::Overflow,
+    types::{Month, MonthCode},
+};
 use displaydoc::Display;
 
-#[derive(Debug, Copy, Clone, PartialEq, Display)]
 /// Error type for date creation via [`Date::try_new_from_codes`].
 ///
 /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+#[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum DateError {
     /// A field is out of range for its domain.
@@ -34,15 +37,14 @@ pub enum DateError {
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::calendar::types::MonthCode;
+    /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
     /// use icu::calendar::DateError;
-    /// use tinystr::tinystr;
     ///
     /// Date::try_new_from_codes(
     ///     None,
     ///     5784,
-    ///     MonthCode::new_leap(5).unwrap(),
+    ///     Month::leap(5).code(),
     ///     1,
     ///     Hebrew,
     /// )
@@ -51,7 +53,7 @@ pub enum DateError {
     /// let err = Date::try_new_from_codes(
     ///     None,
     ///     5785,
-    ///     MonthCode::new_leap(5).unwrap(),
+    ///     Month::leap(5).code(),
     ///     1,
     ///     Hebrew,
     /// )
@@ -61,6 +63,45 @@ pub enum DateError {
     /// ```
     #[displaydoc("Unknown month code {0:?}")]
     UnknownMonthCode(MonthCode),
+}
+
+/// Error type for date creation via [`Date::try_new_from_codes`].
+///
+/// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+#[derive(Debug, Copy, Clone, PartialEq, Display)]
+#[non_exhaustive]
+pub enum LunisolarRangeError {
+    /// A field is out of range for its domain.
+    #[displaydoc("The {field} = {value} argument is out of range {min}..={max}")]
+    Range {
+        /// The field that is out of range, such as "year"
+        field: &'static str,
+        /// The actual value
+        value: i32,
+        /// The minimum value (inclusive). This might not be tight.
+        min: i32,
+        /// The maximum value (inclusive). This might not be tight.
+        max: i32,
+    },
+    /// The month code is invalid for the calendar or year.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::types::Month;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::LunisolarRangeError;
+    ///
+    /// Date::try_new_hebrew_v2(5784, Month::leap(5), 1)
+    ///     .expect("5784 is a leap year");
+    ///
+    /// let err = Date::try_new_hebrew_v2(5785, Month::leap(5), 1)
+    ///     .expect_err("5785 is a common year");
+    ///
+    /// assert!(matches!(err, LunisolarRangeError::InvalidMonth(_)));
+    /// ```
+    #[displaydoc("Invalid month {0:?}")]
+    InvalidMonth(Month),
 }
 
 impl core::error::Error for DateError {}
@@ -127,7 +168,7 @@ mod unstable {
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(2000);
-        /// fields.month_code = Some(b"????");
+        /// fields.month_code = Some(b"sep");
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Iso)
@@ -144,12 +185,12 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M13");
+        /// fields.month = Some(Month::new(13));
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
@@ -165,12 +206,12 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M05L");
+        /// fields.month = Some(Month::leap(5));
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
@@ -215,13 +256,13 @@ mod unstable {
         /// ```
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use tinystr::tinystr;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month_code = Some(b"M06");
+        /// fields.month = Some(Month::new(6));
         /// fields.ordinal_month = Some(6);
         /// fields.day = Some(1);
         ///
@@ -309,9 +350,11 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
-/// Internal narrow error type for functions that only fail on parsing month codes
+/// Error for [`Month`] parsing
 #[derive(Debug)]
-pub(crate) enum MonthCodeParseError {
+#[non_exhaustive]
+pub enum MonthCodeParseError {
+    /// Invalid syntax
     InvalidSyntax,
 }
 
@@ -344,7 +387,14 @@ impl From<MonthCodeError> for DateFromFieldsError {
 mod inner {
     /// Internal narrow error type for calculating the ECMA reference year
     ///
-    /// Public but unstable because it is used on hijri::Rules
+    /// Public but unstable because it is used on [`hijri::Rules`](crate::cal::hijri::Rules)
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+    /// </div>
     #[derive(Debug, Copy, Clone, PartialEq, Eq)]
     #[allow(missing_docs)] // TODO: fix when graduating
     #[non_exhaustive]
@@ -352,12 +402,113 @@ mod inner {
         Unimplemented,
         MonthCodeNotInCalendar,
     }
+
+    /// Errors that can occur when parsing an ISO 8601 date-only duration string.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    #[derive(Debug, Copy, Clone, Eq, PartialEq)]
+    #[non_exhaustive]
+    pub enum DateDurationParseError {
+        /// The input does not follow the expected ISO 8601 date only duration structure.
+        ///
+        /// This error occurs when the duration string is incomplete,
+        /// or contains unexpected characters.
+        ///
+        /// # Examples
+        ///
+        /// ```rust
+        /// use icu::calendar::error::DateDurationParseError;
+        /// use icu::calendar::types::DateDuration;
+        ///
+        /// assert_eq!(DateDuration::try_from_str("P"),  Err(DateDurationParseError::InvalidStructure));
+        /// assert_eq!(DateDuration::try_from_str("P1"), Err(DateDurationParseError::InvalidStructure));
+        /// ```
+        InvalidStructure,
+
+        /// The duration contains a time component, which is not supported.
+        ///
+        /// Only date based units (`Y`, `M`, `W`, `D`) are supported. Any duration
+        /// containing a `T` time separator is rejected.
+        ///
+        /// # Examples
+        ///
+        /// ```rust
+        /// use icu::calendar::error::DateDurationParseError;
+        /// use icu::calendar::types::DateDuration;
+        ///
+        /// assert_eq!(DateDuration::try_from_str("PT5M"), Err(DateDurationParseError::TimeNotSupported));
+        /// assert_eq!(DateDuration::try_from_str("P1DT"), Err(DateDurationParseError::TimeNotSupported));
+        /// ```
+        TimeNotSupported,
+
+        /// A duration unit appeared without a number before it.
+        ///
+        /// For example, the string contains `Y`, `M`, `W`, or `D` without a
+        /// numeric value directly in front of it.
+        ///
+        /// # Examples
+        ///
+        /// ```rust
+        /// use icu::calendar::error::DateDurationParseError;
+        /// use icu::calendar::types::DateDuration;
+        ///
+        /// assert_eq!(DateDuration::try_from_str("PY"), Err(DateDurationParseError::MissingValue));
+        /// assert_eq!(DateDuration::try_from_str("PX1D"), Err(DateDurationParseError::MissingValue));
+        /// ```
+        MissingValue,
+
+        /// A duration unit was specified more than once.
+        ///
+        /// Each unit (`Y`, `M`, `W`, `D`) may appear at most once only.
+        ///
+        /// # Examples
+        ///
+        /// ```rust
+        /// use icu::calendar::error::DateDurationParseError;
+        /// use icu::calendar::types::DateDuration;
+        ///
+        /// assert_eq!(DateDuration::try_from_str("P1Y2Y"), Err(DateDurationParseError::DuplicateUnit));
+        /// assert_eq!(DateDuration::try_from_str("P1D1D"), Err(DateDurationParseError::DuplicateUnit));
+        /// ```
+        DuplicateUnit,
+
+        /// A numeric value exceeded or was more than the supported range.
+        ///
+        /// # Examples
+        ///
+        /// ```rust
+        /// use icu::calendar::error::DateDurationParseError;
+        /// use icu::calendar::types::DateDuration;
+        ///
+        /// assert_eq!(DateDuration::try_from_str("P4294967296Y"), Err(DateDurationParseError::NumberOverflow));
+        /// ```
+        NumberOverflow,
+
+        /// A duration starts with a `+` sign, which is not allowed.
+        ///
+        /// Only negative durations using a leading `-` are supported.
+        ///
+        /// # Examples
+        ///
+        /// ```rust
+        /// use icu::calendar::error::DateDurationParseError;
+        /// use icu::calendar::types::DateDuration;
+        ///
+        /// assert_eq!(DateDuration::try_from_str("+P1D"), Err(DateDurationParseError::PlusNotAllowed));
+        /// ```
+        PlusNotAllowed,
+    }
 }
 
 #[cfg(feature = "unstable")]
-pub use inner::EcmaReferenceYearError;
+pub use inner::{DateDurationParseError, EcmaReferenceYearError};
 #[cfg(not(feature = "unstable"))]
-pub(crate) use inner::EcmaReferenceYearError;
+pub(crate) use inner::{DateDurationParseError, EcmaReferenceYearError};
 
 impl From<EcmaReferenceYearError> for DateFromFieldsError {
     #[inline]
@@ -398,6 +549,24 @@ impl From<RangeError> for DateError {
             max,
         } = value;
         DateError::Range {
+            field,
+            value,
+            min,
+            max,
+        }
+    }
+}
+
+impl From<RangeError> for LunisolarRangeError {
+    #[inline]
+    fn from(value: RangeError) -> Self {
+        let RangeError {
+            field,
+            value,
+            min,
+            max,
+        } = value;
+        LunisolarRangeError::Range {
             field,
             value,
             min,

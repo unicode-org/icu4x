@@ -95,7 +95,7 @@ impl ZoneNameTimestamp {
     ///
     /// # Examples
     ///
-    /// ZonedDateTime does _not_ necessarily roundtrip:
+    /// [`ZonedDateTime`] does _not_ necessarily roundtrip:
     ///
     /// ```
     /// use icu::calendar::Date;
@@ -219,14 +219,14 @@ impl serde::Serialize for ZoneNameTimestamp {
         if serializer.is_human_readable() {
             let date_time = self.to_zoned_date_time_iso();
             let year = date_time.date.era_year().year;
-            let month = date_time.date.month().month_number();
+            let month = date_time.date.month().number();
             let day = date_time.date.day_of_month().0;
             let hour = date_time.time.hour.number();
             let minute = date_time.time.minute.number();
             let second = date_time.time.second.number();
             let mut s = alloc::format!("{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}");
             if second != 0 {
-                use alloc::fmt::Write;
+                use core::fmt::Write;
                 let _infallible = write!(&mut s, ":{second:02}");
             }
             // don't serialize the metadata for now

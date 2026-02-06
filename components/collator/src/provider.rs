@@ -21,7 +21,7 @@
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, RawBytesULE};
+use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
 use zerovec::{zeroslice, ZeroSlice};
 
@@ -370,7 +370,7 @@ pub struct CollationReordering<'data> {
     /// their lead bytes modified by the signed offset (-0xff..+0xff)
     /// stored in the lower 16 bits.
     ///
-    /// CollationData::makeReorderRanges() writes a full list where the
+    /// `CollationData::makeReorderRanges()` writes a full list where the
     /// first range (at least for terminators and separators) has a 0
     /// offset. The last range has a non-zero offset. minHighNoReorder
     /// is set to the limit of that last range.
@@ -582,22 +582,22 @@ pub(crate) struct CollationSpecialPrimariesValidated<'data> {
 
 impl CollationSpecialPrimariesValidated<'static> {
     pub(crate) const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b1111_1111_1111_1110u16.to_le_bytes()),
-        RawBytesULE(0b1111_1111_1111_1111u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0001u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0100_0000_0000_0000u16.to_le_bytes()),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b1111_1111_1111_1110),
+        <u16 as AsULE>::ULE::from_unsigned(0b1111_1111_1111_1111),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0001),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0100_0000_0000_0000),
     ];
 }
 

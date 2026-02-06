@@ -4,7 +4,9 @@
 
 use core::str::FromStr;
 
+use crate::calendar_arithmetic::VALID_RD_RANGE;
 use crate::{AsCalendar, Calendar, Date, Iso, RangeError};
+use calendrical_calculations::gregorian::fixed_from_gregorian;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use ixdtf::encoding::Utf8;
 use ixdtf::parsers::IxdtfParser;
@@ -69,7 +71,7 @@ impl<A: AsCalendar> Date<A> {
     ///     Date::try_from_str("2024-07-17[u-ca=hebrew]", Gregorian).unwrap_err();
     ///
     /// assert_eq!(date.era_year().year, 2024);
-    /// assert_eq!(date.month().standard_code.0, "M07");
+    /// assert_eq!(date.month().number(), 7);
     /// assert_eq!(date.day_of_month().0, 17);
     /// ```
     pub fn try_from_str(rfc_9557_str: &str, calendar: A) -> Result<Self, ParseError> {
@@ -95,7 +97,6 @@ impl<A: AsCalendar> Date<A> {
         calendar: A,
     ) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
-        let iso = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
 
         if let Some(ixdtf_calendar) = ixdtf_record.calendar {
             if let Some(expected_calendar) = calendar.as_calendar().calendar_algorithm() {
@@ -113,6 +114,17 @@ impl<A: AsCalendar> Date<A> {
                 }
             }
         }
-        Ok(iso.to_calendar(calendar))
+
+        // `date_record` is in -999999-01-01..=999999-12-31
+        let rd = fixed_from_gregorian(date_record.year, date_record.month, date_record.day);
+
+        // `rd` is in range, see `_RD_RANGE_REGRESSION_CHECK`
+        Ok(Date::from_rata_die(rd, calendar))
     }
 }
+
+const _RD_RANGE_REGRESSION_CHECK: () = assert!(
+    VALID_RD_RANGE.start().to_i64_date() <= fixed_from_gregorian(-999_999, 1, 1).to_i64_date()
+        && fixed_from_gregorian(999_999, 12, 31).to_i64_date()
+            <= VALID_RD_RANGE.end().to_i64_date()
+);

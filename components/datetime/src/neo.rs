@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! High-level entrypoints for Neo DateTime Formatter
+//! High-level entrypoints for Neo [`DateTimeFormatter`]
 
 use crate::error::DateTimeFormatterLoadError;
 use crate::external_loaders::*;
@@ -141,14 +141,14 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// Basic usage:
 ///
 /// ```
-/// use icu::calendar::cal::JapaneseExtended;
+/// use icu::calendar::cal::Japanese;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::input::Date;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// // The JapaneseExtended generic is inferred by passing this a JapaneseExtended date later
+/// // The Japanese generic is inferred by passing this a Japanese date later
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     locale!("es-MX").into(),
 ///     YMD::long(),
@@ -156,7 +156,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// .unwrap();
 ///
 /// assert_writeable_eq!(
-///     formatter.format(&Date::try_new_iso(2023, 12, 20).unwrap().to_calendar(JapaneseExtended::new())),
+///     formatter.format(&Date::try_new_iso(2023, 12, 20).unwrap().to_calendar(Japanese::new())),
 ///     "20 de diciembre de 5 Reiwa"
 /// );
 /// ```
@@ -219,7 +219,7 @@ where
     /// datetime components specified at build time.
     ///
     /// This ignores the `calendar_kind` preference and instead uses the static calendar type,
-    /// and supports calendars that are not expressible as preferences, such as [`JapaneseExtended`](icu_calendar::cal::JapaneseExtended).
+    /// and supports calendars that are not expressible as preferences.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -391,7 +391,7 @@ where
 size_test!(
     DateTimeFormatter<crate::fieldsets::YMD>,
     neo_year_month_day_formatter_size,
-    368
+    336
 );
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting dates and/or times from
@@ -425,7 +425,7 @@ size_test!(
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
     pub(crate) selection: DateTimeZonePatternSelectionData,
     pub(crate) names: RawDateTimeNames<FSet>,
-    pub(crate) calendar: UntaggedFormattableAnyCalendar,
+    pub(crate) calendar: FormattableAnyCalendar,
 }
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
@@ -503,8 +503,7 @@ where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: DecimalFormatterLoader + FormattableAnyCalendarLoader,
     {
-        let kind = FormattableAnyCalendarKind::from_preferences(prefs);
-        let calendar = FormattableAnyCalendarLoader::load(loader, kind)?;
+        let calendar = FormattableAnyCalendarLoader::load(loader, (&prefs).into())?;
         let names = RawDateTimeNames::new_without_number_formatting();
         Self::try_new_internal_with_calendar_and_names(
             provider,
@@ -549,8 +548,7 @@ where
     {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Skel, _>::new(
-                provider_p,
-                calendar.kind(),
+                provider_p, &calendar,
             ),
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
             &FSet::GluePatternV1::bind(provider_p),
@@ -568,12 +566,10 @@ where
         };
         let result = names.load_for_pattern(
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Year, _>::new(
-                provider,
-                calendar.kind(),
+                provider, &calendar,
             ),
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Month, _>::new(
-                provider,
-                calendar.kind(),
+                provider, &calendar,
             ),
             &<FSet::D as DateDataMarkers>::WeekdayNamesV1::bind(provider),
             &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
@@ -605,7 +601,7 @@ where
         Ok(Self {
             selection,
             names,
-            calendar: calendar.into_untagged(),
+            calendar,
         })
     }
 }
@@ -666,7 +662,7 @@ where
     pub fn format_same_calendar<I>(
         &self,
         datetime: &I,
-    ) -> Result<FormattedDateTime<'_>, crate::MismatchedCalendarError>
+    ) -> Result<FormattedDateTime<'_>, MismatchedCalendarError>
     where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {
@@ -781,7 +777,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
         DateTimeFormatter {
             selection: self.selection,
             names: self.names,
-            calendar: FormattableAnyCalendar::from_calendar(calendar).into_untagged(),
+            calendar: FormattableAnyCalendar::from_calendar(calendar),
         }
     }
 
@@ -789,8 +785,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// For example, this can transform a formatter for [`YMD`] to one for [`DateFieldSet`].
     ///
-    /// [`YMD`]: crate::fieldsets::YMD
-    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// To learn why this function is useful, see [`DateTimeFormatter::cast_into_fset`].
     ///
     /// # Examples
     ///
@@ -818,6 +813,10 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// // Test that it still works:
     /// assert_writeable_eq!(general_formatter.format(&date), "20 déc. 2024");
     /// ```
+    ///
+    /// [`MD`]: crate::fieldsets::MD
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
     pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(
         self,
     ) -> FixedCalendarDateTimeFormatter<C, FSet2> {
@@ -951,8 +950,15 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// For example, this can transform a formatter for [`YMD`] to one for [`DateFieldSet`].
     ///
-    /// [`YMD`]: crate::fieldsets::YMD
-    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// # Why do you need this function?
+    ///
+    /// The constructor is optimized to link only the data required for the chosen field set.
+    /// This function is useful if you want to work with multiple field sets, but not all of
+    /// them.
+    ///
+    /// For example, to support date formatting with variable fields but not weekdays,
+    /// you can use field-set-specific constructors for [`MD`] and [`YMD`] and then use this
+    /// function to convert the formatter to [`DateFields`].
     ///
     /// # Examples
     ///
@@ -978,6 +984,11 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// // Test that it still works:
     /// assert_writeable_eq!(general_formatter.format(&date), "20 déc. 2024");
     /// ```
+    ///
+    /// [`MD`]: crate::fieldsets::MD
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// [`DateFields`]: crate::fieldsets::builder::DateFields
     pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeFormatter<FSet2> {
         DateTimeFormatter {
             selection: self.selection,

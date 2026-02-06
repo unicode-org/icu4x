@@ -9,6 +9,7 @@ pub mod ffi {
     use icu_properties::props;
 
     #[diplomat::rust_link(icu::properties::props::BidiMirroringGlyph, Struct)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct BidiMirroringGlyph {
         /// The mirroring glyph
         pub mirroring_glyph: DiplomatOption<DiplomatChar>,
@@ -22,11 +23,11 @@ pub mod ffi {
     #[diplomat::enum_convert(props::BidiPairedBracketType, needs_wildcard)]
     #[non_exhaustive]
     pub enum BidiPairedBracketType {
-        /// Represents Bidi_Paired_Bracket_Type=Open.
+        /// Represents `Bidi_Paired_Bracket_Type=Open`.
         Open,
-        /// Represents Bidi_Paired_Bracket_Type=Close.
+        /// Represents `Bidi_Paired_Bracket_Type=Close`.
         Close,
-        /// Represents Bidi_Paired_Bracket_Type=None.
+        /// Represents `Bidi_Paired_Bracket_Type=None`.
         // This is an output type, so the default mostly impacts deferred initialization.
         #[diplomat::attr(auto, default)]
         None,
