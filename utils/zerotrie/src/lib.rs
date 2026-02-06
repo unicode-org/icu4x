@@ -27,12 +27,11 @@
 //!
 //! All runtime lookup code in this crate is 100% safe Rust.
 //!
-//! A small amount of unsafe Rust is used in the builder code as well as for implementing
-//! unsafe traits when the `zerovec` feature is enabled.
-//!
-//! `transmute` is allowed for zero-copy conversions between `repr(transparent)` types.
-//! These transmutes are used to provide a ergonomic API while maintaining zero-copy
-//! performance.
+//! A small amount of unsafe Rust is used in these situations:
+//! 
+//! - Casting references after checking for invariants
+//! - In the builder code
+//! - Implementing unsafe traits when the `zerovec` feature is enabled
 //!
 //! # Examples
 //!
