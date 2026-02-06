@@ -15,7 +15,7 @@
 //! All runtime lookup code in this crate is 100% safe Rust.
 //!
 //! A small amount of unsafe Rust is used in the builder code as well as for implementing
-//! unsafe traits such as [`VarULE`](zerovec::ule::VarULE).
+//! unsafe traits when the `zerovec` feature is enabled.
 //!
 //! # Examples
 //!
@@ -57,6 +57,9 @@
     )
 )]
 #![warn(missing_docs)]
+
+// To back up the claim in the crate docs:
+#![cfg_attr(not(feature = "zerovec"), deny(unsafe_code))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
