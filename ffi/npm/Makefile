@@ -19,7 +19,16 @@ lib/index.mjs: FORCE
 ../../target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	rustup toolchain install ${PINNED_CI_NIGHTLY}
 	rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
+	# Build the WASM library. Explanation of the flags:
+	# -Zunstable-options: enables other unstable flags
+	# -Cpanic=immediate-abort: removes unwind machinery and panic strings
+	# -Copt-level=s: tells llvm to optimize for size
+	# -C link-args=-zstack-size=${WASM_STACK_SIZE}: the default is too large and contributes to high runtime memory
+	# -Clto: run link-time optimization when building object files
+	# -Cembed-bitcode: retain llvm bitcode in the object files
+	# -Zwasm-c-abi=spec: use the new standard Rust-Wasm interface
 	RUSTFLAGS="-Zunstable-options -Cpanic=immediate-abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
+	# -Z build-std=std,panic_abort: rebuild the standard library with panic-abort behavior
 	cargo +${PINNED_CI_NIGHTLY} rustc \
 		-Z build-std=std,panic_abort \
 		--target wasm32-unknown-unknown \

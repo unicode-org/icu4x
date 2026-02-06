@@ -29,20 +29,15 @@ diplomat.config.mjs:
 target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	rustup toolchain install ${LLVM_COMPATIBLE_NIGHTLY}
 	rustup component add rust-src --toolchain ${LLVM_COMPATIBLE_NIGHTLY}
-	# Build the WASM library. Explanation of the flags:
-	# -Cpanic=abort: removes unwind machinery
-	# -Copt-level=s: tells llvm to optimize for size
-	# -C link-arg=-zstack-size=${WASM_STACK_SIZE}: the default is too large and contributes to high runtime memory
+	# Build the WASM library.
+	# For an explanation of the shared flags, see ffi/npm/Makefile.
+	# This Makefile adds the following flags to further reduce binary size:
 	# -Clinker-plugin-lto: add symbols to object files that enable link-time optimization
 	# -Ccodegen-units=1: generate the code in a single process to enable more opportunities for optimization
 	# -C linker=${BASEDIR}/ld.py: run a custom linker script to remove symbols
 	# -C linker-flavor=wasm-ld: tells rustc to pass the arguments to ld.py as it would pass to wasm-ld
-	# -Clto: run link-time optimization when building object files
-	# -Cembed-bitcode: retain llvm bitcode in the object files
-	# -Zwasm-c-abi=spec: use the new standard Rust-Wasm interface
+	# -Z build-std-features=panic_immediate_abort: don't link debug impls when panicking, significantly reducing code size
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
-	# -Z build-std=std,panic_abort: rebuild the standard library with panic-abort behavior
-	# -Z build-std-features=panic_immediate_abort: don't link debug impls when panicking, significantly reducing code size\
 	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
