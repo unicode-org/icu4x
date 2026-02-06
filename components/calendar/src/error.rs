@@ -154,6 +154,26 @@ mod unstable {
         #[displaydoc("{0}")]
         Range(RangeError),
         /// The era code is invalid for the calendar.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::cal::Japanese;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.era = Some(b"Heisei"); // should be "heisei"
+        /// fields.era_year = Some(1);
+        /// fields.ordinal_month = Some(1);
+        /// fields.day = Some(1);
+        ///
+        /// let err = Date::try_from_fields(fields, Default::default(), Japanese::new())
+        ///     .expect_err("era is unknown");
+        ///
+        /// assert_eq!(err, DateFromFieldsError::UnknownEra);
+        /// ```
         #[displaydoc("Unknown era or invalid syntax")]
         UnknownEra,
         /// The month code syntax is invalid.
