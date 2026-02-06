@@ -158,19 +158,19 @@ mod unstable {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::cal::Japanese;
+        /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::error::DateFromFieldsError;
         /// use icu::calendar::types::DateFields;
         /// use icu::calendar::Date;
         ///
         /// let mut fields = DateFields::default();
-        /// fields.era = Some(b"Heisei"); // should be "heisei"
+        /// fields.era = Some(b"ce"); // valid in Gregorian, but not Hebrew
         /// fields.era_year = Some(1);
         /// fields.ordinal_month = Some(1);
         /// fields.day = Some(1);
         ///
-        /// let err = Date::try_from_fields(fields, Default::default(), Japanese::new())
-        ///     .expect_err("era is unknown");
+        /// let err = Date::try_from_fields(fields, Default::default(), Hebrew::new())
+        ///     .expect_err("era is unknown for Hebrew");
         ///
         /// assert_eq!(err, DateFromFieldsError::UnknownEra);
         /// ```
