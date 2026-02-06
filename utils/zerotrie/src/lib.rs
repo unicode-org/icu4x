@@ -55,7 +55,7 @@
 //! [`BTreeMap`]: alloc::collections::BTreeMap
 
 // To back up the claim in the docs:
-#[cfg_attr(not(feature = "zerovec"), deny(unsafe_code))]
+#![cfg_attr(not(feature = "zerovec"), deny(unsafe_code))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
