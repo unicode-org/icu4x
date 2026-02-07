@@ -53,10 +53,12 @@ cargo add icu --features serde
 Now, update the instantiation of the datetime formatter to load data from the blob if the
 locale is Chakma:
 
-```rust
+```rust,ignore
 // At the top of the file:
-use icu::locale::locale;
+use icu::locale::{locale, Locale};
 use icu_provider_blob::BlobDataProvider;
+use icu::calendar::{Gregorian, Date};
+use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets::YMD};
 
 // replace the date_formatter creation
 let date_formatter = if locale == locale!("ccp") {
@@ -151,7 +153,7 @@ The last datagen invocation still produced a lot of markers, as you saw in its o
 
 Replace the `DateTimeFormatter::try_new` calls with `FixedCalendarDateTimeFormatter::try_new`, and change the `format` invocation to convert the input to the Gregorian calendar:
 
-```rust
+```rust,ignore
     println!("Date: {}", date_formatter.format(&iso_date.to_calendar(Gregorian)));
 ```
 

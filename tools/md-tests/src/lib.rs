@@ -16,6 +16,8 @@ mod tutorials {
     mod data_provider_runtime_md {}
     #[doc = include_str!("../../../tutorials/data-management.md")]
     mod data_management_md {}
+    #[doc = include_str!("../../../tutorials/date-picker-data.md")]
+    mod date_picker_data_md {}
 }
 
 mod documents {
