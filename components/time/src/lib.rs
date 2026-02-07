@@ -36,4 +36,6 @@ pub mod zone;
 pub use zone::{TimeZone, TimeZoneInfo};
 
 mod types;
+#[cfg(feature = "unstable")]
+pub use types::ZonedTime;
 pub use types::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};

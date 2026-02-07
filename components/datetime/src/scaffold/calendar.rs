@@ -13,6 +13,8 @@ use icu_calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCal
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
+#[cfg(feature = "unstable")]
+use icu_time::ZonedTime;
 use icu_time::{
     zone::{models::TimeZoneModel, UtcOffset},
     DateTime, Time, TimeZoneInfo, ZonedDateTime,
@@ -736,6 +738,9 @@ impl<C> InFixedCalendar<C> for Time {}
 impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for DateTime<A> {}
 
 impl<C: CldrCalendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C> for ZonedDateTime<A, Z> {}
+
+#[cfg(feature = "unstable")]
+impl<C, Z> InFixedCalendar<C> for ZonedTime<Z> {}
 
 impl<C> InFixedCalendar<C> for UtcOffset {}
 

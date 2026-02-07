@@ -408,3 +408,53 @@ impl ZonedDateTime<Iso, UtcOffset> {
             + nanos / 1_000_000
     }
 }
+
+/// A time local to a specified time zone, without an associated date.
+///
+/// This is useful for formatting scenarios where only the time and time zone
+/// are relevant, and the calendar context is not needed.
+///
+/// This type is compatible with `NoCalendarFormatter`, which
+/// is used for field sets that do not contain date components.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+/// </div>
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "ixdtf")] {
+/// use icu::calendar::Iso;
+/// use icu::time::zone::iana::IanaParser;
+/// use icu::time::{ZonedDateTime, ZonedTime};
+///
+/// let zdt = ZonedDateTime::try_strict_from_str(
+///     "2024-10-18T15:44:00-07:00[America/Los_Angeles]",
+///     Iso,
+///     IanaParser::new(),
+/// )
+/// .unwrap();
+///
+/// let zoned_time = ZonedTime {
+///     time: zdt.time,
+///     zone: zdt.zone,
+/// };
+///
+/// assert_eq!(zoned_time.time.hour.number(), 15);
+/// # }
+/// ```
+///
+/// See the docs on `NoCalendarFormatter` for more information and examples.
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
+#[cfg(feature = "unstable")]
+pub struct ZonedTime<Z> {
+    /// The time
+    pub time: Time,
+    /// The time zone information
+    pub zone: Z,
+}
