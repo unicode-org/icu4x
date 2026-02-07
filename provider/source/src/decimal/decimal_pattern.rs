@@ -18,6 +18,14 @@ pub(crate) enum Error {
     NoBodyInSubpattern,
     #[displaydoc("Unclosed quote in pattern")]
     UnclosedQuote,
+    #[displaydoc("Non-literal item in prefix or suffix")]
+    InvalidAffixItem,
+    #[displaydoc("More than two grouping separators in pattern")]
+    TooManyGroupingSeparators,
+    #[displaydoc("Invalid item in pattern body")]
+    InvalidBodyItem,
+    #[displaydoc("Mandatory digit after optional digit in fraction")]
+    MandatoryAfterOptional,
 }
 
 /// An item in a decimal pattern (used during parsing).
@@ -147,7 +155,21 @@ impl FromStr for DecimalSubPattern {
         });
         let body_end = body_end.unwrap_or(body_start);
 
-        // Extract prefix (all literals before body)
+        // Validate prefix: all items before body must be literals
+        for item in &items[..body_start] {
+            if !matches!(item, DecimalPatternItem::Literal(_)) {
+                return Err(Error::InvalidAffixItem);
+            }
+        }
+
+        // Validate suffix: all items after body must be literals
+        for item in &items[body_end + 1..] {
+            if !matches!(item, DecimalPatternItem::Literal(_)) {
+                return Err(Error::InvalidAffixItem);
+            }
+        }
+
+        // Extract prefix
         let prefix: String = items[..body_start]
             .iter()
             .filter_map(|item| {
@@ -159,7 +181,7 @@ impl FromStr for DecimalSubPattern {
             })
             .collect();
 
-        // Extract suffix (all literals after body)
+        // Extract suffix
         let suffix: String = items[body_end + 1..]
             .iter()
             .filter_map(|item| {
@@ -171,8 +193,17 @@ impl FromStr for DecimalSubPattern {
             })
             .collect();
 
-        // Analyze the body to extract grouping and fraction info
+        // Validate body: only digit placeholders and separators are allowed
         let body_items = &items[body_start..=body_end];
+        for item in body_items {
+            match item {
+                DecimalPatternItem::DecimalSeparator
+                | DecimalPatternItem::GroupingSeparator
+                | DecimalPatternItem::MandatoryDigit
+                | DecimalPatternItem::OptionalDigit => {}
+                _ => return Err(Error::InvalidBodyItem),
+            }
+        }
 
         // Find decimal separator position
         let decimal_pos = body_items
@@ -198,6 +229,11 @@ impl FromStr for DecimalSubPattern {
                 }
             })
             .collect();
+
+        // Reject if there are more than two grouping separators
+        if grouping_positions.len() > 2 {
+            return Err(Error::TooManyGroupingSeparators);
+        }
 
         // Count digits after each grouping separator to determine grouping sizes
         let (primary_grouping, secondary_grouping) = if grouping_positions.is_empty() {
@@ -237,6 +273,23 @@ impl FromStr for DecimalSubPattern {
         // Calculate fraction digits from the fractional part
         let (min_fraction_digits, max_fraction_digits) = if let Some(pos) = decimal_pos {
             let fraction_items = &body_items[pos + 1..];
+
+            // Validate: mandatory digits must come before optional digits
+            let mut seen_optional = false;
+            for item in fraction_items {
+                match item {
+                    DecimalPatternItem::MandatoryDigit => {
+                        if seen_optional {
+                            return Err(Error::MandatoryAfterOptional);
+                        }
+                    }
+                    DecimalPatternItem::OptionalDigit => {
+                        seen_optional = true;
+                    }
+                    _ => {}
+                }
+            }
+
             let mandatory: u8 = fraction_items
                 .iter()
                 .filter(|item| matches!(item, DecimalPatternItem::MandatoryDigit))
@@ -483,4 +536,39 @@ fn test_quoted_literals() {
     // Test quoted special characters
     let pattern = DecimalPattern::from_str("'#'#,##0.###").unwrap();
     assert_eq!(pattern.positive.prefix, "#");
+}
+
+#[test]
+fn test_reject_three_grouping_separators() {
+    // Three grouping separators should be rejected
+    let result = DecimalPattern::from_str("#,##,##,##0");
+    assert_eq!(result, Err(Error::TooManyGroupingSeparators));
+}
+
+#[test]
+fn test_reject_mandatory_after_optional_in_fraction() {
+    // Pattern like #,##0.#0 is invalid (mandatory after optional)
+    let result = DecimalPattern::from_str("#,##0.#0");
+    assert_eq!(result, Err(Error::MandatoryAfterOptional));
+
+    // Valid: mandatory then optional
+    let result = DecimalPattern::from_str("#,##0.00##");
+    assert!(result.is_ok());
+    let pattern = result.unwrap();
+    assert_eq!(pattern.positive.min_fraction_digits, 2);
+    assert_eq!(pattern.positive.max_fraction_digits, 4);
+}
+
+#[test]
+fn test_reject_invalid_body_item() {
+    // A literal inside the body should be rejected
+    // This would happen if someone wrote something like #,##0a.### where 'a' is between digits
+    // However, our tokenizer treats unquoted 'a' as a literal, and body detection
+    // considers it as ending the body. So let's test a quoted literal in the body.
+    // Actually, the current logic defines body as the span from first to last body token,
+    // so a literal in between would be caught.
+
+    // Test: pattern with percent in the body (not allowed)
+    let result = DecimalPattern::from_str("#,##0%0.###");
+    assert_eq!(result, Err(Error::InvalidBodyItem));
 }
