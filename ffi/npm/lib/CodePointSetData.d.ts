@@ -66,21 +66,21 @@ export class CodePointSetData {
     static createGeneralCategoryGroupWithProvider(provider: DataProvider, group: number): CodePointSetData;
 
     /**
-     * Get the `Ascii_Hex_Digit` value for a given character, using compiled data
+     * Get the `AsciiHexDigit` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static asciiHexDigitForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Ascii_Hex_Digit` property, using compiled data.
+     * Create a set for the `AsciiHexDigit` property, using compiled data.
      *
      * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
      */
     static createAsciiHexDigit(): CodePointSetData;
 
     /**
-     * Create a set for the `Ascii_Hex_Digit` property, using a particular data source.
+     * Create a set for the `AsciiHexDigit` property, using a particular data source.
      *
      * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
      */
@@ -129,42 +129,42 @@ export class CodePointSetData {
     static createAlphabeticWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Bidi_Control` value for a given character, using compiled data
+     * Get the `BidiControl` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static bidiControlForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Bidi_Control` property, using compiled data.
+     * Create a set for the `BidiControl` property, using compiled data.
      *
      * See the [Rust documentation for `BidiControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiControl.html) for more information.
      */
     static createBidiControl(): CodePointSetData;
 
     /**
-     * Create a set for the `Bidi_Control` property, using a particular data source.
+     * Create a set for the `BidiControl` property, using a particular data source.
      *
      * See the [Rust documentation for `BidiControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiControl.html) for more information.
      */
     static createBidiControlWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Bidi_Mirrored` value for a given character, using compiled data
+     * Get the `BidiMirrored` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static bidiMirroredForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Bidi_Mirrored` property, using compiled data.
+     * Create a set for the `BidiMirrored` property, using compiled data.
      *
      * See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiMirrored.html) for more information.
      */
     static createBidiMirrored(): CodePointSetData;
 
     /**
-     * Create a set for the `Bidi_Mirrored` property, using a particular data source.
+     * Create a set for the `BidiMirrored` property, using a particular data source.
      *
      * See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiMirrored.html) for more information.
      */
@@ -213,168 +213,168 @@ export class CodePointSetData {
     static createCasedWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Case_Ignorable` value for a given character, using compiled data
+     * Get the `CaseIgnorable` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static caseIgnorableForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Case_Ignorable` property, using compiled data.
+     * Create a set for the `CaseIgnorable` property, using compiled data.
      *
      * See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseIgnorable.html) for more information.
      */
     static createCaseIgnorable(): CodePointSetData;
 
     /**
-     * Create a set for the `Case_Ignorable` property, using a particular data source.
+     * Create a set for the `CaseIgnorable` property, using a particular data source.
      *
      * See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseIgnorable.html) for more information.
      */
     static createCaseIgnorableWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Full_Composition_Exclusion` value for a given character, using compiled data
+     * Get the `FullCompositionExclusion` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static fullCompositionExclusionForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Full_Composition_Exclusion` property, using compiled data.
+     * Create a set for the `FullCompositionExclusion` property, using compiled data.
      *
      * See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
      */
     static createFullCompositionExclusion(): CodePointSetData;
 
     /**
-     * Create a set for the `Full_Composition_Exclusion` property, using a particular data source.
+     * Create a set for the `FullCompositionExclusion` property, using a particular data source.
      *
      * See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
      */
     static createFullCompositionExclusionWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Changes_When_Casefolded` value for a given character, using compiled data
+     * Get the `ChangesWhenCasefolded` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenCasefoldedForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Changes_When_Casefolded` property, using compiled data.
+     * Create a set for the `ChangesWhenCasefolded` property, using compiled data.
      *
      * See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
      */
     static createChangesWhenCasefolded(): CodePointSetData;
 
     /**
-     * Create a set for the `Changes_When_Casefolded` property, using a particular data source.
+     * Create a set for the `ChangesWhenCasefolded` property, using a particular data source.
      *
      * See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
      */
     static createChangesWhenCasefoldedWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Changes_When_Casemapped` value for a given character, using compiled data
+     * Get the `ChangesWhenCasemapped` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenCasemappedForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Changes_When_Casemapped` property, using compiled data.
+     * Create a set for the `ChangesWhenCasemapped` property, using compiled data.
      *
      * See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
      */
     static createChangesWhenCasemapped(): CodePointSetData;
 
     /**
-     * Create a set for the `Changes_When_Casemapped` property, using a particular data source.
+     * Create a set for the `ChangesWhenCasemapped` property, using a particular data source.
      *
      * See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
      */
     static createChangesWhenCasemappedWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Changes_When_Nfkc_Casefolded` value for a given character, using compiled data
+     * Get the `ChangesWhenNfkcCasefolded` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenNfkcCasefoldedForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Changes_When_Nfkc_Casefolded` property, using compiled data.
+     * Create a set for the `ChangesWhenNfkcCasefolded` property, using compiled data.
      *
      * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
      */
     static createChangesWhenNfkcCasefolded(): CodePointSetData;
 
     /**
-     * Create a set for the `Changes_When_Nfkc_Casefolded` property, using a particular data source.
+     * Create a set for the `ChangesWhenNfkcCasefolded` property, using a particular data source.
      *
      * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
      */
     static createChangesWhenNfkcCasefoldedWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Changes_When_Lowercased` value for a given character, using compiled data
+     * Get the `ChangesWhenLowercased` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenLowercasedForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Changes_When_Lowercased` property, using compiled data.
+     * Create a set for the `ChangesWhenLowercased` property, using compiled data.
      *
      * See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
      */
     static createChangesWhenLowercased(): CodePointSetData;
 
     /**
-     * Create a set for the `Changes_When_Lowercased` property, using a particular data source.
+     * Create a set for the `ChangesWhenLowercased` property, using a particular data source.
      *
      * See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
      */
     static createChangesWhenLowercasedWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Changes_When_Titlecased` value for a given character, using compiled data
+     * Get the `ChangesWhenTitlecased` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenTitlecasedForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Changes_When_Titlecased` property, using compiled data.
+     * Create a set for the `ChangesWhenTitlecased` property, using compiled data.
      *
      * See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
      */
     static createChangesWhenTitlecased(): CodePointSetData;
 
     /**
-     * Create a set for the `Changes_When_Titlecased` property, using a particular data source.
+     * Create a set for the `ChangesWhenTitlecased` property, using a particular data source.
      *
      * See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
      */
     static createChangesWhenTitlecasedWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Changes_When_Uppercased` value for a given character, using compiled data
+     * Get the `ChangesWhenUppercased` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenUppercasedForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Changes_When_Uppercased` property, using compiled data.
+     * Create a set for the `ChangesWhenUppercased` property, using compiled data.
      *
      * See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
      */
     static createChangesWhenUppercased(): CodePointSetData;
 
     /**
-     * Create a set for the `Changes_When_Uppercased` property, using a particular data source.
+     * Create a set for the `ChangesWhenUppercased` property, using a particular data source.
      *
      * See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
      */
@@ -423,21 +423,21 @@ export class CodePointSetData {
     static createDeprecatedWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Default_Ignorable_Code_Point` value for a given character, using compiled data
+     * Get the `DefaultIgnorableCodePoint` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static defaultIgnorableCodePointForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Default_Ignorable_Code_Point` property, using compiled data.
+     * Create a set for the `DefaultIgnorableCodePoint` property, using compiled data.
      *
      * See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
      */
     static createDefaultIgnorableCodePoint(): CodePointSetData;
 
     /**
-     * Create a set for the `Default_Ignorable_Code_Point` property, using a particular data source.
+     * Create a set for the `DefaultIgnorableCodePoint` property, using a particular data source.
      *
      * See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
      */
@@ -465,63 +465,63 @@ export class CodePointSetData {
     static createDiacriticWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Emoji_Modifier_Base` value for a given character, using compiled data
+     * Get the `EmojiModifierBase` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiModifierBaseForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Emoji_Modifier_Base` property, using compiled data.
+     * Create a set for the `EmojiModifierBase` property, using compiled data.
      *
      * See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifierBase.html) for more information.
      */
     static createEmojiModifierBase(): CodePointSetData;
 
     /**
-     * Create a set for the `Emoji_Modifier_Base` property, using a particular data source.
+     * Create a set for the `EmojiModifierBase` property, using a particular data source.
      *
      * See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifierBase.html) for more information.
      */
     static createEmojiModifierBaseWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Emoji_Component` value for a given character, using compiled data
+     * Get the `EmojiComponent` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiComponentForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Emoji_Component` property, using compiled data.
+     * Create a set for the `EmojiComponent` property, using compiled data.
      *
      * See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiComponent.html) for more information.
      */
     static createEmojiComponent(): CodePointSetData;
 
     /**
-     * Create a set for the `Emoji_Component` property, using a particular data source.
+     * Create a set for the `EmojiComponent` property, using a particular data source.
      *
      * See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiComponent.html) for more information.
      */
     static createEmojiComponentWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Emoji_Modifier` value for a given character, using compiled data
+     * Get the `EmojiModifier` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiModifierForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Emoji_Modifier` property, using compiled data.
+     * Create a set for the `EmojiModifier` property, using compiled data.
      *
      * See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifier.html) for more information.
      */
     static createEmojiModifier(): CodePointSetData;
 
     /**
-     * Create a set for the `Emoji_Modifier` property, using a particular data source.
+     * Create a set for the `EmojiModifier` property, using a particular data source.
      *
      * See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifier.html) for more information.
      */
@@ -549,21 +549,21 @@ export class CodePointSetData {
     static createEmojiWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Emoji_Presentation` value for a given character, using compiled data
+     * Get the `EmojiPresentation` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiPresentationForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Emoji_Presentation` property, using compiled data.
+     * Create a set for the `EmojiPresentation` property, using compiled data.
      *
      * See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiPresentation.html) for more information.
      */
     static createEmojiPresentation(): CodePointSetData;
 
     /**
-     * Create a set for the `Emoji_Presentation` property, using a particular data source.
+     * Create a set for the `EmojiPresentation` property, using a particular data source.
      *
      * See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiPresentation.html) for more information.
      */
@@ -591,21 +591,21 @@ export class CodePointSetData {
     static createExtenderWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Extended_Pictographic` value for a given character, using compiled data
+     * Get the `ExtendedPictographic` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static extendedPictographicForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Extended_Pictographic` property, using compiled data.
+     * Create a set for the `ExtendedPictographic` property, using compiled data.
      *
      * See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ExtendedPictographic.html) for more information.
      */
     static createExtendedPictographic(): CodePointSetData;
 
     /**
-     * Create a set for the `Extended_Pictographic` property, using a particular data source.
+     * Create a set for the `ExtendedPictographic` property, using a particular data source.
      *
      * See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ExtendedPictographic.html) for more information.
      */
@@ -633,84 +633,84 @@ export class CodePointSetData {
     static createGraphWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Grapheme_Base` value for a given character, using compiled data
+     * Get the `GraphemeBase` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static graphemeBaseForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Grapheme_Base` property, using compiled data.
+     * Create a set for the `GraphemeBase` property, using compiled data.
      *
      * See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeBase.html) for more information.
      */
     static createGraphemeBase(): CodePointSetData;
 
     /**
-     * Create a set for the `Grapheme_Base` property, using a particular data source.
+     * Create a set for the `GraphemeBase` property, using a particular data source.
      *
      * See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeBase.html) for more information.
      */
     static createGraphemeBaseWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Grapheme_Extend` value for a given character, using compiled data
+     * Get the `GraphemeExtend` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static graphemeExtendForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Grapheme_Extend` property, using compiled data.
+     * Create a set for the `GraphemeExtend` property, using compiled data.
      *
      * See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeExtend.html) for more information.
      */
     static createGraphemeExtend(): CodePointSetData;
 
     /**
-     * Create a set for the `Grapheme_Extend` property, using a particular data source.
+     * Create a set for the `GraphemeExtend` property, using a particular data source.
      *
      * See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeExtend.html) for more information.
      */
     static createGraphemeExtendWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Grapheme_Link` value for a given character, using compiled data
+     * Get the `GraphemeLink` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static graphemeLinkForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Grapheme_Link` property, using compiled data.
+     * Create a set for the `GraphemeLink` property, using compiled data.
      *
      * See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeLink.html) for more information.
      */
     static createGraphemeLink(): CodePointSetData;
 
     /**
-     * Create a set for the `Grapheme_Link` property, using a particular data source.
+     * Create a set for the `GraphemeLink` property, using a particular data source.
      *
      * See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeLink.html) for more information.
      */
     static createGraphemeLinkWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Hex_Digit` value for a given character, using compiled data
+     * Get the `HexDigit` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static hexDigitForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Hex_Digit` property, using compiled data.
+     * Create a set for the `HexDigit` property, using compiled data.
      *
      * See the [Rust documentation for `HexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HexDigit.html) for more information.
      */
     static createHexDigit(): CodePointSetData;
 
     /**
-     * Create a set for the `Hex_Digit` property, using a particular data source.
+     * Create a set for the `HexDigit` property, using a particular data source.
      *
      * See the [Rust documentation for `HexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HexDigit.html) for more information.
      */
@@ -738,63 +738,63 @@ export class CodePointSetData {
     static createHyphenWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
+     * Get the `IdCompatMathContinue` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idCompatMathContinueForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `ID_Compat_Math_Continue` property, using compiled data.
+     * Create a set for the `IdCompatMathContinue` property, using compiled data.
      *
      * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
      */
     static createIdCompatMathContinue(): CodePointSetData;
 
     /**
-     * Create a set for the `ID_Compat_Math_Continue` property, using a particular data source.
+     * Create a set for the `IdCompatMathContinue` property, using a particular data source.
      *
      * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
      */
     static createIdCompatMathContinueWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `ID_Compat_Math_Start` value for a given character, using compiled data
+     * Get the `IdCompatMathStart` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idCompatMathStartForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `ID_Compat_Math_Start` property, using compiled data.
+     * Create a set for the `IdCompatMathStart` property, using compiled data.
      *
      * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathStart.html) for more information.
      */
     static createIdCompatMathStart(): CodePointSetData;
 
     /**
-     * Create a set for the `ID_Compat_Math_Start` property, using a particular data source.
+     * Create a set for the `IdCompatMathStart` property, using a particular data source.
      *
      * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathStart.html) for more information.
      */
     static createIdCompatMathStartWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Id_Continue` value for a given character, using compiled data
+     * Get the `IdContinue` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idContinueForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Id_Continue` property, using compiled data.
+     * Create a set for the `IdContinue` property, using compiled data.
      *
      * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
      */
     static createIdContinue(): CodePointSetData;
 
     /**
-     * Create a set for the `Id_Continue` property, using a particular data source.
+     * Create a set for the `IdContinue` property, using a particular data source.
      *
      * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
      */
@@ -822,126 +822,126 @@ export class CodePointSetData {
     static createIdeographicWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Id_Start` value for a given character, using compiled data
+     * Get the `IdStart` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idStartForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Id_Start` property, using compiled data.
+     * Create a set for the `IdStart` property, using compiled data.
      *
      * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
      */
     static createIdStart(): CodePointSetData;
 
     /**
-     * Create a set for the `Id_Start` property, using a particular data source.
+     * Create a set for the `IdStart` property, using a particular data source.
      *
      * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
      */
     static createIdStartWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Ids_Binary_Operator` value for a given character, using compiled data
+     * Get the `IdsBinaryOperator` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idsBinaryOperatorForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Ids_Binary_Operator` property, using compiled data.
+     * Create a set for the `IdsBinaryOperator` property, using compiled data.
      *
      * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
      */
     static createIdsBinaryOperator(): CodePointSetData;
 
     /**
-     * Create a set for the `Ids_Binary_Operator` property, using a particular data source.
+     * Create a set for the `IdsBinaryOperator` property, using a particular data source.
      *
      * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
      */
     static createIdsBinaryOperatorWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Ids_Trinary_Operator` value for a given character, using compiled data
+     * Get the `IdsTrinaryOperator` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idsTrinaryOperatorForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Ids_Trinary_Operator` property, using compiled data.
+     * Create a set for the `IdsTrinaryOperator` property, using compiled data.
      *
      * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
      */
     static createIdsTrinaryOperator(): CodePointSetData;
 
     /**
-     * Create a set for the `Ids_Trinary_Operator` property, using a particular data source.
+     * Create a set for the `IdsTrinaryOperator` property, using a particular data source.
      *
      * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
      */
     static createIdsTrinaryOperatorWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Ids_Unary_Operator` value for a given character, using compiled data
+     * Get the `IdsUnaryOperator` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idsUnaryOperatorForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Ids_Unary_Operator` property, using compiled data.
+     * Create a set for the `IdsUnaryOperator` property, using compiled data.
      *
      * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
      */
     static createIdsUnaryOperator(): CodePointSetData;
 
     /**
-     * Create a set for the `Ids_Unary_Operator` property, using a particular data source.
+     * Create a set for the `IdsUnaryOperator` property, using a particular data source.
      *
      * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
      */
     static createIdsUnaryOperatorWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Join_Control` value for a given character, using compiled data
+     * Get the `JoinControl` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static joinControlForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Join_Control` property, using compiled data.
+     * Create a set for the `JoinControl` property, using compiled data.
      *
      * See the [Rust documentation for `JoinControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoinControl.html) for more information.
      */
     static createJoinControl(): CodePointSetData;
 
     /**
-     * Create a set for the `Join_Control` property, using a particular data source.
+     * Create a set for the `JoinControl` property, using a particular data source.
      *
      * See the [Rust documentation for `JoinControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoinControl.html) for more information.
      */
     static createJoinControlWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Logical_Order_Exception` value for a given character, using compiled data
+     * Get the `LogicalOrderException` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static logicalOrderExceptionForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Logical_Order_Exception` property, using compiled data.
+     * Create a set for the `LogicalOrderException` property, using compiled data.
      *
      * See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LogicalOrderException.html) for more information.
      */
     static createLogicalOrderException(): CodePointSetData;
 
     /**
-     * Create a set for the `Logical_Order_Exception` property, using a particular data source.
+     * Create a set for the `LogicalOrderException` property, using a particular data source.
      *
      * See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LogicalOrderException.html) for more information.
      */
@@ -990,189 +990,189 @@ export class CodePointSetData {
     static createMathWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Modifier_Combining_mark` value for a given character, using compiled data
+     * Get the `ModifierCombiningMark` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static modifierCombiningMarkForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Modifier_Combining_mark` property, using compiled data.
+     * Create a set for the `ModifierCombiningMark` property, using compiled data.
      *
      * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
      */
     static createModifierCombiningMark(): CodePointSetData;
 
     /**
-     * Create a set for the `Modifier_Combining_mark` property, using a particular data source.
+     * Create a set for the `ModifierCombiningMark` property, using a particular data source.
      *
      * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
      */
     static createModifierCombiningMarkWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Noncharacter_Code_Point` value for a given character, using compiled data
+     * Get the `NoncharacterCodePoint` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static noncharacterCodePointForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Noncharacter_Code_Point` property, using compiled data.
+     * Create a set for the `NoncharacterCodePoint` property, using compiled data.
      *
      * See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
      */
     static createNoncharacterCodePoint(): CodePointSetData;
 
     /**
-     * Create a set for the `Noncharacter_Code_Point` property, using a particular data source.
+     * Create a set for the `NoncharacterCodePoint` property, using a particular data source.
      *
      * See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
      */
     static createNoncharacterCodePointWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Nfc_Inert` value for a given character, using compiled data
+     * Get the `NfcInert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static nfcInertForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Nfc_Inert` property, using compiled data.
+     * Create a set for the `NfcInert` property, using compiled data.
      *
      * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
      */
     static createNfcInert(): CodePointSetData;
 
     /**
-     * Create a set for the `Nfc_Inert` property, using a particular data source.
+     * Create a set for the `NfcInert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
      */
     static createNfcInertWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Nfd_Inert` value for a given character, using compiled data
+     * Get the `NfdInert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static nfdInertForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Nfd_Inert` property, using compiled data.
+     * Create a set for the `NfdInert` property, using compiled data.
      *
      * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
      */
     static createNfdInert(): CodePointSetData;
 
     /**
-     * Create a set for the `Nfd_Inert` property, using a particular data source.
+     * Create a set for the `NfdInert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
      */
     static createNfdInertWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Nfkc_Inert` value for a given character, using compiled data
+     * Get the `NfkcInert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static nfkcInertForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Nfkc_Inert` property, using compiled data.
+     * Create a set for the `NfkcInert` property, using compiled data.
      *
      * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
      */
     static createNfkcInert(): CodePointSetData;
 
     /**
-     * Create a set for the `Nfkc_Inert` property, using a particular data source.
+     * Create a set for the `NfkcInert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
      */
     static createNfkcInertWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Nfkd_Inert` value for a given character, using compiled data
+     * Get the `NfkdInert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static nfkdInertForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Nfkd_Inert` property, using compiled data.
+     * Create a set for the `NfkdInert` property, using compiled data.
      *
      * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
      */
     static createNfkdInert(): CodePointSetData;
 
     /**
-     * Create a set for the `Nfkd_Inert` property, using a particular data source.
+     * Create a set for the `NfkdInert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
      */
     static createNfkdInertWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Pattern_Syntax` value for a given character, using compiled data
+     * Get the `PatternSyntax` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static patternSyntaxForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Pattern_Syntax` property, using compiled data.
+     * Create a set for the `PatternSyntax` property, using compiled data.
      *
      * See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternSyntax.html) for more information.
      */
     static createPatternSyntax(): CodePointSetData;
 
     /**
-     * Create a set for the `Pattern_Syntax` property, using a particular data source.
+     * Create a set for the `PatternSyntax` property, using a particular data source.
      *
      * See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternSyntax.html) for more information.
      */
     static createPatternSyntaxWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Pattern_White_Space` value for a given character, using compiled data
+     * Get the `PatternWhiteSpace` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static patternWhiteSpaceForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Pattern_White_Space` property, using compiled data.
+     * Create a set for the `PatternWhiteSpace` property, using compiled data.
      *
      * See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
      */
     static createPatternWhiteSpace(): CodePointSetData;
 
     /**
-     * Create a set for the `Pattern_White_Space` property, using a particular data source.
+     * Create a set for the `PatternWhiteSpace` property, using a particular data source.
      *
      * See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
      */
     static createPatternWhiteSpaceWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Prepended_Concatenation_Mark` value for a given character, using compiled data
+     * Get the `PrependedConcatenationMark` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static prependedConcatenationMarkForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Prepended_Concatenation_Mark` property, using compiled data.
+     * Create a set for the `PrependedConcatenationMark` property, using compiled data.
      *
      * See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
      */
     static createPrependedConcatenationMark(): CodePointSetData;
 
     /**
-     * Create a set for the `Prepended_Concatenation_Mark` property, using a particular data source.
+     * Create a set for the `PrependedConcatenationMark` property, using a particular data source.
      *
      * See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
      */
@@ -1200,21 +1200,21 @@ export class CodePointSetData {
     static createPrintWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Quotation_Mark` value for a given character, using compiled data
+     * Get the `QuotationMark` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static quotationMarkForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Quotation_Mark` property, using compiled data.
+     * Create a set for the `QuotationMark` property, using compiled data.
      *
      * See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.QuotationMark.html) for more information.
      */
     static createQuotationMark(): CodePointSetData;
 
     /**
-     * Create a set for the `Quotation_Mark` property, using a particular data source.
+     * Create a set for the `QuotationMark` property, using a particular data source.
      *
      * See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.QuotationMark.html) for more information.
      */
@@ -1242,147 +1242,147 @@ export class CodePointSetData {
     static createRadicalWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Regional_Indicator` value for a given character, using compiled data
+     * Get the `RegionalIndicator` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static regionalIndicatorForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Regional_Indicator` property, using compiled data.
+     * Create a set for the `RegionalIndicator` property, using compiled data.
      *
      * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.RegionalIndicator.html) for more information.
      */
     static createRegionalIndicator(): CodePointSetData;
 
     /**
-     * Create a set for the `Regional_Indicator` property, using a particular data source.
+     * Create a set for the `RegionalIndicator` property, using a particular data source.
      *
      * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.RegionalIndicator.html) for more information.
      */
     static createRegionalIndicatorWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Soft_Dotted` value for a given character, using compiled data
+     * Get the `SoftDotted` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static softDottedForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Soft_Dotted` property, using compiled data.
+     * Create a set for the `SoftDotted` property, using compiled data.
      *
      * See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SoftDotted.html) for more information.
      */
     static createSoftDotted(): CodePointSetData;
 
     /**
-     * Create a set for the `Soft_Dotted` property, using a particular data source.
+     * Create a set for the `SoftDotted` property, using a particular data source.
      *
      * See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SoftDotted.html) for more information.
      */
     static createSoftDottedWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Segment_Starter` value for a given character, using compiled data
+     * Get the `SegmentStarter` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static segmentStarterForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Segment_Starter` property, using compiled data.
+     * Create a set for the `SegmentStarter` property, using compiled data.
      *
      * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SegmentStarter.html) for more information.
      */
     static createSegmentStarter(): CodePointSetData;
 
     /**
-     * Create a set for the `Segment_Starter` property, using a particular data source.
+     * Create a set for the `SegmentStarter` property, using a particular data source.
      *
      * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SegmentStarter.html) for more information.
      */
     static createSegmentStarterWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Case_Sensitive` value for a given character, using compiled data
+     * Get the `CaseSensitive` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static caseSensitiveForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Case_Sensitive` property, using compiled data.
+     * Create a set for the `CaseSensitive` property, using compiled data.
      *
      * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseSensitive.html) for more information.
      */
     static createCaseSensitive(): CodePointSetData;
 
     /**
-     * Create a set for the `Case_Sensitive` property, using a particular data source.
+     * Create a set for the `CaseSensitive` property, using a particular data source.
      *
      * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseSensitive.html) for more information.
      */
     static createCaseSensitiveWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Sentence_Terminal` value for a given character, using compiled data
+     * Get the `SentenceTerminal` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static sentenceTerminalForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Sentence_Terminal` property, using compiled data.
+     * Create a set for the `SentenceTerminal` property, using compiled data.
      *
      * See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceTerminal.html) for more information.
      */
     static createSentenceTerminal(): CodePointSetData;
 
     /**
-     * Create a set for the `Sentence_Terminal` property, using a particular data source.
+     * Create a set for the `SentenceTerminal` property, using a particular data source.
      *
      * See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceTerminal.html) for more information.
      */
     static createSentenceTerminalWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Terminal_Punctuation` value for a given character, using compiled data
+     * Get the `TerminalPunctuation` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static terminalPunctuationForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Terminal_Punctuation` property, using compiled data.
+     * Create a set for the `TerminalPunctuation` property, using compiled data.
      *
      * See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.TerminalPunctuation.html) for more information.
      */
     static createTerminalPunctuation(): CodePointSetData;
 
     /**
-     * Create a set for the `Terminal_Punctuation` property, using a particular data source.
+     * Create a set for the `TerminalPunctuation` property, using a particular data source.
      *
      * See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.TerminalPunctuation.html) for more information.
      */
     static createTerminalPunctuationWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Unified_Ideograph` value for a given character, using compiled data
+     * Get the `UnifiedIdeograph` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static unifiedIdeographForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Unified_Ideograph` property, using compiled data.
+     * Create a set for the `UnifiedIdeograph` property, using compiled data.
      *
      * See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
      */
     static createUnifiedIdeograph(): CodePointSetData;
 
     /**
-     * Create a set for the `Unified_Ideograph` property, using a particular data source.
+     * Create a set for the `UnifiedIdeograph` property, using a particular data source.
      *
      * See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
      */
@@ -1410,42 +1410,42 @@ export class CodePointSetData {
     static createUppercaseWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Variation_Selector` value for a given character, using compiled data
+     * Get the `VariationSelector` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static variationSelectorForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Variation_Selector` property, using compiled data.
+     * Create a set for the `VariationSelector` property, using compiled data.
      *
      * See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VariationSelector.html) for more information.
      */
     static createVariationSelector(): CodePointSetData;
 
     /**
-     * Create a set for the `Variation_Selector` property, using a particular data source.
+     * Create a set for the `VariationSelector` property, using a particular data source.
      *
      * See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VariationSelector.html) for more information.
      */
     static createVariationSelectorWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `White_Space` value for a given character, using compiled data
+     * Get the `WhiteSpace` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static whiteSpaceForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `White_Space` property, using compiled data.
+     * Create a set for the `WhiteSpace` property, using compiled data.
      *
      * See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WhiteSpace.html) for more information.
      */
     static createWhiteSpace(): CodePointSetData;
 
     /**
-     * Create a set for the `White_Space` property, using a particular data source.
+     * Create a set for the `WhiteSpace` property, using a particular data source.
      *
      * See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WhiteSpace.html) for more information.
      */
@@ -1473,53 +1473,46 @@ export class CodePointSetData {
     static createXdigitWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Xid_Continue` value for a given character, using compiled data
+     * Get the `XidContinue` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static xidContinueForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Xid_Continue` property, using compiled data.
+     * Create a set for the `XidContinue` property, using compiled data.
      *
      * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
      */
     static createXidContinue(): CodePointSetData;
 
     /**
-     * Create a set for the `Xid_Continue` property, using a particular data source.
+     * Create a set for the `XidContinue` property, using a particular data source.
      *
      * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
      */
     static createXidContinueWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
-     * Get the `Xid_Start` value for a given character, using compiled data
+     * Get the `XidStart` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static xidStartForChar(ch: codepoint): boolean;
 
     /**
-     * Create a set for the `Xid_Start` property, using compiled data.
+     * Create a set for the `XidStart` property, using compiled data.
      *
      * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
      */
     static createXidStart(): CodePointSetData;
 
     /**
-     * Create a set for the `Xid_Start` property, using a particular data source.
+     * Create a set for the `XidStart` property, using a particular data source.
      *
      * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
      */
     static createXidStartWithProvider(provider: DataProvider): CodePointSetData;
-
-    /**
-     * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
-     *
-     * See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
-     */
-    static createForEcma262(propertyName: string): CodePointSetData;
 
     /**
      * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
