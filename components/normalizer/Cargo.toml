@@ -58,6 +58,8 @@ icu_properties = ["dep:icu_properties"]
 utf16_iter = ["dep:utf16_iter", "dep:write16"]
 # For dealing with potentially ill-formed UTF8 strings
 utf8_iter = ["dep:utf8_iter"]
+# For dealing with Latin1 strings
+latin1 = ["dep:write16"]
 harfbuzz_traits = ["dep:harfbuzz-traits"]
 
 # added by accident
