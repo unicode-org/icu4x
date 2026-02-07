@@ -17,6 +17,16 @@ users cannot violate any invariants that the outer type imposes.
 You should add your own public functions that call the generated private
 functions after checking for invariants.
 
+## Comparison to Other Popular Crates
+
+Versus `ref-cast`: `tcast` is designed to be more flexible. For example,
+it supports standard pointer wrappers like `Box`, and it is exclusively a
+proc macro with no runtime trait, reducing dependencies and allowing it
+to be used as a dev-dependency (see below).
+
+Versus `bytemuck`, `zerocopy`, `zerovec`: `tcast` is a narrower crate
+focused on the `#[repr(transparent)]` use case.
+
 ## As a Dev-Dependency
 
 The primary purpose of this derive is to check for invariants and reduce
