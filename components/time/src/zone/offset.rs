@@ -19,6 +19,36 @@ use super::ZoneNameTimestamp;
 #[allow(clippy::exhaustive_structs)]
 pub struct InvalidOffsetError;
 
+/// A macro allowing for compile-time construction of a [`UtcOffset`].
+///
+/// The macro will perform syntax validation of the offset string.
+///
+/// # Examples
+///
+/// ```
+/// use icu::time::zone::{utc_offset, UtcOffset};
+///
+/// const OFFSET: UtcOffset = utc_offset!("-07:00");
+///
+/// let offset: UtcOffset = "-07:00".parse().unwrap();
+///
+/// assert_eq!(OFFSET, offset);
+/// ```
+#[macro_export]
+#[doc(hidden)] // macro
+macro_rules! __utc_offset {
+    ($offset:literal) => {
+        const {
+            match $crate::zone::UtcOffset::try_from_str($offset) {
+                Ok(offset) => offset,
+                Err(_) => panic!(concat!("Invalid UTC offset string: ", $offset)),
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __utc_offset as utc_offset;
+
 /// An offset from Coordinated Universal Time (UTC).
 ///
 /// Supports ±18:00:00.
@@ -59,10 +89,10 @@ impl UtcOffset {
     /// ```
     /// use icu::time::zone::UtcOffset;
     ///
-    /// let offset0: UtcOffset = UtcOffset::try_from_str("Z").unwrap();
-    /// let offset1: UtcOffset = UtcOffset::try_from_str("+05").unwrap();
-    /// let offset2: UtcOffset = UtcOffset::try_from_str("+0500").unwrap();
-    /// let offset3: UtcOffset = UtcOffset::try_from_str("-05:00").unwrap();
+    /// let offset0 = UtcOffset::try_from_str("Z").unwrap();
+    /// let offset1 = UtcOffset::try_from_str("+05").unwrap();
+    /// let offset2 = UtcOffset::try_from_str("+0500").unwrap();
+    /// let offset3 = UtcOffset::try_from_str("-05:00").unwrap();
     ///
     /// let offset_err0 =
     ///     UtcOffset::try_from_str("0500").expect_err("Invalid input");
@@ -333,7 +363,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::locale::subtags::subtag;
-    /// use icu::time::zone::UtcOffset;
+    /// use icu::time::zone::{utc_offset, UtcOffset};
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::zone::ZoneNameTimestamp;
     /// use icu::time::Time;
@@ -350,11 +380,11 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///     .unwrap();
     /// assert_eq!(
     ///     offsets.standard,
-    ///     UtcOffset::try_from_seconds(-7 * 3600).unwrap()
+    ///     utc_offset!("-07:00")
     /// );
     /// assert_eq!(
     ///     offsets.daylight,
-    ///     Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap())
+    ///     Some(utc_offset!("-06:00"))
     /// );
     ///
     /// // America/Phoenix does not
@@ -366,7 +396,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///     .unwrap();
     /// assert_eq!(
     ///     offsets.standard,
-    ///     UtcOffset::try_from_seconds(-7 * 3600).unwrap()
+    ///     utc_offset!("-07:00")
     /// );
     /// assert_eq!(offsets.daylight, None);
     /// ```

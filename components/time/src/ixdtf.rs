@@ -458,7 +458,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::cal::Hebrew;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
+    ///     zone::{utc_offset, IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     ///
@@ -483,7 +483,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// assert_eq!(zoneddatetime.zone.id(), TimeZone(subtag!("uschi")));
     /// assert_eq!(
     ///     zoneddatetime.zone.offset(),
-    ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
+    ///     Some(utc_offset!("-05:00"))
     /// );
     /// let _ = zoneddatetime.zone.zone_name_timestamp();
     /// ```
@@ -500,7 +500,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// ```
     /// use icu::calendar::Iso;
-    /// use icu::time::{zone::UtcOffset, TimeZoneInfo, ZonedDateTime};
+    /// use icu::time::{zone::utc_offset, zone::UtcOffset, TimeZoneInfo, ZonedDateTime};
     ///
     /// let tz_from_offset = ZonedDateTime::try_offset_only_from_str(
     ///     "2024-08-08T12:08:19-05:00",
@@ -510,7 +510,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     utc_offset!("-05:00")
     /// );
     /// ```
     ///
@@ -522,7 +522,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::Iso;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
+    ///     zone::{utc_offset, IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     ///
@@ -540,7 +540,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset_annotation.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     utc_offset!("-05:00")
     /// );
     ///
     /// assert_eq!(
@@ -562,7 +562,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// ```
     /// use icu::calendar::Iso;
     /// use icu::time::{
-    ///     zone::UtcOffset, ParseError, TimeZone, TimeZoneInfo, ZonedDateTime,
+    ///     zone::utc_offset, zone::UtcOffset, ParseError, TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     /// use tinystr::tinystr;
     ///
@@ -574,7 +574,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     consistent_tz_from_both.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     utc_offset!("-05:00")
     /// );
     ///
     /// let inconsistent_tz_from_both = ZonedDateTime::try_offset_only_from_str(
