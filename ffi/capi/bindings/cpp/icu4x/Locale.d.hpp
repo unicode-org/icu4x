@@ -133,6 +133,65 @@ public:
   inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> set_script(std::string_view s);
 
   /**
+   * Returns a string representation of the {@link Locale} variants.
+   *
+   * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+   */
+  inline std::string variants() const;
+  template<typename W>
+  inline void variants_write(W& writeable_output) const;
+
+  /**
+   * Returns the number of variants in this {@link Locale}.
+   *
+   * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+   */
+  inline size_t variant_count() const;
+
+  /**
+   * Returns the variant at the given index, or nothing if the index is out of bounds.
+   *
+   * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+   */
+  inline std::optional<std::string> variant_at(size_t index) const;
+  template<typename W>
+  inline std::optional<std::monostate> variant_at_write(size_t index, W& writeable_output) const;
+
+  /**
+   * Returns whether the {@link Locale} has a specific variant.
+   *
+   * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+   */
+  inline bool has_variant(std::string_view s) const;
+
+  /**
+   * Adds a variant to the {@link Locale}.
+   *
+   * Returns an error if the variant string is invalid.
+   * Returns `true` if the variant was added, `false` if already present.
+   *
+   * See the [Rust documentation for `push`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.push) for more information.
+   */
+  inline icu4x::diplomat::result<bool, icu4x::LocaleParseError> add_variant(std::string_view s);
+
+  /**
+   * Removes a variant from the {@link Locale}.
+   *
+   * Returns `true` if the variant was removed, `false` if not present.
+   * Returns `false` for invalid variant strings (they cannot exist in the locale).
+   *
+   * See the [Rust documentation for `remove`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.remove) for more information.
+   */
+  inline bool remove_variant(std::string_view s);
+
+  /**
+   * Clears all variants from the {@link Locale}.
+   *
+   * See the [Rust documentation for `clear`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.clear) for more information.
+   */
+  inline void clear_variants();
+
+  /**
    * Normalizes a locale string.
    *
    * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.

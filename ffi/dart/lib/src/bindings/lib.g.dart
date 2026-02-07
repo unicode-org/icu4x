@@ -266,6 +266,36 @@ class _FinalizedArena {
   }
 }
 
+final class _ResultBoolInt32Union extends ffi.Union {
+  @ffi.Bool()
+  external bool ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultBoolInt32 extends ffi.Struct {
+  external _ResultBoolInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultBoolInt32.ok(bool val) {
+    final struct = ffi.Struct.create<_ResultBoolInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultBoolInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultBoolInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
 final class _ResultDateTimeFfiInt32Union extends ffi.Union {
   external _DateTimeFfi ok;
 
