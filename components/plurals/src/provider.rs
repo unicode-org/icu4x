@@ -441,6 +441,7 @@ impl<V: VarULE + ?Sized> ToOwned for PluralElementsPackedULE<V> {
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. `parse_bytes()` is equivalent to `validate_bytes()` followed by `from_bytes_unchecked()`
 //  7. byte equality is semantic equality
+//  8. Concrete methods with the same name as VarULE trait methods have the same behavior as the trait methods.
 unsafe impl<V> VarULE for PluralElementsPackedULE<V>
 where
     V: VarULE + ?Sized,
@@ -478,6 +479,7 @@ where
     ///
     /// The bytes must be valid according to [`PluralElementsPackedULE::validate_bytes`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
     }
