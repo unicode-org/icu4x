@@ -205,7 +205,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     ///
     /// Panics if strings are not sorted:
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0080
     /// # use zerotrie::ZeroTrieSimpleAscii;
     /// const TRIE: ZeroTrieSimpleAscii<[u8; 17]> = ZeroTrieSimpleAscii::from_sorted_u8_tuples(&[
     ///     (b"foo", 1),
@@ -216,7 +216,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     ///
     /// Panics if capacity is too small:
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0080
     /// # use zerotrie::ZeroTrieSimpleAscii;
     /// const TRIE: ZeroTrieSimpleAscii<[u8; 15]> = ZeroTrieSimpleAscii::from_sorted_u8_tuples(&[
     ///     (b"bar", 2),
@@ -227,7 +227,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     ///
     /// Panics if capacity is too large:
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0080
     /// # use zerotrie::ZeroTrieSimpleAscii;
     /// const TRIE: ZeroTrieSimpleAscii<[u8; 20]> = ZeroTrieSimpleAscii::from_sorted_u8_tuples(&[
     ///     (b"bar", 2),
@@ -282,7 +282,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     ///
     /// Panics if the strings are not ASCII:
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0080
     /// # use zerotrie::ZeroTrieSimpleAscii;
     /// const TRIE: ZeroTrieSimpleAscii<[u8; 100]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
     ///     ("bár", 2),

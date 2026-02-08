@@ -163,7 +163,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 ///
 /// Mismatched calendars will not compile:
 ///
-/// ```compile_fail
+/// ```compile_fail,E0271
 /// use icu::calendar::cal::Buddhist;
 /// use icu::datetime::input::Date;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;

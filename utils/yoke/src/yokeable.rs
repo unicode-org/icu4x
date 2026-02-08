@@ -135,7 +135,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// may not necessarily be safe since you could write a smaller reference to it. For example,
     /// the following code is unsound because it manages to stuff a `'a` lifetime into a `Cow<'static>`
     ///
-    /// ```rust,compile_fail
+    /// ```rust,compile_fail,E0521
     /// # use std::borrow::Cow;
     /// # use yoke::Yokeable;
     /// struct Foo {
@@ -158,7 +158,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///
     /// Note that the `for<'b>` is also necessary, otherwise the following code would compile:
     ///
-    /// ```rust,compile_fail
+    /// ```rust,compile_fail,E0521
     /// # use std::borrow::Cow;
     /// # use yoke::Yokeable;
     /// # use std::mem;

@@ -1638,7 +1638,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///
 /// Let's walk through these and see how they're prevented.
 ///
-/// ```rust, compile_fail
+/// ```rust,compile_fail,E0271
 /// # use std::rc::Rc;
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
@@ -1651,7 +1651,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// `&'a str` _for all `'a`_, which isn't possible.
 ///
 ///
-/// ```rust, compile_fail
+/// ```rust,compile_fail,E0515
 /// # use std::rc::Rc;
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
@@ -1801,7 +1801,7 @@ const _: () = ();
 ///
 /// Here's a broken `attach_to_cart()` that attempts to borrow from a local:
 ///
-/// ```rust,compile_fail
+/// ```rust,compile_fail,E0597
 /// use yoke::Yoke;
 ///
 /// let cart = vec![1, 2, 3, 4].into_boxed_slice();
@@ -1824,7 +1824,7 @@ const _: () = ();
 /// the cart being covariant. It fails, but would not if the alternate fix of forcing Yoke to be invariant
 /// were implemented. It is technically a safe operation:
 ///
-/// ```rust,compile_fail
+/// ```rust,compile_fail,E0597
 /// use yoke::Yoke;
 /// // longer lived
 /// let local = vec![4, 5, 6, 7];
@@ -1839,7 +1839,7 @@ const _: () = ();
 /// Finally, here's an `attach_to_cart()` that attempts to borrow from a longer lived local
 /// in the case of a contravariant lifetime. It does not compile, but in and of itself is not dangerous:
 ///
-/// ```rust,compile_fail
+/// ```rust,compile_fail,E0597
 /// use yoke::Yoke;
 ///
 /// type Contra<'a> = fn(&'a ());
@@ -1851,7 +1851,7 @@ const _: () = ();
 ///
 /// It is dangerous if allowed to transform (testcase from #2926)
 ///
-/// ```rust,compile_fail
+/// ```rust,compile_fail,E0597
 /// use yoke::Yoke;
 ///
 /// type Contra<'a> = fn(&'a ());
@@ -1929,7 +1929,7 @@ const _: () = ();
 ///
 /// ### From `map_project`'s safety docs
 ///
-/// ```rust, compile_fail
+/// ```rust,compile_fail
 /// # use std::rc::Rc;
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
@@ -1938,7 +1938,7 @@ const _: () = ();
 /// }
 /// ```
 ///
-/// ```rust, compile_fail
+/// ```rust,compile_fail,E0515
 /// # use std::rc::Rc;
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
@@ -2008,7 +2008,7 @@ const _: () = ();
 /// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, cart| cart);
 /// ```
 ///
-/// ```rust,compile_fail
+/// ```rust,compile_fail,E0597
 /// use std::rc::Rc;
 /// use yoke::Yoke;
 ///
@@ -2039,7 +2039,7 @@ const _: () = ();
 /// println!("{:?}", yoke.get());
 /// ```
 ///
-/// ```rust,compile_fail
+/// ```rust,compile_fail,E0425
 /// use std::rc::Rc;
 /// use yoke::Yoke;
 ///
