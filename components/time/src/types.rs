@@ -370,12 +370,32 @@ impl ZonedDateTime<Iso, UtcOffset> {
     ///     ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
     /// assert_eq!(zdt_from_timestamp, zdt_from_str);
     /// ```
+    ///
+    /// Boundary values are handled without overflow:
+    ///
+    /// ```
+    /// use icu::calendar::cal::Iso;
+    /// use icu::time::zone::UtcOffset;
+    /// use icu::time::ZonedDateTime;
+    ///
+    /// let max_offset = UtcOffset::try_from_seconds(64800).unwrap(); // +18 hours
+    /// let zdt_max = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///         i64::MAX,
+    ///         max_offset
+    ///     );
+    ///
+    /// let min_offset = UtcOffset::try_from_seconds(-64800).unwrap(); // -18 hours
+    /// let zdt_min = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///         i64::MIN,
+    ///         min_offset
+    ///     );
+    /// ```
     pub fn from_epoch_milliseconds_and_utc_offset(
         epoch_milliseconds: i64,
         utc_offset: UtcOffset,
     ) -> Self {
-        // TODO(#6512): Handle overflow
-        let local_epoch_milliseconds = epoch_milliseconds + (1000 * utc_offset.to_seconds()) as i64;
+        // saturating_add() to handle extreme i64 values clamps to i64::MAX
+        let local_epoch_milliseconds = epoch_milliseconds.saturating_add((1000 * utc_offset.to_seconds()) as i64);
         let (epoch_days, time_millisecs) = (
             local_epoch_milliseconds.div_euclid(86400000),
             local_epoch_milliseconds.rem_euclid(86400000),
