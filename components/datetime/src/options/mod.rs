@@ -300,6 +300,50 @@ pub enum YearStyle {
     /// - `1900 AD`
     /// - `2024 AD`
     WithEra,
+    /// Display the century but never display the era.
+    ///
+    /// Corresponds to `eraDisplay: "never"` in the ECMA-402 Intl.eraDisplay proposal.
+    ///
+    /// Examples:
+    ///
+    /// - `1000`
+    /// - `77`
+    /// - `1900`
+    /// - `2024`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
+    /// use icu::datetime::options::YearStyle;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+    ///     locale!("en-US").into(),
+    ///     YMD::short().with_year_style(YearStyle::NoEra),
+    /// )
+    /// .unwrap();
+    ///
+    /// // Era elided even for dates before year 0:
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::try_new_gregorian(-1000, 1, 1).unwrap()),
+    ///     "1/1/1001"
+    /// );
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::try_new_gregorian(77, 1, 1).unwrap()),
+    ///     "1/1/77"
+    /// );
+    /// // Modern years also show full year without era:
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
+    ///     "1/1/2025"
+    /// );
+    /// ```
+    NoEra,
 }
 
 impl IntoOption<YearStyle> for YearStyle {

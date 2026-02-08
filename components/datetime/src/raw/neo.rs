@@ -196,15 +196,13 @@ impl DatePatternSelectionData {
                 })
                 .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
         ) {
-            (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
-                PackedSkeletonVariant::Variant1
-            }
+            (YearStyle::WithEra, _) => PackedSkeletonVariant::Variant1,
+            (YearStyle::NoEra, _) => PackedSkeletonVariant::Variant0,
+            (_, YearAmbiguity::EraAndCenturyRequired) => PackedSkeletonVariant::Variant1,
             (YearStyle::Full, _) | (_, YearAmbiguity::CenturyRequired) => {
                 PackedSkeletonVariant::Variant0
             }
-            (YearStyle::Auto, YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired) => {
-                PackedSkeletonVariant::Standard
-            }
+            _ => PackedSkeletonVariant::Standard,
         };
         Some(DatePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),

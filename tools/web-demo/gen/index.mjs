@@ -860,7 +860,7 @@ let termini = Object.assign({
                 name: "self_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -915,7 +915,7 @@ let termini = Object.assign({
                 name: "self_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -977,7 +977,7 @@ let termini = Object.assign({
                 name: "self_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -1063,7 +1063,7 @@ let termini = Object.assign({
                 name: "self_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -2124,7 +2124,7 @@ let termini = Object.assign({
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -2204,7 +2204,7 @@ let termini = Object.assign({
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -2291,7 +2291,7 @@ let termini = Object.assign({
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -2402,7 +2402,7 @@ let termini = Object.assign({
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {

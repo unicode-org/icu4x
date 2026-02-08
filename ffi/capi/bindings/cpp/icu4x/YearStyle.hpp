@@ -29,6 +29,7 @@ inline icu4x::YearStyle icu4x::YearStyle::FromFFI(icu4x::capi::YearStyle c_enum)
         case icu4x::capi::YearStyle_Auto:
         case icu4x::capi::YearStyle_Full:
         case icu4x::capi::YearStyle_WithEra:
+        case icu4x::capi::YearStyle_NoEra:
             return static_cast<icu4x::YearStyle::Value>(c_enum);
         default:
             std::abort();
