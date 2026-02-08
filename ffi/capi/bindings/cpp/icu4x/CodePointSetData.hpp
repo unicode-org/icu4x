@@ -516,9 +516,6 @@ namespace capi {
     typedef struct icu4x_CodePointSetData_create_xid_start_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_xid_start_with_provider_mv1_result;
     icu4x_CodePointSetData_create_xid_start_with_provider_mv1_result icu4x_CodePointSetData_create_xid_start_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
-    typedef struct icu4x_CodePointSetData_create_for_ecma262_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_for_ecma262_mv1_result;
-    icu4x_CodePointSetData_create_for_ecma262_mv1_result icu4x_CodePointSetData_create_for_ecma262_mv1(icu4x::diplomat::capi::DiplomatStringView property_name);
-
     typedef struct icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1_result;
     icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1_result icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(const icu4x::capi::DataProvider* provider, icu4x::diplomat::capi::DiplomatStringView property_name);
 
@@ -1587,11 +1584,6 @@ inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointSetData::create_
 
 inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> icu4x::CodePointSetData::create_xid_start_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointSetData_create_xid_start_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
-inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> icu4x::CodePointSetData::create_for_ecma262(std::string_view property_name) {
-    auto result = icu4x::capi::icu4x_CodePointSetData_create_for_ecma262_mv1({property_name.data(), property_name.size()});
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

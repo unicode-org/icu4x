@@ -28,6 +28,12 @@ struct PropertiesNames<'a> {
     props: &'a [Prop],
 }
 
+#[derive(Template)]
+#[template(path = "properties_sets.rs.jinja")]
+struct PropertiesSets<'a> {
+    binary_props: &'a [BinaryProp],
+}
+
 struct Prop {
     name: String,
     is_open: bool,
@@ -75,6 +81,17 @@ impl Prop {
         } else {
             "CodePointMapData16"
         }
+    }
+}
+
+struct BinaryProp {
+    name: String,
+}
+
+impl BinaryProp {
+    fn snake_case(&self) -> String {
+        use heck::ToSnakeCase;
+        self.name.to_snake_case()
     }
 }
 
@@ -227,5 +244,223 @@ pub fn main() {
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         writeln!(&mut file, "{}", PropertiesNames { props }).unwrap();
+    }
+
+    {
+        let binary_props = &[
+            BinaryProp {
+                name: "AsciiHexDigit".into(),
+            },
+            BinaryProp {
+                name: "Alnum".into(),
+            },
+            BinaryProp {
+                name: "Alphabetic".into(),
+            },
+            BinaryProp {
+                name: "BidiControl".into(),
+            },
+            BinaryProp {
+                name: "BidiMirrored".into(),
+            },
+            BinaryProp {
+                name: "Blank".into(),
+            },
+            BinaryProp {
+                name: "Cased".into(),
+            },
+            BinaryProp {
+                name: "CaseIgnorable".into(),
+            },
+            BinaryProp {
+                name: "FullCompositionExclusion".into(),
+            },
+            BinaryProp {
+                name: "ChangesWhenCasefolded".into(),
+            },
+            BinaryProp {
+                name: "ChangesWhenCasemapped".into(),
+            },
+            BinaryProp {
+                name: "ChangesWhenNfkcCasefolded".into(),
+            },
+            BinaryProp {
+                name: "ChangesWhenLowercased".into(),
+            },
+            BinaryProp {
+                name: "ChangesWhenTitlecased".into(),
+            },
+            BinaryProp {
+                name: "ChangesWhenUppercased".into(),
+            },
+            BinaryProp {
+                name: "Dash".into(),
+            },
+            BinaryProp {
+                name: "Deprecated".into(),
+            },
+            BinaryProp {
+                name: "DefaultIgnorableCodePoint".into(),
+            },
+            BinaryProp {
+                name: "Diacritic".into(),
+            },
+            BinaryProp {
+                name: "EmojiModifierBase".into(),
+            },
+            BinaryProp {
+                name: "EmojiComponent".into(),
+            },
+            BinaryProp {
+                name: "EmojiModifier".into(),
+            },
+            BinaryProp {
+                name: "Emoji".into(),
+            },
+            BinaryProp {
+                name: "EmojiPresentation".into(),
+            },
+            BinaryProp {
+                name: "Extender".into(),
+            },
+            BinaryProp {
+                name: "ExtendedPictographic".into(),
+            },
+            BinaryProp {
+                name: "Graph".into(),
+            },
+            BinaryProp {
+                name: "GraphemeBase".into(),
+            },
+            BinaryProp {
+                name: "GraphemeExtend".into(),
+            },
+            BinaryProp {
+                name: "GraphemeLink".into(),
+            },
+            BinaryProp {
+                name: "HexDigit".into(),
+            },
+            BinaryProp {
+                name: "Hyphen".into(),
+            },
+            BinaryProp {
+                name: "IdCompatMathContinue".into(),
+            },
+            BinaryProp {
+                name: "IdCompatMathStart".into(),
+            },
+            BinaryProp {
+                name: "IdContinue".into(),
+            },
+            BinaryProp {
+                name: "Ideographic".into(),
+            },
+            BinaryProp {
+                name: "IdStart".into(),
+            },
+            BinaryProp {
+                name: "IdsBinaryOperator".into(),
+            },
+            BinaryProp {
+                name: "IdsTrinaryOperator".into(),
+            },
+            BinaryProp {
+                name: "IdsUnaryOperator".into(),
+            },
+            BinaryProp {
+                name: "JoinControl".into(),
+            },
+            BinaryProp {
+                name: "LogicalOrderException".into(),
+            },
+            BinaryProp {
+                name: "Lowercase".into(),
+            },
+            BinaryProp {
+                name: "Math".into(),
+            },
+            BinaryProp {
+                name: "ModifierCombiningMark".into(),
+            },
+            BinaryProp {
+                name: "NoncharacterCodePoint".into(),
+            },
+            BinaryProp {
+                name: "NfcInert".into(),
+            },
+            BinaryProp {
+                name: "NfdInert".into(),
+            },
+            BinaryProp {
+                name: "NfkcInert".into(),
+            },
+            BinaryProp {
+                name: "NfkdInert".into(),
+            },
+            BinaryProp {
+                name: "PatternSyntax".into(),
+            },
+            BinaryProp {
+                name: "PatternWhiteSpace".into(),
+            },
+            BinaryProp {
+                name: "PrependedConcatenationMark".into(),
+            },
+            BinaryProp {
+                name: "Print".into(),
+            },
+            BinaryProp {
+                name: "QuotationMark".into(),
+            },
+            BinaryProp {
+                name: "Radical".into(),
+            },
+            BinaryProp {
+                name: "RegionalIndicator".into(),
+            },
+            BinaryProp {
+                name: "SoftDotted".into(),
+            },
+            BinaryProp {
+                name: "SegmentStarter".into(),
+            },
+            BinaryProp {
+                name: "CaseSensitive".into(),
+            },
+            BinaryProp {
+                name: "SentenceTerminal".into(),
+            },
+            BinaryProp {
+                name: "TerminalPunctuation".into(),
+            },
+            BinaryProp {
+                name: "UnifiedIdeograph".into(),
+            },
+            BinaryProp {
+                name: "Uppercase".into(),
+            },
+            BinaryProp {
+                name: "VariationSelector".into(),
+            },
+            BinaryProp {
+                name: "WhiteSpace".into(),
+            },
+            BinaryProp {
+                name: "Xdigit".into(),
+            },
+            BinaryProp {
+                name: "XidContinue".into(),
+            },
+            BinaryProp {
+                name: "XidStart".into(),
+            },
+        ];
+
+        let mut path_buf = path_buf.clone();
+        path_buf.push("properties_sets.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        writeln!(&mut file, "{}", PropertiesSets { binary_props }).unwrap();
     }
 }
