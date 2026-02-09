@@ -394,7 +394,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
         epoch_milliseconds: i64,
         utc_offset: UtcOffset,
     ) -> Self {
-        let (utc_epoch_days, utc_time_millisecs) = ( 
+        let (utc_epoch_days, utc_time_millisecs) = (
             epoch_milliseconds.div_euclid(86400000),
             epoch_milliseconds.rem_euclid(86400000),
         );
