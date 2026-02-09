@@ -18,3 +18,4 @@ pub use duration::{Duration, DurationSign};
 pub use format::FormattedDuration;
 pub use formatter::DurationFormatter;
 pub use formatter::DurationFormatterPreferences;
+pub use validated_options::ValidatedDurationFormatterOptions;
