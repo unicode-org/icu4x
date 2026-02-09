@@ -159,11 +159,11 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
     // Furthermore, CLDR used to default to quaternary for Japanese but now defaults to tertiary
     // as for every other language for performance reasons.
     let all_strength = [
-        Strength::Primary,
-        Strength::Secondary,
+        // Strength::Primary,
+        // Strength::Secondary,
         Strength::Tertiary,
-        Strength::Quaternary,
-        Strength::Identical,
+        // Strength::Quaternary,
+        // Strength::Identical,
     ];
     let performance_parameters = [
         (
@@ -225,7 +225,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
         for content_under_bench in files_under_bench {
             let (file_name, elements) = black_box(content_under_bench);
-            baseline_bench(&mut group, file_name, elements);
+            // baseline_bench(&mut group, file_name, elements);
 
             // index to keep order of strength in the html report
             for (index, strength) in benched_strength.iter().enumerate() {
