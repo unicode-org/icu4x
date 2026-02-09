@@ -167,7 +167,7 @@ Several crates have had patch releases in the 2.1 stream:
     - (2.1.2) `icu_segmenter`
         - Add non-complex line and word break constructors (unicode-org#7268)
     - (2.1.2) `icu_capi`
-        - Bring in alignment with 2.1.2 icu_properties changes.
+        - Bring in alignment with 2.1.2 `icu_properties` and `icu_segmenter` changes.
 - Data model and providers
     - (2.1.2) `icu_provider_source`, `icu_locale_data`, `icu_datetime_data`, `icu_experimental_data`
         - Update to CLDR 48.1 (unicode-org#7396)
