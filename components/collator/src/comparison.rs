@@ -803,7 +803,7 @@ macro_rules! compare {
                 $primary_check
             }
             let norm_trie = $self.norm_trie();
-            let ret = $self.compare_impl($left_tail.$left_to_iter(norm_trie), $right_tail.$right_to_iter(norm_trie), head.$left_to_iter(norm_trie).rev(), $variable_top);
+            let ret = $self.compare_impl($left_tail.$left_to_iter(norm_trie), $right_tail.$right_to_iter(norm_trie), head.$left_to_iter(norm_trie), $variable_top);
             if $self.options.strength() == Strength::Identical && ret == Ordering::Equal {
                 // We don't need to remove the leading U+0000, because it compares equal anyway.
                 return icu_normalizer::new_decomposition($left_tail.$left_to_iter(norm_trie), $self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
@@ -1307,7 +1307,7 @@ impl<'data> CollatorBorrowed<'data> {
     where
         L: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
         R: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
-        H: Iterator<Item = (char, u32)> + 'data,
+        H: DoubleEndedIterator<Item = (char, u32)> + 'data,
         T: AbstractCodePointTrie<'data, u32> + 'data,
     {
         // Sadly, it looks like variable CEs and backward second level
@@ -1359,7 +1359,7 @@ impl<'data> CollatorBorrowed<'data> {
         // This loop is only broken out of as goto forward.
         #[expect(clippy::never_loop)]
         'prefix: loop {
-            if let Some((mut head_last_c, head_last_trie_val)) = head_chars.next() {
+            if let Some((mut head_last_c, head_last_trie_val)) = head_chars.next_back() {
                 let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                     head_last_c,
                     head_last_trie_val,
@@ -1567,7 +1567,7 @@ impl<'data> CollatorBorrowed<'data> {
                     tail_first_ce32 = head_last_ce32;
                     tail_first_ok = head_last_ok;
 
-                    let Some((head_last_c_new, decomposition)) = head_chars.next() else {
+                    let Some((head_last_c_new, decomposition)) = head_chars.next_back() else {
                         // We need to step back beyond the start of the prefix.
                         // Treat as good boundary.
                         break 'prefix;
