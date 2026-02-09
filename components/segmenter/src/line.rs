@@ -575,6 +575,19 @@ impl LineSegmenter {
         Ok(self)
     }
 
+    /// A version of [`Self::with_lstm_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    #[cfg(feature = "lstm")]
+    pub fn with_lstm_with_buffer_provider(
+        self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        self.with_lstm_unstable(&provider.as_deserializing())
+    }
+
     /// Loads dictionary data for a [`LineSegmenter`] constructed with
     /// [`LineSegmenter::new_for_non_complex_scripts`].
     pub fn with_dictionary_unstable<D>(mut self, provider: &D) -> Result<Self, DataError>
@@ -589,6 +602,18 @@ impl LineSegmenter {
         // [2]: https://www.unicode.org/reports/tr14/#SA
         self.complex = self.complex.with_southeast_asian_dictionaries(provider)?;
         Ok(self)
+    }
+
+    /// A version of [`Self::with_dictionary_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    pub fn with_dictionary_with_buffer_provider(
+        self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        self.with_dictionary_unstable(&provider.as_deserializing())
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.

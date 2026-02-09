@@ -397,7 +397,7 @@ impl WordSegmenter {
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
     pub fn new_lstm(options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        Self::new_for_non_complex_scripts(options).with_lstm_unstable()
+        Self::new_for_non_complex_scripts(options).with_lstm()
     }
 
     #[cfg(feature = "lstm")]
@@ -563,6 +563,19 @@ impl WordSegmenter {
         Ok(self)
     }
 
+    /// A version of [`Self::with_lstm_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    #[cfg(feature = "lstm")]
+    pub fn with_lstm_with_buffer_provider(
+        self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        self.with_lstm_unstable(&provider.as_deserializing())
+    }
+
     /// Loads dictionary data for a [`WordSegmenter`] constructed with
     /// [`WordSegmenter::new_for_non_complex_scripts`].
     pub fn with_dictionary_unstable<D>(mut self, provider: &D) -> Result<Self, DataError>
@@ -576,6 +589,18 @@ impl WordSegmenter {
             .with_southeast_asian_dictionaries(provider)?
             .with_japanese_dictionary(provider)?;
         Ok(self)
+    }
+
+    /// A version of [`Self::with_dictionary_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    pub fn with_dictionary_with_buffer_provider(
+        self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        self.with_dictionary_unstable(&provider.as_deserializing())
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
@@ -672,7 +697,7 @@ impl WordSegmenterBorrowed<'static> {
     /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
-    pub fn with_lstm_unstable(mut self) -> Self {
+    pub fn with_lstm(mut self) -> Self {
         self.complex = self.complex.with_southeast_asian_lstms();
         self
     }
