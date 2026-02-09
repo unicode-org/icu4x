@@ -39,6 +39,10 @@ zerotrie = { workspace = true, features = ["alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
 smallvec = { workspace = true, optional = true }
 
+jiff = { version = "0.2", optional = true }
+chrono = { version = "0.4", optional = true }
+chrono-tz = { version = "0.10", optional = true }
+
 icu_datetime_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
@@ -91,6 +95,8 @@ logging = ["icu_calendar/logging"]
 unstable = []
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
+jiff = ["dep:jiff"]
+chrono = ["dep:chrono", "dep:chrono-tz"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
