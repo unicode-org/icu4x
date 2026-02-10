@@ -159,15 +159,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp::far_in_past, FnInStruct, hidden)] // documented
         pub fn at_date_time_iso(&self, date: &IsoDate, time: &Time) -> Box<Self> {
             Box::new(Self {
-                zone_name_timestamp: Some(
-                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
-                        icu_time::ZonedDateTime {
-                            date: date.0,
-                            time: time.0,
-                            zone: self.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
-                        },
-                    ),
-                ),
+                zone_name_timestamp: Some(icu_time::zone::ZoneNameTimestamp::from_zoned_date_time(
+                    icu_time::ZonedDateTime {
+                        date: date.0,
+                        time: time.0,
+                        zone: self.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
+                    },
+                )),
                 ..*self
             })
         }
@@ -188,14 +186,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp, Struct, compact)]
         pub fn at_timestamp(&self, timestamp: i64) -> Box<Self> {
             Box::new(Self {
-                zone_name_timestamp: Some(
-                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
-                        icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-                            timestamp,
-                            icu_time::zone::UtcOffset::zero(),
-                        ),
+                zone_name_timestamp: Some(icu_time::zone::ZoneNameTimestamp::from_zoned_date_time(
+                    icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                        timestamp,
+                        icu_time::zone::UtcOffset::zero(),
                     ),
-                ),
+                )),
                 ..*self
             })
         }

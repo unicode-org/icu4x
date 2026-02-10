@@ -280,9 +280,7 @@ impl<'a> Intermediate<'a> {
         let id = iana_parser.parse_from_utf8(iana_identifier);
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        Ok(id
-            .with_offset(None)
-            .at_date_time_iso(DateTime { date, time }))
+        Ok(id.with_offset(None).at_date_time(DateTime { date, time }))
     }
 
     fn lenient(
@@ -311,7 +309,7 @@ impl<'a> Intermediate<'a> {
         }
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        Ok(zone.at_date_time_iso(DateTime { date, time }))
+        Ok(zone.at_date_time(DateTime { date, time }))
     }
 
     #[allow(deprecated)]
@@ -331,7 +329,7 @@ impl<'a> Intermediate<'a> {
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         Ok(time_zone_id
             .with_offset(Some(offset))
-            .at_date_time_iso(DateTime { date, time }))
+            .at_date_time(DateTime { date, time }))
     }
 
     #[allow(deprecated)]
@@ -352,7 +350,7 @@ impl<'a> Intermediate<'a> {
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         Ok(time_zone_id
             .with_offset(Some(offset))
-            .at_date_time_iso(DateTime { date, time })
+            .at_date_time(DateTime { date, time })
             .infer_variant(offset_calculator))
     }
 }

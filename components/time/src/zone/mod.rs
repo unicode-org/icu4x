@@ -52,6 +52,7 @@ mod offset;
 pub mod windows;
 mod zone_name_timestamp;
 
+use icu_calendar::AsCalendar;
 #[doc(inline)]
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
@@ -405,16 +406,19 @@ impl TimeZoneInfo<models::Base> {
 
     /// Sets the [`ZoneNameTimestamp`] to the given datetime.
     ///
-    /// If the offset is knonw, the datetime is interpreted as a local time,
+    /// If the offset is known, the datetime is interpreted as a local time,
     /// otherwise as UTC. This produces correct results for the vast majority
     /// of cases, however close to metazone changes (Eastern Time -> Central Time)
     /// it might be incorrect if the offset is not known.
     ///
     /// Also see [`Self::with_zone_name_timestamp`].
-    pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
+    pub fn at_date_time<C: AsCalendar>(
+        self,
+        date_time: DateTime<C>,
+    ) -> TimeZoneInfo<models::AtTime> {
         Self::with_zone_name_timestamp(
             self,
-            ZoneNameTimestamp::from_zoned_date_time_iso(crate::ZonedDateTime {
+            ZoneNameTimestamp::from_zoned_date_time(crate::ZonedDateTime {
                 date: date_time.date,
                 time: date_time.time,
                 // If we don't have an offset, interpret as UTC. This is incorrect during O(a couple of
@@ -423,6 +427,12 @@ impl TimeZoneInfo<models::Base> {
                 zone: self.offset.unwrap_or(UtcOffset::zero()),
             }),
         )
+    }
+
+    /// Use [`Self::at_date_time`].
+    #[deprecated(since = "2.2.0", note = "use `Self::at_date_time`")]
+    pub fn at_zoned_datetime_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
+        self.at_date_time(date_time)
     }
 }
 

@@ -306,19 +306,25 @@ where
 {
 }
 
-const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
-
-impl Ord for ZonedDateTime<Iso, UtcOffset> {
+impl<A: AsCalendar> Ord for ZonedDateTime<A, UtcOffset> {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.to_epoch_milliseconds_utc()
-            .cmp(&other.to_epoch_milliseconds_utc())
+        self.epoch_millis().cmp(&other.epoch_millis())
     }
 }
-impl PartialOrd for ZonedDateTime<Iso, UtcOffset> {
-    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        Some(self.cmp(other))
+
+impl<A, B> PartialOrd<ZonedDateTime<B, UtcOffset>> for ZonedDateTime<A, UtcOffset>
+where
+    A: AsCalendar,
+    B: AsCalendar,
+    Date<A>: PartialEq<Date<B>>,
+{
+    fn partial_cmp(&self, other: &ZonedDateTime<B, UtcOffset>) -> Option<core::cmp::Ordering> {
+        Some(self.epoch_millis().cmp(&other.epoch_millis()))
     }
 }
+
+const UNIX_EPOCH_RD: RataDie =
+    calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
 impl ZonedDateTime<Iso, UtcOffset> {
     /// Creates a [`ZonedDateTime`] from an absolute time, in milliseconds since the UNIX Epoch,
@@ -380,7 +386,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
             local_epoch_milliseconds.div_euclid(86400000),
             local_epoch_milliseconds.rem_euclid(86400000),
         );
-        let rata_die = UNIX_EPOCH + epoch_days;
+        let rata_die = UNIX_EPOCH_RD + epoch_days;
         #[expect(clippy::unwrap_used)] // these values are derived via modulo operators
         let time = Time::try_new(
             (time_millisecs / 3600000) as u8,
@@ -395,10 +401,12 @@ impl ZonedDateTime<Iso, UtcOffset> {
             zone: utc_offset,
         }
     }
+}
 
-    pub(crate) fn to_epoch_milliseconds_utc(self) -> i64 {
+impl<A: AsCalendar> ZonedDateTime<A, UtcOffset> {
+    pub(crate) fn epoch_millis(&self) -> i64 {
         let ZonedDateTime { date, time, zone } = self;
-        let days = date.to_rata_die() - UNIX_EPOCH;
+        let days = date.to_rata_die() - UNIX_EPOCH_RD;
         let hours = time.hour.number() as i64;
         let minutes = time.minute.number() as i64;
         let seconds = time.second.number() as i64;

@@ -415,7 +415,7 @@ pub(crate) mod legacy {
             "2022-03-12 13:00Z",
             "2023-03-08 16:00Z",
         ] {
-            let t = ZoneNameTimestamp::from_zoned_date_time_iso(
+            let t = ZoneNameTimestamp::from_zoned_date_time(
                 ZonedDateTime::try_offset_only_from_str(timestamp, icu_calendar::Iso).unwrap(),
             );
 
