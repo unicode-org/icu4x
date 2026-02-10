@@ -183,11 +183,11 @@ impl DataProvider<CollationRootV1> for SourceDataProvider {
         self.check_req::<CollationRootV1>(req)?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(
+            payload: DataPayload::from_owned(convert_data_from_serde(
                 self.load_toml::<collator_serde::CollationData>(Default::default(), "_data")
-                    .map_err(|e| e.with_req(CollationRootV1::INFO, req))?
-                    .try_into()?,
-            ),
+                    .map_err(|e| e.with_req(CollationRootV1::INFO, req))?,
+                None,
+            )?),
         })
     }
 }
@@ -206,7 +206,7 @@ impl DataProvider<CollationTailoringV1> for SourceDataProvider {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
                 self.load_toml::<collator_serde::CollationData>(req.id, "_data")
-                    .and_then(TryInto::try_into)
+                    .and_then(|d| convert_data_from_serde(d, Some(&req.id)))
                     .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?,
             ),
         })
@@ -255,20 +255,20 @@ fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
     }
 }
 
-impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
-    type Error = DataError;
-
-    fn try_into(self) -> Result<CollationData<'static>, Self::Error> {
-        Ok(CollationData {
-            trie: rebuild_data(
-                CodePointTrie::<u32>::try_from(&self.trie)
-                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
-            ),
-            contexts: ZeroVec::alloc_from_slice(&self.contexts),
-            ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
-            ces: self.ces.iter().map(|i| *i as u64).collect(),
-        })
-    }
+fn convert_data_from_serde(
+    data: &collator_serde::CollationData,
+    id: Option<&DataIdentifierBorrowed>,
+) -> Result<CollationData<'static>, DataError> {
+    log::info!("CONVERT {:?}", id);
+    Ok(CollationData {
+        trie: rebuild_data(
+            CodePointTrie::<u32>::try_from(&data.trie)
+                .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
+        ),
+        contexts: ZeroVec::alloc_from_slice(&data.contexts),
+        ce32s: ZeroVec::alloc_from_slice(&data.ce32s),
+        ces: data.ces.iter().map(|i| *i as u64).collect(),
+    })
 }
 
 impl TryInto<CollationDiacritics<'static>> for &collator_serde::CollationDiacritics {
