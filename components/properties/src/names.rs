@@ -304,27 +304,19 @@ fn get_strict_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Opti
 
 /// Avoid monomorphizing multiple copies of this function
 fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Option<u16> {
-    // limit input length to prevent stack overflow
-    const MAX_NAME_LENGTH: usize = 100;
-    if name.len() > MAX_NAME_LENGTH {
-        return None;
-    }
 
     fn recurse(mut cursor: ZeroTrieSimpleAsciiCursor, mut rest: &[u8]) -> Option<usize> {
         if cursor.is_empty() {
             return None;
         }
 
-        // Skip underscore, hyphen in trie, only recurse if step succeeds
-        for skip in [b'_', b'-'] {
-            let mut skip_cursor = cursor.clone();
-            if skip_cursor.step(skip) {
-                if let Some(r) = recurse(skip_cursor, rest) {
-                    return Some(r);
-                }
-            }
+        // Skip underscore in trie
+        let mut skip_cursor = cursor.clone();
+        skip_cursor.step(b'_');
+        if let Some(r) = recurse(skip_cursor, rest) {
+            return Some(r);
         }
-
+        
         let ascii = loop {
             let Some((&a, r)) = rest.split_first() else {
                 return cursor.take_value();
