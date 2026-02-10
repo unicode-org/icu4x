@@ -35,6 +35,13 @@ pub struct DataRequest<'a> {
     pub metadata: DataRequestMetadata,
 }
 
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // exported in an unstable module
+pub struct DataAttributesRequest<'a> {
+    pub marker_attributes: &'a DataMarkerAttributes,
+    pub metadata: DataRequestMetadata,
+}
+
 /// Metadata for data requests. This is currently empty, but it may be extended with options
 /// for tuning locale fallback, buffer layout, and so forth.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]

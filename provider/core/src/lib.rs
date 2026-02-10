@@ -120,7 +120,10 @@ mod error;
 pub use error::{DataError, DataErrorKind, ResultDataError};
 
 mod request;
-pub use request::{DataLocale, DataMarkerAttributes, DataRequest, DataRequestMetadata, *};
+pub use request::{
+    AttributeParseError, DataIdentifierBorrowed, DataIdentifierCow, DataLocale,
+    DataMarkerAttributes, DataRequest, DataRequestMetadata,
+};
 
 mod response;
 #[doc(hidden)] // TODO(#4467): establish this as an internal API
@@ -180,6 +183,12 @@ pub mod prelude {
     pub use yoke;
     #[doc(no_inline)]
     pub use zerofrom;
+}
+
+/// Additional traits and types currently being incubated
+pub mod unstable {
+    pub use super::data_provider::{BindLocale, BindLocaleResponse, BoundLocaleDataProvider};
+    pub use super::request::DataAttributesRequest;
 }
 
 #[doc(hidden)] // internal

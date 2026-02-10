@@ -9,6 +9,7 @@ use yoke::Yokeable;
 use alloc::boxed::Box;
 
 use crate::prelude::*;
+use crate::request::DataAttributesRequest;
 
 /// A data provider that loads data for a specific [`DataMarkerInfo`].
 pub trait DataProvider<M>
@@ -457,6 +458,51 @@ where
     #[inline]
     fn bound_marker(&self) -> DataMarkerInfo {
         M::INFO
+    }
+}
+
+#[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // exported in an unstable module
+pub struct BindLocaleResponse<T> {
+    pub metadata: DataResponseMetadata,
+    pub bound_provider: T,
+}
+
+pub trait BindLocale<M>
+where
+    M: DynamicDataMarker,
+{
+    type BoundLocaleDataProvider: BoundLocaleDataProvider<M>;
+    fn bind_locale(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError>;
+}
+
+pub trait BoundLocaleDataProvider<M>
+where
+    M: DynamicDataMarker,
+{
+    /// Query the provider for data, returning the result.
+    ///
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_bound(&self, req: DataAttributesRequest) -> Result<DataResponse<M>, DataError>;
+    // /// Returns the [`DataMarkerInfo`] that this provider uses for loading data.
+    // fn bound_marker(&self) -> DataMarkerInfo;
+    // /// Returns the [`DataLocale`] that this provider uses for loading data.
+    // fn bound_locale(&self) -> DataLocale;
+}
+
+impl<M, P> BoundLocaleDataProvider<M> for &P
+where
+    M: DynamicDataMarker,
+    P: BoundLocaleDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_bound(&self, req: DataAttributesRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load_bound(req)
     }
 }
 
