@@ -28,9 +28,7 @@ pub enum ParseError {
     /// The RFC 9557 string specifies an unknown calendar.
     UnknownCalendar,
     /// Expected a different calendar.
-    ///
-    /// The second field is unused, it is always set to [`CalendarAlgorithm::Gregory`].
-    #[displaydoc("Expected calendar {0:?}")]
+    #[displaydoc("Expected calendar {0:?} but found calendar {1:?}")]
     MismatchedCalendar(CalendarAlgorithm, CalendarAlgorithm),
 }
 
@@ -105,7 +103,10 @@ impl<A: AsCalendar> Date<A> {
                 if ixdtf_calendar != expected_calendar.as_str().as_bytes() {
                     return Err(ParseError::MismatchedCalendar(
                         expected_calendar,
-                        CalendarAlgorithm::Gregory,
+                        icu_locale_core::extensions::unicode::Value::try_from_utf8(ixdtf_calendar)
+                            .ok()
+                            .and_then(|v| CalendarAlgorithm::try_from(&v).ok())
+                            .ok_or(ParseError::UnknownCalendar)?,
                     ));
                 }
             }
