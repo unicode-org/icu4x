@@ -105,9 +105,10 @@ impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
 
         for name in map.keys() {
             if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
-                return Err(DataError::custom(
-                    "Property name contains '-' or whitespace",
-                ));
+                return Err(
+                    DataError::custom("Property name contains '-' or whitespace")
+                        .with_display_context(name),
+                );
             }
         }
 
@@ -363,9 +364,10 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
 
         for name in map.keys() {
             if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
-                return Err(DataError::custom(
-                    "Property name contains '-' or whitespace",
-                ));
+                return Err(
+                    DataError::custom("Property name contains '-' or whitespace")
+                        .with_display_context(name),
+                );
             }
         }
 
