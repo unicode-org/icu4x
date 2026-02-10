@@ -418,7 +418,7 @@ pub trait PreferenceKey: Sized {
 
 #[macro_export]
 #[doc(hidden)]
-// #[cfg(feature = "alloc")]
+#[cfg(feature = "alloc")]
 macro_rules! __impl_into_locale {
     ($name:ident, $($key:ident: $pref:ty),*) => {
         impl From<$name> for $crate::Locale {
@@ -439,12 +439,12 @@ macro_rules! __impl_into_locale {
     }
 }
 
-// #[macro_export]
-// #[doc(hidden)]
-// #[cfg(not(feature = "alloc"))]
-// macro_rules! __impl_into_locale {
-//     ($name:ident, $($key:ident: $pref:ty),*) => {}
-// }
+#[macro_export]
+#[doc(hidden)]
+#[cfg(not(feature = "alloc"))]
+macro_rules! __impl_into_locale {
+    ($name:ident, $($key:ident: $pref:ty),*) => {};
+}
 
 /// A macro to facilitate generation of preferences struct.
 ///
@@ -546,7 +546,7 @@ macro_rules! __define_preferences {
             }
         }
 
-        $crate::preferences::__impl_into_locale!($name, $($key: $pref,)*);
+        $crate::__impl_into_locale!($name, $($key: $pref),*);
 
         impl $name {
             /// Extends the preferences with the values from another set of preferences.
