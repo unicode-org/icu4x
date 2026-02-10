@@ -84,7 +84,7 @@ impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
         Ok(code_point_trie)
     }
 
-    pub(crate) fn names_to_values(&self) -> BTreeMap<&str, u16> {
+    pub(crate) fn names_to_values(&self) -> Result<BTreeMap<&str, u16>, DataError> {
         let mut map = BTreeMap::new();
 
         for range in &self.ranges {
@@ -104,10 +104,14 @@ impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
         }
 
         for name in map.keys() {
-            assert!(!name.contains('-'), "Property name {name:?} contains '-'");
+            if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
+                return Err(DataError::custom(
+                    "Property name contains '-' or whitespace",
+                ));
+            }
         }
 
-        map
+        Ok(map)
     }
 
     pub(crate) fn values_to_names_long(&self) -> BTreeMap<u16, &str> {
@@ -251,7 +255,7 @@ macro_rules! expand {
                         core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
                         core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
                     )?;
-                    let trie = data.names_to_values()
+                    let trie = data.names_to_values()?
                         .into_iter()
                         .map(|(k, v)| (k, v as usize))
                         .collect::<ZeroTrieSimpleAscii<_>>()
@@ -358,7 +362,11 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
         }
 
         for name in map.keys() {
-            assert!(!name.contains('-'), "Property name {name:?} contains '-'");
+            if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
+                return Err(DataError::custom(
+                    "Property name contains '-' or whitespace",
+                ));
+            }
         }
 
         let trie = map
