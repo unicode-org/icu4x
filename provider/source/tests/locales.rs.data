@@ -32,7 +32,7 @@ const LOCALES: &[LanguageIdentifier] = &[
     //  - South American dialect
     //  - Has context dependent list fragments
     langid!("es"),
-    langid!("es-AR"),   
+    langid!("es-AR"),
     // French:
     // - Often the first non-English locale to receive new data in CLDR
     langid!("fr"),
