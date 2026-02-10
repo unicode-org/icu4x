@@ -1,0 +1,144 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+// {{ crate::capi_properties::GENERATED_BY }}
+
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+pub mod ffi {
+    use alloc::boxed::Box;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_properties::props::GeneralCategory;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_properties::props::{
+        {%- for prop in binary_props %}
+        {{ prop.struct_name }},
+        {%- endfor %}
+    };
+
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::unstable::errors::ffi::DataError;
+    use crate::unstable::properties_iter::ffi::CodePointRangeIterator;
+    #[cfg(feature = "buffer_provider")]
+    use crate::unstable::provider::ffi::DataProvider;
+
+    #[cfg(feature = "compiled_data")]
+    use diplomat_runtime::DiplomatChar;
+
+    #[diplomat::opaque]
+    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+    #[diplomat::rust_link(icu::properties, Mod)]
+    #[diplomat::rust_link(icu::properties::CodePointSetData, Struct)]
+    #[diplomat::rust_link(icu::properties::CodePointSetData::new, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed::new, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
+    pub struct CodePointSetData(pub icu_properties::CodePointSetData);
+
+    impl CodePointSetData {
+        /// Checks whether the code point is in the set.
+        #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed::contains, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::CodePointSetDataBorrowed::contains32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn contains(&self, cp: DiplomatChar) -> bool {
+            self.0.as_borrowed().contains32(cp)
+        }
+
+        /// Produces an iterator over ranges of code points contained in this set
+        #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed::iter_ranges, FnInStruct)]
+        pub fn iter_ranges<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges(),
+            )))
+        }
+
+        /// Produces an iterator over ranges of code points not contained in this set
+        #[diplomat::rust_link(
+            icu::properties::CodePointSetDataBorrowed::iter_ranges_complemented,
+            FnInStruct
+        )]
+        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges_complemented(),
+            )))
+        }
+
+        /// Produces a set for obtaining General Category Group values
+        /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
+        #[diplomat::rust_link(
+            icu::properties::CodePointMapDataBorrowed::get_set_for_value_group,
+            FnInStruct
+        )]
+        #[diplomat::attr(auto, named_constructor = "general_category_group")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_general_category_group(
+            group: crate::unstable::properties_gcg::ffi::GeneralCategoryGroup,
+        ) -> Box<CodePointSetData> {
+            let data = icu_properties::CodePointMapData::<GeneralCategory>::new().static_to_owned();
+
+            Box::new(CodePointSetData(
+                data.as_borrowed()
+                    .get_set_for_value_group(group.into_props_group()),
+            ))
+        }
+
+        /// Produces a set for obtaining General Category Group values
+        /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C, using a provided data source.
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
+        #[diplomat::rust_link(
+            icu::properties::CodePointMapDataBorrowed::get_set_for_value_group,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category_group_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_general_category_group_with_provider(
+            provider: &DataProvider,
+            group: u32,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointMapData::<GeneralCategory>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?
+                .as_borrowed()
+                .get_set_for_value_group(group.into()),
+            )))
+        }
+{%- for prop in binary_props %}
+
+        /// Get the `{{ prop.property_name }}` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn {{ prop.func_name() }}_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<{{ prop.struct_name }}>().contains32(ch)
+        }
+        /// Create a set for the `{{ prop.property_name }}` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::{{ prop.struct_name }}, Struct)]
+        #[diplomat::attr(auto, named_constructor = "{{ prop.func_name() }}")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_{{ prop.func_name() }}() -> Box<CodePointSetData> {
+            Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::new::<{{ prop.struct_name }}>().static_to_owned(),
+            ))
+        }
+
+        /// Create a set for the `{{ prop.property_name }}` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::{{ prop.struct_name }}, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ prop.func_name() }}_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_{{ prop.func_name() }}_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<{{ prop.struct_name }}>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
+        }
+{%- endfor %}
+    }
+}
