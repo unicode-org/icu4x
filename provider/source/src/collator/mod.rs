@@ -223,7 +223,10 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
     }
 }
 
-fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
+fn rebuild_data(
+    trie: CodePointTrie<u32>,
+    trie_type: icu::collections::codepointtrie::TrieType,
+) -> CodePointTrie<u32> {
     #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
     {
         let _ = trie;
@@ -231,11 +234,8 @@ fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
     }
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     {
-        let mut builder = CodePointTrieBuilder::new(
-            trie.get('\u{10FFFF}'),
-            trie.get32(u32::MAX),
-            icu::collections::codepointtrie::TrieType::Small,
-        );
+        let mut builder =
+            CodePointTrieBuilder::new(trie.get('\u{10FFFF}'), trie.get32(u32::MAX), trie_type);
 
         for i in 0..0xAC00 {
             builder.set_value(i, trie.get32(i));
@@ -255,16 +255,56 @@ fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
     }
 }
 
+fn decide_trie_type(id: &DataIdentifierBorrowed) -> icu::collections::codepointtrie::TrieType {
+    let collation_type: &str = &id.marker_attributes;
+    match collation_type {
+        "search" | "emoji" | "eor" | "unihan" => {
+            return icu::collections::codepointtrie::TrieType::Small;
+        }
+        _ => {}
+    }
+    // Arabic-script collations tailor the presentation forms.
+    // Ukrainian and Austrian German phonebook each tailor one character
+    // in the fast range.
+    // There are too many cases like this to make the trie type decision
+    // based on trie content.
+    // Let's promote the trie type of specific tailorings manually
+    // instead.
+
+    // km and my are obviously in the range that suggests they
+    // should get the promoted trie type, but we don't have
+    // benchmarking to prove the effect. Reasoning from Japanese
+    // suggests that there should be a considerable effect.
+
+    // The root proper isn't handled in this function, and
+    // we already handled `"search" | "emoji" | "eor"` above.
+    // ICU4X does not have `zh` for collation but instead
+    // models Chinese collations via `und-Hans`, `und-Hant`,
+    // and `und-Hani`. The remaining `und` at this point of
+    // the function is, therefore, Chinese.
+    let lang = id.locale.language;
+    if lang == language!("und") || lang == language!("ja") {
+        return icu::collections::codepointtrie::TrieType::Fast;
+    }
+
+    icu::collections::codepointtrie::TrieType::Small
+}
+
 fn convert_data_from_serde(
     data: &collator_serde::CollationData,
     id: Option<&DataIdentifierBorrowed>,
 ) -> Result<CollationData<'static>, DataError> {
-    log::info!("CONVERT {:?}", id);
+    let trie = CodePointTrie::<u32>::try_from(&data.trie)
+        .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
+    let trie_type = if let Some(id) = id {
+        decide_trie_type(id)
+    } else {
+        // Small root for now
+        icu::collections::codepointtrie::TrieType::Small
+    };
+    log::info!("CONVERT {:?} {:?}", id, trie_type);
     Ok(CollationData {
-        trie: rebuild_data(
-            CodePointTrie::<u32>::try_from(&data.trie)
-                .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
-        ),
+        trie: rebuild_data(trie, trie_type),
         contexts: ZeroVec::alloc_from_slice(&data.contexts),
         ce32s: ZeroVec::alloc_from_slice(&data.ce32s),
         ces: data.ces.iter().map(|i| *i as u64).collect(),

@@ -183,7 +183,7 @@ collation/reordering/v1, ur, -> ar
 collation/root/v1, <singleton>, 131040B, 130923B, 787ce37ea65e1e9
 collation/special/primaries/v1, <singleton>, 72B, 42B, 46181a77c61fe445
 collation/tailoring/v1, <lookup>, 608B, 102 identifiers
-collation/tailoring/v1, <total>, 920210B, 908458B, 93 unique payloads
+collation/tailoring/v1, <total>, 942014B, 930264B, 93 unique payloads
 collation/tailoring/v1, af, 1004B, 877B, 8e3ca7ba0c0efe4b
 collation/tailoring/v1, ar, 8112B, 7987B, f87603c60cb612d4
 collation/tailoring/v1, ar/compat, 1780B, 1652B, 9bab07c54d28766b
@@ -227,7 +227,7 @@ collation/tailoring/v1, hu, 1684B, 1559B, fafd8cc08b9b30aa
 collation/tailoring/v1, hy, 1020B, 893B, e37edd22cc013f5b
 collation/tailoring/v1, ig, 1136B, 1010B, ac03392aea894ea0
 collation/tailoring/v1, is, 1492B, 1366B, 3df5f2784ae6c86
-collation/tailoring/v1, ja, 84470B, 84345B, e356c4aaf2d753f1
+collation/tailoring/v1, ja, 89950B, 89827B, 4c3c1db3804ab11d
 collation/tailoring/v1, ja/unihan, 9706B, 9580B, acd71695db29b6ea
 collation/tailoring/v1, kk, 1352B, 1225B, 72b84de4a4899461
 collation/tailoring/v1, kk-Arab, 1456B, 1329B, a49ee74478533158
@@ -272,10 +272,10 @@ collation/tailoring/v1, to, 1280B, 1154B, adcb5c16b04276d4
 collation/tailoring/v1, tr, 1144B, 1018B, 188e8cd4eacccc65
 collation/tailoring/v1, ug, 1456B, 1329B, 2d75fab408a3c026
 collation/tailoring/v1, uk, 1740B, 1612B, 76fa552c67e8aba3
-collation/tailoring/v1, und-Hani/pinyin, 104670B, 104546B, 561fac6c92e81a2e
-collation/tailoring/v1, und-Hani/stroke, 174790B, 174666B, c29b7cbc4caec467
+collation/tailoring/v1, und-Hani/pinyin, 109266B, 109142B, 428922f942e0702b
+collation/tailoring/v1, und-Hani/stroke, 179930B, 179806B, 64066d17ff35a81b
 collation/tailoring/v1, und-Hani/unihan, 3880B, 3754B, 6464e85d743fbcec
-collation/tailoring/v1, und-Hani/zhuyin, 129006B, 128882B, c38738ac7a73a458
+collation/tailoring/v1, und-Hani/zhuyin, 135594B, 135470B, e9b5470d2d6a25ea
 collation/tailoring/v1, und-Hans, -> und-Hani/pinyin
 collation/tailoring/v1, und-Hant, -> und-Hani/stroke
 collation/tailoring/v1, und/emoji, 31126B, 31000B, 655999e91e23f111
