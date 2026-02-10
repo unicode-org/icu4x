@@ -462,18 +462,28 @@ where
     }
 }
 
+/// The result of [`BindLocaleDataProvider::bind_locale`].
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // exported in an unstable module
 pub struct BindLocaleResponse<T> {
+    /// Metadata from the data bind operation.
     pub metadata: DataResponseMetadata,
+    /// The provider on which attributes can be loaded.
     pub bound_provider: T,
 }
 
+/// A data provider that can be bound to a particular marker and locale.
+/// 
+/// See [`BoundLocaleDataProvider`].
 pub trait BindLocaleDataProvider<M>
 where
     M: DynamicDataMarker,
 {
+    /// Type of the [`BoundLocaleDataProvider`].
     type BoundLocaleDataProvider<'data>: BoundLocaleDataProvider<M> + 'data where Self: 'data;
+    /// Bind this provider to the given marker and locale.
+    /// 
+    /// This performs a data load for the marker and locale, but not attributes.
     fn bind_locale<'data>(
         &'data self,
         marker: DataMarkerInfo,
@@ -481,6 +491,7 @@ where
     ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider<'data>>, DataError>;
 }
 
+/// Like [`DataResponse`] but for [`BoundLocaleDataProvider`].
 #[allow(clippy::exhaustive_structs)] // exported in an unstable module
 pub struct BoundLocaleDataResponse<'data, M>
 where
@@ -488,7 +499,6 @@ where
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
-
     /// The object itself
     pub payload: <M::DataStruct as Yokeable<'data>>::Output,
 }
@@ -507,6 +517,8 @@ where
     }
 }
 
+/// A data provider that is bound to a particular marker locale. Can be queried for
+/// different marker attributes within that marker and locale.
 pub trait BoundLocaleDataProvider<M>
 where
     M: DynamicDataMarker,
@@ -518,11 +530,7 @@ where
     fn load_bound(
         &self,
         req: DataAttributesRequest,
-    ) -> Result<BoundLocaleDataResponse<M>, DataError>;
-    // /// Returns the [`DataMarkerInfo`] that this provider uses for loading data.
-    // fn bound_marker(&self) -> DataMarkerInfo;
-    // /// Returns the [`DataLocale`] that this provider uses for loading data.
-    // fn bound_locale(&self) -> DataLocale;
+    ) -> Result<BoundLocaleDataResponse<'_, M>, DataError>;
 }
 
 impl<M, P> BoundLocaleDataProvider<M> for &P
@@ -534,7 +542,7 @@ where
     fn load_bound(
         &self,
         req: DataAttributesRequest,
-    ) -> Result<BoundLocaleDataResponse<M>, DataError> {
+    ) -> Result<BoundLocaleDataResponse<'_, M>, DataError> {
         (**self).load_bound(req)
     }
 }

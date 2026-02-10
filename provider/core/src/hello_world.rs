@@ -273,7 +273,8 @@ impl BindLocaleDataProvider<BufferMarker> for HelloWorldJsonProvider {
             .iter()
             .filter_map(|(l, a, v)| {
                 if req.id.locale.strict_cmp(l.as_bytes()).is_eq() && !a.is_empty() {
-                    let attributes = DataMarkerAttributes::from_str_or_panic(*a);
+                    let attributes = DataMarkerAttributes::from_str_or_panic(a);
+                    #[expect(clippy::unwrap_used)] // HelloWorld::serialize is infallible
                     let json_string = serde_json::to_string(&HelloWorld {
                         message: Cow::Borrowed(v),
                     })
@@ -314,7 +315,6 @@ impl BoundLocaleDataProvider<BufferMarker> for HelloWorldJsonBoundLocaleProvider
                 buffer_format: Some(icu_provider::buf::BufferFormat::Json),
                 ..Default::default()
             },
-            #[expect(clippy::unwrap_used)] // HelloWorld::serialize is infallible
             payload: json_string.as_bytes(),
         })
     }
@@ -452,12 +452,12 @@ impl<P: BoundLocaleDataProvider<BufferMarker>>
     ///
     /// assert_writeable_eq!(fmt.format("reverse").unwrap(), "Olleh Dlrow");
     /// ```
-    pub fn try_new_with_buffer_provider<'data, P1: ?Sized>(
+    pub fn try_new_with_buffer_provider<'data, P1>(
         provider: &'data P1,
         prefs: HelloWorldFormatterPreferences,
     ) -> Result<Self, DataError>
     where
-        P1: BindLocaleDataProvider<BufferMarker, BoundLocaleDataProvider<'data> = P>,
+        P1: BindLocaleDataProvider<BufferMarker, BoundLocaleDataProvider<'data> = P> + ?Sized,
     {
         let locale = HelloWorldV1::INFO.make_locale(prefs.locale_preferences);
         let response = provider.bind_locale(
@@ -496,8 +496,10 @@ impl<P: BoundLocaleDataProvider<HelloWorldV1>> HelloWorldAttributeFormatter<P> {
     ) -> Result<FormattedHelloWorld<'l>, DataError> {
         let marker_attributes = DataMarkerAttributes::try_from_str(attribute)
             .map_err(|_| DataError::custom("invalid attribute").with_debug_context(attribute))?;
-        let mut metadata = DataRequestMetadata::default();
-        metadata.attributes_prefix_match = attributes_prefix_match;
+        let metadata = DataRequestMetadata {
+            attributes_prefix_match,
+            ..Default::default()
+        };
         let result = self.provider.load_bound(DataAttributesRequest {
             marker_attributes,
             metadata,

@@ -261,7 +261,7 @@ where
     fn load_bound(
         &self,
         req: crate::request::DataAttributesRequest,
-    ) -> Result<BoundLocaleDataResponse<M>, DataError> {
+    ) -> Result<BoundLocaleDataResponse<'_, M>, DataError> {
         let buffer_response = self.0.load_bound(req)?;
         let buffer_format = buffer_response.metadata.buffer_format.ok_or_else(|| {
             DataErrorKind::Deserialize
