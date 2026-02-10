@@ -187,7 +187,10 @@ pub mod prelude {
 
 /// Additional traits and types currently being incubated
 pub mod unstable {
-    pub use super::data_provider::{BindLocale, BindLocaleResponse, BoundLocaleDataProvider};
+    pub use super::data_provider::{
+        BindLocaleDataProvider, BindLocaleResponse, BoundLocaleDataProvider,
+        BoundLocaleDataResponse,
+    };
     pub use super::request::DataAttributesRequest;
 }
 

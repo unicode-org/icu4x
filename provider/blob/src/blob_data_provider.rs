@@ -8,9 +8,10 @@ use crate::blob_schema::BlobSchema;
 use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
-use icu_provider::unstable::BindLocale;
+use icu_provider::unstable::BindLocaleDataProvider;
 use icu_provider::unstable::BindLocaleResponse;
 use icu_provider::unstable::BoundLocaleDataProvider;
+use icu_provider::unstable::BoundLocaleDataResponse;
 use icu_provider::unstable::DataAttributesRequest;
 use icu_provider::Cart;
 use icu_provider::DynamicDryDataProvider;
@@ -217,7 +218,7 @@ pub struct BlobBoundLocaleDataProvider {
     pub(crate) data: Yoke<BlobBoundLocaleSchema<'static>, Option<Cart>>,
 }
 
-impl BindLocale<BufferMarker> for BlobDataProvider {
+impl BindLocaleDataProvider<BufferMarker> for BlobDataProvider {
     type BoundLocaleDataProvider = BlobBoundLocaleDataProvider;
     fn bind_locale(
         &self,
@@ -243,15 +244,15 @@ impl BoundLocaleDataProvider<BufferMarker> for BlobBoundLocaleDataProvider {
     fn load_bound(
         &self,
         req: DataAttributesRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let payload: Yoke<&[u8], Option<Cart>> =
-            self.data.try_map_project_cloned(|blob, _| blob.load(req))?;
+    ) -> Result<BoundLocaleDataResponse<BufferMarker>, DataError> {
+        let blob = self.data.get();
+        let payload = blob.load(req)?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
         // Note: the checksum is returned by `bind_locale()` instead of `load_bound()`
-        Ok(DataResponse {
+        Ok(BoundLocaleDataResponse {
             metadata,
-            payload: DataPayload::from_yoked_buffer(payload),
+            payload: payload,
         })
     }
 }

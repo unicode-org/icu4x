@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt::Debug;
 use core::marker::PhantomData;
 use yoke::Yokeable;
 
@@ -468,16 +469,43 @@ pub struct BindLocaleResponse<T> {
     pub bound_provider: T,
 }
 
-pub trait BindLocale<M>
+pub trait BindLocaleDataProvider<M>
 where
     M: DynamicDataMarker,
 {
+    // TODO: This should be allowed to borrow from &self.
     type BoundLocaleDataProvider: BoundLocaleDataProvider<M>;
     fn bind_locale(
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError>;
+}
+
+#[allow(clippy::exhaustive_structs)] // exported in an unstable module
+pub struct BoundLocaleDataResponse<'data, M>
+where
+    M: DynamicDataMarker,
+{
+    /// Metadata about the returned object.
+    pub metadata: DataResponseMetadata,
+
+    /// The object itself
+    pub payload: <M::DataStruct as Yokeable<'data>>::Output,
+}
+
+impl<'data, M> Debug for BoundLocaleDataResponse<'data, M>
+where
+    M: DynamicDataMarker,
+    <M::DataStruct as Yokeable<'data>>::Output: Debug,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "DataResponse {{ metadata: {:?}, payload: {:?} }}",
+            self.metadata, self.payload
+        )
+    }
 }
 
 pub trait BoundLocaleDataProvider<M>
@@ -488,7 +516,10 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_bound(&self, req: DataAttributesRequest) -> Result<DataResponse<M>, DataError>;
+    fn load_bound(
+        &self,
+        req: DataAttributesRequest,
+    ) -> Result<BoundLocaleDataResponse<M>, DataError>;
     // /// Returns the [`DataMarkerInfo`] that this provider uses for loading data.
     // fn bound_marker(&self) -> DataMarkerInfo;
     // /// Returns the [`DataLocale`] that this provider uses for loading data.
@@ -501,7 +532,10 @@ where
     P: BoundLocaleDataProvider<M> + ?Sized,
 {
     #[inline]
-    fn load_bound(&self, req: DataAttributesRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_bound(
+        &self,
+        req: DataAttributesRequest,
+    ) -> Result<BoundLocaleDataResponse<M>, DataError> {
         (**self).load_bound(req)
     }
 }

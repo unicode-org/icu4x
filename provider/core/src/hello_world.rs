@@ -7,6 +7,11 @@
 #![allow(clippy::exhaustive_structs)] // data struct module
 
 use crate as icu_provider;
+use crate::buf::{DeserializingBufferProvider, DeserializingOwnedBufferProvider};
+use crate::request::DataAttributesRequest;
+use crate::unstable::{BindLocaleDataProvider, BoundLocaleDataProvider};
+#[cfg(feature = "deserialize_json")]
+use crate::unstable::{BindLocaleResponse, BoundLocaleDataResponse};
 
 use crate::prelude::*;
 use alloc::borrow::Cow;
@@ -14,6 +19,8 @@ use alloc::collections::BTreeSet;
 use alloc::string::String;
 use core::fmt::Debug;
 use icu_locale_core::preferences::define_preferences;
+#[cfg(feature = "deserialize_json")]
+use std::collections::BTreeMap;
 use writeable::Writeable;
 use yoke::*;
 use zerofrom::*;
@@ -243,6 +250,72 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
     }
 }
 
+#[cfg(feature = "deserialize_json")]
+#[derive(Debug)]
+pub struct HelloWorldJsonBoundLocaleProvider {
+    json_strings: BTreeMap<&'static DataMarkerAttributes, String>,
+}
+
+#[cfg(feature = "deserialize_json")]
+impl BindLocaleDataProvider<BufferMarker> for HelloWorldJsonProvider {
+    type BoundLocaleDataProvider = HelloWorldJsonBoundLocaleProvider;
+    fn bind_locale(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError> {
+        marker.match_marker(HelloWorldV1::INFO)?;
+        let json_strings = HelloWorldProvider::DATA
+            .iter()
+            .filter_map(|(l, a, v)| {
+                if req.id.locale.strict_cmp(l.as_bytes()).is_eq() && !a.is_empty() {
+                    let attributes = DataMarkerAttributes::from_str_or_panic(*a);
+                    let json_string = serde_json::to_string(&HelloWorld {
+                        message: Cow::Borrowed(v),
+                    })
+                    .unwrap();
+                    Some((attributes, json_string))
+                } else {
+                    None
+                }
+            })
+            .collect::<BTreeMap<_, _>>();
+        if json_strings.is_empty() {
+            return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req));
+        }
+        Ok(BindLocaleResponse {
+            bound_provider: HelloWorldJsonBoundLocaleProvider { json_strings },
+            metadata: Default::default(),
+        })
+    }
+}
+
+#[cfg(feature = "deserialize_json")]
+impl BoundLocaleDataProvider<BufferMarker> for HelloWorldJsonBoundLocaleProvider {
+    fn load_bound<'data>(
+        &'data self,
+        req: DataAttributesRequest,
+    ) -> Result<BoundLocaleDataResponse<'data, BufferMarker>, DataError> {
+        // TODO: Implement logic for attributes_prefix_match
+        let json_string = self
+            .json_strings
+            .get(req.marker_attributes)
+            .ok_or_else(|| {
+                DataErrorKind::IdentifierNotFound
+                    .into_error()
+                    .with_debug_context(&req)
+            })?;
+        Ok(BoundLocaleDataResponse {
+            metadata: DataResponseMetadata {
+                buffer_format: Some(icu_provider::buf::BufferFormat::Json),
+                ..Default::default()
+            },
+            #[expect(clippy::unwrap_used)] // HelloWorld::serialize is infallible
+            payload: json_string.as_bytes(),
+        })
+    }
+}
+
 impl IterableDataProvider<HelloWorldV1> for HelloWorldProvider {
     fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         #[expect(clippy::unwrap_used)] // hello-world
@@ -291,12 +364,37 @@ pub struct HelloWorldFormatter {
     data: DataPayload<HelloWorldV1>,
 }
 
+/// A type that formats variants of localized "hello world" strings.
+///
+/// This type is intended to take the shape of an ICU4X formatter that lazily
+/// loads data marker attributes.
+///
+/// # Examples
+///
+/// ```
+/// use icu_locale_core::locale;
+/// use icu_provider::hello_world::{HelloWorldAttributeFormatter, HelloWorldProvider};
+/// use writeable::assert_writeable_eq;
+///
+/// let fmt = HelloWorldAttributeFormatter::try_new_with_buffer_provider(
+///     &HelloWorldProvider.into_json_provider(),
+///     locale!("en").into(),
+/// )
+/// .expect("locale exists and has attributes");
+///
+/// assert_writeable_eq!(fmt.format("reverse").unwrap(), "Olleh Dlrow");
+/// ```
+#[derive(Debug)]
+pub struct HelloWorldAttributeFormatter<P: BoundLocaleDataProvider<HelloWorldV1>> {
+    provider: P,
+}
+
 /// A formatted hello world message. Implements [`Writeable`].
 ///
 /// For an example, see [`HelloWorldFormatter`].
 #[derive(Debug)]
 pub struct FormattedHelloWorld<'l> {
-    data: &'l HelloWorld<'l>,
+    data: HelloWorld<'l>,
 }
 
 impl HelloWorldFormatter {
@@ -336,13 +434,79 @@ impl HelloWorldFormatter {
     /// Formats a hello world message, returning a [`FormattedHelloWorld`].
     pub fn format<'l>(&'l self) -> FormattedHelloWorld<'l> {
         FormattedHelloWorld {
-            data: self.data.get(),
+            data: self.data.get().clone(), // clones cows whose fields are borrowed
         }
     }
 
     /// Formats a hello world message, returning a [`String`].
     pub fn format_to_string(&self) -> String {
         self.format().write_to_string().into_owned()
+    }
+}
+
+impl<P: BoundLocaleDataProvider<BufferMarker>>
+    HelloWorldAttributeFormatter<DeserializingOwnedBufferProvider<P>>
+{
+    pub fn try_new_with_buffer_provider<P1: ?Sized>(
+        provider: &P1,
+        prefs: HelloWorldFormatterPreferences,
+    ) -> Result<Self, DataError>
+    where
+        P1: BindLocaleDataProvider<BufferMarker, BoundLocaleDataProvider = P>,
+    {
+        let locale = HelloWorldV1::INFO.make_locale(prefs.locale_preferences);
+        let response = provider.bind_locale(
+            HelloWorldV1::INFO,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&locale),
+                metadata: Default::default(),
+            },
+        )?;
+        Ok(Self {
+            provider: DeserializingOwnedBufferProvider::new(response.bound_provider),
+        })
+    }
+}
+
+impl<P: BoundLocaleDataProvider<HelloWorldV1>> HelloWorldAttributeFormatter<P> {
+    /// Formats a hello world message with the specified attribute,
+    /// returning a [`FormattedHelloWorld`].
+    pub fn format<'l>(&'l self, attribute: &str) -> Result<FormattedHelloWorld<'l>, DataError> {
+        self.format_internal(attribute, false)
+    }
+
+    /// Formats a hello world message with the attribute best matching a prefix,
+    /// returning a [`FormattedHelloWorld`].
+    pub fn format_for_prefix<'l>(
+        &'l self,
+        prefix: &str,
+    ) -> Result<FormattedHelloWorld<'l>, DataError> {
+        self.format_internal(prefix, true)
+    }
+
+    fn format_internal<'l>(
+        &'l self,
+        attribute: &str,
+        attributes_prefix_match: bool,
+    ) -> Result<FormattedHelloWorld<'l>, DataError> {
+        let marker_attributes = DataMarkerAttributes::try_from_str(attribute)
+            .map_err(|_| DataError::custom("invalid attribute").with_debug_context(attribute))?;
+        let mut metadata = DataRequestMetadata::default();
+        metadata.attributes_prefix_match = attributes_prefix_match;
+        let result = self.provider.load_bound(DataAttributesRequest {
+            marker_attributes,
+            metadata,
+        })?;
+        Ok(FormattedHelloWorld {
+            data: result.payload,
+        })
+    }
+
+    /// Formats a hello world message with the specified attribute,
+    /// returning a [`String`].
+    pub fn format_to_string(&self, attribute: &str) -> Result<String, DataError> {
+        self.format(attribute)
+            .map(|ok| ok.write_to_string().into_owned())
     }
 }
 
