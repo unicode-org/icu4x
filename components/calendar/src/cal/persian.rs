@@ -97,6 +97,10 @@ impl DateFieldsResolver for Persian {
         };
         Ok(persian_year)
     }
+
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
+        calendrical_calculations::persian::fixed_from_fast_persian(year, month, day)
+    }
 }
 
 impl crate::cal::scaffold::UnstableSealed for Persian {}
@@ -135,11 +139,7 @@ impl Calendar for Persian {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::persian::fixed_from_fast_persian(
-            date.0.year(),
-            date.0.month(),
-            date.0.day(),
-        )
+        date.0.to_rata_die()
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -739,12 +739,10 @@ mod tests {
     #[test]
     fn test_calendar_ut_ac_ir_data() {
         for &(p_year, leap, iso_year, iso_month, iso_day) in CALENDAR_UT_AC_IR_TEST_DATA.iter() {
+            let iso_date = Date::try_new_iso(iso_year, iso_month, iso_day).unwrap();
             let persian_date = Date::try_new_persian(p_year, 1, 1).unwrap();
             assert_eq!(persian_date.is_in_leap_year(), leap);
-            let iso_date = persian_date.to_iso();
-            assert_eq!(iso_date.era_year().year, iso_year);
-            assert_eq!(iso_date.month().ordinal, iso_month);
-            assert_eq!(iso_date.day_of_month().0, iso_day);
+            assert_eq!(iso_date.to_calendar(Persian), persian_date);
         }
     }
 }

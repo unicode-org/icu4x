@@ -134,11 +134,11 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 
 [[package]]
 name = "askama"
-version = "0.14.0"
+version = "0.15.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f75363874b771be265f4ffe307ca705ef6f3baa19011c149da8674a87f1b75c4"
+checksum = "08e1676b346cadfec169374f949d7490fd80a24193d37d2afce0c047cf695e57"
 dependencies = [
- "askama_derive",
+ "askama_macros",
  "itoa",
  "percent-encoding",
  "serde",
@@ -147,9 +147,9 @@ dependencies = [
 
 [[package]]
 name = "askama_derive"
-version = "0.14.0"
+version = "0.15.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "129397200fe83088e8a68407a8e2b1f826cf0086b21ccdb866a722c8bcd3a94f"
+checksum = "7661ff56517787343f376f75db037426facd7c8d3049cef8911f1e75016f3a37"
 dependencies = [
  "askama_parser",
  "basic-toml",
@@ -163,14 +163,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "askama_parser"
-version = "0.14.0"
+name = "askama_macros"
+version = "0.15.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d6ab5630b3d5eaf232620167977f95eb51f3432fc76852328774afbd242d4358"
+checksum = "713ee4dbfd1eb719c2dab859465b01fa1d21cb566684614a713a6b7a99a4e47b"
 dependencies = [
- "memchr",
+ "askama_derive",
+]
+
+[[package]]
+name = "askama_parser"
+version = "0.15.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d62d674238a526418b30c0def480d5beadb9d8964e7f38d635b03bf639c704c"
+dependencies = [
+ "rustc-hash 2.1.1",
  "serde",
  "serde_derive",
+ "unicode-ident",
  "winnow",
 ]
 
@@ -243,7 +253,7 @@ dependencies = [
 
 [[package]]
 name = "bies"
-version = "0.2.5"
+version = "0.3.0-dev"
 dependencies = [
  "itertools 0.14.0",
  "partial-min-max",
@@ -494,6 +504,7 @@ name = "codegen"
 version = "0.0.0"
 dependencies = [
  "askama",
+ "heck 0.4.1",
  "icu",
 ]
 
@@ -710,7 +721,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f71e1b6c562237f9e6059dbf54bfce626936dd35#f71e1b6c562237f9e6059dbf54bfce626936dd35"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -741,7 +752,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f71e1b6c562237f9e6059dbf54bfce626936dd35#f71e1b6c562237f9e6059dbf54bfce626936dd35"
 dependencies = [
  "log",
 ]
@@ -749,7 +760,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.14.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f71e1b6c562237f9e6059dbf54bfce626936dd35#f71e1b6c562237f9e6059dbf54bfce626936dd35"
 dependencies = [
  "askama",
  "clap",
@@ -770,7 +781,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f71e1b6c562237f9e6059dbf54bfce626936dd35#f71e1b6c562237f9e6059dbf54bfce626936dd35"
 dependencies = [
  "displaydoc",
  "either",
@@ -803,12 +814,6 @@ dependencies = [
  "libc",
  "windows-sys 0.60.2",
 ]
-
-[[package]]
-name = "downcast-rs"
-version = "1.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
 
 [[package]]
 name = "download-repo-sources"
@@ -967,6 +972,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
 
 [[package]]
+name = "foldhash"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+
+[[package]]
 name = "freertos-rust"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -984,7 +995,7 @@ version = "0.2.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cfe4fbac503b8d1f88e6676011885f34b7174f46e59956bba534ba83abded4df"
 dependencies = [
- "unicode-width 0.2.2",
+ "unicode-width",
 ]
 
 [[package]]
@@ -1049,9 +1060,7 @@ version = "0.15.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1"
 dependencies = [
- "allocator-api2",
- "equivalent",
- "foldhash",
+ "foldhash 0.1.5",
 ]
 
 [[package]]
@@ -1059,6 +1068,11 @@ name = "hashbrown"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5419bdc4f6a9207fbeba6d11b604d481addf78ecd10c11ad51e76c2f6482748d"
+dependencies = [
+ "allocator-api2",
+ "equivalent",
+ "foldhash 0.2.0",
+]
 
 [[package]]
 name = "heck"
@@ -1218,6 +1232,7 @@ dependencies = [
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
+ "insta",
  "itertools 0.14.0",
  "ixdtf",
  "serde",
@@ -1234,7 +1249,7 @@ version = "2.1.1"
 
 [[package]]
 name = "icu_capi"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1292,7 +1307,7 @@ version = "2.1.1"
 
 [[package]]
 name = "icu_codepointtrie_builder"
-version = "0.5.1"
+version = "0.6.0-dev"
 dependencies = [
  "icu",
  "icu_collections",
@@ -1345,6 +1360,7 @@ dependencies = [
  "serde",
  "serde_json",
  "toml",
+ "utf8_iter",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1377,6 +1393,7 @@ dependencies = [
  "serde_json",
  "smallvec",
  "tinystr",
+ "ureq",
  "writeable",
  "zerotrie",
  "zerovec",
@@ -1384,7 +1401,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_decimal"
@@ -1392,12 +1409,15 @@ version = "2.1.1"
 dependencies = [
  "criterion",
  "databake",
+ "displaydoc",
  "fixed_decimal",
  "getrandom 0.3.4",
  "icu",
  "icu_decimal_data",
  "icu_locale",
  "icu_locale_core",
+ "icu_pattern",
+ "icu_plurals",
  "icu_provider",
  "icu_provider_adapters",
  "rand",
@@ -1414,7 +1434,7 @@ version = "2.1.1"
 
 [[package]]
 name = "icu_experimental"
-version = "0.4.0"
+version = "0.5.0-dev"
 dependencies = [
  "criterion",
  "databake",
@@ -1453,7 +1473,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.4.0"
+version = "0.4.1"
 
 [[package]]
 name = "icu_freertos"
@@ -1528,7 +1548,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_normalizer"
@@ -1601,7 +1621,7 @@ version = "2.1.1"
 
 [[package]]
 name = "icu_properties"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "databake",
  "harfbuzz-traits",
@@ -1618,7 +1638,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_provider"
@@ -1728,7 +1748,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_registry"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "icu",
  "icu_provider",
@@ -1736,9 +1756,8 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
- "calendrical_calculations",
  "displaydoc",
  "elsa",
  "flate2",
@@ -1777,7 +1796,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "core_maths",
  "criterion",
@@ -1954,10 +1973,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
-name = "leb128"
-version = "0.2.5"
+name = "leb128fmt"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "884e2677b40cc8c339eaefcb701c32ef1fd2493d71118dc0ca4b6a736c93bd67"
+checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
 
 [[package]]
 name = "libc"
@@ -2022,11 +2041,11 @@ checksum = "34080505efa8e45a4b816c349525ebe327ceaa8559756f0356cba97ef3bf7432"
 
 [[package]]
 name = "lru"
-version = "0.13.0"
+version = "0.16.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "227748d55f2f0ab4735d87fd623798cb6b664512fe979705f829c9f81c934465"
+checksum = "a1dc47f592c06f33f8e3aea9591776ec7c9f9e4124778ff8a3c3b87159f7e593"
 dependencies = [
- "hashbrown 0.15.5",
+ "hashbrown 0.16.0",
 ]
 
 [[package]]
@@ -2090,12 +2109,6 @@ name = "mintex"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c505b3e17ed6b70a7ed2e67fbb2c560ee327353556120d6e72f5232b6880d536"
-
-[[package]]
-name = "multi-stash"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "685a9ac4b61f4e728e1d2c6a7844609c16527aeb5e6c865915c08e619c16410f"
 
 [[package]]
 name = "nb"
@@ -2454,9 +2467,9 @@ checksum = "007d8adb5ddab6f8e3f491ac63566a7d5002cc7ed73901f72057943fa71ae1ae"
 
 [[package]]
 name = "quote"
-version = "1.0.41"
+version = "1.0.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce25767e7b499d1b604768e7cde645d14cc8584231ea6b295e9c9eb22c02e1d1"
+checksum = "21b2ebcf727b7760c461f091f9f0f539b77b8e87f2fd88131e7f1b433b3cece4"
 dependencies = [
  "proc-macro2",
 ]
@@ -3007,9 +3020,9 @@ dependencies = [
 
 [[package]]
 name = "string-interner"
-version = "0.18.0"
+version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a3275464d7a9f2d4cac57c89c2ef96a8524dba2864c8d6f82e3980baf136f9b"
+checksum = "23de088478b31c349c9ba67816fa55d9355232d63c3afea8bf513e31f0f1d2c0"
 dependencies = [
  "hashbrown 0.15.5",
  "serde",
@@ -3273,7 +3286,7 @@ checksum = "562d481066bde0658276a35467c4af00bdc6ee726305698a55b86e61d7ad82bb"
 
 [[package]]
 name = "tzif"
-version = "0.4.1"
+version = "0.5.0-dev"
 dependencies = [
  "combine",
  "walkdir",
@@ -3296,12 +3309,6 @@ name = "unicode-ident"
 version = "1.0.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9312f7c4f6ff9069b165498234ce8be658059c6728633667c526e27dc2cf1df5"
-
-[[package]]
-name = "unicode-width"
-version = "0.1.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7dd6e30e90baa6f72411720665d41d89b9a3d039dc45b8faea1ddd07f617f6af"
 
 [[package]]
 name = "unicode-width"
@@ -3478,85 +3485,94 @@ dependencies = [
 
 [[package]]
 name = "wasm-encoder"
-version = "0.207.0"
+version = "0.244.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d996306fb3aeaee0d9157adbe2f670df0236caf19f6728b221e92d0f27b3fe17"
+checksum = "990065f2fe63003fe337b932cfb5e3b80e0b4d0f5ff650e6985b1048f62c8319"
 dependencies = [
- "leb128",
+ "leb128fmt",
+ "wasmparser 0.244.0",
 ]
 
 [[package]]
 name = "wasmi"
-version = "0.40.0"
+version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a19af97fcb96045dd1d6b4d23e2b4abdbbe81723dbc5c9f016eb52145b320063"
+checksum = "e1fda10642ea9ba8141d50976b2b3a02d30511baa4b938383b9fa823b35d4138"
 dependencies = [
- "arrayvec",
- "multi-stash",
- "smallvec",
  "spin",
  "wasmi_collections",
  "wasmi_core",
  "wasmi_ir",
- "wasmparser",
+ "wasmparser 0.228.0",
+ "wat",
 ]
 
 [[package]]
 name = "wasmi_collections"
-version = "0.40.0"
+version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e80d6b275b1c922021939d561574bf376613493ae2b61c6963b15db0e8813562"
+checksum = "a67707a7d9eaf65181751b39cf46a003acc2ae1fef7917add38c3ced4b2eb868"
 dependencies = [
  "string-interner",
 ]
 
 [[package]]
 name = "wasmi_core"
-version = "0.40.0"
+version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a8c51482cc32d31c2c7ff211cd2bedd73c5bd057ba16a2ed0110e7a96097c33"
+checksum = "ca9ad2a338c53920b3fd427c2122219fd315dc09044dbda58606259d7854cbed"
 dependencies = [
- "downcast-rs",
  "libm",
 ]
 
 [[package]]
 name = "wasmi_ir"
-version = "0.40.0"
+version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e431a14c186db59212a88516788bd68ed51f87aa1e08d1df742522867b5289a"
+checksum = "27a6079b0597d3793aedbd2a2c0eea595476acabd797df9bba9270fbe319fad0"
 dependencies = [
  "wasmi_core",
 ]
 
 [[package]]
 name = "wasmparser"
-version = "0.221.3"
+version = "0.228.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d06bfa36ab3ac2be0dee563380147a5b81ba10dd8885d7fbbc9eb574be67d185"
+checksum = "4abf1132c1fdf747d56bbc1bb52152400c70f336870f968b85e89ea422198ae3"
 dependencies = [
  "bitflags",
  "indexmap",
 ]
 
 [[package]]
-name = "wast"
-version = "207.0.0"
+name = "wasmparser"
+version = "0.244.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e40be9fd494bfa501309487d2dc0b3f229be6842464ecbdc54eac2679c84c93"
+checksum = "47b807c72e1bac69382b3a6fb3dbe8ea4c0ed87ff5629b8685ae6b9a611028fe"
+dependencies = [
+ "bitflags",
+ "indexmap",
+ "semver 1.0.27",
+]
+
+[[package]]
+name = "wast"
+version = "244.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b2e7b9f9e23311275920e3d6b56d64137c160cf8af4f84a7283b36cfecbf4acb"
 dependencies = [
  "bumpalo",
- "leb128",
+ "leb128fmt",
  "memchr",
- "unicode-width 0.1.14",
+ "unicode-width",
  "wasm-encoder",
 ]
 
 [[package]]
 name = "wat"
-version = "1.207.0"
+version = "1.244.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8eb2b15e2d5f300f5e1209e7dc237f2549edbd4203655b6c6cab5cf180561ee7"
+checksum = "bbf35b87ed352f9ab6cd0732abde5a67dd6153dfd02c493e61459218b19456fa"
 dependencies = [
  "wast",
 ]
@@ -3937,6 +3953,7 @@ dependencies = [
  "displaydoc",
  "icu_benchmark_macros",
  "icu_locale_core",
+ "itertools 0.14.0",
  "litemap",
  "postcard",
  "rand",
@@ -4010,7 +4027,7 @@ dependencies = [
 
 [[package]]
 name = "zoneinfo64"
-version = "0.2.1"
+version = "0.3.0-dev"
 dependencies = [
  "calendrical_calculations",
  "chrono",

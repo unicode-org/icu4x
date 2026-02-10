@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(unused_qualifications)]
+
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
 use core::{marker::PhantomData, mem};
@@ -133,7 +135,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// may not necessarily be safe since you could write a smaller reference to it. For example,
     /// the following code is unsound because it manages to stuff a `'a` lifetime into a `Cow<'static>`
     ///
-    /// ```rust,compile_fail
+    /// ```rust,compile_fail,E0521
     /// # use std::borrow::Cow;
     /// # use yoke::Yokeable;
     /// struct Foo {
@@ -156,7 +158,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///
     /// Note that the `for<'b>` is also necessary, otherwise the following code would compile:
     ///
-    /// ```rust,compile_fail
+    /// ```rust,compile_fail,E0521
     /// # use std::borrow::Cow;
     /// # use yoke::Yokeable;
     /// # use std::mem;
@@ -230,7 +232,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///    non-static lifetimes reachable from Self<'a>, so this is fine.
     ///  - one of f's captures: since F: 'static, the resulting reference must refer
     ///    to 'static data.
-    ///  - a static or thread_local variable: ditto.
+    ///  - a static or `thread_local` variable: ditto.
     fn transform_mut<F>(&'a mut self, f: F)
     where
         // be VERY CAREFUL changing this signature, it is very nuanced (see above)
@@ -259,7 +261,7 @@ where
         // i hate this
         // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
         // are the same
-        debug_assert!(mem::size_of::<Cow<'a, T>>() == mem::size_of::<Self>());
+        debug_assert!(size_of::<Cow<'a, T>>() == size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         let _ = core::mem::ManuallyDrop::new(from);
         // Safety: `ptr` is certainly valid, aligned and points to a properly initialized value, as

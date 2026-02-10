@@ -13,9 +13,6 @@ use crate::types::DateFields;
 use crate::types::Month;
 use crate::{types, Calendar, Date};
 use crate::{AsCalendar, RangeError};
-use calendrical_calculations::islamic::{
-    ISLAMIC_EPOCH_FRIDAY, ISLAMIC_EPOCH_THURSDAY, WELL_BEHAVED_ASTRONOMICAL_RANGE,
-};
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt::Debug;
 use icu_locale_core::preferences::extensions::unicode::keywords::{
@@ -24,8 +21,6 @@ use icu_locale_core::preferences::extensions::unicode::keywords::{
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-#[path = "hijri/simulated_mecca_data.rs"]
-mod simulated_mecca_data;
 #[path = "hijri/ummalqura_data.rs"]
 mod ummalqura_data;
 
@@ -60,6 +55,24 @@ mod ummalqura_data;
 ///
 /// There are either 6 or 7 30-day months, so the length of the year is 354 or 355 days.
 ///
+/// # Crescent moon visibility
+///
+/// According to Islam, a new month begins the evening when the crescent moon is visible at sunset.
+///
+/// Currently, most groups that use the Hijri calendar rely on human observations of the
+/// crescent moon, which are impacted by atmospheric phenomena. As a result, it is not
+/// possible to predict the month start dates ahead of time.
+///
+/// However, some groups use criteria that are not impacted by these phenomena and are
+/// therefore suitable for future prediction. This crate ships two:
+///
+/// 1. [`UmmAlQura`], used in Saudi Arabia, is based on official predictions of crescent
+///    timings published by the KACST.
+/// 2. [`TabularAlgorithm`] is based on a proleptic approximation of the length of a lunar year.
+///    See the docs for information on the branches of Islam using it.
+///
+/// To support other Hijri variants, use the [`Rules`] trait.
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
@@ -70,8 +83,19 @@ pub struct Hijri<S>(pub S);
 
 /// Defines a variant of the [`Hijri`] calendar.
 ///
-/// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`]
-/// rules, other rules can be implemented by users.
+/// This crate includes the [`UmmAlQura`] and [`TabularAlgorithm`] rules.
+///
+/// To support other Hijri variants, provide your own rules by implementing this trait.
+/// You may find the simulations in the [`calendrical_calculations`] crate to be useful,
+/// supplemented with data from human observations.
+///
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+/// </div>
 ///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
@@ -130,132 +154,48 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     }
 }
 
-/// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
+/// [`Hijri`] [`Rules`] based on astronomical simulations.
 ///
-/// These simulations are unofficial and are known to not necessarily match sightings
-/// on the ground. Unless you know otherwise for sure, instead of this variant, use
-/// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
+/// Currently, this uses simulation results published by the KACST,
+/// making it identical to [`UmmAlQura`].
 ///
-/// As floating point arithmetic degenerates for far-away dates, this falls back to
-/// the tabular calendar at some point.
+/// In previous versions, this type used arithmetic published by E. M. Reingold, S. K. Shaukat,
+/// et al.[^1]. Since it now uses the KACST simulations, it is deprecated in favor of [`UmmAlQura`].
+/// If you wish to use the previous behavior, use the [`calendrical_calculations`] crate directly;
+/// for an example, see [`tests/reingold.rs`](https://github.com/unicode-org/icu4x/blob/main/components/calendar/tests/reingold.rs).
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
 /// - We decide to expand or reduce the range where we are using the astronomical simulation.
 ///
-/// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
-/// if constructed with [`Hijri::new_simulated_mecca()`].
-#[derive(Copy, Clone, Debug)]
-pub struct AstronomicalSimulation {
-    pub(crate) location: SimulatedLocation,
-}
+/// [^1]: See [`calendrical_calculations::islamic::observational_islamic_from_fixed`]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+#[deprecated(since = "2.2.0", note = "use `UmmAlQura`")]
+pub struct AstronomicalSimulation;
 
-#[derive(Clone, Debug, Copy, PartialEq)]
-pub(crate) enum SimulatedLocation {
-    Mecca,
-}
-
+#[allow(deprecated)]
 impl crate::cal::scaffold::UnstableSealed for AstronomicalSimulation {}
+#[allow(deprecated)]
 impl Rules for AstronomicalSimulation {
     fn debug_name(&self) -> &'static str {
-        match self.location {
-            SimulatedLocation::Mecca => "Hijri (simulated, Mecca)",
-        }
+        "Hijri (simulated, Mecca)"
+    }
+
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        None
     }
 
     fn year(&self, extended_year: i32) -> HijriYear {
-        if let Some(data) = HijriYear::lookup(
-            extended_year,
-            simulated_mecca_data::STARTING_YEAR,
-            simulated_mecca_data::DATA,
-        ) {
-            return data;
-        }
+        UmmAlQura.year(extended_year)
+    }
 
-        let location = match self.location {
-            SimulatedLocation::Mecca => calendrical_calculations::islamic::MECCA,
-        };
+    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
+        UmmAlQura.ecma_reference_year(month, day)
+    }
 
-        let start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
-            extended_year,
-            1,
-            1,
-            location,
-        );
-        let next_start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
-            extended_year + 1,
-            1,
-            1,
-            location,
-        );
-        match (next_start_day - start_day) as u16 {
-            355 | 354 => (),
-            353 => {
-                icu_provider::log::trace!(
-                    "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
-                    self.debug_name(),
-                    next_start_day - start_day
-                );
-            }
-            other => {
-                debug_assert!(
-                    !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                    "({}) Found year {extended_year} AH with length {}!",
-                    self.debug_name(),
-                    other
-                )
-            }
-        }
-
-        let month_lengths = {
-            let mut excess_days = 0;
-            let mut month_lengths = core::array::from_fn(|month_idx| {
-                let days_in_month =
-                    calendrical_calculations::islamic::observational_islamic_month_days(
-                        extended_year,
-                        month_idx as u8 + 1,
-                        location,
-                    );
-                match days_in_month {
-                    29 => false,
-                    30 => true,
-                    31 => {
-                        icu_provider::log::trace!(
-                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}.",
-                            self.debug_name(),
-                            month_idx + 1
-                        );
-                        excess_days += 1;
-                        true
-                    }
-                    _ => {
-                        debug_assert!(
-                            !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}!",
-                            self.debug_name(),
-                            month_idx + 1
-                        );
-                        false
-                    }
-                }
-            });
-            // To maintain invariants for calendar arithmetic, if astronomy finds
-            // a 31-day month, "move" the day to the first 29-day month in the
-            // same year to maintain all months at 29 or 30 days.
-            if excess_days != 0 {
-                debug_assert!(
-                    excess_days == 1 || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                    "({}) Found year {extended_year} AH with more than one excess day!",
-                    self.debug_name()
-                );
-                if let Some(l) = month_lengths.iter_mut().find(|l| !(**l)) {
-                    *l = true;
-                }
-            }
-            month_lengths
-        };
-        HijriYear::try_new(extended_year, start_day, month_lengths)
-            .unwrap_or_else(|| UmmAlQura.year(extended_year))
+    fn year_containing_rd(&self, rd: RataDie) -> HijriYear {
+        UmmAlQura.year_containing_rd(rd)
     }
 }
 
@@ -340,6 +280,10 @@ impl Rules for UmmAlQura {
 /// See [`TabularAlgorithmEpoch`] and [`TabularAlgorithmLeapYears`] for customization.
 ///
 /// The most common version of these rules uses [`TabularAlgorithmEpoch::Friday`] and [`TabularAlgorithmLeapYears::TypeII`].
+///
+/// Tabular Islamic rules are used in denominations such as Dawoodi Bohra and other branches of Ismailism.
+/// Be sure to select the correct leap year and epoch parameters according to your use case. If this type does
+/// not implement the parameters you need, please file an issue.
 ///
 /// When constructed with [`TabularAlgorithmLeapYears::TypeII`], and either [`TabularAlgorithmEpoch::Friday`] or [`TabularAlgorithmEpoch::Thursday`],
 /// this corresponds to the `"islamic-civil"` and `"islamic-tbla"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier) respectively.
@@ -431,10 +375,11 @@ impl Rules for TabularAlgorithm {
     }
 }
 
+#[allow(deprecated)]
 impl Hijri<AstronomicalSimulation> {
     /// Use [`Self::new_simulated_mecca`].
     #[cfg(feature = "compiled_data")]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_mecca() -> Self {
         Self::new_simulated_mecca()
     }
@@ -444,29 +389,28 @@ impl Hijri<AstronomicalSimulation> {
     /// These simulations are unofficial and are known to not necessarily match sightings
     /// on the ground. Unless you know otherwise for sure, instead of this variant, use
     /// [`Hijri::new_umm_al_qura`], which uses the results of KACST's Mecca-based calculations.
+    #[deprecated(since = "2.2.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_simulated_mecca() -> Self {
-        Self(AstronomicalSimulation {
-            location: SimulatedLocation::Mecca,
-        })
+        Self(AstronomicalSimulation)
     }
 
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub fn try_new_mecca_with_buffer_provider(
-        _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(Self::new_simulated_mecca())
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub fn try_new_mecca_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
         Ok(Self::new_simulated_mecca())
     }
 
     /// Use [`Self::new_simulated_mecca`].
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_mecca_always_calculating() -> Self {
         Self::new_simulated_mecca()
     }
@@ -498,8 +442,8 @@ pub enum TabularAlgorithmEpoch {
 impl TabularAlgorithmEpoch {
     fn rata_die(self) -> RataDie {
         match self {
-            Self::Thursday => ISLAMIC_EPOCH_THURSDAY,
-            Self::Friday => ISLAMIC_EPOCH_FRIDAY,
+            Self::Thursday => calendrical_calculations::islamic::ISLAMIC_EPOCH_THURSDAY,
+            Self::Friday => calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY,
         }
     }
 }
@@ -532,6 +476,13 @@ impl Hijri<TabularAlgorithm> {
 }
 
 /// Information about a Hijri year.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
+/// </div>
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct HijriYear {
     packed: PackedHijriYearData,
@@ -547,19 +498,36 @@ impl ToExtendedYear for HijriYear {
 impl HijriYear {
     /// Creates [`HijriYear`] from the given parts.
     ///
-    /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
-    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar. `start_day` has
-    /// to be within 5 days of the start of the year of the [`TabularAlgorithm`].
+    /// `month_starts` contains the first day of the 13 months from al-Muḥarram of the
+    /// given year to al-Muḥarram of the following year (inclusive). See [`Date::to_rata_die`]
+    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar.
     ///
-    /// `month_lengths[n - 1]` is true if the nth month has 30 days, and false otherwise.
-    /// Either 6 or 7 months need to have 30 days.
-    pub fn try_new(
-        extended_year: i32,
-        start_day: RataDie,
-        month_lengths: [bool; 12],
-    ) -> Option<Self> {
+    /// The start of al-Muḥarram has to be within 5 days of the start of al-Muḥarram using
+    /// the [`TabularAlgorithm`].
+    ///
+    /// Months need to have either 29 or 30 days.
+    pub const fn try_new(extended_year: i32, month_starts: [RataDie; 13]) -> Option<Self> {
+        let mut month_lengths = [false; 12];
+
+        let mut i = 0;
+        #[allow(clippy::indexing_slicing)]
+        while i < 12 {
+            match month_starts[i + 1].to_i64_date() - month_starts[i].to_i64_date() {
+                29 => month_lengths[i] = false,
+                30 => month_lengths[i] = true,
+                _ => return None,
+            }
+            i += 1;
+        }
+
+        let Some(packed) =
+            PackedHijriYearData::try_new(extended_year, month_lengths, month_starts[0])
+        else {
+            return None;
+        };
+
         Some(Self {
-            packed: PackedHijriYearData::try_new(extended_year, month_lengths, start_day)?,
+            packed,
             extended_year,
         })
     }
@@ -600,7 +568,7 @@ impl HijriYear {
     }
 }
 
-/// The struct containing compiled Hijri YearInfo
+/// A packed [`HijriYear`]
 ///
 /// * `start_day` has to be within 5 days of the start of the year of the [`TabularAlgorithm`].
 /// * `month_lengths[n - 1]` has either 6 or 7 long months.
@@ -620,6 +588,8 @@ impl HijriYear {
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
+///
+/// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
 struct PackedHijriYearData(u16);
@@ -630,38 +600,22 @@ impl PackedHijriYearData {
         month_lengths: [bool; 12],
         start_day: RataDie,
     ) -> Option<Self> {
-        let start_offset = start_day.since(Self::mean_tabular_start_day(extended_year));
-
-        if !(-8 < start_offset && start_offset < 8
-            || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
-                .start
-                .to_i64_date()
-                > start_day.to_i64_date()
-            || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
-                .end
-                .to_i64_date()
-                < start_day.to_i64_date())
-        {
+        let start_offset @ -5..=5 = start_day.since(Self::mean_tabular_start_day(extended_year))
+        else {
             return None;
-        }
+        };
+
         let start_offset = start_offset as i8 & 0b1000_0111u8 as i8;
 
         let mut all = 0u16;
-
-        let mut num_days = 29 * 12;
 
         let mut i = 0;
         while i < 12 {
             #[expect(clippy::indexing_slicing)]
             if month_lengths[i] {
                 all |= 1 << i;
-                num_days += 1;
             }
             i += 1;
-        }
-
-        if !matches!(num_days, 354 | 355) {
-            return None;
         }
 
         if start_offset < 0 {
@@ -766,6 +720,7 @@ impl PackWithMD for HijriYear {
     }
 }
 
+#[allow(deprecated)]
 impl<A: AsCalendar<Calendar = Hijri<AstronomicalSimulation>>> Date<A> {
     /// Deprecated
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
@@ -786,15 +741,15 @@ fn computer_reference_years() {
     fn compute_hijri_reference_year<C>(
         ordinal_month: u8,
         day: u8,
-        cal: &C,
+        cal: C,
         year_info_from_extended: impl Fn(i32) -> C::YearInfo,
-    ) -> Result<C::YearInfo, DateError>
+    ) -> C::YearInfo
     where
-        C: DateFieldsResolver,
+        C: DateFieldsResolver + Copy,
     {
         let dec_31 = Date::from_rata_die(
             crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
-            crate::Ref(cal),
+            cal,
         );
         // December 31, 1972 occurs in the 11th month, 1392 AH, but the day could vary
         debug_assert_eq!(dec_31.month().ordinal, 11);
@@ -806,15 +761,15 @@ fn computer_reference_years() {
             };
         let year_info = year_info_from_extended(y3);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y2);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y1);
         if day <= C::days_in_provided_month(year_info, ordinal_month) {
-            return Ok(year_info);
+            return year_info;
         }
         let year_info = year_info_from_extended(y0);
         // This function might be called with out-of-range days that are handled later.
@@ -825,12 +780,11 @@ fn computer_reference_years() {
                 "{ordinal_month}/{day}"
             );
         }
-        Ok(year_info)
+        year_info
     }
     for month in 1..=12 {
         for day in [30, 29] {
-            let y = compute_hijri_reference_year(month, day, &Hijri(rules), |e| rules.year(e))
-                .unwrap()
+            let y = compute_hijri_reference_year(month, day, Hijri(rules), |e| rules.year(e))
                 .extended_year;
 
             if day == 30 {
@@ -895,12 +849,16 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month: types::Month,
+        month: Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
             .ecma_reference_year(month, day)
             .map(|y| self.0.year(y))
+    }
+
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
+        year.new_year() + year.packed.days_before_month(month) as i64 + (day - 1) as i64
     }
 }
 
@@ -940,9 +898,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year().new_year()
-            + date.0.year().packed.days_before_month(date.0.month()) as i64
-            + (date.0.day() - 1) as i64
+        date.0.to_rata_die()
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -1024,7 +980,7 @@ impl<R: Rules> Calendar for Hijri<R> {
         )
     }
 
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         self.0.calendar_algorithm()
     }
 }
@@ -1261,174 +1217,6 @@ mod test {
             year: 1460,
             month: 10,
             day: 13,
-        },
-        DateCase {
-            year: 1518,
-            month: 3,
-            day: 5,
-        },
-    ];
-
-    static SIMULATED_CASES: [DateCase; 33] = [
-        DateCase {
-            year: -1245,
-            month: 12,
-            day: 10,
-        },
-        DateCase {
-            year: -813,
-            month: 2,
-            day: 25,
-        },
-        DateCase {
-            year: -568,
-            month: 4,
-            day: 2,
-        },
-        DateCase {
-            year: -501,
-            month: 4,
-            day: 7,
-        },
-        DateCase {
-            year: -157,
-            month: 10,
-            day: 18,
-        },
-        DateCase {
-            year: -47,
-            month: 6,
-            day: 3,
-        },
-        DateCase {
-            year: 75,
-            month: 7,
-            day: 13,
-        },
-        DateCase {
-            year: 403,
-            month: 10,
-            day: 5,
-        },
-        DateCase {
-            year: 489,
-            month: 5,
-            day: 22,
-        },
-        DateCase {
-            year: 586,
-            month: 2,
-            day: 7,
-        },
-        DateCase {
-            year: 637,
-            month: 8,
-            day: 7,
-        },
-        DateCase {
-            year: 687,
-            month: 2,
-            day: 21,
-        },
-        DateCase {
-            year: 697,
-            month: 7,
-            day: 7,
-        },
-        DateCase {
-            year: 793,
-            month: 6,
-            day: 29,
-        },
-        DateCase {
-            year: 839,
-            month: 7,
-            day: 6,
-        },
-        DateCase {
-            year: 897,
-            month: 6,
-            day: 2,
-        },
-        DateCase {
-            year: 960,
-            month: 9,
-            day: 30,
-        },
-        DateCase {
-            year: 967,
-            month: 5,
-            day: 27,
-        },
-        DateCase {
-            year: 1058,
-            month: 5,
-            day: 18,
-        },
-        DateCase {
-            year: 1091,
-            month: 6,
-            day: 3,
-        },
-        DateCase {
-            year: 1128,
-            month: 8,
-            day: 4,
-        },
-        DateCase {
-            year: 1182,
-            month: 2,
-            day: 4,
-        },
-        DateCase {
-            year: 1234,
-            month: 10,
-            day: 10,
-        },
-        DateCase {
-            year: 1255,
-            month: 1,
-            day: 11,
-        },
-        DateCase {
-            year: 1321,
-            month: 1,
-            day: 20,
-        },
-        DateCase {
-            year: 1348,
-            month: 3,
-            day: 19,
-        },
-        DateCase {
-            year: 1360,
-            month: 9,
-            day: 7,
-        },
-        DateCase {
-            year: 1362,
-            month: 4,
-            day: 13,
-        },
-        DateCase {
-            year: 1362,
-            month: 10,
-            day: 7,
-        },
-        DateCase {
-            year: 1412,
-            month: 9,
-            day: 12,
-        },
-        DateCase {
-            year: 1416,
-            month: 10,
-            day: 5,
-        },
-        DateCase {
-            year: 1460,
-            month: 10,
-            day: 12,
         },
         DateCase {
             year: 1518,
@@ -1774,28 +1562,6 @@ mod test {
     ];
 
     #[test]
-    fn test_simulated_hijri_from_rd() {
-        let calendar = Hijri::new_simulated_mecca();
-        for (case, f_date) in SIMULATED_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
-                .unwrap();
-            let iso = Date::from_rata_die(RataDie::new(*f_date), crate::Iso);
-
-            assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
-        }
-    }
-
-    #[test]
-    fn test_rd_from_simulated_hijri() {
-        let calendar = Hijri::new_simulated_mecca();
-        for (case, f_date) in SIMULATED_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
-                .unwrap();
-            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
-        }
-    }
-
-    #[test]
     fn test_rd_from_hijri() {
         let calendar = Hijri::new_tabular(
             TabularAlgorithmLeapYears::TypeII,
@@ -1875,35 +1641,6 @@ mod test {
 
     #[ignore] // slow
     #[test]
-    fn test_days_in_provided_year_simulated() {
-        let calendar = Hijri::new_simulated_mecca();
-        // -1245 1 1 = -214526 (R.D Date)
-        // 1518 1 1 = 764589 (R.D Date)
-        let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
-            .map(|year| {
-                Hijri::new_simulated_mecca()
-                    .0
-                    .year(year)
-                    .packed
-                    .days_in_year() as i64
-            })
-            .sum();
-        let expected_number_of_days = Date::try_new_hijri_with_calendar(END_YEAR, 1, 1, calendar)
-            .unwrap()
-            .to_rata_die()
-            - Date::try_new_hijri_with_calendar(START_YEAR, 1, 1, calendar)
-                .unwrap()
-                .to_rata_die(); // The number of days between Hijri years -1245 and 1518
-        let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
-
-        assert!(
-            (sum_days_in_year - expected_number_of_days).abs() <= tolerance,
-            "Difference between sum_days_in_year and expected_number_of_days is more than the tolerance"
-        );
-    }
-
-    #[ignore] // slow
-    #[test]
     fn test_days_in_provided_year_ummalqura() {
         let calendar = Hijri::new_umm_al_qura();
         // -1245 1 1 = -214528 (R.D Date)
@@ -1923,12 +1660,13 @@ mod test {
     #[test]
     fn test_regression_3868() {
         // This date used to panic on creation
-        let iso = Date::try_new_iso(2011, 4, 4).unwrap();
-        let hijri = iso.to_calendar(Hijri::new_umm_al_qura());
+        let date = Date::try_new_iso(2011, 4, 4)
+            .unwrap()
+            .to_calendar(Hijri::new_umm_al_qura());
         // Data from https://www.ummulqura.org.sa/Index.aspx
-        assert_eq!(hijri.day_of_month().0, 30);
-        assert_eq!(hijri.month().ordinal, 4);
-        assert_eq!(hijri.era_year().year, 1432);
+        assert_eq!(date.day_of_month().0, 30);
+        assert_eq!(date.month().ordinal, 4);
+        assert_eq!(date.era_year().year, 1432);
     }
 
     #[test]
@@ -1949,9 +1687,9 @@ mod test {
             TabularAlgorithmLeapYears::TypeII,
             TabularAlgorithmEpoch::Friday,
         );
-        let iso = Date::try_new_iso(-62971, 3, 19).unwrap();
-        let _dt = iso.to_calendar(calendar);
-        let _dt = iso.to_calendar(Hijri::new_umm_al_qura());
+        let _dt = Date::try_new_iso(-62971, 3, 19)
+            .unwrap()
+            .to_calendar(calendar);
     }
 
     #[test]
@@ -1960,29 +1698,16 @@ mod test {
 
         let dt = Date::try_new_hijri_with_calendar(1391, 1, 29, calendar).unwrap();
 
-        assert_eq!(dt.to_iso().to_calendar(calendar), dt);
-    }
-
-    #[test]
-    fn test_regression_5069_obs() {
-        let cal = Hijri::new_simulated_mecca();
-
-        let dt = Date::try_new_hijri_with_calendar(1390, 1, 30, cal).unwrap();
-
-        assert_eq!(dt.to_iso().to_calendar(cal), dt);
-
-        let dt = Date::try_new_iso(2000, 5, 5).unwrap();
-
-        assert!(dt.to_calendar(cal).day_of_month().0 > 0);
+        assert_eq!(Date::from_rata_die(dt.to_rata_die(), calendar), dt);
     }
 
     #[test]
     fn test_regression_6197() {
         let calendar = Hijri::new_umm_al_qura();
 
-        let iso = Date::try_new_iso(2025, 2, 26).unwrap();
-
-        let date = iso.to_calendar(calendar);
+        let date = Date::try_new_iso(2025, 2, 26)
+            .unwrap()
+            .to_calendar(calendar);
 
         // Data from https://www.ummulqura.org.sa/
         assert_eq!(
@@ -1997,13 +1722,13 @@ mod test {
 
     #[test]
     fn test_hijri_packed_roundtrip() {
-        fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) -> Option<()> {
-            let packed = PackedHijriYearData::try_new(1600, month_lengths, start_day)?;
+        #[track_caller]
+        fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) {
+            let packed = PackedHijriYearData::try_new(1600, month_lengths, start_day).unwrap();
             for i in 0..12 {
                 assert_eq!(packed.month_len(i + 1) == 30, month_lengths[i as usize]);
             }
             assert_eq!(packed.new_year(1600), start_day);
-            Some(())
         }
 
         let l = true;
@@ -2014,16 +1739,16 @@ mod test {
         let mixed2 = [s, s, l, l, l, s, l, s, s, s, l, l];
 
         let start_1600 = PackedHijriYearData::mean_tabular_start_day(1600);
-        assert_eq!(single_roundtrip(all_short, start_1600), None);
-        assert_eq!(single_roundtrip(all_long, start_1600), None);
-        single_roundtrip(mixed1, start_1600).unwrap();
-        single_roundtrip(mixed2, start_1600).unwrap();
+        single_roundtrip(all_short, start_1600);
+        single_roundtrip(all_long, start_1600);
+        single_roundtrip(mixed1, start_1600);
+        single_roundtrip(mixed2, start_1600);
 
-        single_roundtrip(mixed1, start_1600 - 7).unwrap();
-        single_roundtrip(mixed2, start_1600 + 7).unwrap();
-        single_roundtrip(mixed2, start_1600 + 4).unwrap();
-        single_roundtrip(mixed2, start_1600 + 1).unwrap();
-        single_roundtrip(mixed2, start_1600 - 1).unwrap();
-        single_roundtrip(mixed2, start_1600 - 4).unwrap();
+        single_roundtrip(mixed1, start_1600 - 5);
+        single_roundtrip(mixed2, start_1600 + 5);
+        single_roundtrip(mixed2, start_1600 + 4);
+        single_roundtrip(mixed2, start_1600 + 1);
+        single_roundtrip(mixed2, start_1600 - 1);
+        single_roundtrip(mixed2, start_1600 - 4);
     }
 }

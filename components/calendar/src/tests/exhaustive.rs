@@ -8,7 +8,7 @@ use crate::*;
 // Check rd -> date -> iso -> date -> rd for whole range
 super::test_all_cals!(
     #[ignore] // takes about 200 seconds in release-with-assertions
-    fn check_round_trip<C: Calendar>(cal: Ref<C>) {
+    fn check_round_trip<C: Calendar + Copy>(cal: C) {
         let low = *VALID_RD_RANGE.start();
         let high = *VALID_RD_RANGE.end();
         let mut prev = Date::from_rata_die(low, cal);
@@ -17,11 +17,12 @@ super::test_all_cals!(
             let date = Date::from_rata_die(curr, cal);
             assert!(prev < date);
 
-            let rd = date.to_rata_die();
-            assert_eq!(rd, curr, "{}", cal.as_calendar().debug_name());
-
-            let date2 = Date::new_from_iso(date.to_iso(), cal);
-            assert_eq!(date, date2, "{:?}", cal.as_calendar().debug_name());
+            assert_eq!(
+                date.to_rata_die(),
+                curr,
+                "{}",
+                cal.as_calendar().debug_name()
+            );
 
             prev = date;
             curr += 1;
@@ -31,9 +32,9 @@ super::test_all_cals!(
 
 super::test_all_cals!(
     #[ignore] // takes about 90 seconds in release-with-assertions
-    fn check_from_fields<C: Calendar>(cal: Ref<C>) {
+    fn check_from_fields<C: Calendar + Copy>(cal: C) {
         let months = (1..19)
-            .flat_map(|i| [types::Month::new(i).code(), types::Month::leap(i).code()].into_iter())
+            .flat_map(|i| [types::Month::new(i), types::Month::leap(i)].into_iter())
             .collect::<Vec<_>>();
         for year in VALID_YEAR_RANGE {
             if year % 50000 == 0 {
@@ -45,9 +46,9 @@ super::test_all_cals!(
                 options.overflow = Some(overflow);
                 for mut fields in months
                     .iter()
-                    .map(|m| {
+                    .map(|&m| {
                         let mut fields = types::DateFields::default();
-                        fields.month_code = Some(m.0.as_bytes());
+                        fields.month = Some(m);
                         fields
                     })
                     .chain((1..20).map(|m| {
@@ -59,7 +60,7 @@ super::test_all_cals!(
                     for day in 1..50 {
                         fields.extended_year = Some(year);
                         fields.day = Some(day);
-                        let _ = Date::try_from_fields(fields, options, Ref(&cal));
+                        let _ = Date::try_from_fields(fields, options, cal);
                     }
                 }
             }

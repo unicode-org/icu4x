@@ -90,6 +90,10 @@ impl DateFieldsResolver for Coptic {
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Coptic::reference_year_from_month_day(month, day)
     }
+
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
+        calendrical_calculations::coptic::fixed_from_coptic(year, month, day)
+    }
 }
 
 impl Coptic {
@@ -151,11 +155,7 @@ impl Calendar for Coptic {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::coptic::fixed_from_coptic(
-            date.0.year(),
-            date.0.month(),
-            date.0.day(),
-        )
+        date.0.to_rata_die()
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -266,19 +266,16 @@ mod tests {
     #[test]
     fn test_coptic_regression() {
         // https://github.com/unicode-org/icu4x/issues/2254
-        let iso_date = Date::try_new_iso(-100, 3, 3).unwrap();
-        let coptic = iso_date.to_calendar(Coptic);
-        let recovered_iso = coptic.to_iso();
-        assert_eq!(iso_date, recovered_iso);
+        let rd = Date::try_new_iso(-100, 3, 3).unwrap().to_rata_die();
+        assert_eq!(Date::from_rata_die(rd, Coptic).to_rata_die(), rd);
     }
 
     #[test]
     fn test_from_fields_monthday_constrain() {
         // M13-7 is not a real day, however this should resolve to M13-6
         // with Overflow::Constrain
-        let month = Month::new(13).code();
         let fields = DateFields {
-            month_code: Some(month.0.as_bytes()),
+            month: Some(Month::new(13)),
             day: Some(7),
             ..Default::default()
         };

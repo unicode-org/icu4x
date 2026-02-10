@@ -22,7 +22,7 @@ use zerovec::ZeroVec;
 /// Represents a scientific number that contains only clean numerator and denominator terms.
 /// NOTE:
 ///   clean means that there is no constant in the numerator or denominator.
-///   For example, ["1.2"] is clean, but ["1.2", ft_to_m"] is not clean.
+///   For example, `["1.2"]` is clean, but `["1.2", "ft_to_m"]` is not clean.
 pub(crate) struct ScientificNumber {
     /// Contains numerator terms that are represented as scientific numbers
     pub(crate) clean_num: Vec<String>,
@@ -76,7 +76,7 @@ impl GeneralNonScientificNumber {
         constant
     }
 
-    /// Determines if the constant is free of any non_scientific elements.
+    /// Determines if the constant is free of any `non_scientific` elements.
     fn is_free_of_non_scientific(&self) -> bool {
         self.non_scientific_num.is_empty() && self.non_scientific_den.is_empty()
     }
@@ -112,10 +112,10 @@ pub(crate) fn process_factor_part(
     Ok(result)
 }
 
-/// Processes a factor in the form of a string and returns a ScientificNumber.
+/// Processes a factor in the form of a string and returns a `ScientificNumber`.
 /// Examples:
-///     "1" is converted to ScientificNumber { clean_num: ["1"], clean_den: ["1"], exactness: Exact }
-///     "3 * ft_to_m" is converted to ScientificNumber { clean_num: ["3", "ft_to_m"], clean_den: ["1"], exactness: Exact }
+///     `1` is converted to `ScientificNumber { clean_num: ["1"], clean_den: ["1"], exactness: Exact }`
+///     `3 * ft_to_m` is converted to `ScientificNumber { clean_num: ["3", "ft_to_m"], clean_den: ["1"], exactness: Exact }`
 /// NOTE:
 ///    If one of the constants in the factor is approximate, the whole factor is approximate.
 pub(crate) fn process_factor(
@@ -267,10 +267,10 @@ pub(crate) fn process_constants<'a>(
 /// Determines if a string contains any alphabetic characters.
 /// Returns true if the string contains at least one alphabetic character, false otherwise.
 /// Examples:
-/// - "1" returns false
-/// - "ft_to_m" returns true
-/// - "1E2" returns true
-/// - "1.5E-2" returns true
+/// - `1` returns false
+/// - `ft_to_m` returns true
+/// - `1E2` returns true
+/// - `1.5E-2` returns true
 pub(crate) fn contains_alphabetic_chars(s: &str) -> bool {
     s.chars().any(char::is_alphabetic)
 }
@@ -402,13 +402,13 @@ fn test_convert_array_of_strings_to_fraction() {
 /// Splits a constant string into a tuple of (numerator, denominator).
 /// The numerator and denominator are represented as arrays of strings.
 /// Examples:
-/// - "1/2" is split into (["1"], ["2"])
-/// - "1 * 2 / 3 * ft_to_m" is split into (["1", "2"], ["3" , "ft_to_m"])
-/// - "/2" is split into (["1"], ["2"])
-/// - "2" is split into (["2"], ["1"])
-/// - "2/" is split into (["2"], ["1"])
-/// - "1E2" is split into (["1E2"], ["1"])
-/// - "1 2 * 3" is an invalid constant string
+/// - `1/2` is split into `(["1"], ["2"])`
+/// - `1 * 2 / 3 * ft_to_m` is split into `(["1", "2"], ["3" , "ft_to_m"])`
+/// - `/2` is split into `(["1"], ["2"])`
+/// - `2` is split into `(["2"], ["1"])`
+/// - `2/` is split into `(["2"], ["1"])`
+/// - `1E2` is split into `(["1E2"], ["1"])`
+/// - `1 2 * 3` is an invalid constant string
 pub(crate) fn split_unit_term(
     constant_string: &str,
 ) -> Result<(Vec<String>, Vec<String>), DataError> {

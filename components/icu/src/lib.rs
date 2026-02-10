@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! `icu` is the main meta-crate of the `ICU4X` project.
 //!
 //! It provides a comprehensive selection of functionality found in
@@ -121,23 +134,6 @@
 //! [`Locale`]: crate::locale::Locale
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data-provider-runtime.md#loading-additional-data-at-runtime
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
-
 // Needed for intra-doc link to work, since icu_provider is otherwise never mentioned in this crate
 use icu_provider as _;
 
@@ -181,11 +177,11 @@ pub use icu_segmenter as segmenter;
 pub use icu_time as time;
 
 #[doc(inline)]
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub use icu_experimental as experimental;
 
 #[doc(inline)]
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub use icu_pattern as pattern;
 
 #[cfg(feature = "datagen")]

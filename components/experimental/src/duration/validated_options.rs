@@ -211,7 +211,7 @@ impl ValidatedDurationFormatterOptions {
 
     /// Iterates over all unit fields of the struct, returning a tuple of the unit,
     /// and mutable references to its style and the visibility.
-    /// See also: [iter_units](ValidatedDurationFormatterOptions::iter_units).
+    /// See also: [`iter_units`](ValidatedDurationFormatterOptions::iter_units).
     #[allow(dead_code)]
     pub(crate) fn iter_mut_units(&mut self) -> [(Unit, &mut FieldStyle, &mut FieldDisplay); 10] {
         [
@@ -242,7 +242,7 @@ impl ValidatedDurationFormatterOptions {
 
     /// Iterates over all unit fields of the struct, returning a tuple of the unit,
     /// and references to its style and the visibility.
-    /// See also: [iter_mut_units](ValidatedDurationFormatterOptions::iter_mut_units).
+    /// See also: [`iter_mut_units`](ValidatedDurationFormatterOptions::iter_mut_units).
     pub(crate) fn iter_units(&self) -> [(Unit, FieldStyle, FieldDisplay); 10] {
         [
             (Unit::Year, self.year, self.year_visibility),
@@ -388,7 +388,7 @@ impl TryFrom<ValidatedDurationFormatterOptionsBuilder> for ValidatedDurationForm
     }
 }
 
-/// An enum to specify the unit being used. Used with FieldStyle and FieldDisplay to indicate the field unit.
+/// An enum to specify the unit being used. Used with [`FieldStyle`] and [`FieldDisplay`] to indicate the field unit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Unit {
     Year,
@@ -405,7 +405,7 @@ pub(crate) enum Unit {
 
 impl Unit {
     /// Returns the default digital style for the unit.
-    pub(crate) fn digital_default(&self) -> FieldStyle {
+    pub(crate) fn digital_default(self) -> FieldStyle {
         match self {
             Unit::Year => YearStyle::Short.into(),
             Unit::Month => MonthStyle::Short.into(),
@@ -420,7 +420,7 @@ impl Unit {
         }
     }
 
-    pub(crate) const fn as_unit_formatter_name(&self) -> &'static str {
+    pub(crate) const fn as_unit_formatter_name(self) -> &'static str {
         match self {
             Unit::Year => "year",
             Unit::Month => "month",

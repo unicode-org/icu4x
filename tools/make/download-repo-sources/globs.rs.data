@@ -163,6 +163,7 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/IDSU.toml",
     "uprops/small/InCB.toml",
     "uprops/small/InSC.toml",
+    "uprops/small/jg.toml",
     "uprops/small/Join_C.toml",
     "uprops/small/jt.toml",
     "uprops/small/lb.toml",
@@ -175,6 +176,7 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/nfdinert.toml",
     "uprops/small/nfkcinert.toml",
     "uprops/small/nfkdinert.toml",
+    "uprops/small/nt.toml",
     "uprops/small/Pat_Syn.toml",
     "uprops/small/Pat_WS.toml",
     "uprops/small/PCM.toml",
@@ -208,6 +210,8 @@ const LSTM_GLOB: &[&str] = &[
     "Thai_codepoints_exclusive_model4_heavy/weights.json",
     "Thai_graphclust_model4_heavy/weights.json",
 ];
+
+const UNIHAN_GLOB: &[&str] = &["Unihan_IRGSources.txt"];
 
 const TZDB_GLOB: &[&str] = &[
     "africa",

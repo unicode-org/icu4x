@@ -2,8 +2,177 @@
 
 ## Unreleased
 
+Fully filled in up to 30c187f4b7
+
+
+- Components
+    - General
+        - Use HTTPS links in docs (unicode-org#7212)
+        - Update MSRV to 1.86 (unicode-org#7576)
+    - `icu_calendar`
+        - Introduce a new `Month` type, preferred over using month codes (unicode-org#7147)
+        - Restrict the range of valid dates constructed via certain constructors (unicode-org#7219, unicode-org#7227)
+        - Fix out-of-range bug during date arithmetic (unicode-org#7257)
+        - Implement ISO 8601 date duration parsing (#7355)
+        - Correctly produce `ethioaa` calendars from `CalendarAlgorithm` (unicode-org#7321)
+        - Respect `-u-rg` in calendar resolution (unicode-org#7376)
+        - Optimize the stack size of `Date` types (unicode-org#7220)
+        - `AnyCalendar` cleanups and docs fixes (unicode-org#7223, unicode-org#7225)
+        - Improve Hijri docs (unicode-org#7330, unicode-org#7332, unicode-org#7333)
+        - Remove `Hijri<AstronomicalSimulation>` simulation code, retaining hardcoded data, falling back to Tabular for non-modern dates (unicode-org#7301)
+        - Replace `Date::day_of_week` by `Date::weekday` (unicode-org#7288)
+        - Deprecate `Date::new_from_iso`/`Date::to_iso` (unicode-org#7287)
+        - Optimize Hebrew and Julian calendars (unicode-org#7213)
+        - Optimize day/week diffing to use RDs (unicode-org#7308)
+    - `icu_casemap`
+        - General changes only
+    - `icu_collections`
+        - Add `CodePointInversionListAndStringList::contains_utf8` (unicode-org#7363)
+    - `icu_codepointtrie_builder`: `0.5.1 -> ???`
+        - Remove serde dep from `icu_codepointtrie_builder` (unicode-org#7298)
+    - `icu_collator`
+        - General changes only
+    - `icu_datetime`
+        - Fix error handling for FieldSetBuilder (unicode-org#7245)
+        - Add some support for `U` (cyclic year) datetime symbol (unicode-org#7328)
+        - Remove old datetime data structs (unicode-org#7205)
+        - Assorted improvements to icu_datetime docs (unicode-org#7244)
+    - `icu_decimal`
+        - General changes only
+    - `icu_experimental`: `0.4.0 -> ???`
+        - `compactdecimal`
+            - Don't hallucinate patterns (unicode-org#7387)
+            - Pack compact decimal data (unicode-org#7388)
+            - Round fractional compact decimals to two significant digits (unicode-org#7389)
+        - `currency`
+            - Add currency fractions provider (unicode-org#7278)
+            - Update comments for currency data structures to enhance clarity (unicode-org#7405)
+        - `dimension`
+        - `measure`
+        - `relativetime`
+        - `units`
+            - Correct region extraction for categorized display names (#7421)
+    - `icu`
+        - Add example for measuring Date::try_from_fields code size (unicode-org#7297)
+    - `icu_list`
+        - General changes only
+    - `icu_locale`
+        - Add docs discouraging direct conversion from Locale to DataLocale for locale fallback (unicode-org#7348)
+    - `icu_locale_core`
+        - Fix regional override `-u-rg` (unicode-org#7337) and regional subdivision `-u-sd` (unicode-org#7341) to fix region-priority data loading in other components
+        - (Macro-breaking) The `struct_keyword!` macro was changed to operate on references for conversions. This API is mostly used internally by ICU4X. (unicode-orgunicode-org#7361)
+        - Add `From<&Value>` for struct preferences (unicode-org#7361)
+        - Correctly parse `-u-ca-ethiopic-amete-alem` alias (#7413)
+        - Add `LocalePreferences::from_locale_strict` (unicode-org#7377)
+        - Fix `LanguageIdentifier::normalize_utf8` example (unicode-org#7372)
+        - Use better types in `LocalePreferences` (unicode-org#7360)
+    - `icu_normalizer`
+        - Move `harfbuzz-traits` implementations into component crates (unicode-org#7200)
+    - `icu_pattern`
+        - Create SinglePlaceholderPattern::PASS_THROUGH (unicode-org#7393)
+    - `icu_plurals`
+        - FourBitMetadata should be checked against 0x10 or 0x0F, not 0x80 (unicode-org#7395)
+        - Fix overflow in `PluralOperands` constructor (#7425)
+    - `icu_properties`
+        - Add enumerated property `Numeric_Type` (unicode-org#7157)
+        - Add enumerated property `Joining_Group` (unicode-org#7293)
+        - Add missing convenience API for `Basic_Emoji` and `EmojiSet` (unicode-org#7358)
+        - Stabilise `IndicConjuctBreak` (unicode-org#7280)
+        - Constify `PropertyNamesLong`/`PropertNamesShort`/`PropertyParser` constructors (unicode-orgunicode-org#7294)
+        - Fix script values (unicode-org#7269)
+        - Move `harfbuzz-traits` implementations into component crates (unicode-org#7200)
+        - Add conversions for `unicode_bidi::BidiClass` (unicode-org#7272)
+        - Add conversions for properties/locale scripts (unicode-org#7270)
+        - Validate properties names, constants (unicode-org#7284, unicode-org#7281)
+    - `icu_segmenter`
+        - Add non-complex segmenter constructors (unicode-org#7268)
+        - (Experimental) Initial code for RAdaBoost word segmenter for Chinese and CNN word segmenter for Thai (unicode-org#7122, unicode-org#7217, unicode-org#7246, unicode-org#7344)
+    - `icu_time`
+        - Add docs for `DateTime`/`ZonedDateTime` semantics (unicode-org#7275)
+        - Relax some bounds (unicode-org#7286)
+- Data model and providers
+    - `icu_provider_adapters`
+        - General changes only
+    - `icu_provider_baked`
+        - Use `Index32` in baked data by default (unicode-org#7310)
+    - `icu_provider_blob`
+        - General changes only
+    - `icu_provider`
+        - Breaking: Add associated type to `MaybeEncodeAsVarULE` trait and use Index32 (unicode-org#7310)
+        - Add serde cargo feature comments to icu_provider buf/serde.rs (unicode-org#7408)
+    - `icu_provider_export`
+        - Print warning when multiple filters are applied to same marker (unicode-org#7240)
+    - `icu4x-datagen`
+        - Add `--attribute-filter` cli flag to icu4x-datagen (unicode-org#7236)
+    - `icu_provider_registry`
+        - Various new data markers as needed by component crates
+    - `icu_provider_source`
+        - Support for generating any new data markers as needed by component crates
+        - Update datagen to TZDB 2025c (unicode-org#7306)
+        - Always generate fast-mode data for NFD and NFKD tries (unicode-org#7222)
+- FFI
+    - `icu_capi`
+        - FFI analogues for *most* new ICU4X component APIs
+        - Add FFI property `try_from_str` (unicode-org#7367)
+    - (Experimental) Basic Kotlin bindings (unicode-org#7237, unicode-org#7256, unicode-org#7265)
+    - Use stable Dart 3.10 (unicode-org#7243)
+    - `icu_harfbuzz`
+        - Retire the `icu_harfbuzz` crate. The `icu_properties` and `icu_normalizer` types now directly implement the `harfbuzz-traits`
 - Utils
-  - Retire the `icu_harfbuzz` crate. The `icu_properties` and `icu_normalizer` types now directly implement the `harfbuzz-traits`
+    - `bies`: No change (`0.2.5`)
+    - `calendrical_calculations`: `0.2.3 -> ???`
+        - Optimize Hebrew and Julian calendars (unicode-org#7213)
+        - Add docs about the Skaukat criterion (unicode-org#7331)
+    - `crlify`: No change (`1.0.4`)
+    - `databake`: No change (`0.2.0`)
+    - `fixed_decimal`: No change (`0.7.1`)
+    - `ixdtf`: No change (`0.6.4`)
+    - `litemap`: No change (`0.8.1`)
+    - `potential_utf`: No change (`0.1.4`)
+    - `resb`: No change (`0.1.1`)
+    - `tinystr`: No change (`0.8.2`)
+    - `tzif`: No change (`0.4.1`)
+    - `writeable`: `0.6.2 -> ???`
+        - Add writeable::adapters::Concat and writeable::concat_writeable! (unicode-org#6929)
+    - `yoke`, `yoke_derive`: `0.8.1 -> ???`
+        - impl common traits (Display, PartialEq/Eq, PartialOrd/Ord) (#7400)
+        - derive: Allow trait bounds in `where` clauses (unicode-org#7230)
+        - Safely handle panics in the `replace_cart` callback, additionally fixing OOM safety issue in `wrap_cart_in_*` (unicode-org#7456)
+        - derive: Recognize only `yoke(prove_covariance_manually)`, not arbitrary `foo(prove_covariance_manually)` (unicode-org#7470)
+        - derive: Prevent unusual unsizing coercions, deref coercions, and macros from causing unsoundness (unicode-org#7470)
+        - derive: Handle types' lifetime parameters more precisely (unicode-org#7470)
+        - derive: Support raw generic parameters, raw lifetime parameters, and for-binders (unicode-org#7498)
+        - derive: Loosen bounds in `prove_covariance_manually` on lifetime-less field types `T` to `T: 'static` (unicode-org#7498)
+    - `zerofrom`: No change (`0.1.6`)
+    - `zerotrie`: `0.2.3 -> ???`
+        - Add `ZeroAsciiDenseSparse2dTrie` for more efficient storage of data keys with many attributes (unicode-org#7264, unicode-org#7304, unicode-org#7305)
+    - `zerovec`: `0.11.5 -> ???`
+        - `schemars` support (unicode-org#7209)
+    - `zerovec`: No change (`0.11.2`)
+    - `zoneinfo64`: `0.2.1 -> ???`
+        - Internal cleanups
+
+## icu 2.1.x
+
+Several crates have had patch releases in the 2.1 stream:
+
+- Components
+    - (2.1.1) General
+        - Fix `icu_locale_core` dependency (unicode-org#7191)
+    - (2.1.2)`icu_properties`
+        - Fix some property constants (unicode-org#7269, unicode-org#7281, unicode-org#7284)
+        - Add conversions for `unicode_bidi::BidiClass` (unicode-org#7272)
+        - Add `IndicConjunctBreak` (unicode-org#7280)
+        - Add conversion between `icu::properties::props::Script` and `icu::locale::subtags:Script` (unicode-org#7270)
+    - (2.1.2) `icu_segmenter`
+        - Add non-complex line and word break constructors (unicode-org#7268)
+    - (2.1.2) `icu_capi`
+        - Bring in alignment with 2.1.2 `icu_properties` and `icu_segmenter` changes.
+- Data model and providers
+    - (2.1.2) `icu_provider_source`, `icu_locale_data`, `icu_datetime_data`, `icu_experimental_data`
+        - Update to CLDR 48.1 (unicode-org#7396)
+    - (2.1.2) `icu_provider_registry`, `icu_provider_source`
+        - Add `IndicConjunctBreak` (unicode-org#7280)
 
 ## icu4x 2.1
 
@@ -125,7 +294,7 @@
         - Document deprecated APIs (unicode-org#6890)
         - FFI for most new APIs
         - `ListFormatter::format` now takes a `diplomat::span<const diplomat::string_view_for_slice>` instead of a `diplomat::span<std::string_view>` to handle soundness issues on some platforms (unicode-org#6974)
-    - Dart version `2.1.0-dev.0`
+    - Dart version `2.1.0-dev.0`, `2.1.0-dev.1`
     - NPM version `2.1.0`
 - Utils
     - General

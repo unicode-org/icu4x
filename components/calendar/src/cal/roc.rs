@@ -33,7 +33,7 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Roc;
 
-impl_with_abstract_gregorian!(crate::cal::Roc, RocDateInner, RocEra, _x, RocEra);
+impl_with_abstract_gregorian!(Roc, RocDateInner, RocEra, _x, RocEra);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct RocEra;
@@ -127,50 +127,50 @@ mod test {
     #[derive(Debug)]
     struct TestCase {
         rd: RataDie,
-        iso_year: i32,
-        iso_month: u8,
-        iso_day: u8,
-        expected_year: i32,
-        expected_era: &'static str,
-        expected_month: u8,
-        expected_day: u8,
+        year: i32,
+        era: &'static str,
+        month: u8,
+        day: u8,
     }
 
     fn check_test_case(case: TestCase) {
-        let iso_from_rd = Date::from_rata_die(case.rd, Iso);
         let roc_from_rd = Date::from_rata_die(case.rd, Roc);
         assert_eq!(
             roc_from_rd.era_year().year,
-            case.expected_year,
-            "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+            case.year,
+            "Failed year check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
             roc_from_rd.era_year().era,
-            case.expected_era,
-            "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+            case.era,
+            "Failed era check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.extended_year(),
-            if case.expected_era == "roc" {
-                case.expected_year
+            roc_from_rd.year().extended_year(),
+            if case.era == "roc" {
+                case.year
             } else {
-                1 - case.expected_year
+                1 - case.year
             },
-            "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+            "Failed year check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
             roc_from_rd.month().ordinal,
-            case.expected_month,
-            "Failed month check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+            case.month,
+            "Failed month check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
-        assert_eq!(roc_from_rd.day_of_month().0, case.expected_day,
-            "Failed day_of_month check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}");
+        assert_eq!(
+            roc_from_rd.day_of_month().0,
+            case.day,
+            "Failed day_of_month check from RD: {case:?}\nROC: {roc_from_rd:?}"
+        );
 
-        let iso_from_case = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
-            .expect("Failed to initialize ISO date for {case:?}");
-        let roc_from_case = Date::new_from_iso(iso_from_case, Roc);
-        assert_eq!(iso_from_rd, iso_from_case,
-            "ISO from RD not equal to ISO generated from manually-input ymd\nCase: {case:?}\nRD: {iso_from_rd:?}\nManual: {iso_from_case:?}");
+        let roc_from_case = Date::try_new_roc(
+            roc_from_rd.year().extended_year(),
+            roc_from_rd.month().ordinal,
+            roc_from_rd.day_of_month().0,
+        )
+        .unwrap();
         assert_eq!(roc_from_rd, roc_from_case,
             "ROC date from RD not equal to ROC generated from manually-input ymd\nCase: {case:?}\nRD: {roc_from_rd:?}\nManual: {roc_from_case:?}");
     }
@@ -184,44 +184,32 @@ mod test {
 
         let cases = [
             TestCase {
-                rd: RataDie::new(697978),
-                iso_year: 1912,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 1,
-                expected_era: "roc",
-                expected_month: 1,
-                expected_day: 1,
+                rd: Date::try_new_iso(1912, 1, 1).unwrap().to_rata_die(),
+                year: 1,
+                era: "roc",
+                month: 1,
+                day: 1,
             },
             TestCase {
-                rd: RataDie::new(698037),
-                iso_year: 1912,
-                iso_month: 2,
-                iso_day: 29,
-                expected_year: 1,
-                expected_era: "roc",
-                expected_month: 2,
-                expected_day: 29,
+                rd: Date::try_new_iso(1912, 2, 29).unwrap().to_rata_die(),
+                year: 1,
+                era: "roc",
+                month: 2,
+                day: 29,
             },
             TestCase {
-                rd: RataDie::new(698524),
-                iso_year: 1913,
-                iso_month: 6,
-                iso_day: 30,
-                expected_year: 2,
-                expected_era: "roc",
-                expected_month: 6,
-                expected_day: 30,
+                rd: Date::try_new_iso(1913, 6, 30).unwrap().to_rata_die(),
+                year: 2,
+                era: "roc",
+                month: 6,
+                day: 30,
             },
             TestCase {
-                rd: RataDie::new(738714),
-                iso_year: 2023,
-                iso_month: 7,
-                iso_day: 13,
-                expected_year: 112,
-                expected_era: "roc",
-                expected_month: 7,
-                expected_day: 13,
+                rd: Date::try_new_iso(2023, 7, 13).unwrap().to_rata_die(),
+                year: 112,
+                era: "roc",
+                month: 7,
+                day: 13,
             },
         ];
 
@@ -238,64 +226,46 @@ mod test {
         // Jan 1. 1912 CE = RD 697978
         let cases = [
             TestCase {
-                rd: RataDie::new(697977),
-                iso_year: 1911,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 1,
-                expected_era: "broc",
-                expected_month: 12,
-                expected_day: 31,
+                rd: Date::try_new_iso(1911, 12, 31).unwrap().to_rata_die(),
+                year: 1,
+                era: "broc",
+                month: 12,
+                day: 31,
             },
             TestCase {
-                rd: RataDie::new(697613),
-                iso_year: 1911,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 1,
-                expected_era: "broc",
-                expected_month: 1,
-                expected_day: 1,
+                rd: Date::try_new_iso(1911, 1, 1).unwrap().to_rata_die(),
+                year: 1,
+                era: "broc",
+                month: 1,
+                day: 1,
             },
             TestCase {
-                rd: RataDie::new(697612),
-                iso_year: 1910,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 2,
-                expected_era: "broc",
-                expected_month: 12,
-                expected_day: 31,
+                rd: Date::try_new_iso(1910, 12, 31).unwrap().to_rata_die(),
+                year: 2,
+                era: "broc",
+                month: 12,
+                day: 31,
             },
             TestCase {
-                rd: RataDie::new(696576),
-                iso_year: 1908,
-                iso_month: 2,
-                iso_day: 29,
-                expected_year: 4,
-                expected_era: "broc",
-                expected_month: 2,
-                expected_day: 29,
+                rd: Date::try_new_iso(1908, 2, 29).unwrap().to_rata_die(),
+                year: 4,
+                era: "broc",
+                month: 2,
+                day: 29,
             },
             TestCase {
-                rd: RataDie::new(1),
-                iso_year: 1,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 1911,
-                expected_era: "broc",
-                expected_month: 1,
-                expected_day: 1,
+                rd: Date::try_new_iso(1, 1, 1).unwrap().to_rata_die(),
+                year: 1911,
+                era: "broc",
+                month: 1,
+                day: 1,
             },
             TestCase {
-                rd: RataDie::new(0),
-                iso_year: 0,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 1912,
-                expected_era: "broc",
-                expected_month: 12,
-                expected_day: 31,
+                rd: Date::try_new_iso(0, 12, 31).unwrap().to_rata_die(),
+                year: 1912,
+                era: "broc",
+                month: 12,
+                day: 31,
             },
         ];
 

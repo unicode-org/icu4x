@@ -3,7 +3,9 @@
 <!-- cargo-rdme start -->
 
 This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
-C, C++, Dart, JavaScript, and TypeScript bindings.
+C and C++ headers. ICU4X is also available for JavaScript/TypeScript through [`npm`](https://www.npmjs.com/package/icu), and for
+Dart through [`pub.dev`](https://pub.dev/packages/icu4x).
+
 <p style='font-weight: bold; font-size: 24px;'> 🔗 See the <a target='_blank' href='https://icu4x.unicode.org/
 '>ICU4X website</a> for FFI docs and examples</p>
 

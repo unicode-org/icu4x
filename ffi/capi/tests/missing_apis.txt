@@ -7,7 +7,7 @@
 #  - Whether the API already has its functionality exposed over FFI (if so, add a potentially-`hidden` `rust_link` annotation to the corresponding FFI API)
 #  - Whether that API is rust-specific functionality that need not be exposed (if so, add it to the allowlist with a note, or add a `hidden` `rust_link` annotation to a related API if possible)
 #  - Whether that API should be punted for later in FFI (if so, please check in with @Manishearth, @robertbastian, or @sffc)
-#  - Whether the API is experimental (if so, add it to the allowlist as experimental)
+#  - Whether the API is unstable (if so, add it to the allowlist as unstable)
 #
 # It is acceptable to temporarily have APIs in this file that you plan to add in a soon-upcoming PR.
 #
@@ -17,6 +17,7 @@
 icu::calendar::Date::try_add_with_options#FnInStruct
 icu::calendar::Date::try_added_with_options#FnInStruct
 icu::calendar::Date::try_until_with_options#FnInStruct
+icu::calendar::error::DateDurationParseError#Enum
 icu::calendar::error::EcmaReferenceYearError#Enum
 icu::calendar::options::DateAddOptions#Struct
 icu::calendar::options::DateDifferenceOptions#Struct
@@ -25,6 +26,8 @@ icu::calendar::types::DateDuration::for_days#FnInStruct
 icu::calendar::types::DateDuration::for_months#FnInStruct
 icu::calendar::types::DateDuration::for_weeks#FnInStruct
 icu::calendar::types::DateDuration::for_years#FnInStruct
+icu::calendar::types::DateDuration::try_from_str#FnInStruct
+icu::calendar::types::DateDuration::try_from_utf8#FnInStruct
 icu::calendar::types::DateDurationUnit#Enum
 icu::calendar::types::Month::leap#FnInStruct
 icu::calendar::types::Month::new#FnInStruct

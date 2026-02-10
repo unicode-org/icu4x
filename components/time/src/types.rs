@@ -118,7 +118,7 @@ dt_unit!(
     /// Must be within inclusive bounds `[0, 999_999_999]`."
 );
 
-/// A representation of a time in hours, minutes, seconds, and nanoseconds
+/// A representation of a time-of-day in hours, minutes, seconds, and nanoseconds
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 ///
@@ -184,7 +184,21 @@ impl Time {
 /// A date and time for a given calendar.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+///
+/// This type exists as an input type for datetime formatting and should only be constructed
+/// to pass to a datetime formatter.
+///
+/// # Semantics
+///
+/// This type represents the date and time that are *displayed* to a user. It does not identify
+/// the absolute time that an event happens, nor does it represent the general concept of a
+/// "local date time", which would require time zone and leap second information for operations
+/// like validation, arithmetic, and comparisons.
+///
+/// Hence, while this type implements [`PartialEq`]/[`Eq`] (equal [`DateTime`]s will *display*
+/// equally), it does not implement [`PartialOrd`]/[`Ord`], arithmetic, and it is possible to
+/// create [`DateTime`]s that do not exist for a particular timezone.
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
     /// The date
@@ -193,10 +207,55 @@ pub struct DateTime<A: AsCalendar> {
     pub time: Time,
 }
 
+impl<A, B> PartialEq<DateTime<B>> for DateTime<A>
+where
+    A: AsCalendar,
+    B: AsCalendar,
+    Date<A>: PartialEq<Date<B>>,
+{
+    fn eq(&self, other: &DateTime<B>) -> bool {
+        self.date.eq(&other.date) && self.time.eq(&other.time)
+    }
+}
+
+impl<A: AsCalendar> Eq for DateTime<A> where Date<A>: Eq {}
+
+impl<A: AsCalendar> Clone for DateTime<A>
+where
+    Date<A>: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            date: self.date.clone(),
+            time: self.time,
+        }
+    }
+}
+
+impl<A: AsCalendar> Copy for DateTime<A> where Date<A>: Copy {}
+
 /// A date and time for a given calendar, local to a specified time zone.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+///
+/// This type exists as an input type for datetime formatting and should only be constructed
+/// to pass to a datetime formatter.
+///
+/// # Semantics
+///
+/// This type represents the date, time, and time zone that are *displayed* to a user.
+/// It does not identify the absolute time that an event happens, nor does it represent
+/// the general concept of a "zoned date time", which would require time zone and leap
+/// second information for operations like validation, arithmetic, and comparisons[^1].
+///
+/// Hence, while this type implements [`PartialEq`]/[`Eq`] (equal [`ZonedDateTime`]s will
+/// *display* equally), it does not implement [`PartialOrd`]/[`Ord`], arithmetic, and it
+/// is possible to create [`ZonedDateTime`]s that do not exist.
+///
+/// [^1]: [`ZonedDateTime<UtcOffset>`] is an exception to this, as the whole time zone
+///       identity is part of the type, and there are no local time discontinuities.
+///       Therefore it actually identifies an absolute time and implements [`PartialOrd`].
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedDateTime<A: AsCalendar, Z> {
     /// The date, local to the time zone
@@ -205,6 +264,46 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
     pub time: Time,
     /// The time zone
     pub zone: Z,
+}
+
+impl<A, B, Y, Z> PartialEq<ZonedDateTime<B, Z>> for ZonedDateTime<A, Y>
+where
+    A: AsCalendar,
+    B: AsCalendar,
+    Date<A>: PartialEq<Date<B>>,
+    Y: PartialEq<Z>,
+{
+    fn eq(&self, other: &ZonedDateTime<B, Z>) -> bool {
+        self.date.eq(&other.date) && self.time.eq(&other.time) && self.zone.eq(&other.zone)
+    }
+}
+
+impl<A: AsCalendar, Z> Eq for ZonedDateTime<A, Z>
+where
+    Date<A>: Eq,
+    Z: Eq,
+{
+}
+
+impl<A: AsCalendar, Z> Clone for ZonedDateTime<A, Z>
+where
+    Date<A>: Clone,
+    Z: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            date: self.date.clone(),
+            time: self.time,
+            zone: self.zone.clone(),
+        }
+    }
+}
+
+impl<A: AsCalendar, Z> Copy for ZonedDateTime<A, Z>
+where
+    Date<A>: Copy,
+    Z: Copy,
+{
 }
 
 const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);

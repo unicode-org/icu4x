@@ -7,7 +7,7 @@
 //! Spec reference: <https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns>
 
 use displaydoc::Display;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use icu_pattern::{DoublePlaceholderKey, PatternItemCow};
 use itertools::Itertools;
 use std::str::FromStr;
@@ -77,7 +77,7 @@ impl FromStr for DecimalSubPattern {
 }
 
 impl DecimalSubPattern {
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     pub(crate) fn to_pattern_items(&self) -> Vec<PatternItemCow<'_, DoublePlaceholderKey>> {
         use std::borrow::Cow;
         vec![

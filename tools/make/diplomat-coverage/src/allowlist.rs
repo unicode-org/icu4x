@@ -135,10 +135,13 @@ lazy_static::lazy_static! {
         "icu::calendar::IntoAnyCalendar",
         "icu::calendar::Date::try_new_buddhist",
         "icu::calendar::Date::try_new_chinese_with_calendar",
+        "icu::calendar::Date::try_new_chinese_traditional",
+        "icu::calendar::Date::try_new_korean_traditional",
         "icu::calendar::Date::try_new_coptic",
         "icu::calendar::Date::try_new_ethiopian",
         "icu::calendar::Date::try_new_gregorian",
         "icu::calendar::Date::try_new_hebrew",
+        "icu::calendar::Date::try_new_hebrew_v2",
         "icu::calendar::Date::try_new_hijri_with_calendar",
         "icu::calendar::Date::try_new_indian",
         "icu::calendar::Date::try_new_japanese_with_calendar",
@@ -276,10 +279,20 @@ lazy_static::lazy_static! {
         // Serde-specific
         "icu::datetime::fieldsets::serde",
 
-        // Stuff that is experimental
+        // By-value methods on non-Copy types are not possible over FFI
+        "icu::segmenter::LineSegmenterBorrowed::with_dictionary",
+        "icu::segmenter::LineSegmenterBorrowed::with_lstm",
+        "icu::segmenter::WordSegmenterBorrowed::with_dictionary",
+        "icu::segmenter::WordSegmenterBorrowed::with_lstm",
+
+        // Stuff that is unstable
         //
         // We should occasionally review these
         // =========================
+
+        "icu::decimal::CompactDecimalFormatter",
+        "icu::decimal::error::ExponentError",
+        "icu::decimal::options::CompactDecimalFormatterOptions",
 
         "icu::experimental",
 

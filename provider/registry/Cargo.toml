@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_registry"
 description = "A registry of all ICU4X data markers"
-version.workspace = true
+version = "2.1.2"
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -16,5 +16,8 @@ categories.workspace = true
 include.workspace = true
 
 [dev-dependencies]
-icu = { path = "../../components/icu", features = ["experimental"] }
+icu = { path = "../../components/icu", features = ["unstable"] }
 icu_provider = { workspace = true }
+
+[lints]
+workspace = true

@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use icu::collections::codepointtrie::CodePointTrie;
+use icu::collections::codepointtrie::{CodePointTrie, TrieValue};
+use icu::properties::props::EnumeratedProperty;
 use icu::properties::provider::{names::*, *};
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -15,361 +16,310 @@ use zerovec::ule::NichedOption;
 impl SourceDataProvider {
     pub(super) fn get_enumerated_prop<'a>(
         &'a self,
-        key: &str,
+        name: &str,
+        short_name: &str,
     ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
-        self.icuexport()?
+        let data = self.icuexport()?
             .read_and_parse_toml::<super::uprops_serde::enumerated::Main>(&format!(
                 "uprops/{}/{}.toml",
                 self.trie_type(),
-                key
+                short_name
             ))?
             .enum_property
             .first()
-            .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())
+            .ok_or_else(|| DataError::custom("Loading icuexport property data failed: \
+                                            Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+
+        if name != data.long_name || short_name != data.short_name {
+            return Err(DataError::custom("Property name mismatch").with_display_context(name));
+        }
+
+        Ok(data)
     }
+
     fn get_mask_prop<'a>(
         &'a self,
-        key: &str,
+        name: &str,
+        short_name: &str,
+        mask_for: &str,
     ) -> Result<&'a super::uprops_serde::mask::MaskPropertyMap, DataError> {
-        self.icuexport()?
+        let data = self
+            .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
                 "uprops/{}/{}.toml",
                 self.trie_type(),
-                key
+                short_name
             ))?
             .mask_property
             .first()
             .ok_or(DataError::custom(
                 "Loading icuexport property data failed: \
                  Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)",
-            ))
+            ))?;
+
+        if data.long_name != name || data.short_name != short_name || data.mask_for != mask_for {
+            return Err(DataError::custom("Property name mismatch")
+                .with_marker(PropertyNameParseGeneralCategoryMaskV1::INFO));
+        }
+
+        Ok(data)
     }
 }
 
-fn get_prop_values_map<F>(
-    values: &[super::uprops_serde::PropertyValue],
-    transform_u32: F,
-) -> Result<PropertyValueNameToEnumMap<'static>, DataError>
-where
-    F: Fn(u32) -> Result<u16, DataError>,
-{
-    let mut map = BTreeMap::new();
-    for value in values {
-        let discr = transform_u32(value.discr)? as usize;
-        map.insert(value.long.as_bytes(), discr);
-        if let Some(ref short) = value.short {
-            map.insert(short.as_bytes(), discr);
+impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
+    pub(crate) fn build_codepointtrie<T: TrieValue>(
+        &self,
+    ) -> Result<CodePointTrie<'static, T>, DataError> {
+        let code_point_trie = CodePointTrie::try_from(&self.code_point_trie)
+            .map_err(|e| DataError::custom("CPT").with_display_context(&e))?;
+
+        for (cpt_range, raw_range) in code_point_trie.iter_ranges().zip(&self.ranges) {
+            if (cpt_range.range, TrieValue::to_u32(cpt_range.value))
+                != (raw_range.a..=raw_range.b, raw_range.v as u32)
+            {
+                return Err(DataError::custom("precomputed CPT doesn't match ranges"));
+            }
         }
-        for alias in &value.aliases {
-            map.insert(alias.as_bytes(), discr);
-        }
+
+        Ok(code_point_trie)
     }
-    Ok(PropertyValueNameToEnumMap {
-        map: ZeroTrieSimpleAscii::from_iter(map).convert_store(),
-    })
+
+    pub(crate) fn names_to_values(&self) -> BTreeMap<&str, u16> {
+        let mut map = BTreeMap::new();
+
+        for range in &self.ranges {
+            if let Some(name) = range.name.as_deref() {
+                map.insert(name, range.v);
+            }
+        }
+
+        for value in &self.values {
+            map.insert(value.long.as_str(), value.discr);
+            if let Some(ref short) = value.short {
+                map.insert(short.as_str(), value.discr);
+            }
+            for alias in &value.aliases {
+                map.insert(alias.as_str(), value.discr);
+            }
+        }
+
+        map
+    }
+
+    pub(crate) fn values_to_names_long(&self) -> BTreeMap<u16, &str> {
+        let mut map: BTreeMap<_, &str> = BTreeMap::new();
+
+        for range in &self.ranges {
+            if let Some(name) = range.name.as_deref() {
+                map.insert(range.v, name);
+            }
+        }
+
+        for value in &self.values {
+            map.insert(value.discr, &value.long);
+        }
+
+        map
+    }
+
+    pub(crate) fn values_to_names_short(&self) -> BTreeMap<u16, &str> {
+        let mut map: BTreeMap<_, &str> = BTreeMap::new();
+
+        for range in &self.ranges {
+            if let Some(name) = range.name.as_deref() {
+                map.insert(range.v, name);
+            }
+        }
+
+        for value in &self.values {
+            if let Some(ref short) = value.short {
+                map.insert(value.discr, short);
+            }
+        }
+
+        map
+    }
 }
 
-/// Convert a map from property values to their names into
-/// a linear map where each index represents a property value
-fn map_to_vec<'a>(
-    map: &'a BTreeMap<u16, &'a str>,
-    prop_name: &str,
-) -> Result<Vec<&'a str>, DataError> {
-    // Use .first_key_value() and .last_key_value() after bumping MSRV
-    let first = if let Some((&first, _)) = map.iter().next() {
+fn validate_dense(map: &BTreeMap<u16, &str>) -> Result<(), DataError> {
+    if let Some((&first, _)) = map.first_key_value() {
         if first > 0 {
             return Err(DataError::custom(
                 "Property has nonzero starting discriminant, perhaps consider \
                  storing its names as a sparse map or by specializing this error",
             )
-            .with_display_context(&format!("Property: {prop_name}, discr: {first}")));
+            .with_display_context(&first));
         }
-
-        first
     } else {
-        return Err(DataError::custom("Property has no values!").with_display_context(prop_name));
+        return Err(DataError::custom("Property has no values!"));
     };
-    let last = if let Some((&last, _)) = map.iter().next_back() {
-        let range = usize::from(1 + last - first);
+    if let Some((&last, _)) = map.last_key_value() {
+        let range = usize::from(1 + last);
         let count = map.len();
         let gaps = range - count;
         if gaps > 0 {
-            return Err(DataError::custom("Property has more than 0 gaps, \
-                perhaps consider storing its names in a sparse map or by specializing this error")
-                .with_display_context(&format!("Property: {prop_name}, discriminant range: {first}..{last}, discriminant count: {count}")));
+            return Err(DataError::custom(
+                "Property has more than 0 gaps, \
+                perhaps consider storing its names in a sparse map or by specializing this error",
+            )
+            .with_display_context(&gaps));
         }
-
-        last
     } else {
-        return Err(DataError::custom("Property has no values!").with_display_context(prop_name));
+        return Err(DataError::custom("Property has no values!"));
     };
-
-    let mut v = Vec::new();
-    for i in 0..=last {
-        if let Some(&val) = map.get(&i) {
-            v.push(val)
-        } else {
-            v.push("")
-        }
-    }
-    Ok(v)
+    Ok(())
 }
 
-/// Load the mapping from property values to their names
-fn load_values_to_names(
-    data: &super::uprops_serde::enumerated::EnumeratedPropertyMap,
-    is_short: bool,
-) -> Result<BTreeMap<u16, &str>, DataError> {
-    let mut map: BTreeMap<_, &str> = BTreeMap::new();
-
-    for value in &data.values {
-        let discr = u16::try_from(value.discr)
-            .map_err(|_| DataError::custom("Found value larger than u16 for property"))?;
-        if is_short {
-            if let Some(ref short) = value.short {
-                map.insert(discr, short);
-            }
-        } else {
-            map.insert(discr, &value.long);
-        }
-    }
-
-    Ok(map)
-}
-
-/// Load the mapping from property values to their names as a sparse map
-fn load_values_to_names_sparse<M>(
-    p: &SourceDataProvider,
-    prop_name: &str,
-    is_short: bool,
-) -> Result<DataResponse<M>, DataError>
-where
-    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMap<'static>>,
-{
-    let data = p.get_enumerated_prop(prop_name)
-        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
-                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-    let map = load_values_to_names(data, is_short)?;
-    let map = map.into_iter().collect();
-    let data_struct = PropertyEnumToValueNameSparseMap { map };
-    Ok(DataResponse {
-        metadata: Default::default(),
-        payload: DataPayload::from_owned(data_struct),
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
+fn convert_sparse(
+    map: BTreeMap<u16, &str>,
+) -> Result<PropertyEnumToValueNameSparseMap<'static>, DataError> {
+    Ok(PropertyEnumToValueNameSparseMap {
+        map: map.into_iter().collect(),
     })
 }
 
-/// Load the mapping from property values to their names as a linear map
-fn load_values_to_names_linear<M>(
-    p: &SourceDataProvider,
-    prop_name: &str,
-    is_short: bool,
-) -> Result<DataResponse<M>, DataError>
-where
-    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMap<'static>>,
-{
-    let data = p.get_enumerated_prop(prop_name)
-        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
-                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-    let map = load_values_to_names(data, is_short)?;
-    let vec = map_to_vec(&map, prop_name)?;
-    let varzerovec = (&vec).into();
-    let data_struct = PropertyEnumToValueNameLinearMap { map: varzerovec };
-    Ok(DataResponse {
-        metadata: Default::default(),
-        payload: DataPayload::from_owned(data_struct),
+fn convert_linear(
+    map: BTreeMap<u16, &str>,
+) -> Result<PropertyEnumToValueNameLinearMap<'static>, DataError> {
+    validate_dense(&map)?;
+
+    Ok(PropertyEnumToValueNameLinearMap {
+        map: (&map.into_values().collect::<Vec<_>>()).into(),
     })
 }
 
-/// Load the mapping from property values to their names as a linear map of TinyStr4s
-fn load_values_to_names_linear4<M>(
-    p: &SourceDataProvider,
-    prop_name: &str,
-    is_short: bool,
-) -> Result<DataResponse<M>, DataError>
-where
-    M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMap<'static>>,
-{
-    let data = p.get_enumerated_prop(prop_name)
-        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
-                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-    let map = load_values_to_names(data, is_short)?;
-    let vec = map_to_vec(&map, prop_name)?;
-    let vec: Result<Vec<_>, _> = vec
-        .into_iter()
-        .map(|s| {
-            if s.is_empty() {
-                Ok(None)
-            } else {
-                icu::locale::subtags::Script::try_from_str(s).map(Some)
-            }
-        })
-        .collect();
+fn convert_script(
+    map: BTreeMap<u16, &str>,
+) -> Result<PropertyScriptToIcuScriptMap<'static>, DataError> {
+    validate_dense(&map)?;
 
-    let vec = vec.map_err(|_| DataError::custom("Found invalid script tag"))?;
-    let zerovec = vec.into_iter().map(NichedOption).collect();
-    let data_struct = PropertyScriptToIcuScriptMap { map: zerovec };
-    Ok(DataResponse {
-        metadata: Default::default(),
-        payload: DataPayload::from_owned(data_struct),
+    Ok(PropertyScriptToIcuScriptMap {
+        map: map
+            .into_values()
+            .map(|s| {
+                if s.is_empty() {
+                    Ok(NichedOption(None))
+                } else {
+                    icu::locale::subtags::Script::try_from_str(s)
+                        .map(Some)
+                        .map(NichedOption)
+                }
+            })
+            .collect::<Result<_, _>>()
+            .map_err(|_| DataError::custom("Found invalid script tag"))?,
     })
 }
+
 macro_rules! expand {
-    ($(($marker:ident, $marker_n2e:ident,
-        // marker_e2sns is short for marker_enum_to_short_name_sparse, etc
-        // We only support selecting one of these at a time right now, but we need
-        // different variable names for the macro matcher to work
-        $((sparse: $marker_e2sns:ident, $marker_e2lns:ident),)?
-        $((linear: $marker_e2snl:ident, $marker_e2lnl:ident),)?
-        $((linear4: $marker_e2snl4:ident, $marker_e2lnl4:ident),)?
-
-
-        $prop_name:literal)),+,) => {
+    ($(
+        (
+            $prop:ty,
+            $marker:ident,
+            $parse_marker:ident,
+            $short_marker:ident[$short_convert:ident],
+            $long_marker:ident[$long_convert:ident]
+        )
+    ),+,) => {
         $(
             impl DataProvider<$marker> for SourceDataProvider
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let source_cpt_data = &self.get_enumerated_prop($prop_name)?.code_point_trie;
+                    let data = self.get_enumerated_prop(
+                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
+                        core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
+                    )?;
+                    let trie = data.build_codepointtrie()?;
 
-                    let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
-                        DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
-                    })?;
-                    let data_struct = PropertyCodePointMap::CodePointTrie(code_point_trie);
                     Ok(DataResponse {
                         metadata: Default::default(),
-                        payload: DataPayload::from_owned(data_struct),
+                        payload: DataPayload::from_owned(PropertyCodePointMap::CodePointTrie(trie)),
+                    })
+                }
+            }
+
+            impl DataProvider<$parse_marker> for SourceDataProvider
+            {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$parse_marker>, DataError> {
+                    self.check_req::<$parse_marker>(req)?;
+                    let data = self.get_enumerated_prop(
+                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
+                        core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
+                    )?;
+                    let trie = data.names_to_values()
+                        .into_iter()
+                        .map(|(k, v)| (k, v as usize))
+                        .collect::<ZeroTrieSimpleAscii<_>>()
+                        .convert_store();
+
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(PropertyValueNameToEnumMap { map: trie }),
+                    })
+                }
+            }
+
+            impl DataProvider<$short_marker> for SourceDataProvider
+            {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$short_marker>, DataError> {
+                    self.check_req::<$short_marker>(req)?;
+                    let data = self.get_enumerated_prop(
+                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
+                        core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
+                    )?;
+                    let map = ($short_convert)(data.values_to_names_short())?;
+
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(map),
+                    })
+                }
+            }
+
+            impl DataProvider<$long_marker> for SourceDataProvider
+            {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$long_marker>, DataError> {
+                    self.check_req::<$long_marker>(req)?;
+                    let data = self.get_enumerated_prop(
+                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
+                        core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
+                    )?;
+                    let map = ($long_convert)(data.values_to_names_long())?;
+
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(map),
                     })
                 }
             }
 
             impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
                 fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
-                    self.get_enumerated_prop($prop_name)?;
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
-            impl DataProvider<$marker_n2e> for SourceDataProvider
-            {
-                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_n2e>, DataError> {
-                    self.check_req::<$marker_n2e>(req)?;
-                    let data = self.get_enumerated_prop($prop_name)
-                        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
-                                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-
-                    let data_struct = get_prop_values_map(&data.values, |v| u16::try_from(v).map_err(|_| DataError::custom(concat!("Found value larger than u16 for property ", $prop_name))))?;
-                    Ok(DataResponse {
-                        metadata: Default::default(),
-                        payload: DataPayload::from_owned(data_struct),
-                    })
-                }
-            }
-
-            impl crate::IterableDataProviderCached<$marker_n2e> for SourceDataProvider {
-                                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
-                    self.get_enumerated_prop($prop_name)?;
+            impl crate::IterableDataProviderCached<$parse_marker> for SourceDataProvider {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
-            $(
-                impl DataProvider<$marker_e2sns> for SourceDataProvider
-                {
-                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2sns>, DataError> {
-                        self.check_req::<$marker_e2sns>(req)?;
-                        load_values_to_names_sparse(self, $prop_name, true)
-                    }
+            impl crate::IterableDataProviderCached<$short_marker> for SourceDataProvider {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
+            }
 
-                impl crate::IterableDataProviderCached<$marker_e2sns> for SourceDataProvider {
-                    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
-                        self.get_enumerated_prop($prop_name)?;
-                        Ok(HashSet::from_iter([Default::default()]))
-                    }
+            impl crate::IterableDataProviderCached<$long_marker> for SourceDataProvider {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
+            }
 
-                impl DataProvider<$marker_e2lns> for SourceDataProvider
-                {
-                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lns>, DataError> {
-                        self.check_req::<$marker_e2lns>(req)?;
-                        load_values_to_names_sparse(self, $prop_name, false)
-                    }
-                }
-
-                impl crate::IterableDataProviderCached<$marker_e2lns> for SourceDataProvider {
-                    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
-                        self.get_enumerated_prop($prop_name)?;
-                        Ok(HashSet::from_iter([Default::default()]))
-                    }
-                }
-            )?
-
-            $(
-                impl DataProvider<$marker_e2snl> for SourceDataProvider
-                {
-                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2snl>, DataError> {
-                        self.check_req::<$marker_e2snl>(req)?;
-                        load_values_to_names_linear(self, $prop_name, true)
-                    }
-                }
-
-                impl crate::IterableDataProviderCached<$marker_e2snl> for SourceDataProvider {
-                    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
-                        self.get_enumerated_prop($prop_name)?;
-                        Ok(HashSet::from_iter([Default::default()]))
-                    }
-                }
-
-                impl DataProvider<$marker_e2lnl> for SourceDataProvider
-                {
-                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lnl>, DataError> {
-                        self.check_req::<$marker_e2lnl>(req)?;
-                        load_values_to_names_linear(self, $prop_name, false)
-                    }
-                }
-
-                impl crate::IterableDataProviderCached<$marker_e2lnl> for SourceDataProvider {
-                    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
-                        self.get_enumerated_prop($prop_name)?;
-                        Ok(HashSet::from_iter([Default::default()]))
-                    }
-                }
-            )?
-
-            $(
-                impl DataProvider<$marker_e2snl4> for SourceDataProvider
-                {
-                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2snl4>, DataError> {
-                        self.check_req::<$marker_e2snl4>(req)?;
-                        load_values_to_names_linear4(self, $prop_name, true)
-                    }
-                }
-
-                impl crate::IterableDataProviderCached<$marker_e2snl4> for SourceDataProvider {
-                    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
-                        self.get_enumerated_prop($prop_name)?;
-                        Ok(HashSet::from_iter([Default::default()]))
-                    }
-                }
-
-                impl DataProvider<$marker_e2lnl4> for SourceDataProvider
-                {
-                    fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lnl4>, DataError> {
-                        self.check_req::<$marker_e2lnl4>(req)?;
-                        // Tiny4 is only for short names
-                        load_values_to_names_linear(self, $prop_name, false)
-                    }
-                }
-
-                impl crate::IterableDataProviderCached<$marker_e2lnl4> for SourceDataProvider {
-                    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
-                        self.get_enumerated_prop($prop_name)?;
-                        Ok(HashSet::from_iter([Default::default()]))
-                    }
-                }
-            )?
         )+
-    };
+    }
 }
 
 // Special handling for GeneralCategoryMask
@@ -379,25 +329,38 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
         req: DataRequest,
     ) -> Result<DataResponse<PropertyNameParseGeneralCategoryMaskV1>, DataError> {
         use icu::properties::props::GeneralCategoryGroup;
-        use zerovec::ule::AsULE;
 
         self.check_req::<PropertyNameParseGeneralCategoryMaskV1>(req)?;
 
-        let data = self.get_mask_prop("gcm")?;
-        let data_struct = get_prop_values_map(&data.values, |v| {
-            let value: GeneralCategoryGroup = v.into();
-            let ule = value.to_unaligned();
-            let packed = u16::from_unaligned(ule);
+        let data = self.get_mask_prop("General_Category_Mask", "gcm", "General_Category")?;
+
+        let mut map = BTreeMap::new();
+
+        for value in &data.values {
+            let packed = TrieValue::to_u32(GeneralCategoryGroup::from(value.discr)) as usize;
 
             // sentinel value
             if packed == 0xFF00 {
                 return Err(DataError::custom("Found unknown general category mask value, properties code may need to be updated."));
             }
-            Ok(packed)
-        })?;
+
+            map.insert(value.long.as_str(), packed);
+            if let Some(ref short) = value.short {
+                map.insert(short.as_str(), packed);
+            }
+            for alias in &value.aliases {
+                map.insert(alias.as_str(), packed);
+            }
+        }
+
+        let trie = map
+            .into_iter()
+            .collect::<ZeroTrieSimpleAscii<_>>()
+            .convert_store();
+
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(data_struct),
+            payload: DataPayload::from_owned(PropertyValueNameToEnumMap { map: trie }),
         })
     }
 }
@@ -406,155 +369,122 @@ impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV1>
     for SourceDataProvider
 {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.get_mask_prop("gcm")?;
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-// Special handling for IndicConjunctBreak
-impl DataProvider<PropertyEnumIndicConjunctBreakV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<PropertyEnumIndicConjunctBreakV1>, DataError> {
-        self.check_req::<PropertyEnumIndicConjunctBreakV1>(req)?;
-        let source_cpt_data = &self.get_enumerated_prop("InCB")?.code_point_trie;
-
-        let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
-            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
-        })?;
-        let data_struct = PropertyCodePointMap::CodePointTrie(code_point_trie);
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data_struct),
-        })
-    }
-}
-
-impl crate::IterableDataProviderCached<PropertyEnumIndicConjunctBreakV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.get_enumerated_prop("InCB")?;
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 expand!(
     (
+        icu::properties::props::CanonicalCombiningClass,
         PropertyEnumCanonicalCombiningClassV1,
         PropertyNameParseCanonicalCombiningClassV1,
-        (
-            sparse: PropertyNameShortCanonicalCombiningClassV1,
-            PropertyNameLongCanonicalCombiningClassV1
-        ),
-        "ccc"
+        PropertyNameShortCanonicalCombiningClassV1[convert_sparse],
+        PropertyNameLongCanonicalCombiningClassV1[convert_sparse]
     ),
     (
+        icu::properties::props::GeneralCategory,
         PropertyEnumGeneralCategoryV1,
         PropertyNameParseGeneralCategoryV1,
-        (
-            linear: PropertyNameShortGeneralCategoryV1,
-            PropertyNameLongGeneralCategoryV1
-        ),
-        "gc"
+        PropertyNameShortGeneralCategoryV1[convert_linear],
+        PropertyNameLongGeneralCategoryV1[convert_linear]
     ),
     (
+        icu::properties::props::BidiClass,
         PropertyEnumBidiClassV1,
         PropertyNameParseBidiClassV1,
-        (
-            linear: PropertyNameShortBidiClassV1,
-            PropertyNameLongBidiClassV1
-        ),
-        "bc"
+        PropertyNameShortBidiClassV1[convert_linear],
+        PropertyNameLongBidiClassV1[convert_linear]
     ),
     (
+        icu::properties::props::NumericType,
+        PropertyEnumNumericTypeV1,
+        PropertyNameParseNumericTypeV1,
+        PropertyNameShortNumericTypeV1[convert_linear],
+        PropertyNameLongNumericTypeV1[convert_linear]
+    ),
+    (
+        icu::properties::props::Script,
         PropertyEnumScriptV1,
         PropertyNameParseScriptV1,
-        (
-            linear4: PropertyNameShortScriptV1,
-            PropertyNameLongScriptV1
-        ),
-        "sc"
+        PropertyNameShortScriptV1[convert_script],
+        PropertyNameLongScriptV1[convert_linear]
     ),
     (
+        icu::properties::props::HangulSyllableType,
         PropertyEnumHangulSyllableTypeV1,
         PropertyNameParseHangulSyllableTypeV1,
-        (
-            linear: PropertyNameShortHangulSyllableTypeV1,
-            PropertyNameLongHangulSyllableTypeV1
-        ),
-        "hst"
+        PropertyNameShortHangulSyllableTypeV1[convert_linear],
+        PropertyNameLongHangulSyllableTypeV1[convert_linear]
     ),
     (
+        icu::properties::props::EastAsianWidth,
         PropertyEnumEastAsianWidthV1,
         PropertyNameParseEastAsianWidthV1,
-        (
-            linear: PropertyNameShortEastAsianWidthV1,
-            PropertyNameLongEastAsianWidthV1
-        ),
-        "ea"
+        PropertyNameShortEastAsianWidthV1[convert_linear],
+        PropertyNameLongEastAsianWidthV1[convert_linear]
     ),
     (
+        icu::properties::props::IndicSyllabicCategory,
         PropertyEnumIndicSyllabicCategoryV1,
         PropertyNameParseIndicSyllabicCategoryV1,
-        (
-            linear: PropertyNameShortIndicSyllabicCategoryV1,
-            PropertyNameLongIndicSyllabicCategoryV1
-        ),
-        "InSC"
+        PropertyNameShortIndicSyllabicCategoryV1[convert_linear],
+        PropertyNameLongIndicSyllabicCategoryV1[convert_linear]
     ),
     (
+        icu::properties::props::IndicConjunctBreak,
+        PropertyEnumIndicConjunctBreakV1,
+        PropertyNameParseIndicConjunctBreakV1,
+        PropertyNameShortIndicConjunctBreakV1[convert_linear],
+        PropertyNameLongIndicConjunctBreakV1[convert_linear]
+    ),
+    (
+        icu::properties::props::LineBreak,
         PropertyEnumLineBreakV1,
         PropertyNameParseLineBreakV1,
-        (
-            linear: PropertyNameShortLineBreakV1,
-            PropertyNameLongLineBreakV1
-        ),
-        "lb"
+        PropertyNameShortLineBreakV1[convert_linear],
+        PropertyNameLongLineBreakV1[convert_linear]
     ),
     (
+        icu::properties::props::GraphemeClusterBreak,
         PropertyEnumGraphemeClusterBreakV1,
         PropertyNameParseGraphemeClusterBreakV1,
-        (
-            linear: PropertyNameShortGraphemeClusterBreakV1,
-            PropertyNameLongGraphemeClusterBreakV1
-        ),
-        "GCB"
+        PropertyNameShortGraphemeClusterBreakV1[convert_linear],
+        PropertyNameLongGraphemeClusterBreakV1[convert_linear]
     ),
     (
+        icu::properties::props::WordBreak,
         PropertyEnumWordBreakV1,
         PropertyNameParseWordBreakV1,
-        (
-            linear: PropertyNameShortWordBreakV1,
-            PropertyNameLongWordBreakV1
-        ),
-        "WB"
+        PropertyNameShortWordBreakV1[convert_linear],
+        PropertyNameLongWordBreakV1[convert_linear]
     ),
     (
+        icu::properties::props::SentenceBreak,
         PropertyEnumSentenceBreakV1,
         PropertyNameParseSentenceBreakV1,
-        (
-            linear: PropertyNameShortSentenceBreakV1,
-            PropertyNameLongSentenceBreakV1
-        ),
-        "SB"
+        PropertyNameShortSentenceBreakV1[convert_linear],
+        PropertyNameLongSentenceBreakV1[convert_linear]
     ),
     (
+        icu::properties::props::JoiningType,
         PropertyEnumJoiningTypeV1,
         PropertyNameParseJoiningTypeV1,
-        (
-            linear: PropertyNameShortJoiningTypeV1,
-            PropertyNameLongJoiningTypeV1
-        ),
-        "jt"
+        PropertyNameShortJoiningTypeV1[convert_linear],
+        PropertyNameLongJoiningTypeV1[convert_linear]
     ),
     (
+        icu::properties::props::JoiningGroup,
+        PropertyEnumJoiningGroupV1,
+        PropertyNameParseJoiningGroupV1,
+        PropertyNameShortJoiningGroupV1[convert_linear],
+        PropertyNameLongJoiningGroupV1[convert_linear]
+    ),
+    (
+        icu::properties::props::VerticalOrientation,
         PropertyEnumVerticalOrientationV1,
         PropertyNameParseVerticalOrientationV1,
-        (
-            linear: PropertyNameShortVerticalOrientationV1,
-            PropertyNameLongVerticalOrientationV1
-        ),
-        "vo"
+        PropertyNameShortVerticalOrientationV1[convert_linear],
+        PropertyNameLongVerticalOrientationV1[convert_linear]
     ),
 );
 

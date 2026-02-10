@@ -158,100 +158,59 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
 impl ComplexPayloadsBorrowed<'static> {
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_lstm() -> Self {
-        #[expect(clippy::unwrap_used)]
+    pub(crate) fn with_southeast_asian_lstms(mut self) -> Self {
+        #![expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
-        Self {
-            grapheme: GraphemeClusterSegmenter::new(),
-            my: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, MY_LSTM)
-                .unwrap()
-                .map(DictOrLstmBorrowed::Lstm),
-            km: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, KM_LSTM)
-                .unwrap()
-                .map(DictOrLstmBorrowed::Lstm),
-            lo: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, LO_LSTM)
-                .unwrap()
-                .map(DictOrLstmBorrowed::Lstm),
-            th: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, TH_LSTM)
-                .unwrap()
-                .map(DictOrLstmBorrowed::Lstm),
-            ja: None,
-        }
-    }
-    #[cfg(feature = "auto")]
-    #[cfg(feature = "compiled_data")]
-    #[expect(clippy::unwrap_used)]
-    pub(crate) fn new_auto() -> Self {
-        let mut this = Self::new_lstm();
-        this.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
-            .unwrap();
-        this
-    }
-    #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_dict() -> Self {
-        #[expect(clippy::unwrap_used)]
-        // try_load is infallible if the provider only returns `MissingLocale`.
-        Self {
-            grapheme: GraphemeClusterSegmenter::new(),
-            my: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                MY_DICT,
-            )
+        self.my = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, MY_LSTM)
             .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            km: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                KM_DICT,
-            )
+            .map(DictOrLstmBorrowed::Lstm);
+        self.km = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, KM_LSTM)
             .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                LO_DICT,
-            )
+            .map(DictOrLstmBorrowed::Lstm);
+        self.lo = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, LO_LSTM)
             .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            th: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                TH_DICT,
-            )
+            .map(DictOrLstmBorrowed::Lstm);
+        self.th = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, TH_LSTM)
             .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            ja: try_load_static::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
-                .unwrap(),
-        }
+            .map(DictOrLstmBorrowed::Lstm);
+        self
     }
 
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_southeast_asian() -> Self {
-        #[expect(clippy::unwrap_used)]
+    pub(crate) fn with_japanese_dictionary(mut self) -> Self {
+        #![expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
+        self.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&Baked, CJ_DICT).unwrap();
+        self
+    }
+
+    #[cfg(feature = "compiled_data")]
+    pub(crate) fn with_southeast_asian_dictionaries(mut self) -> Self {
+        #![expect(clippy::unwrap_used)]
+        // try_load is infallible if the provider only returns `MissingLocale`.
+        self.my = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, MY_DICT)
+            .unwrap()
+            .map(DictOrLstmBorrowed::Dict);
+        self.km = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, KM_DICT)
+            .unwrap()
+            .map(DictOrLstmBorrowed::Dict);
+        self.lo = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, LO_DICT)
+            .unwrap()
+            .map(DictOrLstmBorrowed::Dict);
+        self.th = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, TH_DICT)
+            .unwrap()
+            .map(DictOrLstmBorrowed::Dict);
+        self
+    }
+
+    #[cfg(feature = "compiled_data")]
+    pub(crate) const fn new() -> Self {
         Self {
             grapheme: GraphemeClusterSegmenter::new(),
-            my: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                MY_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            km: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                KM_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                LO_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            th: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                TH_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
+            my: None,
+            km: None,
+            lo: None,
+            th: None,
             ja: None,
         }
     }
@@ -281,101 +240,66 @@ impl ComplexPayloads {
     }
 
     #[cfg(feature = "lstm")]
-    pub(crate) fn try_new_lstm<D>(provider: &D) -> Result<Self, DataError>
+    pub(crate) fn with_southeast_asian_lstms<D>(mut self, provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakGraphemeClusterV1>
-            + DataProvider<SegmenterLstmAutoV1>
-            + ?Sized,
+        D: DataProvider<SegmenterLstmAutoV1> + ?Sized,
     {
-        Ok(Self {
-            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
-            my: try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm),
-            km: try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm),
-            lo: try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm),
-            th: try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm),
-            ja: None,
-        })
+        self.my = try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
+            .map(DataPayload::cast)
+            .map(DictOrLstm::Lstm);
+        self.km = try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
+            .map(DataPayload::cast)
+            .map(DictOrLstm::Lstm);
+        self.lo = try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
+            .map(DataPayload::cast)
+            .map(DictOrLstm::Lstm);
+        self.th = try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
+            .map(DataPayload::cast)
+            .map(DictOrLstm::Lstm);
+        Ok(self)
     }
 
-    pub(crate) fn try_new_dict<D>(provider: &D) -> Result<Self, DataError>
+    pub(crate) fn with_japanese_dictionary<D>(mut self, provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakGraphemeClusterV1>
-            + DataProvider<SegmenterDictionaryExtendedV1>
-            + DataProvider<SegmenterDictionaryAutoV1>
-            + ?Sized,
+        D: DataProvider<SegmenterDictionaryAutoV1> + ?Sized,
     {
-        Ok(Self {
-            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
-            my: try_load::<SegmenterDictionaryExtendedV1, D>(provider, MY_DICT)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Dict),
-            km: try_load::<SegmenterDictionaryExtendedV1, D>(provider, KM_DICT)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Dict),
-            lo: try_load::<SegmenterDictionaryExtendedV1, D>(provider, LO_DICT)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Dict),
-            th: try_load::<SegmenterDictionaryExtendedV1, D>(provider, TH_DICT)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Dict),
-            ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast),
-        })
+        self.ja =
+            try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast);
+        Ok(self)
     }
 
-    #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
-    pub(crate) fn try_new_auto<D>(provider: &D) -> Result<Self, DataError>
+    pub(crate) fn with_southeast_asian_dictionaries<D>(
+        mut self,
+        provider: &D,
+    ) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakGraphemeClusterV1>
-            + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterDictionaryAutoV1>
-            + ?Sized,
+        D: DataProvider<SegmenterDictionaryExtendedV1> + ?Sized,
     {
-        Ok(Self {
-            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
-            my: try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm),
-            km: try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm),
-            lo: try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm),
-            th: try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm),
-            ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast),
-        })
+        self.my = try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
+            .map(DataPayload::cast)
+            .map(DictOrLstm::Dict);
+        self.km = try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
+            .map(DataPayload::cast)
+            .map(DictOrLstm::Dict);
+        self.lo = try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
+            .map(DataPayload::cast)
+            .map(DictOrLstm::Dict);
+        self.th = try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
+            .map(DataPayload::cast)
+            .map(DictOrLstm::Dict);
+        Ok(self)
     }
 
-    pub(crate) fn try_new_southeast_asian<D>(provider: &D) -> Result<Self, DataError>
+    pub(crate) fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterDictionaryExtendedV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
-            + ?Sized,
+        D: DataProvider<SegmenterBreakGraphemeClusterV1> + ?Sized,
     {
         Ok(Self {
             grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
-            my: try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Dict),
-            km: try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Dict),
-            lo: try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Dict),
-            th: try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
-                .map(DataPayload::cast)
-                .map(DictOrLstm::Dict),
+            my: None,
+            km: None,
+            lo: None,
+            th: None,
             ja: None,
         })
     }
@@ -427,8 +351,8 @@ mod tests {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
 
-        let lstm = ComplexPayloadsBorrowed::new_lstm();
-        let dict = ComplexPayloadsBorrowed::new_dict();
+        let lstm = ComplexPayloadsBorrowed::new().with_southeast_asian_lstms();
+        let dict = ComplexPayloadsBorrowed::new().with_southeast_asian_dictionaries();
 
         assert_eq!(
             lstm.complex_language_segment_str(TEST_STR),

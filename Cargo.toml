@@ -108,7 +108,7 @@ exclude = [
 
 [workspace.package]
 version = "2.1.1"
-rust-version = "1.83"
+rust-version = "1.86"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -142,10 +142,10 @@ icu_calendar = { version = "~2.1.1", path = "components/calendar", default-featu
 icu_casemap = { version = "~2.1.1", path = "components/casemap", default-features = false }
 icu_collator = { version = "~2.1.1", path = "components/collator", default-features = false }
 icu_collections = { version = "~2.1.1", path = "components/collections", default-features = false }
-icu_codepointtrie_builder = { version = "~0.5.0", path = "components/collections/codepointtrie_builder", default-features = false }
+icu_codepointtrie_builder = { version = "~0.6.0-dev", path = "components/collections/codepointtrie_builder", default-features = false }
 icu_datetime = { version = "~2.1.1", path = "components/datetime", default-features = false }
 icu_decimal = { version = "~2.1.1", path = "components/decimal", default-features = false }
-icu_experimental = { version = "~0.4.0", path = "components/experimental", default-features = false }
+icu_experimental = { version = "~0.5.0-dev", path = "components/experimental", default-features = false }
 icu_list = { version = "~2.1.1", path = "components/list", default-features = false }
 icu_locale = { version = "~2.1.1", path = "components/locale", default-features = false }
 icu_normalizer = { version = "~2.1.1", path = "components/normalizer", default-features = false }
@@ -166,7 +166,7 @@ icu_provider_adapters = { version = "~2.1.1", path = "provider/adapters", defaul
 icu_provider_baked = { version = "~2.1.1", path = "provider/baked", default-features = false }
 icu_provider_blob = { version = "~2.1.1", path = "provider/blob", default-features = false }
 icu_provider_fs = { version = "~2.1.1", path = "provider/fs", default-features = false }
-icu_provider_registry = { version = "~2.1.1", path = "provider/registry", default-features = false }
+icu_provider_registry = { version = "~2.1.2", path = "provider/registry", default-features = false }
 
 # Baked data
 icu_calendar_data = { version = "~2.1.1", path = "provider/data/calendar", default-features = false }
@@ -178,7 +178,7 @@ icu_list_data = { version = "~2.1.1", path = "provider/data/list", default-featu
 icu_locale_data = { version = "~2.1.1", path = "provider/data/locale", default-features = false }
 icu_normalizer_data = { version = "~2.1.1", path = "provider/data/normalizer", default-features = false }
 icu_plurals_data = { version = "~2.1.1", path = "provider/data/plurals", default-features = false }
-icu_properties_data = { version = "~2.1.1", path = "provider/data/properties", default-features = false }
+icu_properties_data = { version = "~2.1.2", path = "provider/data/properties", default-features = false }
 icu_segmenter_data = { version = "~2.1.1", path = "provider/data/segmenter", default-features = false }
 icu_time_data = { version = "~2.1.1", path = "provider/data/time", default-features = false }
 icu_experimental_data = { version = "~0.4.0", path = "provider/data/experimental", default-features = false }
@@ -194,7 +194,7 @@ ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
 potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false }
 resb = { version = "0.1.0", path = "utils/resb", default-features = false }
-tzif = { version = "0.4.0", path = "utils/tzif", default-features = false }
+tzif = { version = "0.5.0-dev", path = "utils/tzif", default-features = false }
 tinystr = { version = "0.8.0", path = "utils/tinystr", default-features = false }
 writeable = { version = "0.6.0", path = "utils/writeable", default-features = false }
 yoke = { version = "0.8.0", path = "utils/yoke", default-features = false }
@@ -214,10 +214,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "0cb25653909d2328c758a1e51049f59a6de051a0", default-features = false }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "0cb25653909d2328c758a1e51049f59a6de051a0", default-features = false }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "0cb25653909d2328c758a1e51049f59a6de051a0", default-features = false }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "0cb25653909d2328c758a1e51049f59a6de051a0" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "f71e1b6c562237f9e6059dbf54bfce626936dd35", default-features = false }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "f71e1b6c562237f9e6059dbf54bfce626936dd35", default-features = false }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "f71e1b6c562237f9e6059dbf54bfce626936dd35", default-features = false }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "f71e1b6c562237f9e6059dbf54bfce626936dd35" }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -275,7 +275,7 @@ toml = { version = "0.8.0", default-features = false, features = ["parse"] }
 
 ## External Deps Group 3: Dev and Datagen deps. Include default features.
 arraystring = "0.3.0"
-askama = "0.14"
+askama = "0.15"
 atoi = "2.0.0"
 bincode = "1.3.1" # Can be updated to 2.0 after MSRV 1.85
 clap = "4.2.0"
@@ -294,7 +294,7 @@ itertools = "0.14.0"
 ndarray = "0.16.0"
 parse-zoneinfo =  "0.5.0"
 proc-macro2 = "1.0.61"
-quote = "1.0.28"
+quote = "1.0.44"
 rand = "0.9"
 rand_distr = "0.5"
 rand_pcg = "0.9"
@@ -308,7 +308,7 @@ syn = "2.0.21"
 synstructure = "0.13.0"
 ureq = "3.0.0"
 walkdir = "2.3.2"
-wasmi = "0.40.0"
+wasmi = "1.0.8"
 wat = "1"
 
 # Size optimized builds
@@ -339,9 +339,63 @@ lto = true
 inherits = "bench"
 debug = true
 
+[workspace.lints]
+clippy.alloc-instead-of-core = "warn"
+clippy.branches-sharing-code = "warn"
+clippy.collection_is_never_read = "warn"
+clippy.dbg_macro = "warn"
+clippy.debug_assert_with_mut_call = "warn"
+clippy.doc_markdown = "warn"
+clippy.exhaustive_enums = "deny"
+clippy.exhaustive_structs = "deny"
+clippy.fn_to_numeric_cast_any = "warn"
+clippy.infinite_loop = "warn"
+clippy.large_stack_arrays = "warn"
+clippy.mismatching_type_param_order = "warn"
+clippy.missing_fields_in_debug = "warn"
+clippy.negative_feature_names = "warn"
+clippy.or-fun-call = "warn"
+clippy.same_functions_in_if_condition = "warn"
+clippy.todo = "warn"
+clippy.trivially_copy_pass_by_ref = "deny"
+clippy.unnecessary-wraps = "warn"
+clippy.wildcard_dependencies = "warn"
+rust.missing_debug_implementations = "deny"
+rust.trivial_numeric_casts = "deny"
+rust.unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(icu4c_enable_renaming)',
+    'cfg(needs_alloc_error_handler)',
+    'cfg(icu4x_run_size_tests)',
+    'cfg(icu4x_unstable_fast_trie_only)',
+] }
+rust.unused_lifetimes = "warn"
+rust.unused_macro_rules = "warn"
+rust.unused_qualifications = "warn"
+
+# These lints are currently enabled in the crate roots because of https://github.com/rust-lang/rust-clippy/issues/13981
+# clippy.unwrap_used = "warn"
+# clippy.expect_used = "warn"
+# clippy.panic = "warn"
+# clippy.indexing_slicing = "warn"
+
+# This lint is currently enabled in the crate roots because of https://github.com/rust-lang/rust/issues/137561
+# rust.missing_docs = "deny"
+
+# We should enable these lints
+# clippy.allow_attributes_without_reason = "warn"
+# clippy.cargo_common_metadata = "warn"
+# clippy.cast_possible_truncation = "warn"
+# clippy.default_trait_access = "warn"
+# clippy.missing_assert_message = "warn"
+# clippy.redundant_feature_names = "warn"
+# clippy.use_self = "warn"
+# rust.unreachable_pub = "warn"
+# rust.unsafe_op_in_unsafe_fn = "forbid"
+
 [workspace.metadata.cargo-semver-checks.lints]
 type_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
 trait_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
 type_marked_deprecated.level = "allow" # allow deprecation in patch releases
 struct_field_marked_deprecated = "allow" # allow deprecation in patch releases
+type_associated_const_marked_deprecated = "allow" # allow deprecation in patch releases
 enum_no_repr_variant_discriminant_changed = "allow" # we don't consider this breaking https://github.com/obi1kenobi/cargo-semver-checks/issues/1376

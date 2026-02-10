@@ -37,42 +37,42 @@ class ListFormatter {
 public:
 
   /**
-   * Construct a new ListFormatter instance for And patterns from compiled data.
+   * Construct a new `ListFormatter` instance for And patterns from compiled data.
    *
    * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_and_with_length(const icu4x::Locale& locale, icu4x::ListLength length);
 
   /**
-   * Construct a new ListFormatter instance for And patterns
+   * Construct a new `ListFormatter` instance for And patterns
    *
    * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_and_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::ListLength length);
 
   /**
-   * Construct a new ListFormatter instance for And patterns from compiled data.
+   * Construct a new `ListFormatter` instance for And patterns from compiled data.
    *
    * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_or_with_length(const icu4x::Locale& locale, icu4x::ListLength length);
 
   /**
-   * Construct a new ListFormatter instance for And patterns
+   * Construct a new `ListFormatter` instance for And patterns
    *
    * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_or_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::ListLength length);
 
   /**
-   * Construct a new ListFormatter instance for And patterns from compiled data.
+   * Construct a new `ListFormatter` instance for And patterns from compiled data.
    *
    * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_unit_with_length(const icu4x::Locale& locale, icu4x::ListLength length);
 
   /**
-   * Construct a new ListFormatter instance for And patterns
+   * Construct a new `ListFormatter` instance for And patterns
    *
    * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
    */

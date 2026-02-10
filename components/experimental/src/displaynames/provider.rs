@@ -65,7 +65,7 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
-/// RegionDisplayNames provides mapping between a region code and locale display name.
+/// [`RegionDisplayNames`] provides mapping between a region code and locale display name.
 pub struct RegionDisplayNames<'data> {
     /// Mapping for region to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -82,7 +82,7 @@ icu_provider::data_struct!(RegionDisplayNames<'_>, #[cfg(feature = "datagen")]);
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
-/// LanguageDisplayNames provides mapping between languages and display names.
+/// [`LanguageDisplayNames`] provides mapping between languages and display names.
 pub struct LanguageDisplayNames<'data> {
     /// Mapping for language to display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -105,7 +105,7 @@ icu_provider::data_struct!(LanguageDisplayNames<'_>, #[cfg(feature = "datagen")]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
-/// ScriptDisplayNames provides mapping between a script code and it's display name.
+/// [`ScriptDisplayNames`] provides mapping between a script code and it's display name.
 pub struct ScriptDisplayNames<'data> {
     /// Mapping for script to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -122,7 +122,7 @@ icu_provider::data_struct!(ScriptDisplayNames<'_>, #[cfg(feature = "datagen")]);
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
-/// LocaleDisplayNames provides mapping between locales and display names.
+/// [`LocaleDisplayNames`] provides mapping between locales and display names.
 pub struct LocaleDisplayNames<'data> {
     /// Mapping for locale to display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -145,7 +145,7 @@ icu_provider::data_struct!(LocaleDisplayNames<'_>, #[cfg(feature = "datagen")]);
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
-/// VariantDisplayNames provides the user-translated names for the variant-code values.
+/// [`VariantDisplayNames`] provides the user-translated names for the variant-code values.
 pub struct VariantDisplayNames<'data> {
     /// Mapping for Variant to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]

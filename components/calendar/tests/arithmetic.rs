@@ -31,6 +31,7 @@ const ISO_DATE_PAIRS: &[(&str, &str, u64, (u32, u64), (u32, u64), (u32, u32, u64
     ("2022-03-01", "2020-02-29", 731,  (104, 3), (24, 1),  (2, 0, 1)),
 ];
 
+#[allow(clippy::trivially_copy_pass_by_ref)]
 fn check<A>(
     d0: &Date<A>,
     d1: &Date<A>,
@@ -143,13 +144,13 @@ fn test_arithmetic_cases() {
 
 #[test]
 fn test_hebrew() {
-    let m06z_20 = Date::try_new_from_codes(None, 5783, Month::new(6).code(), 20, Hebrew).unwrap();
-    let m05l_15 = Date::try_new_from_codes(None, 5784, Month::leap(5).code(), 15, Hebrew).unwrap();
-    let m05l_30 = Date::try_new_from_codes(None, 5784, Month::leap(5).code(), 30, Hebrew).unwrap();
-    let m06a_29 = Date::try_new_from_codes(None, 5784, Month::new(6).code(), 29, Hebrew).unwrap();
-    let m07a_10 = Date::try_new_from_codes(None, 5784, Month::new(7).code(), 10, Hebrew).unwrap();
-    let m06b_15 = Date::try_new_from_codes(None, 5785, Month::new(6).code(), 15, Hebrew).unwrap();
-    let m07b_20 = Date::try_new_from_codes(None, 5785, Month::new(7).code(), 20, Hebrew).unwrap();
+    let m06z_20 = Date::try_new_hebrew_v2(5783, Month::new(6), 20).unwrap();
+    let m05l_15 = Date::try_new_hebrew_v2(5784, Month::leap(5), 15).unwrap();
+    let m05l_30 = Date::try_new_hebrew_v2(5784, Month::leap(5), 30).unwrap();
+    let m06a_29 = Date::try_new_hebrew_v2(5784, Month::new(6), 29).unwrap();
+    let m07a_10 = Date::try_new_hebrew_v2(5784, Month::new(7), 10).unwrap();
+    let m06b_15 = Date::try_new_hebrew_v2(5785, Month::new(6), 15).unwrap();
+    let m07b_20 = Date::try_new_hebrew_v2(5785, Month::new(7), 20).unwrap();
 
     #[rustfmt::skip]
     #[allow(clippy::type_complexity)]
@@ -186,34 +187,60 @@ fn test_hebrew() {
 }
 
 #[test]
+fn test_gregory_leap_addition() {
+    let leap_day = Date::try_new_gregorian(2020, 2, 29).unwrap();
+    let mut options = DateAddOptions::default();
+    options.overflow = Some(Overflow::Reject);
+    let y4 = DateDuration::for_years(4);
+    let result = leap_day.try_added_with_options(y4, options).unwrap();
+    assert_eq!(result, Date::try_new_gregorian(2024, 2, 29).unwrap());
+}
+
+#[test]
 fn test_tricky_leap_months() {
     let mut add_options = DateAddOptions::default();
     add_options.overflow = Some(Overflow::Constrain);
     let mut until_options = DateDifferenceOptions::default();
     until_options.largest_unit = Some(DateDurationUnit::Years);
 
-    fn hebrew_date(year: i32, month: Month, day: u8) -> Date<Hebrew> {
-        Date::try_new_from_codes(None, year, month.code(), day, Hebrew).unwrap()
-    }
-
     // M06 + 1yr = M06 (common to leap)
-    let date0 = hebrew_date(5783, Month::new(6), 20);
+    let date0 = Date::try_new_hebrew_v2(5783, Month::new(6), 20).unwrap();
     let duration0 = DateDuration::for_years(1);
     let date1 = date0
         .try_added_with_options(duration0, add_options)
         .unwrap();
-    assert_eq!(date1, hebrew_date(5784, Month::new(6), 20));
+    assert_eq!(
+        date1,
+        Date::try_new_hebrew_v2(5784, Month::new(6), 20).unwrap()
+    );
     let duration0_actual = date0.try_until_with_options(&date1, until_options).unwrap();
     assert_eq!(duration0_actual, duration0);
+
+    // M02L until M02 = 12mo
+    let cdate0 = Date::try_new_chinese_traditional(2023, Month::leap(2), 1).unwrap();
+    let cdate1 = Date::try_new_chinese_traditional(2024, Month::new(2), 1).unwrap();
+    let duration0a = DateDuration::for_months(12);
+    let diff0 = cdate0
+        .try_until_with_options(&cdate1, until_options)
+        .unwrap();
+    assert_eq!(diff0, duration0a);
 
     // M06 - 1mo = M05L (leap to leap)
     let duration1 = DateDuration::for_months(-1);
     let date2 = date1
         .try_added_with_options(duration1, add_options)
         .unwrap();
-    assert_eq!(date2, hebrew_date(5784, Month::leap(5), 20));
+    assert_eq!(
+        date2,
+        Date::try_new_hebrew_v2(5784, Month::leap(5), 20).unwrap()
+    );
     let duration1_actual = date1.try_until_with_options(&date2, until_options).unwrap();
     assert_eq!(duration1_actual, duration1);
+
+    // M05L until previous M06 = -12mo (leap to common)
+    let diff1 = date2.try_until_with_options(&date0, until_options).unwrap();
+    let duration0an = DateDuration::for_months(-12);
+    assert_eq!(diff1, duration0an);
 
     // M05L + 1yr1mo = M07 (leap to common)
     let duration2 = DateDuration {
@@ -224,7 +251,10 @@ fn test_tricky_leap_months() {
     let date3 = date2
         .try_added_with_options(duration2, add_options)
         .unwrap();
-    assert_eq!(date3, hebrew_date(5785, Month::new(7), 20));
+    assert_eq!(
+        date3,
+        Date::try_new_hebrew_v2(5785, Month::new(7), 20).unwrap()
+    );
     let duration2_actual = date2.try_until_with_options(&date3, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
 
@@ -232,7 +262,10 @@ fn test_tricky_leap_months() {
     let date4 = date1
         .try_added_with_options(duration2, add_options)
         .unwrap();
-    assert_eq!(date4, hebrew_date(5785, Month::new(7), 20));
+    assert_eq!(
+        date4,
+        Date::try_new_hebrew_v2(5785, Month::new(7), 20).unwrap()
+    );
     let duration2_actual = date1.try_until_with_options(&date4, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
 }

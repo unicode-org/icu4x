@@ -41,10 +41,11 @@ pub mod ffi {
         #[diplomat::demo(default_constructor)]
         pub fn create_from_bcp47(id: &DiplomatStr) -> Box<Self> {
             icu_locale_core::subtags::Subtag::try_from_utf8(id)
+                .ok()
                 .map(icu_time::TimeZone)
                 .map(TimeZone)
                 .map(Box::new)
-                .unwrap_or(Self::unknown())
+                .unwrap_or_else(Self::unknown)
         }
 
         #[diplomat::rust_link(icu::time::TimeZone::with_offset, FnInStruct)]
@@ -211,7 +212,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(auto, getter)]
-        /// Returns the DateTime for the UTC zone name reference time
+        /// Returns the `DateTime` for the UTC zone name reference time
         pub fn zone_name_date_time(&self) -> Option<IsoDateTime> {
             let datetime = self.zone_name_timestamp?.to_zoned_date_time_iso();
             Some(IsoDateTime {

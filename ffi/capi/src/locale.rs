@@ -96,7 +96,7 @@ pub mod ffi {
         pub fn create_common() -> Box<LocaleExpander> {
             Box::new(LocaleExpander(icu_locale::LocaleExpander::new_common()))
         }
-        /// Create a new [`LocaleExpander`] using a new_common data source.
+        /// Create a new [`LocaleExpander`] using a `new_common` data source.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new_common, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]

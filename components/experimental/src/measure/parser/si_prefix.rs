@@ -103,8 +103,8 @@ fn get_si_prefix_base_two(part: &[u8]) -> (i8, &[u8]) {
 // TODO: consider using a trie for the prefixes.
 /// Extracts the SI prefix.
 /// NOTE:
-///    if the prefix is found, the function will return (SiPrefix, part without the prefix string).
-///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
+///    if the prefix is found, the function will return (`SiPrefix`, part without the prefix string).
+///    if the prefix is not found, the function will return (`SiPrefix { power: 0, base: Base::Decimal }`, part).
 pub fn get_si_prefix(part: &[u8]) -> (SiPrefix, &[u8]) {
     let (si_prefix_base_10, part) = get_si_prefix_base_ten(part);
     if si_prefix_base_10 != 0 {

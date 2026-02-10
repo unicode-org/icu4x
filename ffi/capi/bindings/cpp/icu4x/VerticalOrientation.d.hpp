@@ -36,9 +36,21 @@ namespace icu4x {
 class VerticalOrientation {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Rotated) for more information.
+         */
         Rotated = 0,
+        /**
+         * See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedRotated) for more information.
+         */
         TransformedRotated = 1,
+        /**
+         * See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedUpright) for more information.
+         */
         TransformedUpright = 2,
+        /**
+         * See the [Rust documentation for `Upright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Upright) for more information.
+         */
         Upright = 3,
     };
 
@@ -70,18 +82,20 @@ public:
   inline std::optional<std::string_view> short_name() const;
 
   /**
-   * Convert to an integer value usable with ICU4C and CodePointMapData
+   * Convert to an integer value usable with ICU4C and `CodePointMapData`
    *
    * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
    */
   inline uint8_t to_integer_value() const;
 
   /**
-   * Convert from an integer value from ICU4C or CodePointMapData
+   * Convert from an integer value from ICU4C or `CodePointMapData`
    *
    * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::VerticalOrientation> from_integer_value(uint8_t other);
+
+  inline static std::optional<icu4x::VerticalOrientation> try_from_str(std::string_view s);
 
     inline icu4x::capi::VerticalOrientation AsFFI() const;
     inline static icu4x::VerticalOrientation FromFFI(icu4x::capi::VerticalOrientation c_enum);

@@ -12,7 +12,7 @@ use crate::{
     options::SubsecondDigits,
     provider::{
         fields::{self, components, Field, FieldLength, FieldSymbol},
-        pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
+        pattern::{naively_apply_hour_cycle, runtime, PatternItem, TimeGranularity},
         skeleton::{reference, FullLongMediumShort, GenericLengthPatterns},
     },
 };
@@ -145,8 +145,8 @@ fn naively_apply_time_zone_name(
     // If there is a preference overriding the hour cycle, apply it now.
     if let Some(time_zone_name) = time_zone_name {
         runtime::helpers::maybe_replace_first(pattern, |item| {
-            if let PatternItem::Field(fields::Field {
-                symbol: fields::FieldSymbol::TimeZone(_),
+            if let PatternItem::Field(Field {
+                symbol: FieldSymbol::TimeZone(_),
                 length: _,
             }) = item
             {
@@ -192,7 +192,7 @@ pub fn create_best_pattern_for_fields<'data>(
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(mut pattern, d) = first_pattern_match {
         pattern.for_each_mut(|pattern| {
-            naively_apply_preferences(pattern, components.hour_cycle);
+            naively_apply_hour_cycle(pattern, components.hour_cycle);
             naively_apply_time_zone_name(pattern, components.time_zone_name);
             apply_subseconds(pattern, components.subsecond);
         });
@@ -209,7 +209,7 @@ pub fn create_best_pattern_for_fields<'data>(
             BestSkeleton::MissingOrExtraFields(mut pattern, d) => {
                 if date.is_empty() {
                     pattern.for_each_mut(|pattern| {
-                        naively_apply_preferences(pattern, components.hour_cycle);
+                        naively_apply_hour_cycle(pattern, components.hour_cycle);
                         naively_apply_time_zone_name(pattern, components.time_zone_name);
                         apply_subseconds(pattern, components.subsecond);
                     });
@@ -238,7 +238,7 @@ pub fn create_best_pattern_for_fields<'data>(
     let time_pattern: Option<runtime::Pattern<'data>> = time_patterns.map(|pattern| {
         #[allow(clippy::unwrap_used)] // only date patterns can contain plural variants
         let mut pattern = pattern.try_into_other().unwrap();
-        naively_apply_preferences(&mut pattern, components.hour_cycle);
+        naively_apply_hour_cycle(&mut pattern, components.hour_cycle);
         naively_apply_time_zone_name(&mut pattern, components.time_zone_name);
         apply_subseconds(&mut pattern, components.subsecond);
         pattern

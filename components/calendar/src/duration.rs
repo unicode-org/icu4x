@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::DateDurationParseError;
+
 /// A signed length of time in terms of days, weeks, months, and years.
 ///
 /// This type represents the abstract concept of a date duration. For example, a duration of
@@ -26,7 +28,7 @@
 /// let mut date_iso = Date::try_new_iso(1992, 9, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
-/// assert_eq!(date_iso.day_of_week(), Weekday::Wednesday);
+/// assert_eq!(date_iso.weekday(), Weekday::Wednesday);
 /// assert_eq!(date_iso.era_year().year, 1992);
 /// assert_eq!(date_iso.month().ordinal, 9);
 /// assert_eq!(date_iso.day_of_month().0, 2);
@@ -158,6 +160,117 @@ pub enum DateDurationUnit {
 }
 
 impl DateDuration {
+    /// Parses an ISO 8601 date-only duration string into a [`DateDuration`].
+    ///
+    /// This is a wrapper around [`Self::try_from_utf8`] for UTF-8
+    /// string inputs.
+    pub fn try_from_str(s: &str) -> Result<Self, DateDurationParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`].
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, DateDurationParseError> {
+        let mut s = code_units;
+
+        let mut is_negative = false;
+        match s {
+            [b'-', rest @ ..] => {
+                is_negative = true;
+                s = rest;
+            }
+            [b'+', ..] => return Err(DateDurationParseError::PlusNotAllowed),
+            _ => {}
+        }
+
+        match s {
+            [b'P', rest @ ..] => s = rest,
+            _ => return Err(DateDurationParseError::InvalidStructure),
+        }
+
+        if s.is_empty() {
+            return Err(DateDurationParseError::InvalidStructure);
+        }
+
+        let mut years: u32 = 0;
+        let mut months: u32 = 0;
+        let mut weeks: u32 = 0;
+        let mut days: u64 = 0;
+
+        let mut seen_years = false;
+        let mut seen_months = false;
+        let mut seen_weeks = false;
+        let mut seen_days = false;
+
+        while !s.is_empty() {
+            if matches!(s, [b'T', ..]) {
+                return Err(DateDurationParseError::TimeNotSupported);
+            }
+
+            let mut value: u64 = 0;
+            let mut has_digits = false;
+
+            while let [b @ b'0'..=b'9', rest @ ..] = s {
+                value = value
+                    .checked_mul(10)
+                    .and_then(|v| v.checked_add((b - b'0') as u64))
+                    .ok_or(DateDurationParseError::NumberOverflow)?;
+                s = rest;
+                has_digits = true;
+            }
+
+            if !has_digits {
+                return Err(DateDurationParseError::MissingValue);
+            }
+
+            match s {
+                [b'Y', rest @ ..] => {
+                    if seen_years {
+                        return Err(DateDurationParseError::DuplicateUnit);
+                    }
+                    years =
+                        u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
+                    seen_years = true;
+                    s = rest;
+                }
+                [b'M', rest @ ..] => {
+                    if seen_months {
+                        return Err(DateDurationParseError::DuplicateUnit);
+                    }
+                    months =
+                        u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
+                    seen_months = true;
+                    s = rest;
+                }
+                [b'W', rest @ ..] => {
+                    if seen_weeks {
+                        return Err(DateDurationParseError::DuplicateUnit);
+                    }
+                    weeks =
+                        u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
+                    seen_weeks = true;
+                    s = rest;
+                }
+                [b'D', rest @ ..] => {
+                    if seen_days {
+                        return Err(DateDurationParseError::DuplicateUnit);
+                    }
+                    days = value;
+                    seen_days = true;
+                    s = rest;
+                }
+                _ => return Err(DateDurationParseError::InvalidStructure),
+            }
+        }
+
+        Ok(Self {
+            is_negative,
+            years,
+            months,
+            weeks,
+            days,
+        })
+    }
+
     /// Returns a new [`DateDuration`] representing a number of years.
     pub fn for_years(years: i32) -> Self {
         Self {
@@ -190,6 +303,21 @@ impl DateDuration {
         Self {
             is_negative: days.is_negative(),
             days: days.unsigned_abs(),
+            ..Default::default()
+        }
+    }
+
+    /// Returns a new [`DateDuration`] representing a number of days
+    /// represented as weeks and days
+    pub(crate) fn for_weeks_and_days(days: i64) -> Self {
+        let is_negative = days.is_negative();
+        let days = days.unsigned_abs();
+        let weeks = (days / 7) as u32;
+        let days = days % 7;
+        Self {
+            is_negative,
+            weeks,
+            days,
             ..Default::default()
         }
     }
@@ -286,5 +414,77 @@ impl DateDuration {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_single_unit_durations() {
+        let d = DateDuration::try_from_str("P1D").unwrap();
+        assert_eq!(
+            d,
+            DateDuration {
+                days: 1,
+                ..Default::default()
+            }
+        );
+
+        let d = DateDuration::try_from_str("P3W").unwrap();
+        assert_eq!(
+            d,
+            DateDuration {
+                weeks: 3,
+                ..Default::default()
+            }
+        );
+
+        let d = DateDuration::try_from_str("P5M").unwrap();
+        assert_eq!(
+            d,
+            DateDuration {
+                months: 5,
+                ..Default::default()
+            }
+        );
+
+        let d = DateDuration::try_from_str("P7Y").unwrap();
+        assert_eq!(
+            d,
+            DateDuration {
+                years: 7,
+                ..Default::default()
+            }
+        );
+    }
+
+    #[test]
+    fn parse_multi_unit_durations() {
+        let d = DateDuration::try_from_str("P1Y3M5W7D").unwrap();
+        assert_eq!(
+            d,
+            DateDuration {
+                years: 1,
+                months: 3,
+                weeks: 5,
+                days: 7,
+                ..Default::default()
+            }
+        );
+    }
+
+    #[test]
+    fn parse_negative_durations() {
+        let d = DateDuration::try_from_str("-P9W").unwrap();
+        assert_eq!(
+            d,
+            DateDuration {
+                is_negative: true,
+                weeks: 9,
+                ..Default::default()
+            }
+        );
     }
 }

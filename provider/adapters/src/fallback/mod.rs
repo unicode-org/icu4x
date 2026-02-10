@@ -134,8 +134,8 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// Function arguments:
     ///
-    /// - F1 should perform a data load for a single DataRequest and return the result of it
-    /// - F2 should map from the provider-specific response type to DataResponseMetadata
+    /// - F1 should perform a data load for a single [`DataRequest`] and return the result of it
+    /// - F2 should map from the provider-specific response type to [`DataResponseMetadata`]
     fn run_fallback<F1, F2, R>(
         &self,
         marker: DataMarkerInfo,
