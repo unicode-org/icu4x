@@ -178,13 +178,7 @@ impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
 ///
 /// ```
 /// use icu_locale_core::locale;
-/// use icu_provider::prelude::*;
-/// use icu_provider::buf::DeserializingBufferProvider;
-/// use icu_provider::hello_world::HelloWorldV1;
-/// use icu_provider::hello_world::HelloWorldFormatterPreferences;
-/// use icu_provider::unstable::BindLocale;
-/// use icu_provider::unstable::BoundLocaleDataProvider;
-/// use icu_provider::unstable::DataAttributesRequest;
+/// use icu_provider::hello_world::HelloWorldAttributeFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;
 ///
@@ -195,23 +189,14 @@ impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
 /// let provider = BlobDataProvider::try_new_from_static_blob(HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
-/// // Bind a specific marker and locale:
-/// let locale = HelloWorldV1::INFO.make_locale(HelloWorldFormatterPreferences::from(locale!("en")).locale_preferences);
-/// let bound_provider = provider.bind_locale(HelloWorldV1::INFO, DataRequest {
-///     metadata: Default::default(),
-///     id: DataIdentifierBorrowed::for_locale(&locale)
-/// }).unwrap().bound_provider;
-///
-/// // Now load a specific attribute:
-/// let response = BoundLocaleDataProvider::<HelloWorldV1>::load_bound(
-///     &DeserializingBufferProvider::new(&bound_provider),
-///     DataAttributesRequest {
-///         marker_attributes: DataMarkerAttributes::try_from_str("reverse").unwrap(),
-///         metadata: Default::default()
-///     }
+/// // Use it to query a HelloWorld formatter:
+/// let formatter = HelloWorldAttributeFormatter::try_new_with_buffer_provider(
+///     &provider,
+///     locale!("en").into()
 /// ).unwrap();
 ///
-/// assert_writeable_eq!(response.payload.get().message, "Olleh Dlrow");
+/// assert_writeable_eq!(formatter.format("reverse").unwrap(), "Olleh Dlrow");
+/// assert_writeable_eq!(formatter.format_for_prefix("rev").unwrap(), "Olleh Dlrow");
 /// ```
 #[derive(Debug)]
 pub struct BlobBoundLocaleDataProvider {
@@ -241,19 +226,16 @@ impl BindLocaleDataProvider<BufferMarker> for BlobDataProvider {
 }
 
 impl BoundLocaleDataProvider<BufferMarker> for BlobBoundLocaleDataProvider {
-    fn load_bound(
-        &self,
+    fn load_bound<'data>(
+        &'data self,
         req: DataAttributesRequest,
-    ) -> Result<BoundLocaleDataResponse<BufferMarker>, DataError> {
+    ) -> Result<BoundLocaleDataResponse<'data, BufferMarker>, DataError> {
         let blob = self.data.get();
         let payload = blob.load(req)?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
         // Note: the checksum is returned by `bind_locale()` instead of `load_bound()`
-        Ok(BoundLocaleDataResponse {
-            metadata,
-            payload: payload,
-        })
+        Ok(BoundLocaleDataResponse { metadata, payload })
     }
 }
 
