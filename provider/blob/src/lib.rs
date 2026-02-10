@@ -38,3 +38,8 @@ mod blob_schema;
 pub mod export;
 
 pub use blob_data_provider::BlobDataProvider;
+
+/// Additional types for mostly internal usage.
+pub mod unstable {
+    pub use super::blob_data_provider::BlobBoundLocaleDataProvider;
+}

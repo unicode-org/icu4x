@@ -2,11 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::blob_schema::BlobBoundLocaleSchema;
 use crate::blob_schema::BlobSchema;
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
+use icu_provider::unstable::BindLocale;
+use icu_provider::unstable::BindLocaleResponse;
+use icu_provider::unstable::BoundLocaleDataProvider;
+use icu_provider::unstable::DataAttributesRequest;
 use icu_provider::Cart;
 use icu_provider::DynamicDryDataProvider;
 use yoke::*;
@@ -163,6 +168,91 @@ impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
         marker: DataMarkerInfo,
     ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         self.data.get().iter_ids(marker)
+    }
+}
+
+/// A [`BlobDataProvider`] that returns data for a specific marker and locale.
+///
+/// # Examples
+///
+/// ```
+/// use icu_locale_core::locale;
+/// use icu_provider::prelude::*;
+/// use icu_provider::buf::DeserializingBufferProvider;
+/// use icu_provider::hello_world::HelloWorldV1;
+/// use icu_provider::hello_world::HelloWorldFormatterPreferences;
+/// use icu_provider::unstable::BindLocale;
+/// use icu_provider::unstable::BoundLocaleDataProvider;
+/// use icu_provider::unstable::DataAttributesRequest;
+/// use icu_provider_blob::BlobDataProvider;
+/// use writeable::assert_writeable_eq;
+///
+/// // Read an ICU4X data blob statically:
+/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!("../tests/data/v3.postcard");
+///
+/// // Create a DataProvider from it:
+/// let provider = BlobDataProvider::try_new_from_static_blob(HELLO_WORLD_BLOB)
+///     .expect("Deserialization should succeed");
+///
+/// // Bind a specific marker and locale:
+/// let locale = HelloWorldV1::INFO.make_locale(HelloWorldFormatterPreferences::from(locale!("en")).locale_preferences);
+/// let bound_provider = provider.bind_locale(HelloWorldV1::INFO, DataRequest {
+///     metadata: Default::default(),
+///     id: DataIdentifierBorrowed::for_locale(&locale)
+/// }).unwrap().bound_provider;
+///
+/// // Now load a specific attribute:
+/// let response = BoundLocaleDataProvider::<HelloWorldV1>::load_bound(
+///     &DeserializingBufferProvider::new(&bound_provider),
+///     DataAttributesRequest {
+///         marker_attributes: DataMarkerAttributes::try_from_str("reverse").unwrap(),
+///         metadata: Default::default()
+///     }
+/// ).unwrap();
+///
+/// assert_writeable_eq!(response.payload.get().message, "Olleh Dlrow");
+/// ```
+#[derive(Debug)]
+pub struct BlobBoundLocaleDataProvider {
+    pub(crate) data: Yoke<BlobBoundLocaleSchema<'static>, Option<Cart>>,
+}
+
+impl BindLocale<BufferMarker> for BlobDataProvider {
+    type BoundLocaleDataProvider = BlobBoundLocaleDataProvider;
+    fn bind_locale(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError> {
+        let payload: Yoke<(BlobBoundLocaleSchema, Option<u64>), Option<Cart>> = self
+            .data
+            .try_map_project_cloned(|blob, _| blob.bind_locale(marker, req))?;
+        let mut metadata = DataResponseMetadata::default();
+        metadata.buffer_format = Some(BufferFormat::Postcard1);
+        metadata.checksum = payload.get().1;
+        Ok(BindLocaleResponse {
+            metadata,
+            bound_provider: BlobBoundLocaleDataProvider {
+                data: payload.map_project(|(inner, _), _| inner),
+            },
+        })
+    }
+}
+
+impl BoundLocaleDataProvider<BufferMarker> for BlobBoundLocaleDataProvider {
+    fn load_bound(
+        &self,
+        req: DataAttributesRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let payload: Yoke<&[u8], Option<Cart>> =
+            self.data.try_map_project_cloned(|blob, _| blob.load(req))?;
+        let mut metadata = DataResponseMetadata::default();
+        metadata.buffer_format = Some(BufferFormat::Postcard1);
+        // Note: the checksum is returned by `bind_locale()` instead of `load_bound()`
+        Ok(DataResponse {
+            metadata,
+            payload: DataPayload::from_yoked_buffer(payload),
+        })
     }
 }
 
