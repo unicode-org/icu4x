@@ -416,6 +416,10 @@ pub trait PreferenceKey: Sized {
     }
 }
 
+// This utility macro needs to be split from the main `__define_preferences` macro
+// to gate the implementation behind the `alloc` feature; using `cfg(feature = "alloc")`
+// inside `__define_preferences` does not use the "alloc" feature from this
+// crate, it uses the "alloc" feature from the crate that expands (calls) the macro.
 #[macro_export]
 #[doc(hidden)]
 #[cfg(feature = "alloc")]
