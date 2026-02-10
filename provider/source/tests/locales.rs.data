@@ -23,12 +23,16 @@ const LOCALES: &[LanguageIdentifier] = &[
     langid!("en"),
     langid!("en-001"),
     langid!("en-ZA"),
+    // Klingon:
+    // - Unsupported locale without CLDR data
+    // - Used to test fallback behavior
+    langid!("tlh-001"),
     // Spanish:
     //  - Most popular Romance language
     //  - South American dialect
     //  - Has context dependent list fragments
     langid!("es"),
-    langid!("es-AR"),
+    langid!("es-AR"),   
     // French:
     // - Often the first non-English locale to receive new data in CLDR
     langid!("fr"),
