@@ -36,8 +36,10 @@ target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	# -Ccodegen-units=1: generate the code in a single process to enable more opportunities for optimization
 	# -C linker=${BASEDIR}/ld.py: run a custom linker script to remove symbols
 	# -C linker-flavor=wasm-ld: tells rustc to pass the arguments to ld.py as it would pass to wasm-ld
-	# -Z build-std-features=panic_immediate_abort: don't link debug impls when panicking, significantly reducing code size
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
+	# -Z build-std-features=panic_immediate_abort: older version of -Cpanic=immediate-abort,
+	# with the side-effect of disabling other optional std features that cause bloat. See:
+	# <https://github.com/rust-lang/rust/issues/147257>
 	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
