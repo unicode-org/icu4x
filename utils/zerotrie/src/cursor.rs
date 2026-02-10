@@ -210,8 +210,8 @@ impl ZeroTrieSimpleAsciiCursor<'_> {
     /// assert_eq!(cursor.take_value(), None);
     /// ```
     #[inline]
-    pub fn step(&mut self, byte: u8) {
-        reader::step_parameterized::<ZeroTrieSimpleAscii<[u8]>>(&mut self.trie.store, byte);
+    pub fn step(&mut self, byte: u8) -> bool {
+        reader::step_parameterized::<ZeroTrieSimpleAscii<[u8]>>(&mut self.trie.store, byte).is_some()
     }
 
     /// Takes the value at the current position.
