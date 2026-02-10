@@ -66,6 +66,7 @@ Fully filled in up to 30c187f4b7
         - Add `LocalePreferences::from_locale_strict` (unicode-org#7377)
         - Fix `LanguageIdentifier::normalize_utf8` example (unicode-org#7372)
         - Use better types in `LocalePreferences` (unicode-org#7360)
+        - Implement `Into<Locale>` for preference structs (unicode-org#7622)
     - `icu_normalizer`
         - Move `harfbuzz-traits` implementations into component crates (unicode-org#7200)
     - `icu_pattern`
