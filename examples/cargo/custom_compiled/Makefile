@@ -5,18 +5,26 @@
 export CARGO_TARGET_DIR ?= target
 export MODE ?= release
 
-all: clean baked_data/mod.rs
+ifeq ($(OS),Windows_NT)
+	BINARY_EXT = .exe
+	SEP = $(strip \)
+else
+	BINARY_EXT =
+	SEP = /
+endif
 
-../bin/icu4x-datagen:
+all: clean baked_data$(SEP)mod.rs
+
+..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT):
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	ifeq ($(MODE), "release")
-		cargo install --path ../../../provider/icu4x-datagen --root ..
+		cargo install --path ..$(SEP)..$(SEP)..$(SEP)provider$(SEP)icu4x-datagen --root ..
 	else
-		cargo install --path ../../../provider/icu4x-datagen --debug --root ..
+		cargo install --path ..$(SEP)..$(SEP)..$(SEP)provider$(SEP)icu4x-datagen --debug --root ..
 	endif
 
-baked_data/mod.rs: ../bin/icu4x-datagen
-	../bin/icu4x-datagen \
+baked_data$(SEP)mod.rs: ..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT)
+	..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT) \
 		--format baked \
 		--markers all \
 		--locales ru \

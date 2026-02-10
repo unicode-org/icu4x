@@ -6,32 +6,40 @@ export CARGO_TARGET_DIR ?= target
 
 PINNED_CI_NIGHTLY = "nightly-2025-09-27"
 
-all: buffer_data.postcard bin/tutorial_buffer.wasm
+ifeq ($(OS),Windows_NT)
+	BINARY_EXT = .exe
+	SEP = $(strip \)
+else
+	BINARY_EXT =
+	SEP = /
+endif
 
-../bin/icu4x-datagen:
+all: buffer_data.postcard bin$(SEP)tutorial_buffer.wasm
+
+..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT):
 	echo "Target dir: $(CARGO_TARGET_DIR)"
-	cargo install --path ../../../provider/icu4x-datagen --root ..
+	cargo install --path ..$(SEP)..$(SEP)..$(SEP)provider$(SEP)icu4x-datagen --root ..
 
-bin/tutorial_buffer:
+bin$(SEP)tutorial_buffer$(BINARY_EXT):
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	cargo build --release
 	mkdir -p bin
-	cp -p "$(CARGO_TARGET_DIR)"/release/tutorial_buffer bin/tutorial_buffer
-	ls -l bin/
+	cp -p "$(CARGO_TARGET_DIR)$(SEP)release$(SEP)tutorial_buffer$(BINARY_EXT)" "bin$(SEP)tutorial_buffer$(BINARY_EXT)"
+	ls -l bin$(SEP)
 
-bin/tutorial_buffer.wasm:
+bin$(SEP)tutorial_buffer.wasm:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	rustup toolchain install ${PINNED_CI_NIGHTLY}
 	rustup target add wasm32-wasip1 --toolchain ${PINNED_CI_NIGHTLY}
 	cargo +${PINNED_CI_NIGHTLY} build --target wasm32-wasip1 --release
 	mkdir -p bin
-	cp -p "$(CARGO_TARGET_DIR)"/wasm32-wasip1/release/tutorial_buffer.wasm bin/
-	ls -l bin/
+	cp -p "$(CARGO_TARGET_DIR)$(SEP)wasm32-wasip1$(SEP)release$(SEP)tutorial_buffer.wasm" bin$(SEP)
+	ls -l bin$(SEP)
 
-buffer_data.postcard: ../bin/icu4x-datagen bin/tutorial_buffer
-	../bin/icu4x-datagen \
+buffer_data.postcard: ..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT) bin$(SEP)tutorial_buffer$(BINARY_EXT)
+	..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT) \
 		--format blob \
-		--markers-for-bin bin/tutorial_buffer \
+		--markers-for-bin "bin$(SEP)tutorial_buffer$(BINARY_EXT)" \
 		--locales my en-ZA \
 		--cldr-tag latest \
 		--overwrite \
