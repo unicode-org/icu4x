@@ -250,8 +250,10 @@ macro_rules! normalization_canonical_compositions_provider_new {
             CanonicalCompositions,
             $file_name,
             {
-                let ranking_json_string = std::fs::read_to_string("/home/hsivonen/Downloads/out.json").unwrap();
-                let rankings: HashMap<char, u64> = serde_json::from_str(&ranking_json_string).unwrap();
+                let ranking_json_string =
+                    std::fs::read_to_string("/home/hsivonen/Downloads/out.json").unwrap();
+                let rankings: HashMap<char, u64> =
+                    serde_json::from_str(&ranking_json_string).unwrap();
 
                 let decomp_owned =
                     icu::normalizer::properties::CanonicalDecomposition::try_new_unstable(self)
@@ -318,7 +320,9 @@ macro_rules! normalization_canonical_compositions_provider_new {
                     // `secondary` values _given_ `primary`, the possible
                     // `secondary` values should be sorted from most frequent
                     // to least frequent.
-                    v.sort_by_key(|(secondary, _, rank)| (*rank, rank_secondary(*secondary), *secondary));
+                    v.sort_by_key(|(secondary, _, rank)| {
+                        (*rank, rank_secondary(*secondary), *secondary)
+                    });
 
                     // Trie value format:
                     //
@@ -370,7 +374,10 @@ macro_rules! normalization_canonical_compositions_provider_new {
                 }
 
                 for l in 0..HANGUL_L_COUNT {
-                    builder.set_value(HANGUL_L_BASE + l, HANGUL_L_TRIE_VAL_BASE + (l * HANGUL_N_COUNT) as u16);
+                    builder.set_value(
+                        HANGUL_L_BASE + l,
+                        HANGUL_L_TRIE_VAL_BASE + (l * HANGUL_N_COUNT) as u16,
+                    );
                 }
 
                 // According to databake, the cost of marking the lv syllables vs. marking
