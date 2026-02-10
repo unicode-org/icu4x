@@ -162,6 +162,9 @@ pub struct AsciiProbeResult {
 impl ZeroTrieSimpleAsciiCursor<'_> {
     /// Steps the cursor one character into the trie based on the character's byte value.
     ///
+    /// Returns `true` if the byte was found in the trie at the current position,
+    /// or `false` if there is no match and the cursor has become empty.
+    ///
     /// # Examples
     ///
     /// Unrolled loop checking for string presence at every step:
