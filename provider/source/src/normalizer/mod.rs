@@ -13,7 +13,6 @@ use icu::collections::char16trie::TrieResult;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::normalizer::provider::*;
 use icu_codepointtrie_builder::CodePointTrieBuilder;
-use icu_codepointtrie_builder::CodePointTrieBuilderData;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -84,33 +83,26 @@ macro_rules! normalization_data_provider {
                 let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
                     .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
 
-                let mut values = Vec::new();
-                // Need to get the surrogate values, too, so iterating
-                // by `u32`.
-                for i in 0..=(char::MAX as u32) {
-                    values.push(trie.get32(i))
-                }
+                let mut builder = CodePointTrieBuilder::new(
+                    0,
+                    0,
+                    icu::collections::codepointtrie::TrieType::Fast,
+                );
 
-                // Mark lead jamo as non-passthrough. In principle,
-                // they are passthrough, but we don't want to take the
-                // passthrough path and then immediately fall off of it
-                // due to the next character being a jamo V.
-                for i in 0..HANGUL_L_COUNT {
-                    values[(HANGUL_L_BASE + i) as usize] |= NON_ROUND_TRIP_MARKER;
+                for i in 0..HANGUL_L_BASE {
+                    builder.set_value(i, trie.get32(i));
                 }
-
-                let trie: CodePointTrie<u32> = CodePointTrieBuilder {
-                    data: CodePointTrieBuilderData::ValuesByCodePoint(&values[..]),
-                    default_value: 0,
-                    error_value: 0,
-                    trie_type: icu::collections::codepointtrie::TrieType::Fast,
+                for i in HANGUL_L_BASE..HANGUL_L_BASE + HANGUL_L_COUNT {
+                    builder.set_value(i, NON_ROUND_TRIP_MARKER | trie.get32(i));
                 }
-                .build();
+                for i in HANGUL_L_BASE + HANGUL_L_COUNT..=(char::MAX as u32) {
+                    builder.set_value(i, trie.get32(i));
+                }
 
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: DataPayload::from_owned(DecompositionData {
-                        trie,
+                        trie: builder.build(),
                         passthrough_cap: toml_data.cap,
                     }),
                 })
@@ -303,7 +295,11 @@ macro_rules! normalization_canonical_compositions_provider_new {
                 let default_value = 0b11111_11111_11111; // 15 bits set
                 let error_value = 0b11111_11111_11111;
 
-                let mut index = vec![default_value; char::MAX as usize];
+                let mut builder = CodePointTrieBuilder::new(
+                    default_value,
+                    error_value,
+                    icu::collections::codepointtrie::TrieType::Fast,
+                );
 
                 let mut linear16: Vec<(u16, u16)> = Vec::new();
                 let mut linear24: Vec<(char, char)> = Vec::new();
@@ -367,14 +363,14 @@ macro_rules! normalization_canonical_compositions_provider_new {
                     if supplementary {
                         let tagged_start_and_len = start_and_len | (1 << 15);
                         assert!(tagged_start_and_len < lv_marker as usize);
-                        index[primary as usize] = tagged_start_and_len as u16;
+                        builder.set_value(u32::from(primary), tagged_start_and_len as u16);
                     } else {
-                        index[primary as usize] = start_and_len as u16;
+                        builder.set_value(u32::from(primary), start_and_len as u16);
                     }
                 }
 
                 for l in 0..HANGUL_L_COUNT {
-                    index[(HANGUL_L_BASE + l) as usize] = HANGUL_L_TRIE_VAL_BASE + (l * HANGUL_N_COUNT) as u16;
+                    builder.set_value(HANGUL_L_BASE + l, HANGUL_L_TRIE_VAL_BASE + (l * HANGUL_N_COUNT) as u16);
                 }
 
                 // According to databake, the cost of marking the lv syllables vs. marking
@@ -382,22 +378,14 @@ macro_rules! normalization_canonical_compositions_provider_new {
                 // 96 bytes in size in order to avoid costlier math at normalization time.
                 let mut lv = HANGUL_S_BASE;
                 while lv < HANGUL_S_BASE + HANGUL_S_COUNT {
-                    index[lv as usize] = lv_marker;
+                    builder.set_value(lv, lv_marker);
                     lv += HANGUL_T_COUNT;
                 }
-
-                let trie: CodePointTrie<u16> = CodePointTrieBuilder {
-                    data: CodePointTrieBuilderData::ValuesByCodePoint(&index[..]),
-                    default_value,
-                    error_value,
-                    trie_type: icu::collections::codepointtrie::TrieType::Fast,
-                }
-                .build();
 
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: DataPayload::from_owned(CanonicalCompositionsNew {
-                        trie,
+                        trie: builder.build(),
                         linear16: ZeroVec::alloc_from_slice(&linear16),
                         linear24: ZeroVec::alloc_from_slice(&linear24),
                     }),
