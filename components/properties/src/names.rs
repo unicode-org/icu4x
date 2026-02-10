@@ -304,7 +304,6 @@ fn get_strict_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Opti
 
 /// Avoid monomorphizing multiple copies of this function
 fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Option<u16> {
-
     fn recurse(mut cursor: ZeroTrieSimpleAsciiCursor, mut rest: &[u8]) -> Option<usize> {
         if cursor.is_empty() {
             return None;
@@ -316,7 +315,7 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Optio
         if let Some(r) = recurse(skip_cursor, rest) {
             return Some(r);
         }
-        
+
         let ascii = loop {
             let Some((&a, r)) = rest.split_first() else {
                 return cursor.take_value();
