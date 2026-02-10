@@ -7,7 +7,7 @@
 #![allow(clippy::exhaustive_structs)] // data struct module
 
 use crate as icu_provider;
-use crate::buf::{DeserializingBufferProvider, DeserializingOwnedBufferProvider};
+use crate::buf::{DeserializingOwnedBufferProvider};
 use crate::request::DataAttributesRequest;
 use crate::unstable::{BindLocaleDataProvider, BoundLocaleDataProvider};
 #[cfg(feature = "deserialize_json")]
@@ -250,6 +250,10 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
     }
 }
 
+/// A data provider returning Hello World strings for attributes in a specific language
+/// as JSON blobs.
+///
+/// Mostly useful for testing.
 #[cfg(feature = "deserialize_json")]
 #[derive(Debug)]
 pub struct HelloWorldJsonBoundLocaleProvider {
@@ -368,22 +372,6 @@ pub struct HelloWorldFormatter {
 ///
 /// This type is intended to take the shape of an ICU4X formatter that lazily
 /// loads data marker attributes.
-///
-/// # Examples
-///
-/// ```
-/// use icu_locale_core::locale;
-/// use icu_provider::hello_world::{HelloWorldAttributeFormatter, HelloWorldProvider};
-/// use writeable::assert_writeable_eq;
-///
-/// let fmt = HelloWorldAttributeFormatter::try_new_with_buffer_provider(
-///     &HelloWorldProvider.into_json_provider(),
-///     locale!("en").into(),
-/// )
-/// .expect("locale exists and has attributes");
-///
-/// assert_writeable_eq!(fmt.format("reverse").unwrap(), "Olleh Dlrow");
-/// ```
 #[derive(Debug)]
 pub struct HelloWorldAttributeFormatter<P: BoundLocaleDataProvider<HelloWorldV1>> {
     provider: P,
@@ -447,6 +435,23 @@ impl HelloWorldFormatter {
 impl<P: BoundLocaleDataProvider<BufferMarker>>
     HelloWorldAttributeFormatter<DeserializingOwnedBufferProvider<P>>
 {
+    /// Creates one of these formatters from a buffer provider.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale_core::locale;
+    /// use icu_provider::hello_world::{HelloWorldAttributeFormatter, HelloWorldProvider};
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let fmt = HelloWorldAttributeFormatter::try_new_with_buffer_provider(
+    ///     &HelloWorldProvider.into_json_provider(),
+    ///     locale!("en").into(),
+    /// )
+    /// .expect("locale exists and has attributes");
+    ///
+    /// assert_writeable_eq!(fmt.format("reverse").unwrap(), "Olleh Dlrow");
+    /// ```
     pub fn try_new_with_buffer_provider<'data, P1: ?Sized>(
         provider: &'data P1,
         prefs: HelloWorldFormatterPreferences,
