@@ -201,7 +201,7 @@ impl DatePatternSelectionData {
             (YearStyle::Full, YearAmbiguity::EraAndCenturyRequired | YearAmbiguity::EraRequired) => {
                 PackedSkeletonVariant::Variant1
             }
-            (YearStyle::Full, _) => PackedSkeletonVariant::Variant0,
+            (YearStyle::Full, YearAmbiguity::CenturyRequired | YearAmbiguity::Unambiguous) => PackedSkeletonVariant::Variant0,
 
             (
                 YearStyle::Auto | YearStyle::NoEra,
