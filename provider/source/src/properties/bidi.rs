@@ -21,7 +21,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         use icu::properties::props::BidiMirroringGlyph;
         use icu::properties::props::BidiPairedBracketType;
         use icu::properties::props::EnumeratedProperty;
-        use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+        use icu_codepointtrie_builder::CodePointTrieBuilder;
 
         self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
 
@@ -40,41 +40,49 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         let bpt_trie = bpt.build_codepointtrie::<u16>()?;
         let bpt_lookup = bpt.values_to_names_long();
 
-        let trie_vals = (0..=(char::MAX as u32)).map(|cp| {
-            let mut r = BidiMirroringGlyph::default();
+        let mut builder = CodePointTrieBuilder::new(
+            BidiMirroringGlyph::default(),
+            BidiMirroringGlyph::default(),
+            TrieType::Small,
+        );
+
+        for cp in 0..=(char::MAX as u32) {
             if !bidi_m_cpinvlist.contains32(cp) {
-                return r;
+                continue;
             }
-            r.mirrored = true;
-            r.mirroring_glyph = Some(bmg_trie.get32(cp)).filter(|&cp| cp as u32 != 0);
-            r.paired_bracket_type = match bpt_lookup[&(bpt_trie.get32(cp))] {
-                "Open" => BidiPairedBracketType::Open,
-                "Close" => BidiPairedBracketType::Close,
-                _ => BidiPairedBracketType::None,
-            };
-            if r.mirrored && r.mirroring_glyph.is_none() {
+            let mirroring_glyph = Some(bmg_trie.get32(cp)).filter(|&m| m as u32 != 0);
+            if mirroring_glyph.is_none() {
                 log::trace!(
                     "Missing mirroring glyph: U+{cp:X}: {}",
                     char::try_from_u32(cp).unwrap()
                 );
-            }
-            r
-        });
+            };
+            let paired_bracket_type = match bpt_lookup.get(&(bpt_trie.get32(cp))).copied() {
+                Some("Open") => BidiPairedBracketType::Open,
+                Some("Close") => BidiPairedBracketType::Close,
+                Some("None") => BidiPairedBracketType::None,
+                _ => {
+                    log::trace!(
+                        "Missing paired-bracket-type: U+{cp:X}: {}",
+                        char::try_from_u32(cp).unwrap()
+                    );
+                    BidiPairedBracketType::None
+                }
+            };
+            builder.set_value(
+                cp,
+                BidiMirroringGlyph {
+                    mirrored: true,
+                    mirroring_glyph,
+                    paired_bracket_type,
+                },
+            );
+        }
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
-                icu::properties::provider::PropertyCodePointMap::CodePointTrie(
-                    CodePointTrieBuilder {
-                        data: CodePointTrieBuilderData::ValuesByCodePoint(
-                            &trie_vals.collect::<Vec<_>>(),
-                        ),
-                        default_value: BidiMirroringGlyph::default(),
-                        error_value: BidiMirroringGlyph::default(),
-                        trie_type: TrieType::Small,
-                    }
-                    .build(),
-                ),
+                icu::properties::provider::PropertyCodePointMap::CodePointTrie(builder.build()),
             ),
         })
     }
@@ -86,7 +94,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
     ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
         self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
         return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",
+            "icu_provider_source must be built with `use_icu4c` or `use_wasm` to build enumerated properties data",
         ));
     }
 }

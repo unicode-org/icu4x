@@ -10,6 +10,8 @@ use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::locale::subtags::{language, script};
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -138,12 +140,20 @@ macro_rules! collation_provider {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    self.check_req::<$marker>(req)?;
+                    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+                    return Err(DataError::custom(
+                        "icu_provider_source must be built with use_icu4c or use_wasm to build collation data",
+                    )
+                    .with_req($marker::INFO, req));
+                    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                    {
+                        self.check_req::<$marker>(req)?;
 
-                    Ok(DataResponse {
-                        metadata: Default::default(),
-                        payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, $suffix).and_then(TryInto::try_into).map_err(|e| e.with_req(<$marker>::INFO, req))?),
-                    })
+                        Ok(DataResponse {
+                            metadata: Default::default(),
+                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, $suffix).and_then(TryInto::try_into).map_err(|e| e.with_req(<$marker>::INFO, req))?),
+                        })
+                    }
                 }
             }
 
@@ -213,13 +223,47 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
     }
 }
 
+fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
+    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+    {
+        let _ = trie;
+        unreachable!("Should have errored out earlier");
+    }
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    {
+        let mut builder = CodePointTrieBuilder::new(
+            trie.get('\u{10FFFF}'),
+            trie.get32(u32::MAX),
+            icu::collections::codepointtrie::TrieType::Small,
+        );
+
+        for i in 0..0xAC00 {
+            builder.set_value(i, trie.get32(i));
+        }
+        for _ in 0xAC00..0xD7A4 {
+            // Use the default value for Hangul syllables. We are not
+            // relying on the collation data to catch Hangul syllables.
+            // Furthermore, having non-default values in this range is
+            // bad for tailorings whose characters of interest are
+            // below the fast-access boundary for the small trie type.
+        }
+        for i in 0xD7A4..=(char::MAX as u32) {
+            builder.set_value(i, trie.get32(i));
+        }
+
+        builder.build()
+    }
+}
+
 impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationData<'static>, Self::Error> {
         Ok(CollationData {
-            trie: CodePointTrie::<u32>::try_from(&self.trie)
-                .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
+            trie: rebuild_data(
+                CodePointTrie::<u32>::try_from(&self.trie)
+                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
+            ),
             contexts: ZeroVec::alloc_from_slice(&self.contexts),
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
             ces: self.ces.iter().map(|i| *i as u64).collect(),

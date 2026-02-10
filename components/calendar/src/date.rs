@@ -99,9 +99,9 @@ impl<C> Deref for Ref<'_, C> {
 /// This can work with wrappers around [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
 ///
-/// This can be constructed  constructed
-/// from its fields via [`Self::try_new_from_codes()`], or can be constructed with one of the
-/// `new_<calendar>_date()` per-calendar methods (and then freely converted between calendars).
+/// This can be constructed from its fields via [`Self::try_new_from_codes()`], or can be
+/// constructed with one of the `new_<calendar>_date()` per-calendar methods (and then
+/// freely converted between calendars).
 ///
 /// ```rust
 /// use icu::calendar::Date;
@@ -115,8 +115,8 @@ impl<C> Deref for Ref<'_, C> {
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```
 pub struct Date<A: AsCalendar> {
-    pub(crate) inner: <A::Calendar as Calendar>::DateInner,
-    pub(crate) calendar: A,
+    inner: <A::Calendar as Calendar>::DateInner,
+    calendar: A,
 }
 
 impl<A: AsCalendar> Date<A> {
@@ -137,7 +137,7 @@ impl<A: AsCalendar> Date<A> {
         let inner = calendar
             .as_calendar()
             .from_codes(era, year, month_code, day)?;
-        Ok(Date { inner, calendar })
+        Ok(Date::from_raw(inner, calendar))
     }
 
     /// Construct a [`Date`] from from a bag of fields and a calendar.
@@ -186,7 +186,7 @@ impl<A: AsCalendar> Date<A> {
         calendar: A,
     ) -> Result<Self, DateFromFieldsError> {
         let inner = calendar.as_calendar().from_fields(fields, options)?;
-        Ok(Date { inner, calendar })
+        Ok(Date::from_raw(inner, calendar))
     }
 
     /// Construct a date from a [`RataDie`] and a calendar.
@@ -202,10 +202,7 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
         let rd = rd.clamp(*VALID_RD_RANGE.start(), *VALID_RD_RANGE.end());
-        Date {
-            inner: calendar.as_calendar().from_rata_die(rd),
-            calendar,
-        }
+        Date::from_raw(calendar.as_calendar().from_rata_die(rd), calendar)
     }
 
     /// Convert the date to a [`RataDie`]
@@ -241,7 +238,7 @@ impl<A: AsCalendar> Date<A> {
             // `from_rata_die` precondition is satified by `to_rata_die`
             c2.from_rata_die(c1.to_rata_die(self.inner()))
         };
-        Date { inner, calendar }
+        Date::from_raw(inner, calendar)
     }
 
     /// The day-of-month of this date.
@@ -432,6 +429,11 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn calendar(&self) -> &A::Calendar {
         self.calendar.as_calendar()
+    }
+
+    #[inline]
+    pub(crate) fn into_calendar(self) -> A {
+        self.calendar
     }
 
     /// Get a reference to the contained calendar wrapper

@@ -9,7 +9,7 @@ use icu_calendar::{
     error::DateFromFieldsError,
     options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow},
     types::{DateFields, Month},
-    Calendar, Date, Ref,
+    Calendar, Date,
 };
 
 /// Test that a given calendar produces valid monthdays
@@ -18,20 +18,20 @@ use icu_calendar::{
 /// that combination is ever possible in that calendar
 fn test_reference_year_impl<C>(cal: C, valid_md_condition: impl Fn(u8, bool, u8) -> bool)
 where
-    C: Calendar + Debug,
+    C: Calendar + Debug + Copy,
 {
     // Test that all dates in a certain range behave according to Temporal
     let mut month_days_seen = HashSet::new();
     let mut rd = Date::try_new_iso(1972, 12, 31).unwrap().to_rata_die();
     for _ in 1..2000 {
-        let date = Date::from_rata_die(rd, Ref(&cal));
+        let date = Date::from_rata_die(rd, cal);
         let month_day = (date.month().value.code(), date.day_of_month().0);
         let mut fields = DateFields::default();
-        fields.month_code = Some(month_day.0 .0.as_bytes());
+        fields.month = Some(date.month().value);
         fields.day = Some(month_day.1);
         let mut options = DateFromFieldsOptions::default();
         options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
-        let reference_date = Date::try_from_fields(fields, options, Ref(&cal)).unwrap();
+        let reference_date = Date::try_from_fields(fields, options, cal).unwrap();
         if month_days_seen.contains(&month_day) {
             assert_ne!(date, reference_date, "{cal:?}");
         } else {
@@ -50,17 +50,15 @@ where
                     valid_day_number = day_number;
                 }
                 let mut fields = DateFields::default();
-                let mc = match is_leap {
+                fields.month = Some(match is_leap {
                     false => Month::new(month_number),
                     true => Month::leap(month_number),
-                }
-                .code();
-                fields.month_code = Some(mc.0.as_bytes());
+                });
                 fields.day = Some(day_number);
                 let mut options = DateFromFieldsOptions::default();
                 options.overflow = Some(Overflow::Constrain);
                 options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
-                let reference_date = match Date::try_from_fields(fields, options, Ref(&cal)) {
+                let reference_date = match Date::try_from_fields(fields, options, cal) {
                     Ok(d) => {
                         assert!(
                             is_valid_month,
@@ -82,8 +80,8 @@ where
 
                 // Test round-trip (to valid day number)
                 assert_eq!(
-                    fields.month_code.unwrap(),
-                    reference_date.month().value.code().0.as_bytes(),
+                    fields.month.unwrap(),
+                    reference_date.month().value,
                     "{fields:?} {cal:?}"
                 );
                 assert_eq!(
@@ -94,7 +92,7 @@ where
 
                 // Test Overflow::Reject
                 options.overflow = Some(Overflow::Reject);
-                let reject_result = Date::try_from_fields(fields, options, Ref(&cal));
+                let reject_result = Date::try_from_fields(fields, options, cal);
                 if valid_day_number == day_number {
                     assert_eq!(reject_result, Ok(reference_date));
                 } else {
@@ -106,7 +104,7 @@ where
 
                 // Test that ordinal months cause it to fail (even if the month code is still set)
                 fields.ordinal_month = Some(month_number);
-                let ordinal_result = Date::try_from_fields(fields, options, Ref(&cal));
+                let ordinal_result = Date::try_from_fields(fields, options, cal);
                 assert!(matches!(
                     ordinal_result,
                     Err(DateFromFieldsError::NotEnoughFields)

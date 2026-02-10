@@ -88,13 +88,12 @@ class DateTime (var date: Date, var time: Time) {
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html#method.try_from_str) for more information.
         */
         fun fromString(v: String, calendar: Calendar): Result<DateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_DateTime_from_string_mv1(vSlice, calendar.handle);
+            val returnVal = lib.icu4x_DateTime_from_string_mv1(vSliceMemory.slice, calendar.handle);
             if (returnVal.isOk == 1.toByte()) {
-                
                 val returnStruct = DateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
+                vSliceMemory?.close()
                 return returnStruct.ok()
             } else {
                 return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()

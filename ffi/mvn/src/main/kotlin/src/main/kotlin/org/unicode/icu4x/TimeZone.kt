@@ -55,14 +55,14 @@ class TimeZone internal constructor (
         *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html)
         */
         fun createFromBcp47(id: String): TimeZone {
-            val (idMem, idSlice) = PrimitiveArrayTools.borrowUtf8(id)
+            val idSliceMemory = PrimitiveArrayTools.borrowUtf8(id)
             
-            val returnVal = lib.icu4x_TimeZone_create_from_bcp47_mv1(idSlice);
+            val returnVal = lib.icu4x_TimeZone_create_from_bcp47_mv1(idSliceMemory.slice);
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = TimeZone(handle, selfEdges)
             CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
-            if (idMem != null) idMem.close()
+            idSliceMemory?.close()
             return returnOpaque
         }
     }

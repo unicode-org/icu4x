@@ -486,7 +486,7 @@ mod test {
 
                 assert_eq!(
                     i.cmp(&j),
-                    julian_i.inner.0.cmp(&julian_j.inner.0),
+                    julian_i.inner().0.cmp(&julian_j.inner().0),
                     "Julian directionality inconsistent with directionality for i: {i}, j: {j}"
                 );
             }

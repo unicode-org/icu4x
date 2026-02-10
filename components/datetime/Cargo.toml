@@ -88,7 +88,6 @@ datagen = [
     "serde",
 ]
 logging = ["icu_calendar/logging"]
-experimental = []
 unstable = []
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
@@ -102,20 +101,20 @@ skip_optional_dependencies = true
 [[bench]]
 name = "datetime"
 harness = false
-required-features = ["compiled_data", "serde", "experimental"]
+required-features = ["compiled_data", "serde", "unstable"]
 
 [[bench]]
 name = "pattern"
 harness = false
-required-features = ["serde", "experimental"]
+required-features = ["serde", "unstable"]
 
 [[test]]
 name = "datetime"
-required-features = ["experimental", "compiled_data", "serde"]
+required-features = ["unstable", "compiled_data", "serde"]
 
 [[test]]
 name = "resolved_components"
-required-features = ["experimental", "compiled_data"]
+required-features = ["unstable", "compiled_data"]
 
 [[test]]
 name = "simple_test"
@@ -123,7 +122,7 @@ required-features = ["compiled_data"]
 
 [[test]]
 name = "skeleton_serialization"
-required-features = ["experimental"]
+required-features = ["unstable"]
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true

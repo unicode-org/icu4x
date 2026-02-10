@@ -75,23 +75,24 @@ class IanaParserExtended internal constructor (
     /** See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
     */
     fun parse(value: String): TimeZoneAndCanonicalAndNormalized {
-        val (valueMem, valueSlice) = PrimitiveArrayTools.borrowUtf8(value)
+        val valueSliceMemory = PrimitiveArrayTools.borrowUtf8(value)
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
-        val returnVal = lib.icu4x_IanaParserExtended_parse_mv1(handle, valueSlice);
-        
-        val aEdges: List<Any?> = listOf(this)
+        val returnVal = lib.icu4x_IanaParserExtended_parse_mv1(handle, valueSliceMemory.slice);
         val returnStruct = TimeZoneAndCanonicalAndNormalized.fromNative(returnVal, aEdges)
-        if (valueMem != null) valueMem.close()
+        valueSliceMemory?.close()
         return returnStruct
     }
     
     /** See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
     */
     fun iter(): TimeZoneAndCanonicalIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_IanaParserExtended_iter_mv1(handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = TimeZoneAndCanonicalIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, TimeZoneAndCanonicalIterator.TimeZoneAndCanonicalIteratorCleaner(handle, TimeZoneAndCanonicalIterator.lib));
@@ -101,10 +102,11 @@ class IanaParserExtended internal constructor (
     /** See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
     */
     fun iterAll(): TimeZoneAndCanonicalAndNormalizedIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_IanaParserExtended_iter_all_mv1(handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = TimeZoneAndCanonicalAndNormalizedIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, TimeZoneAndCanonicalAndNormalizedIterator.TimeZoneAndCanonicalAndNormalizedIteratorCleaner(handle, TimeZoneAndCanonicalAndNormalizedIterator.lib));

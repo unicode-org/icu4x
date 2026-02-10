@@ -741,15 +741,15 @@ fn computer_reference_years() {
     fn compute_hijri_reference_year<C>(
         ordinal_month: u8,
         day: u8,
-        cal: &C,
+        cal: C,
         year_info_from_extended: impl Fn(i32) -> C::YearInfo,
     ) -> C::YearInfo
     where
-        C: DateFieldsResolver,
+        C: DateFieldsResolver + Copy,
     {
         let dec_31 = Date::from_rata_die(
             crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
-            crate::Ref(cal),
+            cal,
         );
         // December 31, 1972 occurs in the 11th month, 1392 AH, but the day could vary
         debug_assert_eq!(dec_31.month().ordinal, 11);
@@ -784,7 +784,7 @@ fn computer_reference_years() {
     }
     for month in 1..=12 {
         for day in [30, 29] {
-            let y = compute_hijri_reference_year(month, day, &Hijri(rules), |e| rules.year(e))
+            let y = compute_hijri_reference_year(month, day, Hijri(rules), |e| rules.year(e))
                 .extended_year;
 
             if day == 30 {

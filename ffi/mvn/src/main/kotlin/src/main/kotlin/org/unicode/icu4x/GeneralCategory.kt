@@ -121,9 +121,9 @@ enum class GeneralCategory(val inner: Int) {
         @JvmStatic
         
         fun tryFromStr(s: String): GeneralCategory? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_GeneralCategory_try_from_str_mv1(sSlice);
+            val returnVal = lib.icu4x_GeneralCategory_try_from_str_mv1(sSliceMemory.slice);
             
             val intermediateOption = returnVal.option() ?: return null
             return GeneralCategory.fromNative(intermediateOption)
@@ -173,7 +173,6 @@ enum class GeneralCategory(val inner: Int) {
     fun toGroup(): GeneralCategoryGroup {
         
         val returnVal = lib.icu4x_GeneralCategory_to_group_mv1(this.toNative());
-        
         val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }
