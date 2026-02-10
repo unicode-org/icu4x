@@ -755,12 +755,13 @@ impl Time {
             .transpose()?
             .unwrap_or_default();
 
-        Ok(Self::try_new(
-            time_record.hour,
-            time_record.minute,
-            time_record.second,
-            nanosecond,
-        )?)
+        // values are in range by construction
+        Ok(Time {
+            hour: crate::types::Hour(time_record.hour),
+            minute: crate::types::Minute(time_record.minute),
+            second: crate::types::Second(time_record.second),
+            subsecond: crate::types::Nanosecond(nanosecond),
+        })
     }
 }
 
