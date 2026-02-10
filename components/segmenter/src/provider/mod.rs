@@ -18,6 +18,9 @@
 mod lstm;
 pub use lstm::*;
 
+mod radicals;
+pub use radicals::*;
+
 use crate::options::WordType;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
