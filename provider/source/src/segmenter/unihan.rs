@@ -7,10 +7,12 @@
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::collections::codepointtrie;
 use icu::segmenter::provider::{SegmenterUnihanV1, UnihanIrgData};
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl DataProvider<SegmenterUnihanV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterUnihanV1>, DataError> {
         self.check_req::<SegmenterUnihanV1>(req)?;
@@ -40,6 +42,7 @@ impl DataProvider<SegmenterUnihanV1> for SourceDataProvider {
     }
 }
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl IterableDataProviderCached<SegmenterUnihanV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::new())
