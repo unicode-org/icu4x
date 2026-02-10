@@ -703,77 +703,63 @@ impl Collator {
 }
 
 macro_rules! quick_primary_compare {
-    ($left_ce32:ident,
-     $right_ce32:ident,
+    ($left_primary:ident,
+     $right_primary:ident,
      $variable_top:ident,
      $self:ident,
-     $left_c:ident,
-     $right_c:ident,
     ) => {
-        // We could handle more non-contextual ce32 types here if
-        // that is measured to be beneficial.
-        if let Some(mut left_primary) = $left_ce32.to_primary_simple_or_long_primary() {
-            if let Some(mut right_primary) = $right_ce32.to_primary_simple_or_long_primary() {
-                if (left_primary != right_primary)
-                    && (left_primary != 0)
-                    && (right_primary != 0)
-                    && !(left_primary < $variable_top && left_primary > MERGE_SEPARATOR_PRIMARY)
-                    && !(right_primary < $variable_top && right_primary > MERGE_SEPARATOR_PRIMARY)
-                {
-                    if let Some(reordering) = &$self.reordering {
-                        left_primary = reordering.reorder(left_primary);
-                        right_primary = reordering.reorder(right_primary);
-                    }
-                    if left_primary < right_primary {
-                        return Ordering::Less;
-                    }
-                    return Ordering::Greater;
-                }
+        if ($left_primary != $right_primary)
+            && ($left_primary != 0)
+            && ($right_primary != 0)
+            && !($left_primary < $variable_top && $left_primary > MERGE_SEPARATOR_PRIMARY)
+            && !($right_primary < $variable_top && $right_primary > MERGE_SEPARATOR_PRIMARY)
+        {
+            if let Some(reordering) = &$self.reordering {
+                $left_primary = reordering.reorder($left_primary);
+                $right_primary = reordering.reorder($right_primary);
             }
-        } else {
-            // If both are Hangul syllables, do a quick compare.
+            if $left_primary < $right_primary {
+                return Ordering::Less;
+            }
+            return Ordering::Greater;
+        }
+    };
+}
 
-            // Optimization that looks ridiculously micro but is actually measurable:
-            // Since we are in the `else` branch of checking the left primary, checking
-            // the right side for being a Hangul syllable is statistically the better
-            // refutation order.
-            let right_hangul_offset = u32::from($right_c).wrapping_sub(HANGUL_S_BASE);
-            if right_hangul_offset < HANGUL_S_COUNT {
-                let left_hangul_offset = u32::from($left_c).wrapping_sub(HANGUL_S_BASE);
-                if left_hangul_offset < HANGUL_S_COUNT {
-                    let left_l = left_hangul_offset / HANGUL_N_COUNT;
-                    let right_l = right_hangul_offset / HANGUL_N_COUNT;
-                    if left_l != right_l {
-                        // We don't really support jamo tailoring, so let's
-                        // compare the jamo directly.
-                        if left_l < right_l {
-                            return Ordering::Less;
-                        }
-                        return Ordering::Greater;
-                    }
-                    let left_v = (left_hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-                    let right_v = (right_hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-                    if left_v != right_v {
-                        // We don't really support jamo tailoring, so let's
-                        // compare the jamo directly.
-                        if left_v < right_v {
-                            return Ordering::Less;
-                        }
-                        return Ordering::Greater;
-                    }
-                    let left_t = left_hangul_offset % HANGUL_T_COUNT;
-                    let right_t = right_hangul_offset % HANGUL_T_COUNT;
-                    // If either syllable is a two-jamo syllable, we fall through.
-                    if left_t != right_t && left_t != 0 && right_t != 0 {
-                        // We don't really support jamo tailoring, so let's
-                        // compare the jamo directly.
-                        if left_t < right_t {
-                            return Ordering::Less;
-                        }
-                        return Ordering::Greater;
-                    }
-                }
+macro_rules! hangul_syllable_compare {
+    ($left_hangul_offset:ident,
+     $right_hangul_offset:ident,
+    ) => {
+        let left_l = $left_hangul_offset / HANGUL_N_COUNT;
+        let right_l = $right_hangul_offset / HANGUL_N_COUNT;
+        if left_l != right_l {
+            // We don't really support jamo tailoring, so let's
+            // compare the jamo directly.
+            if left_l < right_l {
+                return Ordering::Less;
             }
+            return Ordering::Greater;
+        }
+        let left_v = ($left_hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+        let right_v = ($right_hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+        if left_v != right_v {
+            // We don't really support jamo tailoring, so let's
+            // compare the jamo directly.
+            if left_v < right_v {
+                return Ordering::Less;
+            }
+            return Ordering::Greater;
+        }
+        let left_t = $left_hangul_offset % HANGUL_T_COUNT;
+        let right_t = $right_hangul_offset % HANGUL_T_COUNT;
+        // If either syllable is a two-jamo syllable, we fall through.
+        if left_t != right_t && left_t != 0 && right_t != 0 {
+            // We don't really support jamo tailoring, so let's
+            // compare the jamo directly.
+            if left_t < right_t {
+                return Ordering::Less;
+            }
+            return Ordering::Greater;
         }
     };
 }
@@ -1011,22 +997,41 @@ impl<'data> CollatorBorrowed<'data> {
         left_tail,
         right_tail,
         {
+            // Not macroized: Copy and paste to the other UTF-8 case below.
             let tailoring_trie = &self.tailoring_or_root().trie;
             if let Some((left_c, left_u32)) = left_tail.chars_with_trie(tailoring_trie).next() {
+                // Logically, there's a bunch of stuff we could do from the left side alone to determine
+                // that reading from the right side at all or reading from the right trie is useless.
+                // Doing that seems to be a pessimization, at least in the absence of PGO.
                 if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
                     let mut left_ce32 = CollationElement32::new(left_u32);
-                    let mut right_ce32 = CollationElement32::new(right_u32);
                     if left_ce32 == FALLBACK_CE32 {
                         left_ce32 = self.root.ce32_for_char(left_c);
                     }
+                    let mut right_ce32 = CollationElement32::new(right_u32);
                     if right_ce32 == FALLBACK_CE32 {
                         right_ce32 = self.root.ce32_for_char(right_c);
                     }
-                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_c, right_c,);
+                    // XXX handle prefix for Japanese
+                    if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
+                        // XXX handle prefix for Japanese
+                        if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                            quick_primary_compare!(left_primary, right_primary, variable_top, self,);
+                        }
+                    }
+                    // Try Hangul. (At least in the absence of PGO, it's better _not_ to put
+                    // this into an `else` branch of the `left_primary` `if`.)
+                    let right_hangul_offset = u32::from(right_c).wrapping_sub(HANGUL_S_BASE);
+                    if right_hangul_offset < HANGUL_S_COUNT {
+                        let left_hangul_offset = u32::from(left_c).wrapping_sub(HANGUL_S_BASE);
+                        if left_hangul_offset < HANGUL_S_COUNT {
+                            hangul_syllable_compare!(left_hangul_offset, right_hangul_offset,);
+                        }
+                    }
                 }
             }
             // Note: It might look like a good idea to cache the CE32s, but
-            // doing so actually make things slower.
+            // doing so actually makes things slower.
         },
         variable_top,
     );
@@ -1049,20 +1054,38 @@ impl<'data> CollatorBorrowed<'data> {
             // Direct copypaste from the `str` case.
             let tailoring_trie = &self.tailoring_or_root().trie;
             if let Some((left_c, left_u32)) = left_tail.chars_with_trie(tailoring_trie).next() {
+                // Logically, there's a bunch of stuff we could do from the left side alone to determine
+                // that reading from the right side at all or reading from the right trie is useless.
+                // Doing that seems to be a pessimization, at least in the absence of PGO.
                 if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
                     let mut left_ce32 = CollationElement32::new(left_u32);
-                    let mut right_ce32 = CollationElement32::new(right_u32);
                     if left_ce32 == FALLBACK_CE32 {
                         left_ce32 = self.root.ce32_for_char(left_c);
                     }
+                    let mut right_ce32 = CollationElement32::new(right_u32);
                     if right_ce32 == FALLBACK_CE32 {
                         right_ce32 = self.root.ce32_for_char(right_c);
                     }
-                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_c, right_c,);
+                    // XXX handle prefix for Japanese
+                    if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
+                        // XXX handle prefix for Japanese
+                        if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                            quick_primary_compare!(left_primary, right_primary, variable_top, self,);
+                        }
+                    }
+                    // Try Hangul. (At least in the absence of PGO, it's better _not_ to put
+                    // this into an `else` branch of the `left_primary` `if`.)
+                    let right_hangul_offset = u32::from(right_c).wrapping_sub(HANGUL_S_BASE);
+                    if right_hangul_offset < HANGUL_S_COUNT {
+                        let left_hangul_offset = u32::from(left_c).wrapping_sub(HANGUL_S_BASE);
+                        if left_hangul_offset < HANGUL_S_COUNT {
+                            hangul_syllable_compare!(left_hangul_offset, right_hangul_offset,);
+                        }
+                    }
                 }
             }
             // Note: It might look like a good idea to cache the CE32s, but
-            // doing so actually make things slower.
+            // doing so actually makes things slower.
         },
         variable_top,
     );
@@ -1087,22 +1110,39 @@ impl<'data> CollatorBorrowed<'data> {
                     let left_u16 = *left_u;
                     let right_u16 = *right_u;
                     let left_u32 = tailoring_trie.get16(left_u16);
-                    let right_u32 = tailoring_trie.get16(right_u16);
                     let mut left_ce32 = CollationElement32::new(left_u32);
-                    let mut right_ce32 = CollationElement32::new(right_u32);
                     if left_ce32 == FALLBACK_CE32 {
                         let left_u32 = self.root.trie.get16(left_u16);
                         left_ce32 = CollationElement32::new(left_u32);
                     }
+                    let right_u32 = tailoring_trie.get16(right_u16);
+                    let mut right_ce32 = CollationElement32::new(right_u32);
                     if right_ce32 == FALLBACK_CE32 {
                         let right_u32 = self.root.trie.get16(right_u16);
                         right_ce32 = CollationElement32::new(right_u32);
                     }
-                    quick_primary_compare!(left_ce32, right_ce32, variable_top, self, left_u16, right_u16,);
+                    // XXX prefix case for Japanese
+                    if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
+                        // XXX prefix case for Japanese
+                        if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                            quick_primary_compare!(left_primary, right_primary, variable_top, self,);
+                        }
+                    }
+                    // Try Hangul. Not putting in an `else` of the above consistent with UTF-8.
+                    let left_hangul_offset = u32::from(left_u16).wrapping_sub(HANGUL_S_BASE);
+                    if left_hangul_offset < HANGUL_S_COUNT {
+                        if let Some(right_u) = right_tail.first() {
+                            let right_u16 = *right_u;
+                            let right_hangul_offset = u32::from(right_u16).wrapping_sub(HANGUL_S_BASE);
+                            if right_hangul_offset < HANGUL_S_COUNT {
+                                hangul_syllable_compare!(left_hangul_offset, right_hangul_offset,);
+                            }
+                        }
+                    }
                 }
             }
             // Note: It might look like a good idea to cache the CE32s, but
-            // doing so actually make things slower.
+            // doing so actually makes things slower.
         },
         variable_top,
     );
@@ -1132,25 +1172,27 @@ impl<'data> CollatorBorrowed<'data> {
 
                 // SAFETY: Checking the invariant of `get7` here for left.
                 if left_u8 < 0x80 {
-                    if let Some(right_u) = right_tail.first() {
-                        let right_u8 = *right_u;
-                        // SAFETY: Checking the invariant of `get7` here for right.
-                        if right_u8 < 0x80 {
-                            // SAFETY: Invariant of `get7` checked above.
-                            let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
-                            // SAFETY: Invariant of `get7` checked above.
-                            let right_u32 = unsafe { tailoring_trie.get7(right_u8) };
-                            let left_ce32 = CollationElement32::new(left_u32);
-                            let right_ce32 = CollationElement32::new(right_u32);
-                            // ASCII is always copied into the tailoring, so fallback
-                            // can't happen unless GIGO.
-                            debug_assert_ne!(left_ce32, FALLBACK_CE32);
-                            debug_assert_ne!(right_ce32, FALLBACK_CE32);
-                            // Both sides must be Latin, so script reordering can't do
-                            // anything meaningful. Omit script reordering check instead
-                            // of using `quick_primary_compare!`. Also optimize away the
-                            // long primary cases for ASCII.
-                            if let Some(left_primary) = left_ce32.to_primary_simple() {
+                    // SAFETY: Invariant of `get7` checked above.
+                    let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
+                    let left_ce32 = CollationElement32::new(left_u32);
+                    // ASCII is always copied into the tailoring, so fallback
+                    // can't happen unless GIGO.
+                    debug_assert_ne!(left_ce32, FALLBACK_CE32);
+                    if let Some(left_primary) = left_ce32.to_primary_simple() {
+                        if let Some(right_u) = right_tail.first() {
+                            let right_u8 = *right_u;
+                            // SAFETY: Checking the invariant of `get7` here for right.
+                            if right_u8 < 0x80 {
+                                // SAFETY: Invariant of `get7` checked above.
+                                let right_u32 = unsafe { tailoring_trie.get7(right_u8) };
+                                let right_ce32 = CollationElement32::new(right_u32);
+                                // ASCII is always copied into the tailoring, so fallback
+                                // can't happen unless GIGO.
+                                debug_assert_ne!(right_ce32, FALLBACK_CE32);
+                                // Both sides must be Latin, so script reordering can't do
+                                // anything meaningful. Omit script reordering check instead
+                                // of using `quick_primary_compare!`. Also optimize away the
+                                // long primary cases for ASCII.
                                 if let Some(right_primary) = right_ce32.to_primary_simple() {
                                     if (left_primary != right_primary)
                                         && (left_primary != 0)
@@ -1170,7 +1212,7 @@ impl<'data> CollatorBorrowed<'data> {
                 }
             }
             // Note: It might look like a good idea to cache the CE32s, but
-            // doing so actually make things slower.
+            // doing so actually makes things slower.
         },
         variable_top,
     );
@@ -1205,23 +1247,24 @@ impl<'data> CollatorBorrowed<'data> {
 
                 // SAFETY: Checking the invariant of `get7` here.
                 if left_u8 < 0x80 {
-                    if let Some(right_u) = right_tail.first() {
-                        let right_u16 = *right_u;
-                        // SAFETY: Invariant of `get7` checked above.
-                        let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
-                        let right_u32 = tailoring_trie.get16(right_u16);
-                        let left_ce32 = CollationElement32::new(left_u32);
-                        let mut right_ce32 = CollationElement32::new(right_u32);
-                        // ASCII is always copied into the tailoring, so fallback
-                        // can't happen unless GIGO.
-                        debug_assert_ne!(left_ce32,FALLBACK_CE32);
-                        if right_ce32 == FALLBACK_CE32 {
-                            let right_u32 = self.root.trie.get16(right_u16);
-                            right_ce32 = CollationElement32::new(right_u32);
-                        }
-                        // Don't use the macro to micro-optimize away the long primary
-                        // case for ASCII.
-                        if let Some(mut left_primary) = left_ce32.to_primary_simple() {
+                    // SAFETY: Invariant of `get7` checked above.
+                    let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
+                    let left_ce32 = CollationElement32::new(left_u32);
+                    if let Some(mut left_primary) = left_ce32.to_primary_simple() {
+                        if let Some(right_u) = right_tail.first() {
+                            let right_u16 = *right_u;
+                            let right_u32 = tailoring_trie.get16(right_u16);
+                            let mut right_ce32 = CollationElement32::new(right_u32);
+                            // ASCII is always copied into the tailoring, so fallback
+                            // can't happen unless GIGO.
+                            debug_assert_ne!(left_ce32,FALLBACK_CE32);
+                            if right_ce32 == FALLBACK_CE32 {
+                                let right_u32 = self.root.trie.get16(right_u16);
+                                right_ce32 = CollationElement32::new(right_u32);
+                            }
+                            // Don't use the macro to micro-optimize away the long primary
+                            // case for ASCII.
+                            // XXX Japanese prefix
                             if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
                                 if (left_primary != right_primary)
                                     && (left_primary != 0)
@@ -1244,7 +1287,7 @@ impl<'data> CollatorBorrowed<'data> {
                 }
             }
             // Note: It might look like a good idea to cache the CE32s, but
-            // doing so actually make things slower.
+            // doing so actually makes things slower.
         },
         variable_top,
     );
@@ -1473,6 +1516,26 @@ impl<'data> CollatorBorrowed<'data> {
                                 left_c = char_from_u32(decomposition & 0x7FFF);
                             } else if decomposition == HANGUL_SYLLABLE_MARKER {
                                 left_c = left_different.character();
+                                if right_different.trie_val == HANGUL_SYLLABLE_MARKER {
+                                    // Hangul syllable to Hangul syllable comparison can give us
+                                    // a quick exit.
+                                    let left_hangul_offset =
+                                        u32::from(left_c).wrapping_sub(HANGUL_S_BASE);
+                                    let right_hangul_offset =
+                                        u32::from(right_different.character())
+                                            .wrapping_sub(HANGUL_S_BASE);
+                                    // If these are not in range, we have a memory-safe GIGO case.
+                                    debug_assert!(left_hangul_offset < HANGUL_S_COUNT);
+                                    debug_assert!(right_hangul_offset < HANGUL_S_COUNT);
+                                    hangul_syllable_compare!(
+                                        left_hangul_offset,
+                                        right_hangul_offset,
+                                    );
+                                    // We had a two-jamo syllable whose jamo matched
+                                    // the first two jamo of the other syllable.
+                                    // Still, we're at a good boundary.
+                                    break 'prefix;
+                                }
                                 left_ce32 = IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
                             } else {
                                 break;
@@ -1518,39 +1581,56 @@ impl<'data> CollatorBorrowed<'data> {
                                 if left_ce32 == FALLBACK_CE32 {
                                     left_ce32 = self.root.ce32_for_char(left_c);
                                 }
-                                if left_ce32.tag_checked() == Some(Tag::Prefix) {
-                                    break;
-                                }
                             }
                             if right_ce32 == CollationElement32::default() {
                                 right_ce32 = tailoring.ce32_for_char(right_c);
                                 if right_ce32 == FALLBACK_CE32 {
                                     right_ce32 = self.root.ce32_for_char(right_c);
                                 }
-                                if right_ce32.tag_checked() == Some(Tag::Prefix) {
-                                    break;
-                                }
                             }
-                            if self.options.numeric()
-                                && head_last_ce32.tag_checked() == Some(Tag::Digit)
-                                && (left_ce32.tag_checked() == Some(Tag::Digit)
-                                    || right_ce32.tag_checked() == Some(Tag::Digit))
-                            {
-                                break;
-                            }
-                            // We are at a good boundary!
+                            // We don't actually need to do this.
+
+                            // if self.options.numeric()
+                            //     && head_last_ce32.tag_checked() == Some(Tag::Digit)
+                            //     && (left_ce32.tag_checked() == Some(Tag::Digit)
+                            //         || right_ce32.tag_checked() == Some(Tag::Digit))
+                            // {
+                            //     break;
+                            // }
+
+                            // We might be at at a good boundary unless either ce32 is a
+                            // prefix ce32. Let's check for the happy path first, though.
+
                             // Now check if we ce32s we have are simple enough to
                             // make a quick decision here.
-                            quick_primary_compare!(
-                                left_ce32,
-                                right_ce32,
-                                variable_top,
-                                self,
-                                left_c,
-                                right_c,
-                            );
+                            if let Some(mut left_primary) =
+                                left_ce32.to_primary_simple_or_long_primary()
+                            {
+                                if let Some(mut right_primary) =
+                                    right_ce32.to_primary_simple_or_long_primary()
+                                {
+                                    quick_primary_compare!(
+                                        left_primary,
+                                        right_primary,
+                                        variable_top,
+                                        self,
+                                    );
+                                }
+                            }
+
+                            if left_ce32.tag_checked() == Some(Tag::Prefix)
+                                || right_ce32.tag_checked() == Some(Tag::Prefix)
+                            {
+                                // TODO: For the Japanese tailoring, it might actually be worthwhile
+                                // to handle the prefix ce32s inline above the quick check. We've already
+                                // read the last character from `head` anyway.
+                                break;
+                            }
+
+                            // We're at a good boundary but could not make a quick primary comparison decision.
+
                             // Note: It might look like a good idea to cache the CE32s, but
-                            // doing so actually make things slower.
+                            // doing so actually makes things slower.
                             break 'prefix;
                         }
                     }
