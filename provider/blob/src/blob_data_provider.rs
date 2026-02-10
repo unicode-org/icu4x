@@ -219,12 +219,12 @@ pub struct BlobBoundLocaleDataProvider {
 }
 
 impl BindLocaleDataProvider<BufferMarker> for BlobDataProvider {
-    type BoundLocaleDataProvider = BlobBoundLocaleDataProvider;
+    type BoundLocaleDataProvider<'data> = BlobBoundLocaleDataProvider;
     fn bind_locale(
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError> {
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider<'static>>, DataError> {
         let payload: Yoke<(BlobBoundLocaleSchema, Option<u64>), Option<Cart>> = self
             .data
             .try_map_project_cloned(|blob, _| blob.bind_locale(marker, req))?;

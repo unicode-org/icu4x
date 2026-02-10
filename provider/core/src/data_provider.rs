@@ -473,13 +473,12 @@ pub trait BindLocaleDataProvider<M>
 where
     M: DynamicDataMarker,
 {
-    // TODO: This should be allowed to borrow from &self.
-    type BoundLocaleDataProvider: BoundLocaleDataProvider<M>;
-    fn bind_locale(
-        &self,
+    type BoundLocaleDataProvider<'data>: BoundLocaleDataProvider<M> + 'data where Self: 'data;
+    fn bind_locale<'data>(
+        &'data self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError>;
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider<'data>>, DataError>;
 }
 
 #[allow(clippy::exhaustive_structs)] // exported in an unstable module

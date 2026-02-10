@@ -258,12 +258,12 @@ pub struct HelloWorldJsonBoundLocaleProvider {
 
 #[cfg(feature = "deserialize_json")]
 impl BindLocaleDataProvider<BufferMarker> for HelloWorldJsonProvider {
-    type BoundLocaleDataProvider = HelloWorldJsonBoundLocaleProvider;
+    type BoundLocaleDataProvider<'data> = HelloWorldJsonBoundLocaleProvider;
     fn bind_locale(
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError> {
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider<'static>>, DataError> {
         marker.match_marker(HelloWorldV1::INFO)?;
         let json_strings = HelloWorldProvider::DATA
             .iter()
@@ -447,12 +447,12 @@ impl HelloWorldFormatter {
 impl<P: BoundLocaleDataProvider<BufferMarker>>
     HelloWorldAttributeFormatter<DeserializingOwnedBufferProvider<P>>
 {
-    pub fn try_new_with_buffer_provider<P1: ?Sized>(
-        provider: &P1,
+    pub fn try_new_with_buffer_provider<'data, P1: ?Sized>(
+        provider: &'data P1,
         prefs: HelloWorldFormatterPreferences,
     ) -> Result<Self, DataError>
     where
-        P1: BindLocaleDataProvider<BufferMarker, BoundLocaleDataProvider = P>,
+        P1: BindLocaleDataProvider<BufferMarker, BoundLocaleDataProvider<'data> = P>,
     {
         let locale = HelloWorldV1::INFO.make_locale(prefs.locale_preferences);
         let response = provider.bind_locale(
