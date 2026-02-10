@@ -105,6 +105,10 @@ impl From<icu_calendar::ParseError> for ParseError {
             icu_calendar::ParseError::Range(r) => Self::Range(r),
             icu_calendar::ParseError::Syntax(s) => Self::Syntax(s),
             icu_calendar::ParseError::UnknownCalendar => Self::UnknownCalendar,
+            icu_calendar::ParseError::MismatchedCalendar(a, b) => Self::MismatchedCalendar(
+                a.try_into().unwrap_or(AnyCalendarKind::Iso),
+                b.try_into().unwrap_or(AnyCalendarKind::Iso),
+            ),
             _ => unreachable!(),
         }
     }
