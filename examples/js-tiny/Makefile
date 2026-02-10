@@ -32,7 +32,7 @@ target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	# Build the WASM library.
 	# For an explanation of the shared flags, see ffi/npm/Makefile.
 	# This Makefile adds the following flags to further reduce binary size:
-	# -Clinker-plugin-lto: add symbols to object files that enable link-time optimization
+	# -Clinker-plugin-lto: add symbols to object files that allows the linker to perform LTO
 	# -Ccodegen-units=1: generate the code in a single process to enable more opportunities for optimization
 	# -C linker=${BASEDIR}/ld.py: run a custom linker script to remove symbols
 	# -C linker-flavor=wasm-ld: tells rustc to pass the arguments to ld.py as it would pass to wasm-ld
