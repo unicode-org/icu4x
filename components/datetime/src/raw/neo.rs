@@ -198,10 +198,13 @@ impl DatePatternSelectionData {
         let variant = match (year_style, ambiguity) {
             (YearStyle::WithEra, _) => PackedSkeletonVariant::Variant1,
 
-            (YearStyle::Full, YearAmbiguity::EraAndCenturyRequired | YearAmbiguity::EraRequired) => {
-                PackedSkeletonVariant::Variant1
+            (
+                YearStyle::Full,
+                YearAmbiguity::EraAndCenturyRequired | YearAmbiguity::EraRequired,
+            ) => PackedSkeletonVariant::Variant1,
+            (YearStyle::Full, YearAmbiguity::CenturyRequired | YearAmbiguity::Unambiguous) => {
+                PackedSkeletonVariant::Variant0
             }
-            (YearStyle::Full, YearAmbiguity::CenturyRequired | YearAmbiguity::Unambiguous) => PackedSkeletonVariant::Variant0,
 
             (
                 YearStyle::Auto | YearStyle::NoEra,
