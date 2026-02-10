@@ -138,6 +138,26 @@ impl WasmWrap {
         );
     }
 
+    pub(crate) fn umutablecptrie_setRange(
+        &mut self,
+        trie_ptr: &Wasmi32Ptr,
+        start: u32,
+        end: u32,
+        Val: u32,
+        error_code_ptr: &Wasmi32Ptr,
+    ) {
+        self.call_return_void(
+            "umutablecptrie_setRange",
+            &[
+                trie_ptr.0.clone(),
+                Val::I32(start as i32),
+                Val::I32(end as i32),
+                Val::I32(Val as i32),
+                error_code_ptr.0.clone(),
+            ],
+        );
+    }
+
     pub(crate) fn umutablecptrie_buildImmutable(
         &mut self,
         trie_ptr: &Wasmi32Ptr,
@@ -245,10 +265,13 @@ impl<T: TrieValue> Builder<T> {
     }
 
     pub(crate) fn set_range_value(&mut self, cps: RangeInclusive<u32>, value: T) {
-        // TODO: call umutablecptrie_setRange
-        for cp in cps {
-            self.set_value(cp, value);
-        }
+        self.wasm.umutablecptrie_setRange(
+            &self.trie_ptr,
+            *cps.start(),
+            *cps.end(),
+            value.to_u32(),
+            &self.error_code_ptr,
+        );
     }
 
     pub(crate) fn build(mut self, trie_type: TrieType, width: u32) -> CodePointTrie<'static, T> {

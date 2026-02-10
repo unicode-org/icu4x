@@ -154,6 +154,26 @@ mod unstable {
         #[displaydoc("{0}")]
         Range(RangeError),
         /// The era code is invalid for the calendar.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::cal::Hebrew;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.era = Some(b"ce"); // valid in Gregorian, but not Hebrew
+        /// fields.era_year = Some(1);
+        /// fields.ordinal_month = Some(1);
+        /// fields.day = Some(1);
+        ///
+        /// let err = Date::try_from_fields(fields, Default::default(), Hebrew::new())
+        ///     .expect_err("era is unknown for Hebrew");
+        ///
+        /// assert_eq!(err, DateFromFieldsError::UnknownEra);
+        /// ```
         #[displaydoc("Unknown era or invalid syntax")]
         UnknownEra,
         /// The month code syntax is invalid.
@@ -278,6 +298,29 @@ mod unstable {
         /// ```
         #[displaydoc("Inconsistent month")]
         InconsistentMonth,
+        /// Too many fields were specified to form a well-defined date.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::types::{DateFields, Month};
+        /// use icu::calendar::Date;
+        /// use icu::calendar::Iso;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.extended_year = Some(2000);
+        /// fields.month = Some(Month::new(1));
+        /// fields.month_code = Some(b"M01");
+        /// fields.day = Some(1);
+        ///
+        /// let err = Date::try_from_fields(fields, Default::default(), Iso)
+        ///     .expect_err("cannot specify both month and month_code");
+        ///
+        /// assert_eq!(err, DateFromFieldsError::TooManyFields);
+        /// ```
+        #[displaydoc("Too many fields")]
+        TooManyFields,
         /// Not enough fields were specified to form a well-defined date.
         ///
         /// # Examples

@@ -102,6 +102,20 @@ public:
   inline icu4x::diplomat::result<std::monostate, icu4x::diplomat::Utf8Error> titlecase_segment_with_only_case_data_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output) const;
 
   /**
+   * Returns the full titlecase mapping of the given string, performing head adjustment without
+   * loading additional data, using compiled data (avoids having to allocate a `CaseMapper` object).
+   *
+   * (if head adjustment is enabled in the options)
+   *
+   * The `v1` refers to the version of the options struct, which may change as we add more options
+   *
+   * See the [Rust documentation for `titlecase_segment_with_only_case_data_to_string`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.titlecase_segment_with_only_case_data_to_string) for more information.
+   */
+  inline static icu4x::diplomat::result<std::string, icu4x::diplomat::Utf8Error> titlecase_segment_with_only_case_compiled_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options);
+  template<typename W>
+  inline static icu4x::diplomat::result<std::monostate, icu4x::diplomat::Utf8Error> titlecase_segment_with_only_case_compiled_data_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output);
+
+  /**
    * Case-folds the characters in the given string
    *
    * See the [Rust documentation for `fold`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.fold) for more information.
