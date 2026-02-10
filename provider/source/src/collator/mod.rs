@@ -268,11 +268,14 @@ fn decide_trie_type(id: &DataIdentifierBorrowed) -> icu::collections::codepointt
     // in the fast range.
     // There are too many cases like this to make the trie type decision
     // based on trie content.
-    // Let's promote the trie type of specific tailorings manually
+    // Let's manage the trie type of specific tailorings manually
     // instead.
 
+    // Note: Statically knowing that these tries are always small
+    // would be beneficial.
+
     // km and my are obviously in the range that suggests they
-    // should get the promoted trie type, but we don't have
+    // should get the fast trie type, but we don't have
     // benchmarking to prove the effect. Reasoning from Japanese
     // suggests that there should be a considerable effect.
 
@@ -282,10 +285,23 @@ fn decide_trie_type(id: &DataIdentifierBorrowed) -> icu::collections::codepointt
     // models Chinese collations via `und-Hans`, `und-Hant`,
     // and `und-Hani`. The remaining `und` at this point of
     // the function is, therefore, Chinese.
+    //
+    // Delta from small to fast in bytes:
+    // Japanese (excluding unihan): 5480.
+    // The three Chinese tailorings (excluding unihan): 16324
+    // Khmer: 1876.
+    // Myanmar: 2012.
     let lang = id.locale.language;
-    if lang == language!("und") || lang == language!("ja") {
+    if lang == language!("und")
+        || lang == language!("ja")
+        || lang == language!("km")
+        || lang == language!("my")
+    {
         return icu::collections::codepointtrie::TrieType::Fast;
     }
+    // Delta from small to fast for Korean is 4332 bytes.
+    // The common case for Korean doesn't go through this trie.
+    // See also https://github.com/unicode-org/icu4x/issues/1315 .
 
     icu::collections::codepointtrie::TrieType::Small
 }
@@ -299,7 +315,7 @@ fn convert_data_from_serde(
     let trie_type = if let Some(id) = id {
         decide_trie_type(id)
     } else {
-        // Small root for now
+        // Delta from small to fast for root: 7056 bytes.
         icu::collections::codepointtrie::TrieType::Small
     };
     log::info!("CONVERT {:?} {:?}", id, trie_type);
