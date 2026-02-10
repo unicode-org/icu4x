@@ -103,6 +103,13 @@ impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
             }
         }
 
+        for name in map.keys() {
+            assert!(
+                !name.contains('-'),
+                "Property name {name:?} contains '-'"
+            );
+        }
+
         map
     }
 
@@ -351,6 +358,13 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
             for alias in &value.aliases {
                 map.insert(alias.as_str(), packed);
             }
+        }
+
+        for name in map.keys() {
+            assert!(
+                !name.contains('-'),
+                "Property name {name:?} contains '-'"
+            );
         }
 
         let trie = map
