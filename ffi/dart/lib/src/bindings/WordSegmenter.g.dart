@@ -201,6 +201,30 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result.union.ok, []);
   }
 
+  /// Loads available LSMT models from the given provider.
+  ///
+  /// See the [Rust documentation for `load_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.load_lstm) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  void loadLstmModelsWithProvider(DataProvider provider) {
+    final result = _icu4x_WordSegmenter_load_lstm_models_with_provider_mv1(_ffi, provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+  }
+
+  /// Loads available dictionary models from the given provider.
+  ///
+  /// See the [Rust documentation for `load_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.load_dictionary) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  void loadDictinoaryModelsWithProvider(DataProvider provider) {
+    final result = _icu4x_WordSegmenter_load_dictinoary_models_with_provider_mv1(_ffi, provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+  }
+
   /// Segments a string.
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -281,6 +305,16 @@ external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_for_non_complex_scripts_
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_WordSegmenter_load_lstm_models_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_load_lstm_models_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _icu4x_WordSegmenter_load_lstm_models_with_provider_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_WordSegmenter_load_dictinoary_models_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_load_dictinoary_models_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _icu4x_WordSegmenter_load_dictinoary_models_with_provider_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('icu4x_WordSegmenter_segment_utf16_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_segment_utf16_mv1')

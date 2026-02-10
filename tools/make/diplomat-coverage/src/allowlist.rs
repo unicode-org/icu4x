@@ -279,12 +279,6 @@ lazy_static::lazy_static! {
         // Serde-specific
         "icu::datetime::fieldsets::serde",
 
-        // By-value methods on non-Copy types are not possible over FFI
-        "icu::segmenter::LineSegmenterBorrowed::with_dictionary",
-        "icu::segmenter::LineSegmenterBorrowed::with_lstm",
-        "icu::segmenter::WordSegmenterBorrowed::with_dictionary",
-        "icu::segmenter::WordSegmenterBorrowed::with_lstm",
-
         // Stuff that is unstable
         //
         // We should occasionally review these

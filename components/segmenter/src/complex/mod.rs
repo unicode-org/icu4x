@@ -158,49 +158,64 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
 impl ComplexPayloadsBorrowed<'static> {
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn with_southeast_asian_lstms(mut self) -> Self {
+    pub(crate) fn with_southeast_asian_lstms(&mut self) {
         #![expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
-        self.my = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, MY_LSTM)
-            .unwrap()
-            .map(DictOrLstmBorrowed::Lstm);
-        self.km = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, KM_LSTM)
-            .unwrap()
-            .map(DictOrLstmBorrowed::Lstm);
-        self.lo = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, LO_LSTM)
-            .unwrap()
-            .map(DictOrLstmBorrowed::Lstm);
-        self.th = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, TH_LSTM)
-            .unwrap()
-            .map(DictOrLstmBorrowed::Lstm);
-        self
+        if self.my.is_none() {
+            self.my = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, MY_LSTM)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Lstm);
+        }
+        if self.km.is_none() {
+            self.km = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, KM_LSTM)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Lstm);
+        }
+        if self.lo.is_none() {
+            self.lo = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, LO_LSTM)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Lstm);
+        }
+        if self.th.is_none() {
+            self.th = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, TH_LSTM)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Lstm);
+        }
     }
 
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn with_japanese_dictionary(mut self) -> Self {
+    pub(crate) fn with_japanese_dictionary(&mut self) {
         #![expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
-        self.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&Baked, CJ_DICT).unwrap();
-        self
+        if self.ja.is_none() {
+            self.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&Baked, CJ_DICT).unwrap();
+        }
     }
 
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn with_southeast_asian_dictionaries(mut self) -> Self {
+    pub(crate) fn with_southeast_asian_dictionaries(&mut self) {
         #![expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
-        self.my = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, MY_DICT)
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict);
-        self.km = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, KM_DICT)
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict);
-        self.lo = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, LO_DICT)
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict);
-        self.th = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, TH_DICT)
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict);
-        self
+        if self.my.is_none() {
+            self.my = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, MY_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict);
+        }
+        if self.km.is_none() {
+            self.km = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, KM_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict);
+        }
+        if self.lo.is_none() {
+            self.lo = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, LO_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict);
+        }
+        if self.th.is_none() {
+            self.th = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, TH_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict);
+        }
     }
 
     #[cfg(feature = "compiled_data")]
@@ -240,54 +255,70 @@ impl ComplexPayloads {
     }
 
     #[cfg(feature = "lstm")]
-    pub(crate) fn with_southeast_asian_lstms<D>(mut self, provider: &D) -> Result<Self, DataError>
+    pub(crate) fn with_southeast_asian_lstms<D>(&mut self, provider: &D) -> Result<(), DataError>
     where
         D: DataProvider<SegmenterLstmAutoV1> + ?Sized,
     {
-        self.my = try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
-            .map(DataPayload::cast)
-            .map(DictOrLstm::Lstm);
-        self.km = try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
-            .map(DataPayload::cast)
-            .map(DictOrLstm::Lstm);
-        self.lo = try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
-            .map(DataPayload::cast)
-            .map(DictOrLstm::Lstm);
-        self.th = try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
-            .map(DataPayload::cast)
-            .map(DictOrLstm::Lstm);
-        Ok(self)
+        if self.my.is_none() {
+            self.my = try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
+                .map(DataPayload::cast)
+                .map(DictOrLstm::Lstm);
+        }
+        if self.km.is_none() {
+            self.km = try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
+                .map(DataPayload::cast)
+                .map(DictOrLstm::Lstm);
+        }
+        if self.lo.is_none() {
+            self.lo = try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
+                .map(DataPayload::cast)
+                .map(DictOrLstm::Lstm);
+        }
+        if self.th.is_none() {
+            self.th = try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
+                .map(DataPayload::cast)
+                .map(DictOrLstm::Lstm);
+        }
+        Ok(())
     }
 
-    pub(crate) fn with_japanese_dictionary<D>(mut self, provider: &D) -> Result<Self, DataError>
+    pub(crate) fn with_japanese_dictionary<D>(&mut self, provider: &D) -> Result<(), DataError>
     where
         D: DataProvider<SegmenterDictionaryAutoV1> + ?Sized,
     {
         self.ja =
             try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast);
-        Ok(self)
+        Ok(())
     }
 
     pub(crate) fn with_southeast_asian_dictionaries<D>(
-        mut self,
+        &mut self,
         provider: &D,
-    ) -> Result<Self, DataError>
+    ) -> Result<(), DataError>
     where
         D: DataProvider<SegmenterDictionaryExtendedV1> + ?Sized,
     {
-        self.my = try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
-            .map(DataPayload::cast)
-            .map(DictOrLstm::Dict);
-        self.km = try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
-            .map(DataPayload::cast)
-            .map(DictOrLstm::Dict);
-        self.lo = try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
-            .map(DataPayload::cast)
-            .map(DictOrLstm::Dict);
-        self.th = try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
-            .map(DataPayload::cast)
-            .map(DictOrLstm::Dict);
-        Ok(self)
+        if self.my.is_none() {
+            self.my = try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
+                .map(DataPayload::cast)
+                .map(DictOrLstm::Dict);
+        }
+        if self.km.is_none() {
+            self.km = try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
+                .map(DataPayload::cast)
+                .map(DictOrLstm::Dict);
+        }
+        if self.lo.is_none() {
+            self.lo = try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
+                .map(DataPayload::cast)
+                .map(DictOrLstm::Dict);
+        }
+        if self.th.is_none() {
+            self.th = try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
+                .map(DataPayload::cast)
+                .map(DictOrLstm::Dict);
+        }
+        Ok(())
     }
 
     pub(crate) fn try_new<D>(provider: &D) -> Result<Self, DataError>
@@ -351,8 +382,10 @@ mod tests {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
 
-        let lstm = ComplexPayloadsBorrowed::new().with_southeast_asian_lstms();
-        let dict = ComplexPayloadsBorrowed::new().with_southeast_asian_dictionaries();
+        let mut lstm = ComplexPayloadsBorrowed::new();
+        lstm.with_southeast_asian_lstms();
+        let mut dict = ComplexPayloadsBorrowed::new();
+        dict.with_southeast_asian_dictionaries();
 
         assert_eq!(
             lstm.complex_language_segment_str(TEST_STR),
