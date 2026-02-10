@@ -333,10 +333,9 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Optio
 
         // Try matching with the original case first
         let mut cursor_clone = cursor.clone();
-        if cursor_clone.step(ascii) {
-            if let Some(r) = recurse(cursor_clone, rest) {
-                return Some(r);
-            }
+        cursor_clone.step(ascii);
+        if let Some(r) = recurse(cursor_clone, rest) {
+            return Some(r);
         }
 
         // Try matching with the other case
@@ -346,9 +345,9 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Optio
             ascii.to_ascii_lowercase()
         };
 
-        // If the other_case is different and
-        // the trie has that character, recurse
-        if other_case != ascii && cursor.step(other_case) {
+        // If the other_case is different then recurse
+        if other_case != ascii {
+            cursor.step(other_case);
             return recurse(cursor, rest);
         }
 
