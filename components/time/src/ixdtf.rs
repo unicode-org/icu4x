@@ -361,7 +361,7 @@ impl<A: AsCalendar> ZonedDateTime<A, UtcOffset> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// This function is "strict": the string should have only an offset and no named time zone.
     pub fn try_offset_only_from_str(rfc_9557_str: &str, calendar: A) -> Result<Self, ParseError> {
@@ -384,7 +384,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// This function is "strict": the string should have only a named time zone and no offset.
     pub fn try_location_only_from_str(
@@ -414,7 +414,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// This function is "lenient": the string can have an offset, and named time zone, both, or
     /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
@@ -444,7 +444,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// The string should have both an offset and a named time zone.
     ///
@@ -661,7 +661,7 @@ impl<A: AsCalendar> DateTime<A> {
     /// Creates a [`DateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
@@ -755,12 +755,13 @@ impl Time {
             .transpose()?
             .unwrap_or_default();
 
-        Ok(Self::try_new(
-            time_record.hour,
-            time_record.minute,
-            time_record.second,
-            nanosecond,
-        )?)
+        // values are in range by construction
+        Ok(Time {
+            hour: crate::types::Hour(time_record.hour),
+            minute: crate::types::Minute(time_record.minute),
+            second: crate::types::Second(time_record.second),
+            subsecond: crate::types::Nanosecond(nanosecond),
+        })
     }
 }
 

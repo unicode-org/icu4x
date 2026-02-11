@@ -14,7 +14,7 @@ macro_rules! dt_unit {
     ($name:ident, $storage:ident, $value:expr, $(#[$docs:meta])+) => {
         $(#[$docs])+
         #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Ord, PartialOrd, Hash)]
-        pub struct $name($storage);
+        pub struct $name(pub(crate) $storage);
 
         impl $name {
             /// Gets the numeric value for this component.

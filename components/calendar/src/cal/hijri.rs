@@ -1687,9 +1687,10 @@ mod test {
             TabularAlgorithmLeapYears::TypeII,
             TabularAlgorithmEpoch::Friday,
         );
-        let _dt = Date::try_new_iso(-62971, 3, 19)
-            .unwrap()
-            .to_calendar(calendar);
+        let _dt = Date::from_rata_die(
+            calendrical_calculations::gregorian::fixed_from_gregorian(-62971, 3, 19),
+            calendar,
+        );
     }
 
     #[test]
