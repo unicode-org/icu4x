@@ -170,7 +170,7 @@ fn likely(b: bool) -> bool {
     b
 }
 
-/// This type exists as a shim for icu_properties CanonicalCombiningClass when the crate is disabled
+/// This type exists as a shim for `icu_properties` `CanonicalCombiningClass` when the crate is disabled
 /// It should not be exposed to users.
 #[cfg(not(feature = "icu_properties"))]
 #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
