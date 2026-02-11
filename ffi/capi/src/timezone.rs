@@ -66,7 +66,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::TimeZone::from_system_id, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "from_system_id")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_from_system_id<'a>(id: &'a DiplomatStr, _region: &'a DiplomatStr) -> Box<Self> {
+        pub fn create_from_system_id<'a>(
+            id: &'a DiplomatStr,
+            _region: &'a DiplomatStr,
+        ) -> Box<Self> {
             #[cfg(target_os = "windows")]
             return Self::create_from_windows_id(id, _region);
             #[cfg(not(target_os = "windows"))]

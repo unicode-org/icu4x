@@ -184,7 +184,7 @@ impl TimeZone {
     }
 
     /// Construct a [`TimeZone`] from an IANA time zone ID.
-    /// 
+    ///
     /// See [`IanaParser`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -194,17 +194,19 @@ impl TimeZone {
     }
 
     /// Construct a [`TimeZone`] from a Windows time zone ID and region.
-    /// 
+    ///
     /// See [`WindowsParser`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn from_windows_id(windows_id: &str, region: Option<Region>) -> Self {
-        WindowsParser::new().parse(windows_id, region).unwrap_or(Self::UNKNOWN)
+        WindowsParser::new()
+            .parse(windows_id, region)
+            .unwrap_or(Self::UNKNOWN)
     }
 
     /// Construct a [`TimeZone`] from the platform-specific ID.
-    /// 
+    ///
     /// On Windows systems, this resolves to [`TimeZone::from_windows_id`], on
     /// all other systems to [`TimeZone::from_iana_id`].
     ///
