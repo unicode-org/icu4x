@@ -61,21 +61,22 @@ use icu::calendar::{Gregorian, Date};
 use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets::YMD};
 
 // replace the date_formatter creation
-    let locale = locale!("ccp");
-    let iso_date = Date::try_new_iso(2023, 11, 7).unwrap();
-    let date_formatter = if locale == locale!("ccp") {
-        println!("Using buffer provider");
-        let blob = std::fs::read("ccp.blob")
-            .expect("blob should read successfully")
-            .into();
-        let provider = BlobDataProvider::try_new_from_blob(blob).expect("deserialization should succeed");
-        DateTimeFormatter::try_new_with_buffer_provider(&provider, locale.into(), YMD::medium())
-            .expect("should have data for selected locale")
-    } else {
-        // As before
-        DateTimeFormatter::try_new(locale.into(), YMD::medium())
-            .expect("should have data for specified locale")
-    };
+let locale = locale!("ccp");
+let iso_date = Date::try_new_iso(2023, 11, 7).unwrap();
+let date_formatter = if locale == locale!("ccp") {
+    println!("Using buffer provider");
+    let blob = std::fs::read("ccp.blob")
+        .expect("blob should read successfully")
+        .into();
+    let provider = BlobDataProvider::try_new_from_blob(blob).expect("deserialization should succeed");
+    DateTimeFormatter::try_new_with_buffer_provider(&provider, locale.into(), YMD::medium())
+        .expect("should have data for selected locale")
+} else {
+    // As before
+    DateTimeFormatter::try_new(locale.into(), YMD::medium())
+        .expect("should have data for specified locale")
+};
+let locale = locale!("ccp");
 ```
 
 Try using `ccp` now!
@@ -152,27 +153,26 @@ The last datagen invocation still produced a lot of markers, as you saw in its o
 Replace the `DateTimeFormatter::try_new` calls with `FixedCalendarDateTimeFormatter::try_new`, and change the `format` invocation to convert the input to the Gregorian calendar:
 
 ```rust,no_run
-    use icu::locale::{locale, Locale};
-    use icu_provider_blob::BlobDataProvider;
-    use icu::calendar::{Gregorian, Date};
-    use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets::YMD};
+use icu::locale::{locale, Locale};
+use icu_provider_blob::BlobDataProvider;
+use icu::calendar::{Gregorian, Date};
+use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets::YMD};
+let locale = locale!("ccp");
+let iso_date = Date::try_new_iso(2023, 11, 7).unwrap();
+let date_formatter = if locale == locale!("ccp") {
+    println!("Using buffer provider");
+    let blob = std::fs::read("ccp_smallest.blob")
+    .expect("blob should read successfully")
+    .into();
+    let provider = BlobDataProvider::try_new_from_blob(blob).expect("deserialization should succeed");
+    FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(&provider, locale.into(), YMD::medium())
+    .expect("should have data for selected locale")
+} else {
+    FixedCalendarDateTimeFormatter::try_new(locale.into(), YMD::medium())
+    .expect("should have data for specified locale")
+};
 
-    let locale = locale!("ccp");
-    let iso_date = Date::try_new_iso(2023, 11, 7).unwrap();
-    let date_formatter = if locale == locale!("ccp") {
-        println!("Using buffer provider");
-        let blob = std::fs::read("ccp_smallest.blob")
-            .expect("blob should read successfully")
-            .into();
-        let provider = BlobDataProvider::try_new_from_blob(blob).expect("deserialization should succeed");
-        FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(&provider, locale.into(), YMD::medium())
-            .expect("should have data for selected locale")
-    } else {
-        FixedCalendarDateTimeFormatter::try_new(locale.into(), YMD::medium())
-            .expect("should have data for specified locale")
-    };
-
-    println!("Date: {}", date_formatter.format(&iso_date.to_calendar(Gregorian)));
+println!("Date: {}", date_formatter.format(&iso_date.to_calendar(Gregorian)));
 ```
 
 The generic type of `FixedCalendarDateTimeFormatter` will be inferred from the input, which now has type `&Date<Gregorian>` now. Unlike `DateTimeFormatter`, `FixedCalendarDateTimeFormatter` never applies calendar conversions on its input, so it will be a `FixedCalendarDateTimeFormatter<Gregorian, ...>`.
