@@ -10,6 +10,7 @@ internal interface TimeZoneInfoLib: Library {
     fun icu4x_TimeZoneInfo_utc_mv1(): Pointer
     fun icu4x_TimeZoneInfo_id_mv1(handle: Pointer): Pointer
     fun icu4x_TimeZoneInfo_at_date_time_iso_mv1(handle: Pointer, date: Pointer, time: Pointer): Pointer
+    fun icu4x_TimeZoneInfo_at_date_time_mv1(handle: Pointer, date: Pointer, time: Pointer): Pointer
     fun icu4x_TimeZoneInfo_at_timestamp_mv1(handle: Pointer, timestamp: Long): Pointer
     fun icu4x_TimeZoneInfo_zone_name_date_time_mv1(handle: Pointer): OptionIsoDateTimeNative
     fun icu4x_TimeZoneInfo_with_variant_mv1(handle: Pointer, timeVariant: Int): Pointer
@@ -74,13 +75,37 @@ class TimeZoneInfo internal constructor (
     *- The constraints are the same as with `ZoneNameTimestamp` in Rust.
     *- Set to year 1000 or 9999 for a reference far in the past or future.
     *
-    *See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+    *See the [Rust documentation for `at_date_time`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.at_date_time) for more information.
     *
     *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html)
     */
     fun atDateTimeIso(date: IsoDate, time: Time): TimeZoneInfo {
         
         val returnVal = lib.icu4x_TimeZoneInfo_at_date_time_iso_mv1(handle, date.handle, time.handle);
+        val selfEdges: List<Any> = listOf()
+        val handle = returnVal 
+        val returnOpaque = TimeZoneInfo(handle, selfEdges)
+        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        return returnOpaque
+    }
+    
+    /** Sets the datetime at which to interpret the time zone
+    *for display name lookup.
+    *
+    *Notes:
+    *
+    *- If not set, the formatting datetime is used if possible.
+    *- If the offset is not set, the datetime is interpreted as UTC.
+    *- The constraints are the same as with `ZoneNameTimestamp` in Rust.
+    *- Set to year 1000 or 9999 for a reference far in the past or future.
+    *
+    *See the [Rust documentation for `at_date_time`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.at_date_time) for more information.
+    *
+    *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html)
+    */
+    fun atDateTime(date: Date, time: Time): TimeZoneInfo {
+        
+        val returnVal = lib.icu4x_TimeZoneInfo_at_date_time_mv1(handle, date.handle, time.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
         val returnOpaque = TimeZoneInfo(handle, selfEdges)
@@ -98,7 +123,7 @@ class TimeZoneInfo internal constructor (
     *
     *See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
     *
-    *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html)
+    *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time), [2](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset), [3](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html)
     */
     fun atTimestamp(timestamp: Long): TimeZoneInfo {
         

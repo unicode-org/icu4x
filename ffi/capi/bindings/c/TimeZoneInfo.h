@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
+#include "Date.d.h"
 #include "IsoDate.d.h"
 #include "IsoDateTime.d.h"
 #include "Time.d.h"
@@ -29,6 +30,8 @@ TimeZoneInfo* icu4x_TimeZoneInfo_from_parts_mv1(const TimeZone* id, const UtcOff
 TimeZone* icu4x_TimeZoneInfo_id_mv1(const TimeZoneInfo* self);
 
 TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_iso_mv1(const TimeZoneInfo* self, const IsoDate* date, const Time* time);
+
+TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_mv1(const TimeZoneInfo* self, const Date* date, const Time* time);
 
 TimeZoneInfo* icu4x_TimeZoneInfo_at_timestamp_mv1(const TimeZoneInfo* self, int64_t timestamp);
 

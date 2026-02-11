@@ -11,6 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
+#include "Date.hpp"
 #include "IsoDate.hpp"
 #include "IsoDateTime.hpp"
 #include "Time.hpp"
@@ -32,6 +33,8 @@ namespace capi {
     icu4x::capi::TimeZone* icu4x_TimeZoneInfo_id_mv1(const icu4x::capi::TimeZoneInfo* self);
 
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_iso_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time);
+
+    icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::Date* date, const icu4x::capi::Time* time);
 
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_timestamp_mv1(const icu4x::capi::TimeZoneInfo* self, int64_t timestamp);
 
@@ -73,6 +76,13 @@ inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZoneInfo::id() const {
 
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_date_time_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const {
     auto result = icu4x::capi::icu4x_TimeZoneInfo_at_date_time_iso_mv1(this->AsFFI(),
+        date.AsFFI(),
+        time.AsFFI());
+    return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+}
+
+inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_date_time(const icu4x::Date& date, const icu4x::Time& time) const {
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_at_date_time_mv1(this->AsFFI(),
         date.AsFFI(),
         time.AsFFI());
     return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));

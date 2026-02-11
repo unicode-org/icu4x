@@ -94,7 +94,7 @@ pub mod models {
     pub trait TimeZoneModel: private::Sealed {
         /// The zone variant, if required for this time zone model.
         type TimeZoneVariant: IntoOption<TimeZoneVariant> + fmt::Debug + Copy;
-        /// The local time, if required for this time zone model.
+        /// The reference datetime, if required for this time zone model.
         type ZoneNameTimestamp: IntoOption<ZoneNameTimestamp> + fmt::Debug + Copy;
     }
 
@@ -109,7 +109,7 @@ pub mod models {
         type ZoneNameTimestamp = ();
     }
 
-    /// A time zone containing a time zone ID, optional offset, and local time.
+    /// A time zone containing a time zone ID, optional offset, and reference datetime.
     #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     pub struct AtTime;
@@ -120,7 +120,7 @@ pub mod models {
         type ZoneNameTimestamp = ZoneNameTimestamp;
     }
 
-    /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
+    /// A time zone containing a time zone ID, optional offset, reference datetime, and zone variant.
     #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     #[deprecated(
@@ -239,9 +239,9 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// // Create a TimeZoneInfo<Base> by associating the ID with an offset
 /// let time_zone = id.with_offset("-0600".parse().ok());
 ///
-/// // Extend to a TimeZoneInfo<AtTime> by adding a local time
-/// let time_zone_at_time = time_zone.at_date_time_iso(DateTime {
-///     date: Date::try_new_iso(2023, 12, 2).unwrap(),
+/// // Extend to a TimeZoneInfo<AtTime> by adding a reference datetime
+/// let time_zone_at_time = time_zone.at_date_time(DateTime {
+///     date: Date::try_new_gregorian(2023, 12, 2).unwrap(),
 ///     time: Time::start_of_day(),
 /// });
 /// ```
@@ -431,7 +431,7 @@ impl TimeZoneInfo<models::Base> {
 
     /// Use [`Self::at_date_time`].
     #[deprecated(since = "2.2.0", note = "use `Self::at_date_time`")]
-    pub fn at_zoned_datetime_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
+    pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
         self.at_date_time(date_time)
     }
 }
@@ -472,8 +472,8 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at UTC-6
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0600".parse().ok())
-    ///     .at_date_time_iso(DateTime {
-    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
+    ///     .at_date_time(DateTime {
+    ///         date: Date::try_new_gregorian(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
     ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
@@ -483,8 +483,8 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at at UTC-5
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0500".parse().ok())
-    ///     .at_date_time_iso(DateTime {
-    ///         date: Date::try_new_iso(2023, 6, 2).unwrap(),
+    ///     .at_date_time(DateTime {
+    ///         date: Date::try_new_gregorian(2023, 6, 2).unwrap(),
     ///         time: Time::start_of_day(),
     ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
@@ -494,8 +494,8 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at UTC-7
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0700".parse().ok())
-    ///     .at_date_time_iso(DateTime {
-    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
+    ///     .at_date_time(DateTime {
+    ///         date: Date::try_new_gregorian(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
     ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());

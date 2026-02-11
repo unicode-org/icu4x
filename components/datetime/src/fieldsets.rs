@@ -947,7 +947,7 @@ macro_rules! impl_zone_marker {
         /// // Time zone info for America/Chicago in the summer
         /// let zone = TimeZone(subtag!("uschi"))
         ///     .with_offset("-05".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// assert_writeable_eq!(
         ///     fmt.format(&zone),
@@ -1318,7 +1318,7 @@ pub mod zone {
         /// // Time zone info for Europe/Istanbul in the winter
         /// let zone = TimeZone(subtag!("trist"))
         ///     .with_offset("+03".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 1, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 1, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
@@ -1343,7 +1343,7 @@ pub mod zone {
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone(subtag!("uschi"))
         ///     .with_offset("-04".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
@@ -1414,7 +1414,7 @@ pub mod zone {
         /// // Time zone info for Asia/Tokyo
         /// let zone = TimeZone(subtag!("jptyo"))
         ///     .with_offset("+09".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 1, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 1, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
@@ -1440,7 +1440,7 @@ pub mod zone {
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone(subtag!("uschi"))
         ///     .with_offset("-04".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
@@ -1510,7 +1510,7 @@ pub mod zone {
         ///
         /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
         /// let time = Time::start_of_day();
-        /// let time_zone_at_time = time_zone_basic.at_date_time_iso(DateTime{ date, time });
+        /// let time_zone_at_time = time_zone_basic.at_date_time(DateTime{ date, time });
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
@@ -1557,7 +1557,7 @@ pub mod zone {
         ///
         /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
         /// let time = Time::start_of_day();
-        /// let time_zone_at_time = time_zone_basic.at_date_time_iso(DateTime{ date, time });
+        /// let time_zone_at_time = time_zone_basic.at_date_time(DateTime{ date, time });
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
@@ -1601,7 +1601,7 @@ pub mod zone {
         /// // Time zone info for Europe/Istanbul in the winter
         /// let zone = TimeZone(subtag!("trist"))
         ///     .with_offset("+03".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 1, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 1, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
@@ -1626,7 +1626,7 @@ pub mod zone {
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone(subtag!("uschi"))
         ///     .with_offset("-04".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
@@ -1698,7 +1698,7 @@ pub mod zone {
         /// // Time zone info for Asia/Tokyo
         /// let zone = TimeZone(subtag!("jptyo"))
         ///     .with_offset("+09".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 1, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 1, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
@@ -1724,7 +1724,7 @@ pub mod zone {
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone(subtag!("uschi"))
         ///     .with_offset("-04".parse().ok())
-        ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
+        ///     .at_date_time(DateTime{ date: Date::try_new_gregorian(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
