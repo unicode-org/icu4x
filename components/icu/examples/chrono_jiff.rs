@@ -60,4 +60,17 @@ fn main() {
             &chrono_tz::Tz::from_str("Pacific/Honolulu").unwrap_or(chrono_tz::Tz::UTC)
         ))
     );
+
+    // User locale, calendar, time zone
+
+    let formatter = DateTimeFormatter::try_new(
+        icu_host_info::datetime_preferences().unwrap(),
+        fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
+    )
+    .expect("data is present");
+
+    println!(
+        "{}",
+        formatter.format(&jiff.to_zoned(jiff::tz::TimeZone::system()))
+    );
 }

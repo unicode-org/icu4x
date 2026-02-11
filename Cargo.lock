@@ -1321,6 +1321,7 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_experimental",
+ "icu_host_info",
  "icu_list",
  "icu_locale",
  "icu_normalizer",

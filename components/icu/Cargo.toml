@@ -45,6 +45,7 @@ icu_provider = { workspace = true }
 
 [dev-dependencies]
 icu_datetime = { path = "../../components/datetime", features = ["serde", "jiff_0_2", "chrono_0_4"] }
+icu_host_info = { path = "../../utils/host_info", features = ["datetime"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
