@@ -1,0 +1,37 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "tcast"
+description = "Cast transparent wrappers between their inner and outer types"
+version = "0.1.0"
+authors = ["Shane F Carr <shane@unicode.org>"]
+categories = ["rust-patterns", "no-std", "no-std::no-alloc"]
+keywords = ["transparent", "cast", "ref", "box", "dst"]
+
+edition.workspace = true
+include.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version = "1.71.1"
+
+[lib]
+proc-macro = true
+path = "src/lib.rs"
+
+[package.metadata.workspaces]
+independent = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true, features = ["fold"] }
+
+[dev-dependencies]
+
+[lints]
+workspace = true
