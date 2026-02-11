@@ -11,6 +11,8 @@ internal interface LineSegmenterLib: Library {
     fun icu4x_LineSegmenter_create_lstm_mv1(): Pointer
     fun icu4x_LineSegmenter_create_dictionary_mv1(): Pointer
     fun icu4x_LineSegmenter_create_for_non_complex_scripts_mv1(): Pointer
+    fun icu4x_LineSegmenter_load_lstm_models_with_provider_mv1(handle: Pointer, provider: Pointer): ResultUnitInt
+    fun icu4x_LineSegmenter_load_dictinoary_models_with_provider_mv1(handle: Pointer, provider: Pointer): ResultUnitInt
 }
 /** An ICU4X line-break segmenter, capable of finding breakpoints in strings.
 *
@@ -95,6 +97,34 @@ class LineSegmenter internal constructor (
             val returnOpaque = LineSegmenter(handle, selfEdges)
             CLEANER.register(returnOpaque, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
             return returnOpaque
+        }
+    }
+    
+    /** Loads available LSMT models from the given provider.
+    *
+    *See the [Rust documentation for `load_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.load_lstm) for more information.
+    */
+    fun loadLstmModelsWithProvider(provider: DataProvider): Result<Unit> {
+        
+        val returnVal = lib.icu4x_LineSegmenter_load_lstm_models_with_provider_mv1(handle, provider.handle);
+        if (returnVal.isOk == 1.toByte()) {
+            return Unit.ok()
+        } else {
+            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+        }
+    }
+    
+    /** Loads available dictionary models from the given provider.
+    *
+    *See the [Rust documentation for `load_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.load_dictionary) for more information.
+    */
+    fun loadDictinoaryModelsWithProvider(provider: DataProvider): Result<Unit> {
+        
+        val returnVal = lib.icu4x_LineSegmenter_load_dictinoary_models_with_provider_mv1(handle, provider.handle);
+        if (returnVal.isOk == 1.toByte()) {
+            return Unit.ok()
+        } else {
+            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
         }
     }
 

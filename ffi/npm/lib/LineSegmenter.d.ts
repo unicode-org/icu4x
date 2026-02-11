@@ -118,6 +118,20 @@ export class LineSegmenter {
     static forNonComplexScriptsWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
     /**
+     * Loads available LSMT models from the given provider.
+     *
+     * See the [Rust documentation for `load_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.load_lstm) for more information.
+     */
+    loadLstmModelsWithProvider(provider: DataProvider): void;
+
+    /**
+     * Loads available dictionary models from the given provider.
+     *
+     * See the [Rust documentation for `load_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.load_dictionary) for more information.
+     */
+    loadDictinoaryModelsWithProvider(provider: DataProvider): void;
+
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
