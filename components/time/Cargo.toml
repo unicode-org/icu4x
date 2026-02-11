@@ -32,9 +32,9 @@ zerovec = { workspace = true, features = ["derive", "yoke"] }
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive"], optional = true }
 
-chrono = { version = "0.4", optional = true }
-jiff = { version = "0.2", optional = true }
-chrono-tz = { version = "0.10", optional = true }
+chrono = { workspace = true, optional = true }
+jiff = { workspace = true, optional = true }
+chrono-tz = { workspace = true, optional = true }
 
 icu_time_data = { workspace = true, optional = true }
 

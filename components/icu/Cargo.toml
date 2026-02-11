@@ -49,9 +49,10 @@ icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"]
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 writeable = { path = "../../utils/writeable" }
-jiff = { version = "0.2", default-features = false, features = ["tzdb-bundle-always", "std"] }
-chrono = { version = "0.4", default-features = false }
-chrono-tz = { version = "0.10", default-features = false }
+jiff = { workspace = true, features = ["tzdb-bundle-always", "tz-system", "std"] }
+chrono = { workspace = true }
+chrono-tz = { workspace = true }
+icu_host_info = { workspace = true, features = ["datetime"] }
 
 [features]
 default = [

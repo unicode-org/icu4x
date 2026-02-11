@@ -190,6 +190,7 @@ crlify = { version = "1.0.4", path = "utils/crlify", default-features = false }
 databake = { version = "0.2.0", path = "utils/databake", default-features = false }
 databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false }
 fixed_decimal = { version = "0.7.0", path = "utils/fixed_decimal", default-features = false }
+icu_host_info = { version = "0.1", path = "utils/host_info", default-features = false }
 ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
 potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false }
@@ -241,10 +242,13 @@ diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "f71e
 # EXTRA_BLOB_DEPS
 # EXTRA_FS_DEPS
 arrayvec = { version = "0.7.2", default-features = false }
+chrono = { version = "0.4", default-features = false }
+chrono-tz = { version = "0.10", default-features = false }
 core_maths = { version = "0.1.0", default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.9.0", default-features = false }
 harfbuzz-traits = { version = "0.6.0", default-features = false }
+jiff = { version = "0.2", default-features = false }
 libc_alloc = { version = "1.0.6", default-features = false }
 log = { version = "0.4.17", default-features = false }
 memchr = { version = "2.6.0", default-features = false }

@@ -34,8 +34,8 @@ serde = { workspace = true, features = ["derive"], optional = true }
 icu_calendar_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
-chrono = { version = "0.4", optional = true }
-jiff = { version = "0.2", optional = true }
+chrono = { workspace = true, optional = true }
+jiff = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["logging"] }
