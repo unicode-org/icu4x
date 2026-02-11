@@ -66,6 +66,7 @@ members = [
     "utils/databake",
     "utils/databake/derive",
     "utils/fixed_decimal",
+    "utils/host_info",
     "utils/ixdtf",
     "utils/litemap",
     "utils/resb",
@@ -98,8 +99,6 @@ members = [
 # Note: Workspaces in subdirectories, such as components/collator/fuzz, are
 # implicitly excluded from the main workspace.
 exclude = [
-    # host_info requires a custom ci job to avoid having to pull its optional dependencies
-    "utils/host_info",
     # Examples are tested outside the workspace to simulate external users
     "examples",
     # Don't publish the graveyard

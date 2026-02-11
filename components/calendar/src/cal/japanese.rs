@@ -200,8 +200,8 @@ impl Date<Japanese> {
     ///
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
-    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the Gregorian year
-    /// is also in the range `-1,000,000..=1,000,000`.
+    /// This function accepts years in the range `-9999..=9999`, where the Gregorian year
+    /// is also in the range `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::cal::Japanese;
