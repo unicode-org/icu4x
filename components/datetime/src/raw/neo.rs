@@ -185,26 +185,41 @@ impl DatePatternSelectionData {
     ) -> Option<DatePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let year_style = options.year_style.unwrap_or_default();
-        let variant = match (
-            year_style,
-            input
-                .year
-                .map(|y| {
-                    y.era()
-                        .map(|e| e.ambiguity)
-                        .unwrap_or(YearAmbiguity::EraRequired)
-                })
-                .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
-        ) {
-            (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
-                PackedSkeletonVariant::Variant1
-            }
-            (YearStyle::Full, _) | (_, YearAmbiguity::CenturyRequired) => {
+        let ambiguity = input
+            .year
+            .as_ref()
+            .map(|y| {
+                y.era()
+                    .map(|e| e.ambiguity)
+                    .unwrap_or(YearAmbiguity::EraRequired)
+            })
+            .unwrap_or(YearAmbiguity::EraAndCenturyRequired);
+
+        let variant = match (year_style, ambiguity) {
+            (YearStyle::WithEra, _) => PackedSkeletonVariant::Variant1,
+
+            (
+                YearStyle::Full,
+                YearAmbiguity::EraAndCenturyRequired | YearAmbiguity::EraRequired,
+            ) => PackedSkeletonVariant::Variant1,
+            (YearStyle::Full, YearAmbiguity::CenturyRequired | YearAmbiguity::Unambiguous) => {
                 PackedSkeletonVariant::Variant0
             }
-            (YearStyle::Auto, YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired) => {
-                PackedSkeletonVariant::Standard
+
+            (
+                YearStyle::Auto | YearStyle::NoEra,
+                YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired,
+            ) => PackedSkeletonVariant::Standard,
+
+            (YearStyle::Auto, YearAmbiguity::CenturyRequired) => PackedSkeletonVariant::Variant0,
+            (YearStyle::Auto, YearAmbiguity::EraAndCenturyRequired) => {
+                PackedSkeletonVariant::Variant1
             }
+
+            (
+                YearStyle::NoEra,
+                YearAmbiguity::CenturyRequired | YearAmbiguity::EraAndCenturyRequired,
+            ) => PackedSkeletonVariant::Variant0,
         };
         Some(DatePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),
