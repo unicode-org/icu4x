@@ -1698,7 +1698,7 @@ mod tests {
         single_test_error(
             korean_traditional,
             None,
-            10393,
+            9393,
             Month::leap(0),
             1,
             DateError::UnknownMonthCode(Month::leap(0).code()),

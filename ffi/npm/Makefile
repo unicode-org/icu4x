@@ -12,6 +12,10 @@ FEATURES ?= "compiled_data,buffer_provider,default_components,experimental,unsta
 WASM_STACK_SIZE := 100000
 
 icu_capi.wasm: FORCE
+	# Build the WASM library. Explanation of the flags:
+	# -Copt-level=s: optimize for size, analagous to "clang -Os"
+	# -C link-args=-zstack-size=${WASM_STACK_SIZE}: see https://github.com/unicode-org/icu4x/issues/2753
+	# -Zwasm-c-abi=spec: use the standard Rust-Wasm interface (default since Rust 1.89)
 	RUSTFLAGS="-Copt-level=s -Clink-args=-zstack-size=${WASM_STACK_SIZE} -Zwasm-c-abi=spec" \
 	TARGET="wasm32-unknown-unknown" \
 	TYPE="dynamic" \
