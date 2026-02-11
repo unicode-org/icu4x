@@ -15,10 +15,13 @@ use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
+use std::sync::OnceLock;
 use writeable::Writeable;
 use zerovec::ZeroVec;
 
 mod collator_serde;
+
+static ROOT_CELL: OnceLock<Result<CollationData<'static>, DataError>> = OnceLock::new();
 
 fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     let mut s = if id.locale.is_unknown() {
@@ -201,12 +204,21 @@ impl IterableDataProviderCached<CollationRootV1> for SourceDataProvider {
 impl DataProvider<CollationTailoringV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CollationTailoringV1>, DataError> {
         self.check_req::<CollationTailoringV1>(req)?;
-
+        let root_trie: &CodePointTrie<u32> = &ROOT_CELL
+            .get_or_init(|| {
+                convert_data_from_serde(
+                    self.load_toml::<collator_serde::CollationData>(Default::default(), "_data")?,
+                    None,
+                )
+            })
+            .as_ref()
+            .map_err(|e| *e)?
+            .trie;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
                 self.load_toml::<collator_serde::CollationData>(req.id, "_data")
-                    .and_then(|d| convert_data_from_serde(d, Some(&req.id)))
+                    .and_then(|d| convert_data_from_serde(d, Some((&req.id, root_trie))))
                     .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?,
             ),
         })
@@ -223,10 +235,11 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
     }
 }
 
-fn rebuild_data(
-    trie: CodePointTrie<u32>,
+fn rebuild_data<'a>(
+    trie: CodePointTrie<'a, u32>,
     trie_type: icu::collections::codepointtrie::TrieType,
-) -> CodePointTrie<u32> {
+    root: Option<&CodePointTrie<u32>>,
+) -> CodePointTrie<'a, u32> {
     #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
     {
         let _ = trie;
@@ -234,11 +247,39 @@ fn rebuild_data(
     }
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     {
+        let default_value = trie.get('\u{10FFFF}');
+        let mut rewritten_fast: Vec<u32> = Vec::new();
+        if let Some(root) = root {
+            let bound = if trie_type == icu::collections::codepointtrie::TrieType::Small {
+                0x1000
+            } else {
+                0x10000
+            };
+            rewritten_fast.reserve_exact(bound as usize);
+            for i in 0..bound {
+                rewritten_fast[i as usize] = trie.get32(i);
+            }
+            if 0xD7A4 < bound {
+                for i in 0xAC00..0xD7A4 {
+                    // Use the default value for Hangul syllables. We are not
+                    // relying on the collation data to catch Hangul syllables.
+                    // Furthermore, having non-default values in this range is
+                    // bad for tailorings whose characters of interest are
+                    // below the fast-access boundary for the small trie type.
+                    rewritten_fast[i as usize] = default_value;
+                }
+            }
+            
+        }
         let mut builder =
-            CodePointTrieBuilder::new(trie.get('\u{10FFFF}'), trie.get32(u32::MAX), trie_type);
+            CodePointTrieBuilder::new(default_value, trie.get32(u32::MAX), trie_type);
 
         for i in 0..0xAC00 {
-            builder.set_value(i, trie.get32(i));
+            if let Some(trie_val) = rewritten_fast.get(i as usize) {
+                builder.set_value(i, *trie_val);
+            } else {
+                builder.set_value(i, trie.get32(i));
+            }
         }
         for _ in 0xAC00..0xD7A4 {
             // Use the default value for Hangul syllables. We are not
@@ -248,7 +289,11 @@ fn rebuild_data(
             // below the fast-access boundary for the small trie type.
         }
         for i in 0xD7A4..=(char::MAX as u32) {
-            builder.set_value(i, trie.get32(i));
+            if let Some(trie_val) = rewritten_fast.get(i as usize) {
+                builder.set_value(i, *trie_val);
+            } else {
+                builder.set_value(i, trie.get32(i));
+            }
         }
 
         builder.build()
@@ -308,19 +353,19 @@ fn decide_trie_type(id: &DataIdentifierBorrowed) -> icu::collections::codepointt
 
 fn convert_data_from_serde(
     data: &collator_serde::CollationData,
-    id: Option<&DataIdentifierBorrowed>,
+    id_and_root: Option<(&DataIdentifierBorrowed, &CodePointTrie<u32>)>,
 ) -> Result<CollationData<'static>, DataError> {
     let trie = CodePointTrie::<u32>::try_from(&data.trie)
         .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
-    let trie_type = if let Some(id) = id {
-        decide_trie_type(id)
+    let (trie_type, root) = if let Some((id, root)) = id_and_root {
+        (decide_trie_type(id), Some(root))
     } else {
         // Delta from small to fast for root: 7056 bytes.
-        icu::collections::codepointtrie::TrieType::Small
+        (icu::collections::codepointtrie::TrieType::Small, None)
     };
-    log::info!("CONVERT {:?} {:?}", id, trie_type);
+    log::info!("CONVERT {:?} {:?}", id_and_root.map(|x| x.0), trie_type);
     Ok(CollationData {
-        trie: rebuild_data(trie, trie_type),
+        trie: rebuild_data(trie, trie_type, root),
         contexts: ZeroVec::alloc_from_slice(&data.contexts),
         ce32s: ZeroVec::alloc_from_slice(&data.ce32s),
         ces: data.ces.iter().map(|i| *i as u64).collect(),

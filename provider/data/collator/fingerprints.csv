@@ -183,7 +183,7 @@ collation/reordering/v1, ur, -> ar
 collation/root/v1, <singleton>, 131040B, 130923B, 787ce37ea65e1e9
 collation/special/primaries/v1, <singleton>, 72B, 42B, 46181a77c61fe445
 collation/tailoring/v1, <lookup>, 608B, 102 identifiers
-collation/tailoring/v1, <total>, 942014B, 930264B, 93 unique payloads
+collation/tailoring/v1, <total>, 945902B, 934156B, 93 unique payloads
 collation/tailoring/v1, af, 1004B, 877B, 8e3ca7ba0c0efe4b
 collation/tailoring/v1, ar, 8112B, 7987B, f87603c60cb612d4
 collation/tailoring/v1, ar/compat, 1780B, 1652B, 9bab07c54d28766b
@@ -231,7 +231,7 @@ collation/tailoring/v1, ja, 89950B, 89827B, 4c3c1db3804ab11d
 collation/tailoring/v1, ja/unihan, 9706B, 9580B, acd71695db29b6ea
 collation/tailoring/v1, kk, 1352B, 1225B, 72b84de4a4899461
 collation/tailoring/v1, kk-Arab, 1456B, 1329B, a49ee74478533158
-collation/tailoring/v1, km, 2510B, 2383B, d438b214067f8bfd
+collation/tailoring/v1, km, 4386B, 4261B, 88fa5270c5f305a7
 collation/tailoring/v1, kn, 1092B, 965B, 82ef807011a4ec63
 collation/tailoring/v1, kn/trad, 11078B, 10953B, f56aa35745e4206a
 collation/tailoring/v1, ko, 220856B, 220732B, 4258b53995162825
@@ -245,7 +245,7 @@ collation/tailoring/v1, mk, 1020B, 893B, b1b9675c525c3a04
 collation/tailoring/v1, ml, 1496B, 1369B, 761bed1c0a0fc2e4
 collation/tailoring/v1, mr, 1076B, 949B, 6d8c933d1e664add
 collation/tailoring/v1, mt, 1120B, 993B, 6212491e5c5137ca
-collation/tailoring/v1, my, 20112B, 19985B, fc3bc97eff23db1d
+collation/tailoring/v1, my, 22124B, 21999B, dbf141eec06597da
 collation/tailoring/v1, no, 1752B, 1627B, 804e23f5cdba061
 collation/tailoring/v1, nso, 864B, 737B, f175960e45f40968
 collation/tailoring/v1, om, 1018B, 892B, 8fb6ca5d98bf4ac
