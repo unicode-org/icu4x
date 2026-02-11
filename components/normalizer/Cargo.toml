@@ -25,10 +25,11 @@ icu_collections = { workspace = true }
 icu_properties = { workspace = true, optional = true }
 icu_provider = { workspace = true }
 smallvec = { workspace = true } # alloc
-utf16_iter = { workspace = true, optional = true }
-utf8_iter = { workspace = true, optional = true }
+utf16_iter = { path = "../../../utf16_iter", features = ["icu_collections"], optional = true }
+utf8_iter = { path = "../../../utf8_iter", features = ["icu_collections"], optional = true }
 write16 = { workspace = true, features = ["alloc"], optional = true }
 zerovec = { workspace = true }
+zerofrom = { workspace = true, features = ["alloc"] }
 
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
@@ -48,6 +49,7 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data", "utf8_iter", "utf16_iter"]
+# Warning! Enabling the "serde" feature pessimizes performance.
 serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties?/serde", "icu_provider/serde"]
 # n.b. "icu_properties" + "icu_properties?/datagen" is equivalent to "icu_properties/datagen", however
 # we specify this explicitly since "optional_dep/feature" is a footgun that leads to us often accidentally enabling features
@@ -58,6 +60,8 @@ icu_properties = ["dep:icu_properties"]
 utf16_iter = ["dep:utf16_iter", "dep:write16"]
 # For dealing with potentially ill-formed UTF8 strings
 utf8_iter = ["dep:utf8_iter"]
+# For dealing with Latin1 strings
+latin1 = ["dep:write16"]
 harfbuzz_traits = ["dep:harfbuzz-traits"]
 
 # added by accident

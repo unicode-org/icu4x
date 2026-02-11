@@ -24,8 +24,8 @@ icu_normalizer = { workspace = true, features = ["utf8_iter", "utf16_iter"] }
 icu_locale_core = { workspace = true, features = ["alloc"] }
 icu_properties = { workspace = true }
 icu_provider = { workspace = true }
-utf8_iter = { workspace = true }
-utf16_iter = { workspace = true }
+utf16_iter = { path = "../../../utf16_iter", features = ["icu_collections"] }
+utf8_iter = { path = "../../../utf8_iter", features = ["icu_collections"] }
 smallvec = { workspace = true, features = ["union", "const_generics", "const_new"] } # alloc
 zerovec = { workspace = true }
 
