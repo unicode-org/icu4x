@@ -371,7 +371,8 @@ impl ZonedDateTime<Iso, UtcOffset> {
     /// assert_eq!(zdt_from_timestamp, zdt_from_str);
     /// ```
     ///
-    /// Boundary values are handled without overflow:
+    /// When epoch milliseconds exceed the representable date range, the date component
+    /// saturates to the maximum or minimum representable date in the ISO calendar
     ///
     /// ```
     /// use icu::calendar::cal::Iso;
