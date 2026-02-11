@@ -111,9 +111,9 @@ public:
    *
    * See the [Rust documentation for `titlecase_segment_with_only_case_data_to_string`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.titlecase_segment_with_only_case_data_to_string) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::diplomat::Utf8Error> titlecase_segment_with_only_case_compiled_data(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options);
+  inline static icu4x::diplomat::result<std::string, icu4x::diplomat::Utf8Error> titlecase_segment_with_only_case_compiled_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::diplomat::Utf8Error> titlecase_segment_with_only_case_compiled_data_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output);
+  inline static icu4x::diplomat::result<std::monostate, icu4x::diplomat::Utf8Error> titlecase_segment_with_only_case_compiled_data_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output);
 
   /**
    * Case-folds the characters in the given string

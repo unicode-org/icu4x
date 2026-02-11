@@ -4,8 +4,9 @@
 
 use core::str::FromStr;
 
-use crate::calendar_arithmetic::VALID_RD_RANGE;
-use crate::{AsCalendar, Calendar, Date, Iso, RangeError};
+use crate::cal::gregorian::GregorianDateInner;
+use crate::calendar_arithmetic::{ArithmeticDate, VALID_RD_RANGE};
+use crate::{AsCalendar, Calendar, Date, Gregorian, Iso, RangeError};
 use calendrical_calculations::gregorian::fixed_from_gregorian;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use ixdtf::encoding::Utf8;
@@ -55,7 +56,7 @@ impl<A: AsCalendar> Date<A> {
     /// Creates a [`Date`] in the given calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
@@ -100,31 +101,36 @@ impl<A: AsCalendar> Date<A> {
 
         if let Some(ixdtf_calendar) = ixdtf_record.calendar {
             if let Some(expected_calendar) = calendar.as_calendar().calendar_algorithm() {
-                if let Some(parsed_calendar) =
-                    icu_locale_core::extensions::unicode::Value::try_from_utf8(ixdtf_calendar)
-                        .ok()
-                        .and_then(|v| CalendarAlgorithm::try_from(&v).ok())
-                {
-                    if parsed_calendar != expected_calendar {
-                        return Err(ParseError::MismatchedCalendar(
-                            expected_calendar,
-                            parsed_calendar,
-                        ));
-                    }
+                if ixdtf_calendar != expected_calendar.as_str().as_bytes() {
+                    return Err(ParseError::MismatchedCalendar(
+                        expected_calendar,
+                        icu_locale_core::extensions::unicode::Value::try_from_utf8(ixdtf_calendar)
+                            .ok()
+                            .and_then(|v| CalendarAlgorithm::try_from(&v).ok())
+                            .ok_or(ParseError::UnknownCalendar)?,
+                    ));
                 }
             }
         }
 
-        // `date_record` is in -999999-01-01..=999999-12-31
-        let rd = fixed_from_gregorian(date_record.year, date_record.month, date_record.day);
+        // `date_record` is in `VALID_RD_RANGE` by `ixdtf` invariants
+        const _: () = assert!(
+            VALID_RD_RANGE.start().to_i64_date()
+                <= fixed_from_gregorian(-999_999, 1, 1).to_i64_date()
+                && fixed_from_gregorian(999_999, 12, 31).to_i64_date()
+                    <= VALID_RD_RANGE.end().to_i64_date()
+        );
+        let inner = GregorianDateInner(ArithmeticDate::new_unchecked(
+            date_record.year,
+            date_record.month,
+            date_record.day,
+        ));
 
-        // `rd` is in range, see `_RD_RANGE_REGRESSION_CHECK`
-        Ok(Date::from_rata_die(rd, calendar))
+        Ok(Date::from_raw(inner, Gregorian).to_calendar(calendar))
     }
 }
 
-const _RD_RANGE_REGRESSION_CHECK: () = assert!(
-    VALID_RD_RANGE.start().to_i64_date() <= fixed_from_gregorian(-999_999, 1, 1).to_i64_date()
-        && fixed_from_gregorian(999_999, 12, 31).to_i64_date()
-            <= VALID_RD_RANGE.end().to_i64_date()
-);
+#[test]
+fn invalid_calendar() {
+    Date::try_from_str("2025-01-01T00:00:00[u-ca=foo]", Gregorian).unwrap_err();
+}
