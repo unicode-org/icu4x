@@ -443,11 +443,7 @@ impl LineSegmenter {
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
     pub fn new_lstm(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
-        LineSegmenterBorrowed {
-            options: options.resolve(),
-            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
-            complex: ComplexPayloadsBorrowed::new_lstm(),
-        }
+        Self::new_for_non_complex_scripts(options).with_lstm()
     }
 
     #[cfg(feature = "lstm")]
@@ -473,11 +469,8 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self {
-            options: options.resolve(),
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_lstm(provider)?,
-        })
+        Self::try_new_for_non_complex_scripts_unstable(provider, options)?
+            .with_lstm_unstable(provider)
     }
 
     /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
@@ -491,17 +484,7 @@ impl LineSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn new_dictionary(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
-        LineSegmenterBorrowed {
-            options: options.resolve(),
-            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
-            // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
-            // characters [1]. Southeast Asian languages however require complex context analysis
-            // [2].
-            //
-            // [1]: https://www.unicode.org/reports/tr14/#ID
-            // [2]: https://www.unicode.org/reports/tr14/#SA
-            complex: ComplexPayloadsBorrowed::new_southeast_asian(),
-        }
+        Self::new_for_non_complex_scripts(options).with_dictionary()
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -525,17 +508,8 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self {
-            options: options.resolve(),
-            payload: provider.load(Default::default())?.payload,
-            // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
-            // characters [1]. Southeast Asian languages however require complex context analysis
-            // [2].
-            //
-            // [1]: https://www.unicode.org/reports/tr14/#ID
-            // [2]: https://www.unicode.org/reports/tr14/#SA
-            complex: ComplexPayloads::try_new_southeast_asian(provider)?,
-        })
+        Self::try_new_for_non_complex_scripts_unstable(provider, options)?
+            .with_dictionary_unstable(provider)
     }
 
     /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
@@ -551,7 +525,7 @@ impl LineSegmenter {
         LineSegmenterBorrowed {
             options: options.resolve(),
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
-            complex: ComplexPayloadsBorrowed::empty(),
+            complex: ComplexPayloadsBorrowed::new(),
         }
     }
 
@@ -578,8 +552,68 @@ impl LineSegmenter {
         Ok(Self {
             options: options.resolve(),
             payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_empty(provider)?,
+            complex: ComplexPayloads::try_new(provider)?,
         })
+    }
+
+    /// Loads LSTM data for a [`LineSegmenter`] constructed with
+    /// [`LineSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `lstm` Cargo feature.*
+    #[cfg(feature = "lstm")]
+    pub fn with_lstm_unstable<D>(mut self, provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterLstmAutoV1> + ?Sized,
+    {
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        self.complex = self.complex.with_southeast_asian_lstms(provider)?;
+        Ok(self)
+    }
+
+    /// A version of [`Self::with_lstm_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    #[cfg(feature = "lstm")]
+    pub fn with_lstm_with_buffer_provider(
+        self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        self.with_lstm_unstable(&provider.as_deserializing())
+    }
+
+    /// Loads dictionary data for a [`LineSegmenter`] constructed with
+    /// [`LineSegmenter::new_for_non_complex_scripts`].
+    pub fn with_dictionary_unstable<D>(mut self, provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterDictionaryExtendedV1> + ?Sized,
+    {
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        self.complex = self.complex.with_southeast_asian_dictionaries(provider)?;
+        Ok(self)
+    }
+
+    /// A version of [`Self::with_dictionary_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    pub fn with_dictionary_with_buffer_provider(
+        self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        self.with_dictionary_unstable(&provider.as_deserializing())
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
@@ -660,6 +694,39 @@ impl<'data> LineSegmenterBorrowed<'data> {
 }
 
 impl LineSegmenterBorrowed<'static> {
+    /// Loads LSTM data for a [`LineSegmenter`] constructed with
+    /// [`LineSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
+    #[cfg(feature = "lstm")]
+    #[cfg(feature = "compiled_data")]
+    pub fn with_lstm(mut self) -> Self {
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        self.complex = self.complex.with_southeast_asian_lstms();
+        self
+    }
+
+    /// Loads dictionary data for a [`LineSegmenter`] constructed with
+    /// [`LineSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn with_dictionary(mut self) -> Self {
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        self.complex = self.complex.with_southeast_asian_dictionaries();
+        self
+    }
+
     /// Cheaply converts a [`LineSegmenterBorrowed<'static>`] into a [`LineSegmenter`].
     ///
     /// Note: Due to branching and indirection, using [`LineSegmenter`] might inhibit some

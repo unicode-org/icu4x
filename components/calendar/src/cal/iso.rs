@@ -109,18 +109,18 @@ mod test {
         let cases = [
             // Clamping RD
             TestCase {
-                year: -1005513,
+                year: -999999,
                 month: 1,
-                day: 3,
+                day: 1,
                 rd: *VALID_RD_RANGE.start() - 100000,
                 invalid_ymd: true,
                 clamping_rd: true,
             },
             // Lowest allowed RD
             TestCase {
-                year: -1005513,
+                year: -999999,
                 month: 1,
-                day: 3,
+                day: 1,
                 rd: *VALID_RD_RANGE.start(),
                 invalid_ymd: true,
                 clamping_rd: false,
@@ -130,7 +130,7 @@ mod test {
                 year: *VALID_YEAR_RANGE.start(),
                 month: 1,
                 day: 1,
-                rd: RataDie::new(-365242865),
+                rd: RataDie::new(-3652424),
                 invalid_ymd: false,
                 clamping_rd: false,
             },
@@ -139,13 +139,13 @@ mod test {
                 year: *VALID_YEAR_RANGE.end(),
                 month: 12,
                 day: 31,
-                rd: RataDie::new(365242500),
+                rd: RataDie::new(3652059),
                 invalid_ymd: false,
                 clamping_rd: false,
             },
             // Highest allowed RD
             TestCase {
-                year: 1001911,
+                year: 999999,
                 month: 12,
                 day: 31,
                 rd: *VALID_RD_RANGE.end(),
@@ -154,7 +154,7 @@ mod test {
             },
             // Clamping RD
             TestCase {
-                year: 1001911,
+                year: 999999,
                 month: 12,
                 day: 31,
                 rd: *VALID_RD_RANGE.end() + 100000,
@@ -168,9 +168,9 @@ mod test {
             let date_from_ymd = Date::try_new_iso(case.year, case.month, case.day);
 
             if !case.clamping_rd {
-                assert_eq!(date_from_rd.to_rata_die(), case.rd);
+                assert_eq!(date_from_rd.to_rata_die(), case.rd, "{:?}", case);
             } else {
-                assert_ne!(date_from_rd.to_rata_die(), case.rd);
+                assert_ne!(date_from_rd.to_rata_die(), case.rd, "{:?}", case);
             }
 
             if !case.invalid_ymd {
