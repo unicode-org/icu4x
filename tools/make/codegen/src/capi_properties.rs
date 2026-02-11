@@ -248,7 +248,7 @@ pub fn main() {
     }
 
     let binary_props = &[
-        BinaryProp { property_name: "ASCII_Hex_Digit".into(), struct_name: "AsciiHexDigit".into() },
+        BinaryProp { property_name: AsciiHexDigit::NAME, struct_name: stringify!(AsciiHexDigit) },
         BinaryProp { property_name: "alnum".into(), struct_name: "Alnum".into() },
         BinaryProp { property_name: "Alphabetic".into(), struct_name: "Alphabetic".into() },
         BinaryProp { property_name: "Bidi_Control".into(), struct_name: "BidiControl".into() },
