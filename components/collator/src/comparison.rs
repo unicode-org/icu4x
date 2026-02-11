@@ -572,7 +572,11 @@ impl Collator {
         CollatorBorrowed {
             special_primaries: self.special_primaries.get(),
             root: self.root.get(),
-            tailoring: self.tailoring.as_ref().map(|s| s.get()),
+            tailoring: if let Some(t) = self.tailoring.as_ref() {
+                t.get()
+            } else {
+                self.root.get()
+            },
             jamo: self.jamo.get(),
             diacritics: self.diacritics.get(),
             options: self.options,
@@ -807,7 +811,7 @@ macro_rules! compare {
 pub struct CollatorBorrowed<'a> {
     special_primaries: &'a CollationSpecialPrimariesValidated<'a>,
     root: &'a CollationData<'a>,
-    tailoring: Option<&'a CollationData<'a>>,
+    tailoring: &'a CollationData<'a>,
     jamo: &'a CollationJamo<'a>,
     diacritics: &'a CollationDiacritics<'a>,
     options: CollatorOptionsBitField,
@@ -909,7 +913,11 @@ impl CollatorBorrowed<'static> {
             special_primaries,
             root,
             // Unwrap is OK, because we know we have the baked provider.
-            tailoring: locale_dependent.tailoring.map(|s| s.get_static().unwrap()),
+            tailoring: if let Some(s) = locale_dependent.tailoring {
+                s.get_static().unwrap()
+            } else {
+                root
+            },
             jamo,
             // Unwrap is OK, because we know we have the baked provider.
             diacritics: locale_dependent.diacritics.get_static().unwrap(),
@@ -930,12 +938,7 @@ impl CollatorBorrowed<'static> {
         Collator {
             special_primaries: DataPayload::from_static_ref(self.special_primaries),
             root: DataPayload::from_static_ref(self.root),
-            tailoring: if let Some(s) = self.tailoring {
-                // `map` not available in const context
-                Some(DataPayload::from_static_ref(s))
-            } else {
-                None
-            },
+            tailoring: Some(DataPayload::from_static_ref(self.tailoring)),
             jamo: DataPayload::from_static_ref(self.jamo),
             diacritics: DataPayload::from_static_ref(self.diacritics),
             options: self.options,
@@ -953,7 +956,7 @@ impl CollatorBorrowed<'static> {
 }
 
 macro_rules! collation_elements {
-    ($self:expr, $chars:expr, $tailoring:expr, $numeric_primary:expr) => {{
+    ($self:expr, $chars:expr, $numeric_primary:expr) => {{
         let jamo = <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from($self.jamo.ce32s.as_ule_slice());
 
         let jamo = jamo.unwrap();
@@ -961,7 +964,7 @@ macro_rules! collation_elements {
         CollationElements::new(
             $chars,
             $self.root,
-            $tailoring,
+            $self.tailoring,
             jamo,
             &$self.diacritics.secondaries,
             $self.tables,
@@ -998,7 +1001,7 @@ impl<'data> CollatorBorrowed<'data> {
         right_tail,
         {
             // Not macroized: Copy and paste to the other UTF-8 case below.
-            let tailoring_trie = &self.tailoring_or_root().trie;
+            let tailoring_trie = &self.tailoring.trie;
             if let Some((left_c, left_u32)) = left_tail.chars_with_trie(tailoring_trie).next() {
                 // Logically, there's a bunch of stuff we could do from the left side alone to determine
                 // that reading from the right side at all or reading from the right trie is useless.
@@ -1052,7 +1055,7 @@ impl<'data> CollatorBorrowed<'data> {
         right_tail,
         {
             // Direct copypaste from the `str` case.
-            let tailoring_trie = &self.tailoring_or_root().trie;
+            let tailoring_trie = &self.tailoring.trie;
             if let Some((left_c, left_u32)) = left_tail.chars_with_trie(tailoring_trie).next() {
                 // Logically, there's a bunch of stuff we could do from the left side alone to determine
                 // that reading from the right side at all or reading from the right trie is useless.
@@ -1104,7 +1107,7 @@ impl<'data> CollatorBorrowed<'data> {
         left_tail,
         right_tail,
         {
-            let tailoring_trie = &self.tailoring_or_root().trie;
+            let tailoring_trie = &self.tailoring.trie;
             if let Some(left_u) = left_tail.first() {
                 if let Some(right_u) = right_tail.first() {
                     let left_u16 = *left_u;
@@ -1163,7 +1166,7 @@ impl<'data> CollatorBorrowed<'data> {
         left_tail,
         right_tail,
         {
-            let tailoring_trie = &self.tailoring_or_root().trie;
+            let tailoring_trie = &self.tailoring.trie;
             if let Some(left_u) = left_tail.first() {
                 let left_u8 = *left_u;
                 // The probability of getting a non-simple ce32 from
@@ -1238,7 +1241,7 @@ impl<'data> CollatorBorrowed<'data> {
         left_tail,
         right_tail,
         {
-            let tailoring_trie = &self.tailoring_or_root().trie;
+            let tailoring_trie = &self.tailoring.trie;
             if let Some(left_u) = left_tail.first() {
                 let left_u8 = *left_u;
                 // The probability of getting a non-simple ce32 from
@@ -1291,28 +1294,6 @@ impl<'data> CollatorBorrowed<'data> {
         },
         variable_top,
     );
-
-    #[inline(always)]
-    fn tailoring_or_root(&self) -> &CollationData<'_> {
-        if let Some(tailoring) = &self.tailoring {
-            tailoring
-        } else {
-            // If the root collation is valid for the locale,
-            // use the root as the tailoring so that reads from the
-            // tailoring always succeed.
-            //
-            // TODO(#2011): Do we instead want to have an untailored
-            // copypaste of the iterator that omits the tailoring
-            // branches for performance at the expense of code size
-            // and having to maintain both a tailoring-capable and
-            // a tailoring-incapable version of the iterator?
-            // Or, in order not to flip the branch prediction around,
-            // should we have a no-op tailoring that contains a
-            // specially-crafted CodePointTrie that always returns
-            // a FALLBACK_CE32 after a single branch?
-            self.root
-        }
-    }
 
     #[inline(always)]
     fn numeric_primary(&self) -> Option<u8> {
@@ -1374,11 +1355,10 @@ impl<'data> CollatorBorrowed<'data> {
 
         let mut any_variable = false;
 
-        let tailoring = self.tailoring_or_root();
         let numeric_primary = self.numeric_primary();
 
-        let mut left = collation_elements!(self, left_chars, tailoring, numeric_primary);
-        let mut right = collation_elements!(self, right_chars, tailoring, numeric_primary);
+        let mut left = collation_elements!(self, left_chars, numeric_primary);
+        let mut right = collation_elements!(self, right_chars, numeric_primary);
 
         // Start identical prefix
 
@@ -1564,7 +1544,7 @@ impl<'data> CollatorBorrowed<'data> {
                             // level. Now let's check its ce32 unless it's a Hangul syllable,
                             // in which case `head_last_ce32` already is a non-default placeholder.
                             if head_last_ce32 == CollationElement32::default() {
-                                head_last_ce32 = tailoring.ce32_for_char(head_last_c);
+                                head_last_ce32 = self.tailoring.ce32_for_char(head_last_c);
                                 if head_last_ce32 == FALLBACK_CE32 {
                                     head_last_ce32 = self.root.ce32_for_char(head_last_c);
                                 }
@@ -1577,13 +1557,13 @@ impl<'data> CollatorBorrowed<'data> {
                             // The first character of each suffix is OK on the normalization
                             // level. Now let's check their ce32s unless they are Hangul syllables.
                             if left_ce32 == CollationElement32::default() {
-                                left_ce32 = tailoring.ce32_for_char(left_c);
+                                left_ce32 = self.tailoring.ce32_for_char(left_c);
                                 if left_ce32 == FALLBACK_CE32 {
                                     left_ce32 = self.root.ce32_for_char(left_c);
                                 }
                             }
                             if right_ce32 == CollationElement32::default() {
-                                right_ce32 = tailoring.ce32_for_char(right_c);
+                                right_ce32 = self.tailoring.ce32_for_char(right_c);
                                 if right_ce32 == FALLBACK_CE32 {
                                     right_ce32 = self.root.ce32_for_char(right_c);
                                 }
@@ -1682,7 +1662,7 @@ impl<'data> CollatorBorrowed<'data> {
                     // The last character of the prefix is OK on the normalization
                     // level. Now let's check its ce32 unless it's a Hangul syllable.
                     if head_last_ce32 == CollationElement32::default() {
-                        head_last_ce32 = tailoring.ce32_for_char(head_last_c);
+                        head_last_ce32 = self.tailoring.ce32_for_char(head_last_c);
                         if head_last_ce32 == FALLBACK_CE32 {
                             head_last_ce32 = self.root.ce32_for_char(head_last_c);
                         }
@@ -1696,7 +1676,7 @@ impl<'data> CollatorBorrowed<'data> {
                     // `head_last_ce32` is initialized for the next loop round
                     // trip if applicable.
                     if tail_first_ce32 == CollationElement32::default() {
-                        tail_first_ce32 = tailoring.ce32_for_char(tail_first_c);
+                        tail_first_ce32 = self.tailoring.ce32_for_char(tail_first_c);
                         if tail_first_ce32 == FALLBACK_CE32 {
                             tail_first_ce32 = self.root.ce32_for_char(tail_first_c);
                         }
@@ -2297,8 +2277,7 @@ impl<'data> CollatorBorrowed<'data> {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
         let levels = self.sort_key_levels();
 
-        let mut iter =
-            collation_elements!(self, iter, self.tailoring_or_root(), self.numeric_primary());
+        let mut iter = collation_elements!(self, iter, self.numeric_primary());
         iter.init();
         let variable_top = self.variable_top();
 

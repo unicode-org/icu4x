@@ -280,6 +280,7 @@ fn rebuild_data<'a>(
                 }
             }
             // Fill the 6-bit blocks
+            // TODO: For Cyrillic and Armenian, hoist more.
             let mut i = 0;
             while i < bound {
                 for j in 0..0b1_000_000 {

@@ -36,10 +36,10 @@ use crate::provider::CollationData;
 /// is self-contained.
 #[cfg(feature = "datagen")]
 pub fn is_self_contained(ce32: u32) -> bool {
-    CollationElement32::new(ce32).to_ce_self_contained().is_some()
+    CollationElement32::new(ce32)
+        .to_ce_self_contained()
+        .is_some()
 }
-
-
 
 // Start `SmallVec` size constants.
 //
