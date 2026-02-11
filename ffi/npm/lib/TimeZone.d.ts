@@ -30,6 +30,29 @@ export class TimeZone {
     isUnknown(): boolean;
 
     /**
+     * Construct a {@link TimeZone} from an IANA time zone ID.
+     *
+     * See {@link IanaParser}.
+     *
+     * See the [Rust documentation for `from_iana_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_iana_id) for more information.
+     */
+    static fromIanaId(ianaId: string): TimeZone;
+
+    /**
+     * Construct a {@link TimeZone} from a Windows time zone ID and region.
+     *
+     * See the [Rust documentation for `from_windows_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_windows_id) for more information.
+     */
+    static fromWindowsId(windowsId: string, region: string): TimeZone;
+
+    /**
+     * Construct a {@link TimeZone} from the platform-specific ID.
+     *
+     * See the [Rust documentation for `from_system_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_system_id) for more information.
+     */
+    static fromSystemId(id: string, region: string): TimeZone;
+
+    /**
      * Creates a time zone from a BCP-47 string.
      *
      * Returns the unknown time zone if the string is not a valid BCP-47 subtag.

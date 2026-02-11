@@ -9,6 +9,9 @@ internal interface TimeZoneLib: Library {
     fun icu4x_TimeZone_destroy_mv1(handle: Pointer)
     fun icu4x_TimeZone_unknown_mv1(): Pointer
     fun icu4x_TimeZone_is_unknown_mv1(handle: Pointer): Byte
+    fun icu4x_TimeZone_from_iana_id_mv1(ianaId: Slice): Pointer
+    fun icu4x_TimeZone_from_windows_id_mv1(windowsId: Slice, region: Slice): Pointer
+    fun icu4x_TimeZone_from_system_id_mv1(id: Slice, region: Slice): Pointer
     fun icu4x_TimeZone_create_from_bcp47_mv1(id: Slice): Pointer
     fun icu4x_TimeZone_with_offset_mv1(handle: Pointer, offset: Pointer): Pointer
     fun icu4x_TimeZone_without_offset_mv1(handle: Pointer): Pointer
@@ -44,6 +47,63 @@ class TimeZone internal constructor (
             val handle = returnVal 
             val returnOpaque = TimeZone(handle, selfEdges)
             CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Construct a [TimeZone] from an IANA time zone ID.
+        *
+        *See [IanaParser].
+        *
+        *See the [Rust documentation for `from_iana_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_iana_id) for more information.
+        */
+        fun fromIanaId(ianaId: String): TimeZone {
+            val ianaIdSliceMemory = PrimitiveArrayTools.borrowUtf8(ianaId)
+            
+            val returnVal = lib.icu4x_TimeZone_from_iana_id_mv1(ianaIdSliceMemory.slice);
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = TimeZone(handle, selfEdges)
+            CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
+            ianaIdSliceMemory?.close()
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Construct a [TimeZone] from a Windows time zone ID and region.
+        *
+        *See the [Rust documentation for `from_windows_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_windows_id) for more information.
+        */
+        fun fromWindowsId(windowsId: String, region: String): TimeZone {
+            val windowsIdSliceMemory = PrimitiveArrayTools.borrowUtf8(windowsId)
+            val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
+            
+            val returnVal = lib.icu4x_TimeZone_from_windows_id_mv1(windowsIdSliceMemory.slice, regionSliceMemory.slice);
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = TimeZone(handle, selfEdges)
+            CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
+            windowsIdSliceMemory?.close()
+            regionSliceMemory?.close()
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Construct a [TimeZone] from the platform-specific ID.
+        *
+        *See the [Rust documentation for `from_system_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_system_id) for more information.
+        */
+        fun fromSystemId(id: String, region: String): TimeZone {
+            val idSliceMemory = PrimitiveArrayTools.borrowUtf8(id)
+            val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
+            
+            val returnVal = lib.icu4x_TimeZone_from_system_id_mv1(idSliceMemory.slice, regionSliceMemory.slice);
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = TimeZone(handle, selfEdges)
+            CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
+            idSliceMemory?.close()
+            regionSliceMemory?.close()
             return returnOpaque
         }
         @JvmStatic

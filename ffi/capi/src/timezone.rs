@@ -33,6 +33,44 @@ pub mod ffi {
             self.0.is_unknown()
         }
 
+        /// Construct a [`TimeZone`] from an IANA time zone ID.
+        ///
+        /// See [`IanaParser`].
+        #[diplomat::rust_link(icu::time::TimeZone::from_iana_id, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn from_iana_id<'a>(iana_id: &'a DiplomatStr) -> Box<Self> {
+            Box::new(Self(
+                icu_time::zone::IanaParser::new().parse_from_utf8(iana_id),
+            ))
+        }
+
+        /// Construct a [`TimeZone`] from a Windows time zone ID and region.
+        #[diplomat::rust_link(icu::time::TimeZone::from_windows_id, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn from_windows_id<'a>(
+            windows_id: &'a DiplomatStr,
+            region: &'a DiplomatStr,
+        ) -> Box<Self> {
+            Box::new(Self(
+                icu_time::zone::WindowsParser::new()
+                    .parse_from_utf8(
+                        windows_id,
+                        icu_locale_core::subtags::Region::try_from_utf8(region).ok(),
+                    )
+                    .unwrap_or(icu_time::TimeZone::UNKNOWN),
+            ))
+        }
+
+        /// Construct a [`TimeZone`] from the platform-specific ID.
+        #[diplomat::rust_link(icu::time::TimeZone::from_system_id, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn from_system_id<'a>(id: &'a DiplomatStr, _region: &'a DiplomatStr) -> Box<Self> {
+            #[cfg(target_os = "windows")]
+            return Self::from_windows_id(id, _region);
+            #[cfg(not(target_os = "windows"))]
+            return Self::from_iana_id(id);
+        }
+
         /// Creates a time zone from a BCP-47 string.
         ///
         /// Returns the unknown time zone if the string is not a valid BCP-47 subtag.
