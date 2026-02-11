@@ -14,6 +14,12 @@ else
     rustup target add $TARGET
 fi
 
+# Explanation of flags:
+# -Zunstable-options: enables other unstable flags
+# -Cpanic=immediate-abort: removes unwind machinery and associated Debug impls
+# --config=profile.release.codegen-units=1: generate the code in a single process to enable more opportunities for optimization
+# -Zbuild-std=std,panic_abort: rebuild the standard library with panic-abort behavior and our RUSTFLAGS
+
 if [[ $NO_STD == 1 ]]; then
     RUSTFLAGS="-Zunstable-options -Cpanic=immediate-abort $RUSTFLAGS"
 fi
