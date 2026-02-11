@@ -126,7 +126,8 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
         year
     }
 
-    /// Returns an ECMA reference year that contains the given month-day combination.
+    /// Returns an ECMA reference year (represented as an extended year)
+    /// that contains the given month-day combination.
     ///
     /// If the day is out of range, it will return a year that contains the given month
     /// and the maximum day possible for that month. See [the spec][spec] for the

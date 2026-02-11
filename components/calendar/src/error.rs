@@ -444,6 +444,13 @@ mod inner {
     pub enum EcmaReferenceYearError {
         Unimplemented,
         MonthCodeNotInCalendar,
+        /// This leap month could not be found within recent times.
+        /// Constrain to the regular month if allowed, otherwise reject.
+        ///
+        /// Note: This currently encodes Chinese/Dangi-specific specced
+        /// semantics. Before graduation, we should consider having this be
+        /// something like UseIfConstrain(y, m, d).
+        UseRegularIfConstrain,
     }
 
     /// Errors that can occur when parsing an ISO 8601 date-only duration string.
@@ -560,6 +567,14 @@ impl From<EcmaReferenceYearError> for DateFromFieldsError {
             EcmaReferenceYearError::Unimplemented => DateFromFieldsError::NotEnoughFields,
             EcmaReferenceYearError::MonthCodeNotInCalendar => {
                 DateFromFieldsError::MonthCodeNotInCalendar
+            }
+            // This only happens when the month-day combo isn't in the year, and if not rejecting
+            // we constrain to the non-leap month
+            //
+            // We can potentially consider turning this into a RangeError, then UseRegularIfConstrain
+            // would need to carry a range error inside it.
+            EcmaReferenceYearError::UseRegularIfConstrain => {
+                DateFromFieldsError::MonthCodeNotInYear
             }
         }
     }
