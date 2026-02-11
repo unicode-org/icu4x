@@ -84,7 +84,7 @@ impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
         Ok(code_point_trie)
     }
 
-    pub(crate) fn names_to_values(&self) -> Result<BTreeMap<&str, u16>, DataError> {
+    pub(crate) fn names_to_values(&self) -> BTreeMap<&str, u16> {
         let mut map = BTreeMap::new();
 
         for range in &self.ranges {
@@ -103,16 +103,7 @@ impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
             }
         }
 
-        for name in map.keys() {
-            if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
-                return Err(
-                    DataError::custom("Property name contains '-' or whitespace")
-                        .with_display_context(name),
-                );
-            }
-        }
-
-        Ok(map)
+        map
     }
 
     pub(crate) fn values_to_names_long(&self) -> BTreeMap<u16, &str> {
@@ -256,7 +247,16 @@ macro_rules! expand {
                         core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
                         core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
                     )?;
-                    let trie = data.names_to_values()?
+                    let map = data.names_to_values();
+                    for name in map.keys() {
+                        if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
+                            return Err(
+                                DataError::custom("Property name contains '-' or whitespace")
+                                    .with_display_context(name),
+                            );
+                        }
+                    }
+                    let trie = map
                         .into_iter()
                         .map(|(k, v)| (k, v as usize))
                         .collect::<ZeroTrieSimpleAscii<_>>()
