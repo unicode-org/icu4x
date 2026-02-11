@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 fn main() {
-    println!("cargo:rustc-check-cfg=cfg(gio)");
+    println!("cargo:rustc-check-cfg=cfg(icu4x_gio_available)");
     if std::fs::exists("/usr/include/gio/gio.h").ok() == Some(true) {
-        println!("cargo:rustc-cfg=gio");
+        println!("cargo:rustc-cfg=icu4x_gio_available");
     }
 }

@@ -52,7 +52,7 @@ impl HostInfoBackend for LinuxHostInfoBackend {
     }
 
     fn hour_cycle() -> Result<Option<HourCycle>, HostInfoError> {
-        #[cfg(gio)]
+        #[cfg(icu4x_gio_available)]
         if let Some(hc) = gnome_clock_format_hc() {
             return Ok(Some(hc));
         }
@@ -87,7 +87,7 @@ impl RawHostInfoBackend for LinuxHostInfoBackend {
     }
 }
 
-#[cfg(gio)]
+#[cfg(icu4x_gio_available)]
 fn gnome_clock_format_hc() -> Option<HourCycle> {
     use gio::prelude::*;
     let s = gio::Settings::new("org.gnome.desktop.interface");
