@@ -79,18 +79,16 @@ export class TimeZone {
     /**
      * Construct a {@link TimeZone} from an IANA time zone ID.
      *
-     * See {@link IanaParser}.
-     *
      * See the [Rust documentation for `from_iana_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_iana_id) for more information.
      */
-    static fromIanaId(ianaId) {
+    static createFromIanaId(ianaId) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const ianaIdSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, ianaId)));
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [ianaIdSlice];
 
 
-        const result = wasm.icu4x_TimeZone_from_iana_id_mv1(ianaIdSlice.ptr);
+        const result = wasm.icu4x_TimeZone_create_from_iana_id_mv1(ianaIdSlice.ptr);
 
         try {
             return new TimeZone(diplomatRuntime.internalConstructor, result, []);
@@ -108,7 +106,7 @@ export class TimeZone {
      *
      * See the [Rust documentation for `from_windows_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_windows_id) for more information.
      */
-    static fromWindowsId(windowsId, region) {
+    static createFromWindowsId(windowsId, region) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const windowsIdSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, windowsId)));
         const regionSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
@@ -116,7 +114,7 @@ export class TimeZone {
         let aEdges = [windowsIdSlice, regionSlice];
 
 
-        const result = wasm.icu4x_TimeZone_from_windows_id_mv1(windowsIdSlice.ptr, regionSlice.ptr);
+        const result = wasm.icu4x_TimeZone_create_from_windows_id_mv1(windowsIdSlice.ptr, regionSlice.ptr);
 
         try {
             return new TimeZone(diplomatRuntime.internalConstructor, result, []);
@@ -134,7 +132,7 @@ export class TimeZone {
      *
      * See the [Rust documentation for `from_system_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_system_id) for more information.
      */
-    static fromSystemId(id, region) {
+    static createFromSystemId(id, region) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const idSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, id)));
         const regionSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
@@ -142,7 +140,7 @@ export class TimeZone {
         let aEdges = [idSlice, regionSlice];
 
 
-        const result = wasm.icu4x_TimeZone_from_system_id_mv1(idSlice.ptr, regionSlice.ptr);
+        const result = wasm.icu4x_TimeZone_create_from_system_id_mv1(idSlice.ptr, regionSlice.ptr);
 
         try {
             return new TimeZone(diplomatRuntime.internalConstructor, result, []);

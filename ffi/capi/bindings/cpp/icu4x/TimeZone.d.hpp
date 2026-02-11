@@ -51,25 +51,23 @@ public:
   /**
    * Construct a {@link TimeZone} from an IANA time zone ID.
    *
-   * See {@link IanaParser}.
-   *
    * See the [Rust documentation for `from_iana_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_iana_id) for more information.
    */
-  inline static std::unique_ptr<icu4x::TimeZone> from_iana_id(std::string_view iana_id);
+  inline static std::unique_ptr<icu4x::TimeZone> create_from_iana_id(std::string_view iana_id);
 
   /**
    * Construct a {@link TimeZone} from a Windows time zone ID and region.
    *
    * See the [Rust documentation for `from_windows_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_windows_id) for more information.
    */
-  inline static std::unique_ptr<icu4x::TimeZone> from_windows_id(std::string_view windows_id, std::string_view region);
+  inline static std::unique_ptr<icu4x::TimeZone> create_from_windows_id(std::string_view windows_id, std::string_view region);
 
   /**
    * Construct a {@link TimeZone} from the platform-specific ID.
    *
    * See the [Rust documentation for `from_system_id`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.from_system_id) for more information.
    */
-  inline static std::unique_ptr<icu4x::TimeZone> from_system_id(std::string_view id, std::string_view _region);
+  inline static std::unique_ptr<icu4x::TimeZone> create_from_system_id(std::string_view id, std::string_view _region);
 
   /**
    * Creates a time zone from a BCP-47 string.

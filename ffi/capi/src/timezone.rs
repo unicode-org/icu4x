@@ -34,11 +34,11 @@ pub mod ffi {
         }
 
         /// Construct a [`TimeZone`] from an IANA time zone ID.
-        ///
-        /// See [`IanaParser`].
         #[diplomat::rust_link(icu::time::TimeZone::from_iana_id, FnInStruct)]
+        #[diplomat::demo(default_constructor)]
+        #[diplomat::attr(auto, named_constructor = "from_iana_id")]
         #[cfg(feature = "compiled_data")]
-        pub fn from_iana_id<'a>(iana_id: &'a DiplomatStr) -> Box<Self> {
+        pub fn create_from_iana_id<'a>(iana_id: &'a DiplomatStr) -> Box<Self> {
             Box::new(Self(
                 icu_time::zone::IanaParser::new().parse_from_utf8(iana_id),
             ))
@@ -46,8 +46,9 @@ pub mod ffi {
 
         /// Construct a [`TimeZone`] from a Windows time zone ID and region.
         #[diplomat::rust_link(icu::time::TimeZone::from_windows_id, FnInStruct)]
+        #[diplomat::attr(auto, named_constructor = "from_windows_id")]
         #[cfg(feature = "compiled_data")]
-        pub fn from_windows_id<'a>(
+        pub fn create_from_windows_id<'a>(
             windows_id: &'a DiplomatStr,
             region: &'a DiplomatStr,
         ) -> Box<Self> {
@@ -63,12 +64,13 @@ pub mod ffi {
 
         /// Construct a [`TimeZone`] from the platform-specific ID.
         #[diplomat::rust_link(icu::time::TimeZone::from_system_id, FnInStruct)]
+        #[diplomat::attr(auto, named_constructor = "from_system_id")]
         #[cfg(feature = "compiled_data")]
-        pub fn from_system_id<'a>(id: &'a DiplomatStr, _region: &'a DiplomatStr) -> Box<Self> {
+        pub fn create_from_system_id<'a>(id: &'a DiplomatStr, _region: &'a DiplomatStr) -> Box<Self> {
             #[cfg(target_os = "windows")]
-            return Self::from_windows_id(id, _region);
+            return Self::create_from_windows_id(id, _region);
             #[cfg(not(target_os = "windows"))]
-            return Self::from_iana_id(id);
+            return Self::create_from_iana_id(id);
         }
 
         /// Creates a time zone from a BCP-47 string.
@@ -76,7 +78,6 @@ pub mod ffi {
         /// Returns the unknown time zone if the string is not a valid BCP-47 subtag.
         #[diplomat::rust_link(icu::time::TimeZone, Struct, compact)]
         #[diplomat::attr(auto, named_constructor = "from_bcp47")]
-        #[diplomat::demo(default_constructor)]
         pub fn create_from_bcp47(id: &DiplomatStr) -> Box<Self> {
             icu_locale_core::subtags::Subtag::try_from_utf8(id)
                 .ok()

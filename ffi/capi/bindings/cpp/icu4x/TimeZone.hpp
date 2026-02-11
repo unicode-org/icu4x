@@ -24,11 +24,11 @@ namespace capi {
 
     bool icu4x_TimeZone_is_unknown_mv1(const icu4x::capi::TimeZone* self);
 
-    icu4x::capi::TimeZone* icu4x_TimeZone_from_iana_id_mv1(icu4x::diplomat::capi::DiplomatStringView iana_id);
+    icu4x::capi::TimeZone* icu4x_TimeZone_create_from_iana_id_mv1(icu4x::diplomat::capi::DiplomatStringView iana_id);
 
-    icu4x::capi::TimeZone* icu4x_TimeZone_from_windows_id_mv1(icu4x::diplomat::capi::DiplomatStringView windows_id, icu4x::diplomat::capi::DiplomatStringView region);
+    icu4x::capi::TimeZone* icu4x_TimeZone_create_from_windows_id_mv1(icu4x::diplomat::capi::DiplomatStringView windows_id, icu4x::diplomat::capi::DiplomatStringView region);
 
-    icu4x::capi::TimeZone* icu4x_TimeZone_from_system_id_mv1(icu4x::diplomat::capi::DiplomatStringView id, icu4x::diplomat::capi::DiplomatStringView _region);
+    icu4x::capi::TimeZone* icu4x_TimeZone_create_from_system_id_mv1(icu4x::diplomat::capi::DiplomatStringView id, icu4x::diplomat::capi::DiplomatStringView _region);
 
     icu4x::capi::TimeZone* icu4x_TimeZone_create_from_bcp47_mv1(icu4x::diplomat::capi::DiplomatStringView id);
 
@@ -52,19 +52,19 @@ inline bool icu4x::TimeZone::is_unknown() const {
     return result;
 }
 
-inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::from_iana_id(std::string_view iana_id) {
-    auto result = icu4x::capi::icu4x_TimeZone_from_iana_id_mv1({iana_id.data(), iana_id.size()});
+inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::create_from_iana_id(std::string_view iana_id) {
+    auto result = icu4x::capi::icu4x_TimeZone_create_from_iana_id_mv1({iana_id.data(), iana_id.size()});
     return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::from_windows_id(std::string_view windows_id, std::string_view region) {
-    auto result = icu4x::capi::icu4x_TimeZone_from_windows_id_mv1({windows_id.data(), windows_id.size()},
+inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::create_from_windows_id(std::string_view windows_id, std::string_view region) {
+    auto result = icu4x::capi::icu4x_TimeZone_create_from_windows_id_mv1({windows_id.data(), windows_id.size()},
         {region.data(), region.size()});
     return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::from_system_id(std::string_view id, std::string_view _region) {
-    auto result = icu4x::capi::icu4x_TimeZone_from_system_id_mv1({id.data(), id.size()},
+inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::create_from_system_id(std::string_view id, std::string_view _region) {
+    auto result = icu4x::capi::icu4x_TimeZone_create_from_system_id_mv1({id.data(), id.size()},
         {_region.data(), _region.size()});
     return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
