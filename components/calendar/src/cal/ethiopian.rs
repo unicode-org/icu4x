@@ -285,7 +285,7 @@ impl Date<Ethiopian> {
     /// Construct new Ethiopian [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
     /// Years are interpreted according to the provided `era_style`.
     ///
