@@ -188,15 +188,14 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        choco install pkgconfiglite
-      
+        choco install pkgconfiglite -y
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
-
         .\vcpkg\vcpkg install harfbuzz:x64-windows
-
-        echo "PKG_CONFIG_PATH=$PWD/vcpkg/installed/x64-windows/lib/pkgconfig" >> $GITHUB_ENV
-        echo "$PWD/vcpkg/installed/x64-windows/bin" >> $GITHUB_PATH
+        $pkg_path = Join-Path $env:GITHUB_WORKSPACE "vcpkg\installed\x64-windows\lib\pkgconfig"
+        echo "PKG_CONFIG_PATH=$pkg_path" >> $env:GITHUB_ENV
+        $bin_path = Join-Path $env:GITHUB_WORKSPACE "vcpkg\installed\x64-windows\bin"
+        echo "$bin_path" >> $env:GITHUB_PATH
 
     # Actual job
     - name: Run `cargo make ci-job-test-cargo`
