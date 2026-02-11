@@ -229,6 +229,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ArithmeticDate::new_unchecked(self.year(), self.month(), self.day())
     }
 
+    // Used by `from_codes`, checks `VALID_YEAR_RANGE`
     pub(crate) fn from_era_year_month_code_day(
         era: Option<&str>,
         year: i32,
@@ -261,6 +262,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Ok(ArithmeticDate::new_unchecked(year, month, day))
     }
 
+    // Used by calendar-specific constructors (lunisolar), checks `VALID_YEAR_RANGE`
     pub(crate) fn try_from_ymd_lunisolar(
         year: i32,
         month: Month,
@@ -320,6 +322,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // NOTE: The year/extendedyear range check is important to avoid arithmetic
         // overflow in `year_info_from_era` and `year_info_from_extended`. It
         // must happen before they are called.
+        // TODO: update to a wider year range that allows for the full RD range to constructed
         //
         // To better match the Temporal specification's order of operations, we try
         // to return structural type errors (`NotEnoughFields`) before checking for range errors.
@@ -417,6 +420,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Ok(Self::new_unchecked(year, constrained_month, day))
     }
 
+    // Used by calendar-specific constructors (non-lunisolar), checks `VALID_YEAR_RANGE`
     pub(crate) fn from_year_month_day(
         year: i32,
         month: u8,
@@ -437,6 +441,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Ok(ArithmeticDate::new_unchecked(year_info, month, day))
     }
 
+    // Used by calendar-specific constructors (Japanese), checks `VALID_YEAR_RANGE`
     pub(crate) fn from_era_year_month_day(
         era: &str,
         year: i32,

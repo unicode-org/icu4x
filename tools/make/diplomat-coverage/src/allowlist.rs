@@ -279,12 +279,6 @@ lazy_static::lazy_static! {
         // Serde-specific
         "icu::datetime::fieldsets::serde",
 
-        // By-value methods on non-Copy types are not possible over FFI
-        "icu::segmenter::LineSegmenterBorrowed::with_dictionary",
-        "icu::segmenter::LineSegmenterBorrowed::with_lstm",
-        "icu::segmenter::WordSegmenterBorrowed::with_dictionary",
-        "icu::segmenter::WordSegmenterBorrowed::with_lstm",
-
         // Stuff that is unstable
         //
         // We should occasionally review these
@@ -454,9 +448,6 @@ lazy_static::lazy_static! {
         // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
         "icu_provider_adapters::fork::MultiForkByMarkerProvider",
-
-        // Specialized constructor for separately constructed instances
-        "icu::time::IanaParserExtended::try_new_with_mapper",
 
         // macros
         "icu::locale::langid",

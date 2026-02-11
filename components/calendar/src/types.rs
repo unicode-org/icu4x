@@ -66,8 +66,8 @@ mod unstable {
         /// If set, [`Self::era`] must also be set.
         ///
         /// [`Date::try_from_fields`](crate::Date::try_from_fields)  accepts years in
-        /// the range `-1,000,000..=1,000,000`, where the `extended_year` is also in
-        /// the range `-1,000,000..=1,000,000`.
+        /// the range `-9999..=9999`, where the `extended_year` is also in
+        /// the range `-9999..=9999`.
         ///
         /// # Examples
         ///
@@ -87,7 +87,7 @@ mod unstable {
         /// refer to the same year.
         ///
         /// [`Date::try_from_fields`](crate::Date::try_from_fields) accepts extended years
-        /// in the range `-1,000,000..=1,000,000`.
+        /// in the range `-9999..=9999`.
         ///
         /// # Examples
         ///

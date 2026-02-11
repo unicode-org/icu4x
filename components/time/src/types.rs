@@ -370,23 +370,46 @@ impl ZonedDateTime<Iso, UtcOffset> {
     ///     ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
     /// assert_eq!(zdt_from_timestamp, zdt_from_str);
     /// ```
+    ///
+    /// When epoch milliseconds exceed the representable date range, the date component
+    /// saturates to the maximum or minimum representable date in the ISO calendar
+    ///
+    /// ```
+    /// use icu::calendar::cal::Iso;
+    /// use icu::time::zone::UtcOffset;
+    /// use icu::time::ZonedDateTime;
+    ///
+    /// let max_offset = UtcOffset::try_from_seconds(50400).unwrap(); // +14 hours
+    /// let zdt_max = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///         i64::MAX,
+    ///         max_offset
+    ///     );
+    ///
+    /// let min_offset = UtcOffset::try_from_seconds(-43200).unwrap(); // -12 hours
+    /// let zdt_min = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///         i64::MIN,
+    ///         min_offset
+    ///     );
+    /// ```
     pub fn from_epoch_milliseconds_and_utc_offset(
         epoch_milliseconds: i64,
         utc_offset: UtcOffset,
     ) -> Self {
-        // TODO(#6512): Handle overflow
-        let local_epoch_milliseconds = epoch_milliseconds + (1000 * utc_offset.to_seconds()) as i64;
-        let (epoch_days, time_millisecs) = (
-            local_epoch_milliseconds.div_euclid(86400000),
-            local_epoch_milliseconds.rem_euclid(86400000),
+        let (utc_epoch_days, utc_time_millisecs) = (
+            epoch_milliseconds.div_euclid(86400000),
+            epoch_milliseconds.rem_euclid(86400000),
         );
-        let rata_die = UNIX_EPOCH + epoch_days;
+        let offset_millisecs = 1000 * (utc_offset.to_seconds() as i64);
+        let local_time_millisecs = utc_time_millisecs + offset_millisecs;
+        let day_adjustment = local_time_millisecs.div_euclid(86400000);
+        let final_time_millisecs = local_time_millisecs.rem_euclid(86400000);
+        let rata_die = UNIX_EPOCH + utc_epoch_days + day_adjustment;
         #[expect(clippy::unwrap_used)] // these values are derived via modulo operators
         let time = Time::try_new(
-            (time_millisecs / 3600000) as u8,
-            ((time_millisecs % 3600000) / 60000) as u8,
-            ((time_millisecs % 60000) / 1000) as u8,
-            ((time_millisecs % 1000) as u32) * 1000000,
+            (final_time_millisecs / 3600000) as u8,
+            ((final_time_millisecs % 3600000) / 60000) as u8,
+            ((final_time_millisecs % 60000) / 1000) as u8,
+            ((final_time_millisecs % 1000) as u32) * 1000000,
         )
         .unwrap();
         ZonedDateTime {
