@@ -5,11 +5,12 @@
 use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, UnstableSealed};
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
 use icu_calendar::{AnyCalendar, Date, Gregorian};
+#[cfg(feature = "compiled_data")]
 use icu_time::zone::models::AtTime;
 use icu_time::zone::{UtcOffset, ZoneNameTimestamp};
+use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
 #[cfg(feature = "compiled_data")]
-use icu_time::TimeZone;
-use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, TimeZoneInfo, ZonedDateTime};
+use icu_time::{TimeZone, TimeZoneInfo};
 
 impl UnstableSealed for jiff::civil::Time {}
 impl InFixedCalendar<()> for jiff::civil::Time {}
@@ -19,34 +20,25 @@ impl GetField<()> for jiff::civil::Time {
 
 impl GetField<Hour> for jiff::civil::Time {
     fn get_field(&self) -> Hour {
-        #[allow(clippy::unwrap_used)] // jiff returns valid fields
-        Hour::try_from(self.hour() as u8).unwrap()
+        Time::from(*self).hour
     }
 }
 
 impl GetField<Minute> for jiff::civil::Time {
     fn get_field(&self) -> Minute {
-        #[allow(clippy::unwrap_used)] // jiff returns valid fields
-        Minute::try_from(self.minute() as u8).unwrap()
+        Time::from(*self).minute
     }
 }
 
 impl GetField<Second> for jiff::civil::Time {
     fn get_field(&self) -> Second {
-        #[allow(clippy::unwrap_used)] // jiff returns valid fields
-        Second::try_from(self.second() as u8).unwrap()
+        Time::from(*self).second
     }
 }
 
 impl GetField<Nanosecond> for jiff::civil::Time {
     fn get_field(&self) -> Nanosecond {
-        #[allow(clippy::unwrap_used)] // jiff returns valid fields
-        Nanosecond::try_from(
-            self.millisecond() as u32 * 1_000_000
-                + self.microsecond() as u32 * 1_000
-                + self.nanosecond() as u32,
-        )
-        .unwrap()
+        Time::from(*self).subsecond
     }
 }
 
@@ -59,20 +51,14 @@ impl GetField<()> for jiff::civil::Date {
 impl GetField<YearInfo> for jiff::civil::Date {
     #[inline]
     fn get_field(&self) -> YearInfo {
-        #[allow(clippy::unwrap_used)] // jiff returns valid fields
-        Date::try_new_gregorian(self.year() as i32, self.month() as u8, self.day() as u8)
-            .unwrap()
-            .year()
+        Date::from(*self).year()
     }
 }
 
 impl GetField<MonthInfo> for jiff::civil::Date {
     #[inline]
     fn get_field(&self) -> MonthInfo {
-        #[allow(clippy::unwrap_used)] // jiff returns valid fields
-        Date::try_new_gregorian(self.year() as i32, self.month() as u8, self.day() as u8)
-            .unwrap()
-            .month()
+        Date::from(*self).month()
     }
 }
 
@@ -108,10 +94,7 @@ impl GetField<DayOfYear> for jiff::civil::Date {
 impl GetField<RataDie> for jiff::civil::Date {
     #[inline]
     fn get_field(&self) -> RataDie {
-        #[allow(clippy::unwrap_used)] // jiff returns valid fields
-        Date::try_new_gregorian(self.year() as i32, self.month() as u8, self.day() as u8)
-            .unwrap()
-            .to_rata_die()
+        Date::from(*self).to_rata_die()
     }
 }
 
@@ -124,7 +107,7 @@ impl GetField<()> for jiff::tz::Offset {
 impl GetField<Option<UtcOffset>> for jiff::tz::Offset {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
-        Some(UtcOffset::from_seconds_unchecked(self.seconds()))
+        Some((*self).into())
     }
 }
 
@@ -276,7 +259,7 @@ impl GetField<RataDie> for jiff::Zoned {
 impl GetField<TimeZone> for jiff::Zoned {
     #[inline]
     fn get_field(&self) -> TimeZone {
-        icu_time::zone::IanaParser::new().parse(self.time_zone().iana_name().unwrap_or_default())
+        TimeZone::from(self.time_zone())
     }
 }
 
@@ -323,8 +306,10 @@ impl ConvertCalendar for jiff::civil::DateTime {
     }
 }
 
+#[cfg(feature = "compiled_data")]
 impl ConvertCalendar for jiff::Zoned {
-    type Converted<'a> = <ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>> as ConvertCalendar>::Converted<'a>;
+    type Converted<'a> =
+        <ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>> as ConvertCalendar>::Converted<'a>;
 
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
         ConvertCalendar::to_calendar(&ZonedDateTime::from(self), calendar)
@@ -354,10 +339,7 @@ fn jiff() {
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
     .unwrap();
-    assert_writeable_eq!(
-        ymdt.format(&jiff),
-        "令和6年9月11日 8:37:20 日本標準時"
-    );
+    assert_writeable_eq!(ymdt.format(&jiff), "令和6年9月11日 8:37:20 日本標準時");
 
     let ymd =
         DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::YMD::medium())

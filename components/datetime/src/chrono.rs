@@ -3,14 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, UnstableSealed};
-use chrono::{Datelike, Offset, Timelike};
+use chrono::{Datelike, Offset};
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
 use icu_calendar::{AnyCalendar, Date, Gregorian};
+#[cfg(feature = "compiled_data")]
 use icu_time::zone::models::AtTime;
 use icu_time::zone::{UtcOffset, ZoneNameTimestamp};
+use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
 #[cfg(feature = "compiled_data")]
-use icu_time::TimeZone;
-use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, TimeZoneInfo, ZonedDateTime};
+use icu_time::{TimeZone, TimeZoneInfo};
 
 impl UnstableSealed for chrono::NaiveTime {}
 impl InFixedCalendar<()> for chrono::NaiveTime {}
@@ -20,29 +21,25 @@ impl GetField<()> for chrono::NaiveTime {
 
 impl GetField<Hour> for chrono::NaiveTime {
     fn get_field(&self) -> Hour {
-        #[allow(clippy::unwrap_used)] // chrono returns valid fields
-        Hour::try_from(self.hour() as u8).unwrap()
+        Time::from(*self).hour
     }
 }
 
 impl GetField<Minute> for chrono::NaiveTime {
     fn get_field(&self) -> Minute {
-        #[allow(clippy::unwrap_used)] // chrono returns valid fields
-        Minute::try_from(self.minute() as u8).unwrap()
+        Time::from(*self).minute
     }
 }
 
 impl GetField<Second> for chrono::NaiveTime {
     fn get_field(&self) -> Second {
-        #[allow(clippy::unwrap_used)] // chrono returns valid fields
-        Second::try_from(self.second() as u8).unwrap()
+        Time::from(*self).second
     }
 }
 
 impl GetField<Nanosecond> for chrono::NaiveTime {
     fn get_field(&self) -> Nanosecond {
-        #[allow(clippy::unwrap_used)] // chrono returns valid fields
-        Nanosecond::try_from(self.nanosecond()).unwrap()
+        Time::from(*self).subsecond
     }
 }
 
@@ -55,20 +52,14 @@ impl GetField<()> for chrono::NaiveDate {
 impl GetField<YearInfo> for chrono::NaiveDate {
     #[inline]
     fn get_field(&self) -> YearInfo {
-        #[allow(clippy::unwrap_used)] // chrono returns valid fields
-        Date::try_new_gregorian(self.year(), self.month() as u8, self.day() as u8)
-            .unwrap()
-            .year()
+        Date::from(*self).year()
     }
 }
 
 impl GetField<MonthInfo> for chrono::NaiveDate {
     #[inline]
     fn get_field(&self) -> MonthInfo {
-        #[allow(clippy::unwrap_used)] // chrono returns valid fields
-        Date::try_new_gregorian(self.year(), self.month() as u8, self.day() as u8)
-            .unwrap()
-            .month()
+        Date::from(*self).month()
     }
 }
 
@@ -97,17 +88,14 @@ impl GetField<Weekday> for chrono::NaiveDate {
 impl GetField<DayOfYear> for chrono::NaiveDate {
     #[inline]
     fn get_field(&self) -> DayOfYear {
-        #[allow(clippy::unwrap_used)] // chrono returns valid fields
-        Date::try_new_gregorian(self.year(), self.month() as u8, self.day() as u8)
-            .unwrap()
-            .day_of_year()
+        DayOfYear(self.ordinal() as u16)
     }
 }
 
 impl GetField<RataDie> for chrono::NaiveDate {
     #[inline]
     fn get_field(&self) -> RataDie {
-        RataDie::new(self.num_days_from_ce() as i64)
+        RataDie::new(0) + self.num_days_from_ce() as i64
     }
 }
 
@@ -120,7 +108,7 @@ impl GetField<()> for chrono::FixedOffset {
 impl GetField<Option<UtcOffset>> for chrono::FixedOffset {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
-        Some(UtcOffset::from_seconds_unchecked(self.local_minus_utc()))
+        Some((*self).into())
     }
 }
 
@@ -272,7 +260,7 @@ impl<Tz: chrono::TimeZone> GetField<RataDie> for chrono::DateTime<Tz> {
 impl GetField<TimeZone> for chrono::DateTime<chrono_tz::Tz> {
     #[inline]
     fn get_field(&self) -> TimeZone {
-        icu_time::zone::IanaParser::new().parse(self.timezone().name())
+        TimeZone::from(self.timezone())
     }
 }
 
@@ -319,6 +307,7 @@ impl ConvertCalendar for chrono::NaiveDateTime {
     }
 }
 
+#[cfg(feature = "compiled_data")]
 impl ConvertCalendar for chrono::DateTime<chrono_tz::Tz> {
     type Converted<'a> =
         <ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>> as ConvertCalendar>::Converted<'a>;
@@ -350,10 +339,7 @@ fn chrono() {
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
     .unwrap();
-    assert_writeable_eq!(
-        ymdt.format(&chrono),
-        "令和6年9月11日 8:37:20 日本標準時"
-    );
+    assert_writeable_eq!(ymdt.format(&chrono), "令和6年9月11日 8:37:20 日本標準時");
 
     let ymd =
         DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::YMD::medium())

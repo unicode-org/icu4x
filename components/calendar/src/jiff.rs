@@ -24,22 +24,19 @@ impl From<jiff::civil::Date> for Date<Gregorian> {
 #[test]
 fn assert_range() {
     use crate::calendar_arithmetic::VALID_RD_RANGE;
-    use crate::types::RataDie;
 
     assert!(VALID_RD_RANGE.contains(
-        &(RataDie::new(
-            jiff::civil::Date::MIN
-                .since(jiff::civil::Date::ZERO)
-                .unwrap()
-                .get_days() as i64
+        &(calendrical_calculations::gregorian::fixed_from_gregorian(
+            jiff::civil::Date::MIN.year() as i32,
+            jiff::civil::Date::MIN.month() as u8,
+            jiff::civil::Date::MIN.day() as u8
         ))
     ));
     assert!(VALID_RD_RANGE.contains(
-        &(RataDie::new(
-            jiff::civil::Date::MAX
-                .since(jiff::civil::Date::ZERO)
-                .unwrap()
-                .get_days() as i64
+        &(calendrical_calculations::gregorian::fixed_from_gregorian(
+            jiff::civil::Date::MAX.year() as i32,
+            jiff::civil::Date::MAX.month() as u8,
+            jiff::civil::Date::MAX.day() as u8
         ))
     ));
 }
