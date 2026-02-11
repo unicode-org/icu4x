@@ -1832,7 +1832,7 @@ mod test {
                 };
 
                 let chinese =
-                    Date::try_new_korean_traditional(related_iso, lunar_month, lunar_day).unwrap();
+                    Date::try_new_chinese_traditional(related_iso, lunar_month, lunar_day).unwrap();
 
                 assert_eq!(
                     gregorian,
