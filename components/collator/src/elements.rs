@@ -32,6 +32,15 @@ use zerovec::{zeroslice, ZeroSlice};
 
 use crate::provider::CollationData;
 
+/// `true` iff `ce32`, when interpreted as `CollationElement32`,
+/// is self-contained.
+#[cfg(feature = "datagen")]
+pub fn is_self_contained(ce32: u32) -> bool {
+    CollationElement32::new(ce32).to_ce_self_contained().is_some()
+}
+
+
+
 // Start `SmallVec` size constants.
 //
 // These are the on-stack buffer sizes. If the buffers need

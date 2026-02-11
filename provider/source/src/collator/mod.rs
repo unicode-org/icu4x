@@ -256,6 +256,7 @@ fn rebuild_data<'a>(
                 0x10000
             };
             rewritten_fast.reserve_exact(bound as usize);
+            rewritten_fast.resize(bound as usize, default_value);
             for i in 0..bound {
                 rewritten_fast[i as usize] = trie.get32(i);
             }
@@ -269,7 +270,33 @@ fn rebuild_data<'a>(
                     rewritten_fast[i as usize] = default_value;
                 }
             }
-            
+            // Copy the ASCII range
+            for i in 0..0x80 {
+                if rewritten_fast[i as usize] == default_value {
+                    let ce32 = root.get32(i);
+                    if icu::collator::is_self_contained(ce32) {
+                        rewritten_fast[i as usize] = ce32;
+                    }
+                }
+            }
+            // Fill the 6-bit blocks
+            let mut i = 0;
+            while i < bound {
+                for j in 0..0b1_000_000 {
+                    if rewritten_fast[(i + j) as usize] != default_value {
+                        for k in 0..0b1_000_000 {
+                            if rewritten_fast[(i + k) as usize] == default_value {
+                                let ce32 = root.get32(i + k);
+                                if icu::collator::is_self_contained(ce32) {
+                                    rewritten_fast[(i + k) as usize] = ce32;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                i += 0b1_000_000;
+            }
         }
         let mut builder =
             CodePointTrieBuilder::new(default_value, trie.get32(u32::MAX), trie_type);
@@ -342,7 +369,7 @@ fn decide_trie_type(id: &DataIdentifierBorrowed) -> icu::collections::codepointt
         || lang == language!("km")
         || lang == language!("my")
     {
-        return icu::collections::codepointtrie::TrieType::Fast;
+        return icu::collections::codepointtrie::TrieType::Small;
     }
     // Delta from small to fast for Korean is 4332 bytes.
     // The common case for Korean doesn't go through this trie.

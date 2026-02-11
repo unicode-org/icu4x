@@ -172,11 +172,16 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             &all_strength,
         ),
         (
-            locale!("da-DK"),
-            vec![&content_latin, &content_photos],
+            locale!("sv"),
+            vec![&content_latin, &content_swedish, &content_photos],
             &all_strength,
         ),
-        (locale!("fr-CA"), vec![&content_latin], &all_strength),
+        // (
+        //     locale!("da-DK"),
+        //     vec![&content_latin, &content_photos],
+        //     &all_strength,
+        // ),
+        // (locale!("fr-CA"), vec![&content_latin], &all_strength),
         (
             locale!("ja-JP"),
             vec![&content_latin, &content_jp_h, &content_jp_k, &content_asian],
@@ -195,11 +200,6 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         (
             locale!("ru-RU"),
             vec![&content_latin, &content_russian],
-            &all_strength,
-        ),
-        (
-            locale!("sv"),
-            vec![&content_latin, &content_swedish],
             &all_strength,
         ),
         (

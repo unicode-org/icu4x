@@ -360,6 +360,9 @@ pub use comparison::Collator;
 pub use comparison::CollatorBorrowed;
 pub use comparison::CollatorPreferences;
 
+#[cfg(feature = "datagen")]
+pub use elements::is_self_contained;
+
 #[cfg(feature = "unstable")]
 pub use comparison::CollationKeySink;
 
