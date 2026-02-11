@@ -52,7 +52,6 @@ writeable = { path = "../../utils/writeable" }
 jiff = { workspace = true, features = ["tzdb-bundle-always", "tz-system", "std"] }
 chrono = { workspace = true }
 chrono-tz = { workspace = true }
-icu_host_info = { workspace = true, features = ["datetime"] }
 
 [features]
 default = [
