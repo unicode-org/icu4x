@@ -85,8 +85,8 @@ impl Prop {
 }
 
 struct BinaryProp {
-    property_name: String,
-    struct_name: String,
+    property_name: &'static str,
+    struct_name: &'static str,
 }
 
 impl BinaryProp {
