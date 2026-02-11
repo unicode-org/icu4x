@@ -155,43 +155,33 @@ impl FromStr for DecimalSubPattern {
         });
         let body_end = body_end.unwrap_or(body_start);
 
-        // Validate prefix: all items before body must be literals
+        // Validate and extract prefix: must be literals or affix symbols (¤, %, ‰, +, -)
+        let mut prefix = String::new();
         for item in &items[..body_start] {
-            if !matches!(item, DecimalPatternItem::Literal(_)) {
-                return Err(Error::InvalidAffixItem);
+            match item {
+                DecimalPatternItem::Literal(s) => prefix.push_str(s),
+                DecimalPatternItem::Currency => prefix.push('¤'),
+                DecimalPatternItem::Percent => prefix.push('%'),
+                DecimalPatternItem::PerMille => prefix.push('‰'),
+                DecimalPatternItem::PlusSign => prefix.push('+'),
+                DecimalPatternItem::MinusSign => prefix.push('-'),
+                _ => return Err(Error::InvalidAffixItem),
             }
         }
 
-        // Validate suffix: all items after body must be literals
+        // Validate and extract suffix: same rules as prefix
+        let mut suffix = String::new();
         for item in &items[body_end + 1..] {
-            if !matches!(item, DecimalPatternItem::Literal(_)) {
-                return Err(Error::InvalidAffixItem);
+            match item {
+                DecimalPatternItem::Literal(s) => suffix.push_str(s),
+                DecimalPatternItem::Currency => suffix.push('¤'),
+                DecimalPatternItem::Percent => suffix.push('%'),
+                DecimalPatternItem::PerMille => suffix.push('‰'),
+                DecimalPatternItem::PlusSign => suffix.push('+'),
+                DecimalPatternItem::MinusSign => suffix.push('-'),
+                _ => return Err(Error::InvalidAffixItem),
             }
         }
-
-        // Extract prefix
-        let prefix: String = items[..body_start]
-            .iter()
-            .filter_map(|item| {
-                if let DecimalPatternItem::Literal(s) = item {
-                    Some(s.as_str())
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        // Extract suffix
-        let suffix: String = items[body_end + 1..]
-            .iter()
-            .filter_map(|item| {
-                if let DecimalPatternItem::Literal(s) = item {
-                    Some(s.as_str())
-                } else {
-                    None
-                }
-            })
-            .collect();
 
         // Validate body: only digit placeholders and separators are allowed
         let body_items = &items[body_start..=body_end];
