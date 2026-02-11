@@ -95,8 +95,8 @@ logging = ["icu_calendar/logging"]
 unstable = []
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
-jiff = ["dep:jiff"]
-chrono = ["dep:chrono", "dep:chrono-tz"]
+jiff_0_2 = ["dep:jiff", "icu_time/jiff_0_2", "icu_calendar/jiff_0_2"]
+chrono_0_4 = ["dep:chrono", "dep:chrono-tz", "icu_time/chrono_0_4", "icu_calendar/chrono_0_4"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

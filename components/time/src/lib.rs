@@ -38,7 +38,7 @@ pub use zone::{TimeZone, TimeZoneInfo};
 mod types;
 pub use types::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
 
-#[cfg(feature = "chrono")]
+#[cfg(feature = "chrono_0_4")]
 mod chrono;
-#[cfg(feature = "jiff")]
+#[cfg(feature = "jiff_0_2")]
 mod jiff;

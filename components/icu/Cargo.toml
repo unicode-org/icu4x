@@ -44,8 +44,7 @@ memchr = { workspace = true, optional = true }
 icu_provider = { workspace = true }
 
 [dev-dependencies]
-icu_datetime = { path = "../../components/datetime", features = ["serde", "chrono", "jiff"] }
-icu_time = { path = "../../components/time", features = ["chrono", "jiff"] }
+icu_datetime = { path = "../../components/datetime", features = ["serde", "jiff_0_2", "chrono_0_4"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }

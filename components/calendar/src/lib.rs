@@ -109,6 +109,10 @@ mod duration;
 pub mod error;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
+#[cfg(feature = "chrono_0_4")]
+mod chrono;
+#[cfg(feature = "jiff_0_2")]
+mod jiff;
 
 // Top-level types
 pub use any_calendar::IntoAnyCalendar;

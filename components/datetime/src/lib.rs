@@ -120,14 +120,14 @@
 
 extern crate alloc;
 
-#[cfg(feature = "chrono")]
+#[cfg(feature = "chrono_0_4")]
 mod chrono;
 mod combo;
 mod error;
 mod external_loaders;
 pub mod fieldsets;
 mod format;
-#[cfg(feature = "jiff")]
+#[cfg(feature = "jiff_0_2")]
 mod jiff;
 mod neo;
 pub mod options;

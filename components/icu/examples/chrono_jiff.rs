@@ -3,47 +3,42 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu::{
-    datetime::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter},
+    datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
-    time::ZonedDateTime,
 };
 
 fn main() {
     // jiff requires `std` as of 0.2
-    let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)
-        .unwrap()
-        .to_zoned(jiff::tz::TimeZone::get("Asia/Tokyo").unwrap());
+    let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789).unwrap();
 
     // chrono and chrono_tz are `#[no_std]`
-    let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)
-        .with_timezone(&"Asia/Tokyo".parse().unwrap());
+    let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789);
 
-    // jiff and chrono types can be formatted with a `FixedCalendarDateTimeFormatter<Gregorian>`
-
-    let fixed_formatter = FixedCalendarDateTimeFormatter::try_new(
-        locale!("fr").into(),
+    let formatter = DateTimeFormatter::try_new(
+        locale!("ja-u-ca-japanese").into(),
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
-    .unwrap();
+    .expect("data is present");
 
-    println!("direct jiff: {}", fixed_formatter.format(&jiff));
-    println!("direct chrono: {}", fixed_formatter.format(&chrono));
+    println!("{}", formatter.format(&jiff.in_tz("Asia/Tokyo").unwrap()));
 
-    // For calendrical conversions and usage with `DateTimeFormatter`, conversions between icu
-    // types and jiff/chrono types are also available
+    println!(
+        "{}",
+        formatter.format(&chrono.with_timezone(&"Asia/Tokyo".parse().unwrap()))
+    );
 
-    let converting_formatter = DateTimeFormatter::try_new(
-        locale!("en-GB-u-ca-japanese").into(),
+    let formatter = DateTimeFormatter::try_new(
+        locale!("en-US").into(),
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
     .expect("data is present");
 
     println!(
-        "converted jiff: {}",
-        converting_formatter.format(&ZonedDateTime::from(&jiff))
+        "{}",
+        formatter.format(&jiff.in_tz("Pacific/Honolulu").unwrap())
     );
     println!(
-        "converted chrono: {}",
-        converting_formatter.format(&ZonedDateTime::from(&chrono))
+        "{}",
+        formatter.format(&chrono.with_timezone(&"Pacific/Honolulu".parse().unwrap()))
     );
 }

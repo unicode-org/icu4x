@@ -1224,6 +1224,7 @@ name = "icu_calendar"
 version = "2.1.1"
 dependencies = [
  "calendrical_calculations",
+ "chrono",
  "criterion",
  "databake",
  "displaydoc",
@@ -1235,6 +1236,7 @@ dependencies = [
  "insta",
  "itertools 0.14.0",
  "ixdtf",
+ "jiff",
  "serde",
  "serde_json",
  "simple_logger",

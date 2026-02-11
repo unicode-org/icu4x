@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::scaffold::{GetField, InFixedCalendar, UnstableSealed};
+use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, UnstableSealed};
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
-use icu_calendar::{Date, Gregorian};
+use icu_calendar::{AnyCalendar, Date, Gregorian};
+use icu_time::zone::models::AtTime;
 use icu_time::zone::{UtcOffset, ZoneNameTimestamp};
 #[cfg(feature = "compiled_data")]
 use icu_time::TimeZone;
-use icu_time::{Hour, Minute, Nanosecond, Second, ZonedDateTime};
+use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, TimeZoneInfo, ZonedDateTime};
 
 impl UnstableSealed for jiff::civil::Time {}
 impl InFixedCalendar<()> for jiff::civil::Time {}
@@ -298,9 +299,49 @@ impl GetField<ZoneNameTimestamp> for jiff::Zoned {
     }
 }
 
+impl ConvertCalendar for jiff::civil::Time {
+    type Converted<'a> = Self;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
+impl ConvertCalendar for jiff::civil::Date {
+    type Converted<'a> = <Date<Gregorian> as ConvertCalendar>::Converted<'a>;
+
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        ConvertCalendar::to_calendar(&Date::from(*self), calendar)
+    }
+}
+
+impl ConvertCalendar for jiff::civil::DateTime {
+    type Converted<'a> = <DateTime<Gregorian> as ConvertCalendar>::Converted<'a>;
+
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        ConvertCalendar::to_calendar(&DateTime::from(*self), calendar)
+    }
+}
+
+impl ConvertCalendar for jiff::Zoned {
+    type Converted<'a> = <ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>> as ConvertCalendar>::Converted<'a>;
+
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        ConvertCalendar::to_calendar(&ZonedDateTime::from(self), calendar)
+    }
+}
+
+impl ConvertCalendar for jiff::tz::Offset {
+    type Converted<'a> = Self;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
 #[test]
 fn jiff() {
-    use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter, NoCalendarFormatter};
+    use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
     use icu::locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -308,26 +349,28 @@ fn jiff() {
         .unwrap()
         .to_zoned(jiff::tz::TimeZone::get("Asia/Tokyo").unwrap());
 
-    let ymdt = FixedCalendarDateTimeFormatter::try_new(
-        locale!("en-GB").into(),
+    let ymdt = DateTimeFormatter::try_new(
+        locale!("ja-u-ca-japanese").into(),
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
     .unwrap();
     assert_writeable_eq!(
         ymdt.format(&jiff),
-        "11 Sept 2024, 08:37:20 Japan Standard Time"
+        "令和6年9月11日 8:37:20 日本標準時"
     );
 
     let ymd =
-        FixedCalendarDateTimeFormatter::try_new(locale!("en-GB").into(), fieldsets::YMD::medium())
+        DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::YMD::medium())
             .unwrap();
-    assert_writeable_eq!(ymd.format(&jiff.date()), "11 Sept 2024");
+    assert_writeable_eq!(ymd.format(&jiff.date()), "令和6年9月11日");
 
-    let t = NoCalendarFormatter::try_new(locale!("en-GB").into(), fieldsets::T::medium()).unwrap();
-    assert_writeable_eq!(t.format(&jiff.time()), "08:37:20");
+    let t =
+        NoCalendarFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::T::medium())
+            .unwrap();
+    assert_writeable_eq!(t.format(&jiff.time()), "8:37:20");
 
     let offset = NoCalendarFormatter::try_new(
-        locale!("en-GB").into(),
+        locale!("ja-u-ca-japanese").into(),
         fieldsets::zone::LocalizedOffsetLong,
     )
     .unwrap();
