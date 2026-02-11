@@ -13,9 +13,9 @@ else
 	SEP = /
 endif
 
-all: clean baked_data$(SEP)mod.rs
+all: clean baked_data/mod.rs
 
-..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT):
+../bin/icu4x-datagen$(BINARY_EXT):
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	ifeq ($(MODE), "release")
 		cargo install --path ..$(SEP)..$(SEP)..$(SEP)provider$(SEP)icu4x-datagen --root ..
@@ -23,7 +23,7 @@ all: clean baked_data$(SEP)mod.rs
 		cargo install --path ..$(SEP)..$(SEP)..$(SEP)provider$(SEP)icu4x-datagen --debug --root ..
 	endif
 
-baked_data$(SEP)mod.rs: ..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT)
+baked_data/mod.rs: ../bin/icu4x-datagen$(BINARY_EXT)
 	..$(SEP)bin$(SEP)icu4x-datagen$(BINARY_EXT) \
 		--format baked \
 		--markers all \
