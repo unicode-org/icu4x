@@ -320,8 +320,7 @@ pub fn main() {
     ];
 
     {
-        let mut path_buf = path_buf.clone();
-        path_buf.push("properties_sets.rs");
+        let mut path_buf = path_buf.join("properties_sets.rs");
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         writeln!(&mut file, "{}", PropertiesSets { binary_props }).unwrap();
