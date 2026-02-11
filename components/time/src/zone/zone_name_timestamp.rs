@@ -32,12 +32,12 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 /// use icu::datetime::fieldsets::zone::GenericLong;
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::TimeZone;
 /// use icu::time::zone::ZoneNameTimestamp;
 /// use icu::time::ZonedDateTime;
 /// use writeable::assert_writeable_eq;
 ///
-/// let metlakatla = IanaParser::new().parse("America/Metlakatla");
+/// let metlakatla = TimeZone::from_iana_id("America/Metlakatla");
 ///
 /// let zone_formatter =
 ///     NoCalendarFormatter::try_new(locale!("en-US").into(), GenericLong)
