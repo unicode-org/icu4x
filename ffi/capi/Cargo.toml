@@ -91,7 +91,7 @@ segmenter = ["dep:icu_segmenter"]
 timezone = ["calendar"]
 
 # Unstable features on individual components
-unstable = ["icu_calendar?/unstable", "icu_datetime?/unstable", "icu_plurals?/unstable"]
+unstable = ["icu_calendar?/unstable", "icu_datetime?/unstable", "icu_plurals?/unstable", "icu_time?/unstable"]
 
 compiled_data = [
     "icu_calendar?/compiled_data",
