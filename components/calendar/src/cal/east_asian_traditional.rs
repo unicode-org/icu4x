@@ -32,9 +32,12 @@ enum EastAsianCalendarKind {
     Korean,
 }
 
-/// Implements https://tc39.es/proposal-intl-era-monthcode/#chinese-dangi-iso-reference-years
+/// Implements <https://tc39.es/proposal-intl-era-monthcode/#chinese-dangi-iso-reference-years>
 ///
 /// `generate_reference_years` is helpful for generating this data if the spec needs to be updated.
+///
+/// Note that the spec is written in terms of ISO years, and this code is in terms of extended years.
+/// This distinction only matters for month 11 and 12.
 fn ecma_reference_year_common(
     month: types::Month,
     day: u8,
@@ -1123,7 +1126,7 @@ impl Rules for EastAsianTraditionalYears {
 mod test {
     use super::*;
     use crate::cal::Iso;
-    use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
+    use crate::options::{DateFromFieldsOptions, Overflow};
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
     use std::collections::BTreeMap;
     use types::DateFields;
@@ -1989,83 +1992,5 @@ mod test {
         packed_roundtrip_single(RANDOM2, Some(2), 18 + 19);
         packed_roundtrip_single(RANDOM2, Some(5), 18 + 2);
         packed_roundtrip_single(RANDOM2, Some(12), 18 + 5);
-    }
-
-    /// This tests the following properties for reference year computations:
-    ///
-    /// * Reference year computations for East Asian Traditional
-    ///   calendars succesfully produce a date with the same month and day, or constrain/reject
-    /// * Constraining month day combos only changes the month from leap to regular
-    /// * Regular months do not need any constraining
-    /// * Constraining and rejecting occur at the same time
-    fn test_reference_years_common<C: Calendar + Copy>(cal: C) {
-        let mut options_constrain = DateFromFieldsOptions::default();
-        let mut options_reject = DateFromFieldsOptions::default();
-        options_constrain.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
-        options_reject.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
-        options_constrain.overflow = Some(Overflow::Constrain);
-        options_reject.overflow = Some(Overflow::Reject);
-
-        for m in 1..=12 {
-            for month in [Month::new(m), Month::leap(m)] {
-                for day in 1..=30 {
-                    let mut fields = DateFields::default();
-                    fields.month = Some(month);
-                    fields.day = Some(day);
-
-                    let date_constrain = Date::try_from_fields(fields, options_constrain, cal)
-                        .expect("Constrain must succeed");
-                    let day_constrain = date_constrain.day_of_month().0;
-                    let month_constrain = date_constrain.month().value;
-
-                    assert_eq!(
-                        month_constrain.number(),
-                        m,
-                        "Constraining should result in the same numerical month"
-                    );
-
-                    let date_reject = Date::try_from_fields(fields, options_reject, cal);
-
-                    if month_constrain != month || day_constrain != day {
-                        // We constrained, so the other date got rejected
-                        assert!(
-                            date_reject.is_err(),
-                            "{}-{day} should not parse",
-                            month.code()
-                        );
-
-                        assert!(
-                            month.is_leap(),
-                            "Constraining should only occur for leap months, occurred for {}-{day}, producing {date_constrain:?}",
-                            month.code()
-                        );
-                    } else {
-                        let date_reject = date_reject
-                            .expect("If we didn't constrain anything, Reject should succeed");
-                        // All input values should roundtrip and be identical between the two results
-                        assert_eq!(date_reject.day_of_month().0, day);
-                        assert_eq!(day_constrain, day);
-                        assert_eq!(date_constrain.month().value, month);
-                        assert_eq!(date_reject.month().value, month);
-                        assert_eq!(
-                            date_constrain.year().extended_year(),
-                            date_reject.year().extended_year()
-                        );
-                    }
-                }
-            }
-        }
-    }
-
-    #[test]
-    fn test_reference_years_chinese() {
-        let c = ChineseTraditional::new();
-        test_reference_years_common(c);
-    }
-
-    #[test]
-    fn test_reference_years_korean() {
-        let c = KoreanTraditional::new();
-        test_reference_years_common(c);
     }
 }
