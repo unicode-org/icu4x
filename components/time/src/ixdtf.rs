@@ -12,8 +12,7 @@ use ixdtf::{
     encoding::Utf8,
     parsers::IxdtfParser,
     records::{
-        DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
-        UtcOffsetRecord, UtcOffsetRecordOrZ,
+        IxdtfParseRecord, TimeZoneAnnotation, TimeZoneRecord, UtcOffsetRecord, UtcOffsetRecordOrZ,
     },
     ParseError as Rfc9557ParseError,
 };
@@ -130,8 +129,6 @@ struct Intermediate<'a> {
     offset: Option<UtcOffsetRecord>,
     is_z: bool,
     iana_identifier: Option<&'a [u8]>,
-    date: DateRecord,
-    time: TimeRecord,
 }
 
 impl<'a> Intermediate<'a> {
@@ -232,25 +229,14 @@ impl<'a> Intermediate<'a> {
                 (None, false, None)
             }
         };
-        let IxdtfParseRecord {
-            date: Some(date),
-            time: Some(time),
-            ..
-        } = *ixdtf_record
-        else {
-            // Date or time was missing
-            return Err(ParseError::MismatchedTimeZoneFields);
-        };
         Ok(Self {
             offset,
             is_z,
             iana_identifier,
-            date,
-            time,
         })
     }
 
-    fn offset_only(self) -> Result<UtcOffset, ParseError> {
+    fn offset_only(&self) -> Result<UtcOffset, ParseError> {
         let None = self.iana_identifier else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
@@ -271,7 +257,7 @@ impl<'a> Intermediate<'a> {
     fn location_only(
         self,
         iana_parser: IanaParserBorrowed<'_>,
-    ) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
+    ) -> Result<TimeZoneInfo<models::Base>, ParseError> {
         let None = self.offset else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
@@ -281,18 +267,15 @@ impl<'a> Intermediate<'a> {
             }
             return Err(ParseError::MismatchedTimeZoneFields);
         };
-        let id = iana_parser.parse_from_utf8(iana_identifier);
-        let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let time = Time::try_from_time_record(&self.time)?;
-        Ok(id
-            .with_offset(None)
-            .at_date_time_iso(DateTime { date, time }))
+        Ok(iana_parser
+            .parse_from_utf8(iana_identifier)
+            .with_offset(None))
     }
 
     fn lenient(
         self,
         iana_parser: IanaParserBorrowed<'_>,
-    ) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
+    ) -> Result<TimeZoneInfo<models::Base>, ParseError> {
         let mut zone = match self.iana_identifier {
             Some(iana_identifier) => {
                 if self.is_z {
@@ -313,51 +296,22 @@ impl<'a> Intermediate<'a> {
             }
             zone = zone.id().with_offset(Some(offset));
         }
-        let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let time = Time::try_from_time_record(&self.time)?;
-        Ok(zone.at_date_time_iso(DateTime { date, time }))
+        Ok(zone)
     }
 
-    #[allow(deprecated)]
     fn all(
         self,
         iana_parser: IanaParserBorrowed<'_>,
-    ) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
+    ) -> Result<TimeZoneInfo<models::Base>, ParseError> {
         let Some(offset) = self.offset else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         let Some(iana_identifier) = self.iana_identifier else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
-        let time_zone_id = iana_parser.parse_from_utf8(iana_identifier);
-        let date = Date::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let time = Time::try_from_time_record(&self.time)?;
-        let offset = UtcOffset::try_from_utc_offset_record(offset)?;
-        Ok(time_zone_id
-            .with_offset(Some(offset))
-            .at_date_time_iso(DateTime { date, time }))
-    }
-
-    #[allow(deprecated)]
-    fn full(
-        self,
-        iana_parser: IanaParserBorrowed<'_>,
-        offset_calculator: crate::zone::VariantOffsetsCalculatorBorrowed,
-    ) -> Result<TimeZoneInfo<models::Full>, ParseError> {
-        let Some(offset) = self.offset else {
-            return Err(ParseError::MismatchedTimeZoneFields);
-        };
-        let Some(iana_identifier) = self.iana_identifier else {
-            return Err(ParseError::MismatchedTimeZoneFields);
-        };
-        let time_zone_id = iana_parser.parse_from_utf8(iana_identifier);
-        let date = Date::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let time = Time::try_from_time_record(&self.time)?;
-        let offset = UtcOffset::try_from_utc_offset_record(offset)?;
-        Ok(time_zone_id
-            .with_offset(Some(offset))
-            .at_date_time_iso(DateTime { date, time })
-            .infer_variant(offset_calculator))
+        Ok(iana_parser
+            .parse_from_utf8(iana_identifier)
+            .with_offset(Some(UtcOffset::try_from_utc_offset_record(offset)?)))
     }
 }
 
@@ -408,10 +362,11 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
         iana_parser: IanaParserBorrowed,
     ) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
-        let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
+        let (date, rd) = Date::try_from_ixdtf_record_with_rd(&ixdtf_record, calendar)?;
         let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
-        let zone =
-            Intermediate::try_from_ixdtf_record(&ixdtf_record)?.location_only(iana_parser)?;
+        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?
+            .location_only(iana_parser)?
+            .at_rd_time(rd, time);
         Ok(ZonedDateTime { date, time, zone })
     }
 
@@ -439,9 +394,11 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
         iana_parser: IanaParserBorrowed,
     ) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
-        let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
+        let (date, rd) = Date::try_from_ixdtf_record_with_rd(&ixdtf_record, calendar)?;
         let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
-        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.lenient(iana_parser)?;
+        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?
+            .lenient(iana_parser)?
+            .at_rd_time(rd, time);
         Ok(ZonedDateTime { date, time, zone })
     }
 
@@ -608,10 +565,11 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
         iana_parser: IanaParserBorrowed,
     ) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
-        let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
+        let (date, rd) = Date::try_from_ixdtf_record_with_rd(&ixdtf_record, calendar)?;
         let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
-        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.all(iana_parser)?;
-
+        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?
+            .all(iana_parser)?
+            .at_rd_time(rd, time);
         Ok(ZonedDateTime { date, time, zone })
     }
 }
@@ -644,13 +602,13 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
         iana_parser: IanaParserBorrowed,
         offset_calculator: crate::zone::VariantOffsetsCalculatorBorrowed,
     ) -> Result<Self, ParseError> {
-        let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
-        let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
-        let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
-        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?
-            .full(iana_parser, offset_calculator)?;
-
-        Ok(ZonedDateTime { date, time, zone })
+        let ZonedDateTime { date, time, zone } =
+            ZonedDateTime::try_strict_from_utf8(rfc_9557_str, calendar, iana_parser)?;
+        Ok(ZonedDateTime {
+            date,
+            time,
+            zone: zone.infer_variant(offset_calculator),
+        })
     }
 }
 
@@ -745,10 +703,7 @@ impl Time {
         ixdtf_record: &IxdtfParseRecord<'_, Utf8>,
     ) -> Result<Self, ParseError> {
         let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
-        Self::try_from_time_record(&time_record)
-    }
 
-    fn try_from_time_record(time_record: &TimeRecord) -> Result<Self, ParseError> {
         let nanosecond = time_record
             .fraction
             .map(|fraction| {
