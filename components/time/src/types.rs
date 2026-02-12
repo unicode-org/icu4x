@@ -426,21 +426,14 @@ impl ZonedDateTime<Iso, UtcOffset> {
 ///
 /// ```
 /// # #[cfg(feature = "ixdtf")] {
-/// use icu::calendar::Iso;
 /// use icu::time::zone::iana::IanaParser;
-/// use icu::time::{ZonedDateTime, ZonedTime};
+/// use icu::time::ZonedTime;
 ///
-/// let zdt = ZonedDateTime::try_strict_from_str(
-///     "2024-10-18T15:44:00-07:00[America/Los_Angeles]",
-///     Iso,
+/// let zoned_time = ZonedTime::try_strict_from_str(
+///     "T15:44:00-07:00[America/Los_Angeles]",
 ///     IanaParser::new(),
 /// )
 /// .unwrap();
-///
-/// let zoned_time = ZonedTime {
-///     time: zdt.time,
-///     zone: zdt.zone,
-/// };
 ///
 /// assert_eq!(zoned_time.time.hour.number(), 15);
 /// # }
@@ -453,8 +446,8 @@ impl ZonedDateTime<Iso, UtcOffset> {
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[cfg(feature = "unstable")]
 pub struct ZonedTime<Z> {
-    /// The time
+    /// The time, local to the time zone
     pub time: Time,
-    /// The time zone information
+    /// The time zone
     pub zone: Z,
 }

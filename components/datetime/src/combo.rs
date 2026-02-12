@@ -124,7 +124,6 @@ use crate::scaffold::*;
 ///
 /// ```
 /// # #[cfg(all(feature = "unstable", feature = "ixdtf"))] {
-/// use icu::calendar::Iso;
 /// use icu::datetime::fieldsets::{zone::SpecificLong, T};
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
@@ -139,17 +138,11 @@ use crate::scaffold::*;
 /// )
 /// .unwrap();
 ///
-/// let zdt = ZonedDateTime::try_strict_from_str(
-///     "2024-10-18T15:44:00-07:00[America/Los_Angeles]",
-///     Iso,
+/// let zoned_time = ZonedDateTime::try_strict_from_str(
+///     "15:44:00-07:00[America/Los_Angeles]",
 ///     IanaParser::new(),
 /// )
 /// .unwrap();
-///
-/// let zoned_time = ZonedTime {
-///     time: zdt.time,
-///     zone: zdt.zone,
-/// };
 ///
 /// assert_writeable_eq!(
 ///     formatter.format(&zoned_time),

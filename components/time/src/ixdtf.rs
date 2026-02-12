@@ -650,6 +650,248 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     }
 }
 
+#[cfg(feature = "unstable")]
+impl crate::ZonedTime<UtcOffset> {
+    /// Create a [`ZonedTime`] from an RFC 9557 string.
+    ///
+    /// This function is "strict": the string should have only an offset and no named time zone.
+    pub fn try_offset_only_from_str(rfc_9557_str: &str) -> Result<Self, ParseError> {
+        Self::try_offset_only_from_utf8(rfc_9557_str.as_bytes())
+    }
+
+    /// Create a [`ZonedTime`] in any calendar from RFC 9557 syntax UTF-8 bytes.
+    ///
+    /// See [`Self:try_offset_only_from_str`](Self::try_offset_only_from_str).
+    pub fn try_offset_only_from_utf8(rfc_9557_str: &[u8]) -> Result<Self, ParseError> {
+        let mut ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse_time()?;
+        ixdtf_record.date = Some(DateRecord {
+            year: 999999,
+            month: 12,
+            day: 31,
+        });
+        let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
+        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.offset_only()?;
+        Ok(Self { time, zone })
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl crate::ZonedTime<TimeZoneInfo<models::AtTime>> {
+    /// Create a [`ZonedTime`]from an RFC 9557 string.
+    ///
+    /// This function is "strict": the string should have only a named time zone and no offset.
+    pub fn try_location_only_from_str(
+        rfc_9557_str: &str,
+        iana_parser: IanaParserBorrowed,
+    ) -> Result<Self, ParseError> {
+        Self::try_location_only_from_utf8(rfc_9557_str.as_bytes(), iana_parser)
+    }
+
+    /// Create a [`ZonedTime`]from RFC 9557 UTF-8 bytes.
+    ///
+    /// See [`Self::try_location_only_from_str`].
+    pub fn try_location_only_from_utf8(
+        rfc_9557_str: &[u8],
+        iana_parser: IanaParserBorrowed,
+    ) -> Result<Self, ParseError> {
+        let mut ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse_time()?;
+        ixdtf_record.date = Some(DateRecord {
+            year: 999999,
+            month: 12,
+            day: 31,
+        });
+        let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
+        let zone =
+            Intermediate::try_from_ixdtf_record(&ixdtf_record)?.location_only(iana_parser)?;
+        Ok(Self { time, zone })
+    }
+
+    /// Create a [`ZonedTime`]from an RFC 9557 string.
+    ///
+    /// This function is "lenient": the string can have an offset, and named time zone, both, or
+    /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
+    pub fn try_lenient_from_str(
+        rfc_9557_str: &str,
+        iana_parser: IanaParserBorrowed,
+    ) -> Result<Self, ParseError> {
+        Self::try_lenient_from_utf8(rfc_9557_str.as_bytes(), iana_parser)
+    }
+
+    /// Create a [`ZonedTime`]from RFC 9557 UTF-8 bytes.
+    ///
+    /// See [`Self::try_lenient_from_str`].
+    pub fn try_lenient_from_utf8(
+        rfc_9557_str: &[u8],
+        iana_parser: IanaParserBorrowed,
+    ) -> Result<Self, ParseError> {
+        let mut ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse_time()?;
+        ixdtf_record.date = Some(DateRecord {
+            year: 999999,
+            month: 12,
+            day: 31,
+        });
+        let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
+        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.lenient(iana_parser)?;
+        Ok(Self { time, zone })
+    }
+
+    /// Create a [`ZonedTime`]from an RFC 9557 string.
+    ///
+    /// The string should have both an offset and a named time zone.
+    ///
+    /// For more information on RFC 9557, see the [`ixdtf`] crate.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::locale::subtags::subtag;
+    /// use icu::time::{
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
+    ///     TimeZone, TimeZoneInfo, ZonedTime,
+    /// };
+    ///
+    /// let zonedtime = ZonedTime::try_strict_from_str(
+    ///     "T12:08:19-05:00[America/Chicago][u-ca=hebrew]",
+    ///     IanaParser::new(),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_eq!(zonedtime.time.hour.number(), 12);
+    /// assert_eq!(zonedtime.time.minute.number(), 8);
+    /// assert_eq!(zonedtime.time.second.number(), 19);
+    /// assert_eq!(zonedtime.time.subsecond.number(), 0);
+    /// assert_eq!(zonedtime.zone.id(), TimeZone(subtag!("uschi")));
+    /// assert_eq!(
+    ///     zonedtime.zone.offset(),
+    ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
+    /// );
+    /// let _ = zonedtime.zone.zone_name_timestamp();
+    /// ```
+    ///
+    /// An RFC 9557 string can provide a time zone in two parts: the `DateTime` UTC Offset or the Time Zone
+    /// Annotation. A `DateTime` UTC Offset is the time offset as laid out by RFC 3339; meanwhile, the Time
+    /// Zone Annotation is the annotation laid out by RFC 9557 and is defined as a UTC offset or IANA Time
+    /// Zone identifier.
+    ///
+    /// ## `DateTime` UTC Offsets
+    ///
+    /// Below is an example of a time zone from a `DateTime` UTC Offset. The syntax here is familiar to a RFC 3339
+    /// `DateTime` string.
+    ///
+    /// ```
+    /// use icu::calendar::Iso;
+    /// use icu::time::{zone::UtcOffset, TimeZoneInfo, ZonedTime};
+    ///
+    /// let tz_from_offset = ZonedTime::try_offset_only_from_str(
+    ///     "T12:08:19-05:00",
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_eq!(
+    ///     tz_from_offset.zone,
+    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    /// );
+    /// ```
+    ///
+    /// ## Time Zone Annotations
+    ///
+    /// Below is an example of a time zone being provided by a time zone annotation.
+    ///
+    /// ```
+    /// use icu::calendar::Iso;
+    /// use icu::locale::subtags::subtag;
+    /// use icu::time::{
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
+    ///     TimeZone, TimeZoneInfo, ZonedTime,
+    /// };
+    ///
+    /// let tz_from_offset_annotation = ZonedTime::try_offset_only_from_str(
+    ///     "T12:08:19[-05:00]",
+    /// )
+    /// .unwrap();
+    /// let tz_from_iana_annotation = ZonedTime::try_location_only_from_str(
+    ///     "T12:08:19[America/Chicago]",
+    ///     IanaParser::new(),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_eq!(
+    ///     tz_from_offset_annotation.zone,
+    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    /// );
+    ///
+    /// assert_eq!(
+    ///     tz_from_iana_annotation.zone.id(),
+    ///     TimeZone(subtag!("uschi"))
+    /// );
+    /// assert_eq!(tz_from_iana_annotation.zone.offset(), None);
+    /// ```
+    ///
+    /// ## UTC Offset and time zone annotations.
+    ///
+    /// An RFC 9557 string may contain both a UTC Offset and time zone annotation. This is fine as long as
+    /// the time zone parts can be deemed as inconsistent or unknown consistency.
+    ///
+    /// ### `DateTime` UTC offset with UTC Offset annotation.
+    ///
+    /// These annotations must always be consistent as they should be either the same value or are inconsistent.
+    ///
+    /// ```
+    /// use icu::calendar::Iso;
+    /// use icu::time::{
+    ///     zone::UtcOffset, ParseError, TimeZone, TimeZoneInfo, ZonedTime,
+    /// };
+    /// use tinystr::tinystr;
+    ///
+    /// let consistent_tz_from_both = ZonedTime::try_offset_only_from_str(
+    ///     "T12:08:19-05:00[-05:00]",
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_eq!(
+    ///     consistent_tz_from_both.zone,
+    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    /// );
+    ///
+    /// let inconsistent_tz_from_both = ZonedTime::try_offset_only_from_str(
+    ///     "T12:08:19-05:00[+05:00]",
+    /// );
+    ///
+    /// assert!(matches!(
+    ///     inconsistent_tz_from_both,
+    ///     Err(ParseError::InconsistentTimeUtcOffsets)
+    /// ));
+    /// ```
+    pub fn try_strict_from_str(
+        rfc_9557_str: &str,
+        iana_parser: IanaParserBorrowed,
+    ) -> Result<Self, ParseError> {
+        Self::try_strict_from_utf8(rfc_9557_str.as_bytes(), iana_parser)
+    }
+
+    /// Create a [`ZonedTime`]from RFC 9557 UTF-8 bytes.
+    ///
+    /// See [`Self::try_strict_from_str`].
+    pub fn try_strict_from_utf8(
+        rfc_9557_str: &[u8],
+        iana_parser: IanaParserBorrowed,
+    ) -> Result<Self, ParseError> {
+        let mut ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse_time()?;
+        ixdtf_record.date = Some(DateRecord {
+            year: 999999,
+            month: 12,
+            day: 31,
+        });
+        let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
+        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.all(iana_parser)?;
+
+        Ok(Self { time, zone })
+    }
+}
+
 impl FromStr for DateTime<Iso> {
     type Err = ParseError;
     fn from_str(rfc_9557_str: &str) -> Result<Self, Self::Err> {
