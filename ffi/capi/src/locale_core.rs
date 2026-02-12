@@ -13,7 +13,6 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[diplomat::opaque]
-    #[diplomat::transparent_convert]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
     #[diplomat::rust_link(icu::locale::Locale, Struct)]
     #[diplomat::rust_link(icu::locale::DataLocale, Struct, hidden)]
@@ -214,39 +213,39 @@ pub mod ffi {
     impl LocaleStatics {
         /// Construct a [`Locale`] "und".
         pub fn und() -> &'static Locale {
-            static UND: icu_locale_core::Locale = icu_locale_core::Locale::UNKNOWN;
-            Locale::transparent_convert(&UND)
+            static UND: Locale = Locale(icu_locale_core::Locale::UNKNOWN);
+            &UND
         }
 
         /// Construct a [`Locale`] "az".
         pub fn az() -> &'static Locale {
-            static AZ: icu_locale_core::Locale = locale!("az");
-            Locale::transparent_convert(&AZ)
+            static AZ: Locale = Locale(locale!("az"));
+            &AZ
         }
         /// Construct a [`Locale`] "el".
         pub fn el() -> &'static Locale {
-            static EL: icu_locale_core::Locale = locale!("el");
-            Locale::transparent_convert(&EL)
+            static EL: Locale = Locale(locale!("el"));
+            &EL
         }
         /// Construct a [`Locale`] "hy".
         pub fn hy() -> &'static Locale {
-            static HY: icu_locale_core::Locale = locale!("hy");
-            Locale::transparent_convert(&HY)
+            static HY: Locale = Locale(locale!("hy"));
+            &HY
         }
         /// Construct a [`Locale`] "lt".
         pub fn lt() -> &'static Locale {
-            static LT: icu_locale_core::Locale = locale!("lt");
-            Locale::transparent_convert(&LT)
+            static LT: Locale = Locale(locale!("lt"));
+            &LT
         }
         /// Construct a [`Locale`] "nl".
         pub fn nl() -> &'static Locale {
-            static NL: icu_locale_core::Locale = locale!("nl");
-            Locale::transparent_convert(&NL)
+            static NL: Locale = Locale(locale!("nl"));
+            &NL
         }
         /// Construct a [`Locale`] "tr".
         pub fn tr() -> &'static Locale {
-            static TR: icu_locale_core::Locale = locale!("tr");
-            Locale::transparent_convert(&TR)
+            static TR: Locale = Locale(locale!("tr"));
+            &TR
         }
     }
 }
