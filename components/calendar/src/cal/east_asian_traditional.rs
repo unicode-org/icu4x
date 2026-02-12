@@ -26,6 +26,77 @@ mod qing_data;
 #[path = "east_asian_traditional/simple.rs"]
 mod simple;
 
+#[derive(PartialEq)]
+enum EastAsianCalendarKind {
+    Chinese,
+    Korean,
+}
+
+/// Implements <https://tc39.es/proposal-intl-era-monthcode/#chinese-dangi-iso-reference-years>
+///
+/// `generate_reference_years` is helpful for generating this data if the spec needs to be updated.
+///
+/// Note that the spec is written in terms of ISO years, and this code is in terms of extended years.
+/// This distinction only matters for month 11 and 12.
+fn ecma_reference_year_common(
+    month: types::Month,
+    day: u8,
+    cal: EastAsianCalendarKind,
+) -> Result<i32, EcmaReferenceYearError> {
+    let extended_year = match (month.number(), month.is_leap(), day > 29) {
+        (1, false, false) => 1972,
+        (1, false, true) => 1970,
+        (1, true, _) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
+        (2, false, _) => 1972,
+        (2, true, false) => 1947,
+        (2, true, true) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
+        (3, false, false) => 1972,
+        (3, false, true) if cal == EastAsianCalendarKind::Chinese => 1966,
+        (3, false, true) => 1968, // Korean
+        (3, true, false) => 1966,
+        (3, true, true) => 1955,
+        (4, false, false) => 1972,
+        (4, false, true) => 1970,
+        (4, true, false) => 1963,
+        (4, true, true) => 1944,
+        (5, false, _) => 1972,
+        (5, true, false) => 1971,
+        (5, true, true) => 1952,
+        (6, false, false) => 1972,
+        (6, false, true) => 1971,
+        (6, true, false) => 1960,
+        (6, true, true) => 1941,
+        (7, false, _) => 1972,
+        (7, true, false) => 1968,
+        (7, true, true) => 1938,
+        (8, false, false) => 1972,
+        (8, false, true) => 1971,
+        (8, true, false) => 1957,
+        (8, true, true) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
+        (9, false, _) => 1972,
+        (9, true, false) => 2014,
+        (9, true, true) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
+        (10, false, _) => 1972,
+        (10, true, false) => 1984,
+        (10, true, true) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
+        // Dec 31, 1972 is 1972-M11-26, dates after that
+        // are in the next year
+        (11, false, false) if day > 26 => 1971,
+        (11, false, false) => 1972,
+        (11, false, true) => 1969,
+        // Spec has two years that map to the same extended year
+        (11, true, false) => 2033,
+        (11, true, true) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
+        // Spec says 1972, but that is extended year 1971
+        (12, false, _) => 1971,
+        (12, true, _) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
+
+        (0 | 13.., _, _) => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
+    };
+
+    Ok(extended_year)
+}
+
 /// The traditional East-Asian lunisolar calendar.
 ///
 /// This calendar used traditionally in China as well as in other countries in East Asia is
@@ -110,7 +181,8 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
         year
     }
 
-    /// Returns an ECMA reference year that contains the given month-day combination.
+    /// Returns an ECMA reference year (represented as an extended year)
+    /// that contains the given month-day combination.
     ///
     /// If the day is out of range, it will return a year that contains the given month
     /// and the maximum day possible for that month. See [the spec][spec] for the
@@ -227,62 +299,7 @@ impl Rules for China {
         month: types::Month,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        // Computed by `generate_reference_years`
-        let extended_year = match (month.number(), month.is_leap(), day > 29) {
-            (1, false, false) => 1972,
-            (1, false, true) => 1970,
-            (1, true, false) => 1898,
-            (1, true, true) => 1898,
-            (2, false, false) => 1972,
-            (2, false, true) => 1972,
-            (2, true, false) => 1947,
-            (2, true, true) => 1830,
-            (3, false, false) => 1972,
-            (3, false, true) => 1966,
-            (3, true, false) => 1966,
-            (3, true, true) => 1955,
-            (4, false, false) => 1972,
-            (4, false, true) => 1970,
-            (4, true, false) => 1963,
-            (4, true, true) => 1944,
-            (5, false, false) => 1972,
-            (5, false, true) => 1972,
-            (5, true, false) => 1971,
-            (5, true, true) => 1952,
-            (6, false, false) => 1972,
-            (6, false, true) => 1971,
-            (6, true, false) => 1960,
-            (6, true, true) => 1941,
-            (7, false, false) => 1972,
-            (7, false, true) => 1972,
-            (7, true, false) => 1968,
-            (7, true, true) => 1938,
-            (8, false, false) => 1972,
-            (8, false, true) => 1971,
-            (8, true, false) => 1957,
-            (8, true, true) => 1691,
-            (9, false, false) => 1972,
-            (9, false, true) => 1972,
-            (9, true, false) => 2014,
-            (9, true, true) => 1843,
-            (10, false, false) => 1972,
-            (10, false, true) => 1972,
-            (10, true, false) => 1984,
-            (10, true, true) => 1737,
-            // Dec 31, 1972 is 1972-M11-26, dates after that
-            // are in the next year
-            (11, false, false) if day > 26 => 1971,
-            (11, false, false) => 1972,
-            (11, false, true) => 1969,
-            (11, true, false) => 2033,
-            (11, true, true) => 1889,
-            (12, false, false) => 1971,
-            (12, false, true) => 1971,
-            (12, true, false) => 1878,
-            (12, true, true) => 1783,
-            _ => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
-        };
-        Ok(extended_year)
+        ecma_reference_year_common(month, day, EastAsianCalendarKind::Chinese)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -417,62 +434,7 @@ impl Rules for Korea {
         month: types::Month,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        // Computed by `generate_reference_years`
-        let extended_year = match (month.number(), month.is_leap(), day > 29) {
-            (1, false, false) => 1972,
-            (1, false, true) => 1970,
-            (1, true, false) => 1898,
-            (1, true, true) => 1898,
-            (2, false, false) => 1972,
-            (2, false, true) => 1972,
-            (2, true, false) => 1947,
-            (2, true, true) => 1830,
-            (3, false, false) => 1972,
-            (3, false, true) => 1968,
-            (3, true, false) => 1966,
-            (3, true, true) => 1955,
-            (4, false, false) => 1972,
-            (4, false, true) => 1970,
-            (4, true, false) => 1963,
-            (4, true, true) => 1944,
-            (5, false, false) => 1972,
-            (5, false, true) => 1972,
-            (5, true, false) => 1971,
-            (5, true, true) => 1952,
-            (6, false, false) => 1972,
-            (6, false, true) => 1971,
-            (6, true, false) => 1960,
-            (6, true, true) => 1941,
-            (7, false, false) => 1972,
-            (7, false, true) => 1972,
-            (7, true, false) => 1968,
-            (7, true, true) => 1938,
-            (8, false, false) => 1972,
-            (8, false, true) => 1971,
-            (8, true, false) => 1957,
-            (8, true, true) => 1691,
-            (9, false, false) => 1972,
-            (9, false, true) => 1972,
-            (9, true, false) => 2014,
-            (9, true, true) => 1843,
-            (10, false, false) => 1972,
-            (10, false, true) => 1972,
-            (10, true, false) => 1984,
-            (10, true, true) => 1737,
-            // Dec 31, 1972 is 1972-M11-26, dates after that
-            // are in the next year
-            (11, false, false) if day > 26 => 1971,
-            (11, false, false) => 1972,
-            (11, false, true) => 1969,
-            (11, true, false) => 2033,
-            (11, true, true) => 1889,
-            (12, false, false) => 1971,
-            (12, false, true) => 1971,
-            (12, true, false) => 1878,
-            (12, true, true) => 1783,
-            _ => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
-        };
-        Ok(extended_year)
+        ecma_reference_year_common(month, day, EastAsianCalendarKind::Korean)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {

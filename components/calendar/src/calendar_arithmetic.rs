@@ -148,8 +148,8 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// Converts an extended year to a [`Self::YearInfo`].
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
 
-    /// Calculates the ECMA reference year for the month code and day, or an error
-    /// if the month code and day are invalid.
+    /// Calculates the ECMA reference year (represented as an extended year)
+    /// for the month code and day, or an error if the month code and day are invalid.
     ///
     /// Note that this is called before any potential `Overflow::Constrain` application,
     /// so this should accept out-of-range day values as if they are the highest possible
@@ -340,16 +340,24 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                         return Err(DateFromFieldsError::NotEnoughFields)
                     }
                     MissingFieldsStrategy::Ecma => {
-                        match (fields.month, fields.month_code, fields.ordinal_month) {
-                            (Some(month), _, None) => {
-                                calendar.reference_year_from_month_day(month, day)?
-                            }
+                        let (m, d) = match (fields.month, fields.month_code, fields.ordinal_month) {
+                            (Some(month), _, None) => (month, day),
                             (_, Some(month_code), None) => {
                                 let validated = Month::try_from_utf8(month_code)?;
                                 valid_month = Some(validated);
-                                calendar.reference_year_from_month_day(validated, day)?
+                                (validated, day)
                             }
                             _ => return Err(DateFromFieldsError::NotEnoughFields),
+                        };
+                        let ref_year = calendar.reference_year_from_month_day(m, d);
+                        if ref_year == Err(EcmaReferenceYearError::UseRegularIfConstrain)
+                            && options.overflow == Some(Overflow::Constrain)
+                        {
+                            let new_valid_month = Month::new(m.number());
+                            valid_month = Some(new_valid_month);
+                            calendar.reference_year_from_month_day(new_valid_month, d)?
+                        } else {
+                            ref_year?
                         }
                     }
                 },
