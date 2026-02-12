@@ -52,6 +52,7 @@ mod offset;
 pub mod windows;
 mod zone_name_timestamp;
 
+use icu_calendar::types::RataDie;
 use icu_calendar::AsCalendar;
 #[cfg(feature = "compiled_data")]
 use icu_locale_core::subtags::Region;
@@ -73,6 +74,7 @@ pub use zone_name_timestamp::ZoneNameTimestamp;
 
 use crate::scaffold::IntoOption;
 use crate::DateTime;
+use crate::Time;
 use core::fmt;
 use core::ops::Deref;
 use icu_calendar::Iso;
@@ -453,23 +455,24 @@ impl TimeZoneInfo<models::Base> {
         self,
         date_time: DateTime<C>,
     ) -> TimeZoneInfo<models::AtTime> {
-        Self::with_zone_name_timestamp(
-            self,
-            ZoneNameTimestamp::from_zoned_date_time(crate::ZonedDateTime {
-                date: date_time.date,
-                time: date_time.time,
-                // If we don't have an offset, interpret as UTC. This is incorrect during O(a couple of
-                // hours) since the UNIX epoch (a handful of transitions times the few hours this is too
-                // early/late).
-                zone: self.offset.unwrap_or(UtcOffset::zero()),
-            }),
-        )
+        self.at_rd_time(date_time.date.to_rata_die(), date_time.time)
     }
 
     /// Use [`Self::at_date_time`].
     #[deprecated(since = "2.2.0", note = "use `Self::at_date_time`")]
     pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
         self.at_date_time(date_time)
+    }
+
+    pub(crate) fn at_rd_time(self, rd: RataDie, time: Time) -> TimeZoneInfo<models::AtTime> {
+        self.with_zone_name_timestamp(ZoneNameTimestamp::from_rd_time_zone(
+            rd,
+            time,
+            // If we don't have an offset, interpret as UTC. This is incorrect during O(a couple of
+            // hours) since the UNIX epoch (a handful of transitions times the few hours this is too
+            // early/late).
+            self.offset.unwrap_or(UtcOffset::zero()),
+        ))
     }
 }
 

@@ -179,6 +179,10 @@ impl Time {
             subsecond: nanosecond.try_into()?,
         })
     }
+
+    pub(crate) const fn seconds_since_midnight(self) -> u32 {
+        (self.hour.0 as u32 * 60 + self.minute.0 as u32) * 60 + self.second.0 as u32
+    }
 }
 
 /// A date and time for a given calendar.
@@ -306,25 +310,63 @@ where
 {
 }
 
+const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
+
 impl<A: AsCalendar> Ord for ZonedDateTime<A, UtcOffset> {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.epoch_millis().cmp(&other.epoch_millis())
+        let mut srd = self.date.to_rata_die();
+        let mut ord = other.date.to_rata_die();
+
+        // If the RDs are three days apart, even with maximum/minimum
+        // times and offsets, the UTC days will still be at at least
+        // one day apart
+        if srd + 3 <= ord {
+            return core::cmp::Ordering::Less;
+        }
+        if srd - 3 >= ord {
+            return core::cmp::Ordering::Greater;
+        }
+
+        let mut ss = self.time.seconds_since_midnight() as i32 - self.zone.to_seconds();
+        let mut os = other.time.seconds_since_midnight() as i32 - other.zone.to_seconds();
+
+        // the seconds can wrap into the day
+
+        if ss < 0 {
+            srd -= 1;
+            ss += 24 * 60 * 60;
+        }
+        if ss > 24 * 60 * 60 {
+            srd += 1;
+            ss -= 24 * 60 * 60;
+        }
+
+        if os < 0 {
+            ord -= 1;
+            os += 24 * 60 * 60;
+        }
+        if os > 24 * 60 * 60 {
+            ord += 1;
+            os -= 24 * 60 * 60;
+        }
+
+        // the subseconds cannot wrap into the seconds
+
+        srd.cmp(&ord)
+            .then(ss.cmp(&os))
+            .then(self.time.subsecond.cmp(&other.time.subsecond))
     }
 }
 
-impl<A, B> PartialOrd<ZonedDateTime<B, UtcOffset>> for ZonedDateTime<A, UtcOffset>
+impl<A> PartialOrd<ZonedDateTime<A, UtcOffset>> for ZonedDateTime<A, UtcOffset>
 where
     A: AsCalendar,
-    B: AsCalendar,
-    Date<A>: PartialEq<Date<B>>,
+    Date<A>: PartialEq<Date<A>>,
 {
-    fn partial_cmp(&self, other: &ZonedDateTime<B, UtcOffset>) -> Option<core::cmp::Ordering> {
-        Some(self.epoch_millis().cmp(&other.epoch_millis()))
+    fn partial_cmp(&self, other: &ZonedDateTime<A, UtcOffset>) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
-
-const UNIX_EPOCH_RD: RataDie =
-    calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
 impl ZonedDateTime<Iso, UtcOffset> {
     /// Creates a [`ZonedDateTime`] from an absolute time, in milliseconds since the UNIX Epoch,
@@ -409,7 +451,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
         let local_time_millisecs = utc_time_millisecs + offset_millisecs;
         let day_adjustment = local_time_millisecs.div_euclid(86400000);
         let final_time_millisecs = local_time_millisecs.rem_euclid(86400000);
-        let rata_die = UNIX_EPOCH_RD + utc_epoch_days + day_adjustment;
+        let rata_die = UNIX_EPOCH + utc_epoch_days + day_adjustment;
         #[expect(clippy::unwrap_used)] // these values are derived via modulo operators
         let time = Time::try_new(
             (final_time_millisecs / 3600000) as u8,
@@ -423,19 +465,5 @@ impl ZonedDateTime<Iso, UtcOffset> {
             time,
             zone: utc_offset,
         }
-    }
-}
-
-impl<A: AsCalendar> ZonedDateTime<A, UtcOffset> {
-    pub(crate) fn epoch_millis(&self) -> i64 {
-        let ZonedDateTime { date, time, zone } = self;
-        let days = date.to_rata_die() - UNIX_EPOCH_RD;
-        let hours = time.hour.number() as i64;
-        let minutes = time.minute.number() as i64;
-        let seconds = time.second.number() as i64;
-        let nanos = time.subsecond.number() as i64;
-        let offset_seconds = zone.to_seconds() as i64;
-        (((days * 24 + hours) * 60 + minutes) * 60 + seconds - offset_seconds) * 1000
-            + nanos / 1_000_000
     }
 }
