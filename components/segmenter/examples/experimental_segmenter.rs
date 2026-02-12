@@ -15,8 +15,8 @@ use adaboost::Predictor;
 use cnn::{CnnSegmenter, RawCnnData};
 use icu_segmenter::{options::WordBreakOptions, WordSegmenter, WordSegmenterBorrowed};
 use std::time::SystemTime;
-use icu::segmenter::provider::SegmenterUnihanIrgV1;   // ✅ needed to load IRG marker
-use icu_provider::prelude::*;                         // ✅ needed for DataRequest/DataResponse
+use icu::segmenter::provider::SegmenterUnihanIrgV1;
+use icu_provider::prelude::*
 use icu_segmenter::provider::Baked;
 
 const REPETITIONS: usize = 1000;
