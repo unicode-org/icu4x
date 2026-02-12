@@ -1007,17 +1007,9 @@ impl<'data> CollatorBorrowed<'data> {
                 // that reading from the right side at all or reading from the right trie is useless.
                 // Doing that seems to be a pessimization, at least in the absence of PGO.
                 if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
-                    let mut left_ce32 = CollationElement32::new(left_u32);
-                    if left_ce32 == FALLBACK_CE32 {
-                        left_ce32 = self.root.ce32_for_char(left_c);
-                    }
-                    let mut right_ce32 = CollationElement32::new(right_u32);
-                    if right_ce32 == FALLBACK_CE32 {
-                        right_ce32 = self.root.ce32_for_char(right_c);
-                    }
-                    // XXX handle prefix for Japanese
+                    let left_ce32 = CollationElement32::new(left_u32);
+                    let right_ce32 = CollationElement32::new(right_u32);
                     if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
-                        // XXX handle prefix for Japanese
                         if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
                             quick_primary_compare!(left_primary, right_primary, variable_top, self,);
                         }
@@ -1061,17 +1053,9 @@ impl<'data> CollatorBorrowed<'data> {
                 // that reading from the right side at all or reading from the right trie is useless.
                 // Doing that seems to be a pessimization, at least in the absence of PGO.
                 if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
-                    let mut left_ce32 = CollationElement32::new(left_u32);
-                    if left_ce32 == FALLBACK_CE32 {
-                        left_ce32 = self.root.ce32_for_char(left_c);
-                    }
-                    let mut right_ce32 = CollationElement32::new(right_u32);
-                    if right_ce32 == FALLBACK_CE32 {
-                        right_ce32 = self.root.ce32_for_char(right_c);
-                    }
-                    // XXX handle prefix for Japanese
+                    let left_ce32 = CollationElement32::new(left_u32);
+                    let right_ce32 = CollationElement32::new(right_u32);
                     if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
-                        // XXX handle prefix for Japanese
                         if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
                             quick_primary_compare!(left_primary, right_primary, variable_top, self,);
                         }
@@ -1113,20 +1097,10 @@ impl<'data> CollatorBorrowed<'data> {
                     let left_u16 = *left_u;
                     let right_u16 = *right_u;
                     let left_u32 = tailoring_trie.get16(left_u16);
-                    let mut left_ce32 = CollationElement32::new(left_u32);
-                    if left_ce32 == FALLBACK_CE32 {
-                        let left_u32 = self.root.trie.get16(left_u16);
-                        left_ce32 = CollationElement32::new(left_u32);
-                    }
+                    let left_ce32 = CollationElement32::new(left_u32);
                     let right_u32 = tailoring_trie.get16(right_u16);
-                    let mut right_ce32 = CollationElement32::new(right_u32);
-                    if right_ce32 == FALLBACK_CE32 {
-                        let right_u32 = self.root.trie.get16(right_u16);
-                        right_ce32 = CollationElement32::new(right_u32);
-                    }
-                    // XXX prefix case for Japanese
+                    let right_ce32 = CollationElement32::new(right_u32);
                     if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
-                        // XXX prefix case for Japanese
                         if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
                             quick_primary_compare!(left_primary, right_primary, variable_top, self,);
                         }
@@ -1178,9 +1152,6 @@ impl<'data> CollatorBorrowed<'data> {
                     // SAFETY: Invariant of `get7` checked above.
                     let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
                     let left_ce32 = CollationElement32::new(left_u32);
-                    // ASCII is always copied into the tailoring, so fallback
-                    // can't happen unless GIGO.
-                    debug_assert_ne!(left_ce32, FALLBACK_CE32);
                     if let Some(left_primary) = left_ce32.to_primary_simple() {
                         if let Some(right_u) = right_tail.first() {
                             let right_u8 = *right_u;
@@ -1189,9 +1160,6 @@ impl<'data> CollatorBorrowed<'data> {
                                 // SAFETY: Invariant of `get7` checked above.
                                 let right_u32 = unsafe { tailoring_trie.get7(right_u8) };
                                 let right_ce32 = CollationElement32::new(right_u32);
-                                // ASCII is always copied into the tailoring, so fallback
-                                // can't happen unless GIGO.
-                                debug_assert_ne!(right_ce32, FALLBACK_CE32);
                                 // Both sides must be Latin, so script reordering can't do
                                 // anything meaningful. Omit script reordering check instead
                                 // of using `quick_primary_compare!`. Also optimize away the
@@ -1257,17 +1225,9 @@ impl<'data> CollatorBorrowed<'data> {
                         if let Some(right_u) = right_tail.first() {
                             let right_u16 = *right_u;
                             let right_u32 = tailoring_trie.get16(right_u16);
-                            let mut right_ce32 = CollationElement32::new(right_u32);
-                            // ASCII is always copied into the tailoring, so fallback
-                            // can't happen unless GIGO.
-                            debug_assert_ne!(left_ce32,FALLBACK_CE32);
-                            if right_ce32 == FALLBACK_CE32 {
-                                let right_u32 = self.root.trie.get16(right_u16);
-                                right_ce32 = CollationElement32::new(right_u32);
-                            }
+                            let right_ce32 = CollationElement32::new(right_u32);
                             // Don't use the macro to micro-optimize away the long primary
                             // case for ASCII.
-                            // XXX Japanese prefix
                             if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
                                 if (left_primary != right_primary)
                                     && (left_primary != 0)
