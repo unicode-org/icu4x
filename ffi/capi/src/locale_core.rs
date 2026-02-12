@@ -47,6 +47,16 @@ pub mod ffi {
             Box::new(Locale(icu_locale_core::Locale::UNKNOWN))
         }
 
+        /// Construct an unknown [`Locale`] "und" as a C++ const/static,
+        /// without allocating.
+        ///
+        /// (Can potentially be exposed to other backends if they gain static support)
+        #[diplomat::attr(not(cpp), disable)]
+        pub fn unknown_static() -> &'static Locale {
+            static UND: Locale = Locale(icu_locale_core::Locale::UNKNOWN);
+            &UND
+        }
+
         /// Clones the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale, Struct)]
         pub fn clone(&self) -> Box<Locale> {

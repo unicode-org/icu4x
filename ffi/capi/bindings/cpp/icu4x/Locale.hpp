@@ -24,6 +24,8 @@ namespace capi {
 
     icu4x::capi::Locale* icu4x_Locale_unknown_mv1(void);
 
+    const icu4x::capi::Locale* icu4x_Locale_unknown_static_mv1(void);
+
     icu4x::capi::Locale* icu4x_Locale_clone_mv1(const icu4x::capi::Locale* self);
 
     void icu4x_Locale_basename_mv1(const icu4x::capi::Locale* self, icu4x::diplomat::capi::DiplomatWrite* write);
@@ -76,6 +78,11 @@ inline icu4x::diplomat::result<std::unique_ptr<icu4x::Locale>, icu4x::LocalePars
 inline std::unique_ptr<icu4x::Locale> icu4x::Locale::unknown() {
     auto result = icu4x::capi::icu4x_Locale_unknown_mv1();
     return std::unique_ptr<icu4x::Locale>(icu4x::Locale::FromFFI(result));
+}
+
+inline const icu4x::Locale& icu4x::Locale::unknown_static() {
+    auto result = icu4x::capi::icu4x_Locale_unknown_static_mv1();
+    return *icu4x::Locale::FromFFI(result);
 }
 
 inline std::unique_ptr<icu4x::Locale> icu4x::Locale::clone() const {

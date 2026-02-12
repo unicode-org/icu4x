@@ -52,6 +52,14 @@ public:
   inline static std::unique_ptr<icu4x::Locale> unknown();
 
   /**
+   * Construct an unknown {@link Locale} "und" as a C++ const/static,
+   * without allocating.
+   *
+   * (Can potentially be exposed to other backends if they gain static support)
+   */
+  inline static const icu4x::Locale& unknown_static();
+
+  /**
    * Clones the {@link Locale}.
    *
    * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html) for more information.
