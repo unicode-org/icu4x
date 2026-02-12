@@ -33,7 +33,7 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Roc;
 
-impl_with_abstract_gregorian!(crate::cal::Roc, RocDateInner, RocEra, _x, RocEra);
+impl_with_abstract_gregorian!(Roc, RocDateInner, RocEra, _x, RocEra);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct RocEra;
@@ -87,7 +87,7 @@ impl Date<Roc> {
     /// Construct a new Republic of China calendar [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -146,7 +146,7 @@ mod test {
             "Failed era check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.extended_year(),
+            roc_from_rd.year().extended_year(),
             if case.era == "roc" {
                 case.year
             } else {
@@ -166,7 +166,7 @@ mod test {
         );
 
         let roc_from_case = Date::try_new_roc(
-            roc_from_rd.extended_year(),
+            roc_from_rd.year().extended_year(),
             roc_from_rd.month().ordinal,
             roc_from_rd.day_of_month().0,
         )

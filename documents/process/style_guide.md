@@ -201,11 +201,9 @@ There are several types of invisible code points in Unicode, including whitespac
 - In docs tests: users are more interested in the end result, so favor rendering the invisible characters. When invisible characters could cause confusion, it is suggested to leave an unrendered docs comment, such as `# // The following line contains an invisible code point.`
 - In source code and unit tests: being explicit about invisible characters makes reading and modifying code more explicit for ICU4X developers, so favor using escape sequences.
 
-# Structs and Traits
+## Private vs Public
 
 For ICU4X we should be looking to keep code consistent and very unsurprising, especially for layout and behavior of data structures.
-
-## Private vs Public
 
 Rust offers a compelling model for encapsulating implementation details based on a hierarchical view of privacy; see [Visibility and Privacy - The Rust Reference](https://doc.rust-lang.org/reference/visibility-and-privacy.html). This should allow ICU4X to encapsulate all of its implementation details neatly from applications using the library and avoid too many cases of [Hyrum's Law](https://www.hyrumslaw.com/).
 
@@ -373,11 +371,9 @@ This adds weight to the idea that we should avoid traits and any other unsized t
 
 For example, in general we should avoid returning an abstract trait to the user (intermediate traits like Iterator might be fine though since a user is expected to consume those fairly immediately).
 
-# Idiomatic Code
+## Pass by Reference vs Pass by Value
 
 A lot of this section just boils down to "[Read the Book](https://doc.rust-lang.org/book/)", but I'm highlighting a few things I personally found useful while learning.
-
-## Pass by Reference vs Pass by Value
 
 There is something a bit subtle about how Rust handles "pass by value" which means you should not just apply standard C++ best-practice. In particular, in C++ you would might expect a method like:
 
@@ -561,8 +557,6 @@ let x = match number {
 
 Obviously where an if-statement is simply there to do optional work, and not cover every case, it may well be more suitable to just use that.
 
-# Structs
-
 ## Structs with Private Fields
 
 ### Constructor conventions :: suggested
@@ -731,7 +725,7 @@ Keep the following in mind when using exotic types:
 
 If it is not possible to obey these requirements in an exotic type, use a standard type instead, but make sure that it requires minimal parsing and post-processing.
 
-# Error Handling
+## Error Handling
 
 See also the [Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html) chapter in the Rust Book.
 
@@ -788,8 +782,6 @@ The alternative to using direct data accessors which can panic is to use a metho
 If data access is expected to fail occasionally (e.g. looking up properties in a map) then the resulting [Option can be unwrapped](https://doc.rust-lang.org/std/option/enum.Option.html#method.unwrap_or) or propagated accordingly.
 
 If missing data signals a "hard" error from which the function cannot recover (e.g. user supplies incorrect input) then any returned `Option` should be [propagated into a `Result` immediately](https://doc.rust-lang.org/std/option/enum.Option.html#method.ok_or), with an appropriate error value.
-
-## Best Practice
 
 ### Don't Panic :: required
 
@@ -911,13 +903,13 @@ where
 }
 ```
 
-# Lints
+## Lints
 
 Some lints should be enabled at the crate level for primary ICU4X crates. This guidance need not extend to utils.
 
-## Exhaustiveness :: required
+### Exhaustiveness :: required
 
-Crates should deny the `clippy::exhaustive_structs, clippy::exhaustive_enums` lints at the top-level so that our types default to being `#[non_exhaustive]`.
+Enforced by the workspace-level `clippy::exhaustive_structs, clippy::exhaustive_enums` lints so that our types default to being `#[non_exhaustive]`.
 
 These kinds of types _must_ be `#[non_exhaustive]`:
 
@@ -931,7 +923,7 @@ Most public newtypes and marker types should also be allowed to be exhaustive.
 
 Miscellaneous types with public fields may or may not be exhaustive based on need: if they are expected to be stable, they should be marked with an allow attribute and a comment explaining why. Otherwise, default to `#[non_exhaustive]`.
 
-## Panics :: required
+### Panics :: required
 
 Crates should deny the `clippy::indexing_slicing, clippy::unwrap_used, clippy::expect_used, clippy::panic` lints at the top-level to greatly reduce the number of panicky call sites in our code.
 
@@ -946,13 +938,11 @@ In general, non-panicky APIs that return `Result`s or `Option`s should be prefer
 
 `#[allow()]`s should be documented with a comment.
 
-## Debug :: required
+### Debug :: required
 
-Crates should deny the `missing_debug_implementations` lint at the top-level so that our types all have `Debug` implementations.
+Enforced by the workspace-level `missing_debug_implementations` lint so that our types all have `Debug` implementations.
 
-# Imports and Configurations
-
-## Features
+## Crate Features
 
 ### Use no_std :: suggested
 
@@ -975,7 +965,7 @@ the end user to control the code size of their compilation as follows:
 
 [features]: https://doc.rust-lang.org/cargo/reference/features.html
 
-## Dependencies
+## Crate Dependencies
 
 ### Avoid heavy dependencies :: suggested
 
@@ -999,8 +989,6 @@ fn insert_sorted<A>(vec: &mut Vec<A>, item: A) {
   }
 }
 ```
-
-# Advanced Features
 
 ## Operator Overloading
 
@@ -1054,9 +1042,9 @@ for w in s.unicode_words() {
 
 Thus we could provide one or more ICU4X traits bound to things like `str` to provide a low friction way to access the libraries (obvious questions like naming notwithstanding).
 
-# Appendix
+## Appendix
 
-## Sources
+### Sources
 
 * [Learn Rust](https://doc.rust-lang.org/)
   * The canonical source for Rust information, but it doesn't offer advice on all aspects of code design.
@@ -1069,7 +1057,7 @@ Thus we could provide one or more ICU4X traits bound to things like `str` to pro
 * [Strategies for Returning References in Rust](https://bryce.fisher-fleig.org/strategies-for-returning-references-in-rust/)
   * Though I don't believe we should be doing this, it's still an interesting read.
 
-## Other Useful Links
+### Other Useful Links
 
 * Write and run Rust snippets: https://play.rust-lang.org
   * You can save snippets in permantent links and incluce them as working examples in docs.

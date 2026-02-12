@@ -93,7 +93,7 @@ enum class LineBreak {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
         *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#method.from_icu4c_value) for more information.
         */
@@ -107,9 +107,9 @@ enum class LineBreak {
         @JvmStatic
         
         fun tryFromStr(s: String): LineBreak? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_LineBreak_try_from_str_mv1(sSlice);
+            val returnVal = lib.icu4x_LineBreak_try_from_str_mv1(sSliceMemory.slice);
             
             val intermediateOption = returnVal.option() ?: return null
             return LineBreak.fromNative(intermediateOption)
@@ -142,7 +142,7 @@ enum class LineBreak {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
     *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#method.to_icu4c_value) for more information.
     */

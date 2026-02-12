@@ -71,13 +71,13 @@ mod unstable {
         /// ```
         /// use icu::calendar::options::DateFromFieldsOptions;
         /// use icu::calendar::options::MissingFieldsStrategy;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use icu::calendar::Iso;
         ///
         /// // These options are missing a year.
         /// let mut fields = DateFields::default();
-        /// fields.month_code = Some(b"M02");
+        /// fields.month = Some(Month::new(2));
         /// fields.day = Some(1);
         ///
         /// let options_default = DateFromFieldsOptions::default();
@@ -273,7 +273,7 @@ mod unstable {
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::options::DateFromFieldsOptions;
         /// use icu::calendar::options::Overflow;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use icu::calendar::DateError;
         ///
@@ -283,7 +283,7 @@ mod unstable {
         /// // 5784, a leap year, contains M05L, but the day is too big.
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5784);
-        /// fields.month_code = Some(b"M05L");
+        /// fields.month = Some(Month::leap(5));
         /// fields.day = Some(50);
         ///
         /// let date = Date::try_from_fields(fields, options, Hebrew).unwrap();
@@ -313,7 +313,7 @@ mod unstable {
         /// use icu::calendar::error::DateFromFieldsError;
         /// use icu::calendar::options::DateFromFieldsOptions;
         /// use icu::calendar::options::Overflow;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use tinystr::tinystr;
         ///
@@ -323,7 +323,7 @@ mod unstable {
         /// // 5784, a leap year, contains M05L, but the day is too big.
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5784);
-        /// fields.month_code = Some(b"M05L");
+        /// fields.month = Some(Month::leap(5));
         /// fields.day = Some(50);
         ///
         /// let err = Date::try_from_fields(fields, options, Hebrew)
@@ -364,7 +364,7 @@ mod unstable {
     ///
     /// The fields `month_code` and `ordinal_month` identify the month:
     ///
-    /// | Month Code? | Ordinal Month? | Outcome |
+    /// | Month( Code)? | Ordinal Month? | Outcome |
     /// |-------------|----------------|---------|
     /// | -           | -              | Error |
     /// | Some        | -              | OK |
@@ -413,7 +413,11 @@ mod unstable {
 }
 #[cfg(test)]
 mod tests {
-    use crate::{error::DateFromFieldsError, types::DateFields, Date, Gregorian};
+    use crate::{
+        error::DateFromFieldsError,
+        types::{DateFields, Month},
+        Date, Gregorian,
+    };
     use itertools::Itertools;
     use std::collections::{BTreeMap, BTreeSet};
 
@@ -435,8 +439,10 @@ mod tests {
         // The sets of fields that identify a month, according to the table in the docs
         let valid_month_field_sets = [
             &["month_code"][..],
+            &["month"][..],
             &["ordinal_month"][..],
             &["month_code", "ordinal_month"][..],
+            &["month", "ordinal_month"][..],
         ]
         .into_iter()
         .map(|field_names| field_names.iter().copied().collect())
@@ -477,7 +483,7 @@ mod tests {
             .collect::<BTreeSet<BTreeSet<&str>>>();
 
         // Field sets with month and day but without year that ECMA accepts
-        let field_sets_without_year = [&["month_code", "day"][..]]
+        let field_sets_without_year = [&["month_code", "day"][..], &["month", "day"][..]]
             .into_iter()
             .map(|field_names| field_names.iter().copied().collect())
             .collect::<Vec<BTreeSet<&str>>>();
@@ -487,6 +493,7 @@ mod tests {
         field_fns.insert("era", &|fields| fields.era = Some(b"ad"));
         field_fns.insert("era_year", &|fields| fields.era_year = Some(2000));
         field_fns.insert("extended_year", &|fields| fields.extended_year = Some(2000));
+        field_fns.insert("month", &|fields| fields.month = Some(Month::new(4)));
         field_fns.insert("month_code", &|fields| fields.month_code = Some(b"M04"));
         field_fns.insert("ordinal_month", &|fields| fields.ordinal_month = Some(4));
         field_fns.insert("day", &|fields| fields.day = Some(20));
@@ -505,7 +512,7 @@ mod tests {
 
             // Populate the fields in the field set
             let mut fields = Default::default();
-            for field_name in field_set {
+            for field_name in &field_set {
                 field_fns.get(field_name).unwrap()(&mut fields);
             }
 
@@ -517,10 +524,12 @@ mod tests {
                     should_succeed_rejecting,
                     "Succeeded, but should have rejected: {fields:?}"
                 ),
-                Err(DateFromFieldsError::NotEnoughFields) => assert!(
-                    !should_succeed_rejecting,
-                    "Rejected, but should have succeeded: {fields:?}"
-                ),
+                Err(DateFromFieldsError::NotEnoughFields | DateFromFieldsError::TooManyFields) => {
+                    assert!(
+                        !should_succeed_rejecting,
+                        "Rejected, but should have succeeded: {fields:?}"
+                    )
+                }
                 Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
             }
 
@@ -532,10 +541,12 @@ mod tests {
                     should_succeed_ecma,
                     "Succeeded, but should have rejected (ECMA): {fields:?}"
                 ),
-                Err(DateFromFieldsError::NotEnoughFields) => assert!(
-                    !should_succeed_ecma,
-                    "Rejected, but should have succeeded (ECMA): {fields:?}"
-                ),
+                Err(DateFromFieldsError::NotEnoughFields | DateFromFieldsError::TooManyFields) => {
+                    assert!(
+                        !should_succeed_ecma,
+                        "Rejected, but should have succeeded (ECMA): {fields:?}"
+                    )
+                }
                 Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
             }
         }

@@ -103,7 +103,7 @@ use crate::options::*;
 /// This is a builder enum. See [`builder`](crate::fieldsets::builder).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[non_exhaustive]
@@ -177,7 +177,7 @@ impl DateFields {
 /// This is a builder enum. See [`builder`](crate::fieldsets::builder).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
+    all(feature = "serde", feature = "unstable"),
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[non_exhaustive]
@@ -298,7 +298,7 @@ impl core::error::Error for BuilderError {}
 
 /// Serde impls: We can't directly use `derive(Serialize)` and also hide null fields
 /// due to <https://github.com/serde-rs/serde/issues/2191>
-#[cfg(all(feature = "serde", feature = "experimental"))]
+#[cfg(all(feature = "serde", feature = "unstable"))]
 mod _serde {
     use super::*;
     use serde::{Deserialize, Serialize};
@@ -333,7 +333,7 @@ mod _serde {
 
     /// Serialization for [`FieldSetBuilder`].
     ///
-    /// ✨ *Enabled with the `serde` and `experimental` Cargo features.*
+    /// ✨ *Enabled with the `serde` and `unstable` Cargo features.*
     ///
     /// # Examples
     ///
@@ -397,7 +397,7 @@ mod _serde {
 
     /// Deserialization for [`FieldSetBuilder`].
     ///
-    /// ✨ *Enabled with the `serde` and `experimental` Cargo features.*
+    /// ✨ *Enabled with the `serde` and `unstable` Cargo features.*
     ///
     /// For an example, see the `Serialize` impl.
     impl<'de> Deserialize<'de> for FieldSetBuilder {
@@ -501,7 +501,7 @@ impl FieldSetBuilder {
             Some(DateFields::Y) => CalendarPeriod(CalendarPeriodFieldSet::Y(
                 fieldsets::Y::take_from_builder(self),
             )),
-            Option::None => return Err(BuilderError::MissingDateFields),
+            None => return Err(BuilderError::MissingDateFields),
         };
         Ok(field_set)
     }
@@ -652,7 +652,7 @@ impl FieldSetBuilder {
             Some(ZoneStyle::ExemplarCity) => {
                 ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity)
             }
-            Option::None => return Err(BuilderError::MissingZoneStyle),
+            None => return Err(BuilderError::MissingZoneStyle),
         };
         Ok(zone_field_set)
     }
@@ -1108,7 +1108,7 @@ mod tests {
         ZoneStyle::ExemplarCity,
     ];
 
-    #[cfg(all(feature = "serde", feature = "experimental"))]
+    #[cfg(all(feature = "serde", feature = "unstable"))]
     fn check_serde(value: &FieldSetBuilder) {
         let json_str = serde_json::to_string(value).unwrap();
         let json_parsed: FieldSetBuilder = serde_json::from_str(&json_str).unwrap();
@@ -1130,7 +1130,7 @@ mod tests {
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap();
             builder.clone().build_composite().unwrap();
-            #[cfg(all(feature = "serde", feature = "experimental"))]
+            #[cfg(all(feature = "serde", feature = "unstable"))]
             check_serde(&builder);
         }
     }
@@ -1147,7 +1147,7 @@ mod tests {
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap();
             builder.clone().build_composite().unwrap();
-            #[cfg(all(feature = "serde", feature = "experimental"))]
+            #[cfg(all(feature = "serde", feature = "unstable"))]
             check_serde(&builder);
         }
     }
@@ -1163,7 +1163,7 @@ mod tests {
         builder.clone().build_date_and_time().unwrap_err();
         builder.clone().build_composite_datetime().unwrap();
         builder.clone().build_composite().unwrap();
-        #[cfg(all(feature = "serde", feature = "experimental"))]
+        #[cfg(all(feature = "serde", feature = "unstable"))]
         check_serde(&builder);
     }
 
@@ -1179,7 +1179,7 @@ mod tests {
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap_err();
             builder.clone().build_composite().unwrap();
-            #[cfg(all(feature = "serde", feature = "experimental"))]
+            #[cfg(all(feature = "serde", feature = "unstable"))]
             check_serde(&builder);
         }
     }
@@ -1197,7 +1197,7 @@ mod tests {
             builder.clone().build_date_and_time().unwrap();
             builder.clone().build_composite_datetime().unwrap();
             builder.clone().build_composite().unwrap();
-            #[cfg(all(feature = "serde", feature = "experimental"))]
+            #[cfg(all(feature = "serde", feature = "unstable"))]
             check_serde(&builder);
         }
     }
@@ -1216,7 +1216,7 @@ mod tests {
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap_err();
             builder.clone().build_composite().unwrap_err();
-            #[cfg(all(feature = "serde", feature = "experimental"))]
+            #[cfg(all(feature = "serde", feature = "unstable"))]
             check_serde(&builder);
         }
     }
@@ -1235,7 +1235,7 @@ mod tests {
                 builder.clone().build_date_and_time().unwrap_err();
                 builder.clone().build_composite_datetime().unwrap_err();
                 builder.clone().build_composite().unwrap();
-                #[cfg(all(feature = "serde", feature = "experimental"))]
+                #[cfg(all(feature = "serde", feature = "unstable"))]
                 check_serde(&builder);
             }
         }
@@ -1256,7 +1256,7 @@ mod tests {
                 builder.clone().build_date_and_time().unwrap_err();
                 builder.clone().build_composite_datetime().unwrap_err();
                 builder.clone().build_composite().unwrap_err();
-                #[cfg(all(feature = "serde", feature = "experimental"))]
+                #[cfg(all(feature = "serde", feature = "unstable"))]
                 check_serde(&builder);
             }
         }
@@ -1275,7 +1275,7 @@ mod tests {
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap_err();
             builder.clone().build_composite().unwrap();
-            #[cfg(all(feature = "serde", feature = "experimental"))]
+            #[cfg(all(feature = "serde", feature = "unstable"))]
             check_serde(&builder);
         }
     }
@@ -1295,7 +1295,7 @@ mod tests {
                 builder.clone().build_date_and_time().unwrap_err();
                 builder.clone().build_composite_datetime().unwrap_err();
                 builder.clone().build_composite().unwrap();
-                #[cfg(all(feature = "serde", feature = "experimental"))]
+                #[cfg(all(feature = "serde", feature = "unstable"))]
                 check_serde(&builder);
             }
         }
@@ -1317,7 +1317,7 @@ mod tests {
                 builder.clone().build_date_and_time().unwrap_err();
                 builder.clone().build_composite_datetime().unwrap_err();
                 builder.clone().build_composite().unwrap_err();
-                #[cfg(all(feature = "serde", feature = "experimental"))]
+                #[cfg(all(feature = "serde", feature = "unstable"))]
                 check_serde(&builder);
             }
         }

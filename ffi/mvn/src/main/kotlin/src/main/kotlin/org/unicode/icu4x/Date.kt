@@ -28,6 +28,7 @@ internal interface DateLib: Library {
     fun icu4x_Date_months_in_year_mv1(handle: Pointer): FFIUint8
     fun icu4x_Date_days_in_month_mv1(handle: Pointer): FFIUint8
     fun icu4x_Date_days_in_year_mv1(handle: Pointer): FFIUint16
+    fun icu4x_Date_is_in_leap_year_mv1(handle: Pointer): Byte
     fun icu4x_Date_calendar_mv1(handle: Pointer): Pointer
 }
 /** An ICU4X Date object capable of containing a date for any calendar.
@@ -81,17 +82,17 @@ class Date internal constructor (
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.try_from_str) for more information.
         */
         fun fromCodesInCalendar(eraCode: String, year: Int, monthCode: String, day: UByte, calendar: Calendar): Result<Date> {
-            val (eraCodeMem, eraCodeSlice) = PrimitiveArrayTools.borrowUtf8(eraCode)
-            val (monthCodeMem, monthCodeSlice) = PrimitiveArrayTools.borrowUtf8(monthCode)
+            val eraCodeSliceMemory = PrimitiveArrayTools.borrowUtf8(eraCode)
+            val monthCodeSliceMemory = PrimitiveArrayTools.borrowUtf8(monthCode)
             
-            val returnVal = lib.icu4x_Date_from_codes_in_calendar_mv1(eraCodeSlice, year, monthCodeSlice, FFIUint8(day), calendar.handle);
+            val returnVal = lib.icu4x_Date_from_codes_in_calendar_mv1(eraCodeSliceMemory.slice, year, monthCodeSliceMemory.slice, FFIUint8(day), calendar.handle);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = Date(handle, selfEdges)
                 CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
-                if (eraCodeMem != null) eraCodeMem.close()
-                if (monthCodeMem != null) monthCodeMem.close()
+                eraCodeSliceMemory?.close()
+                monthCodeSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
@@ -123,15 +124,15 @@ class Date internal constructor (
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_str) for more information.
         */
         fun fromString(v: String, calendar: Calendar): Result<Date> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_Date_from_string_mv1(vSlice, calendar.handle);
+            val returnVal = lib.icu4x_Date_from_string_mv1(vSliceMemory.slice, calendar.handle);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = Date(handle, selfEdges)
                 CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
-                if (vMem != null) vMem.close()
+                vSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
@@ -223,7 +224,7 @@ class Date internal constructor (
     /** Returns 1-indexed number of the month of this date in its year
     *
     *Note that for lunar calendars this may not lead to the same month
-    *having the same ordinal month across years; use month_code if you care
+    *having the same ordinal month across years; use `month_code` if you care
     *about month identity.
     *
     *See the [Rust documentation for `month`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.month) for more information.
@@ -293,7 +294,7 @@ class Date internal constructor (
     *of the year, and can be meaningfully compared with extended years from other
     *eras or used in arithmetic.
     *
-    *See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.extended_year) for more information.
+    *See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
     */
     fun extendedYear(): Int {
         
@@ -343,6 +344,16 @@ class Date internal constructor (
         
         val returnVal = lib.icu4x_Date_days_in_year_mv1(handle);
         return (returnVal.toUShort())
+    }
+    
+    /** Returns if the year is a leap year for this date
+    *
+    *See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+    */
+    fun isInLeapYear(): Boolean {
+        
+        val returnVal = lib.icu4x_Date_is_in_leap_year_mv1(handle);
+        return (returnVal > 0)
     }
     
     /** Returns the [Calendar] object backing this date

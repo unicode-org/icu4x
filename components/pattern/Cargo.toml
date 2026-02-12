@@ -47,3 +47,6 @@ litemap = ["dep:litemap"]
 serde = ["alloc", "dep:serde"]
 yoke = ["dep:yoke"]
 zerovec = ["dep:zerovec", "alloc"]
+
+[lints]
+workspace = true

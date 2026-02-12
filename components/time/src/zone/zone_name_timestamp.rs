@@ -32,12 +32,12 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 /// use icu::datetime::fieldsets::zone::GenericLong;
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::TimeZone;
 /// use icu::time::zone::ZoneNameTimestamp;
 /// use icu::time::ZonedDateTime;
 /// use writeable::assert_writeable_eq;
 ///
-/// let metlakatla = IanaParser::new().parse("America/Metlakatla");
+/// let metlakatla = TimeZone::from_iana_id("America/Metlakatla");
 ///
 /// let zone_formatter =
 ///     NoCalendarFormatter::try_new(locale!("en-US").into(), GenericLong)
@@ -95,7 +95,7 @@ impl ZoneNameTimestamp {
     ///
     /// # Examples
     ///
-    /// ZonedDateTime does _not_ necessarily roundtrip:
+    /// [`ZonedDateTime`] does _not_ necessarily roundtrip:
     ///
     /// ```
     /// use icu::calendar::Date;
@@ -226,7 +226,7 @@ impl serde::Serialize for ZoneNameTimestamp {
             let second = date_time.time.second.number();
             let mut s = alloc::format!("{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}");
             if second != 0 {
-                use alloc::fmt::Write;
+                use core::fmt::Write;
                 let _infallible = write!(&mut s, ":{second:02}");
             }
             // don't serialize the metadata for now

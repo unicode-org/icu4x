@@ -105,6 +105,10 @@ impl From<icu_calendar::ParseError> for ParseError {
             icu_calendar::ParseError::Range(r) => Self::Range(r),
             icu_calendar::ParseError::Syntax(s) => Self::Syntax(s),
             icu_calendar::ParseError::UnknownCalendar => Self::UnknownCalendar,
+            icu_calendar::ParseError::MismatchedCalendar(a, b) => Self::MismatchedCalendar(
+                a.try_into().unwrap_or(AnyCalendarKind::Iso),
+                b.try_into().unwrap_or(AnyCalendarKind::Iso),
+            ),
             _ => unreachable!(),
         }
     }
@@ -361,7 +365,7 @@ impl<A: AsCalendar> ZonedDateTime<A, UtcOffset> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// This function is "strict": the string should have only an offset and no named time zone.
     pub fn try_offset_only_from_str(rfc_9557_str: &str, calendar: A) -> Result<Self, ParseError> {
@@ -384,7 +388,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// This function is "strict": the string should have only a named time zone and no offset.
     pub fn try_location_only_from_str(
@@ -414,7 +418,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// This function is "lenient": the string can have an offset, and named time zone, both, or
     /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
@@ -444,7 +448,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// The string should have both an offset and a named time zone.
     ///
@@ -469,7 +473,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// )
     /// .unwrap();
     ///
-    /// assert_eq!(zoneddatetime.date.extended_year(), 5784);
+    /// assert_eq!(zoneddatetime.date.year().extended_year(), 5784);
     /// assert_eq!(
     ///     zoneddatetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M11"))
@@ -488,15 +492,15 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// let _ = zoneddatetime.zone.zone_name_timestamp();
     /// ```
     ///
-    /// An RFC 9557 string can provide a time zone in two parts: the DateTime UTC Offset or the Time Zone
-    /// Annotation. A DateTime UTC Offset is the time offset as laid out by RFC 3339; meanwhile, the Time
+    /// An RFC 9557 string can provide a time zone in two parts: the `DateTime` UTC Offset or the Time Zone
+    /// Annotation. A `DateTime` UTC Offset is the time offset as laid out by RFC 3339; meanwhile, the Time
     /// Zone Annotation is the annotation laid out by RFC 9557 and is defined as a UTC offset or IANA Time
     /// Zone identifier.
     ///
-    /// ## DateTime UTC Offsets
+    /// ## `DateTime` UTC Offsets
     ///
-    /// Below is an example of a time zone from a DateTime UTC Offset. The syntax here is familiar to a RFC 3339
-    /// DateTime string.
+    /// Below is an example of a time zone from a `DateTime` UTC Offset. The syntax here is familiar to a RFC 3339
+    /// `DateTime` string.
     ///
     /// ```
     /// use icu::calendar::Iso;
@@ -555,7 +559,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// An RFC 9557 string may contain both a UTC Offset and time zone annotation. This is fine as long as
     /// the time zone parts can be deemed as inconsistent or unknown consistency.
     ///
-    /// ### DateTime UTC offset with UTC Offset annotation.
+    /// ### `DateTime` UTC offset with UTC Offset annotation.
     ///
     /// These annotations must always be consistent as they should be either the same value or are inconsistent.
     ///
@@ -661,7 +665,7 @@ impl<A: AsCalendar> DateTime<A> {
     /// Creates a [`DateTime`] in any calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument, unless the argument is [`Iso`].
+    /// match the calendar argument.
     ///
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
@@ -755,12 +759,13 @@ impl Time {
             .transpose()?
             .unwrap_or_default();
 
-        Ok(Self::try_new(
-            time_record.hour,
-            time_record.minute,
-            time_record.second,
-            nanosecond,
-        )?)
+        // values are in range by construction
+        Ok(Time {
+            hour: crate::types::Hour(time_record.hour),
+            minute: crate::types::Minute(time_record.minute),
+            second: crate::types::Second(time_record.second),
+            subsecond: crate::types::Nanosecond(nanosecond),
+        })
     }
 }
 

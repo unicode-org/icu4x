@@ -51,21 +51,7 @@ impl SourceDataProvider {
                         .as_ref()
                         .map(|c| DatagenCalendar::from_cldr_name(&c.calendar));
 
-                    struct EmptyProvider;
-                    impl<M: DataMarker<DataStruct = JapaneseEras<'static>>> DataProvider<M> for EmptyProvider {
-                        fn load(&self, _req: DataRequest) -> Result<DataResponse<M>, DataError> {
-                            Ok(DataResponse {
-                                metadata: Default::default(),
-                                payload: DataPayload::from_owned(
-                                    JapaneseEras {
-                                        dates_to_eras: [(EraStartDate { year: 3000, month: 1, day: 1 }, tinystr::tinystr!(16, "dummy"))].into_iter().collect(),
-                                    },
-                                ),
-                            })
-                        }
-                    }
-
-                    let any_cal = AnyCalendar::try_new_unstable(&EmptyProvider, cal.canonical_any_calendar_kind()).unwrap();
+                    let any_cal = AnyCalendar::new_without_data(cal.canonical_any_calendar_kind());
 
                     let mut vec = era_dates_map[cal.cldr_name()]
                         .eras
@@ -73,18 +59,16 @@ impl SourceDataProvider {
                         .map(|(key, data)| {
                             let mut data = data.clone();
                             let date = data.start.or(data.end).unwrap();
-                            let era_year =
-                                Date::try_new_gregorian(date.year, date.month, date.day)
-                                    .unwrap()
-                                    .to_calendar(icu::calendar::Ref(&any_cal))
-                                    .year()
-                                    .era()
-                                    .unwrap();
+                            let era_year = Date::try_new_gregorian(date.year, date.month, date.day)
+                                .unwrap()
+                                .to_calendar(icu::calendar::Ref(&any_cal))
+                                .year()
+                                .era()
+                                .unwrap();
                             if era_year.era != data.code {
-                                println!("mismatched era code {era_year:?} - {data:?}");
+                                log::warn!("mismatched era code {era_year:?} - {data:?}");
                             }
-                            data.icu4x_era_index = era_year.era_index;
-
+                            data.icu4x_era_index = Some(era_year.era_index.unwrap());
                             (key.parse::<usize>().unwrap(), data)
                         })
                         .collect::<Vec<_>>();
@@ -172,7 +156,7 @@ fn test_calendar_eras() {
     use icu::datetime::preferences::CalendarAlgorithm;
     use icu::locale::extensions::unicode::Value;
 
-    let provider = crate::SourceDataProvider::new_testing();
+    let provider = SourceDataProvider::new_testing();
 
     let era_dates_map = &provider
         .cldr()
@@ -186,7 +170,7 @@ fn test_calendar_eras() {
 
     for (calendar, data) in era_dates_map {
         let kind = match calendar.as_str() {
-            "generic" | "islamic" => continue,
+            "generic" | "islamic" | "islamic-rgsa" => continue,
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
             c => CalendarAlgorithm::try_from(&Value::try_from_str(c).unwrap())
@@ -201,7 +185,13 @@ fn test_calendar_eras() {
         for (idx, (_, era)) in data.eras.iter().enumerate() {
             let (in_era_iso, not_in_era_iso) = match (era.start, era.end) {
                 (Some(start), None) => {
-                    let start = Date::try_new_iso(start.year, start.month, start.day).unwrap();
+                    let year = if era.code == "meiji" {
+                        // Meiji starts roundtripping only after Meiji 6
+                        start.year + 5
+                    } else {
+                        start.year
+                    };
+                    let start = Date::try_new_iso(year, start.month, start.day).unwrap();
                     (start, Date::from_rata_die(start.to_rata_die() - 1, Iso))
                 }
                 (None, Some(end)) => {
@@ -249,7 +239,16 @@ fn test_calendar_eras() {
             }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
-            assert_eq!(era_year.year, 1, "Didn't get correct year for {in_era:?}");
+            let expected_year = if era.code == "meiji" {
+                // We started at Meiji 6 for Meiji only, above
+                6
+            } else {
+                1
+            };
+            assert_eq!(
+                era_year.year, expected_year,
+                "Didn't get correct year for {in_era:?}"
+            );
 
             if calendar == "japanese" {
                 // Japanese is the only calendar that doesn't start eras on a new year

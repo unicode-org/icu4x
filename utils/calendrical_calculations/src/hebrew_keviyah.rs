@@ -212,7 +212,7 @@ pub struct YearInfo {
 }
 
 impl YearInfo {
-    /// Compute the YearInfo for a given year
+    /// Compute the [`YearInfo`] for a given year
     #[inline]
     pub fn compute_for(h_year: i32) -> Self {
         let (mut weeks_since_beharad, ḥalakim) = molad_details(h_year);
@@ -234,7 +234,7 @@ impl YearInfo {
         }
     }
 
-    /// Returns the YearInfo and h_year for the year containing `date`
+    /// Returns the [`YearInfo`] and `h_year` for the year containing `date`
     ///
     /// This will clamp the R.D. such that the hebrew year is within range for i32
     #[inline]
@@ -287,7 +287,7 @@ impl YearInfo {
 /// with the leap year ones being offset by 7. We don't directly rely on this
 /// property but it is useful for potential bitpacking, and we use it as a way
 /// to double-check that the four gates code is set up correctly. We do directly
-/// rely on the leap-keviyot being after the regular ones (and starting with בחה) in is_leap.
+/// rely on the leap-keviyot being after the regular ones (and starting with בחה) in `is_leap`.
 ///
 /// For people unsure if their editor supports bidirectional text,
 /// the first Keviyah (2D3) is Bet (ב), Ḥet (ח), Gimel (ג).
@@ -516,7 +516,7 @@ impl Keviyah {
         self >= Self::בחה
     }
 
-    /// Given the hebrew year for this Keviyah, calculate the YearInfo
+    /// Given the hebrew year for this Keviyah, calculate the [`YearInfo`]
     #[inline]
     pub fn year_info(self, h_year: i32) -> YearInfo {
         let (mut weeks_since_beharad, ḥalakim) = molad_details(h_year);

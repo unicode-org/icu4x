@@ -39,7 +39,6 @@ rand_pcg = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-experimental = []
 ryu = ["dep:ryu"]
 
 [lib]
@@ -48,3 +47,6 @@ bench = false  # This option is required for Benchmark CI
 [[bench]]
 name = "fixed_decimal"
 harness = false
+
+[lints]
+workspace = true

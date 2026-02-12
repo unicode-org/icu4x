@@ -266,7 +266,7 @@ mod tests {
         #[cfg(feature = "serde")]
         for val in zerovec.iter() {
             // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
-            crate::ule::test_utils::assert_serde_roundtrips::<Tuple2VarULE<str, [u8]>>(val);
+            test_utils::assert_serde_roundtrips::<Tuple2VarULE<str, [u8]>>(val);
         }
     }
     fn test_tripleule_validate_inner<Format: VarZeroVecFormat>() {
@@ -292,9 +292,9 @@ mod tests {
         #[cfg(feature = "serde")]
         for val in zerovec.iter() {
             // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
-            crate::ule::test_utils::assert_serde_roundtrips::<
-                Tuple3VarULE<str, [u8], VarZeroSlice<str>, Format>,
-            >(val);
+            test_utils::assert_serde_roundtrips::<Tuple3VarULE<str, [u8], VarZeroSlice<str>, Format>>(
+                val,
+            );
         }
     }
 

@@ -11,7 +11,7 @@ const ScriptWithExtensions_box_destroy_registry = new FinalizationRegistry((ptr)
 });
 
 /**
- * An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
+ * An ICU4X `ScriptWithExtensions` map object, capable of holding a map of codepoints to scriptextensions values
  *
  * See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
  */
@@ -106,7 +106,7 @@ export class ScriptWithExtensions {
     }
 
     /**
-     * Check if the Script_Extensions property of the given code point covers the given script
+     * Check if the `Script_Extensions` property of the given code point covers the given script
      *
      * See the [Rust documentation for `has_script`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
      */
@@ -145,7 +145,7 @@ export class ScriptWithExtensions {
     }
 
     /**
-     * Get a list of ranges of code points that contain this script in their Script_Extensions values
+     * Get a list of ranges of code points that contain this script in their `Script_Extensions` values
      *
      * See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
      */

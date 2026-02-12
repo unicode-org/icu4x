@@ -324,7 +324,7 @@ impl<'a> Replaceable<'a> {
             run_start = self.find_first_char_in_modifiable_range(start, |c| filter.contains(c))?;
             run_end = self
                 .find_first_char_in_modifiable_range(run_start, |c| !filter.contains(c))
-                .unwrap_or(self.allowed_upper_bound());
+                .unwrap_or_else(|| self.allowed_upper_bound());
         }
 
         // eprintln!("computing filtered run for rep: {self:?}, start: {start}, run_start: {run_start}, run_end: {run_end}");

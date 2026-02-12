@@ -4,7 +4,7 @@
 
 use core::borrow::Borrow;
 
-#[cfg(feature = "serde")]
+#[cfg(any(feature = "serde", feature = "alloc"))]
 use alloc::boxed::Box;
 
 /// A struct transparent over `[u8]` with convenient helper functions.
@@ -121,7 +121,7 @@ impl Borrow<[u8]> for ByteStr {
 }
 
 #[cfg(feature = "alloc")]
-impl Borrow<[u8]> for alloc::boxed::Box<ByteStr> {
+impl Borrow<[u8]> for Box<ByteStr> {
     fn borrow(&self) -> &[u8] {
         self.as_bytes()
     }

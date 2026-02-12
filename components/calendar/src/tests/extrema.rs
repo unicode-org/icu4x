@@ -14,7 +14,7 @@ const MIN_TEMPORAL: RataDie = fixed_from_gregorian(1970, 1, 1).add(-100_000_000)
 const MAX_TEMPORAL: RataDie = fixed_from_gregorian(1970, 1, 1).add(100_000_000);
 
 super::test_all_cals!(
-    fn check_ecma_extrema<C: Calendar>(cal: Ref<C>) {
+    fn check_ecma_extrema<C: Calendar + Copy>(cal: C) {
         // Round-trips
         assert_eq!(
             Date::from_rata_die(MIN_TEMPORAL, cal).to_rata_die(),
@@ -28,7 +28,7 @@ super::test_all_cals!(
 );
 
 super::test_all_cals!(
-    fn check_representation_extrema<C: Calendar>(cal: Ref<C>) {
+    fn check_representation_extrema<C: Calendar + Copy>(cal: C) {
         // Round-trips
         assert_eq!(
             Date::from_rata_die(*VALID_RD_RANGE.start(), cal).to_rata_die(),
@@ -52,7 +52,7 @@ super::test_all_cals!(
 );
 
 super::test_all_cals!(
-    fn check_from_codes_extrema<C: Calendar>(cal: Ref<C>) {
+    fn check_from_codes_extrema<C: Calendar + Copy>(cal: C) {
         // Success
         Date::try_new_from_codes(
             None,
@@ -137,12 +137,9 @@ super::test_all_cals!(
 );
 
 mod check_convenience_constructors {
-    use crate::{
-        cal::{
-            ChineseTraditional, EthiopianEraStyle, Hijri, HijriTabularEpoch, HijriTabularLeapYears,
-            Japanese, KoreanTraditional,
-        },
-        Ref,
+    use crate::cal::{
+        ChineseTraditional, EthiopianEraStyle, Hijri, HijriTabularEpoch, HijriTabularLeapYears,
+        Japanese, KoreanTraditional,
     };
 
     use super::*;
@@ -154,11 +151,17 @@ mod check_convenience_constructors {
     #[test]
     #[allow(deprecated)]
     fn chinese_traditional() {
-        let c = ChineseTraditional::new();
-        Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+        Date::try_new_chinese_traditional(*VALID_YEAR_RANGE.start() - 1, Month::new(1), 1)
             .unwrap_err();
-        Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c))
+        Date::try_new_chinese_traditional(*VALID_YEAR_RANGE.end() + 1, Month::new(1), 1)
             .unwrap_err();
+        #[allow(deprecated)]
+        {
+            let c = ChineseTraditional::new();
+            Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, c)
+                .unwrap_err();
+            Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, c).unwrap_err();
+        }
     }
     #[test]
     fn coptic() {
@@ -166,12 +169,17 @@ mod check_convenience_constructors {
         Date::try_new_coptic(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
     }
     #[test]
-    #[allow(deprecated)]
     fn korean_traditional() {
-        let c = KoreanTraditional::new();
-        Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+        Date::try_new_korean_traditional(*VALID_YEAR_RANGE.start() - 1, Month::new(1), 1)
             .unwrap_err();
-        Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+        Date::try_new_korean_traditional(*VALID_YEAR_RANGE.end() + 1, Month::new(1), 1)
+            .unwrap_err();
+        #[allow(deprecated)]
+        {
+            let c = KoreanTraditional::new();
+            Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, c).unwrap_err();
+            Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, c).unwrap_err();
+        }
     }
     #[test]
     fn ethiopian() {
@@ -213,31 +221,32 @@ mod check_convenience_constructors {
         Date::try_new_gregorian(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
     }
     #[test]
-    #[allow(deprecated)]
     fn hebrew() {
-        Date::try_new_hebrew(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
-        Date::try_new_hebrew(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+        Date::try_new_hebrew_v2(*VALID_YEAR_RANGE.start() - 1, Month::new(1), 1).unwrap_err();
+        Date::try_new_hebrew_v2(*VALID_YEAR_RANGE.end() + 1, Month::new(1), 1).unwrap_err();
+        #[allow(deprecated)]
+        {
+            Date::try_new_hebrew(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+            Date::try_new_hebrew(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+        }
     }
     #[test]
     fn hijri_tabular_friday() {
         let c = Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
-        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
-            .unwrap_err();
-        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, c).unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, c).unwrap_err();
     }
     #[test]
     fn hijri_tabular_thursday() {
         let c = Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
-        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
-            .unwrap_err();
-        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, c).unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, c).unwrap_err();
     }
     #[test]
     fn hijri_uaq() {
         let c = Hijri::new_umm_al_qura();
-        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
-            .unwrap_err();
-        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, c).unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, c).unwrap_err();
     }
     #[test]
     fn indian() {
@@ -257,15 +266,9 @@ mod check_convenience_constructors {
     #[test]
     fn japanese() {
         let cal = Japanese::new();
-        Date::try_new_japanese_with_calendar(
-            "reiwa",
-            *VALID_YEAR_RANGE.start() - 1,
-            1,
-            1,
-            Ref(&cal),
-        )
-        .unwrap_err();
-        Date::try_new_japanese_with_calendar("reiwa", *VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&cal))
+        Date::try_new_japanese_with_calendar("reiwa", *VALID_YEAR_RANGE.start() - 1, 1, 1, cal)
+            .unwrap_err();
+        Date::try_new_japanese_with_calendar("reiwa", *VALID_YEAR_RANGE.end() + 1, 1, 1, cal)
             .unwrap_err();
     }
     #[test]

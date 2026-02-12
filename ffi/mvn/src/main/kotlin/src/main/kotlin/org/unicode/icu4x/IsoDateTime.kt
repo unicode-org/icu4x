@@ -63,7 +63,7 @@ internal class OptionIsoDateTimeNative constructor(): Structure(), Structure.ByV
 
 }
 
-/** An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+/** An ICU4X `DateTime` object capable of containing a ISO-8601 date and time.
 *
 *See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html) for more information.
 */
@@ -88,13 +88,12 @@ class IsoDateTime (var date: IsoDate, var time: Time) {
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<IsoDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_IsoDateTime_from_string_mv1(vSlice);
+            val returnVal = lib.icu4x_IsoDateTime_from_string_mv1(vSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
-                
                 val returnStruct = IsoDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
+                vSliceMemory?.close()
                 return returnStruct.ok()
             } else {
                 return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()

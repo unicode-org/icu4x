@@ -4,7 +4,8 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
+    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarRangeError, MonthCodeError,
+    UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -102,7 +103,7 @@ impl ToExtendedYear for HebrewYear {
 
 impl HebrewYear {
     /// Convenience method to compute for a given year. Don't use this if you actually need
-    /// a YearInfo that you want to call .new_year() on.
+    /// a [`YearInfo`] that you want to call `.new_year()` on.
     fn compute(value: i32) -> Self {
         Self {
             keviyah: YearInfo::compute_for(value).keviyah,
@@ -151,7 +152,7 @@ impl DateFieldsResolver for Hebrew {
 
     fn reference_year_from_month_day(
         &self,
-        month: types::Month,
+        month: Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
@@ -186,7 +187,7 @@ impl DateFieldsResolver for Hebrew {
     fn ordinal_from_month(
         &self,
         year: Self::YearInfo,
-        month: types::Month,
+        month: Month,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
         let is_leap_year = year.keviyah.is_leap();
@@ -207,12 +208,12 @@ impl DateFieldsResolver for Hebrew {
         Ok(ordinal_month)
     }
 
-    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> types::Month {
+    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> Month {
         let is_leap = year.keviyah.is_leap();
         Month::new_unchecked(
             ordinal_month - (is_leap && ordinal_month >= 6) as u8,
             if ordinal_month == 6 && is_leap {
-                types::LeapStatus::Leap
+                LeapStatus::Leap
             } else if ordinal_month == 7 && is_leap {
                 // Use the leap name for Adar in a leap year
                 LeapStatus::FormattingLeap
@@ -347,13 +348,38 @@ impl Calendar for Hebrew {
 }
 
 impl Date<Hebrew> {
-    /// This method uses an ordinal month, which is probably not what you want.
+    /// Construct a new Hebrew [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
-    /// Use [`Date::try_new_from_codes`]
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::Month;
+    ///
+    /// let date = Date::try_new_hebrew_v2(5782, Month::new(6), 7)
+    ///     .expect("Failed to initialize Date instance.");
+    ///
+    /// assert_eq!(date.era_year().year, 5782);
+    /// // Adar I
+    /// assert_eq!(date.month().number(), 6);
+    /// assert_eq!(date.month().is_formatting_leap(), true);
+    /// assert_eq!(date.day_of_month().0, 7);
+    /// ```
+    pub fn try_new_hebrew_v2(
+        year: i32,
+        month: Month,
+        day: u8,
+    ) -> Result<Date<Hebrew>, LunisolarRangeError> {
+        ArithmeticDate::try_from_ymd_lunisolar(year, month, day, &Hebrew)
+            .map(HebrewDateInner)
+            .map(|inner| Date::from_raw(inner, Hebrew))
+    }
+
+    /// This method uses an ordinal month, which is probably not what you want.
+    ///
+    /// Use [`Date::try_new_hebrew_v2`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hebrew_v2`")]
     pub fn try_new_hebrew(
         year: i32,
         ordinal_month: u8,
@@ -384,11 +410,10 @@ mod tests {
     pub const AV: Month = Month::new(11);
     pub const ELUL: Month = Month::new(12);
 
-    /// The leap years used in the tests below
     const LEAP_YEARS_IN_TESTS: [i32; 1] = [5782];
-    /// (iso, hebrew) pairs of testcases. If any of the years here
-    /// are leap years please add them to LEAP_YEARS_IN_TESTS (we have this manually
-    /// so we don't end up exercising potentially buggy codepaths to test this)
+    // If any of the years here are leap years, add them to
+    // [`LEAP_YEARS_IN_TESTS`] (we have this manually so we don't
+    // end up exercising potentially buggy codepaths to test this)
     #[expect(clippy::type_complexity)]
     const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (i32, Month, u8)); 48] = [
         ((2021, 1, 10), (5781, TEVET, 26)),
@@ -476,6 +501,15 @@ mod tests {
                 Ok(date)
             );
 
+            assert_eq!(
+                Date::try_new_hebrew_v2(
+                    date.era_year().year,
+                    date.month().value,
+                    date.day_of_month().0,
+                ),
+                Ok(date)
+            );
+
             #[allow(deprecated)] // should still test
             {
                 assert_eq!(
@@ -500,13 +534,13 @@ mod tests {
     fn test_negative_era_years() {
         let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
         let greg_year = greg_date.era_year();
-        assert_eq!(greg_date.inner.0.year(), -5000);
+        assert_eq!(greg_year.extended_year, -5000);
         assert_eq!(greg_year.era, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_year.year, 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         let hebr_year = hebr_date.era_year();
-        assert_eq!(hebr_date.inner.0.year().value, -1240);
+        assert_eq!(hebr_year.extended_year, -1240);
         assert_eq!(hebr_year.era, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
         assert_eq!(hebr_year.year, -1240);
@@ -515,10 +549,7 @@ mod tests {
     #[test]
     fn test_weekdays() {
         // https://github.com/unicode-org/icu4x/issues/4893
-        let cal = Hebrew::new();
-        let era = "am";
-        let month = Month::new(1);
-        let dt = Date::try_new_from_codes(Some(era), 3760, month.code(), 1, cal).unwrap();
+        let dt = Date::try_new_hebrew_v2(3760, Month::new(1), 1).unwrap();
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1

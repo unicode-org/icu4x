@@ -162,7 +162,7 @@ enum class CanonicalCombiningClass(val inner: Int) {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
         *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.
         */
@@ -176,9 +176,9 @@ enum class CanonicalCombiningClass(val inner: Int) {
         @JvmStatic
         
         fun tryFromStr(s: String): CanonicalCombiningClass? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_CanonicalCombiningClass_try_from_str_mv1(sSlice);
+            val returnVal = lib.icu4x_CanonicalCombiningClass_try_from_str_mv1(sSliceMemory.slice);
             
             val intermediateOption = returnVal.option() ?: return null
             return CanonicalCombiningClass.fromNative(intermediateOption)
@@ -211,7 +211,7 @@ enum class CanonicalCombiningClass(val inner: Int) {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
     *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
     */

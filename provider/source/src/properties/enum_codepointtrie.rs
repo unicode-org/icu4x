@@ -170,6 +170,7 @@ fn validate_dense(map: &BTreeMap<u16, &str>) -> Result<(), DataError> {
     Ok(())
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn convert_sparse(
     map: BTreeMap<u16, &str>,
 ) -> Result<PropertyEnumToValueNameSparseMap<'static>, DataError> {
@@ -246,7 +247,16 @@ macro_rules! expand {
                         core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
                         core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
                     )?;
-                    let trie = data.names_to_values()
+                    let map = data.names_to_values();
+                    for name in map.keys() {
+                        if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
+                            return Err(
+                                DataError::custom("Property name contains '-' or whitespace")
+                                    .with_display_context(name),
+                            );
+                        }
+                    }
+                    let trie = map
                         .into_iter()
                         .map(|(k, v)| (k, v as usize))
                         .collect::<ZeroTrieSimpleAscii<_>>()
@@ -349,6 +359,15 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
             }
             for alias in &value.aliases {
                 map.insert(alias.as_str(), packed);
+            }
+        }
+
+        for name in map.keys() {
+            if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
+                return Err(
+                    DataError::custom("Property name contains '-' or whitespace")
+                        .with_display_context(name),
+                );
             }
         }
 

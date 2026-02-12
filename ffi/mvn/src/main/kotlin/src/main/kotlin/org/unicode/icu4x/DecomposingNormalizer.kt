@@ -35,7 +35,7 @@ class DecomposingNormalizer internal constructor (
         internal val lib: DecomposingNormalizerLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new DecomposingNormalizer instance for NFD using compiled data.
+        /** Construct a new `DecomposingNormalizer` instance for NFD using compiled data.
         *
         *See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
         */
@@ -50,7 +50,7 @@ class DecomposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new DecomposingNormalizer instance for NFD using a particular data source.
+        /** Construct a new `DecomposingNormalizer` instance for NFD using a particular data source.
         *
         *See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
         */
@@ -69,7 +69,7 @@ class DecomposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new DecomposingNormalizer instance for NFKD using compiled data.
+        /** Construct a new `DecomposingNormalizer` instance for NFKD using compiled data.
         *
         *See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
         */
@@ -84,7 +84,7 @@ class DecomposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
+        /** Construct a new `DecomposingNormalizer` instance for NFKD using a particular data source.
         *
         *See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
         */
@@ -111,9 +111,9 @@ class DecomposingNormalizer internal constructor (
     *See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
     */
     fun normalize(s: String): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_DecomposingNormalizer_normalize_mv1(handle, sSlice, write);
+        val returnVal = lib.icu4x_DecomposingNormalizer_normalize_mv1(handle, sSliceMemory.slice, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -127,9 +127,9 @@ class DecomposingNormalizer internal constructor (
     *See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
     */
     fun is_normalized(s: String): Boolean {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf16(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
         
-        val returnVal = lib.icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(handle, sSliceMemory.slice);
         return (returnVal > 0)
     }
     
@@ -138,9 +138,9 @@ class DecomposingNormalizer internal constructor (
     *See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
     */
     fun is_normalized_up_to(s: String): ULong {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf16(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
         
-        val returnVal = lib.icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(handle, sSliceMemory.slice);
         return (returnVal.toULong())
     }
 

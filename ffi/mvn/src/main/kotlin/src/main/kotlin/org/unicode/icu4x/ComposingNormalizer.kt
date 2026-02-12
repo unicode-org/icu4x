@@ -35,7 +35,7 @@ class ComposingNormalizer internal constructor (
         internal val lib: ComposingNormalizerLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new ComposingNormalizer instance for NFC using compiled data.
+        /** Construct a new `ComposingNormalizer` instance for NFC using compiled data.
         *
         *See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
         */
@@ -50,7 +50,7 @@ class ComposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new ComposingNormalizer instance for NFC using a particular data source.
+        /** Construct a new `ComposingNormalizer` instance for NFC using a particular data source.
         *
         *See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
         */
@@ -69,7 +69,7 @@ class ComposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new ComposingNormalizer instance for NFKC using compiled data.
+        /** Construct a new `ComposingNormalizer` instance for NFKC using compiled data.
         *
         *See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
         */
@@ -84,7 +84,7 @@ class ComposingNormalizer internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new ComposingNormalizer instance for NFKC using a particular data source.
+        /** Construct a new `ComposingNormalizer` instance for NFKC using a particular data source.
         *
         *See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
         */
@@ -111,9 +111,9 @@ class ComposingNormalizer internal constructor (
     *See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
     */
     fun normalize(s: String): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_ComposingNormalizer_normalize_mv1(handle, sSlice, write);
+        val returnVal = lib.icu4x_ComposingNormalizer_normalize_mv1(handle, sSliceMemory.slice, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -127,9 +127,9 @@ class ComposingNormalizer internal constructor (
     *See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
     */
     fun is_normalized(s: String): Boolean {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf16(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
         
-        val returnVal = lib.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(handle, sSliceMemory.slice);
         return (returnVal > 0)
     }
     
@@ -138,9 +138,9 @@ class ComposingNormalizer internal constructor (
     *See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
     */
     fun is_normalized_up_to(s: String): ULong {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf16(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
         
-        val returnVal = lib.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(handle, sSliceMemory.slice);
         return (returnVal.toULong())
     }
 

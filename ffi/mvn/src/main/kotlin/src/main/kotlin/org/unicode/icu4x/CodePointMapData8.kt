@@ -596,10 +596,11 @@ class CodePointMapData8 internal constructor (
     *See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
     */
     fun iterRangesForValue(value: UByte): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointMapData8_iter_ranges_for_value_mv1(handle, FFIUint8(value));
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
@@ -611,10 +612,11 @@ class CodePointMapData8 internal constructor (
     *See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
     */
     fun iterRangesForValueComplemented(value: UByte): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(handle, FFIUint8(value));
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
@@ -624,19 +626,20 @@ class CodePointMapData8 internal constructor (
     /** Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
     *whose property values are contained in the mask.
     *
-    *The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or
+    *The main mask property supported is that for `General_Category`, which can be obtained via `general_category_to_mask()` or
     *by using `GeneralCategoryNameToMaskMapper`
     *
-    *Should only be used on maps for properties with values less than 32 (like Generak_Category),
+    *Should only be used on maps for properties with values less than 32 (like `General_Category`),
     *other maps will have unpredictable results
     *
     *See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
     */
     fun iterRangesForGroup(group: GeneralCategoryGroup): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointMapData8_iter_ranges_for_group_mv1(handle, group.toNative());
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));

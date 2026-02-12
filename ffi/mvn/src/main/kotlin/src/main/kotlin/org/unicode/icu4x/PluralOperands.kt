@@ -36,15 +36,15 @@ class PluralOperands internal constructor (
         *See the [Rust documentation for `from_str`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
         */
         fun fromString(s: String): Result<PluralOperands> {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_PluralOperands_from_string_mv1(sSlice);
+            val returnVal = lib.icu4x_PluralOperands_from_string_mv1(sSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = PluralOperands(handle, selfEdges)
                 CLEANER.register(returnOpaque, PluralOperands.PluralOperandsCleaner(handle, PluralOperands.lib));
-                if (sMem != null) sMem.close()
+                sSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return DecimalParseErrorError(DecimalParseError.fromNative(returnVal.union.err)).err()
@@ -65,7 +65,7 @@ class PluralOperands internal constructor (
         }
         @JvmStatic
         
-        /** Construct from a FixedDecimal
+        /** Construct from a `FixedDecimal`
         *
         *Retains at most 18 digits each from the integer and fraction parts.
         */

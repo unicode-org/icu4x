@@ -9,9 +9,9 @@ use crate::SourceDataProvider;
 use icu_locale_core::locale;
 use icu_provider::prelude::*;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod compact;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod compact_decimal_pattern;
 pub(crate) mod decimal_pattern;
 mod symbols;
@@ -73,9 +73,9 @@ impl SourceDataProvider {
             .collect())
     }
 
-    /// Produce DataIdentifier's for all locale-numbering system pairs in the form <locale>/<numsys>
+    /// Produce `DataIdentifier`'s for all locale-numbering system pairs in the form <locale>/<numsys>
     /// This also includes a bare <locale>
-    fn iter_ids_for_numbers_with_locales(
+    pub(crate) fn iter_ids_for_numbers_with_locales(
         &self,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
@@ -99,7 +99,7 @@ impl SourceDataProvider {
             .collect())
     }
 
-    /// Produce DataIdentifier's for all *used* numbering systems in the form und/<numsys>
+    /// Produce `DataIdentifier`'s for all *used* numbering systems in the form und/<numsys>
     fn iter_ids_for_used_numbers(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -120,7 +120,7 @@ impl SourceDataProvider {
             .collect())
     }
 
-    /// Produce DataIdentifier's for all digit-based numbering systems in the form und/<numsys>
+    /// Produce `DataIdentifier`'s for all digit-based numbering systems in the form und/<numsys>
     #[allow(unused)] // TODO(#5824): Support user-specified numbering systems
     fn iter_all_number_ids(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         use cldr_serde::numbering_systems::NumberingSystemType;

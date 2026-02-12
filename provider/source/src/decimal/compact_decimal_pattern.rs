@@ -3,14 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde::numbers::DecimalFormat;
-use icu::experimental::compactdecimal::provider::CompactPatterns;
+use icu::decimal::provider::CompactPatterns;
 use icu::plurals::PluralElements;
-use icu_pattern::{
-    PatternItemCow, SinglePlaceholder, SinglePlaceholderKey, SinglePlaceholderPattern,
-};
+use icu_pattern::{QuoteMode, SinglePlaceholder, SinglePlaceholderPattern};
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use std::collections::HashMap;
 
 /// A [`ParsedPattern`] represents a compact decimal pattern, which consists of
 /// literal text with an optional placeholder.  The literal text is unescaped,
@@ -20,127 +17,6 @@ use std::collections::HashMap;
 struct ParsedPattern {
     pattern: Box<SinglePlaceholderPattern>,
     number_of_0s: Option<u8>,
-}
-
-/// Parses a compact decimal pattern string, performing any validation that can
-/// be done without the context of the associated type and count.
-fn parse(pattern: &str) -> Result<ParsedPattern, Cow<'static, str>> {
-    let cldr_overrides: HashMap<String, String> = [
-        // Unescaped - in yrl (Nheengatu).
-        ("0 millón-ita", "0 millón'-'ita"),
-        ("0 billón-ita", "0 billón'-'ita"),
-        ("0 tirillón-ita", "0 tirillón'-'ita"),
-        ("0 miliãu-ita", "0 miliãu'-'ita"),
-        ("0 biliãu-ita", "0 biliãu'-'ita"),
-        ("0 tiriliãu-ita", "0 tiriliãu'-'ita"),
-        // All compact decimal patterns for sw (Swahili) are split by sign;
-        // the sign ends up where it would be as part of the significand, so
-        // this special handling is unneeded.  Depending on the region subtag,
-        // the space may be breaking or nonbreaking.
-        ("elfu 0;elfu -0", "elfu 0"),
-        ("milioni 0;milioni -0", "milioni 0"),
-        ("bilioni 0;bilioni -0", "bilioni 0"),
-        ("trilioni 0;trilioni -0", "trilioni 0"),
-        ("elfu\u{A0}0;elfu\u{A0}-0", "elfu\u{A0}0"),
-        ("milioni\u{A0}0;milioni\u{A0}-0", "milioni\u{A0}0"),
-        ("bilioni\u{A0}0;bilioni\u{A0}-0", "bilioni\u{A0}0"),
-        ("trilioni\u{A0}0;trilioni\u{A0}-0", "trilioni\u{A0}0"),
-        ("0M;-0M", "0M"),
-        ("0B;-0B", "0B"),
-        ("0T;-0T", "0B"),
-        // Unescaped E in hu (Hungarian).
-        ("0\u{A0}E", "0\u{A0}'E'"),
-    ]
-    .iter()
-    .flat_map(|(key, value)| {
-        [
-            (key.to_string(), value.to_string()),
-            (key.replace('0', "00"), value.replace('0', "00")),
-            (key.replace('0', "000"), value.replace('0', "000")),
-        ]
-    })
-    .collect();
-    let pattern = cldr_overrides
-        .get(pattern)
-        .map(|s| s.as_str())
-        .unwrap_or(pattern);
-
-    let mut number_of_0s = None;
-    let mut parts = Vec::new();
-    // CLDR patterns use quoting for escaping, thus '.' for a literal FULL
-    // STOP, as opposed to . for the decimal separator.  A doubled
-    // APOSTROPHE ('') represents a single one.
-    // See https://www.unicode.org/reports/tr35/tr35-numbers.html#Special_Pattern_Characters.
-    // We process the pattern in chunks delimited by ', which are
-    // alternatingly unescaped and escaped.
-    for (i, chunk) in pattern.split('\'').enumerate() {
-        let escaped = i % 2 == 1;
-        if escaped {
-            if chunk.is_empty() {
-                // '' means '.
-                parts.push(PatternItemCow::Literal(Cow::Borrowed("\'")));
-            } else {
-                // Anything else wrapped in apostrophes is literal text.
-                parts.push(PatternItemCow::Literal(Cow::Borrowed(chunk)));
-            }
-        } else {
-            // We are in unquoted text, so we need to check for the
-            // symbols defined in https://www.unicode.org/reports/tr35/tr35-numbers.html#Number_Pattern_Character_Definitions.
-            if chunk
-                .chars()
-                .any(|c| ('1'..'9').contains(&c) || "@#.-,E+%‰,¤*'".contains(c))
-            {
-                return Err(
-                    format!("Unsupported symbol in compact decimal pattern {pattern}").into(),
-                );
-            }
-            // Given the chunk "me0000w", the prefix is "me", and
-            // additional_0s_and_suffix is "000w"; given the chunk
-            // "me0w", these are "me" and "w" respectively.
-            if let Some((prefix, additional_0s_and_suffix)) = chunk.split_once('0') {
-                if number_of_0s.is_some() {
-                    return Err(format!(
-                        "Multiple placeholders in compact decimal pattern {pattern})"
-                    )
-                    .into());
-                }
-                // The prefix goes into the literal text, and the position
-                // of the placeholder is then at the end of the accumulated
-                // text, at variable.len().
-                parts.push(PatternItemCow::Literal(Cow::Borrowed(prefix)));
-                if let Some((middle_0s, suffix)) = additional_0s_and_suffix.rsplit_once('0') {
-                    // More than one 0; in the "me0000w" example, middle_0s
-                    // is "00", suffix is "w".
-                    if !middle_0s.chars().all(|c| c == '0') {
-                        return Err(format!(
-                            "Multiple placeholders in compact decimal pattern {pattern}"
-                        )
-                        .into());
-                    }
-                    number_of_0s = Some(
-                        u8::try_from(middle_0s.len() + 2)
-                            .map_err(|_| format!("Too many 0s in pattern {pattern}"))?,
-                    );
-                    parts.push(PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton));
-                    parts.push(PatternItemCow::Literal(Cow::Borrowed(suffix)));
-                } else {
-                    // Only one 0, we are in the "me0w" case.
-                    number_of_0s = Some(1);
-                    parts.push(PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton));
-                    parts.push(PatternItemCow::Literal(Cow::Borrowed(
-                        additional_0s_and_suffix,
-                    )));
-                }
-            } else {
-                // No symbols, all literal text.
-                parts.push(PatternItemCow::Literal(Cow::Borrowed(chunk)));
-            }
-        }
-    }
-    Ok(ParsedPattern {
-        pattern: SinglePlaceholderPattern::try_from_items(parts.into_iter()).unwrap(),
-        number_of_0s,
-    })
 }
 
 impl TryFrom<&DecimalFormat> for CompactPatterns<'static, SinglePlaceholder> {
@@ -158,18 +34,61 @@ impl TryFrom<&DecimalFormat> for CompactPatterns<'static, SinglePlaceholder> {
             let log10_type = u8::try_from(pattern.magnitude.len() - 1)
                 .map_err(|_| format!("Too many digits in type {}", pattern.magnitude))?;
 
-            let count = &*pattern.count;
+            // TODO: use negative patterns?
+            let pattern_str = pattern.pattern.split(';').next().unwrap();
+
+            let number_of_0s = pattern_str
+                .split('\'')
+                .enumerate()
+                .filter_map(|(i, chunk)| {
+                    (i % 2 == 0)
+                        .then(|| chunk.chars().filter(|&c| c == '0').count() as u8)
+                        .filter(|&n| n != 0)
+                })
+                .next();
+
+            if log10_type < number_of_0s.unwrap_or_default() {
+                return Err(format!(
+                    "Too many 0s in type 10^{}, ({}, implying nonpositive exponent c={})",
+                    log10_type,
+                    number_of_0s.unwrap_or_default(),
+                    log10_type as i8 - number_of_0s.unwrap_or_default() as i8 + 1
+                )
+                .into());
+            }
+
+            let pattern_str = if let Some(number_of_zeros) = number_of_0s {
+                pattern_str.replace(
+                    &core::iter::repeat_n('0', number_of_zeros as usize).collect::<String>(),
+                    "{0}",
+                )
+            } else {
+                pattern_str.into()
+            };
+
+            let parsed = SinglePlaceholderPattern::try_from_str(
+                &pattern_str,
+                QuoteMode::QuotingSupported.into(),
+            )
+            .map_err(|e| e.to_string())?;
 
             parsed_patterns
                 .entry(log10_type)
                 .or_default()
-                .insert(count, parse(&pattern.pattern)?)
+                .insert(
+                    &pattern.count,
+                    ParsedPattern {
+                        pattern: parsed,
+                        number_of_0s,
+                    },
+                )
                 .map_or_else(
                     // TODO(egg): This should be try_insert.
                     || Ok(()),
                     |_| {
                         Err(format!(
-                            "Plural case {count:?} is duplicated for type 10^{log10_type}"
+                            "Plural case {:?} is duplicated for type 10^{log10_type}",
+                            pattern.count
                         ))
                     },
                 )?;
@@ -210,16 +129,6 @@ impl TryFrom<&DecimalFormat> for CompactPatterns<'static, SinglePlaceholder> {
                 }
                 Ok(())
             })?;
-
-            if log10_type < other_number_of_0s {
-                return Err(format!(
-                    "Too many 0s in type 10^{}, ({}, implying nonpositive exponent c={})",
-                    log10_type,
-                    other_number_of_0s,
-                    log10_type as i8 - other_number_of_0s as i8 + 1
-                )
-                .into());
-            }
 
             let exponent = log10_type - other_number_of_0s + 1;
 
@@ -418,35 +327,6 @@ mod tests {
     }
 
     #[test]
-    fn test_pattern_syntax_errors() {
-        assert_eq!(
-            parse("M.").err().unwrap(),
-            "Unsupported symbol in compact decimal pattern M."
-        );
-        assert_eq!(
-            parse("M'.'").unwrap().pattern,
-            SinglePlaceholderPattern::try_from_str("M.", Default::default()).unwrap()
-        );
-        assert_eq!(
-            parse("0 0").err().unwrap(),
-            "Multiple placeholders in compact decimal pattern 0 0"
-        );
-        assert_eq!(
-            parse("0 '0'").unwrap().pattern,
-            SinglePlaceholderPattern::try_from_str("{0} 0", Default::default()).unwrap()
-        );
-        let zeros = str::repeat("0", 256);
-        assert_eq!(
-            parse(&zeros).err().unwrap(),
-            String::from("Too many 0s in pattern ") + &zeros
-        );
-        assert_eq!(
-            parse(&zeros[..255]).unwrap().pattern,
-            SinglePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap()
-        );
-    }
-
-    #[test]
     fn test_inter_pattern_errors() {
         assert_eq!(
             CompactPatterns::try_from(
@@ -462,11 +342,11 @@ mod tests {
 
         assert_eq!(
             CompactPatterns::try_from(
-                &serde_json::from_str::<DecimalFormat>(r#"{ "1-count-one": "0" }"#).unwrap()
+                &serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-one": "0" }"#).unwrap()
             )
             .err()
             .unwrap(),
-            "Missing other case for type 10^0"
+            "Missing other case for type 10^3"
         );
 
         assert_eq!(

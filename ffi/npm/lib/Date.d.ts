@@ -36,7 +36,7 @@ export class Date {
     /**
      * Creates a new {@link Date} from the given fields, which are interpreted in the given calendar system.
      *
-     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
      * See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
      */
@@ -125,7 +125,7 @@ export class Date {
      * Returns 1-indexed number of the month of this date in its year
      *
      * Note that for lunar calendars this may not lead to the same month
-     * having the same ordinal month across years; use month_code if you care
+     * having the same ordinal month across years; use `month_code` if you care
      * about month identity.
      *
      * See the [Rust documentation for `month`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.month) for more information.
@@ -178,7 +178,7 @@ export class Date {
      * of the year, and can be meaningfully compared with extended years from other
      * eras or used in arithmetic.
      *
-     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.extended_year) for more information.
+     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
      */
     get extendedYear(): number;
 
@@ -211,6 +211,13 @@ export class Date {
      * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.days_in_year) for more information.
      */
     get daysInYear(): number;
+
+    /**
+     * Returns if the year is a leap year for this date
+     *
+     * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+     */
+    get isInLeapYear(): boolean;
 
     /**
      * Returns the {@link Calendar} object backing this date

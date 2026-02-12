@@ -47,7 +47,7 @@ class CaseMapper internal constructor (
         internal val lib: CaseMapperLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new CaseMapper instance using compiled data.
+        /** Construct a new `CaseMapper` instance using compiled data.
         *
         *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapper.html#method.new) for more information.
         */
@@ -62,7 +62,7 @@ class CaseMapper internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new CaseMapper instance using a particular data source.
+        /** Construct a new `CaseMapper` instance using a particular data source.
         *
         *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapper.html#method.new) for more information.
         */
@@ -81,35 +81,35 @@ class CaseMapper internal constructor (
         }
         @JvmStatic
         
-        /** Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+        /** Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a `CaseMapper` object)
         *
         *See the [Rust documentation for `lowercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
         */
         fun lowercaseWithCompiledData(s: String, locale: Locale): String {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_CaseMapper_lowercase_with_compiled_data_mv1(sSlice, locale.handle, write);
+            val returnVal = lib.icu4x_CaseMapper_lowercase_with_compiled_data_mv1(sSliceMemory.slice, locale.handle, write);
             
             val returnString = DW.writeToString(write)
             return returnString
         }
         @JvmStatic
         
-        /** Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+        /** Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a `CaseMapper` object)
         *
         *See the [Rust documentation for `uppercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
         */
         fun uppercaseWithCompiledData(s: String, locale: Locale): String {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(sSlice, locale.handle, write);
+            val returnVal = lib.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(sSliceMemory.slice, locale.handle, write);
             
             val returnString = DW.writeToString(write)
             return returnString
         }
         @JvmStatic
         
-        /** Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /** Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         *
         *See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
         */
@@ -120,7 +120,7 @@ class CaseMapper internal constructor (
         }
         @JvmStatic
         
-        /** Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /** Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         *
         *See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
         */
@@ -131,7 +131,7 @@ class CaseMapper internal constructor (
         }
         @JvmStatic
         
-        /** Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /** Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         *
         *See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
         */
@@ -142,7 +142,7 @@ class CaseMapper internal constructor (
         }
         @JvmStatic
         
-        /** Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /** Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         *
         *See the [Rust documentation for `simple_fold`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
         */
@@ -153,7 +153,7 @@ class CaseMapper internal constructor (
         }
         @JvmStatic
         
-        /** Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /** Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         *
         *See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
         */
@@ -169,9 +169,9 @@ class CaseMapper internal constructor (
     *See the [Rust documentation for `lowercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
     */
     fun lowercase(s: String, locale: Locale): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_CaseMapper_lowercase_mv1(handle, sSlice, locale.handle, write);
+        val returnVal = lib.icu4x_CaseMapper_lowercase_mv1(handle, sSliceMemory.slice, locale.handle, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -182,9 +182,9 @@ class CaseMapper internal constructor (
     *See the [Rust documentation for `uppercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
     */
     fun uppercase(s: String, locale: Locale): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_CaseMapper_uppercase_mv1(handle, sSlice, locale.handle, write);
+        val returnVal = lib.icu4x_CaseMapper_uppercase_mv1(handle, sSliceMemory.slice, locale.handle, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -195,9 +195,9 @@ class CaseMapper internal constructor (
     *See the [Rust documentation for `fold`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.fold) for more information.
     */
     fun fold(s: String): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_CaseMapper_fold_mv1(handle, sSlice, write);
+        val returnVal = lib.icu4x_CaseMapper_fold_mv1(handle, sSliceMemory.slice, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -209,9 +209,9 @@ class CaseMapper internal constructor (
     *See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.fold_turkic) for more information.
     */
     fun foldTurkic(s: String): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_CaseMapper_fold_turkic_mv1(handle, sSlice, write);
+        val returnVal = lib.icu4x_CaseMapper_fold_turkic_mv1(handle, sSliceMemory.slice, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -223,7 +223,7 @@ class CaseMapper internal constructor (
     *In other words, this adds all characters that this casemaps to, as
     *well as all characters that may casemap to this one.
     *
-    *Note that since CodePointSetBuilder does not contain strings, this will
+    *Note that since `CodePointSetBuilder` does not contain strings, this will
     *ignore string mappings.
     *
     *Identical to the similarly named method on `CaseMapCloser`, use that if you

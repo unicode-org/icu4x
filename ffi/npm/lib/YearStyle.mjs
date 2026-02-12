@@ -13,7 +13,8 @@ export class YearStyle {
     static #values = new Map([
         ["Auto", 0],
         ["Full", 1],
-        ["WithEra", 2]
+        ["WithEra", 2],
+        ["NoEra", 3]
     ]);
 
     static getAllEntries() {
@@ -62,11 +63,13 @@ export class YearStyle {
         new YearStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         new YearStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
         new YearStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new YearStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
     ];
 
     static Auto = YearStyle.#objectValues[0];
     static Full = YearStyle.#objectValues[1];
     static WithEra = YearStyle.#objectValues[2];
+    static NoEra = YearStyle.#objectValues[3];
 
 
     constructor(value) {

@@ -55,11 +55,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         sorted_vals[best_index]
     }
     /// Add a prefix and all values associated with the prefix to the builder.
-    pub(crate) fn add_prefix(
-        &mut self,
-        prefix: &'a str,
-        values: &BTreeMap<&'a str, usize>,
-    ) -> Result<(), ZeroTrieBuildError> {
+    pub(crate) fn add_prefix(&mut self, prefix: &'a str, values: &BTreeMap<&'a str, usize>) {
         // Is there a more Rusty way to compute min and max together?
         let mut min = usize::MAX;
         let mut max = 0;
@@ -87,7 +83,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .iter()
             .map(|(suffix, value)| (*suffix, *value))
             .collect::<ZeroTrieSimpleAscii<Vec<u8>>>();
-        if sub_trie.byte_len() > self.suffixes.len() * core::mem::size_of::<DenseType>() {
+        if sub_trie.byte_len() > self.suffixes.len() * size_of::<DenseType>() {
             // Create a dense prefix
             let offsets = self
                 .suffixes
@@ -108,13 +104,11 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             for (suffix, value) in sparse_only.iter() {
                 self.primary.push((prefix, *suffix, *value));
             }
-            Ok(())
         } else {
             // Create a sparse prefix
             for (suffix, value) in values.iter() {
                 self.primary.push((prefix, *suffix, *value));
             }
-            Ok(())
         }
     }
 
@@ -171,7 +165,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 }
 
 impl ZeroAsciiDenseSparse2dTrieOwned {
-    /// Builds one of these from a two-dimensional BTreeMap and a delimiter.
+    /// Builds one of these from a two-dimensional [`BTreeMap`] and a delimiter.
     ///
     /// Keep in mind the recommendations for optimal data size described in
     /// the [class docs].
@@ -203,7 +197,7 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             if prefix.contains(delimiter as char) {
                 return Err(ZeroTrieBuildError::IllegalDelimiter);
             }
-            builder.add_prefix(prefix, values)?;
+            builder.add_prefix(prefix, values);
         }
         builder.build()
     }

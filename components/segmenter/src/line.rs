@@ -258,7 +258,7 @@ impl LineBreakOptions<'_> {
 /// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
 /// line break opportunities ([definition LD3][LD3]).
 /// It does not distinguish them.  Callers requiring that distinction can check
-/// the Line_Break property of the code point preceding the break against those
+/// the `Line_Break` property of the code point preceding the break against those
 /// listed in rules [LB4][LB4] and [LB5][LB5], special-casing the end of text
 /// according to [LB3][LB3].
 ///
@@ -443,11 +443,9 @@ impl LineSegmenter {
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
     pub fn new_lstm(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
-        LineSegmenterBorrowed {
-            options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
-            complex: ComplexPayloadsBorrowed::new_lstm(),
-        }
+        let mut s = Self::new_for_non_complex_scripts(options);
+        s.load_lstm();
+        s
     }
 
     #[cfg(feature = "lstm")]
@@ -473,11 +471,9 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self {
-            options: options.resolve(),
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_lstm(provider)?,
-        })
+        let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
+        s.load_lstm_unstable(provider)?;
+        Ok(s)
     }
 
     /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
@@ -491,17 +487,9 @@ impl LineSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn new_dictionary(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
-        LineSegmenterBorrowed {
-            options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
-            // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
-            // characters [1]. Southeast Asian languages however require complex context analysis
-            // [2].
-            //
-            // [1]: https://www.unicode.org/reports/tr14/#ID
-            // [2]: https://www.unicode.org/reports/tr14/#SA
-            complex: ComplexPayloadsBorrowed::new_southeast_asian(),
-        }
+        let mut s = Self::new_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -525,17 +513,9 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self {
-            options: options.resolve(),
-            payload: provider.load(Default::default())?.payload,
-            // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
-            // characters [1]. Southeast Asian languages however require complex context analysis
-            // [2].
-            //
-            // [1]: https://www.unicode.org/reports/tr14/#ID
-            // [2]: https://www.unicode.org/reports/tr14/#SA
-            complex: ComplexPayloads::try_new_southeast_asian(provider)?,
-        })
+        let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
+        s.load_dictionary_unstable(provider)?;
+        Ok(s)
     }
 
     /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
@@ -550,8 +530,8 @@ impl LineSegmenter {
     ) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
             options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
-            complex: ComplexPayloadsBorrowed::empty(),
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            complex: ComplexPayloadsBorrowed::new(),
         }
     }
 
@@ -578,8 +558,68 @@ impl LineSegmenter {
         Ok(Self {
             options: options.resolve(),
             payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_empty(provider)?,
+            complex: ComplexPayloads::try_new(provider)?,
         })
+    }
+
+    /// Loads LSTM data for a [`LineSegmenter`] constructed with
+    /// [`LineSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `lstm` Cargo feature.*
+    #[cfg(feature = "lstm")]
+    pub fn load_lstm_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
+    where
+        D: DataProvider<SegmenterLstmAutoV1> + ?Sized,
+    {
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        self.complex.with_southeast_asian_lstms(provider)?;
+        Ok(())
+    }
+
+    /// A version of [`Self::load_lstm_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    #[cfg(feature = "lstm")]
+    pub fn load_lstm_with_buffer_provider(
+        &mut self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<(), DataError> {
+        self.load_lstm_unstable(&provider.as_deserializing())
+    }
+
+    /// Loads dictionary data for a [`LineSegmenter`] constructed with
+    /// [`LineSegmenter::new_for_non_complex_scripts`].
+    pub fn load_dictionary_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
+    where
+        D: DataProvider<SegmenterDictionaryExtendedV1> + ?Sized,
+    {
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        self.complex.with_southeast_asian_dictionaries(provider)?;
+        Ok(())
+    }
+
+    /// A version of [`Self::load_dictionary_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    pub fn load_dictionary_with_buffer_provider(
+        &mut self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<(), DataError> {
+        self.load_dictionary_unstable(&provider.as_deserializing())
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
@@ -595,6 +635,14 @@ impl LineSegmenter {
 }
 
 impl<'data> LineSegmenterBorrowed<'data> {
+    #[doc(hidden)]
+    pub fn with_options(self, options: LineBreakOptions) -> Self {
+        Self {
+            options: options.resolve(),
+            ..self
+        }
+    }
+
     /// Creates a line break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
@@ -660,6 +708,37 @@ impl<'data> LineSegmenterBorrowed<'data> {
 }
 
 impl LineSegmenterBorrowed<'static> {
+    /// Loads LSTM data for a [`LineSegmenter`] constructed with
+    /// [`LineSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
+    #[cfg(feature = "lstm")]
+    #[cfg(feature = "compiled_data")]
+    pub fn load_lstm(&mut self) {
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        self.complex.with_southeast_asian_lstms();
+    }
+
+    /// Loads dictionary data for a [`LineSegmenter`] constructed with
+    /// [`LineSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn load_dictionary(&mut self) {
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        self.complex.with_southeast_asian_dictionaries();
+    }
+
     /// Cheaply converts a [`LineSegmenterBorrowed<'static>`] into a [`LineSegmenter`].
     ///
     /// Note: Due to branching and indirection, using [`LineSegmenter`] might inhibit some
@@ -779,7 +858,7 @@ fn is_break_utf32_by_loose(
     None
 }
 
-/// A trait allowing for LineBreakIterator to be generalized to multiple string iteration methods.
+/// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
 ///
 /// This is implemented by ICU4X for several common string types.
 ///
@@ -1172,7 +1251,7 @@ impl LineBreakType for PotentiallyIllFormedUtf8 {
         line_handle_complex_language_utf8(iter, left_codepoint)
     }
 }
-/// line_handle_complex_language impl for UTF8 iterators
+
 fn line_handle_complex_language_utf8<T>(
     iter: &mut LineBreakIterator<'_, '_, T>,
     left_codepoint: char,
@@ -1324,10 +1403,9 @@ mod tests {
 
     #[test]
     fn linebreak_property() {
-        let payload =
-            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
-                .expect("Loading should succeed!")
-                .payload;
+        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+            .expect("Loading should succeed!")
+            .payload;
 
         let get_linebreak_property = |codepoint| {
             payload.get().get_linebreak_property_utf32_with_rule(
@@ -1356,10 +1434,9 @@ mod tests {
     #[test]
     #[expect(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
-        let payload =
-            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
-                .expect("Loading should succeed!")
-                .payload;
+        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+            .expect("Loading should succeed!")
+            .payload;
         let lb_data: &RuleBreakData = payload.get();
 
         let is_break = |left, right| {
@@ -1457,9 +1534,8 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter =
-            LineSegmenter::try_new_dictionary_unstable(&crate::provider::Baked, Default::default())
-                .expect("Data exists");
+        let segmenter = LineSegmenter::try_new_dictionary_unstable(&Baked, Default::default())
+            .expect("Data exists");
         let segmenter = segmenter.as_borrowed();
 
         let mut iter = segmenter.segment_str("hello world");

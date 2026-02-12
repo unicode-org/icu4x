@@ -45,7 +45,7 @@ criterion = { workspace = true }
 default = ["compiled_data"]
 serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde", "dep:displaydoc"]
 datagen = ["serde", "zerovec/databake", "dep:databake", "icu_provider/export"]
-experimental = []
+unstable = []
 compiled_data = ["dep:icu_plurals_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 
 # added by accident
@@ -74,8 +74,11 @@ required-features = ["serde"]
 
 [[test]]
 name = "operands"
-required-features = ["serde", "experimental"]
+required-features = ["serde", "unstable"]
 
 [[test]]
 name = "rules"
-required-features = ["experimental"]
+required-features = ["unstable"]
+
+[lints]
+workspace = true

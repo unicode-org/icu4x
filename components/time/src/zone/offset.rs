@@ -31,7 +31,7 @@ impl UtcOffset {
     /// Attempt to create a [`UtcOffset`] from a seconds input.
     ///
     /// Returns [`InvalidOffsetError`] if the seconds are out of bounds.
-    pub fn try_from_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
+    pub const fn try_from_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
         if seconds.unsigned_abs() > 18 * 60 * 60 {
             Err(InvalidOffsetError)
         } else {
@@ -75,14 +75,20 @@ impl UtcOffset {
     /// assert_eq!(offset3.to_seconds(), -18000);
     /// ```
     #[inline]
-    pub fn try_from_str(s: &str) -> Result<Self, InvalidOffsetError> {
+    pub const fn try_from_str(s: &str) -> Result<Self, InvalidOffsetError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
-    pub fn try_from_utf8(mut code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
-        fn try_get_time_component([tens, ones]: [u8; 2]) -> Option<i32> {
-            Some(((tens as char).to_digit(10)? * 10 + (ones as char).to_digit(10)?) as i32)
+    pub const fn try_from_utf8(mut code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
+        const fn try_get_time_component([tens, ones]: [u8; 2]) -> Option<i32> {
+            let Some(tens) = (tens as char).to_digit(10) else {
+                return None;
+            };
+            let Some(ones) = (ones as char).to_digit(10) else {
+                return None;
+            };
+            Some((tens * 10 + ones) as i32)
         }
 
         let offset_sign = match code_units {
@@ -106,19 +112,22 @@ impl UtcOffset {
         let hours = match code_units {
             &[h1, h2, ..] => try_get_time_component([h1, h2]),
             _ => None,
-        }
-        .ok_or(InvalidOffsetError)?;
+        };
+        let Some(hours) = hours else {
+            return Err(InvalidOffsetError);
+        };
 
         let minutes = match code_units {
             /* ±hh */
             &[_, _] => Some(0),
             /* ±hhmm, ±hh:mm */
-            &[_, _, m1, m2] | &[_, _, b':', m1, m2] => {
-                try_get_time_component([m1, m2]).filter(|&m| m < 60)
-            }
+            &[_, _, m1, m2] | &[_, _, b':', m1, m2] => try_get_time_component([m1, m2]),
             _ => None,
-        }
-        .ok_or(InvalidOffsetError)?;
+        };
+
+        let Some(minutes @ ..60) = minutes else {
+            return Err(InvalidOffsetError);
+        };
 
         Self::try_from_seconds(offset_sign * (hours * 60 + minutes) * 60)
     }
@@ -230,7 +239,7 @@ impl VariantOffsetsCalculator {
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new)]
     pub fn try_new_with_buffer_provider(
-        provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
         use icu_provider::buf::AsDeserializingBufferProvider;
         {

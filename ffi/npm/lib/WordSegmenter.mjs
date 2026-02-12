@@ -356,6 +356,54 @@ export class WordSegmenter {
     }
 
     /**
+     * Loads available LSMT models from the given provider.
+     *
+     * See the [Rust documentation for `load_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.load_lstm) for more information.
+     */
+    loadLstmModelsWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_WordSegmenter_load_lstm_models_with_provider_mv1(diplomatReceive.buffer, this.ffiValue, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Loads available dictionary models from the given provider.
+     *
+     * See the [Rust documentation for `load_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.load_dictionary) for more information.
+     */
+    loadDictinoaryModelsWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_WordSegmenter_load_dictinoary_models_with_provider_mv1(diplomatReceive.buffer, this.ffiValue, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according

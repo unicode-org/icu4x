@@ -99,9 +99,9 @@ impl<C> Deref for Ref<'_, C> {
 /// This can work with wrappers around [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
 ///
-/// This can be constructed  constructed
-/// from its fields via [`Self::try_new_from_codes()`], or can be constructed with one of the
-/// `new_<calendar>_date()` per-calendar methods (and then freely converted between calendars).
+/// This can be constructed from its fields via [`Self::try_new_from_codes()`], or can be
+/// constructed with one of the `new_<calendar>_date()` per-calendar methods (and then
+/// freely converted between calendars).
 ///
 /// ```rust
 /// use icu::calendar::Date;
@@ -115,8 +115,8 @@ impl<C> Deref for Ref<'_, C> {
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```
 pub struct Date<A: AsCalendar> {
-    pub(crate) inner: <A::Calendar as Calendar>::DateInner,
-    pub(crate) calendar: A,
+    inner: <A::Calendar as Calendar>::DateInner,
+    calendar: A,
 }
 
 impl<A: AsCalendar> Date<A> {
@@ -124,8 +124,8 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// The year is interpreted as an [`extended_year`](Date::extended_year) if no era is provided.
     ///
-    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the `extended_year`
-    /// is also in the range `-1,000,000..=1,000,000`.
+    /// This function accepts years in the range `-9999..=9999`, where the `extended_year`
+    /// is also in the range `-9999..=9999`.
     #[inline]
     pub fn try_new_from_codes(
         era: Option<&str>,
@@ -137,7 +137,7 @@ impl<A: AsCalendar> Date<A> {
         let inner = calendar
             .as_calendar()
             .from_codes(era, year, month_code, day)?;
-        Ok(Date { inner, calendar })
+        Ok(Date::from_raw(inner, calendar))
     }
 
     /// Construct a [`Date`] from from a bag of fields and a calendar.
@@ -146,8 +146,8 @@ impl<A: AsCalendar> Date<A> {
     /// and the month as either ordinal or month code. It can constrain out-of-bounds values
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
-    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the `extended_year`
-    /// is also in the range `-1,000,000..=1,000,000`.
+    /// This function accepts years in the range `-9999..=9999`, where the `extended_year`
+    /// is also in the range `-9999..=9999`.
     ///
     /// # Examples
     ///
@@ -186,7 +186,7 @@ impl<A: AsCalendar> Date<A> {
         calendar: A,
     ) -> Result<Self, DateFromFieldsError> {
         let inner = calendar.as_calendar().from_fields(fields, options)?;
-        Ok(Date { inner, calendar })
+        Ok(Date::from_raw(inner, calendar))
     }
 
     /// Construct a date from a [`RataDie`] and a calendar.
@@ -202,10 +202,7 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
         let rd = rd.clamp(*VALID_RD_RANGE.start(), *VALID_RD_RANGE.end());
-        Date {
-            inner: calendar.as_calendar().from_rata_die(rd),
-            calendar,
-        }
+        Date::from_raw(calendar.as_calendar().from_rata_die(rd), calendar)
     }
 
     /// Convert the date to a [`RataDie`]
@@ -241,7 +238,7 @@ impl<A: AsCalendar> Date<A> {
             // `from_rata_die` precondition is satified by `to_rata_die`
             c2.from_rata_die(c1.to_rata_die(self.inner()))
         };
-        Date { inner, calendar }
+        Date::from_raw(inner, calendar)
     }
 
     /// The day-of-month of this date.
@@ -286,19 +283,9 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year_info(&self.inner).into()
     }
 
-    /// The "extended year" of this date.
-    ///
-    /// This year number can be used when you need a simple numeric representation
-    /// of the year, and can be meaningfully compared with extended years from other
-    /// eras or used in arithmetic.
-    ///
-    /// For calendars defined in Temporal, this will match the "arithmetic year"
-    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
-    /// This is typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar.
-    ///
-    /// See [`Self::year()`] for more information about the year.
+    /// Use [`YearInfo::extended_year`](types::YearInfo::extended_year)
     #[inline]
+    #[deprecated(since = "2.2.0", note = "use `date.year().extended_year()`")]
     pub fn extended_year(&self) -> i32 {
         self.year().extended_year()
     }
@@ -425,8 +412,8 @@ impl<A: AsCalendar> Date<A> {
     /// Calling this outside of calendar implementations is sound, but calendar implementations are not
     /// expected to do anything sensible with such invalid dates.
     ///
-    /// AnyCalendar *will* panic if AnyCalendar [`Date`] objects with mismatching
-    /// date and calendar types are constructed
+    /// [`AnyCalendar`](crate::AnyCalendar) *will* panic if `Date<AnyCalendar>` objects with mismatching
+    /// date and calendar types are encountered.
     #[inline]
     pub fn from_raw(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
         Self { inner, calendar }
@@ -442,6 +429,11 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn calendar(&self) -> &A::Calendar {
         self.calendar.as_calendar()
+    }
+
+    #[inline]
+    pub(crate) fn into_calendar(self) -> A {
+        self.calendar
     }
 
     /// Get a reference to the contained calendar wrapper
@@ -500,7 +492,7 @@ impl Date<Iso> {
                 debug_assert!(false);
                 WeekOf {
                     week: 1,
-                    unit: crate::week::RelativeUnit::Current,
+                    unit: RelativeUnit::Current,
                 }
             });
 
