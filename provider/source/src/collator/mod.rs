@@ -238,7 +238,7 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
 fn rebuild_data<'a>(
     trie: CodePointTrie<'a, u32>,
     trie_type: icu::collections::codepointtrie::TrieType,
-    root: Option<&CodePointTrie<u32>>,
+    id_and_root: Option<(&DataIdentifierBorrowed, &CodePointTrie<u32>)>,
 ) -> CodePointTrie<'a, u32> {
     #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
     {
@@ -249,54 +249,59 @@ fn rebuild_data<'a>(
     {
         let default_value = trie.get('\u{10FFFF}');
         let mut rewritten_fast: Vec<u32> = Vec::new();
-        if let Some(root) = root {
-            let bound = if trie_type == icu::collections::codepointtrie::TrieType::Small {
-                0x1000
-            } else {
-                0x10000
-            };
-            rewritten_fast.reserve_exact(bound as usize);
-            rewritten_fast.resize(bound as usize, default_value);
-            for i in 0..bound {
-                rewritten_fast[i as usize] = trie.get32(i);
-            }
-            if 0xD7A4 < bound {
-                for i in 0xAC00..0xD7A4 {
-                    // Use the default value for Hangul syllables. We are not
-                    // relying on the collation data to catch Hangul syllables.
-                    // Furthermore, having non-default values in this range is
-                    // bad for tailorings whose characters of interest are
-                    // below the fast-access boundary for the small trie type.
-                    rewritten_fast[i as usize] = default_value;
+        if let Some((id, root)) = id_and_root {
+            let collation_type: &str = &id.marker_attributes;
+            let lang = id.locale.language;
+            // Only optimize the default collation and the three non-unihan Chinese collations
+            if collation_type == "" || collation_type == "pinyin" || collation_type == "zhuyin" || collation_type == "stroke" {
+                let bound = if trie_type == icu::collections::codepointtrie::TrieType::Small {
+                    0x1000
+                } else {
+                    0x10000
+                };
+                rewritten_fast.reserve_exact(bound as usize);
+                rewritten_fast.resize(bound as usize, default_value);
+                for i in 0..bound {
+                    rewritten_fast[i as usize] = trie.get32(i);
                 }
-            }
-            // Copy the ASCII range
-            for i in 0..0x80 {
-                if rewritten_fast[i as usize] == default_value {
-                    let ce32 = root.get32(i);
-                    if icu::collator::is_self_contained(ce32) {
-                        rewritten_fast[i as usize] = ce32;
+                if 0xD7A4 < bound {
+                    for i in 0xAC00..0xD7A4 {
+                        // Use the default value for Hangul syllables. We are not
+                        // relying on the collation data to catch Hangul syllables.
+                        // Furthermore, having non-default values in this range is
+                        // bad for tailorings whose characters of interest are
+                        // below the fast-access boundary for the small trie type.
+                        rewritten_fast[i as usize] = default_value;
                     }
                 }
-            }
-            // Fill the 6-bit blocks
-            // TODO: For Cyrillic and Armenian, hoist more.
-            let mut i = 0;
-            while i < bound {
-                for j in 0..0b1_000_000 {
-                    if rewritten_fast[(i + j) as usize] != default_value {
-                        for k in 0..0b1_000_000 {
-                            if rewritten_fast[(i + k) as usize] == default_value {
-                                let ce32 = root.get32(i + k);
-                                if icu::collator::is_self_contained(ce32) {
-                                    rewritten_fast[(i + k) as usize] = ce32;
+                // Copy the ASCII range
+                for i in 0..0x80 {
+                    if rewritten_fast[i as usize] == default_value {
+                        let ce32 = root.get32(i);
+                        if icu::collator::is_self_contained(ce32) {
+                            rewritten_fast[i as usize] = ce32;
+                        }
+                    }
+                }
+                // Fill the 6-bit blocks
+                // TODO: For Cyrillic and Armenian, hoist more.
+                let mut i = 0;
+                while i < bound {
+                    for j in 0..0b1_000_000 {
+                        if rewritten_fast[(i + j) as usize] != default_value {
+                            for k in 0..0b1_000_000 {
+                                if rewritten_fast[(i + k) as usize] == default_value {
+                                    let ce32 = root.get32(i + k);
+                                    if icu::collator::is_self_contained(ce32) {
+                                        rewritten_fast[(i + k) as usize] = ce32;
+                                    }
                                 }
                             }
+                            break;
                         }
-                        break;
                     }
+                    i += 0b1_000_000;
                 }
-                i += 0b1_000_000;
             }
         }
         let mut builder =
@@ -323,7 +328,21 @@ fn rebuild_data<'a>(
                 builder.set_value(i, trie.get32(i));
             }
         }
-
+        if let Some((id, root)) = id_and_root {
+            // let collation_type: &str = &id.marker_attributes;
+            let lang = id.locale.language;
+            if lang == language!("ja") {
+                // Hoist Hiragana
+                for i in 0x3041..0x30A0 {
+                    if trie.get32(i) == default_value {
+                        let ce32 = root.get32(i);
+                        if icu::collator::is_self_contained(ce32) {
+                            builder.set_value(i, ce32);
+                        }
+                    }
+                }
+            }
+        }
         builder.build()
     }
 }
@@ -370,6 +389,7 @@ fn decide_trie_type(id: &DataIdentifierBorrowed) -> icu::collections::codepointt
         || lang == language!("km")
         || lang == language!("my")
     {
+        // XXX: Keep everything Small for now
         return icu::collections::codepointtrie::TrieType::Small;
     }
     // Delta from small to fast for Korean is 4332 bytes.
@@ -385,15 +405,15 @@ fn convert_data_from_serde(
 ) -> Result<CollationData<'static>, DataError> {
     let trie = CodePointTrie::<u32>::try_from(&data.trie)
         .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
-    let (trie_type, root) = if let Some((id, root)) = id_and_root {
-        (decide_trie_type(id), Some(root))
+    let trie_type = if let Some((id, _)) = id_and_root {
+        decide_trie_type(id)
     } else {
         // Delta from small to fast for root: 7056 bytes.
-        (icu::collections::codepointtrie::TrieType::Small, None)
+        icu::collections::codepointtrie::TrieType::Small
     };
     log::info!("CONVERT {:?} {:?}", id_and_root.map(|x| x.0), trie_type);
     Ok(CollationData {
-        trie: rebuild_data(trie, trie_type, root),
+        trie: rebuild_data(trie, trie_type, id_and_root),
         contexts: ZeroVec::alloc_from_slice(&data.contexts),
         ce32s: ZeroVec::alloc_from_slice(&data.ce32s),
         ces: data.ces.iter().map(|i| *i as u64).collect(),
