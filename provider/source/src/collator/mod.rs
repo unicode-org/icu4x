@@ -9,6 +9,9 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
+use icu::collections::codepointtrie::SmallCodePointTrie;
+use icu::collections::codepointtrie::Typed;
+use icu::collections::codepointtrie::TypedCodePointTrie;
 use icu::locale::subtags::{language, script};
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
@@ -204,7 +207,7 @@ impl IterableDataProviderCached<CollationRootV1> for SourceDataProvider {
 impl DataProvider<CollationTailoringV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CollationTailoringV1>, DataError> {
         self.check_req::<CollationTailoringV1>(req)?;
-        let root_trie: &CodePointTrie<u32> = &ROOT_CELL
+        let root_trie: &SmallCodePointTrie<u32> = &ROOT_CELL
             .get_or_init(|| {
                 convert_data_from_serde(
                     self.load_toml::<collator_serde::CollationData>(Default::default(), "_data")?,
@@ -237,9 +240,8 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
 
 fn rebuild_data<'a>(
     trie: CodePointTrie<'a, u32>,
-    trie_type: icu::collections::codepointtrie::TrieType,
-    id_and_root: Option<(&DataIdentifierBorrowed, &CodePointTrie<u32>)>,
-) -> CodePointTrie<'a, u32> {
+    id_and_root: Option<(&DataIdentifierBorrowed, &SmallCodePointTrie<u32>)>,
+) -> SmallCodePointTrie<'a, u32> {
     #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
     {
         let _ = trie;
@@ -253,12 +255,12 @@ fn rebuild_data<'a>(
             let collation_type: &str = &id.marker_attributes;
             let lang = id.locale.language;
             // Only optimize the default collation and the three non-unihan Chinese collations
-            if collation_type == "" || collation_type == "pinyin" || collation_type == "zhuyin" || collation_type == "stroke" {
-                let bound = if trie_type == icu::collections::codepointtrie::TrieType::Small {
-                    0x1000
-                } else {
-                    0x10000
-                };
+            if collation_type == ""
+                || collation_type == "pinyin"
+                || collation_type == "zhuyin"
+                || collation_type == "stroke"
+            {
+                let bound = 0x1000;
                 rewritten_fast.reserve_exact(bound as usize);
                 rewritten_fast.resize(bound as usize, default_value);
                 for i in 0..bound {
@@ -304,8 +306,11 @@ fn rebuild_data<'a>(
                 }
             }
         }
-        let mut builder =
-            CodePointTrieBuilder::new(default_value, trie.get32(u32::MAX), trie_type);
+        let mut builder = CodePointTrieBuilder::new(
+            default_value,
+            trie.get32(u32::MAX),
+            icu::collections::codepointtrie::TrieType::Small,
+        );
 
         for i in 0..0xAC00 {
             if let Some(trie_val) = rewritten_fast.get(i as usize) {
@@ -343,77 +348,22 @@ fn rebuild_data<'a>(
                 }
             }
         }
-        builder.build()
+        let Typed::Small(t) = builder.build().to_typed() else {
+            panic!("Must have small trie type");
+        };
+        t
     }
-}
-
-fn decide_trie_type(id: &DataIdentifierBorrowed) -> icu::collections::codepointtrie::TrieType {
-    let collation_type: &str = &id.marker_attributes;
-    match collation_type {
-        "search" | "emoji" | "eor" | "unihan" => {
-            return icu::collections::codepointtrie::TrieType::Small;
-        }
-        _ => {}
-    }
-    // Arabic-script collations tailor the presentation forms.
-    // Ukrainian and Austrian German phonebook each tailor one character
-    // in the fast range.
-    // There are too many cases like this to make the trie type decision
-    // based on trie content.
-    // Let's manage the trie type of specific tailorings manually
-    // instead.
-
-    // Note: Statically knowing that these tries are always small
-    // would be beneficial.
-
-    // km and my are obviously in the range that suggests they
-    // should get the fast trie type, but we don't have
-    // benchmarking to prove the effect. Reasoning from Japanese
-    // suggests that there should be a considerable effect.
-
-    // The root proper isn't handled in this function, and
-    // we already handled `"search" | "emoji" | "eor"` above.
-    // ICU4X does not have `zh` for collation but instead
-    // models Chinese collations via `und-Hans`, `und-Hant`,
-    // and `und-Hani`. The remaining `und` at this point of
-    // the function is, therefore, Chinese.
-    //
-    // Delta from small to fast in bytes:
-    // Japanese (excluding unihan): 5480.
-    // The three Chinese tailorings (excluding unihan): 16324
-    // Khmer: 1876.
-    // Myanmar: 2012.
-    let lang = id.locale.language;
-    if lang == language!("und")
-        || lang == language!("ja")
-        || lang == language!("km")
-        || lang == language!("my")
-    {
-        // XXX: Keep everything Small for now
-        return icu::collections::codepointtrie::TrieType::Small;
-    }
-    // Delta from small to fast for Korean is 4332 bytes.
-    // The common case for Korean doesn't go through this trie.
-    // See also https://github.com/unicode-org/icu4x/issues/1315 .
-
-    icu::collections::codepointtrie::TrieType::Small
 }
 
 fn convert_data_from_serde(
     data: &collator_serde::CollationData,
-    id_and_root: Option<(&DataIdentifierBorrowed, &CodePointTrie<u32>)>,
+    id_and_root: Option<(&DataIdentifierBorrowed, &SmallCodePointTrie<u32>)>,
 ) -> Result<CollationData<'static>, DataError> {
     let trie = CodePointTrie::<u32>::try_from(&data.trie)
         .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
-    let trie_type = if let Some((id, _)) = id_and_root {
-        decide_trie_type(id)
-    } else {
-        // Delta from small to fast for root: 7056 bytes.
-        icu::collections::codepointtrie::TrieType::Small
-    };
-    log::info!("CONVERT {:?} {:?}", id_and_root.map(|x| x.0), trie_type);
+    log::info!("CONVERT {:?}", id_and_root.map(|x| x.0));
     Ok(CollationData {
-        trie: rebuild_data(trie, trie_type, id_and_root),
+        trie: rebuild_data(trie, id_and_root),
         contexts: ZeroVec::alloc_from_slice(&data.contexts),
         ce32s: ZeroVec::alloc_from_slice(&data.ce32s),
         ces: data.ces.iter().map(|i| *i as u64).collect(),

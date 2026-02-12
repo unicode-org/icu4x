@@ -58,6 +58,7 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::FastCodePointTrie;
 #[cfg(feature = "latin1")]
 use icu_collections::codepointtrie::Latin1CharsWithTrieEx;
+use icu_collections::codepointtrie::TypedCodePointTrie;
 use icu_collections::codepointtrie::WithTrie;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;

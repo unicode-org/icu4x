@@ -1726,7 +1726,7 @@ pub trait TypedCodePointTrie<'trie, T: TrieValue>: Seal {
 /// the the getters don't branch on the trie type
 /// and for guarenteeing that `get16` is branchless
 /// in release builds.
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom, Clone)]
 #[repr(transparent)]
 pub struct FastCodePointTrie<'trie, T: TrieValue> {
     inner: CodePointTrie<'trie, T>,
@@ -1874,7 +1874,7 @@ impl<T: TrieValue + databake::Bake> databake::BakeSize for FastCodePointTrie<'_,
 
 /// Type-safe wrapper for a small trie guaranteeing
 /// the the getters don't branch on the trie type.
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom, Clone)]
 #[repr(transparent)]
 pub struct SmallCodePointTrie<'trie, T: TrieValue> {
     inner: CodePointTrie<'trie, T>,

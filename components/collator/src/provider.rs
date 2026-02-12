@@ -19,7 +19,8 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 use icu_collections::char16trie::Char16TrieIterator;
-use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::SmallCodePointTrie;
+use icu_collections::codepointtrie::TypedCodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
@@ -188,7 +189,7 @@ pub struct CollationData<'data> {
     /// Mapping from `char` to `CollationElement32` (represented
     /// as its `u32` bits).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub trie: CodePointTrie<'data, u32>,
+    pub trie: SmallCodePointTrie<'data, u32>,
     /// `CollationElement`s used in expansions and offset CE32s
     /// (represented as their `u64` bits)
     #[cfg_attr(feature = "serde", serde(borrow))]
