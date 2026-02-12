@@ -60,12 +60,8 @@ use icu_provider_blob::BlobDataProvider;
 use icu::calendar::{Gregorian, Date};
 use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets::YMD};
 
-// At the top of the file:
-let locale = locale!("ccp");
-use icu::locale::locale;
-use icu_provider_blob::BlobDataProvider;
-
 // replace the date_formatter creation
+let locale = locale!("ccp");
 let date_formatter = if locale == locale!("ccp") {
     println!("Using buffer provider");
 
