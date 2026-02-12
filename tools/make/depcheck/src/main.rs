@@ -154,12 +154,6 @@ struct CargoDepInfo {
     optional: bool,
 }
 
-// exception packages that can be allowed to have implicit features.
-const ALLOWED_IMPLICIT_FEATURES: &[(&str, &str)] = &[
-    // in this format - ("some-package", "some-dep"),
-    // ("icu_experimental", "log"), 
-];
-
 fn check_implicit_features() {
     println!("implicit features check ....");
 
@@ -216,14 +210,6 @@ fn check_implicit_features() {
             .unwrap_or_default();
 
         for dep in optional_deps {
-            // skip it if in allowlist
-            if ALLOWED_IMPLICIT_FEATURES
-                .iter()
-                .any(|(pkg, d)| *pkg == package.name && *d == dep)
-            {
-                continue;
-            }
-
             // check if a feature with this dep's name exists in the source Cargo.toml
             // also check if any explicit feature references this dep via dep: syntax
             let has_explicit_feature = source_features.contains(dep);
