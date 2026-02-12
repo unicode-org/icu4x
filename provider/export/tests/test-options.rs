@@ -283,7 +283,7 @@ fn all_runtime_retain_base() {
 
 #[test]
 fn explicit_preferred() {
-    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+    const SELECTED_LOCALES: [LanguageIdentifier; 8] = [
         langid!("arc"), // Aramaic, not in supported list
         langid!("ar-EG"),
         langid!("ar-SA"),
@@ -291,6 +291,7 @@ fn explicit_preferred() {
         langid!("es"),
         langid!("sr-ME"),
         langid!("ru-Cyrl-RU"),
+        langid!("tlh-001"), // Klingon, not in supported list
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -301,7 +302,7 @@ fn explicit_preferred() {
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar",         // ancestor of ar-EG
         "ar-EG",      // explicit locale
@@ -321,6 +322,7 @@ fn explicit_preferred() {
         // "sr", // not reachable from sr-ME
         "sr-Latn", // ancestor of sr-ME
         "sr-ME",   // explicit locale not in supported locales
+        "tlh-001", // Earth Klingon, inheriting from Klingon inheriting from und
         "und",     // ancestor of everything
     ];
 
@@ -330,7 +332,7 @@ fn explicit_preferred() {
 
 #[test]
 fn explicit_hybrid() {
-    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+    const SELECTED_LOCALES: [LanguageIdentifier; 8] = [
         langid!("arc"), // Aramaic, not in supported list
         langid!("ar-EG"),
         langid!("ar-SA"),
@@ -338,6 +340,7 @@ fn explicit_hybrid() {
         langid!("es"),
         langid!("sr-ME"),
         langid!("ru-Cyrl-RU"),
+        langid!("tlh-001"), // Klingon, not in supported list
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -348,7 +351,7 @@ fn explicit_hybrid() {
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar",         // ancestor of ar-EG
         "ar-EG",      // explicit locale
@@ -368,6 +371,7 @@ fn explicit_hybrid() {
         // "sr", // not reachable from sr-ME
         "sr-Latn", // ancestor of sr-ME
         "sr-ME",   // explicit locale not in supported locales
+        "tlh-001", // Earth Klingon, inheriting from Klingon inheriting from und
         "und",     // ancestor of everything
     ];
 
@@ -377,7 +381,7 @@ fn explicit_hybrid() {
 
 #[test]
 fn explicit_runtime() {
-    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+    const SELECTED_LOCALES: [LanguageIdentifier; 8] = [
         langid!("arc"), // Aramaic, not in supported list
         langid!("ar-EG"),
         langid!("ar-SA"),
@@ -385,6 +389,7 @@ fn explicit_runtime() {
         langid!("es"),
         langid!("sr-ME"),
         langid!("ru-Cyrl-RU"),
+        langid!("tlh-001"), // Klingon, not in supported list
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -395,7 +400,7 @@ fn explicit_runtime() {
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     #[rustfmt::skip]
     let locales = [
         "ar",
@@ -415,6 +420,7 @@ fn explicit_runtime() {
         // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn",
         // "sr-ME", (same as 'sr-Latn')
+        // "tlh-001", (same as 'und', not retained since it is not a base language)
         "und",
     ];
 
@@ -424,7 +430,7 @@ fn explicit_runtime() {
 
 #[test]
 fn explicit_runtime_retain_base() {
-    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+    const SELECTED_LOCALES: [LanguageIdentifier; 8] = [
         langid!("arc"), // Aramaic, not in supported list
         langid!("ar-EG"),
         langid!("ar-SA"),
@@ -432,6 +438,7 @@ fn explicit_runtime_retain_base() {
         langid!("es"),
         langid!("sr-ME"),
         langid!("ru-Cyrl-RU"),
+        langid!("tlh-001"), // Klingon, not in supported list
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -442,7 +449,7 @@ fn explicit_runtime_retain_base() {
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     #[rustfmt::skip]
     let locales = [
         "ar",
@@ -456,12 +463,13 @@ fn explicit_runtime_retain_base() {
         "en",  // (same as 'und', but retained)
         // "en-001", (same as 'en')
         // "en-GB", (same as 'en-001')
-        "es",
+        "es",   
         "es-AR",
         "ru",
         // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn",
         // "sr-ME", (same as 'sr-Latn')
+        "tlh-001", // no data for any ancestor, so not retained
         "und",
     ];
 
@@ -471,7 +479,7 @@ fn explicit_runtime_retain_base() {
 
 #[test]
 fn explicit_preresolved() {
-    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+    const SELECTED_LOCALES: [LanguageIdentifier; 8] = [
         langid!("arc"), // Aramaic, not in supported list
         langid!("ar-EG"),
         langid!("ar-SA"),
@@ -479,6 +487,7 @@ fn explicit_preresolved() {
         langid!("es"),
         langid!("sr-ME"),
         langid!("ru-Cyrl-RU"),
+        langid!("tlh-001"), // Klingon, not in supported list
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -492,7 +501,7 @@ fn explicit_preresolved() {
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU, "tlh-001"
     let locales = [
         "ar-EG",
         "ar-EG/latn", // extensions included even in preresolved mode
@@ -503,6 +512,7 @@ fn explicit_preresolved() {
         "es",
         "ru-Cyrl-RU",
         "sr-ME",
+        "tlh-001",
     ];
 
     // Should return the exact explicit locales set.
