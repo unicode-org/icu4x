@@ -253,7 +253,6 @@ fn rebuild_data<'a>(
         let mut rewritten_fast: Vec<u32> = Vec::new();
         if let Some((id, root)) = id_and_root {
             let collation_type: &str = &id.marker_attributes;
-            let lang = id.locale.language;
             // Only optimize the default collation and the three non-unihan Chinese collations
             if collation_type == ""
                 || collation_type == "pinyin"
@@ -285,13 +284,78 @@ fn rebuild_data<'a>(
                         }
                     }
                 }
-                // Fill the 6-bit blocks
-                // TODO: For Cyrillic and Armenian, hoist more.
-                let mut i = 0;
+                // Hoist Cyrillic base if Cyrillic tailored.
+                for i in 0x0400..0x0500 {
+                    if rewritten_fast[i] != default_value {
+                        log::info!("Hoist Cyrillic base for {:?}", id);
+                        for j in 0x0410..0x0450 {
+                            if rewritten_fast[j as usize] == default_value {
+                                let ce32 = root.get32(j);
+                                if icu::collator::is_self_contained(ce32) {
+                                    rewritten_fast[j as usize] = ce32;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                // Hoist Armenian if Armenian tailored.
+                for i in 0x0531..0x0590 {
+                    if rewritten_fast[i] != default_value {
+                        log::info!("Hoist Armenian for {:?}", id);
+                        for j in 0x0531..0x0590 {
+                            if rewritten_fast[j as usize] == default_value {
+                                let ce32 = root.get32(j);
+                                if icu::collator::is_self_contained(ce32) {
+                                    rewritten_fast[j as usize] = ce32;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                // Hoist Hebrew base if Hebrew tailored.
+                for i in 0x0591..0x05F5 {
+                    if rewritten_fast[i] != default_value {
+                        log::info!("Hoist Hebrew base for {:?}", id);
+                        for j in 0x05D0..0x05EB {
+                            if rewritten_fast[j as usize] == default_value {
+                                let ce32 = root.get32(j);
+                                if icu::collator::is_self_contained(ce32) {
+                                    rewritten_fast[j as usize] = ce32;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                // Hoist Arabic if Arabic tailored.
+                // TODO: Should the hoisting be narrower?
+                for i in 0x0600..0x0700 {
+                    if rewritten_fast[i] != default_value {
+                        log::info!("Hoist Arabic for {:?}", id);
+                        for j in 0x0600..0x0700 {
+                            if rewritten_fast[j as usize] == default_value {
+                                let ce32 = root.get32(j);
+                                if icu::collator::is_self_contained(ce32) {
+                                    rewritten_fast[j as usize] = ce32;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                // We currently don't have tailorings using the Syriac, Thaana,
+                // N'Ko, Samaritan, or Mandaic scripts.
+
+                // Fill the 7-bit blocks for Brahmic scripts
+                let mut i = 0x0900;
                 while i < bound {
-                    for j in 0..0b1_000_000 {
+                    for j in 0..0x80 {
                         if rewritten_fast[(i + j) as usize] != default_value {
-                            for k in 0..0b1_000_000 {
+                            log::info!("Hoist 7-bit block starting at {:X} for {:?}", i, id);
+                            for k in 0..0x80 {
                                 if rewritten_fast[(i + k) as usize] == default_value {
                                     let ce32 = root.get32(i + k);
                                     if icu::collator::is_self_contained(ce32) {
@@ -302,7 +366,7 @@ fn rebuild_data<'a>(
                             break;
                         }
                     }
-                    i += 0b1_000_000;
+                    i += 0x80;
                 }
             }
         }
@@ -338,11 +402,30 @@ fn rebuild_data<'a>(
             let lang = id.locale.language;
             if lang == language!("ja") {
                 // Hoist Hiragana
+                log::info!("Hoist Hiragana for {:?}", id);
                 for i in 0x3041..0x30A0 {
                     if trie.get32(i) == default_value {
                         let ce32 = root.get32(i);
                         if icu::collator::is_self_contained(ce32) {
                             builder.set_value(i, ce32);
+                        }
+                    }
+                }
+            }
+            let collation_type: &str = &id.marker_attributes;
+            match collation_type {
+                "search" | "emoji" | "eor" | "unihan" => {},
+                _ => {
+                    // `und` means Chinese after we've excluded `search`, `emoji`, and `eor`.
+                    if lang == language!("ja") || lang == language!("und") {
+                        log::info!("Hoist ideographic punctuation for {:?}", id);
+                        for i in 0x3000..0x3040 {
+                            if trie.get32(i) == default_value {
+                                let ce32 = root.get32(i);
+                                if icu::collator::is_self_contained(ce32) {
+                                    builder.set_value(i, ce32);
+                                }
+                            }
                         }
                     }
                 }
