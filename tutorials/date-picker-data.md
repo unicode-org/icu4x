@@ -60,15 +60,24 @@ use icu_provider_blob::BlobDataProvider;
 use icu::calendar::{Gregorian, Date};
 use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets::YMD};
 
-// replace the date_formatter creation
+// At the top of the file:
 let locale = locale!("ccp");
+use icu::locale::locale;
+use icu_provider_blob::BlobDataProvider;
+
+// replace the date_formatter creation
 let date_formatter = if locale == locale!("ccp") {
     println!("Using buffer provider");
+
     let blob = std::fs::read("ccp.blob")
         .expect("blob should read successfully")
         .into();
-    let provider = BlobDataProvider::try_new_from_blob(blob).expect("deserialization should succeed");
-    DateTimeFormatter::try_new_with_buffer_provider(&provider, locale.into(), YMD::medium()).expect("should have data for selected locale")
+
+    let provider =
+        BlobDataProvider::try_new_from_blob(blob).expect("deserialization should succeed");
+
+    DateTimeFormatter::try_new_with_buffer_provider(&provider, locale.into(), YMD::medium())
+        .expect("should have data for selected locale")
 } else {
     // As before
     DateTimeFormatter::try_new(locale.into(), YMD::medium())
