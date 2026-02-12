@@ -74,7 +74,7 @@ num-traits = { workspace = true, optional = true }
 postcard = { workspace = true, features = ["alloc"] }
 icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_exporter", "rayon"] }
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
-icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
+icu_segmenter = { path = "../../components/segmenter", features = ["lstm", "radicals"] }
 simple_logger = { workspace = true }
 icu = { path = "../../components/icu", default-features = false, features = ["unstable"] }
 num-bigint = { workspace = true }

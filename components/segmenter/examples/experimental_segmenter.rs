@@ -13,13 +13,21 @@ mod cnn;
 
 use adaboost::Predictor;
 use cnn::{CnnSegmenter, RawCnnData};
+use icu::segmenter::provider::SegmenterUnihanIrgV1;
+use icu_provider::prelude::*;
+use icu_segmenter::provider::Baked;
 use icu_segmenter::{options::WordBreakOptions, WordSegmenter, WordSegmenterBorrowed};
 use std::time::SystemTime;
 
 const REPETITIONS: usize = 1000;
 
 fn main_adaboost(args: &[String]) {
-    let segmenter = Predictor::for_test();
+    let response: DataResponse<SegmenterUnihanIrgV1> = Baked.load(DataRequest::default()).unwrap();
+
+    let payload = response.payload;
+    let irg = payload.get();
+
+    let segmenter = Predictor::for_test(irg);
     let s = &args[0];
     let start_time = SystemTime::now();
     for _ in 0..REPETITIONS {
@@ -31,6 +39,9 @@ fn main_adaboost(args: &[String]) {
     for breakpoint in segmenter.predict_breakpoints(s) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
+    }
+    if prev < s.len() {
+        print!("{}", &s[prev..]);
     }
     println!();
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);

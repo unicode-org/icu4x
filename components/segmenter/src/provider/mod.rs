@@ -18,6 +18,9 @@
 mod lstm;
 pub use lstm::*;
 
+mod radicals;
+pub use radicals::*;
+
 use crate::options::WordType;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
@@ -51,6 +54,8 @@ const _: () = {
     impl_segmenter_break_line_v1!(Baked);
     #[cfg(feature = "lstm")]
     impl_segmenter_lstm_auto_v1!(Baked);
+    #[cfg(feature = "radicals")]
+    impl_segmenter_unihan_irg_v1!(Baked);
     impl_segmenter_break_word_v1!(Baked);
     impl_segmenter_break_word_override_v1!(Baked);
     impl_segmenter_break_sentence_override_v1!(Baked);
@@ -120,6 +125,13 @@ icu_provider::data_marker!(
     RuleBreakData<'static>,
     is_singleton = true
 );
+icu_provider::data_marker!(
+    /// `SegmenterUnihanIrgV1`
+    SegmenterUnihanIrgV1,
+    "segmenter/unihan/irg/v1",
+    UnihanIrgData<'static>,
+    is_singleton = true
+);
 
 pub use crate::word::inner::WordTypeULE;
 
@@ -135,6 +147,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterDictionaryAutoV1::INFO,
     SegmenterDictionaryExtendedV1::INFO,
     SegmenterLstmAutoV1::INFO,
+    SegmenterUnihanIrgV1::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
