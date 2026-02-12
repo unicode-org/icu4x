@@ -18,7 +18,7 @@ pub mod ffi {
     use crate::unstable::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
         date_time_formatter::ffi::{DateTimeFormatter, DateTimeFormatterGregorian},
-        date::ffi::IsoDate,
+        date::ffi::{Date, IsoDate},
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
@@ -592,6 +592,7 @@ pub mod ffi {
                 .transpose()?;
             Ok(())
         }
+        
     }
     
 }

@@ -614,6 +614,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        #[diplomat::attr(demo_gen, disable)] // confusing, as Date is constructed from ISO
         pub fn format_same_calendar(
             &self,
             date: &Date,
@@ -626,7 +627,7 @@ pub mod ffi {
             use icu_datetime::scaffold::InSameCalendar;
             date_borrowed.check_any_calendar_kind(self.0.calendar().kind())?;
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
-            input.set_date_fields_unchecked(date_borrowed); 
+            input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
             input.set_time_fields(time.0);
             input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {
@@ -637,7 +638,7 @@ pub mod ffi {
             }
             else {
                 let iso_date = date.0.to_calendar(icu_calendar::Iso);
-                #[allow(deprecated)] 
+                #[allow(deprecated)] // clean up in 3.0
                 input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
                     icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
                         date: iso_date,
@@ -1217,6 +1218,7 @@ pub mod ffi {
                 .transpose()?;
             Ok(())
         }
+        
     }
     
 }
