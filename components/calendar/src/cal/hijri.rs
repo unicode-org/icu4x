@@ -227,7 +227,7 @@ impl Rules for UmmAlQura {
 
     fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
         if month.is_leap() {
-            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+            return Err(EcmaReferenceYearError::MonthNotInCalendar);
         }
 
         let extended_year = match (month.number(), day) {
@@ -250,7 +250,7 @@ impl Rules for UmmAlQura {
             (11, _) => 1391,
             (12, 30..) => 1390,
             (12, _) => 1391,
-            _ => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
+            _ => return Err(EcmaReferenceYearError::MonthNotInCalendar),
         };
         Ok(extended_year)
     }
@@ -316,7 +316,7 @@ impl Rules for TabularAlgorithm {
 
     fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
         if month.is_leap() {
-            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+            return Err(EcmaReferenceYearError::MonthNotInCalendar);
         }
 
         Ok(match (month.number(), day) {
@@ -340,7 +340,7 @@ impl Rules for TabularAlgorithm {
             (11, _) => 1391,
             (12, 30..) => 1390,
             (12, _) => 1391,
-            _ => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
+            _ => return Err(EcmaReferenceYearError::MonthNotInCalendar),
         })
     }
 

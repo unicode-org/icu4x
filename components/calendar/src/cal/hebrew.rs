@@ -4,7 +4,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarRangeError, MonthCodeError,
+    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError, MonthCodeError,
     UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -178,7 +178,7 @@ impl DateFieldsResolver for Hebrew {
             // Neither 5731 nor 5732 is a leap year
             (5, true) => 5730,
             _ => {
-                return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+                return Err(EcmaReferenceYearError::MonthNotInCalendar);
             }
         };
         Ok(HebrewYear::compute(hebrew_year))
@@ -370,7 +370,7 @@ impl Date<Hebrew> {
         year: i32,
         month: Month,
         day: u8,
-    ) -> Result<Date<Hebrew>, LunisolarRangeError> {
+    ) -> Result<Date<Hebrew>, LunisolarDateError> {
         ArithmeticDate::try_from_ymd_lunisolar(year, month, day, &Hebrew)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))

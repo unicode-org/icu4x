@@ -6,8 +6,8 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::{
-    range_check, range_check_with_overflow, DateFromFieldsError, EcmaReferenceYearError,
-    LunisolarRangeError, MonthCodeError, MonthCodeParseError, UnknownEraError,
+    range_check, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError, MonthCodeError,
+    MonthCodeParseError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
@@ -268,18 +268,23 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         month: Month,
         day: u8,
         calendar: &C,
-    ) -> Result<Self, LunisolarRangeError> {
-        let year = calendar.year_info_from_extended(range_check(year, "year", VALID_YEAR_RANGE)?);
+    ) -> Result<Self, LunisolarDateError> {
+        if !VALID_YEAR_RANGE.contains(&year) {
+            return Err(LunisolarDateError::InvalidYear);
+        }
+        let year = calendar.year_info_from_extended(year);
 
         let month = calendar
             .ordinal_from_month(year, month, Default::default())
             .map_err(|e| match e {
-                MonthCodeError::NotInCalendar | MonthCodeError::NotInYear => {
-                    LunisolarRangeError::InvalidMonth(month)
-                }
+                MonthCodeError::NotInCalendar => LunisolarDateError::MonthNotInCalendar,
+                MonthCodeError::NotInYear => LunisolarDateError::MonthNotInYear,
             })?;
 
-        let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+        let max_day = C::days_in_provided_month(year, month);
+        if !(1..=max_day).contains(&day) {
+            return Err(LunisolarDateError::InvalidDay { max: max_day });
+        }
 
         // date is in the valid year range, and therefore in the valid RD range
         Ok(Self::new_unchecked(year, month, day))
@@ -330,11 +335,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // so we make an attempt.
         let year = match (fields.era, fields.era_year) {
             (None, None) => match fields.extended_year {
-                Some(extended_year) => calendar.year_info_from_extended(range_check(
-                    extended_year,
-                    "year",
-                    VALID_YEAR_RANGE,
-                )?),
+                Some(extended_year) => {
+                    if !VALID_YEAR_RANGE.contains(&extended_year) {
+                        return Err(DateFromFieldsError::Overflow);
+                    }
+
+                    calendar.year_info_from_extended(extended_year)
+                }
                 None => match missing_fields_strategy {
                     MissingFieldsStrategy::Reject => {
                         return Err(DateFromFieldsError::NotEnoughFields)
@@ -363,11 +370,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 },
             },
             (Some(era), Some(era_year)) => {
-                let year = calendar.year_info_from_era(
-                    era,
-                    range_check(era_year.to_extended_year(), "year", VALID_YEAR_RANGE)?,
-                )?;
-                range_check(year.to_extended_year(), "extended_year", VALID_YEAR_RANGE)?;
+                if !VALID_YEAR_RANGE.contains(&era_year) {
+                    return Err(DateFromFieldsError::Overflow);
+                }
+                let year = calendar.year_info_from_era(era, era_year)?;
+                if !VALID_YEAR_RANGE.contains(&year.to_extended_year()) {
+                    return Err(DateFromFieldsError::Overflow);
+                }
                 if let Some(extended_year) = fields.extended_year {
                     if year.to_extended_year() != extended_year {
                         return Err(DateFromFieldsError::InconsistentYear);
@@ -411,21 +420,25 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             },
         };
 
-        let constrained_month = range_check_with_overflow(
-            month,
-            "month",
-            1..=C::months_in_provided_year(year),
-            options.overflow.unwrap_or_default(),
-        )?;
+        let max_month = C::months_in_provided_year(year);
+        let month = if matches!(options.overflow.unwrap_or_default(), Overflow::Constrain) {
+            month.clamp(1, max_month)
+        } else if (1..=max_month).contains(&month) {
+            month
+        } else {
+            return Err(DateFromFieldsError::InvalidOrdinalMonth { max: max_month });
+        };
 
-        let day = range_check_with_overflow(
-            day,
-            "day",
-            1..=C::days_in_provided_month(year, constrained_month),
-            options.overflow.unwrap_or_default(),
-        )?;
+        let max_day = C::days_in_provided_month(year, month);
+        let day = if matches!(options.overflow.unwrap_or_default(), Overflow::Constrain) {
+            day.clamp(1, max_day)
+        } else if (1..=max_day).contains(&day) {
+            day
+        } else {
+            return Err(DateFromFieldsError::InvalidDay { max: max_day });
+        };
         // date is in the valid year range, and therefore in the valid RD range
-        Ok(Self::new_unchecked(year, constrained_month, day))
+        Ok(Self::new_unchecked(year, month, day))
     }
 
     // Used by calendar-specific constructors (non-lunisolar), checks `VALID_YEAR_RANGE`

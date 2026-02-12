@@ -67,7 +67,7 @@ where
                         );
                         d
                     }
-                    Err(DateFromFieldsError::MonthCodeNotInCalendar) => {
+                    Err(DateFromFieldsError::MonthNotInCalendar) => {
                         assert!(
                             month_validity == ValidityState::Invalid,
                             "try_from_fields failed but should have passed: {fields:?}"
@@ -107,14 +107,14 @@ where
                 if md_validity == ValidityState::ChineseConstrain {
                     assert!(matches!(
                         reject_result,
-                        Err(DateFromFieldsError::MonthCodeNotInYear)
+                        Err(DateFromFieldsError::MonthNotInYear)
                     ))
                 } else if valid_day_number == day_number {
                     assert_eq!(reject_result, Ok(reference_date));
                 } else {
                     assert!(matches!(
                         reject_result,
-                        Err(DateFromFieldsError::Range { .. })
+                        Err(DateFromFieldsError::InvalidDay { .. })
                     ))
                 }
 

@@ -5,7 +5,7 @@
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
 use crate::calendar_arithmetic::{DateFieldsResolver, PackWithMD};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarRangeError, MonthCodeError,
+    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError, MonthCodeError,
     UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -91,7 +91,7 @@ fn ecma_reference_year_common(
         (12, false, _) => 1971,
         (12, true, _) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
 
-        (0 | 13.., _, _) => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
+        (0 | 13.., _, _) => return Err(EcmaReferenceYearError::MonthNotInCalendar),
     };
 
     Ok(extended_year)
@@ -466,7 +466,7 @@ impl Date<KoreanTraditional> {
         related_iso_year: i32,
         month: types::Month,
         day: u8,
-    ) -> Result<Date<KoreanTraditional>, LunisolarRangeError> {
+    ) -> Result<Date<KoreanTraditional>, LunisolarDateError> {
         let calendar = KoreanTraditional::new();
         ArithmeticDate::try_from_ymd_lunisolar(related_iso_year, month, day, &calendar)
             .map(ChineseDateInner)
@@ -809,7 +809,7 @@ impl Date<ChineseTraditional> {
         related_iso_year: i32,
         month: types::Month,
         day: u8,
-    ) -> Result<Date<ChineseTraditional>, LunisolarRangeError> {
+    ) -> Result<Date<ChineseTraditional>, LunisolarDateError> {
         let calendar = ChineseTraditional::new();
         ArithmeticDate::try_from_ymd_lunisolar(related_iso_year, month, day, &calendar)
             .map(ChineseDateInner)
@@ -1730,7 +1730,7 @@ mod test {
         let cal = ChineseTraditional::new();
         assert!(matches!(
             Date::try_from_fields(fields, options, cal).unwrap_err(),
-            DateFromFieldsError::Range { .. }
+            DateFromFieldsError::Overflow
         ));
     }
 

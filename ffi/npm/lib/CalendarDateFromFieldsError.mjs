@@ -12,14 +12,17 @@ export class CalendarDateFromFieldsError {
 
     static #values = new Map([
         ["Unknown", 0],
-        ["OutOfRange", 1],
-        ["UnknownEra", 2],
+        ["InvalidDay", 1],
+        ["InvalidOrdinalMonth", 9],
+        ["InvalidEra", 2],
         ["MonthCodeInvalidSyntax", 3],
-        ["MonthCodeNotInCalendar", 4],
-        ["MonthCodeNotInYear", 5],
+        ["MonthNotInCalendar", 4],
+        ["MonthNotInYear", 5],
         ["InconsistentYear", 6],
         ["InconsistentMonth", 7],
-        ["NotEnoughFields", 8]
+        ["NotEnoughFields", 8],
+        ["TooManyFields", 10],
+        ["Overflow", 11]
     ]);
 
     static getAllEntries() {
@@ -57,34 +60,44 @@ export class CalendarDateFromFieldsError {
     }
 
     get value(){
-        return [...CalendarDateFromFieldsError.#values.keys()][this.#value];
+        for (let entry of CalendarDateFromFieldsError.#values) {
+            if (entry[1] == this.#value) {
+                return entry[0];
+            }
+        }
     }
 
     /** @internal */
     get ffiValue(){
         return this.#value;
     }
-    static #objectValues = [
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
-        new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
-    ];
+    static #objectValues = {
+        [0]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        [1]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        [9]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 9),
+        [2]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        [3]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        [4]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        [5]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
+        [6]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
+        [7]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
+        [8]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
+        [10]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 10),
+        [11]: new CalendarDateFromFieldsError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 11),
+    };
 
     static Unknown = CalendarDateFromFieldsError.#objectValues[0];
-    static OutOfRange = CalendarDateFromFieldsError.#objectValues[1];
-    static UnknownEra = CalendarDateFromFieldsError.#objectValues[2];
+    static InvalidDay = CalendarDateFromFieldsError.#objectValues[1];
+    static InvalidOrdinalMonth = CalendarDateFromFieldsError.#objectValues[9];
+    static InvalidEra = CalendarDateFromFieldsError.#objectValues[2];
     static MonthCodeInvalidSyntax = CalendarDateFromFieldsError.#objectValues[3];
-    static MonthCodeNotInCalendar = CalendarDateFromFieldsError.#objectValues[4];
-    static MonthCodeNotInYear = CalendarDateFromFieldsError.#objectValues[5];
+    static MonthNotInCalendar = CalendarDateFromFieldsError.#objectValues[4];
+    static MonthNotInYear = CalendarDateFromFieldsError.#objectValues[5];
     static InconsistentYear = CalendarDateFromFieldsError.#objectValues[6];
     static InconsistentMonth = CalendarDateFromFieldsError.#objectValues[7];
     static NotEnoughFields = CalendarDateFromFieldsError.#objectValues[8];
+    static TooManyFields = CalendarDateFromFieldsError.#objectValues[10];
+    static Overflow = CalendarDateFromFieldsError.#objectValues[11];
 
 
     constructor(value) {

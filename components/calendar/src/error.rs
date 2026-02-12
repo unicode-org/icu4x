@@ -4,10 +4,7 @@
 
 //! Error types for functions in the calendar crate
 
-use crate::{
-    options::Overflow,
-    types::{Month, MonthCode},
-};
+use crate::types::MonthCode;
 use displaydoc::Display;
 
 /// Error type for date creation via [`Date::try_new_from_codes`].
@@ -65,32 +62,41 @@ pub enum DateError {
     UnknownMonthCode(MonthCode),
 }
 
+impl core::error::Error for DateError {}
+
 /// Error type for date creation via [`Date::try_new_from_codes`].
 ///
 /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
-pub enum LunisolarRangeError {
-    /// A field is out of range for its domain.
-    #[displaydoc("The {field} = {value} argument is out of range {min}..={max}")]
-    Range {
-        /// The field that is out of range, such as "year"
-        field: &'static str,
-        /// The actual value
-        value: i32,
-        /// The minimum value (inclusive). This might not be tight.
-        min: i32,
-        /// The maximum value (inclusive). This might not be tight.
-        max: i32,
-    },
-    /// The month code is invalid for the calendar or year.
+pub enum LunisolarDateError {
+    /// The day is invalid for the given month.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
-    /// use icu::calendar::error::LunisolarRangeError;
+    /// use icu::calendar::error::LunisolarDateError;
+    ///
+    /// let err = Date::try_new_hebrew_v2(5785, Month::new(5), 50)
+    ///     .expect_err("no month has 50 days");
+    ///
+    /// assert!(matches!(err, LunisolarDateError::InvalidDay { .. }));
+    /// ```
+    #[displaydoc("Invalid day for month")]
+    InvalidDay {
+        /// The maximum allowed value (the minimum is 1).
+        max: u8,
+    },
+    /// The month is invalid for the given year.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::types::Month;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::LunisolarDateError;
     ///
     /// Date::try_new_hebrew_v2(5784, Month::leap(5), 1)
     ///     .expect("5784 is a leap year");
@@ -98,13 +104,46 @@ pub enum LunisolarRangeError {
     /// let err = Date::try_new_hebrew_v2(5785, Month::leap(5), 1)
     ///     .expect_err("5785 is a common year");
     ///
-    /// assert!(matches!(err, LunisolarRangeError::InvalidMonth(_)));
+    /// assert!(matches!(err, LunisolarDateError::MonthNotInYear));
     /// ```
-    #[displaydoc("Invalid month {0:?}")]
-    InvalidMonth(Month),
+    #[displaydoc("The specified month exists in calendar, but not for this year")]
+    MonthNotInYear,
+    /// The month code is invalid for the calendar.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::types::Month;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::LunisolarDateError;
+    ///
+    /// let err = Date::try_new_hebrew_v2(5785, Month::leap(1), 1)
+    ///     .expect_err("Tishrei does not have a leap month");
+    ///
+    /// assert!(matches!(err, LunisolarDateError::MonthNotInCalendar));
+    /// ```
+    #[displaydoc("The specified month code does not exist in this calendar")]
+    MonthNotInCalendar,
+    /// The year exceeds the allowed range.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::types::Month;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::LunisolarDateError;
+    ///
+    /// let err = Date::try_new_hebrew_v2(56812, Month::leap(5), 1)
+    ///     .expect_err("56812 is too big");
+    ///
+    /// assert!(matches!(err, LunisolarDateError::InvalidYear));
+    /// ```
+    #[displaydoc("Invalid year")]
+    InvalidYear,
 }
 
-impl core::error::Error for DateError {}
+impl core::error::Error for LunisolarDateError {}
+
 #[cfg(feature = "unstable")]
 pub use unstable::DateFromFieldsError;
 #[cfg(not(feature = "unstable"))]
@@ -127,6 +166,35 @@ mod unstable {
     #[derive(Debug, Copy, Clone, PartialEq, Display)]
     #[non_exhaustive]
     pub enum DateFromFieldsError {
+        /// The day is invalid for the given month.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::error::RangeError;
+        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
+        /// use icu::calendar::Iso;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.extended_year = Some(2000);
+        /// fields.ordinal_month = Some(11);
+        /// fields.day = Some(31);
+        ///
+        /// let err = Date::try_from_fields(fields, Default::default(), Iso)
+        ///     .expect_err("no day 31 in November");
+        ///
+        /// assert!(matches!(
+        ///     err,
+        ///     DateFromFieldsError::InvalidDay { .. }
+        /// ));
+        /// ```
+        #[displaydoc("Invalid day for month")]
+        InvalidDay {
+            /// The maximum allowed value (the minimum is 1).
+            max: u8,
+        },
         /// A field is out of range for its domain.
         ///
         /// # Examples
@@ -148,34 +216,14 @@ mod unstable {
         ///
         /// assert!(matches!(
         ///     err,
-        ///     DateFromFieldsError::Range(RangeError { field: "month", .. })
+        ///     DateFromFieldsError::InvalidOrdinalMonth { .. }
         /// ));
         /// ```
-        #[displaydoc("{0}")]
-        Range(RangeError),
-        /// The era code is invalid for the calendar.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::calendar::cal::Hebrew;
-        /// use icu::calendar::error::DateFromFieldsError;
-        /// use icu::calendar::types::DateFields;
-        /// use icu::calendar::Date;
-        ///
-        /// let mut fields = DateFields::default();
-        /// fields.era = Some(b"ce"); // valid in Gregorian, but not Hebrew
-        /// fields.era_year = Some(1);
-        /// fields.ordinal_month = Some(1);
-        /// fields.day = Some(1);
-        ///
-        /// let err = Date::try_from_fields(fields, Default::default(), Hebrew::new())
-        ///     .expect_err("era is unknown for Hebrew");
-        ///
-        /// assert_eq!(err, DateFromFieldsError::UnknownEra);
-        /// ```
-        #[displaydoc("Unknown era or invalid syntax")]
-        UnknownEra,
+        #[displaydoc("Invalid ordinal month for year")]
+        InvalidOrdinalMonth {
+            /// The maximum allowed value (the minimum is 1).
+            max: u8,
+        },
         /// The month code syntax is invalid.
         ///
         /// # Examples
@@ -215,10 +263,10 @@ mod unstable {
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
         ///     .expect_err("no month M13 in Hebrew");
-        /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInCalendar);
+        /// assert_eq!(err, DateFromFieldsError::MonthNotInCalendar);
         /// ```
         #[displaydoc("The specified month code does not exist in this calendar")]
-        MonthCodeNotInCalendar,
+        MonthNotInCalendar,
         /// The specified month code exists in this calendar, but not in the specified year.
         ///
         /// # Examples
@@ -236,10 +284,33 @@ mod unstable {
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
         ///     .expect_err("no month M05L in Hebrew year 5783");
-        /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInYear);
+        /// assert_eq!(err, DateFromFieldsError::MonthNotInYear);
         /// ```
-        #[displaydoc("The specified month code exists in calendar, but not for this year")]
-        MonthCodeNotInYear,
+        #[displaydoc("The specified month exists in calendar, but not for this year")]
+        MonthNotInYear,
+        /// The era code is invalid for the calendar.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::cal::Hebrew;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.era = Some(b"ce"); // valid in Gregorian, but not Hebrew
+        /// fields.era_year = Some(1);
+        /// fields.ordinal_month = Some(1);
+        /// fields.day = Some(1);
+        ///
+        /// let err = Date::try_from_fields(fields, Default::default(), Hebrew::new())
+        ///     .expect_err("era is unknown for Hebrew");
+        ///
+        /// assert_eq!(err, DateFromFieldsError::InvalidEra);
+        /// ```
+        #[displaydoc("Unknown era or invalid syntax")]
+        InvalidEra,
         /// The year was specified in multiple inconsistent ways.
         ///
         /// # Examples
@@ -364,16 +435,34 @@ mod unstable {
         /// ```
         #[displaydoc("Not enough fields")]
         NotEnoughFields,
+        /// The date is out of range.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::error::RangeError;
+        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
+        /// use icu::calendar::Iso;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.extended_year = Some(12345678);
+        /// fields.ordinal_month = Some(12);
+        /// fields.day = Some(31);
+        ///
+        /// let err = Date::try_from_fields(fields, Default::default(), Iso)
+        ///     .expect_err("no day 31 in November");
+        ///
+        /// assert!(matches!(
+        ///     err,
+        ///     DateFromFieldsError::Overflow
+        /// ));
+        #[displaydoc("Result out of range")]
+        Overflow,
     }
 
     impl core::error::Error for DateFromFieldsError {}
-
-    impl From<RangeError> for DateFromFieldsError {
-        #[inline]
-        fn from(value: RangeError) -> Self {
-            DateFromFieldsError::Range(value)
-        }
-    }
 }
 
 /// Internal narrow error type for functions that only fail on unknown eras
@@ -389,11 +478,11 @@ impl From<UnknownEraError> for DateError {
 impl From<UnknownEraError> for DateFromFieldsError {
     #[inline]
     fn from(_value: UnknownEraError) -> Self {
-        DateFromFieldsError::UnknownEra
+        DateFromFieldsError::InvalidEra
     }
 }
 
-/// Error for [`Month`] parsing
+/// Error for [`Month`](crate::types::Month) parsing
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum MonthCodeParseError {
@@ -421,8 +510,8 @@ impl From<MonthCodeError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeError) -> Self {
         match value {
-            MonthCodeError::NotInCalendar => DateFromFieldsError::MonthCodeNotInCalendar,
-            MonthCodeError::NotInYear => DateFromFieldsError::MonthCodeNotInYear,
+            MonthCodeError::NotInCalendar => DateFromFieldsError::MonthNotInCalendar,
+            MonthCodeError::NotInYear => DateFromFieldsError::MonthNotInYear,
         }
     }
 }
@@ -443,7 +532,7 @@ mod inner {
     #[non_exhaustive]
     pub enum EcmaReferenceYearError {
         Unimplemented,
-        MonthCodeNotInCalendar,
+        MonthNotInCalendar,
         /// This leap month could not be found within recent times.
         /// Constrain to the regular month if allowed, otherwise reject.
         ///
@@ -565,17 +654,13 @@ impl From<EcmaReferenceYearError> for DateFromFieldsError {
     fn from(value: EcmaReferenceYearError) -> Self {
         match value {
             EcmaReferenceYearError::Unimplemented => DateFromFieldsError::NotEnoughFields,
-            EcmaReferenceYearError::MonthCodeNotInCalendar => {
-                DateFromFieldsError::MonthCodeNotInCalendar
-            }
+            EcmaReferenceYearError::MonthNotInCalendar => DateFromFieldsError::MonthNotInCalendar,
             // This only happens when the month-day combo isn't in the year, and if not rejecting
             // we constrain to the non-leap month
             //
             // We can potentially consider turning this into a RangeError, then UseRegularIfConstrain
             // would need to carry a range error inside it.
-            EcmaReferenceYearError::UseRegularIfConstrain => {
-                DateFromFieldsError::MonthCodeNotInYear
-            }
+            EcmaReferenceYearError::UseRegularIfConstrain => DateFromFieldsError::MonthNotInYear,
         }
     }
 }
@@ -612,37 +697,6 @@ impl From<RangeError> for DateError {
             min,
             max,
         }
-    }
-}
-
-impl From<RangeError> for LunisolarRangeError {
-    #[inline]
-    fn from(value: RangeError) -> Self {
-        let RangeError {
-            field,
-            value,
-            min,
-            max,
-        } = value;
-        LunisolarRangeError::Range {
-            field,
-            value,
-            min,
-            max,
-        }
-    }
-}
-
-pub(crate) fn range_check_with_overflow<T: Ord + Into<i32> + Copy>(
-    value: T,
-    field: &'static str,
-    bounds: core::ops::RangeInclusive<T>,
-    overflow: Overflow,
-) -> Result<T, RangeError> {
-    if matches!(overflow, Overflow::Constrain) {
-        Ok(value.clamp(*bounds.start(), *bounds.end()))
-    } else {
-        range_check(value, field, bounds)
     }
 }
 
