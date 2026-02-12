@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieValue};
+use crate::codepointtrie::{
+    CodePointTrie, CodePointTrieHeader, FastCodePointTrie, SmallCodePointTrie, TrieValue,
+    TypedCodePointTrie,
+};
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 use zerofrom::ZeroFrom;
 use zerovec::ZeroVec;
@@ -25,6 +28,36 @@ impl<T: TrieValue + Serialize> Serialize for CodePointTrie<'_, T> {
             header: self.header,
             index: ZeroFrom::zero_from(&self.index),
             data: ZeroFrom::zero_from(&self.data),
+        };
+        ser.serialize(serializer)
+    }
+}
+
+impl<T: TrieValue + Serialize> Serialize for SmallCodePointTrie<'_, T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let untyped = self.as_untyped_ref();
+        let ser = CodePointTrieSerde {
+            header: untyped.header,
+            index: ZeroFrom::zero_from(&untyped.index),
+            data: ZeroFrom::zero_from(&untyped.data),
+        };
+        ser.serialize(serializer)
+    }
+}
+
+impl<T: TrieValue + Serialize> Serialize for FastCodePointTrie<'_, T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let untyped = self.as_untyped_ref();
+        let ser = CodePointTrieSerde {
+            header: untyped.header,
+            index: ZeroFrom::zero_from(&untyped.index),
+            data: ZeroFrom::zero_from(&untyped.data),
         };
         ser.serialize(serializer)
     }
@@ -73,5 +106,41 @@ where
             data: de.data,
             error_value,
         })
+    }
+}
+
+impl<'de, 'trie, T: TrieValue + Deserialize<'de>> Deserialize<'de> for SmallCodePointTrie<'trie, T>
+where
+    'de: 'trie,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let untyped_de = CodePointTrie::deserialize(deserializer)?;
+        let Ok(de) = <SmallCodePointTrie<_>>::try_from(untyped_de) else {
+            return Err(D::Error::custom(
+                "SmallCodePointTrie must have small-mode data",
+            ));
+        };
+        Ok(de)
+    }
+}
+
+impl<'de, 'trie, T: TrieValue + Deserialize<'de>> Deserialize<'de> for FastCodePointTrie<'trie, T>
+where
+    'de: 'trie,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let untyped_de = CodePointTrie::deserialize(deserializer)?;
+        let Ok(de) = <FastCodePointTrie<_>>::try_from(untyped_de) else {
+            return Err(D::Error::custom(
+                "FastCodePointTrie must have fast-mode data",
+            ));
+        };
+        Ok(de)
     }
 }

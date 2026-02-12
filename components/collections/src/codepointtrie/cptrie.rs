@@ -401,7 +401,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 
     /// Turns this trie into a version whose trie type is encoded in the Rust type.
     #[inline]
-    pub fn to_typed(self) -> Typed<FastCodePointTrie<'trie, T>, SmallCodePointTrie<'trie, T>> {
+    pub const fn to_typed(
+        self,
+    ) -> Typed<FastCodePointTrie<'trie, T>, SmallCodePointTrie<'trie, T>> {
         match self.header.trie_type {
             TrieType::Fast => Typed::Fast(FastCodePointTrie { inner: self }),
             TrieType::Small => Typed::Small(SmallCodePointTrie { inner: self }),
@@ -1730,6 +1732,33 @@ pub struct FastCodePointTrie<'trie, T: TrieValue> {
     inner: CodePointTrie<'trie, T>,
 }
 
+impl<'trie, T: TrieValue> FastCodePointTrie<'trie, T> {
+    #[doc(hidden)] // databake internal
+    /// # Safety
+    ///
+    /// `header.trie_type`, `index`, and `data` must
+    /// satisfy the invariants for the fields of the
+    /// same names on `CodePointTrie`.
+    pub const unsafe fn from_parts_unstable_unchecked_v1(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, T>,
+        error_value: T,
+    ) -> Self {
+        // Field invariants upheld: The caller is responsible.
+        // In practice, this means that datagen in the databake
+        // mode upholds these invariants when constructing the
+        // `CodePointTrie` that is then baked.
+        let untyped = CodePointTrie::<'trie, T>::from_parts_unstable_unchecked_v1(
+            header,
+            index,
+            data,
+            error_value,
+        );
+        Self { inner: untyped }
+    }
+}
+
 impl<'trie, T: TrieValue> TypedCodePointTrie<'trie, T> for FastCodePointTrie<'trie, T> {
     const TRIE_TYPE: TrieType = TrieType::Fast;
 
@@ -1825,12 +1854,57 @@ impl<'trie, T: TrieValue> TryFrom<CodePointTrie<'trie, T>> for FastCodePointTrie
     }
 }
 
+#[cfg(feature = "databake")]
+impl<T: TrieValue + databake::Bake> databake::Bake for FastCodePointTrie<'_, T> {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        let header = self.inner.header.bake(env);
+        let index = self.inner.index.bake(env);
+        let data = self.inner.data.bake(env);
+        let error_value = self.inner.error_value.bake(env);
+        databake::quote! { unsafe { icu_collections::codepointtrie::FastCodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value) } }
+    }
+}
+
+#[cfg(feature = "databake")]
+impl<T: TrieValue + databake::Bake> databake::BakeSize for FastCodePointTrie<'_, T> {
+    fn borrows_size(&self) -> usize {
+        self.inner.borrows_size()
+    }
+}
+
 /// Type-safe wrapper for a small trie guaranteeing
 /// the the getters don't branch on the trie type.
 #[derive(Debug)]
 #[repr(transparent)]
 pub struct SmallCodePointTrie<'trie, T: TrieValue> {
     inner: CodePointTrie<'trie, T>,
+}
+
+impl<'trie, T: TrieValue> SmallCodePointTrie<'trie, T> {
+    #[doc(hidden)] // databake internal
+    /// # Safety
+    ///
+    /// `header.trie_type`, `index`, and `data` must
+    /// satisfy the invariants for the fields of the
+    /// same names on `CodePointTrie`.
+    pub const unsafe fn from_parts_unstable_unchecked_v1(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, T>,
+        error_value: T,
+    ) -> Self {
+        // Field invariants upheld: The caller is responsible.
+        // In practice, this means that datagen in the databake
+        // mode upholds these invariants when constructing the
+        // `CodePointTrie` that is then baked.
+        let untyped = CodePointTrie::<'trie, T>::from_parts_unstable_unchecked_v1(
+            header,
+            index,
+            data,
+            error_value,
+        );
+        Self { inner: untyped }
+    }
 }
 
 impl<'trie, T: TrieValue> TypedCodePointTrie<'trie, T> for SmallCodePointTrie<'trie, T> {
@@ -1876,6 +1950,24 @@ impl<'trie, T: TrieValue> TryFrom<CodePointTrie<'trie, T>> for SmallCodePointTri
             Typed::Fast(_) => Err(TypedCodePointTrieError),
             Typed::Small(trie) => Ok(trie),
         }
+    }
+}
+
+#[cfg(feature = "databake")]
+impl<T: TrieValue + databake::Bake> databake::Bake for SmallCodePointTrie<'_, T> {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        let header = self.inner.header.bake(env);
+        let index = self.inner.index.bake(env);
+        let data = self.inner.data.bake(env);
+        let error_value = self.inner.error_value.bake(env);
+        databake::quote! { unsafe { icu_collections::codepointtrie::SmallCodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value) } }
+    }
+}
+
+#[cfg(feature = "databake")]
+impl<T: TrieValue + databake::Bake> databake::BakeSize for SmallCodePointTrie<'_, T> {
+    fn borrows_size(&self) -> usize {
+        self.inner.borrows_size()
     }
 }
 
@@ -2237,6 +2329,144 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
+    fn test_serde_with_postcard_roundtrip_small() -> Result<(), postcard::Error> {
+        let untyped = planes::get_planes_trie();
+        let trie = <SmallCodePointTrie<_>>::try_from(untyped.clone()).unwrap();
+
+        let trie_serialized: Vec<u8> = postcard::to_allocvec(&trie).unwrap();
+
+        // Assert an expected (golden data) version of the serialized trie.
+        const EXP_TRIE_SERIALIZED: &[u8] = &[
+            128, 128, 64, 128, 2, 2, 0, 0, 1, 160, 18, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 136,
+            2, 144, 2, 144, 2, 144, 2, 176, 2, 176, 2, 176, 2, 176, 2, 208, 2, 208, 2, 208, 2, 208,
+            2, 240, 2, 240, 2, 240, 2, 240, 2, 16, 3, 16, 3, 16, 3, 16, 3, 48, 3, 48, 3, 48, 3, 48,
+            3, 80, 3, 80, 3, 80, 3, 80, 3, 112, 3, 112, 3, 112, 3, 112, 3, 144, 3, 144, 3, 144, 3,
+            144, 3, 176, 3, 176, 3, 176, 3, 176, 3, 208, 3, 208, 3, 208, 3, 208, 3, 240, 3, 240, 3,
+            240, 3, 240, 3, 16, 4, 16, 4, 16, 4, 16, 4, 48, 4, 48, 4, 48, 4, 48, 4, 80, 4, 80, 4,
+            80, 4, 80, 4, 112, 4, 112, 4, 112, 4, 112, 4, 0, 0, 16, 0, 32, 0, 48, 0, 64, 0, 80, 0,
+            96, 0, 112, 0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32,
+            0, 48, 0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32, 0, 48,
+            0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32, 0, 48, 0, 128, 0, 128, 0, 128, 0, 128,
+            0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128,
+            0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128,
+            0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144,
+            0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144,
+            0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144,
+            0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160,
+            0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160,
+            0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160,
+            0, 160, 0, 160, 0, 160, 0, 160, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176,
+            0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176,
+            0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176,
+            0, 176, 0, 176, 0, 176, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192,
+            0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192,
+            0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192,
+            0, 192, 0, 192, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208,
+            0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208,
+            0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208,
+            0, 208, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224,
+            0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224,
+            0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224,
+            0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240,
+            0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240,
+            0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 0,
+            1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+            0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+            1, 0, 1, 0, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1,
+            16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16,
+            1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 32, 1, 32, 1, 32, 1,
+            32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32,
+            1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1,
+            32, 1, 32, 1, 32, 1, 32, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48,
+            1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1,
+            48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 64, 1, 64,
+            1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1,
+            64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64,
+            1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1,
+            80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80,
+            1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1,
+            96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96,
+            1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1,
+            96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 128, 0, 136, 0, 136, 0, 136, 0, 136,
+            0, 136, 0, 136, 0, 136, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
+            2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2,
+            0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0,
+            168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0,
+            168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0,
+            168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0,
+            200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0,
+            200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0,
+            200, 0, 200, 0, 200, 0, 200, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0,
+            232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0,
+            232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0,
+            232, 0, 232, 0, 232, 0, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8,
+            1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1,
+            8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40,
+            1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1,
+            40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40,
+            1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1,
+            72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72,
+            1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 104, 1, 104, 1, 104, 1, 104, 1,
+            104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1,
+            104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1,
+            104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1,
+            136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1,
+            136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1,
+            136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1,
+            168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1,
+            168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1,
+            168, 1, 168, 1, 168, 1, 168, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1,
+            200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1,
+            200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1,
+            200, 1, 200, 1, 200, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1,
+            232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1,
+            232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1,
+            232, 1, 232, 1, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2,
+            8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8,
+            2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40,
+            2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2,
+            40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 72,
+            2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2,
+            72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72,
+            2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2,
+            104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2,
+            104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2,
+            104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 244, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+            2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+            4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6,
+            6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8,
+            8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10,
+            10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11,
+            11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+            12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14,
+            14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+            15, 15, 15, 15, 15, 15, 15, 16, 16, 16, 0,
+        ];
+        assert_eq!(trie_serialized, EXP_TRIE_SERIALIZED);
+
+        let trie_deserialized = postcard::from_bytes::<SmallCodePointTrie<u8>>(&trie_serialized)?;
+
+        let trie_deserialized_untyped = trie_deserialized.as_untyped_ref();
+        assert_eq!(&untyped.index, &trie_deserialized_untyped.index);
+        assert_eq!(&untyped.data, &trie_deserialized_untyped.data);
+
+        assert!(!trie_deserialized_untyped.index.is_owned());
+        assert!(!trie_deserialized_untyped.data.is_owned());
+
+        Ok(())
+    }
+
+    #[test]
     fn test_get_range() {
         let planes_trie = planes::get_planes_trie();
 
@@ -2292,6 +2522,58 @@ mod tests {
                         data_null_offset: 4u32,
                         null_value: 5u32,
                         trie_type: crate::codepointtrie::TrieType::Small,
+                    },
+                    zerovec::ZeroVec::new(),
+                    zerovec::ZeroVec::new(),
+                    0u32,
+                )
+            },
+            icu_collections,
+            [zerovec],
+        );
+    }
+
+    #[test]
+    #[allow(unused_unsafe)] // `unsafe` below is both necessary and unnecessary
+    fn databake_small() {
+        databake::test_bake!(
+            SmallCodePointTrie<'static, u32>,
+            const,
+            unsafe {
+                crate::codepointtrie::SmallCodePointTrie::from_parts_unstable_unchecked_v1(
+                    crate::codepointtrie::CodePointTrieHeader {
+                        high_start: 1u32,
+                        shifted12_high_start: 2u16,
+                        index3_null_offset: 3u16,
+                        data_null_offset: 4u32,
+                        null_value: 5u32,
+                        trie_type: crate::codepointtrie::TrieType::Small,
+                    },
+                    zerovec::ZeroVec::new(),
+                    zerovec::ZeroVec::new(),
+                    0u32,
+                )
+            },
+            icu_collections,
+            [zerovec],
+        );
+    }
+
+    #[test]
+    #[allow(unused_unsafe)] // `unsafe` below is both necessary and unnecessary
+    fn databake_fast() {
+        databake::test_bake!(
+            FastCodePointTrie<'static, u32>,
+            const,
+            unsafe {
+                crate::codepointtrie::FastCodePointTrie::from_parts_unstable_unchecked_v1(
+                    crate::codepointtrie::CodePointTrieHeader {
+                        high_start: 1u32,
+                        shifted12_high_start: 2u16,
+                        index3_null_offset: 3u16,
+                        data_null_offset: 4u32,
+                        null_value: 5u32,
+                        trie_type: crate::codepointtrie::TrieType::Fast,
                     },
                     zerovec::ZeroVec::new(),
                     zerovec::ZeroVec::new(),
