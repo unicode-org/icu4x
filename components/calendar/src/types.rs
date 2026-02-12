@@ -66,10 +66,20 @@ mod unstable {
         /// If set, [`Self::era`] must also be set.
         ///
         /// [`Date::try_from_fields`](crate::Date::try_from_fields)  accepts years in
-        /// the range `-1,000,000..=1,000,000`, where the `extended_year` is also in
-        /// the range `-1,000,000..=1,000,000`.
+        /// the range `-9999..=9999`, where the `extended_year` is also in
+        /// the range `-9999..=9999`.
         ///
-        /// For an example, see [`Self::extended_year`].
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.era = Some(b"ce");
+        /// fields.era_year = Some(2025);
+        /// ```
+        ///
+        /// For a full example, see [`Self::extended_year`].
         pub era_year: Option<i32>,
         /// See [`YearInfo::extended_year()`](crate::types::YearInfo::extended_year).
         ///
@@ -77,7 +87,7 @@ mod unstable {
         /// refer to the same year.
         ///
         /// [`Date::try_from_fields`](crate::Date::try_from_fields) accepts extended years
-        /// in the range `-1,000,000..=1,000,000`.
+        /// in the range `-9999..=9999`.
         ///
         /// # Examples
         ///
@@ -119,6 +129,15 @@ mod unstable {
         ///
         /// Only one of [`Self::month`] and [`Self::month_code`] may be set.
         ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::{DateFields, Month};
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.month = Some(Month::new(1));
+        /// ```
+        ///
         /// For a full example, see [`Self::ordinal_month`].
         pub month: Option<crate::types::Month>,
         /// The month code representing a valid month in this calendar year,
@@ -127,6 +146,15 @@ mod unstable {
         /// See [`MonthCode`](crate::types::MonthCode) for information on the syntax.
         ///
         /// Only one of [`Self::month`] and [`Self::month_code`] may be set.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.month_code = Some(b"M01");
+        /// ```
         ///
         /// For a full example, see [`Self::ordinal_month`].
         pub month_code: Option<&'a [u8]>,
@@ -182,6 +210,15 @@ mod unstable {
         /// ```
         pub ordinal_month: Option<u8>,
         /// See [`DayOfMonth`](crate::types::DayOfMonth).
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.day = Some(1);
+        /// ```
         pub day: Option<u8>,
     }
 }

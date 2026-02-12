@@ -14,7 +14,7 @@ macro_rules! dt_unit {
     ($name:ident, $storage:ident, $value:expr, $(#[$docs:meta])+) => {
         $(#[$docs])+
         #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Ord, PartialOrd, Hash)]
-        pub struct $name($storage);
+        pub struct $name(pub(crate) $storage);
 
         impl $name {
             /// Gets the numeric value for this component.
@@ -179,6 +179,10 @@ impl Time {
             subsecond: nanosecond.try_into()?,
         })
     }
+
+    pub(crate) const fn seconds_since_midnight(self) -> u32 {
+        (self.hour.0 as u32 * 60 + self.minute.0 as u32) * 60 + self.second.0 as u32
+    }
 }
 
 /// A date and time for a given calendar.
@@ -310,8 +314,47 @@ const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_greg
 
 impl Ord for ZonedDateTime<Iso, UtcOffset> {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.to_epoch_milliseconds_utc()
-            .cmp(&other.to_epoch_milliseconds_utc())
+        let mut srd = self.date.to_rata_die();
+        let mut ord = other.date.to_rata_die();
+
+        // If the RDs are three days apart, even with maximum/minimum
+        // times and offsets, the UTC days will still be at at least
+        // one day apart
+        if srd + 3 <= ord {
+            return core::cmp::Ordering::Less;
+        }
+        if srd - 3 >= ord {
+            return core::cmp::Ordering::Greater;
+        }
+
+        let mut ss = self.time.seconds_since_midnight() as i32 - self.zone.to_seconds();
+        let mut os = other.time.seconds_since_midnight() as i32 - other.zone.to_seconds();
+
+        // the seconds can wrap into the day
+
+        if ss < 0 {
+            srd -= 1;
+            ss += 24 * 60 * 60;
+        }
+        if ss > 24 * 60 * 60 {
+            srd += 1;
+            ss -= 24 * 60 * 60;
+        }
+
+        if os < 0 {
+            ord -= 1;
+            os += 24 * 60 * 60;
+        }
+        if os > 24 * 60 * 60 {
+            ord += 1;
+            os -= 24 * 60 * 60;
+        }
+
+        // the subseconds cannot wrap into the seconds
+
+        srd.cmp(&ord)
+            .then(ss.cmp(&os))
+            .then(self.time.subsecond.cmp(&other.time.subsecond))
     }
 }
 impl PartialOrd for ZonedDateTime<Iso, UtcOffset> {
@@ -370,23 +413,46 @@ impl ZonedDateTime<Iso, UtcOffset> {
     ///     ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
     /// assert_eq!(zdt_from_timestamp, zdt_from_str);
     /// ```
+    ///
+    /// When epoch milliseconds exceed the representable date range, the date component
+    /// saturates to the maximum or minimum representable date in the ISO calendar
+    ///
+    /// ```
+    /// use icu::calendar::cal::Iso;
+    /// use icu::time::zone::UtcOffset;
+    /// use icu::time::ZonedDateTime;
+    ///
+    /// let max_offset = UtcOffset::try_from_seconds(50400).unwrap(); // +14 hours
+    /// let zdt_max = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///         i64::MAX,
+    ///         max_offset
+    ///     );
+    ///
+    /// let min_offset = UtcOffset::try_from_seconds(-43200).unwrap(); // -12 hours
+    /// let zdt_min = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///         i64::MIN,
+    ///         min_offset
+    ///     );
+    /// ```
     pub fn from_epoch_milliseconds_and_utc_offset(
         epoch_milliseconds: i64,
         utc_offset: UtcOffset,
     ) -> Self {
-        // TODO(#6512): Handle overflow
-        let local_epoch_milliseconds = epoch_milliseconds + (1000 * utc_offset.to_seconds()) as i64;
-        let (epoch_days, time_millisecs) = (
-            local_epoch_milliseconds.div_euclid(86400000),
-            local_epoch_milliseconds.rem_euclid(86400000),
+        let (utc_epoch_days, utc_time_millisecs) = (
+            epoch_milliseconds.div_euclid(86400000),
+            epoch_milliseconds.rem_euclid(86400000),
         );
-        let rata_die = UNIX_EPOCH + epoch_days;
+        let offset_millisecs = 1000 * (utc_offset.to_seconds() as i64);
+        let local_time_millisecs = utc_time_millisecs + offset_millisecs;
+        let day_adjustment = local_time_millisecs.div_euclid(86400000);
+        let final_time_millisecs = local_time_millisecs.rem_euclid(86400000);
+        let rata_die = UNIX_EPOCH + utc_epoch_days + day_adjustment;
         #[expect(clippy::unwrap_used)] // these values are derived via modulo operators
         let time = Time::try_new(
-            (time_millisecs / 3600000) as u8,
-            ((time_millisecs % 3600000) / 60000) as u8,
-            ((time_millisecs % 60000) / 1000) as u8,
-            ((time_millisecs % 1000) as u32) * 1000000,
+            (final_time_millisecs / 3600000) as u8,
+            ((final_time_millisecs % 3600000) / 60000) as u8,
+            ((final_time_millisecs % 60000) / 1000) as u8,
+            ((final_time_millisecs % 1000) as u32) * 1000000,
         )
         .unwrap();
         ZonedDateTime {
@@ -394,18 +460,6 @@ impl ZonedDateTime<Iso, UtcOffset> {
             time,
             zone: utc_offset,
         }
-    }
-
-    pub(crate) fn to_epoch_milliseconds_utc(self) -> i64 {
-        let ZonedDateTime { date, time, zone } = self;
-        let days = date.to_rata_die() - UNIX_EPOCH;
-        let hours = time.hour.number() as i64;
-        let minutes = time.minute.number() as i64;
-        let seconds = time.second.number() as i64;
-        let nanos = time.subsecond.number() as i64;
-        let offset_seconds = zone.to_seconds() as i64;
-        (((days * 24 + hours) * 60 + minutes) * 60 + seconds - offset_seconds) * 1000
-            + nanos / 1_000_000
     }
 }
 

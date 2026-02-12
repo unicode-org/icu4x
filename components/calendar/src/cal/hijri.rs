@@ -126,7 +126,8 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
         year
     }
 
-    /// Returns an ECMA reference year that contains the given month-day combination.
+    /// Returns an ECMA reference year (represented as an extended year)
+    /// that contains the given month-day combination.
     ///
     /// If the day is out of range, it will return a year that contains the given month
     /// and the maximum day possible for that month. See [the spec][spec] for the
@@ -989,7 +990,7 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
     /// Construct new Hijri [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::cal::Hijri;
@@ -1687,9 +1688,10 @@ mod test {
             TabularAlgorithmLeapYears::TypeII,
             TabularAlgorithmEpoch::Friday,
         );
-        let _dt = Date::try_new_iso(-62971, 3, 19)
-            .unwrap()
-            .to_calendar(calendar);
+        let _dt = Date::from_rata_die(
+            calendrical_calculations::gregorian::fixed_from_gregorian(-62971, 3, 19),
+            calendar,
+        );
     }
 
     #[test]

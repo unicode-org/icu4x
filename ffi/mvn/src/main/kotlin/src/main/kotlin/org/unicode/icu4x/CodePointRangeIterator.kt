@@ -38,7 +38,6 @@ class CodePointRangeIterator internal constructor (
     fun next(): CodePointRangeIteratorResult {
         
         val returnVal = lib.icu4x_CodePointRangeIterator_next_mv1(handle);
-        
         val returnStruct = CodePointRangeIteratorResult.fromNative(returnVal)
         return returnStruct
     }

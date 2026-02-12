@@ -44,9 +44,9 @@ enum class PluralCategory {
         *See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/2.1.1/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
         */
         fun getForCldrString(s: String): PluralCategory? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_PluralCategory_get_for_cldr_string_mv1(sSlice);
+            val returnVal = lib.icu4x_PluralCategory_get_for_cldr_string_mv1(sSliceMemory.slice);
             
             val intermediateOption = returnVal.option() ?: return null
             return PluralCategory.fromNative(intermediateOption)

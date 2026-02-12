@@ -8,6 +8,7 @@ Fully filled in up to 30c187f4b7
 - Components
     - General
         - Use HTTPS links in docs (unicode-org#7212)
+        - Update MSRV to 1.86 (unicode-org#7576)
     - `icu_calendar`
         - Introduce a new `Month` type, preferred over using month codes (unicode-org#7147)
         - Restrict the range of valid dates constructed via certain constructors (unicode-org#7219, unicode-org#7227)
@@ -165,6 +166,8 @@ Several crates have had patch releases in the 2.1 stream:
         - Add conversion between `icu::properties::props::Script` and `icu::locale::subtags:Script` (unicode-org#7270)
     - (2.1.2) `icu_segmenter`
         - Add non-complex line and word break constructors (unicode-org#7268)
+    - (2.1.2) `icu_capi`
+        - Bring in alignment with 2.1.2 `icu_properties` and `icu_segmenter` changes.
 - Data model and providers
     - (2.1.2) `icu_provider_source`, `icu_locale_data`, `icu_datetime_data`, `icu_experimental_data`
         - Update to CLDR 48.1 (unicode-org#7396)

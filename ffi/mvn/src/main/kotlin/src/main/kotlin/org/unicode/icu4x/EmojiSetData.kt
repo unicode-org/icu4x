@@ -92,9 +92,9 @@ class EmojiSetData internal constructor (
         *See the [Rust documentation for `for_str`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
         */
         fun basicEmojiForStr(s: String): Boolean {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_EmojiSetData_basic_emoji_for_str_mv1(sSlice);
+            val returnVal = lib.icu4x_EmojiSetData_basic_emoji_for_str_mv1(sSliceMemory.slice);
             return (returnVal > 0)
         }
     }
@@ -104,9 +104,9 @@ class EmojiSetData internal constructor (
     *See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.1.1/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
     */
     fun contains(s: String): Boolean {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_EmojiSetData_contains_str_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_EmojiSetData_contains_str_mv1(handle, sSliceMemory.slice);
         return (returnVal > 0)
     }
     

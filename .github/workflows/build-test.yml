@@ -71,7 +71,7 @@ jobs:
         tool: cargo-all-features@1.11.0
       
     - name: Set MSRV toolchain
-      run: rustup override set 1.83
+      run: rustup override set 1.86
       
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
