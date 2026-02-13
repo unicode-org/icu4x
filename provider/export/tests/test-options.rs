@@ -463,7 +463,7 @@ fn explicit_runtime_retain_base() {
         "en",  // (same as 'und', but retained)
         // "en-001", (same as 'en')
         // "en-GB", (same as 'en-001')
-        "es",   
+        "es",
         "es-AR",
         "ru",
         // "ru-Cyrl-RU", (same as 'ru')
@@ -501,7 +501,7 @@ fn explicit_preresolved() {
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU, "tlh-001"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar-EG",
         "ar-EG/latn", // extensions included even in preresolved mode
