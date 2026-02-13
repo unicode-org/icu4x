@@ -4,9 +4,11 @@
 
 use core::fmt;
 
+use icu_calendar::types::RataDie;
 use icu_calendar::Iso;
 use zerovec::ule::AsULE;
 
+use crate::Time;
 use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 
 /// The moment in time for resolving a time zone name.
@@ -32,12 +34,12 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 /// use icu::datetime::fieldsets::zone::GenericLong;
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::TimeZone;
 /// use icu::time::zone::ZoneNameTimestamp;
 /// use icu::time::ZonedDateTime;
 /// use writeable::assert_writeable_eq;
 ///
-/// let metlakatla = IanaParser::new().parse("America/Metlakatla");
+/// let metlakatla = TimeZone::from_iana_id("America/Metlakatla");
 ///
 /// let zone_formatter =
 ///     NoCalendarFormatter::try_new(locale!("en-US").into(), GenericLong)
@@ -65,6 +67,8 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 /// ```
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ZoneNameTimestamp(u32);
+
+const RD_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
 impl ZoneNameTimestamp {
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
@@ -123,21 +127,31 @@ impl ZoneNameTimestamp {
     /// assert_eq!(recovered_zoned_date_time.time.subsecond.number(), 0); // always zero
     /// ```
     pub fn from_zoned_date_time_iso(zoned_date_time: ZonedDateTime<Iso, UtcOffset>) -> Self {
-        let ms = match zoned_date_time.to_epoch_milliseconds_utc() {
+        Self::from_rd_time_zone(
+            zoned_date_time.date.to_rata_die(),
+            zoned_date_time.time,
+            zoned_date_time.zone,
+        )
+    }
+
+    pub(crate) fn from_rd_time_zone(rd: RataDie, time: Time, zone: UtcOffset) -> Self {
+        let seconds = (rd - RD_EPOCH) * 24 * 60 * 60 + time.seconds_since_midnight() as i64
+            - zone.to_seconds() as i64;
+        let seconds = match seconds {
             // Values that are not multiples of 15, that we map to the next multiple
             // of 15 (which is always 00:15 or 00:45, values that are otherwise unused).
-            63593070000..63593100000 => 63593100000,
-            307622400000..307622700000 => 307622700000,
-            576041460000..576042300000 => 576042300000,
-            576043260000..576044100000 => 576044100000,
-            594180060000..594180900000 => 594180900000,
-            607491060000..607491900000 => 607491900000,
-            1601740860000..1601741700000 => 1601741700000,
-            1633190460000..1633191300000 => 1633191300000,
-            1664640060000..1664640900000 => 1664640900000,
-            ms => ms,
+            63593070..63593100 => 63593100,
+            307622400..307622700 => 307622700,
+            576041460..576042300 => 576042300,
+            576043260..576044100 => 576044100,
+            594180060..594180900 => 594180900,
+            607491060..607491900 => 607491900,
+            1601740860..1601741700 => 1601741700,
+            1633190460..1633191300 => 1633191300,
+            1664640060..1664640900 => 1664640900,
+            s => s,
         };
-        let qh = ms / 1000 / 60 / 15;
+        let qh = seconds / 60 / 15;
         let qh_clamped = qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
         // Valid cast as the value is clamped to u32 values.
         Self(qh_clamped as u32)
@@ -261,7 +275,7 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
             return Ok(Self::from_zoned_date_time_iso(ZonedDateTime {
                 date: icu_calendar::Date::try_new_iso(year, month, day).map_err(e2)?,
-                time: crate::Time::try_new(hour, minute, 0, 0).map_err(e3)?,
+                time: Time::try_new(hour, minute, 0, 0).map_err(e3)?,
                 zone: UtcOffset::zero(),
             }));
         }

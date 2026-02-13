@@ -213,9 +213,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<IanaParser> parser = IanaParser::create();
-
-    std::unique_ptr<TimeZone> time_zone = parser->parse("america/chicago");
+    std::unique_ptr<TimeZone> time_zone = TimeZone::create_from_iana_id("america/chicago");
 
     std::unique_ptr<UtcOffset> utc_offset = UtcOffset::from_string("-05:00").ok().value();
     if (utc_offset->seconds() != -18000) {

@@ -73,7 +73,6 @@ class VariantOffsetsCalculator internal constructor (
         val returnVal = lib.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(handle, timeZone.handle, utcDate.handle, utcTime.handle);
         
         val intermediateOption = returnVal.option() ?: return null
-
         val returnStruct = VariantOffsets.fromNative(intermediateOption)
         return returnStruct
                                 
@@ -86,7 +85,6 @@ class VariantOffsetsCalculator internal constructor (
         val returnVal = lib.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(handle, timeZone.handle, timestamp);
         
         val intermediateOption = returnVal.option() ?: return null
-
         val returnStruct = VariantOffsets.fromNative(intermediateOption)
         return returnStruct
                                 

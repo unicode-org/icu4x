@@ -48,6 +48,8 @@ export { ZonedDateTime } from "./ZonedDateTime.mjs"
 
 export { ZonedIsoDateTime } from "./ZonedIsoDateTime.mjs"
 
+export { ZonedTime } from "./ZonedTime.mjs"
+
 export { Bidi } from "./Bidi.mjs"
 
 export { BidiInfo } from "./BidiInfo.mjs"

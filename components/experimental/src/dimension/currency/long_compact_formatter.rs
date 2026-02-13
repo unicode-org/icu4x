@@ -2,22 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
-
 use core::fmt::Display;
 
 use fixed_decimal::Decimal;
+use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
 use crate::dimension::currency::compact_formatter::CompactCurrencyFormatterPreferences;
-use crate::{
-    compactdecimal::options::CompactDecimalFormatterOptions,
-    compactdecimal::CompactDecimalFormatter,
-    dimension::provider::currency::{
-        extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
-    },
+use crate::dimension::provider::currency::{
+    extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
 };
 
 use super::CurrencyCode;
@@ -37,8 +32,9 @@ pub struct LongCompactCurrencyFormatter {
     /// Formatting patterns for each currency plural category.
     patterns: DataPayload<CurrencyPatternsDataV1>,
 
-    /// A [`CompactDecimalFormatter`] to format the currency value in compact form.
-    compact_decimal_formatter: CompactDecimalFormatter,
+    decimal_formatter: DecimalFormatter,
+
+    compact_data: DataPayload<icu_decimal::provider::DecimalCompactLongV1>,
 
     /// A [`PluralRules`] to determine the plural category of the unit.
     plural_rules: PluralRules,
@@ -68,10 +64,21 @@ impl LongCompactCurrencyFormatter {
         prefs: CompactCurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError> {
-        let compact_decimal_formatter = CompactDecimalFormatter::try_new_long(
-            (&prefs).into(),
-            CompactDecimalFormatterOptions::default(),
-        )?;
+        let decimal_formatter = DecimalFormatter::try_new((&prefs).into(), Default::default())?;
+
+        let compact_data = DataProvider::<icu_decimal::provider::DecimalCompactLongV1>::load(
+            &icu_decimal::provider::Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_locale(
+                    &icu_decimal::provider::DecimalCompactLongV1::make_locale(
+                        prefs.locale_preferences,
+                    ),
+                ),
+                ..Default::default()
+            },
+        )?
+        .payload
+        .cast();
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {
@@ -99,7 +106,8 @@ impl LongCompactCurrencyFormatter {
         Ok(Self {
             extended,
             patterns,
-            compact_decimal_formatter,
+            decimal_formatter,
+            compact_data,
             plural_rules,
         })
     }
@@ -117,7 +125,7 @@ impl LongCompactCurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
-            + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1>,
+            + DataProvider<icu_decimal::provider::DecimalCompactLongV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
 
@@ -142,16 +150,28 @@ impl LongCompactCurrencyFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
-        let compact_decimal_formatter = CompactDecimalFormatter::try_new_long_unstable(
+        let decimal_formatter =
+            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?;
+
+        let compact_data = DataProvider::<icu_decimal::provider::DecimalCompactLongV1>::load(
             provider,
-            (&prefs).into(),
-            CompactDecimalFormatterOptions::default(),
-        )?;
+            DataRequest {
+                id: DataIdentifierBorrowed::for_locale(
+                    &icu_decimal::provider::DecimalCompactLongV1::make_locale(
+                        prefs.locale_preferences,
+                    ),
+                ),
+                ..Default::default()
+            },
+        )?
+        .payload
+        .cast();
 
         Ok(Self {
             extended,
             patterns,
-            compact_decimal_formatter,
+            decimal_formatter,
+            compact_data,
             plural_rules,
         })
     }
@@ -188,27 +208,20 @@ impl LongCompactCurrencyFormatter {
             .get(operands, &self.plural_rules);
 
         let (compact_pattern, significand) = self
-            .compact_decimal_formatter
             .compact_data
             .get()
-            .get_pattern_and_significand(
-                &value.absolute,
-                &self.compact_decimal_formatter.plural_rules,
-            );
+            .get_pattern_and_significand(&value.absolute, &self.plural_rules);
 
-        self.compact_decimal_formatter
-            .decimal_formatter
-            .format_sign(
-                value.sign,
-                pattern.interpolate((
-                    compact_pattern
-                        .unwrap_or(icu_pattern::SinglePlaceholderPattern::PASS_THROUGH)
-                        .interpolate([self
-                            .compact_decimal_formatter
-                            .decimal_formatter
-                            .format_unsigned(icu_decimal::Cow::Owned(significand))]),
-                    display_name,
-                )),
-            )
+        self.decimal_formatter.format_sign(
+            value.sign,
+            pattern.interpolate((
+                compact_pattern
+                    .unwrap_or(icu_pattern::SinglePlaceholderPattern::PASS_THROUGH)
+                    .interpolate([self
+                        .decimal_formatter
+                        .format_unsigned(icu_decimal::Cow::Owned(significand))]),
+                display_name,
+            )),
+        )
     }
 }

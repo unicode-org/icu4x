@@ -152,9 +152,9 @@ class ListFormatter internal constructor (
     /** See the [Rust documentation for `format`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.format) for more information.
     */
     fun format(list: Array<String>): String {
-        val (listMem, listSlice) = PrimitiveArrayTools.borrowUtf16s(list)
+        val listSliceMemory = PrimitiveArrayTools.borrowUtf16s(list)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_ListFormatter_format_utf16_mv1(handle, listSlice, write);
+        val returnVal = lib.icu4x_ListFormatter_format_utf16_mv1(handle, listSliceMemory.slice, write);
         
         val returnString = DW.writeToString(write)
         return returnString

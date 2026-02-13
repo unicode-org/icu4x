@@ -93,13 +93,12 @@ class ZonedIsoDateTime (var date: IsoDate, var time: Time, var zone: TimeZoneInf
         *See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
         */
         fun strictFromString(v: String, ianaParser: IanaParser): Result<ZonedIsoDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_ZonedIsoDateTime_strict_from_string_mv1(vSlice, ianaParser.handle);
+            val returnVal = lib.icu4x_ZonedIsoDateTime_strict_from_string_mv1(vSliceMemory.slice, ianaParser.handle);
             if (returnVal.isOk == 1.toByte()) {
-                
                 val returnStruct = ZonedIsoDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
+                vSliceMemory?.close()
                 return returnStruct.ok()
             } else {
                 return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
@@ -112,13 +111,12 @@ class ZonedIsoDateTime (var date: IsoDate, var time: Time, var zone: TimeZoneInf
         *See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
         */
         fun fullFromString(v: String, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): Result<ZonedIsoDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_ZonedIsoDateTime_full_from_string_mv1(vSlice, ianaParser.handle, offsetCalculator.handle);
+            val returnVal = lib.icu4x_ZonedIsoDateTime_full_from_string_mv1(vSliceMemory.slice, ianaParser.handle, offsetCalculator.handle);
             if (returnVal.isOk == 1.toByte()) {
-                
                 val returnStruct = ZonedIsoDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
+                vSliceMemory?.close()
                 return returnStruct.ok()
             } else {
                 return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
@@ -135,7 +133,6 @@ class ZonedIsoDateTime (var date: IsoDate, var time: Time, var zone: TimeZoneInf
         fun fromEpochMillisecondsAndUtcOffset(epochMilliseconds: Long, utcOffset: UtcOffset): ZonedIsoDateTime {
             
             val returnVal = lib.icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(epochMilliseconds, utcOffset.handle);
-            
             val returnStruct = ZonedIsoDateTime.fromNative(returnVal)
             return returnStruct
         }

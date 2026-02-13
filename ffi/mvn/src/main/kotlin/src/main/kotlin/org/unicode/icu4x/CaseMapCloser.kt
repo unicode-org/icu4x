@@ -89,9 +89,9 @@ class CaseMapCloser internal constructor (
     *See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
     */
     fun addStringCaseClosureTo(s: String, builder: CodePointSetBuilder): Boolean {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(handle, sSlice, builder.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
+        val returnVal = lib.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(handle, sSliceMemory.slice, builder.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
         return (returnVal > 0)
     }
 

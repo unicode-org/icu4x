@@ -9,9 +9,9 @@ use crate::SourceDataProvider;
 use icu_locale_core::locale;
 use icu_provider::prelude::*;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod compact;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod compact_decimal_pattern;
 pub(crate) mod decimal_pattern;
 mod symbols;

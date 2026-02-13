@@ -56,15 +56,15 @@ class Locale internal constructor (
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.try_from_str) for more information.
         */
         fun fromString(name: String): Result<Locale> {
-            val (nameMem, nameSlice) = PrimitiveArrayTools.borrowUtf8(name)
+            val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
             
-            val returnVal = lib.icu4x_Locale_from_string_mv1(nameSlice);
+            val returnVal = lib.icu4x_Locale_from_string_mv1(nameSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = Locale(handle, selfEdges)
                 CLEANER.register(returnOpaque, Locale.LocaleCleaner(handle, Locale.lib));
-                if (nameMem != null) nameMem.close()
+                nameSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
@@ -92,9 +92,9 @@ class Locale internal constructor (
         *See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.
         */
         fun normalize(s: String): Result<String> {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_Locale_normalize_mv1(sSlice, write);
+            val returnVal = lib.icu4x_Locale_normalize_mv1(sSliceMemory.slice, write);
             if (returnVal.isOk == 1.toByte()) {
                 
                 val returnString = DW.writeToString(write)
@@ -137,9 +137,9 @@ class Locale internal constructor (
     *See the [Rust documentation for `extensions`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.extensions) for more information.
     */
     fun getUnicodeExtension(s: String): String? {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_Locale_get_unicode_extension_mv1(handle, sSlice, write);
+        val returnVal = lib.icu4x_Locale_get_unicode_extension_mv1(handle, sSliceMemory.slice, write);
         
         returnVal.option() ?: return null
 
@@ -153,10 +153,10 @@ class Locale internal constructor (
     *See the [Rust documentation for `extensions`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.extensions) for more information.
     */
     fun setUnicodeExtension(k: String, v: String): Unit? {
-        val (kMem, kSlice) = PrimitiveArrayTools.borrowUtf8(k)
-        val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+        val kSliceMemory = PrimitiveArrayTools.borrowUtf8(k)
+        val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
         
-        val returnVal = lib.icu4x_Locale_set_unicode_extension_mv1(handle, kSlice, vSlice);
+        val returnVal = lib.icu4x_Locale_set_unicode_extension_mv1(handle, kSliceMemory.slice, vSliceMemory.slice);
         return returnVal.option()
     }
     
@@ -177,9 +177,9 @@ class Locale internal constructor (
     *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.try_from_str) for more information.
     */
     fun setLanguage(s: String): Result<Unit> {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_Locale_set_language_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_Locale_set_language_mv1(handle, sSliceMemory.slice);
         if (returnVal.isOk == 1.toByte()) {
             return Unit.ok()
         } else {
@@ -207,9 +207,9 @@ class Locale internal constructor (
     *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.try_from_str) for more information.
     */
     fun setRegion(s: String): Result<Unit> {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_Locale_set_region_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_Locale_set_region_mv1(handle, sSliceMemory.slice);
         if (returnVal.isOk == 1.toByte()) {
             return Unit.ok()
         } else {
@@ -237,9 +237,9 @@ class Locale internal constructor (
     *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.try_from_str) for more information.
     */
     fun setScript(s: String): Result<Unit> {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_Locale_set_script_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_Locale_set_script_mv1(handle, sSliceMemory.slice);
         if (returnVal.isOk == 1.toByte()) {
             return Unit.ok()
         } else {
@@ -262,18 +262,18 @@ class Locale internal constructor (
     /** See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
     */
     fun normalizingEq(other: String): Boolean {
-        val (otherMem, otherSlice) = PrimitiveArrayTools.borrowUtf8(other)
+        val otherSliceMemory = PrimitiveArrayTools.borrowUtf8(other)
         
-        val returnVal = lib.icu4x_Locale_normalizing_eq_mv1(handle, otherSlice);
+        val returnVal = lib.icu4x_Locale_normalizing_eq_mv1(handle, otherSliceMemory.slice);
         return (returnVal > 0)
     }
     
     /** See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
     */
     fun compareToString(other: String): Byte {
-        val (otherMem, otherSlice) = PrimitiveArrayTools.borrowUtf8(other)
+        val otherSliceMemory = PrimitiveArrayTools.borrowUtf8(other)
         
-        val returnVal = lib.icu4x_Locale_compare_to_string_mv1(handle, otherSlice);
+        val returnVal = lib.icu4x_Locale_compare_to_string_mv1(handle, otherSliceMemory.slice);
         return (returnVal)
     }
     

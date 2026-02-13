@@ -88,10 +88,11 @@ class LocaleFallbacker internal constructor (
     *See the [Rust documentation for `for_config`](https://docs.rs/icu_locale/2.1.1/icu_locale/struct.LocaleFallbacker.html#method.for_config) for more information.
     */
     fun forConfig(config: LocaleFallbackConfig): LocaleFallbackerWithConfig {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_LocaleFallbacker_for_config_mv1(handle, config.toNative());
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = LocaleFallbackerWithConfig(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, LocaleFallbackerWithConfig.LocaleFallbackerWithConfigCleaner(handle, LocaleFallbackerWithConfig.lib));

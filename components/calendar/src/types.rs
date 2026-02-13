@@ -66,10 +66,20 @@ mod unstable {
         /// If set, [`Self::era`] must also be set.
         ///
         /// [`Date::try_from_fields`](crate::Date::try_from_fields)  accepts years in
-        /// the range `-1,000,000..=1,000,000`, where the `extended_year` is also in
-        /// the range `-1,000,000..=1,000,000`.
+        /// the range `-9999..=9999`, where the `extended_year` is also in
+        /// the range `-9999..=9999`.
         ///
-        /// For an example, see [`Self::extended_year`].
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.era = Some(b"ce");
+        /// fields.era_year = Some(2025);
+        /// ```
+        ///
+        /// For a full example, see [`Self::extended_year`].
         pub era_year: Option<i32>,
         /// See [`YearInfo::extended_year()`](crate::types::YearInfo::extended_year).
         ///
@@ -77,7 +87,7 @@ mod unstable {
         /// refer to the same year.
         ///
         /// [`Date::try_from_fields`](crate::Date::try_from_fields) accepts extended years
-        /// in the range `-1,000,000..=1,000,000`.
+        /// in the range `-9999..=9999`.
         ///
         /// # Examples
         ///
@@ -115,51 +125,61 @@ mod unstable {
         /// assert_eq!(year_info.extended_year, 2025);
         /// ```
         pub extended_year: Option<i32>,
+        /// The month representing a valid month in this calendar year.
+        ///
+        /// Only one of [`Self::month`] and [`Self::month_code`] may be set.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::{DateFields, Month};
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.month = Some(Month::new(1));
+        /// ```
+        ///
+        /// For a full example, see [`Self::ordinal_month`].
+        pub month: Option<crate::types::Month>,
         /// The month code representing a valid month in this calendar year,
         /// as a UTF-8 string.
         ///
         /// See [`MonthCode`](crate::types::MonthCode) for information on the syntax.
         ///
-        /// # Examples
+        /// Only one of [`Self::month`] and [`Self::month_code`] may be set.
         ///
-        /// To set the month code field, use a byte string:
+        /// # Examples
         ///
         /// ```
         /// use icu::calendar::types::DateFields;
         ///
         /// let mut fields = DateFields::default();
-        ///
-        /// // As a byte string literal:
-        /// fields.era = Some(b"M02L");
-        ///
-        /// // Using str::as_bytes:
-        /// fields.era = Some("M02L".as_bytes());
+        /// fields.month_code = Some(b"M01");
         /// ```
         ///
         /// For a full example, see [`Self::ordinal_month`].
         pub month_code: Option<&'a [u8]>,
         /// See [`MonthInfo::ordinal`](crate::types::MonthInfo::ordinal).
         ///
-        /// If both this and [`Self::month_code`] are set, they must refer to
+        /// If both this and [`Self::month`]/[`Self::month_code`] are set, they must refer to
         /// the same month.
         ///
-        /// Note: using [`Self::month_code`] is recommended, because the ordinal month numbers
-        /// can vary from year to year, as illustrated in the following example.
+        /// Note: using [`Self::month`]/[`Self::month_code`] is recommended, because the ordinal
+        /// month numbers can vary from year to year, as illustrated in the following example.
         ///
         /// # Examples
         ///
-        /// Either `month_code` or `ordinal_month` can be used in [`DateFields`], but they
+        /// Either `month`/`month_code`, or `ordinal_month` can be used in [`DateFields`], but they
         /// might not resolve to the same month number:
         ///
         /// ```
         /// use icu::calendar::cal::ChineseTraditional;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// // The 2023 Year of the Rabbit had a leap month after the 2nd month.
         /// let mut fields1 = DateFields::default();
         /// fields1.extended_year = Some(2023);
-        /// fields1.month_code = Some(b"M02L");
+        /// fields1.month = Some(Month::leap(2));
         /// fields1.day = Some(1);
         ///
         /// let date1 = Date::try_from_fields(
@@ -185,10 +205,20 @@ mod unstable {
         ///
         /// let month_info = date1.month();
         /// assert_eq!(month_info.ordinal, 3);
-        /// assert_eq!(month_info.standard_code.0, "M02L");
+        /// assert_eq!(month_info.number(), 2);
+        /// assert_eq!(month_info.is_leap(), true);
         /// ```
         pub ordinal_month: Option<u8>,
         /// See [`DayOfMonth`](crate::types::DayOfMonth).
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.day = Some(1);
+        /// ```
         pub day: Option<u8>,
     }
 }
@@ -202,6 +232,7 @@ impl fmt::Debug for DateFields<'_> {
             era_year,
             extended_year,
             month_code,
+            month,
             ordinal_month,
             day,
         } = *self;
@@ -213,6 +244,7 @@ impl fmt::Debug for DateFields<'_> {
         }
         builder.field("era_year", &era_year);
         builder.field("extended_year", &extended_year);
+        builder.field("month", &month);
         if let Some(s) = month_code.and_then(|s| core::str::from_utf8(s).ok()) {
             builder.field("month_code", &Some(s));
         } else {

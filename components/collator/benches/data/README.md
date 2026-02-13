@@ -13,7 +13,7 @@ sed -i '/^$/d' ${filename}
 ## Shuffling the file
 
 ```shell
-shuf -n 20 ${filename} -o ${filename}
+shuf ${filename} -o ${filename}
 ```
 
 ## Add back the header (if you plan on submitting the files)
