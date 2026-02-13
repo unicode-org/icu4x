@@ -226,7 +226,7 @@ const NO_CE_VALUE: u64 =
     ((NO_CE_PRIMARY as u64) << 32) | ((NO_CE_SECONDARY as u64) << 16) | (NO_CE_TERTIARY as u64); // 0x101000100
 
 // See ICU4C collation.h and https://www.unicode.org/reports/tr10/#Trailing_Weights
-const FFFD_PRIMARY: u32 = 0xFFFD0000; // U+FFFD
+pub(crate) const FFFD_PRIMARY: u32 = 0xFFFD0000; // U+FFFD
 pub(crate) const FFFD_CE_VALUE: u64 = ((FFFD_PRIMARY as u64) << 32) | COMMON_SEC_AND_TER_CE;
 pub(crate) const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
 pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
@@ -438,7 +438,7 @@ impl CollationElement32 {
         unsafe { core::mem::transmute(self.low_byte() & 0xF) }
     }
 
-    /// Simple-only version of `to_primary_simple_or_long_primary`.
+    /// Simplest possible check for the Latin1 fast path.
     #[cfg(feature = "latin1")]
     #[inline(always)]
     pub fn to_primary_simple(self) -> Option<u32> {
@@ -451,9 +451,10 @@ impl CollationElement32 {
         }
     }
 
-    /// Primary-only counterpart of `to_ce_simple_or_long_primary`.
+    /// Extract only the first primary in the quick check without identical
+    /// prefix.
     #[inline(always)]
-    pub fn to_primary_simple_or_long_primary(self) -> Option<u32> {
+    pub fn to_primary_in_quick_check(self, data: &CollationData) -> Option<u32> {
         let t = self.low_byte();
         if t < SPECIAL_CE32_LOW_BYTE {
             // Not special
@@ -461,7 +462,17 @@ impl CollationElement32 {
         } else if t == LONG_PRIMARY_CE32_LOW_BYTE {
             Some(self.0 - u32::from(t))
         } else {
-            None
+            let tag = self.tag();
+            if tag == Tag::Expansion {
+                // Hiragana in `ja` tailoring
+                Some(data.get_primary_from_ces(self.index()))
+            } else {
+                None
+            }
+            // Note: If we start adding support for more tags,
+            // we should probably do early exits for contractions
+            // and potential Hangul syllables before checking
+            // for expansion.
         }
     }
 

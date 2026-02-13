@@ -1010,8 +1010,8 @@ impl<'data> CollatorBorrowed<'data> {
                 if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
                     let left_ce32 = CollationElement32::new(left_u32);
                     let right_ce32 = CollationElement32::new(right_u32);
-                    if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
-                        if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                    if let Some(mut left_primary) = left_ce32.to_primary_in_quick_check(self.tailoring) {
+                        if let Some(mut right_primary) = right_ce32.to_primary_in_quick_check(self.tailoring) {
                             quick_primary_compare!(left_primary, right_primary, variable_top, self,);
                         }
                     }
@@ -1056,8 +1056,8 @@ impl<'data> CollatorBorrowed<'data> {
                 if let Some((right_c, right_u32)) = right_tail.chars_with_trie(tailoring_trie).next() {
                     let left_ce32 = CollationElement32::new(left_u32);
                     let right_ce32 = CollationElement32::new(right_u32);
-                    if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
-                        if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                    if let Some(mut left_primary) = left_ce32.to_primary_in_quick_check(self.tailoring) {
+                        if let Some(mut right_primary) = right_ce32.to_primary_in_quick_check(self.tailoring) {
                             quick_primary_compare!(left_primary, right_primary, variable_top, self,);
                         }
                     }
@@ -1101,8 +1101,8 @@ impl<'data> CollatorBorrowed<'data> {
                     let right_u32 = tailoring_trie.get16(right_u16);
                     let left_ce32 = CollationElement32::new(left_u32);
                     let right_ce32 = CollationElement32::new(right_u32);
-                    if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
-                        if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                    if let Some(mut left_primary) = left_ce32.to_primary_in_quick_check(self.tailoring) {
+                        if let Some(mut right_primary) = right_ce32.to_primary_in_quick_check(self.tailoring) {
                             quick_primary_compare!(left_primary, right_primary, variable_top, self,);
                         }
                     }
@@ -1227,7 +1227,7 @@ impl<'data> CollatorBorrowed<'data> {
                         if let Some(mut left_primary) = left_ce32.to_primary_simple() {
                             // Don't use the macro to micro-optimize away the long primary
                             // case for ASCII.
-                            if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
+                            if let Some(mut right_primary) = right_ce32.to_primary_in_quick_check(self.tailoring) {
                                 if (left_primary != right_primary)
                                     && (left_primary != 0)
                                     && (right_primary != 0)
@@ -1543,10 +1543,10 @@ impl<'data> CollatorBorrowed<'data> {
                             // Now check if we ce32s we have are simple enough to
                             // make a quick decision here.
                             if let Some(mut left_primary) =
-                                left_ce32.to_primary_simple_or_long_primary()
+                                left_ce32.to_primary_in_quick_check(self.tailoring)
                             {
                                 if let Some(mut right_primary) =
-                                    right_ce32.to_primary_simple_or_long_primary()
+                                    right_ce32.to_primary_in_quick_check(self.tailoring)
                                 {
                                     quick_primary_compare!(
                                         left_primary,

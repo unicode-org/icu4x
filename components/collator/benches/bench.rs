@@ -204,31 +204,11 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         ),
         // Deliberately using Russian data with Cyrillic tailorings
         // to test the perf of the base Cyrillic range.
-        (
-            locale!("uk"),
-            vec![&content_russian],
-            &all_strength,
-        ),
-        (
-            locale!("be"),
-            vec![&content_russian],
-            &all_strength,
-        ),
-        (
-            locale!("kk"),
-            vec![&content_russian],
-            &all_strength,
-        ),
-        (
-            locale!("ky"),
-            vec![&content_russian],
-            &all_strength,
-        ),
-        (
-            locale!("mk"),
-            vec![&content_russian],
-            &all_strength,
-        ),
+        (locale!("uk"), vec![&content_russian], &all_strength),
+        (locale!("be"), vec![&content_russian], &all_strength),
+        (locale!("kk"), vec![&content_russian], &all_strength),
+        (locale!("ky"), vec![&content_russian], &all_strength),
+        (locale!("mk"), vec![&content_russian], &all_strength),
         (
             locale!("th"),
             vec![&content_latin, &content_thai],
