@@ -635,7 +635,9 @@ pub mod ffi {
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
             let iso_date = date.0.to_calendar(icu_calendar::Iso);
-            let _infallible = self.format_raw(input, iso_date,  zone, write);
+            self
+                .format_raw(input, iso_date, zone, write)
+                .expect("format_raw must not fail in format_same_calendar; DateTimeWriteError indicates a bug in the FFI layer");
             Ok(())
         }
     }
