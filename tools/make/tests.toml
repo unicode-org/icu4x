@@ -82,12 +82,19 @@ exit_on_error true
 project_dir = pwd
 set_env CARGO_TARGET_DIR ${project_dir}/target
 
+is_windows = is_windows
+if ${is_windows}
+    binary_ext = set ".exe"
+else
+    binary_ext = set ""
+end
+
 exec --fail-on-error cargo build -p icu4x-datagen
 
 cd examples/cargo
 
 mkdir bin
-cp ${project_dir}/target/debug/icu4x-datagen bin/icu4x-datagen
+cp ${project_dir}/target/debug/icu4x-datagen${binary_ext} bin/icu4x-datagen${binary_ext}
 
 exec --fail-on-error cargo run --manifest-path default/Cargo.toml
 exec --fail-on-error cargo run --manifest-path experimental/Cargo.toml
@@ -98,7 +105,7 @@ exec --fail-on-error cargo run --manifest-path harfbuzz/Cargo.toml
 # Copy our own tutorial_buffer to speed up the task
 exec --fail-on-error cargo build --manifest-path buffer/Cargo.toml
 mkdir buffer/bin
-cp ${project_dir}/target/debug/tutorial_buffer buffer/bin/tutorial_buffer
+cp ${project_dir}/target/debug/tutorial_buffer${binary_ext} buffer/bin/tutorial_buffer${binary_ext}
 exec --fail-on-error make -C buffer buffer_data.postcard
 exec --fail-on-error cargo run --manifest-path buffer/Cargo.toml
 
