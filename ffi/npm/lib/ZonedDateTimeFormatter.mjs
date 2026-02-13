@@ -530,7 +530,7 @@ export class ZonedDateTimeFormatter {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
+        wasm.icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
