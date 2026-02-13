@@ -129,6 +129,7 @@ impl SourceDataProvider {
         Ok(self
             .icuexport()?
             .list(&format!("collation/{}", self.collation_root_han()))?
+            .filter(|name| !name.contains("POSIX")) // No known use cases
             .filter_map(|mut file_name| {
                 file_name.truncate(file_name.len() - ".toml".len());
                 file_name.ends_with(suffix).then(|| {

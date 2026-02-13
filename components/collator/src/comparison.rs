@@ -1098,8 +1098,8 @@ impl<'data> CollatorBorrowed<'data> {
                     let left_u16 = *left_u;
                     let right_u16 = *right_u;
                     let left_u32 = tailoring_trie.get16(left_u16);
-                    let left_ce32 = CollationElement32::new(left_u32);
                     let right_u32 = tailoring_trie.get16(right_u16);
+                    let left_ce32 = CollationElement32::new(left_u32);
                     let right_ce32 = CollationElement32::new(right_u32);
                     if let Some(mut left_primary) = left_ce32.to_primary_simple_or_long_primary() {
                         if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
@@ -1143,28 +1143,26 @@ impl<'data> CollatorBorrowed<'data> {
         {
             let tailoring_trie = &self.tailoring.trie;
             if let Some(left_u) = left_tail.first() {
-                let left_u8 = *left_u;
-                // The probability of getting a non-simple ce32 from
-                // the Latin1 part above ASCII is so high that let's
-                // only consider ASCII on the left for this fast path.
+                if let Some(right_u) = right_tail.first() {
+                    let left_u8 = *left_u;
+                    let right_u8 = *right_u;
+                    // The probability of getting a non-simple ce32 from
+                    // the Latin1 part above ASCII is so high that let's
+                    // only consider ASCII on the left for this fast path.
 
-                // SAFETY: Checking the invariant of `get7` here for left.
-                if left_u8 < 0x80 {
-                    // SAFETY: Invariant of `get7` checked above.
-                    let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
-                    let left_ce32 = CollationElement32::new(left_u32);
-                    if let Some(left_primary) = left_ce32.to_primary_simple() {
-                        if let Some(right_u) = right_tail.first() {
-                            let right_u8 = *right_u;
-                            // SAFETY: Checking the invariant of `get7` here for right.
-                            if right_u8 < 0x80 {
-                                // SAFETY: Invariant of `get7` checked above.
-                                let right_u32 = unsafe { tailoring_trie.get7(right_u8) };
-                                let right_ce32 = CollationElement32::new(right_u32);
-                                // Both sides must be Latin, so script reordering can't do
-                                // anything meaningful. Omit script reordering check instead
-                                // of using `quick_primary_compare!`. Also optimize away the
-                                // long primary cases for ASCII.
+                    // SAFETY: Checking the invariant of `get7` here.
+                    if left_u8 < 0x80 {
+                        // SAFETY: Invariant of `get7` checked above.
+                        let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
+                        let left_ce32 = CollationElement32::new(left_u32);
+                        // SAFETY: Checking the invariant of `get7` here for right.
+                        if right_u8 < 0x80 {
+                            // SAFETY: Invariant of `get7` checked above.
+                            let right_u32 = unsafe { tailoring_trie.get7(right_u8) };
+                            let right_ce32 = CollationElement32::new(right_u32);
+                            // Should be use script reordering to cater to reordering
+                            // digets or punctuation relative to letters?
+                            if let Some(left_primary) = left_ce32.to_primary_simple() {
                                 if let Some(right_primary) = right_ce32.to_primary_simple() {
                                     if (left_primary != right_primary)
                                         && (left_primary != 0)
@@ -1212,21 +1210,21 @@ impl<'data> CollatorBorrowed<'data> {
         {
             let tailoring_trie = &self.tailoring.trie;
             if let Some(left_u) = left_tail.first() {
-                let left_u8 = *left_u;
-                // The probability of getting a non-simple ce32 from
-                // the Latin1 part above ASCII is so high that let's
-                // only consider ASCII on the left for this fast path.
+                if let Some(right_u) = right_tail.first() {
+                    let left_u8 = *left_u;
+                    // The probability of getting a non-simple ce32 from
+                    // the Latin1 part above ASCII is so high that let's
+                    // only consider ASCII on the left for this fast path.
 
-                // SAFETY: Checking the invariant of `get7` here.
-                if left_u8 < 0x80 {
-                    // SAFETY: Invariant of `get7` checked above.
-                    let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
-                    let left_ce32 = CollationElement32::new(left_u32);
-                    if let Some(mut left_primary) = left_ce32.to_primary_simple() {
-                        if let Some(right_u) = right_tail.first() {
-                            let right_u16 = *right_u;
-                            let right_u32 = tailoring_trie.get16(right_u16);
-                            let right_ce32 = CollationElement32::new(right_u32);
+                    // SAFETY: Checking the invariant of `get7` here.
+                    if left_u8 < 0x80 {
+                        // SAFETY: Invariant of `get7` checked above.
+                        let left_u32 = unsafe { tailoring_trie.get7(left_u8) };
+                        let left_ce32 = CollationElement32::new(left_u32);
+                        let right_u16 = *right_u;
+                        let right_u32 = tailoring_trie.get16(right_u16);
+                        let right_ce32 = CollationElement32::new(right_u32);
+                        if let Some(mut left_primary) = left_ce32.to_primary_simple() {
                             // Don't use the macro to micro-optimize away the long primary
                             // case for ASCII.
                             if let Some(mut right_primary) = right_ce32.to_primary_simple_or_long_primary() {
