@@ -1430,14 +1430,12 @@ impl<'data> CollatorBorrowed<'data> {
                                 // Let's take the starter
                                 head_last_c = char_from_u32(decomposition & 0x7FFF);
                             } else if decomposition == HANGUL_SYLLABLE_MARKER {
-                                head_last_ce32 = FFFD_CE32;
+                                head_last_ce32 = IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
                             } else {
                                 break;
                             }
                             head_last_ok = true;
 
-                            let mut left_ce32 = CollationElement32::default();
-                            let mut right_ce32 = CollationElement32::default();
                             let left_c;
                             let right_c;
 
@@ -1475,7 +1473,6 @@ impl<'data> CollatorBorrowed<'data> {
                                     // Still, we're at a good boundary.
                                     break 'prefix;
                                 }
-                                left_ce32 = IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
                             } else {
                                 break;
                             }
@@ -1494,7 +1491,6 @@ impl<'data> CollatorBorrowed<'data> {
                                 right_c = char_from_u32(decomposition & 0x7FFF);
                             } else if decomposition == HANGUL_SYLLABLE_MARKER {
                                 right_c = right_different.character();
-                                right_ce32 = IDENTICAL_PREFIX_HANGUL_MARKER_CE32;
                             } else {
                                 break;
                             }
@@ -1514,22 +1510,16 @@ impl<'data> CollatorBorrowed<'data> {
                                 }
                             }
                             let mut left_data = self.tailoring;
-                            // The first character of each suffix is OK on the normalization
-                            // level. Now let's check their ce32s unless they are Hangul syllables.
-                            if left_ce32 == CollationElement32::default() {
-                                left_ce32 = self.tailoring.ce32_for_char(left_c);
-                                if left_ce32 == FALLBACK_CE32 {
-                                    left_ce32 = self.root.ce32_for_char(left_c);
-                                    left_data = self.root;
-                                }
+                            let mut left_ce32 = self.tailoring.ce32_for_char(left_c);
+                            if left_ce32 == FALLBACK_CE32 {
+                                left_ce32 = self.root.ce32_for_char(left_c);
+                                left_data = self.root;
                             }
                             let mut right_data = self.tailoring;
-                            if right_ce32 == CollationElement32::default() {
-                                right_ce32 = self.tailoring.ce32_for_char(right_c);
-                                if right_ce32 == FALLBACK_CE32 {
-                                    right_ce32 = self.root.ce32_for_char(right_c);
-                                    right_data = self.root;
-                                }
+                            let mut right_ce32 = self.tailoring.ce32_for_char(right_c);
+                            if right_ce32 == FALLBACK_CE32 {
+                                right_ce32 = self.root.ce32_for_char(right_c);
+                                right_data = self.root;
                             }
                             // We don't actually need to do this.
 
