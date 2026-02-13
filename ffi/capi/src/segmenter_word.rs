@@ -272,6 +272,36 @@ pub mod ffi {
                 )?,
             )))
         }
+
+        /// Loads available LSMT models from the given provider.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::load_lstm, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed::load_lstm, FnInStruct, hidden)]
+        #[cfg(feature = "buffer_provider")]
+        pub fn load_lstm_models_with_provider(
+            &mut self,
+            provider: &DataProvider,
+        ) -> Result<(), DataError> {
+            self.0.load_lstm_with_buffer_provider(&provider.get()?)?;
+            Ok(())
+        }
+
+        /// Loads available dictionary models from the given provider.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::load_dictionary, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordSegmenterBorrowed::load_dictionary,
+            FnInStruct,
+            hidden
+        )]
+        #[cfg(feature = "buffer_provider")]
+        pub fn load_dictinoary_models_with_provider(
+            &mut self,
+            provider: &DataProvider,
+        ) -> Result<(), DataError> {
+            self.0
+                .load_dictionary_with_buffer_provider(&provider.get()?)?;
+            Ok(())
+        }
+
         /// Segments a string.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according

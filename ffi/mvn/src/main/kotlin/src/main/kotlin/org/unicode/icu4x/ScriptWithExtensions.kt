@@ -95,10 +95,11 @@ class ScriptWithExtensions internal constructor (
     *See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
     */
     fun asBorrowed(): ScriptWithExtensionsBorrowed {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_ScriptWithExtensions_as_borrowed_mv1(handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = ScriptWithExtensionsBorrowed(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, ScriptWithExtensionsBorrowed.ScriptWithExtensionsBorrowedCleaner(handle, ScriptWithExtensionsBorrowed.lib));
@@ -110,10 +111,11 @@ class ScriptWithExtensions internal constructor (
     *See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
     */
     fun iterRangesForScript(script: UShort): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(handle, FFIUint16(script));
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
         val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
         CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));

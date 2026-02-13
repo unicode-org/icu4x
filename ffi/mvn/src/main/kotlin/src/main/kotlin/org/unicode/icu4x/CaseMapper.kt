@@ -86,9 +86,9 @@ class CaseMapper internal constructor (
         *See the [Rust documentation for `lowercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
         */
         fun lowercaseWithCompiledData(s: String, locale: Locale): String {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_CaseMapper_lowercase_with_compiled_data_mv1(sSlice, locale.handle, write);
+            val returnVal = lib.icu4x_CaseMapper_lowercase_with_compiled_data_mv1(sSliceMemory.slice, locale.handle, write);
             
             val returnString = DW.writeToString(write)
             return returnString
@@ -100,9 +100,9 @@ class CaseMapper internal constructor (
         *See the [Rust documentation for `uppercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
         */
         fun uppercaseWithCompiledData(s: String, locale: Locale): String {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(sSlice, locale.handle, write);
+            val returnVal = lib.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(sSliceMemory.slice, locale.handle, write);
             
             val returnString = DW.writeToString(write)
             return returnString
@@ -169,9 +169,9 @@ class CaseMapper internal constructor (
     *See the [Rust documentation for `lowercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
     */
     fun lowercase(s: String, locale: Locale): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_CaseMapper_lowercase_mv1(handle, sSlice, locale.handle, write);
+        val returnVal = lib.icu4x_CaseMapper_lowercase_mv1(handle, sSliceMemory.slice, locale.handle, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -182,9 +182,9 @@ class CaseMapper internal constructor (
     *See the [Rust documentation for `uppercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
     */
     fun uppercase(s: String, locale: Locale): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_CaseMapper_uppercase_mv1(handle, sSlice, locale.handle, write);
+        val returnVal = lib.icu4x_CaseMapper_uppercase_mv1(handle, sSliceMemory.slice, locale.handle, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -195,9 +195,9 @@ class CaseMapper internal constructor (
     *See the [Rust documentation for `fold`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.fold) for more information.
     */
     fun fold(s: String): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_CaseMapper_fold_mv1(handle, sSlice, write);
+        val returnVal = lib.icu4x_CaseMapper_fold_mv1(handle, sSliceMemory.slice, write);
         
         val returnString = DW.writeToString(write)
         return returnString
@@ -209,9 +209,9 @@ class CaseMapper internal constructor (
     *See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.fold_turkic) for more information.
     */
     fun foldTurkic(s: String): String {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_CaseMapper_fold_turkic_mv1(handle, sSlice, write);
+        val returnVal = lib.icu4x_CaseMapper_fold_turkic_mv1(handle, sSliceMemory.slice, write);
         
         val returnString = DW.writeToString(write)
         return returnString

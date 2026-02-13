@@ -50,8 +50,8 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         &strip_headers(include_str!("./data/TestNames_Korean.txt")),
     );
     let content_random_words_ar: (&str, &str) = (
-        "TestRandomWordsUDHR_ar",
-        &strip_headers(include_str!("./data/TestRandomWordsUDHR_ar.txt")),
+        "Carroll-11-ar",
+        &strip_headers(include_str!("./data/Carroll-11-ar.txt")),
     );
     let content_random_words_de: (&str, &str) = (
         "Carroll-11-de",
@@ -70,8 +70,8 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         &strip_headers(include_str!("./data/Carroll-11-fr.txt")),
     );
     let content_random_words_he: (&str, &str) = (
-        "TestRandomWordsUDHR_he",
-        &strip_headers(include_str!("./data/TestRandomWordsUDHR_he.txt")),
+        "Carroll-11-he",
+        &strip_headers(include_str!("./data/Carroll-11-he.txt")),
     );
     let content_random_words_pl: (&str, &str) = (
         "Carroll-11-pl",

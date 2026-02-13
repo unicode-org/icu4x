@@ -381,10 +381,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
         match cli.markers.as_slice() {
             [x] if x == "none" => Default::default(),
             [x] if x == "all" => {
-                #[cfg(feature = "experimental")]
-                log::info!("The icu4x-datagen crate has been built with the `experimental` feature, so `--markers all` includes experimental markers");
-                #[cfg(not(feature = "experimental"))]
-                log::info!("The icu4x-datagen crate has been built without the `experimental` feature, so `--markers all` does not include experimental markers");
+                #[cfg(feature = "unstable")]
+                log::info!("The icu4x-datagen crate has been built with the `unstable` feature, so `--markers all` includes unstable markers");
+                #[cfg(not(feature = "unstable"))]
+                log::info!("The icu4x-datagen crate has been built without the `unstable` feature, so `--markers all` does not include unstable markers");
                 all_markers()
             }
             markers => markers
@@ -392,7 +392,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 .map(|k| match marker_lookup().get(k.as_str()) {
                     Some(Some(marker)) => Ok(*marker),
                     Some(None) => {
-                        eyre::bail!("Marker {k:?} requires `experimental` Cargo feature")
+                        eyre::bail!("Marker {k:?} requires `unstable` Cargo feature")
                     }
                     None => eyre::bail!("Unknown marker {k:?}"),
                 })
@@ -428,20 +428,20 @@ fn run(cli: Cli) -> eyre::Result<()> {
     fn missing_data_message<T>(e: DataError) -> Result<T, eyre::Report> {
         #[cfg(feature = "provider")]
         if SourceDataProvider::is_missing_cldr_error(e) {
-            eyre::bail!("CLDR data is required for this invocation, set --cldr-path or --cldr-tag");
+            eyre::bail!("CLDR data is required for this invocation, set --cldr-root or --cldr-tag");
         } else if SourceDataProvider::is_missing_icuexport_error(e) {
             eyre::bail!(
-                "ICU data is required for this invocation, set --icuexport-path or --icuexport-tag"
+                "ICU data is required for this invocation, set --icuexport-root or --icuexport-tag"
             );
         } else if SourceDataProvider::is_missing_segmenter_lstm_error(e) {
-            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segementer-lstm-path or --segementer-lstm-tag");
+            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segmenter-lstm-root or --segmenter-lstm-tag");
         } else if SourceDataProvider::is_missing_unihan_error(e) {
             eyre::bail!(
-                "Unihan data is required for this invocation, set --unihan-root or --unihan-tag"
+                "Unihan data is required for this invocation, set --unihan-root or --ucd-tag"
             );
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
             eyre::bail!(
-                "Timezone data is required for this invocation, set --tzdb-path or --tzdb-tag"
+                "Timezone data is required for this invocation, set --tzdb-root or --tzdb-tag"
             );
         }
 
@@ -722,14 +722,14 @@ fn run(cli: Cli) -> eyre::Result<()> {
 }
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn all_markers() -> Vec<DataMarkerInfo> {
             vec![
                 $(
                     <$marker_ty>::INFO,
                 )+
                 $(
-                    #[cfg(feature = "experimental")]
+                    #[cfg(feature = "unstable")]
                     <$emarker_ty>::INFO,
                 )+
             ]
@@ -747,13 +747,13 @@ macro_rules! cb {
                         (stringify!($marker).into(), Some(<$marker_ty>::INFO)),
                     )+
                     $(
-                        #[cfg(feature = "experimental")]
+                        #[cfg(feature = "unstable")]
                         (stringify!($emarker_ty).replace(' ', ""), Some(<$emarker_ty>::INFO)),
-                        #[cfg(feature = "experimental")]
+                        #[cfg(feature = "unstable")]
                         (stringify!($emarker).into(), Some(<$emarker_ty>::INFO)),
-                        #[cfg(not(feature = "experimental"))]
+                        #[cfg(not(feature = "unstable"))]
                         (stringify!($emarker_ty).replace(' ', ""), None),
-                        #[cfg(not(feature = "experimental"))]
+                        #[cfg(not(feature = "unstable"))]
                         (stringify!($emarker).into(), None),
                     )+
 
@@ -780,7 +780,7 @@ macro_rules! cb {
                     $marker_ty,
                 )+
                 $(
-                    #[cfg(feature = "experimental")]
+                    #[cfg(feature = "unstable")]
                     $emarker_ty,
                 )+
             ]

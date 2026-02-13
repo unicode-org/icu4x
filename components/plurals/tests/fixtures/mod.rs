@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::Decimal;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use icu_plurals::PluralOperands;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRulesOptions};
 use serde::Deserialize;
@@ -51,9 +51,8 @@ impl From<&FixedDecimalInput> for Decimal {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum PluralOperandsInput {
-    List((f64, u64, usize, usize, u64, u64, usize)),
+    List((u64, usize, usize, u64, u64, usize)),
     Struct {
-        n: Option<f64>,
         i: Option<u64>,
         v: Option<usize>,
         w: Option<usize>,
@@ -65,35 +64,24 @@ pub enum PluralOperandsInput {
     Number(isize),
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl From<PluralOperandsInput> for PluralOperands {
     fn from(input: PluralOperandsInput) -> Self {
         use icu_plurals::RawPluralOperands;
         match input {
-            PluralOperandsInput::List(operands) => PluralOperands::from(RawPluralOperands {
-                i: operands.1,
-                v: operands.2,
-                w: operands.3,
-                f: operands.4,
-                t: operands.5,
-                c: operands.6,
-            }),
-            PluralOperandsInput::Struct {
-                n,
-                i,
-                v,
-                w,
-                f,
-                t,
-                c,
-            } => PluralOperands::from(RawPluralOperands {
-                i: i.unwrap_or_else(|| n.unwrap_or(0_f64) as u64),
-                v: v.unwrap_or(0),
-                w: w.unwrap_or(0),
-                f: f.unwrap_or(0),
-                t: t.unwrap_or(0),
-                c: c.unwrap_or(0),
-            }),
+            PluralOperandsInput::List((i, v, w, f, t, c)) => {
+                PluralOperands::from(RawPluralOperands { i, v, w, f, t, c })
+            }
+            PluralOperandsInput::Struct { i, v, w, f, t, c } => {
+                PluralOperands::from(RawPluralOperands {
+                    i: i.unwrap_or(0),
+                    v: v.unwrap_or(0),
+                    w: w.unwrap_or(0),
+                    f: f.unwrap_or(0),
+                    t: t.unwrap_or(0),
+                    c: c.unwrap_or(0),
+                })
+            }
             PluralOperandsInput::String(num) => num
                 .parse()
                 .expect("Failed to parse a number into operands."),

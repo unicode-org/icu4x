@@ -19,6 +19,8 @@ internal interface WordSegmenterLib: Library {
     fun icu4x_WordSegmenter_create_for_non_complex_scripts_mv1(): Pointer
     fun icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1(locale: Pointer): ResultPointerInt
     fun icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(provider: Pointer, locale: Pointer): ResultPointerInt
+    fun icu4x_WordSegmenter_load_lstm_models_with_provider_mv1(handle: Pointer, provider: Pointer): ResultUnitInt
+    fun icu4x_WordSegmenter_load_dictinoary_models_with_provider_mv1(handle: Pointer, provider: Pointer): ResultUnitInt
 }
 /** An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
 *
@@ -290,6 +292,34 @@ class WordSegmenter internal constructor (
             } else {
                 return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
             }
+        }
+    }
+    
+    /** Loads available LSMT models from the given provider.
+    *
+    *See the [Rust documentation for `load_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.load_lstm) for more information.
+    */
+    fun loadLstmModelsWithProvider(provider: DataProvider): Result<Unit> {
+        
+        val returnVal = lib.icu4x_WordSegmenter_load_lstm_models_with_provider_mv1(handle, provider.handle);
+        if (returnVal.isOk == 1.toByte()) {
+            return Unit.ok()
+        } else {
+            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+        }
+    }
+    
+    /** Loads available dictionary models from the given provider.
+    *
+    *See the [Rust documentation for `load_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.load_dictionary) for more information.
+    */
+    fun loadDictinoaryModelsWithProvider(provider: DataProvider): Result<Unit> {
+        
+        val returnVal = lib.icu4x_WordSegmenter_load_dictinoary_models_with_provider_mv1(handle, provider.handle);
+        if (returnVal.isOk == 1.toByte()) {
+            return Unit.ok()
+        } else {
+            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
         }
     }
 

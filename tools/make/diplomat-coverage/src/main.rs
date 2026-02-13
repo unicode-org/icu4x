@@ -20,7 +20,7 @@ static FILE_HEADER: &str = r##"# This file contains all APIs that are exposed in
 #  - Whether the API already has its functionality exposed over FFI (if so, add a potentially-`hidden` `rust_link` annotation to the corresponding FFI API)
 #  - Whether that API is rust-specific functionality that need not be exposed (if so, add it to the allowlist with a note, or add a `hidden` `rust_link` annotation to a related API if possible)
 #  - Whether that API should be punted for later in FFI (if so, please check in with @Manishearth, @robertbastian, or @sffc)
-#  - Whether the API is experimental (if so, add it to the allowlist as experimental)
+#  - Whether the API is unstable (if so, add it to the allowlist as unstable)
 #
 # It is acceptable to temporarily have APIs in this file that you plan to add in a soon-upcoming PR.
 #

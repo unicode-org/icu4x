@@ -47,15 +47,15 @@ class DataProvider internal constructor (
         *See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/2.1.1/icu_provider_fs/struct.FsDataProvider.html) for more information.
         */
         fun fromFs(path: String): Result<DataProvider> {
-            val (pathMem, pathSlice) = PrimitiveArrayTools.borrowUtf8(path)
+            val pathSliceMemory = PrimitiveArrayTools.borrowUtf8(path)
             
-            val returnVal = lib.icu4x_DataProvider_from_fs_mv1(pathSlice);
+            val returnVal = lib.icu4x_DataProvider_from_fs_mv1(pathSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = DataProvider(handle, selfEdges)
                 CLEANER.register(returnOpaque, DataProvider.DataProviderCleaner(handle, DataProvider.lib));
-                if (pathMem != null) pathMem.close()
+                pathSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
@@ -68,15 +68,15 @@ class DataProvider internal constructor (
         *See the [Rust documentation for `try_new_from_static_blob`](https://docs.rs/icu_provider_blob/2.1.1/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_static_blob) for more information.
         */
         fun fromByteSlice(blob: ByteArray): Result<DataProvider> {
-            val (blobMem, blobSlice) = PrimitiveArrayTools.borrow(blob)
+            val blobSliceMemory = PrimitiveArrayTools.borrow(blob)
             
-            val returnVal = lib.icu4x_DataProvider_from_byte_slice_mv1(blobSlice);
+            val returnVal = lib.icu4x_DataProvider_from_byte_slice_mv1(blobSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = DataProvider(handle, selfEdges)
                 CLEANER.register(returnOpaque, DataProvider.DataProviderCleaner(handle, DataProvider.lib));
-                if (blobMem != null) blobMem.close()
+                blobSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return DataErrorError(DataError.fromNative(returnVal.union.err)).err()

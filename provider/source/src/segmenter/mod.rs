@@ -18,7 +18,6 @@ use icu::properties::{
 };
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
-use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_provider::prelude::*;
 use std::cmp;
 use std::collections::HashSet;
@@ -89,16 +88,6 @@ struct SegmenterRuleTable {
     rules: Vec<SegmenterState>,
 }
 
-/// Fill `dst` at range `r` with `value`, ignoring any out of bounds ranges
-fn fill_bounded(dst: &mut [u8], r: RangeInclusive<u32>, value: u8) {
-    let start = *r.start() as usize;
-    let end = cmp::min(*r.end() as usize, dst.len() - 1);
-    if start >= dst.len() {
-        return;
-    }
-    dst[start..=end].fill(value);
-}
-
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn generate_rule_break_data(
     provider: &SourceDataProvider,
@@ -106,6 +95,7 @@ fn generate_rule_break_data(
     trie_type: crate::TrieType,
 ) -> RuleBreakData<'static> {
     use icu::properties::{props::ExtendedPictographic, PropertyParser};
+    use icu_codepointtrie_builder::CodePointTrieBuilder;
 
     let segmenter = provider
         .icuexport()
@@ -206,7 +196,14 @@ fn generate_rule_break_data(
     // the default unassigned values, so it's ok to omit them in the table.
     const CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
-    let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
+    let mut properties_trie = CodePointTrieBuilder::new(
+        0u8,
+        0,
+        match trie_type {
+            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+            crate::TrieType::Small => codepointtrie::TrieType::Small,
+        },
+    );
     let mut properties_names = Vec::<String>::new();
     let mut simple_properties_count = 0;
 
@@ -238,7 +235,7 @@ fn generate_rule_break_data(
                         // [[:Extended_Pictographic:] - [:Word_Break=ALetter:]]
                         for range in extended_pictographic.iter_ranges() {
                             for ch in range.filter(|ch| wb.get32(*ch) != WordBreak::ALetter) {
-                                properties_map[ch as usize] = property_index;
+                                properties_trie.set_value(ch, property_index);
                             }
                         }
                         continue;
@@ -248,7 +245,7 @@ fn generate_rule_break_data(
                         // [[:Extended_Pictographic:] & [:Word_Break=ALetter:]]
                         for range in wb.iter_ranges_for_value(WordBreak::ALetter) {
                             for ch in range.filter(|ch| extended_pictographic.contains32(*ch)) {
-                                properties_map[ch as usize] = property_index;
+                                properties_trie.set_value(ch, property_index);
                             }
                         }
                         continue;
@@ -257,16 +254,16 @@ fn generate_rule_break_data(
                     if p.name == "SA" {
                         // Word break property doesn't define SA, but we will use non-UAX29 rules.
                         for range in script.iter_ranges_for_value(Script::Han) {
-                            fill_bounded(&mut properties_map, range, property_index);
+                            properties_trie.set_range_value(range, property_index);
                         }
                         for range in script.iter_ranges_for_value(Script::Hiragana) {
-                            fill_bounded(&mut properties_map, range, property_index);
+                            properties_trie.set_range_value(range, property_index);
                         }
                         for range in lb.iter_ranges_for_value(LineBreak::ComplexContext) {
                             // Unicode 16.0 changes some Complex properties to others such as U+19DA.
                             // Excluding Numriec should be removed after line break is 16.0
                             for ch in range.filter(|ch| *ch != 0x19da) {
-                                properties_map[ch as usize] = property_index;
+                                properties_trie.set_value(ch, property_index);
                             }
                         }
                         continue;
@@ -293,7 +290,7 @@ fn generate_rule_break_data(
                             for ch in
                                 range.filter(|ch| *ch != 0x003a && *ch != 0xfe55 && *ch != 0xff1a)
                             {
-                                properties_map[ch as usize] = property_index;
+                                properties_trie.set_value(ch, property_index);
                             }
                         } else if prop == WordBreak::Extend {
                             // [[:Word_Break=Extend:] - [[:Hani:] [:Line_Break=Complex_Context:]]]
@@ -301,17 +298,17 @@ fn generate_rule_break_data(
                                 script.get32(*ch) != Script::Han
                                     && lb.get32(*ch) != LineBreak::ComplexContext
                             }) {
-                                properties_map[ch as usize] = property_index;
+                                properties_trie.set_value(ch, property_index);
                             }
                         } else if prop == WordBreak::ALetter {
                             // :Word_Break=ALetter: includes Extended_Pictographic. So we want to
                             // exlude it.
                             // "[[:Word_Break=ALetter:] - [:Extended_Pictographic:]]"
                             for ch in range.filter(|ch| !extended_pictographic.contains32(*ch)) {
-                                properties_map[ch as usize] = property_index;
+                                properties_trie.set_value(ch, property_index);
                             }
                         } else {
-                            fill_bounded(&mut properties_map, range, property_index);
+                            properties_trie.set_range_value(range, property_index);
                         }
                     }
 
@@ -322,7 +319,7 @@ fn generate_rule_break_data(
                     // Extended_Pictographic isn't a part of grapheme break property
                     if p.name == "Extended_Pictographic" {
                         for range in extended_pictographic.iter_ranges() {
-                            fill_bounded(&mut properties_map, range, property_index);
+                            properties_trie.set_range_value(range, property_index);
                         }
                         continue;
                     }
@@ -339,10 +336,10 @@ fn generate_rule_break_data(
                             if range.contains(&0x200D) {
                                 // ZWJ is handled as a separate rule
                                 for ch in range.filter(|ch| *ch != 0x200D) {
-                                    properties_map[ch as usize] = property_index;
+                                    properties_trie.set_value(ch, property_index);
                                 }
                             } else {
-                                fill_bounded(&mut properties_map, range, property_index);
+                                properties_trie.set_range_value(range, property_index);
                             }
                         }
 
@@ -354,7 +351,7 @@ fn generate_rule_break_data(
                         .expect("property name should be valid!");
 
                     for range in gb.iter_ranges_for_value(prop) {
-                        fill_bounded(&mut properties_map, range, property_index);
+                        properties_trie.set_range_value(range, property_index);
                     }
                     continue;
                 }
@@ -364,7 +361,7 @@ fn generate_rule_break_data(
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
                     for range in sb.iter_ranges_for_value(prop) {
-                        fill_bounded(&mut properties_map, range, property_index);
+                        properties_trie.set_range_value(range, property_index);
                     }
                     continue;
                 }
@@ -380,40 +377,40 @@ fn generate_rule_break_data(
                         || p.name == "QU_PI"
                         || p.name == "QU_PF"
                     {
-                        for i in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            match lb.get32(i) {
+                        for cp in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            match lb.get32(cp) {
                                 LineBreak::OpenPunctuation => {
                                     if (p.name == "OP_OP30"
-                                        && (eaw.get32(i) != EastAsianWidth::Fullwidth
-                                            && eaw.get32(i) != EastAsianWidth::Halfwidth
-                                            && eaw.get32(i) != EastAsianWidth::Wide))
+                                        && (eaw.get32(cp) != EastAsianWidth::Fullwidth
+                                            && eaw.get32(cp) != EastAsianWidth::Halfwidth
+                                            && eaw.get32(cp) != EastAsianWidth::Wide))
                                         || (p.name == "OP_EA"
-                                            && (eaw.get32(i) == EastAsianWidth::Fullwidth
-                                                || eaw.get32(i) == EastAsianWidth::Halfwidth
-                                                || eaw.get32(i) == EastAsianWidth::Wide))
+                                            && (eaw.get32(cp) == EastAsianWidth::Fullwidth
+                                                || eaw.get32(cp) == EastAsianWidth::Halfwidth
+                                                || eaw.get32(cp) == EastAsianWidth::Wide))
                                     {
-                                        properties_map[i as usize] = property_index;
+                                        properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
                                 LineBreak::CloseParenthesis => {
                                     // CP_EA is unused on the latest spec.
                                     if p.name == "CP_EA"
-                                        && (eaw.get32(i) == EastAsianWidth::Fullwidth
-                                            || eaw.get32(i) == EastAsianWidth::Halfwidth
-                                            || eaw.get32(i) == EastAsianWidth::Wide)
+                                        && (eaw.get32(cp) == EastAsianWidth::Fullwidth
+                                            || eaw.get32(cp) == EastAsianWidth::Halfwidth
+                                            || eaw.get32(cp) == EastAsianWidth::Wide)
                                     {
-                                        properties_map[i as usize] = property_index;
+                                        properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
                                 LineBreak::Ideographic => {
                                     if p.name == "ID_CN"
-                                        && gc.get32(i) == GeneralCategory::Unassigned
+                                        && gc.get32(cp) == GeneralCategory::Unassigned
                                     {
-                                        if let Some(c) = char::from_u32(i) {
+                                        if let Some(c) = char::from_u32(cp) {
                                             if extended_pictographic.contains(c) {
-                                                properties_map[i as usize] = property_index;
+                                                properties_trie.set_value(cp, property_index);
                                             } else {
                                                 // Line segmenter doesn't use Unicode 17's data,
                                                 // but extended_pictographic is 17.
@@ -422,16 +419,13 @@ fn generate_rule_break_data(
                                                 // This should be removed when line segmenter uses
                                                 // Unicode 17.
                                                 // (https://github.com/unicode-org/icu4x/issues/7134)
-                                                match i {
-                                                    0x1f774..=0x1f77f => {
-                                                        properties_map[i as usize] = property_index
-                                                    }
-                                                    0x1f8ae..=0x1f8ff => {
-                                                        properties_map[i as usize] = property_index
-                                                    }
-                                                    0x1f947..=0x1faff => {
-                                                        properties_map[i as usize] = property_index
-                                                    }
+                                                match cp {
+                                                    0x1f774..=0x1f77f => properties_trie
+                                                        .set_value(cp, property_index),
+                                                    0x1f8ae..=0x1f8ff => properties_trie
+                                                        .set_value(cp, property_index),
+                                                    0x1f947..=0x1faff => properties_trie
+                                                        .set_value(cp, property_index),
                                                     _ => {}
                                                 };
                                             }
@@ -440,34 +434,34 @@ fn generate_rule_break_data(
                                 }
 
                                 LineBreak::PostfixNumeric => {
-                                    if p.name == "PO_EAW" && is_cjk_fullwidth(eaw, i) {
-                                        properties_map[i as usize] = property_index;
+                                    if p.name == "PO_EAW" && is_cjk_fullwidth(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
                                 LineBreak::PrefixNumeric => {
-                                    if p.name == "PR_EAW" && is_cjk_fullwidth(eaw, i) {
-                                        properties_map[i as usize] = property_index;
+                                    if p.name == "PR_EAW" && is_cjk_fullwidth(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
                                 LineBreak::Alphabetic => {
-                                    if p.name == "AL_DOTTED_CIRCLE" && i == 0x25CC {
-                                        properties_map[i as usize] = property_index;
+                                    if p.name == "AL_DOTTED_CIRCLE" && cp == 0x25CC {
+                                        properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
                                 LineBreak::Quotation => {
                                     if p.name == "QU_PI"
-                                        && gc.get32(i) == GeneralCategory::InitialPunctuation
+                                        && gc.get32(cp) == GeneralCategory::InitialPunctuation
                                     {
-                                        properties_map[i as usize] = property_index;
+                                        properties_trie.set_value(cp, property_index);
                                     }
 
                                     if p.name == "QU_PF"
-                                        && gc.get32(i) == GeneralCategory::FinalPunctuation
+                                        && gc.get32(cp) == GeneralCategory::FinalPunctuation
                                     {
-                                        properties_map[i as usize] = property_index;
+                                        properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
@@ -481,7 +475,7 @@ fn generate_rule_break_data(
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
                     for range in lb.iter_ranges_for_value(prop) {
-                        fill_bounded(&mut properties_map, range, property_index);
+                        properties_trie.set_range_value(range, property_index);
                     }
 
                     if p.name == "AL" {
@@ -490,7 +484,7 @@ fn generate_rule_break_data(
                             .get_loose("SG")
                             .expect("property name should be valid!");
                         for range in lb.iter_ranges_for_value(prop) {
-                            fill_bounded(&mut properties_map, range, property_index);
+                            properties_trie.set_range_value(range, property_index);
                         }
                     }
                     continue;
@@ -611,16 +605,7 @@ fn generate_rule_break_data(
     }
 
     RuleBreakData {
-        property_table: CodePointTrieBuilder {
-            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
-            default_value: 0,
-            error_value: 0,
-            trie_type: match trie_type {
-                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-                crate::TrieType::Small => codepointtrie::TrieType::Small,
-            },
-        }
-        .build(),
+        property_table: properties_trie.build(),
         break_state_table: break_state_table
             .into_iter()
             // All states are initialized
@@ -659,6 +644,8 @@ fn generate_rule_break_data_override(
     rules_file: &str,
     trie_type: crate::TrieType,
 ) -> RuleBreakDataOverride<'static> {
+    use icu_codepointtrie_builder::CodePointTrieBuilder;
+
     let segmenter = provider
         .icuexport()
         .unwrap()
@@ -666,7 +653,14 @@ fn generate_rule_break_data_override(
         .expect("The data should be valid!");
 
     const CODEPOINT_TABLE_LEN: usize = 0xE1000;
-    let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
+    let mut properties_trie = CodePointTrieBuilder::new(
+        0u8,
+        0,
+        match trie_type {
+            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+            crate::TrieType::Small => codepointtrie::TrieType::Small,
+        },
+    );
     let mut properties_names = Vec::<String>::new();
 
     properties_names.push("Unknown".to_string());
@@ -689,9 +683,9 @@ fn generate_rule_break_data_override(
                     //
                     // TODO: We have to consider this definition from CLDR instead.
                     if p.name == "MidLetter" {
-                        properties_map[0x003a] = property_index;
-                        properties_map[0xfe55] = property_index;
-                        properties_map[0xff1a] = property_index;
+                        properties_trie.set_value(0x003a, property_index);
+                        properties_trie.set_value(0xfe55, property_index);
+                        properties_trie.set_value(0xff1a, property_index);
                     }
                 }
                 "sentence" => {
@@ -700,8 +694,8 @@ fn generate_rule_break_data_override(
                     //
                     // TODO: We have to consider this definition from CLDR instead.
                     if p.name == "STerm" {
-                        properties_map[0x003b] = property_index;
-                        properties_map[0x037e] = property_index;
+                        properties_trie.set_value(0x003b, property_index);
+                        properties_trie.set_value(0x037e, property_index);
                     }
                 }
                 _ => {}
@@ -710,16 +704,7 @@ fn generate_rule_break_data_override(
     }
 
     RuleBreakDataOverride {
-        property_table_override: CodePointTrieBuilder {
-            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
-            default_value: 0,
-            error_value: 0,
-            trie_type: match trie_type {
-                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-                crate::TrieType::Small => codepointtrie::TrieType::Small,
-            },
-        }
-        .build(),
+        property_table_override: properties_trie.build(),
     }
 }
 

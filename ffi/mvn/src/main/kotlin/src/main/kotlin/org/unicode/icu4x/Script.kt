@@ -414,9 +414,9 @@ enum class Script(val inner: Int) {
         @JvmStatic
         
         fun tryFromStr(s: String): Script? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_Script_try_from_str_mv1(sSlice);
+            val returnVal = lib.icu4x_Script_try_from_str_mv1(sSliceMemory.slice);
             
             val intermediateOption = returnVal.option() ?: return null
             return Script.fromNative(intermediateOption)

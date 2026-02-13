@@ -5,17 +5,14 @@
 use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::experimental::compactdecimal::provider::*;
+use icu::decimal::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 
-impl DataProvider<ShortCompactDecimalFormatDataV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<ShortCompactDecimalFormatDataV1>, DataError> {
-        self.check_req::<ShortCompactDecimalFormatDataV1>(req)?;
+impl DataProvider<DecimalCompactShortV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalCompactShortV1>, DataError> {
+        self.check_req::<DecimalCompactShortV1>(req)?;
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -55,12 +52,9 @@ impl DataProvider<ShortCompactDecimalFormatDataV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<LongCompactDecimalFormatDataV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LongCompactDecimalFormatDataV1>, DataError> {
-        self.check_req::<LongCompactDecimalFormatDataV1>(req)?;
+impl DataProvider<DecimalCompactLongV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalCompactLongV1>, DataError> {
+        self.check_req::<DecimalCompactLongV1>(req)?;
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -100,13 +94,13 @@ impl DataProvider<LongCompactDecimalFormatDataV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<ShortCompactDecimalFormatDataV1> for SourceDataProvider {
+impl IterableDataProviderCached<DecimalCompactShortV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
 }
 
-impl IterableDataProviderCached<LongCompactDecimalFormatDataV1> for SourceDataProvider {
+impl IterableDataProviderCached<DecimalCompactLongV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
@@ -124,7 +118,7 @@ mod tests {
     fn test_compact_long() {
         let provider = SourceDataProvider::new_testing();
 
-        let en_compact_long: DataPayload<LongCompactDecimalFormatDataV1> = provider
+        let en_compact_long: DataPayload<DecimalCompactLongV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
@@ -185,7 +179,7 @@ mod tests {
     fn test_compact_short() {
         let provider = SourceDataProvider::new_testing();
 
-        let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1> = provider
+        let ja_compact_short: DataPayload<DecimalCompactShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierCow::from_locale(langid!("ja").into()).as_borrowed(),
                 ..Default::default()

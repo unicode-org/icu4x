@@ -295,14 +295,14 @@ fn main() {
     test_dep_list(
         "icu",
         "normal",
-        "--features compiled_data,experimental",
+        "--features compiled_data,unstable",
         &[&basic, &data, &experimental_data, &experimental],
         "`EXTRA_EXPERIMENTAL_DEPS`",
     );
     test_dep_list(
         "icu",
         "normal",
-        "--features compiled_data,experimental,icu_segmenter/lstm",
+        "--features compiled_data,unstable,icu_segmenter/lstm",
         &[&basic, &data, &experimental, &experimental_data, &lstm],
         "`EXTRA_LSTM_DEPS`",
     );
@@ -316,14 +316,14 @@ fn main() {
     test_dep_list(
         "icu",
         "normal",
-        "--features serde,experimental",
+        "--features serde,unstable",
         &[&basic, &serde, &experimental],
         "`EXTRA_EXPERIMENTAL_DEPS`",
     );
     test_dep_list(
         "icu",
         "normal",
-        "--features serde,experimental,icu_segmenter/lstm",
+        "--features serde,unstable,icu_segmenter/lstm",
         &[&basic, &serde, &experimental, &lstm],
         "`EXTRA_LSTM_DEPS`",
     );

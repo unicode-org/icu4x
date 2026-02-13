@@ -171,7 +171,7 @@
         }
     },
     {
-        "description": "Full date time example with long generic time zone. For locale with non-default timezone appendItem (zh, {1}{0} rather than {1} {0}).",
+        "description": "Full date time example with long generic time zone. For locale with non-default timezone appendItem (zh, {1}{0} rather than {0} {1}). See https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/zh/ca-gregorian.json).",
         "input": {
             "value": "2020-01-21T08:25:07.000+05:00",
             "options": {
@@ -200,7 +200,7 @@
         }
     },
     {
-        "description": "Full date time example with short specific time zone. For locale with non-default timezone appendItem (cv, {0} {1} rather than {1} {0}).",
+        "description": "Full date time example with short specific time zone. For locale with non-default timezone appendItem (cv, {0} ({1}) rather than {0} {1}. See https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/cv/ca-gregorian.json)",
         "input": {
             "value": "2020-01-21T08:25:07.000+05:00",
             "options": {

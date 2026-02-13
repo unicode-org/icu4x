@@ -9,7 +9,7 @@
 use icu_pattern::DoublePlaceholder;
 use icu_provider::prelude::*;
 
-use crate::compactdecimal::provider::CompactPatterns;
+use icu_decimal::provider::CompactPatterns;
 
 icu_provider::data_marker!(
     /// `ShortCurrencyCompactV1`

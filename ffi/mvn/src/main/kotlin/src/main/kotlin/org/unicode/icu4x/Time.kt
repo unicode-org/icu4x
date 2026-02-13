@@ -62,15 +62,15 @@ class Time internal constructor (
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.Time.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<Time> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_Time_from_string_mv1(vSlice);
+            val returnVal = lib.icu4x_Time_from_string_mv1(vSliceMemory.slice);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 
                 val returnOpaque = Time(handle, selfEdges)
                 CLEANER.register(returnOpaque, Time.TimeCleaner(handle, Time.lib));
-                if (vMem != null) vMem.close()
+                vSliceMemory?.close()
                 return returnOpaque.ok()
             } else {
                 return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()

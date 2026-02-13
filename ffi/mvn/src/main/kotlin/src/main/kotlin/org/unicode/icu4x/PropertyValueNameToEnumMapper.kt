@@ -619,9 +619,9 @@ class PropertyValueNameToEnumMapper internal constructor (
     *See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
     */
     fun getStrict(name: String): Short {
-        val (nameMem, nameSlice) = PrimitiveArrayTools.borrowUtf8(name)
+        val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
         
-        val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(handle, nameSlice);
+        val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(handle, nameSliceMemory.slice);
         return (returnVal)
     }
     
@@ -632,9 +632,9 @@ class PropertyValueNameToEnumMapper internal constructor (
     *See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
     */
     fun getLoose(name: String): Short {
-        val (nameMem, nameSlice) = PrimitiveArrayTools.borrowUtf8(name)
+        val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
         
-        val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(handle, nameSlice);
+        val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(handle, nameSliceMemory.slice);
         return (returnVal)
     }
 

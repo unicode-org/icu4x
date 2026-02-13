@@ -31,7 +31,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
  *
  * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
  */
@@ -39,7 +39,7 @@ class LocaleDisplayNamesFormatter {
 public:
 
   /**
-   * 🚧 This API is experimental and may experience breaking changes outside major releases.
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
    * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
    *
@@ -48,7 +48,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleDisplayNamesFormatter>, icu4x::DataError> create_v1(const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
 
   /**
-   * 🚧 This API is experimental and may experience breaking changes outside major releases.
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
    * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
    *
@@ -57,10 +57,10 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleDisplayNamesFormatter>, icu4x::DataError> create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
 
   /**
-   * 🚧 This API is experimental and may experience breaking changes outside major releases.
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
    * Returns the locale-specific display name of a locale.
-   * 🚧 This API is experimental and may experience breaking changes outside major releases.
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
    * See the [Rust documentation for `of`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
    */
