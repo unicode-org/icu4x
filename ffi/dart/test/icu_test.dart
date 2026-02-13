@@ -258,6 +258,33 @@ void main() {
       ),
       'Mi., 15.07.1446 AH, 14:32:12 Koordinierte Weltzeit',
     );
+    expect(
+      ZonedDateTimeFormatter.specificLong(
+        locale,
+        DateTimeFormatter.ymdet(locale),
+      ).formatSameCalendar(
+        zonedDateTimeIso.date.toCalendar(Calendar(CalendarKind.hijriUmmAlQura)),
+        zonedDateTimeIso.time,
+        TimeZoneInfo.utc(),
+      ),
+      'Mi., 15.07.1446 AH, 14:32:12 Koordinierte Weltzeit',
+    );
+    expect(
+      () => ZonedDateTimeFormatter.specificLong(
+        locale,
+        DateTimeFormatter.ymdet(locale),
+      ).formatSameCalendar(
+        zonedDateTimeBuddhist.date,
+        zonedDateTimeBuddhist.time,
+        TimeZoneInfo.utc(),
+      ),
+      throwsA(
+        DateTimeMismatchedCalendarError(
+          thisKind: CalendarKind.hijriUmmAlQura,
+          dateKind: CalendarKind.buddhist,
+        ),
+      ),
+    );
 
     expect(
       ZonedDateTimeFormatter.specificShort(

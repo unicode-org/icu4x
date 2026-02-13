@@ -265,6 +265,16 @@ int main() {
     }
     std::cout << std::endl;
 
+    std::unique_ptr<Calendar> cal = Calendar::create(CalendarKind::Gregorian);
+    std::unique_ptr<Date> any_date = Date::from_iso_in_calendar(2022, 07, 11, *cal.get()).ok().value();
+    out = fmt_mdt_generic_short->format_same_calendar(*any_date.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MDT Generic Short (Same Calendar): " << out;
+    if (out != "11 jul, 13:06 hora de Chicago") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
     std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_generic_long = ZonedDateTimeFormatter::create_generic_long(*locale.get(), *fmt_mdt).ok().value();
     out = fmt_mdt_generic_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset MDT Generic Long: " << out;

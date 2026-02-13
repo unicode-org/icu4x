@@ -26,9 +26,6 @@ pub mod ffi {
         date::ffi::{Date, IsoDate},
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
-        {%- if flavor.has_date() %}
-        errors::ffi::DateTimeMismatchedCalendarError,
-        {%- endif %}
         errors::ffi::DateTimeWriteError,
         locale_core::ffi::Locale,
         time_formatter::ffi::TimeFormatter,
@@ -180,29 +177,16 @@ pub mod ffi {
         }
         {% endfor %}
         {%- endfor %}
-        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
-        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format{% if flavor.has_date() %}_iso{% endif %}(
+        fn format_raw(
             &self,
-            {%- if flavor.has_date() %}
-            iso_date: &IsoDate,
-            {%- endif %}
+            mut input: icu_datetime::unchecked::DateTimeInputUnchecked,
+            _iso_date: icu_calendar::Date<icu_calendar::Iso>,
             {%- if flavor.has_time() %}
             time: &Time,
             {%- endif %}
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
-            {%- if flavor.has_date() %}
-            {%- if formatter_kind.is_fixed_calendar %}
-            let date_in_calendar = iso_date.0.to_calendar(Gregorian);
-            {%- else %}
-            let date_in_calendar = iso_date.0.to_calendar(self.0.calendar());
-            {%- endif %}
-            input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
-            {%- endif %}
             {%- if flavor.has_time() %}
             input.set_time_fields(time.0);
             {%- endif %}
@@ -218,7 +202,7 @@ pub mod ffi {
                 #[allow(deprecated)] // clean up in 3.0
                 input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
                     icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: iso_date.0,
+                        date: _iso_date,
                         time: time.0,
                     })
                 ).zone_name_timestamp());
@@ -228,7 +212,7 @@ pub mod ffi {
                 #[allow(deprecated)] // clean up in 3.0
                 input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
                     icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: iso_date.0,
+                        date: _iso_date,
                         time: icu_time::Time::noon(),
                     })
                 ).zone_name_timestamp());
@@ -238,13 +222,43 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
             }
             {%- endif %}
-            let _infallible = self
+            self
                 .0
                 .format_unchecked(input)
                 .try_write_to(write)
                 .ok()
                 .transpose()?;
             Ok(())
+        }
+
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format{% if flavor.has_date() %}_iso{% endif %}(
+            &self,
+            {%- if flavor.has_date() %}
+            iso_date: &IsoDate,
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            time: &Time,
+            {%- endif %}
+            zone: &TimeZoneInfo,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DateTimeWriteError> {
+            {% if flavor.has_date() %}let mut input{% else %}let input{% endif %} = icu_datetime::unchecked::DateTimeInputUnchecked::default();
+            {%- if flavor.has_date() %}
+            {%- if formatter_kind.is_fixed_calendar %}
+            let date_in_calendar = iso_date.0.to_calendar(Gregorian);
+            {%- else %}
+            let date_in_calendar = iso_date.0.to_calendar(self.0.calendar());
+            {%- endif %}
+            input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
+            {%- endif %}
+            {%- if flavor.has_date() %}
+            self.format_raw(input, iso_date.0, {% if flavor.has_time() %}time,{% endif %} zone, write)
+            {%- else %}
+            self.format_raw(input, icu_calendar::Date::from_rata_die(icu_calendar::types::RataDie::new(0), icu_calendar::Iso), {% if flavor.has_time() %}time,{% endif %} zone, write)
+            {%- endif %}
         }
         {% if !formatter_kind.is_fixed_calendar && flavor.has_date() %}
         #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::format_same_calendar, {{ formatter_kind.rustlink_doctype_fn() }})]
@@ -259,51 +273,15 @@ pub mod ffi {
             {%- endif %}
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeMismatchedCalendarError> {
+        ) -> Result<(), crate::unstable::errors::ffi::DateTimeMismatchedCalendarError> {
             let date_borrowed = date.0.as_borrowed();
             // Check that the date's calendar matches the formatter's calendar
             use icu_datetime::scaffold::InSameCalendar;
-            date_borrowed.check_any_calendar_kind(self.0.calendar().kind())?;
+            date_borrowed.check_any_calendar_kind(self.0.calendar().kind()).map_err(crate::unstable::errors::ffi::DateTimeMismatchedCalendarError::from)?;
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
-            {%- if flavor.has_time() %}
-            input.set_time_fields(time.0);
-            {%- endif %}
-            input.set_time_zone_id(zone.id);
-            if let Some(offset) = zone.offset {
-                input.set_time_zone_utc_offset(offset);
-            }
-            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
-                input.set_time_zone_name_timestamp(zone_name_timestamp);
-            }
-            {%- if flavor.has_time() %}
-            else {
-                let iso_date = date.0.to_calendar(icu_calendar::Iso);
-                #[allow(deprecated)] // clean up in 3.0
-                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
-                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: iso_date,
-                        time: time.0,
-                    })
-                ).zone_name_timestamp());
-            }
-            {%- else %}
-            else {
-                let iso_date = date.0.to_calendar(icu_calendar::Iso);
-                #[allow(deprecated)] // clean up in 3.0
-                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
-                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: iso_date,
-                        time: icu_time::Time::noon(),
-                    })
-                ).zone_name_timestamp());
-            }
-            {%- endif %}
-            let _infallible = self
-                .0
-                .format_unchecked(input)
-                .try_write_to(write)
-                .ok();
+            let iso_date = date.0.to_calendar(icu_calendar::Iso);
+            let _infallible = self.format_raw(input, iso_date, {% if flavor.has_time() %}time,{% endif %} zone, write);
             Ok(())
         }
         {%- endif %}

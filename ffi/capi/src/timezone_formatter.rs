@@ -467,15 +467,13 @@ pub mod ffi {
             )))
         }
         
-        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
-        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format(
+        fn format_raw(
             &self,
+            mut input: icu_datetime::unchecked::DateTimeInputUnchecked,
+            _iso_date: icu_calendar::Date<icu_calendar::Iso>,
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);
@@ -486,13 +484,25 @@ pub mod ffi {
             else {
                 input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
             }
-            let _infallible = self
+            self
                 .0
                 .format_unchecked(input)
                 .try_write_to(write)
                 .ok()
                 .transpose()?;
             Ok(())
+        }
+
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format(
+            &self,
+            zone: &TimeZoneInfo,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DateTimeWriteError> {
+            let input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
+            self.format_raw(input, icu_calendar::Date::from_rata_die(icu_calendar::types::RataDie::new(0), icu_calendar::Iso),  zone, write)
         }
         
     }
