@@ -51,6 +51,53 @@ pub fn check(
     false
 }
 
+/// Returns whether to display a grouping separator at the given magnitude.
+///
+/// `lower_magnitude` is the magnitude of the lowest-power digit, used for resolving minimum
+/// grouping digits.
+/// `magnitude` is the magnitude of the digit, which is negative for fraction digits.
+pub fn check_fraction(
+    lower_magnitude: i16,
+    magnitude: i16,
+    strategy: GroupingStrategy,
+    fraction_grouping: Option<u8>,
+    min_grouping: u8,
+) -> bool {
+    let fraction = if let Some(fraction) = fraction_grouping {
+        if fraction == 0 {
+            return false;
+        }
+        fraction as i16
+    } else {
+        return false;
+    };
+    if magnitude >= 0 {
+        return false;
+    }
+    let min_grouping = {
+        use GroupingStrategy::*;
+        match strategy {
+            Never => return false,
+            // Note: Auto and Always are the same for DecimalFormatter.
+            // When currencies are implemented, this will change.
+            Auto | Always => cmp::max(1, min_grouping) as i16,
+            Min2 => cmp::max(2, min_grouping) as i16,
+        }
+    };
+
+    // If there are fewer than `fraction + min_grouping` fraction digits,
+    // we do not group.
+    // e.g. fraction=3, min2=2. Total digits must be 5+.
+    if -lower_magnitude < fraction + min_grouping {
+        return false;
+    }
+
+    // Magnitude is negative: -1, -2, -3...
+    // We want to group at -fraction, -2*fraction, etc.
+    // e.g. fraction=3. Group at -3, -6...
+    (-magnitude) % fraction == 0
+}
+
 #[test]
 fn test_grouper() {
     use crate::input::Decimal;
@@ -201,5 +248,126 @@ fn test_grouper() {
             let actual = formatter.format(&dec);
             assert_writeable_eq!(actual, cas.expected[i], "{:?}", cas);
         }
+    }
+}
+
+#[test]
+fn test_fraction_grouper() {
+    use crate::input::Decimal;
+    use crate::options;
+    use crate::provider::*;
+    use crate::DecimalFormatter;
+    use icu_provider::prelude::*;
+    use std::cell::RefCell;
+    use writeable::assert_writeable_eq;
+
+    let western_sizes = GroupingSizes {
+        min_grouping: 1,
+        primary: 3,
+        secondary: 3,
+    };
+
+    #[derive(Debug)]
+    struct TestCase {
+        strategy: GroupingStrategy,
+        sizes: GroupingSizes,
+        fraction_grouping: Option<u8>,
+        input: &'static str,
+        expected: &'static str,
+    }
+    let cases = [
+        TestCase {
+            strategy: GroupingStrategy::Auto,
+            sizes: western_sizes,
+            fraction_grouping: Some(3),
+            input: "0.1234567",
+            expected: "0.123,456,7",
+        },
+        TestCase {
+            strategy: GroupingStrategy::Auto,
+            sizes: western_sizes,
+            fraction_grouping: Some(2),
+            input: "0.12345",
+            expected: "0.12,34,5",
+        },
+        TestCase {
+            strategy: GroupingStrategy::Never,
+            sizes: western_sizes,
+            fraction_grouping: Some(3),
+            input: "0.1234567",
+            expected: "0.1234567",
+        },
+        // Check that integer grouping still works
+        TestCase {
+            strategy: GroupingStrategy::Auto,
+            sizes: western_sizes,
+            fraction_grouping: Some(3),
+            input: "12345.123456",
+            expected: "12,345.123,456",
+        },
+        // NIST example: 4 digits don't group if min_grouping is 2
+        TestCase {
+            strategy: GroupingStrategy::Min2,
+            sizes: GroupingSizes {
+                min_grouping: 1, // strategy Min2 overrides this to 2
+                primary: 3,
+                secondary: 3,
+            },
+            fraction_grouping: Some(3),
+            input: "0.1234",
+            expected: "0.1234",
+        },
+        TestCase {
+            strategy: GroupingStrategy::Min2,
+            sizes: GroupingSizes {
+                min_grouping: 1,
+                primary: 3,
+                secondary: 3,
+            },
+            fraction_grouping: Some(3),
+            input: "0.12345",
+            expected: "0.123,45",
+        },
+    ];
+
+    for cas in &cases {
+        let dec: Decimal = cas.input.parse().unwrap();
+        let symbols = DecimalSymbols {
+            grouping_sizes: cas.sizes,
+            ..DecimalSymbols::new_en_for_testing()
+        };
+        let digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        struct Provider(RefCell<Option<DecimalSymbols<'static>>>, [char; 10]);
+        impl DataProvider<DecimalSymbolsV1> for Provider {
+            fn load(&self, _req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1>, DataError> {
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(
+                        self.0
+                            .borrow_mut()
+                            .take()
+                            // We only have one payload
+                            .ok_or(DataErrorKind::Custom.into_error())?,
+                    ),
+                })
+            }
+        }
+        impl DataProvider<DecimalDigitsV1> for Provider {
+            fn load(&self, _req: DataRequest) -> Result<DataResponse<DecimalDigitsV1>, DataError> {
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(self.1),
+                })
+            }
+        }
+        let provider = Provider(RefCell::new(Some(symbols)), digits);
+        let options = options::DecimalFormatterOptions {
+            grouping_strategy: Some(cas.strategy),
+            fraction_grouping_size: cas.fraction_grouping,
+        };
+        let formatter =
+            DecimalFormatter::try_new_unstable(&provider, Default::default(), options).unwrap();
+        let actual = formatter.format(&dec);
+        assert_writeable_eq!(actual, cas.expected, "{:?}", cas);
     }
 }

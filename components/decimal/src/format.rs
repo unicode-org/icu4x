@@ -61,6 +61,7 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
     {
         let range = self.value.magnitude_range();
         let upper_magnitude = *range.end();
+        let lower_magnitude = *range.start();
         let mut range = range.rev().peekable();
         w.with_part(parts::INTEGER, |w| {
             while let Some(m) = range.next_if(|&m| m >= 0) {
@@ -84,9 +85,21 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
                 w.write_str(self.symbols.decimal_separator())
             })?;
             w.with_part(parts::FRACTION, |w| {
-                for m in range.by_ref() {
+                while let Some(m) = range.next() {
                     #[expect(clippy::indexing_slicing)] // digit_at in 0..=9
                     w.write_char(self.digits[self.value.digit_at(m) as usize])?;
+                    if grouper::check_fraction(
+                        lower_magnitude,
+                        m,
+                        self.options.grouping_strategy.unwrap_or_default(),
+                        self.options.fraction_grouping_size,
+                        self.symbols.grouping_sizes.min_grouping,
+                    ) && range.peek().is_some()
+                    {
+                        w.with_part(parts::GROUP, |w| {
+                            w.write_str(self.symbols.grouping_separator())
+                        })?;
+                    }
                 }
                 Ok(())
             })?;
