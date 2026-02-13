@@ -4,6 +4,8 @@
 
 #[cfg(feature = "unstable")]
 use crate::zone::ZoneNameTimestamp;
+#[cfg(feature = "unstable")]
+use crate::ZonedTime;
 use crate::{
     zone::{iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset},
     DateTime, Time, TimeZoneInfo, ZonedDateTime,
@@ -615,7 +617,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
 }
 
 #[cfg(feature = "unstable")]
-impl crate::ZonedTime<UtcOffset> {
+impl ZonedTime<UtcOffset> {
     /// Create a [`ZonedTime`] from an RFC 9557 string.
     ///
     /// This function is "strict": the string should have only an offset and no named time zone.
@@ -635,7 +637,7 @@ impl crate::ZonedTime<UtcOffset> {
 }
 
 #[cfg(feature = "unstable")]
-impl crate::ZonedTime<TimeZoneInfo<models::AtTime>> {
+impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// Create a [`ZonedTime`] from an RFC 9557 string.
     ///
     /// This function is "strict": the string should have only a named time zone and no offset.

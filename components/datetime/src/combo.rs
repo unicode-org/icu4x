@@ -128,8 +128,7 @@ use crate::scaffold::*;
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
 /// use icu::time::zone::iana::IanaParser;
-/// use icu::time::ZonedDateTime;
-/// use icu_time::ZonedTime;
+/// use icu::time::ZonedTime;
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = NoCalendarFormatter::try_new(
@@ -138,7 +137,7 @@ use crate::scaffold::*;
 /// )
 /// .unwrap();
 ///
-/// let zoned_time = ZonedDateTime::try_strict_from_str(
+/// let zoned_time = ZonedTime::try_strict_from_str(
 ///     "15:44:00-07:00[America/Los_Angeles]",
 ///     IanaParser::new(),
 /// )
