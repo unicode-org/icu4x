@@ -469,7 +469,7 @@ fn explicit_runtime_retain_base() {
         // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn",
         // "sr-ME", (same as 'sr-Latn')
-        "tlh-001", // no data for any ancestor, but retained as an explicit base language
+        "tlh-001", // no matching ancestor locale in responses before 'und'; retained since RetainBaseLanguages does not deduplicate against 'und'
         "und",
     ];
 
