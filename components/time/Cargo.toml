@@ -43,6 +43,7 @@ writeable = { workspace = true }
 
 [features]
 default = ["compiled_data", "ixdtf"]
+unstable = []
 ixdtf = ["dep:ixdtf", "icu_calendar/ixdtf"]
 serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "icu_provider/serde", "icu_locale_core/serde", "alloc"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "icu_provider/export", "icu_locale_core/databake", "alloc"]

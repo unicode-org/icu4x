@@ -462,3 +462,46 @@ impl ZonedDateTime<Iso, UtcOffset> {
         }
     }
 }
+
+/// A time local to a specified time zone, without an associated date.
+///
+/// This is useful for formatting scenarios where only the time and time zone
+/// are relevant, and the calendar context is not needed.
+///
+/// This type is compatible with `NoCalendarFormatter`, which
+/// is used for field sets that do not contain date components.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+/// </div>
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "ixdtf")] {
+/// use icu::time::zone::iana::IanaParser;
+/// use icu::time::ZonedTime;
+///
+/// let zoned_time = ZonedTime::try_strict_from_str(
+///     "T15:44:00-07:00[America/Los_Angeles]",
+///     IanaParser::new(),
+/// )
+/// .unwrap();
+///
+/// assert_eq!(zoned_time.time.hour.number(), 15);
+/// # }
+/// ```
+///
+/// See the docs on `NoCalendarFormatter` for more information and examples.
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
+#[cfg(feature = "unstable")]
+pub struct ZonedTime<Z> {
+    /// The time, local to the time zone
+    pub time: Time,
+    /// The time zone
+    pub zone: Z,
+}
