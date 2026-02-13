@@ -1513,18 +1513,22 @@ impl<'data> CollatorBorrowed<'data> {
                                     break;
                                 }
                             }
+                            let mut left_data = self.tailoring;
                             // The first character of each suffix is OK on the normalization
                             // level. Now let's check their ce32s unless they are Hangul syllables.
                             if left_ce32 == CollationElement32::default() {
                                 left_ce32 = self.tailoring.ce32_for_char(left_c);
                                 if left_ce32 == FALLBACK_CE32 {
                                     left_ce32 = self.root.ce32_for_char(left_c);
+                                    left_data = self.root;
                                 }
                             }
+                            let mut right_data = self.tailoring;
                             if right_ce32 == CollationElement32::default() {
                                 right_ce32 = self.tailoring.ce32_for_char(right_c);
                                 if right_ce32 == FALLBACK_CE32 {
                                     right_ce32 = self.root.ce32_for_char(right_c);
+                                    right_data = self.root;
                                 }
                             }
                             // We don't actually need to do this.
@@ -1543,10 +1547,10 @@ impl<'data> CollatorBorrowed<'data> {
                             // Now check if we ce32s we have are simple enough to
                             // make a quick decision here.
                             if let Some(mut left_primary) =
-                                left_ce32.to_primary_in_quick_check(self.tailoring)
+                                left_ce32.to_primary_in_quick_check(left_data)
                             {
                                 if let Some(mut right_primary) =
-                                    right_ce32.to_primary_in_quick_check(self.tailoring)
+                                    right_ce32.to_primary_in_quick_check(right_data)
                                 {
                                     quick_primary_compare!(
                                         left_primary,
