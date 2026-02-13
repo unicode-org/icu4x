@@ -12,7 +12,7 @@ const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 /**
- * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
  *
  * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
  */
@@ -46,7 +46,7 @@ export class RegionDisplayNames {
 
 
     /**
-     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
      * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
      *
@@ -77,7 +77,7 @@ export class RegionDisplayNames {
     }
 
     /**
-     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
      * Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
      *
@@ -108,7 +108,7 @@ export class RegionDisplayNames {
     }
 
     /**
-     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
      * Returns the locale specific display name of a region.
      * Note that the function returns an empty string in case the display name for a given
@@ -145,7 +145,7 @@ export class RegionDisplayNames {
     }
 
     /**
-     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
      * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
      *

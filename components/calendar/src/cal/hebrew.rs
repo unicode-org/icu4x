@@ -351,13 +351,13 @@ impl Date<Hebrew> {
     /// Construct a new Hebrew [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
     /// use icu::calendar::types::Month;
     ///
-    /// let date = Date::try_new_hebrew_fixed(5782, Month::new(6), 7)
+    /// let date = Date::try_new_hebrew_v2(5782, Month::new(6), 7)
     ///     .expect("Failed to initialize Date instance.");
     ///
     /// assert_eq!(date.era_year().year, 5782);
@@ -366,7 +366,7 @@ impl Date<Hebrew> {
     /// assert_eq!(date.month().is_formatting_leap(), true);
     /// assert_eq!(date.day_of_month().0, 7);
     /// ```
-    pub fn try_new_hebrew_fixed(
+    pub fn try_new_hebrew_v2(
         year: i32,
         month: Month,
         day: u8,
@@ -378,8 +378,8 @@ impl Date<Hebrew> {
 
     /// This method uses an ordinal month, which is probably not what you want.
     ///
-    /// Use [`Date::try_new_hebrew_fixed`]
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hebrew_fixed`")]
+    /// Use [`Date::try_new_hebrew_v2`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hebrew_v2`")]
     pub fn try_new_hebrew(
         year: i32,
         ordinal_month: u8,
@@ -502,7 +502,7 @@ mod tests {
             );
 
             assert_eq!(
-                Date::try_new_hebrew_fixed(
+                Date::try_new_hebrew_v2(
                     date.era_year().year,
                     date.month().value,
                     date.day_of_month().0,
@@ -534,13 +534,13 @@ mod tests {
     fn test_negative_era_years() {
         let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
         let greg_year = greg_date.era_year();
-        assert_eq!(greg_date.inner.0.year(), -5000);
+        assert_eq!(greg_year.extended_year, -5000);
         assert_eq!(greg_year.era, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_year.year, 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         let hebr_year = hebr_date.era_year();
-        assert_eq!(hebr_date.inner.0.year().value, -1240);
+        assert_eq!(hebr_year.extended_year, -1240);
         assert_eq!(hebr_year.era, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
         assert_eq!(hebr_year.year, -1240);
@@ -549,10 +549,7 @@ mod tests {
     #[test]
     fn test_weekdays() {
         // https://github.com/unicode-org/icu4x/issues/4893
-        let cal = Hebrew::new();
-        let era = "am";
-        let month = Month::new(1);
-        let dt = Date::try_new_from_codes(Some(era), 3760, month.code(), 1, cal).unwrap();
+        let dt = Date::try_new_hebrew_v2(3760, Month::new(1), 1).unwrap();
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1

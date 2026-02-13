@@ -167,6 +167,20 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_for_non_complex_scripts_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   /**
+   * Loads available LSMT models from the given provider.
+   *
+   * See the [Rust documentation for `load_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.load_lstm) for more information.
+   */
+  inline icu4x::diplomat::result<std::monostate, icu4x::DataError> load_lstm_models_with_provider(const icu4x::DataProvider& provider);
+
+  /**
+   * Loads available dictionary models from the given provider.
+   *
+   * See the [Rust documentation for `load_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.load_dictionary) for more information.
+   */
+  inline icu4x::diplomat::result<std::monostate, icu4x::DataError> load_dictinoary_models_with_provider(const icu4x::DataProvider& provider);
+
+  /**
    * Segments a string.
    *
    * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according

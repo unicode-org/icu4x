@@ -174,9 +174,9 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 /// have information on the language of the text being segmented, providing this hint can
 /// produce higher-quality results.
 ///
-/// If you have a content locale, use [`WordBreakOptions`] and a constructor begining with `new`.
+/// If you have a content locale, use [`WordBreakOptions`] and a constructor beginning with `try_new`.
 /// If you do not have a content locale use [`WordBreakInvariantOptions`] and a constructor
-/// beginning with `try_new`.
+/// beginning with `new`.
 ///
 /// # Examples
 ///
@@ -301,9 +301,12 @@ impl WordSegmenter {
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
     pub fn new_auto(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+        let mut complex = ComplexPayloadsBorrowed::new();
+        complex.with_southeast_asian_lstms();
+        complex.with_japanese_dictionary();
         WordSegmenterBorrowed {
             data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            complex: ComplexPayloadsBorrowed::new_auto(),
+            complex,
             locale_override: None,
         }
     }
@@ -333,9 +336,12 @@ impl WordSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
+        let mut complex = ComplexPayloads::try_new(provider)?;
+        complex.with_southeast_asian_lstms(provider)?;
+        complex.with_japanese_dictionary(provider)?;
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_auto(provider)?,
+            complex,
             payload_locale_override: if let Some(locale) = options.content_locale {
                 let locale = DataLocale::from(locale);
                 let req = DataRequest {
@@ -392,12 +398,10 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
-    pub fn new_lstm(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        WordSegmenterBorrowed {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            complex: ComplexPayloadsBorrowed::new_lstm(),
-            locale_override: None,
-        }
+    pub fn new_lstm(options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+        let mut s = Self::new_for_non_complex_scripts(options);
+        s.load_lstm();
+        s
     }
 
     #[cfg(feature = "lstm")]
@@ -424,27 +428,9 @@ impl WordSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self {
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_lstm(provider)?,
-            payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
-                let req = DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    metadata: {
-                        let mut metadata = DataRequestMetadata::default();
-                        metadata.silent = true;
-                        metadata
-                    },
-                };
-                provider
-                    .load(req)
-                    .allow_identifier_not_found()?
-                    .map(|r| r.payload)
-            } else {
-                None
-            },
-        })
+        let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
+        s.load_lstm_unstable(provider)?;
+        Ok(s)
     }
 
     /// Construct a [`WordSegmenter`] with an invariant locale and compiled dictionary data for
@@ -477,12 +463,10 @@ impl WordSegmenter {
     /// assert_eq!(ja_bps, [0, 15, 21]);
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn new_dictionary(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        WordSegmenterBorrowed {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            complex: ComplexPayloadsBorrowed::new_dict(),
-            locale_override: None,
-        }
+    pub fn new_dictionary(options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+        let mut s = Self::new_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -508,27 +492,9 @@ impl WordSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self {
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_dict(provider)?,
-            payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
-                let req = DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    metadata: {
-                        let mut metadata = DataRequestMetadata::default();
-                        metadata.silent = true;
-                        metadata
-                    },
-                };
-                provider
-                    .load(req)
-                    .allow_identifier_not_found()?
-                    .map(|r| r.payload)
-            } else {
-                None
-            },
-        })
+        let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
+        s.load_dictionary_unstable(provider)?;
+        Ok(s)
     }
 
     /// Construct a [`WordSegmenter`] with an invariant locale and no support for
@@ -543,7 +509,7 @@ impl WordSegmenter {
     ) -> WordSegmenterBorrowed<'static> {
         WordSegmenterBorrowed {
             data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            complex: ComplexPayloadsBorrowed::empty(),
+            complex: ComplexPayloadsBorrowed::new(),
             locale_override: None,
         }
     }
@@ -571,7 +537,7 @@ impl WordSegmenter {
     {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_empty(provider)?,
+            complex: ComplexPayloads::try_new(provider)?,
             payload_locale_override: if let Some(locale) = options.content_locale {
                 let locale = DataLocale::from(locale);
                 let req = DataRequest {
@@ -590,6 +556,57 @@ impl WordSegmenter {
                 None
             },
         })
+    }
+
+    /// Loads LSTM data for a [`WordSegmenter`] constructed with
+    /// [`WordSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `lstm` Cargo feature.*
+    #[cfg(feature = "lstm")]
+    pub fn load_lstm_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
+    where
+        D: DataProvider<SegmenterLstmAutoV1> + ?Sized,
+    {
+        self.complex.with_southeast_asian_lstms(provider)?;
+        Ok(())
+    }
+
+    /// A version of [`Self::load_lstm_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    #[cfg(feature = "lstm")]
+    pub fn load_lstm_with_buffer_provider(
+        &mut self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<(), DataError> {
+        self.load_lstm_unstable(&provider.as_deserializing())
+    }
+
+    /// Loads dictionary data for a [`WordSegmenter`] constructed with
+    /// [`WordSegmenter::new_for_non_complex_scripts`].
+    pub fn load_dictionary_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
+    where
+        D: DataProvider<SegmenterDictionaryAutoV1>
+            + DataProvider<SegmenterDictionaryExtendedV1>
+            + ?Sized,
+    {
+        self.complex.with_southeast_asian_dictionaries(provider)?;
+        self.complex.with_japanese_dictionary(provider)?;
+        Ok(())
+    }
+
+    /// A version of [`Self::load_dictionary_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "serde")]
+    pub fn load_dictionary_with_buffer_provider(
+        &mut self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<(), DataError> {
+        self.load_dictionary_unstable(&provider.as_deserializing())
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
@@ -680,6 +697,26 @@ impl<'data> WordSegmenterBorrowed<'data> {
 }
 
 impl WordSegmenterBorrowed<'static> {
+    /// Loads LSTM data for a [`WordSegmenter`] constructed with
+    /// [`WordSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
+    #[cfg(feature = "lstm")]
+    #[cfg(feature = "compiled_data")]
+    pub fn load_lstm(&mut self) {
+        self.complex.with_southeast_asian_lstms();
+    }
+
+    /// Loads dictionary data for a [`WordSegmenter`] constructed with
+    /// [`WordSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn load_dictionary(&mut self) {
+        self.complex.with_southeast_asian_dictionaries();
+        self.complex.with_japanese_dictionary();
+    }
+
     /// Cheaply converts a [`WordSegmenterBorrowed<'static>`] into a [`WordSegmenter`].
     ///
     /// Note: Due to branching and indirection, using [`WordSegmenter`] might inhibit some

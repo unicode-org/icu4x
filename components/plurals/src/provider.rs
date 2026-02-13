@@ -59,7 +59,7 @@ const _: () = {
     make_provider!(Baked);
     impl_plurals_cardinal_v1!(Baked);
     impl_plurals_ordinal_v1!(Baked);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     impl_plurals_ranges_v1!(Baked);
 };
 
@@ -77,7 +77,7 @@ icu_provider::data_marker!(
     PluralRulesData<'static>,
 );
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 icu_provider::data_marker!(
     /// Data for plural range formatting
     PluralsRangesV1,
@@ -90,7 +90,7 @@ icu_provider::data_marker!(
 pub const MARKERS: &[DataMarkerInfo] = &[
     PluralsCardinalV1::INFO,
     PluralsOrdinalV1::INFO,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     PluralsRangesV1::INFO,
 ];
 
@@ -131,10 +131,10 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub use ranges::*;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod ranges {
     use super::*;
     use zerovec::ZeroMap;

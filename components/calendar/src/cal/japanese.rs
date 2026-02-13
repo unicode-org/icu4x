@@ -200,22 +200,18 @@ impl Date<Japanese> {
     ///
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
-    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the Gregorian year
-    /// is also in the range `-1,000,000..=1,000,000`.
+    /// This function accepts years in the range `-9999..=9999`, where the Gregorian year
+    /// is also in the range `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::cal::Japanese;
     /// use icu::calendar::{Date, Ref};
     /// use tinystr::tinystr;
     ///
-    /// let japanese_calendar = Japanese::new();
-    /// // for easy sharing
-    /// let japanese_calendar = Ref(&japanese_calendar);
-    ///
     /// let era = "heisei";
     ///
     /// let date =
-    ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
+    ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, Japanese::new())
     ///         .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.era_year().era, era);
@@ -230,7 +226,7 @@ impl Date<Japanese> {
     ///     10,
     ///     1,
     ///     2,
-    ///     japanese_calendar,
+    ///     Japanese::new(),
     /// );
     /// assert!(fake_date.is_err());
     /// ```

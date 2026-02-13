@@ -1,9 +1,7 @@
-Exploratory: Principles on Fixing Bugs in Stable Crates
-=======================================================
+Principles on Fixing Bugs in Stable Crates
+==========================================
 
-*Status: Exploratory*
-
-*This doc does not represent an official position of the ICU4X TC. It is intended as a basis for discussion and future revision.*
+*These positions are held by sffc@ and not necesarilly the ICU4X Technical Committee.*
 
 ICU4X has a thorough [Graduation Checklist](graduation.md) to help ensure that new components and features adhere to high standards. However, bugs and mistakes inevitably creep through, whether intentional or unintentional.
 

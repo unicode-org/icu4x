@@ -64,6 +64,18 @@ export class CaseMapper {
     titlecaseSegmentWithOnlyCaseData(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
 
     /**
+     * Returns the full titlecase mapping of the given string, performing head adjustment without
+     * loading additional data, using compiled data (avoids having to allocate a `CaseMapper` object).
+     *
+     * (if head adjustment is enabled in the options)
+     *
+     * The `v1` refers to the version of the options struct, which may change as we add more options
+     *
+     * See the [Rust documentation for `titlecase_segment_with_only_case_data_to_string`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.titlecase_segment_with_only_case_data_to_string) for more information.
+     */
+    static titlecaseSegmentWithOnlyCaseCompiledData(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
+
+    /**
      * Case-folds the characters in the given string
      *
      * See the [Rust documentation for `fold`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.fold) for more information.

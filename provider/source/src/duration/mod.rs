@@ -7,12 +7,12 @@ use crate::cldr_serde::units::data::DurationUnits;
 use crate::SourceDataProvider;
 use icu_provider::prelude::*;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use std::{borrow::Cow, collections::HashSet};
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use icu::experimental::duration::provider::{DigitalDurationData, DigitalDurationDataV1};
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use icu::experimental::duration::provider::{HmPadding, HmsPadding, MsPadding};
 
 /// Strips multiples of the given character from the start of the string.
@@ -69,7 +69,7 @@ fn strip_separated_padded_characters<'s, const N: usize>(
     ))
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl DataProvider<DigitalDurationDataV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DigitalDurationDataV1>, DataError> {
         let (
@@ -155,7 +155,7 @@ impl SourceDataProvider {
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl crate::IterableDataProviderCached<DigitalDurationDataV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self

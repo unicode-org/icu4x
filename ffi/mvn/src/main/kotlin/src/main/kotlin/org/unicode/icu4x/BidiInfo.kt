@@ -46,10 +46,11 @@ class BidiInfo internal constructor (
     /** Get the nth paragraph, returning `None` if out of bounds
     */
     fun paragraphAt(n: ULong): BidiParagraph? {
+        // This lifetime edge depends on lifetimes: 'text
+        val textEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_BidiInfo_paragraph_at_mv1(handle, FFISizet(n));
         val selfEdges: List<Any> = listOf()
-        val textEdges: List<Any?> = listOf(this)
         val handle = returnVal ?: return null
         val returnOpaque = BidiParagraph(handle, selfEdges, textEdges)
         CLEANER.register(returnOpaque, BidiParagraph.BidiParagraphCleaner(handle, BidiParagraph.lib));

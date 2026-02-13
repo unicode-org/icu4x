@@ -39,6 +39,8 @@ class ReorderedIndexMap internal constructor (
     /** Get this as a slice/array of indices
     */
     fun asSlice(): ULongArray {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_ReorderedIndexMap_as_slice_mv1(handle);
             return PrimitiveArrayTools.getULongArray(returnVal)

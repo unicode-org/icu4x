@@ -241,9 +241,9 @@ class ExemplarCharacters internal constructor (
     *See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.1.1/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains_str) for more information.
     */
     fun contains(s: String): Boolean {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_ExemplarCharacters_contains_str_mv1(handle, sSlice);
+        val returnVal = lib.icu4x_ExemplarCharacters_contains_str_mv1(handle, sSliceMemory.slice);
         return (returnVal > 0)
     }
     

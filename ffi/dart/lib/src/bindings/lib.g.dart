@@ -176,6 +176,7 @@ part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 part 'ZonedDateTimeFormatterGregorian.g.dart';
 part 'ZonedIsoDateTime.g.dart';
+part 'ZonedTime.g.dart';
 part 'ZonedTimeFormatter.g.dart';
 
 // ignore: experimental_member_use
@@ -742,6 +743,35 @@ final class _ResultZonedIsoDateTimeFfiInt32 extends ffi.Struct {
   // ignore: unused_element
   factory _ResultZonedIsoDateTimeFfiInt32.err(int val) {
     final struct = ffi.Struct.create<_ResultZonedIsoDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultZonedTimeFfiInt32Union extends ffi.Union {
+  external _ZonedTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultZonedTimeFfiInt32 extends ffi.Struct {
+  external _ResultZonedTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultZonedTimeFfiInt32.ok(_ZonedTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultZonedTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultZonedTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultZonedTimeFfiInt32>();
     struct.isOk = false;
     struct.union.err = val;
     return struct;
