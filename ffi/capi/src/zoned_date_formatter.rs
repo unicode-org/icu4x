@@ -635,7 +635,8 @@ pub mod ffi {
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
             let iso_date = date.0.to_calendar(icu_calendar::Iso);
-            let _ = self.format_raw(input, iso_date,  zone, write).ok();
+            let _ = self
+                .format_raw(input, iso_date,  zone, write).ok();
             Ok(())
         }
     }
@@ -1212,6 +1213,27 @@ pub mod ffi {
             self.format_raw(input, iso_date.0,  zone, write)
         }
         
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format_same_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        #[diplomat::attr(demo_gen, disable)] // confusing, as Date is constructed from ISO
+        pub fn format_same_calendar(
+            &self,
+            date: &Date,
+            zone: &TimeZoneInfo,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), crate::unstable::errors::ffi::DateTimeMismatchedCalendarError> {
+            let date_borrowed = date.0.as_borrowed();
+            // Check that the date's calendar matches the formatter's calendar
+            use icu_datetime::scaffold::InSameCalendar;
+            date_borrowed.check_any_calendar_kind(icu_calendar::AnyCalendarKind::Gregorian).map_err(crate::unstable::errors::ffi::DateTimeMismatchedCalendarError::from)?;
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
+            input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
+            let iso_date = date.0.to_calendar(icu_calendar::Iso);
+            let _ = self
+                .format_raw(input, iso_date,  zone, write).ok();
+            Ok(())
+        }
     }
     
 }
