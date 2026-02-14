@@ -180,7 +180,9 @@ pub mod ffi {
         fn format_raw(
             &self,
             mut input: icu_datetime::unchecked::DateTimeInputUnchecked,
-            _iso_date: icu_calendar::Date<icu_calendar::Iso>,
+            {%- if flavor.has_date() %}
+            iso_date_obj: impl FnOnce() -> icu_calendar::Date<icu_calendar::Iso>,
+            {%- endif %}
             {%- if flavor.has_time() %}
             time: &Time,
             {%- endif %}
@@ -202,7 +204,7 @@ pub mod ffi {
                 #[allow(deprecated)] // clean up in 3.0
                 input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
                     icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: _iso_date,
+                        date: iso_date_obj(),
                         time: time.0,
                     })
                 ).zone_name_timestamp());
@@ -212,7 +214,7 @@ pub mod ffi {
                 #[allow(deprecated)] // clean up in 3.0
                 input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
                     icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: _iso_date,
+                        date: iso_date_obj(),
                         time: icu_time::Time::noon(),
                     })
                 ).zone_name_timestamp());
@@ -255,9 +257,9 @@ pub mod ffi {
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             {%- endif %}
             {%- if flavor.has_date() %}
-            self.format_raw(input, iso_date.0, {% if flavor.has_time() %}time,{% endif %} zone, write)
+            self.format_raw(input, || iso_date.0, {% if flavor.has_time() %}time,{% endif %} zone, write)
             {%- else %}
-            self.format_raw(input, icu_calendar::Date::from_rata_die(icu_calendar::types::RataDie::new(0), icu_calendar::Iso), {% if flavor.has_time() %}time,{% endif %} zone, write)
+            self.format_raw(input, {% if flavor.has_time() %}time,{% endif %} zone, write)
             {%- endif %}
         }
         {% if flavor.has_date() %}
@@ -288,9 +290,8 @@ pub mod ffi {
             {%- endif %}
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
-            let iso_date = date.0.to_calendar(icu_calendar::Iso);
             let _ = self
-                .format_raw(input, iso_date, {% if flavor.has_time() %}time,{% endif %} zone, write).ok();
+                .format_raw(input, || date.0.to_calendar(icu_calendar::Iso), {% if flavor.has_time() %}time,{% endif %} zone, write).ok();
             Ok(())
         }
         {%- endif %}

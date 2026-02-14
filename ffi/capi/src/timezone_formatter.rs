@@ -470,7 +470,6 @@ pub mod ffi {
         fn format_raw(
             &self,
             mut input: icu_datetime::unchecked::DateTimeInputUnchecked,
-            _iso_date: icu_calendar::Date<icu_calendar::Iso>,
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
@@ -502,7 +501,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
             let input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
-            self.format_raw(input, icu_calendar::Date::from_rata_die(icu_calendar::types::RataDie::new(0), icu_calendar::Iso),  zone, write)
+            self.format_raw(input,  zone, write)
         }
         
     }

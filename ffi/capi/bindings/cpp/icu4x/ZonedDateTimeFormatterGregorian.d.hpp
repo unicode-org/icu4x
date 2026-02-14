@@ -13,6 +13,8 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
+namespace capi { struct Date; }
+class Date;
 namespace capi { struct DateTimeFormatterGregorian; }
 class DateTimeFormatterGregorian;
 namespace capi { struct IsoDate; }
@@ -25,6 +27,7 @@ namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
 namespace capi { struct ZonedDateTimeFormatterGregorian; }
 class ZonedDateTimeFormatterGregorian;
+struct DateTimeMismatchedCalendarError;
 class DateTimeFormatterLoadError;
 class DateTimeWriteError;
 } // namespace icu4x
@@ -210,6 +213,13 @@ public:
   inline icu4x::diplomat::result<std::string, icu4x::DateTimeWriteError> format_iso(const icu4x::IsoDate& iso_date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
   template<typename W>
   inline icu4x::diplomat::result<std::monostate, icu4x::DateTimeWriteError> format_iso_write(const icu4x::IsoDate& iso_date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone, W& writeable_output) const;
+
+  /**
+   * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.1.1/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format_same_calendar) for more information.
+   */
+  inline icu4x::diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> format_same_calendar(const icu4x::Date& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
+  template<typename W>
+  inline icu4x::diplomat::result<std::monostate, icu4x::DateTimeMismatchedCalendarError> format_same_calendar_write(const icu4x::Date& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone, W& writeable_output) const;
 
     inline const icu4x::capi::ZonedDateTimeFormatterGregorian* AsFFI() const;
     inline icu4x::capi::ZonedDateTimeFormatterGregorian* AsFFI();
