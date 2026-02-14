@@ -233,9 +233,9 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
                     if grouper::check_fraction(
                         lower_magnitude,
                         m,
-                        self.options.grouping_strategy.unwrap_or_default(),
-                        self.options.fraction_grouping_size,
+                        self.options.fraction_grouping.unwrap_or_default(),
                         self.symbols.grouping_sizes.min_grouping,
+                        self.symbols.grouping_sizes.primary,
                     ) && range.peek().is_some()
                     {
                         w.with_part(parts::GROUP, |w| {

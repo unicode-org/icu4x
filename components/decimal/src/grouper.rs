@@ -60,30 +60,27 @@ pub fn check_fraction(
     lower_magnitude: i16,
     magnitude: i16,
     strategy: GroupingStrategy,
-    fraction_grouping: Option<u8>,
     min_grouping: u8,
+    grouping_size: u8,
 ) -> bool {
-    let fraction = if let Some(fraction) = fraction_grouping {
-        if fraction == 0 {
-            return false;
-        }
-        fraction as i16
-    } else {
-        return false;
-    };
     if magnitude >= 0 {
+        return false;
+    }
+    if grouping_size == 0 {
         return false;
     }
     let min_grouping = {
         use GroupingStrategy::*;
         match strategy {
-            Never => return false,
+            Never | Auto => return false,
             // Note: Auto and Always are the same for DecimalFormatter.
             // When currencies are implemented, this will change.
-            Auto | Always => cmp::max(1, min_grouping) as i16,
+            Always => cmp::max(1, min_grouping) as i16,
             Min2 => cmp::max(2, min_grouping) as i16,
         }
     };
+
+    let fraction = grouping_size as i16;
 
     // If there are fewer than `fraction + min_grouping` fraction digits,
     // we do not group.
@@ -266,12 +263,17 @@ fn test_fraction_grouper() {
         primary: 3,
         secondary: 3,
     };
+    let sizes_2 = GroupingSizes {
+        min_grouping: 1,
+        primary: 2,
+        secondary: 2,
+    };
 
     #[derive(Debug)]
     struct TestCase {
         strategy: GroupingStrategy,
         sizes: GroupingSizes,
-        fraction_grouping: Option<u8>,
+        fraction_strategy: Option<GroupingStrategy>,
         input: &'static str,
         expected: &'static str,
     }
@@ -279,21 +281,21 @@ fn test_fraction_grouper() {
         TestCase {
             strategy: GroupingStrategy::Auto,
             sizes: western_sizes,
-            fraction_grouping: Some(3),
+            fraction_strategy: Some(GroupingStrategy::Always),
             input: "0.1234567",
             expected: "0.123,456,7",
         },
         TestCase {
             strategy: GroupingStrategy::Auto,
-            sizes: western_sizes,
-            fraction_grouping: Some(2),
+            sizes: sizes_2,
+            fraction_strategy: Some(GroupingStrategy::Always),
             input: "0.12345",
             expected: "0.12,34,5",
         },
         TestCase {
             strategy: GroupingStrategy::Never,
             sizes: western_sizes,
-            fraction_grouping: Some(3),
+            fraction_strategy: Some(GroupingStrategy::Never),
             input: "0.1234567",
             expected: "0.1234567",
         },
@@ -301,7 +303,7 @@ fn test_fraction_grouper() {
         TestCase {
             strategy: GroupingStrategy::Auto,
             sizes: western_sizes,
-            fraction_grouping: Some(3),
+            fraction_strategy: Some(GroupingStrategy::Always),
             input: "12345.123456",
             expected: "12,345.123,456",
         },
@@ -313,7 +315,7 @@ fn test_fraction_grouper() {
                 primary: 3,
                 secondary: 3,
             },
-            fraction_grouping: Some(3),
+            fraction_strategy: Some(GroupingStrategy::Min2),
             input: "0.1234",
             expected: "0.1234",
         },
@@ -324,7 +326,7 @@ fn test_fraction_grouper() {
                 primary: 3,
                 secondary: 3,
             },
-            fraction_grouping: Some(3),
+            fraction_strategy: Some(GroupingStrategy::Min2),
             input: "0.12345",
             expected: "0.123,45",
         },
@@ -363,7 +365,7 @@ fn test_fraction_grouper() {
         let provider = Provider(RefCell::new(Some(symbols)), digits);
         let options = options::DecimalFormatterOptions {
             grouping_strategy: Some(cas.strategy),
-            fraction_grouping_size: cas.fraction_grouping,
+            fraction_grouping: cas.fraction_strategy,
         };
         let formatter =
             DecimalFormatter::try_new_unstable(&provider, Default::default(), options).unwrap();
