@@ -123,31 +123,31 @@ use crate::scaffold::*;
 /// Format with a time of day and long time zone:
 ///
 /// ```
-/// use icu::calendar::Gregorian;
+/// # #[cfg(all(feature = "unstable", feature = "ixdtf"))] {
 /// use icu::datetime::fieldsets::{zone::SpecificLong, T};
-/// use icu::datetime::input::ZonedDateTime;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::iana::IanaParser;
+/// use icu::time::ZonedTime;
 /// use writeable::assert_writeable_eq;
 ///
-/// let formatter = FixedCalendarDateTimeFormatter::try_new(
+/// let formatter = NoCalendarFormatter::try_new(
 ///     locale!("en-US").into(),
 ///     T::medium().with_zone(SpecificLong),
 /// )
 /// .unwrap();
 ///
-/// let zdt = ZonedDateTime::try_strict_from_str(
-///     "2024-10-18T15:44-0700[America/Los_Angeles]",
-///     Gregorian,
+/// let zoned_time = ZonedTime::try_strict_from_str(
+///     "15:44:00-07:00[America/Los_Angeles]",
 ///     IanaParser::new(),
 /// )
 /// .unwrap();
 ///
 /// assert_writeable_eq!(
-///     formatter.format(&zdt),
+///     formatter.format(&zoned_time),
 ///     "3:44:00 PM Pacific Daylight Time"
 /// );
+/// # }
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Combo<DT, Z> {

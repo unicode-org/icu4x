@@ -12,7 +12,6 @@ else
 	BINARY_EXT =
 endif
 
-
 all: buffer_data.postcard bin/tutorial_buffer.wasm
 
 ../bin/icu4x-datagen$(BINARY_EXT):
@@ -23,7 +22,7 @@ bin/tutorial_buffer$(BINARY_EXT):
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	cargo build --release
 	mkdir -p bin
-	cp -p "$(CARGO_TARGET_DIR)/release/tutorial_buffer$(BINARY_EXT)" "bin/tutorial_buffer$(BINARY_EXT)"
+	cp -p "$(CARGO_TARGET_DIR)/release/tutorial_buffer$(BINARY_EXT) bin/tutorial_buffer$(BINARY_EXT)"
 	ls -l bin/
 
 bin/tutorial_buffer.wasm:

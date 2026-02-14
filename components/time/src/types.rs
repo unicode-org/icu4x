@@ -179,6 +179,10 @@ impl Time {
             subsecond: nanosecond.try_into()?,
         })
     }
+
+    pub(crate) const fn seconds_since_midnight(self) -> u32 {
+        (self.hour.0 as u32 * 60 + self.minute.0 as u32) * 60 + self.second.0 as u32
+    }
 }
 
 /// A date and time for a given calendar.
@@ -310,8 +314,47 @@ const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_greg
 
 impl Ord for ZonedDateTime<Iso, UtcOffset> {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.to_epoch_milliseconds_utc()
-            .cmp(&other.to_epoch_milliseconds_utc())
+        let mut srd = self.date.to_rata_die();
+        let mut ord = other.date.to_rata_die();
+
+        // If the RDs are three days apart, even with maximum/minimum
+        // times and offsets, the UTC days will still be at at least
+        // one day apart
+        if srd + 3 <= ord {
+            return core::cmp::Ordering::Less;
+        }
+        if srd - 3 >= ord {
+            return core::cmp::Ordering::Greater;
+        }
+
+        let mut ss = self.time.seconds_since_midnight() as i32 - self.zone.to_seconds();
+        let mut os = other.time.seconds_since_midnight() as i32 - other.zone.to_seconds();
+
+        // the seconds can wrap into the day
+
+        if ss < 0 {
+            srd -= 1;
+            ss += 24 * 60 * 60;
+        }
+        if ss > 24 * 60 * 60 {
+            srd += 1;
+            ss -= 24 * 60 * 60;
+        }
+
+        if os < 0 {
+            ord -= 1;
+            os += 24 * 60 * 60;
+        }
+        if os > 24 * 60 * 60 {
+            ord += 1;
+            os -= 24 * 60 * 60;
+        }
+
+        // the subseconds cannot wrap into the seconds
+
+        srd.cmp(&ord)
+            .then(ss.cmp(&os))
+            .then(self.time.subsecond.cmp(&other.time.subsecond))
     }
 }
 impl PartialOrd for ZonedDateTime<Iso, UtcOffset> {
@@ -418,16 +461,47 @@ impl ZonedDateTime<Iso, UtcOffset> {
             zone: utc_offset,
         }
     }
+}
 
-    pub(crate) fn to_epoch_milliseconds_utc(self) -> i64 {
-        let ZonedDateTime { date, time, zone } = self;
-        let days = date.to_rata_die() - UNIX_EPOCH;
-        let hours = time.hour.number() as i64;
-        let minutes = time.minute.number() as i64;
-        let seconds = time.second.number() as i64;
-        let nanos = time.subsecond.number() as i64;
-        let offset_seconds = zone.to_seconds() as i64;
-        (((days * 24 + hours) * 60 + minutes) * 60 + seconds - offset_seconds) * 1000
-            + nanos / 1_000_000
-    }
+/// A time local to a specified time zone, without an associated date.
+///
+/// This is useful for formatting scenarios where only the time and time zone
+/// are relevant, and the calendar context is not needed.
+///
+/// This type is compatible with `NoCalendarFormatter`, which
+/// is used for field sets that do not contain date components.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+/// </div>
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "ixdtf")] {
+/// use icu::time::zone::iana::IanaParser;
+/// use icu::time::ZonedTime;
+///
+/// let zoned_time = ZonedTime::try_strict_from_str(
+///     "T15:44:00-07:00[America/Los_Angeles]",
+///     IanaParser::new(),
+/// )
+/// .unwrap();
+///
+/// assert_eq!(zoned_time.time.hour.number(), 15);
+/// # }
+/// ```
+///
+/// See the docs on `NoCalendarFormatter` for more information and examples.
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
+#[cfg(feature = "unstable")]
+pub struct ZonedTime<Z> {
+    /// The time, local to the time zone
+    pub time: Time,
+    /// The time zone
+    pub zone: Z,
 }

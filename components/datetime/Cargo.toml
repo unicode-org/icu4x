@@ -88,7 +88,7 @@ datagen = [
     "serde",
 ]
 logging = ["icu_calendar/logging"]
-unstable = []
+unstable = ["icu_time/unstable"]
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
 

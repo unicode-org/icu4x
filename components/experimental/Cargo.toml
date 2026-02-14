@@ -71,8 +71,9 @@ icu_normalizer_data = { workspace = true }
 [features]
 default = ["compiled_data"]
 compiled_data = ["dep:icu_experimental_data", "icu_decimal/compiled_data", "icu_list/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data", "icu_provider/baked"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_collections/databake", "log", "icu_pattern/databake", "icu_plurals/datagen", "icu_pattern/alloc", "icu_provider/export", "icu_decimal/datagen"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_collections/databake", "dep:log", "icu_pattern/databake", "icu_plurals/datagen", "icu_pattern/alloc", "icu_provider/export", "icu_decimal/datagen"]
 ryu = ["fixed_decimal/ryu"]
+log = ["dep:log"]
 serde = ["dep:serde", "zerovec/serde", "potential_utf/serde", "tinystr/serde", "icu_collections/serde", "icu_decimal/serde", "icu_list/serde", "icu_pattern/serde", "icu_plurals/serde", "icu_provider/alloc", "icu_provider/serde", "zerotrie/serde", "icu_normalizer/serde", "icu_casemap/serde"]
 
 [[bench]]

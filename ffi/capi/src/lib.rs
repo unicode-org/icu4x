@@ -174,6 +174,8 @@ pub mod unstable {
     pub mod zoned_date_time_formatter;
     #[cfg(feature = "datetime")]
     pub mod zoned_datetime;
+    #[cfg(all(feature = "datetime", feature = "unstable"))]
+    pub mod zoned_time;
     #[cfg(feature = "datetime")]
     pub mod zoned_time_formatter;
 }
