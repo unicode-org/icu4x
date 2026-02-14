@@ -189,7 +189,7 @@ jobs:
       shell: pwsh
       run: |
         choco install pkgconfiglite -y
-        git clone https://github.com/microsoft/vcpkg.git
+        git clone --depth 1 https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
         .\vcpkg\vcpkg install harfbuzz:x64-windows
         $pkg_path = Join-Path $env:GITHUB_WORKSPACE "vcpkg\installed\x64-windows\lib\pkgconfig"
