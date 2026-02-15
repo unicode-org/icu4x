@@ -967,3 +967,11 @@ impl_value_getter! {
         PropertyEnumToValueNameLinearMap / PropertyNameLongVerticalOrientationV1 / SINGLETON_PROPERTY_NAME_LONG_VERTICAL_ORIENTATION_V1;
     }
 }
+
+impl_value_getter! {
+    impl Block {
+        PropertyNameParseBlockV1 / SINGLETON_PROPERTY_NAME_PARSE_BLOCK_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameShortBlockV1 / SINGLETON_PROPERTY_NAME_SHORT_BLOCK_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameLongBlockV1 / SINGLETON_PROPERTY_NAME_LONG_BLOCK_V1;
+    }
+}

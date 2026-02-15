@@ -2078,6 +2078,407 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
+/// Enumerated property `Block`.
+///
+/// See UAX #44:
+/// <https://www.unicode.org/reports/tr44/#Block>.
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{props::Block, CodePointMapData};
+///
+/// assert_eq!(
+///     CodePointMapData::<Block>::new().get('A'),
+///     Block::BasicLatin
+/// );
+/// assert_eq!(
+///     CodePointMapData::<Block>::new().get('α'),
+///     Block::GreekAndCoptic
+/// );
+/// ```
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+pub struct Block(pub(crate) u16);
+
+impl Block {
+    /// Returns an ICU4C `U_BLOCK_CODE` value.
+    pub const fn to_icu4c_value(self) -> u16 {
+        self.0
+    }
+    /// Constructor from an ICU4C `U_BLOCK_CODE` value.
+    pub const fn from_icu4c_value(value: u16) -> Self {
+        Self(value)
+    }
+}
+
+create_const_array! {
+#[allow(missing_docs)]
+#[allow(non_upper_case_globals)]
+impl Block {
+    pub const NoBlock: Block = Block(0);
+    pub const BasicLatin: Block = Block(1); // 0000..007F; Basic Latin
+    pub const Latin1Supplement: Block = Block(2); // 0080..00FF; Latin-1 Supplement
+    pub const LatinExtendedA: Block = Block(3); // 0100..017F; Latin Extended-A
+    pub const LatinExtendedB: Block = Block(4); // 0180..024F; Latin Extended-B
+    pub const IpaExtensions: Block = Block(5); // 0250..02AF; IPA Extensions
+    pub const SpacingModifierLetters: Block = Block(6); // 02B0..02FF; Spacing Modifier Letters
+    pub const CombiningDiacriticalMarks: Block = Block(7); // 0300..036F; Combining Diacritical Marks
+    pub const GreekAndCoptic: Block = Block(8); // 0370..03FF; Greek and Coptic
+    pub const Cyrillic: Block = Block(9); // 0400..04FF; Cyrillic
+    pub const CyrillicSupplement: Block = Block(10); // 0500..052F; Cyrillic Supplement
+    pub const Armenian: Block = Block(11); // 0530..058F; Armenian
+    pub const Hebrew: Block = Block(12); // 0590..05FF; Hebrew
+    pub const Arabic: Block = Block(13); // 0600..06FF; Arabic
+    pub const Syriac: Block = Block(14); // 0700..074F; Syriac
+    pub const ArabicSupplement: Block = Block(15); // 0750..077F; Arabic Supplement
+    pub const Thaana: Block = Block(16); // 0780..07BF; Thaana
+    pub const Nko: Block = Block(17); // 07C0..07FF; NKo
+    pub const Samaritan: Block = Block(18); // 0800..083F; Samaritan
+    pub const Mandaic: Block = Block(19); // 0840..085F; Mandaic
+    pub const SyriacSupplement: Block = Block(20); // 0860..086F; Syriac Supplement
+    pub const ArabicExtendedB: Block = Block(21); // 0870..089F; Arabic Extended-B
+    pub const ArabicExtendedA: Block = Block(22); // 08A0..08FF; Arabic Extended-A
+    pub const Devanagari: Block = Block(23); // 0900..097F; Devanagari
+    pub const Bengali: Block = Block(24); // 0980..09FF; Bengali
+    pub const Gurmukhi: Block = Block(25); // 0A00..0A7F; Gurmukhi
+    pub const Gujarati: Block = Block(26); // 0A80..0AFF; Gujarati
+    pub const Oriya: Block = Block(27); // 0B00..0B7F; Oriya
+    pub const Tamil: Block = Block(28); // 0B80..0BFF; Tamil
+    pub const Telugu: Block = Block(29); // 0C00..0C7F; Telugu
+    pub const Kannada: Block = Block(30); // 0C80..0CFF; Kannada
+    pub const Malayalam: Block = Block(31); // 0D00..0D7F; Malayalam
+    pub const Sinhala: Block = Block(32); // 0D80..0DFF; Sinhala
+    pub const Thai: Block = Block(33); // 0E00..0E7F; Thai
+    pub const Lao: Block = Block(34); // 0E80..0EFF; Lao
+    pub const Tibetan: Block = Block(35); // 0F00..0FFF; Tibetan
+    pub const Myanmar: Block = Block(36); // 1000..109F; Myanmar
+    pub const Georgian: Block = Block(37); // 10A0..10FF; Georgian
+    pub const HangulJamo: Block = Block(38); // 1100..11FF; Hangul Jamo
+    pub const Ethiopic: Block = Block(39); // 1200..137F; Ethiopic
+    pub const EthiopicSupplement: Block = Block(40); // 1380..139F; Ethiopic Supplement
+    pub const Cherokee: Block = Block(41); // 13A0..13FF; Cherokee
+    pub const UnifiedCanadianAboriginalSyllabics: Block = Block(42); // 1400..167F; Unified Canadian Aboriginal Syllabics
+    pub const Ogham: Block = Block(43); // 1680..169F; Ogham
+    pub const Runic: Block = Block(44); // 16A0..16FF; Runic
+    pub const Tagalog: Block = Block(45); // 1700..171F; Tagalog
+    pub const Hanunoo: Block = Block(46); // 1720..173F; Hanunoo
+    pub const Buhid: Block = Block(47); // 1740..175F; Buhid
+    pub const Tagbanwa: Block = Block(48); // 1760..177F; Tagbanwa
+    pub const Khmer: Block = Block(49); // 1780..17FF; Khmer
+    pub const Mongolian: Block = Block(50); // 1800..18AF; Mongolian
+    pub const UnifiedCanadianAboriginalSyllabicsExtended: Block = Block(51); // 18B0..18FF; Unified Canadian Aboriginal Syllabics Extended
+    pub const Limbu: Block = Block(52); // 1900..194F; Limbu
+    pub const TaiLe: Block = Block(53); // 1950..197F; Tai Le
+    pub const NewTaiLue: Block = Block(54); // 1980..19DF; New Tai Lue
+    pub const KhmerSymbols: Block = Block(55); // 19E0..19FF; Khmer Symbols
+    pub const Buginese: Block = Block(56); // 1A00..1A1F; Buginese
+    pub const TaiTham: Block = Block(57); // 1A20..1AAF; Tai Tham
+    pub const CombiningDiacriticalMarksExtended: Block = Block(58); // 1AB0..1AFF; Combining Diacritical Marks Extended
+    pub const Balinese: Block = Block(59); // 1B00..1B7F; Balinese
+    pub const Sundanese: Block = Block(60); // 1B80..1BBF; Sundanese
+    pub const Batak: Block = Block(61); // 1BC0..1BFF; Batak
+    pub const Lepcha: Block = Block(62); // 1C00..1C4F; Lepcha
+    pub const OlChiki: Block = Block(63); // 1C50..1C7F; Ol Chiki
+    pub const CyrillicExtendedC: Block = Block(64); // 1C80..1C8F; Cyrillic Extended-C
+    pub const GeorgianExtended: Block = Block(65); // 1C90..1CBF; Georgian Extended
+    pub const SundaneseSupplement: Block = Block(66); // 1CC0..1CCF; Sundanese Supplement
+    pub const VedicExtensions: Block = Block(67); // 1CD0..1CFF; Vedic Extensions
+    pub const PhoneticExtensions: Block = Block(68); // 1D00..1D7F; Phonetic Extensions
+    pub const PhoneticExtensionsSupplement: Block = Block(69); // 1D80..1DBF; Phonetic Extensions Supplement
+    pub const CombiningDiacriticalMarksSupplement: Block = Block(70); // 1DC0..1DFF; Combining Diacritical Marks Supplement
+    pub const LatinExtendedAdditional: Block = Block(71); // 1E00..1EFF; Latin Extended Additional
+    pub const GreekExtended: Block = Block(72); // 1F00..1FFF; Greek Extended
+    pub const GeneralPunctuation: Block = Block(73); // 2000..206F; General Punctuation
+    pub const SuperscriptsAndSubscripts: Block = Block(74); // 2070..209F; Superscripts and Subscripts
+    pub const CurrencySymbols: Block = Block(75); // 20A0..20CF; Currency Symbols
+    pub const CombiningDiacriticalMarksForSymbols: Block = Block(76); // 20D0..20FF; Combining Diacritical Marks for Symbols
+    pub const LetterlikeSymbols: Block = Block(77); // 2100..214F; Letterlike Symbols
+    pub const NumberForms: Block = Block(78); // 2150..218F; Number Forms
+    pub const Arrows: Block = Block(79); // 2190..21FF; Arrows
+    pub const MathematicalOperators: Block = Block(80); // 2200..22FF; Mathematical Operators
+    pub const MiscellaneousTechnical: Block = Block(81); // 2300..23FF; Miscellaneous Technical
+    pub const ControlPictures: Block = Block(82); // 2400..243F; Control Pictures
+    pub const OpticalCharacterRecognition: Block = Block(83); // 2440..245F; Optical Character Recognition
+    pub const EnclosedAlphanumerics: Block = Block(84); // 2460..24FF; Enclosed Alphanumerics
+    pub const BoxDrawing: Block = Block(85); // 2500..257F; Box Drawing
+    pub const BlockElements: Block = Block(86); // 2580..259F; Block Elements
+    pub const GeometricShapes: Block = Block(87); // 25A0..25FF; Geometric Shapes
+    pub const MiscellaneousSymbols: Block = Block(88); // 2600..26FF; Miscellaneous Symbols
+    pub const Dingbats: Block = Block(89); // 2700..27BF; Dingbats
+    pub const MiscellaneousMathematicalSymbolsA: Block = Block(90); // 27C0..27EF; Miscellaneous Mathematical Symbols-A
+    pub const SupplementalArrowsA: Block = Block(91); // 27F0..27FF; Supplemental Arrows-A
+    pub const BraillePatterns: Block = Block(92); // 2800..28FF; Braille Patterns
+    pub const SupplementalArrowsB: Block = Block(93); // 2900..297F; Supplemental Arrows-B
+    pub const MiscellaneousMathematicalSymbolsB: Block = Block(94); // 2980..29FF; Miscellaneous Mathematical Symbols-B
+    pub const SupplementalMathematicalOperators: Block = Block(95); // 2A00..2AFF; Supplemental Mathematical Operators
+    pub const MiscellaneousSymbolsAndArrows: Block = Block(96); // 2B00..2BFF; Miscellaneous Symbols and Arrows
+    pub const Glagolitic: Block = Block(97); // 2C00..2C5F; Glagolitic
+    pub const LatinExtendedC: Block = Block(98); // 2C60..2C7F; Latin Extended-C
+    pub const Coptic: Block = Block(99); // 2C80..2CFF; Coptic
+    pub const GeorgianSupplement: Block = Block(100); // 2D00..2D2F; Georgian Supplement
+    pub const Tifinagh: Block = Block(101); // 2D30..2D7F; Tifinagh
+    pub const EthiopicExtended: Block = Block(102); // 2D80..2DDF; Ethiopic Extended
+    pub const CyrillicExtendedA: Block = Block(103); // 2DE0..2DFF; Cyrillic Extended-A
+    pub const SupplementalPunctuation: Block = Block(104); // 2E00..2E7F; Supplemental Punctuation
+    pub const CjkRadicalsSupplement: Block = Block(105); // 2E80..2EFF; CJK Radicals Supplement
+    pub const KangxiRadicals: Block = Block(106); // 2F00..2FDF; Kangxi Radicals
+    pub const IdeographicDescriptionCharacters: Block = Block(107); // 2FF0..2FFF; Ideographic Description Characters
+    pub const CjkSymbolsAndPunctuation: Block = Block(108); // 3000..303F; CJK Symbols and Punctuation
+    pub const Hiragana: Block = Block(109); // 3040..309F; Hiragana
+    pub const Katakana: Block = Block(110); // 30A0..30FF; Katakana
+    pub const Bopomofo: Block = Block(111); // 3100..312F; Bopomofo
+    pub const HangulCompatibilityJamo: Block = Block(112); // 3130..318F; Hangul Compatibility Jamo
+    pub const Kanbun: Block = Block(113); // 3190..319F; Kanbun
+    pub const BopomofoExtended: Block = Block(114); // 31A0..31BF; Bopomofo Extended
+    pub const CjkStrokes: Block = Block(115); // 31C0..31EF; CJK Strokes
+    pub const KatakanaPhoneticExtensions: Block = Block(116); // 31F0..31FF; Katakana Phonetic Extensions
+    pub const EnclosedCjkLettersAndMonths: Block = Block(117); // 3200..32FF; Enclosed CJK Letters and Months
+    pub const CjkCompatibility: Block = Block(118); // 3300..33FF; CJK Compatibility
+    pub const CjkUnifiedIdeographsExtensionA: Block = Block(119); // 3400..4DBF; CJK Unified Ideographs Extension A
+    pub const YijingHexagramSymbols: Block = Block(120); // 4DC0..4DFF; Yijing Hexagram Symbols
+    pub const CjkUnifiedIdeographs: Block = Block(121); // 4E00..9FFF; CJK Unified Ideographs
+    pub const YiSyllables: Block = Block(122); // A000..A48F; Yi Syllables
+    pub const YiRadicals: Block = Block(123); // A490..A4CF; Yi Radicals
+    pub const Lisu: Block = Block(124); // A4D0..A4FF; Lisu
+    pub const Vai: Block = Block(125); // A500..A63F; Vai
+    pub const CyrillicExtendedB: Block = Block(126); // A640..A69F; Cyrillic Extended-B
+    pub const Bamum: Block = Block(127); // A6A0..A6FF; Bamum
+    pub const ModifierToneLetters: Block = Block(128); // A700..A71F; Modifier Tone Letters
+    pub const LatinExtendedD: Block = Block(129); // A720..A7FF; Latin Extended-D
+    pub const SylotiNagri: Block = Block(130); // A800..A82F; Syloti Nagri
+    pub const CommonIndicNumberForms: Block = Block(131); // A830..A83F; Common Indic Number Forms
+    pub const PhagsPa: Block = Block(132); // A840..A87F; Phags-pa
+    pub const Saurashtra: Block = Block(133); // A880..A8DF; Saurashtra
+    pub const DevanagariExtended: Block = Block(134); // A8E0..A8FF; Devanagari Extended
+    pub const KayahLi: Block = Block(135); // A900..A92F; Kayah Li
+    pub const Rejang: Block = Block(136); // A930..A95F; Rejang
+    pub const HangulJamoExtendedA: Block = Block(137); // A960..A97F; Hangul Jamo Extended-A
+    pub const Javanese: Block = Block(138); // A980..A9DF; Javanese
+    pub const MyanmarExtendedB: Block = Block(139); // A9E0..A9FF; Myanmar Extended-B
+    pub const Cham: Block = Block(140); // AA00..AA5F; Cham
+    pub const MyanmarExtendedA: Block = Block(141); // AA60..AA7F; Myanmar Extended-A
+    pub const TaiViet: Block = Block(142); // AA80..AADF; Tai Viet
+    pub const MeeteiMayekExtensions: Block = Block(143); // AAE0..AAFF; Meetei Mayek Extensions
+    pub const EthiopicExtendedA: Block = Block(144); // AB00..AB2F; Ethiopic Extended-A
+    pub const LatinExtendedE: Block = Block(145); // AB30..AB6F; Latin Extended-E
+    pub const CherokeeSupplement: Block = Block(146); // AB70..ABBF; Cherokee Supplement
+    pub const MeeteiMayek: Block = Block(147); // ABC0..ABFF; Meetei Mayek
+    pub const HangulSyllables: Block = Block(148); // AC00..D7AF; Hangul Syllables
+    pub const HangulJamoExtendedB: Block = Block(149); // D7B0..D7FF; Hangul Jamo Extended-B
+    pub const HighSurrogates: Block = Block(150); // D800..DB7F; High Surrogates
+    pub const HighPrivateUseSurrogates: Block = Block(151); // DB80..DBFF; High Private Use Surrogates
+    pub const LowSurrogates: Block = Block(152); // DC00..DFFF; Low Surrogates
+    pub const PrivateUseArea: Block = Block(153); // E000..F8FF; Private Use Area
+    pub const CjkCompatibilityIdeographs: Block = Block(154); // F900..FAFF; CJK Compatibility Ideographs
+    pub const AlphabeticPresentationForms: Block = Block(155); // FB00..FB4F; Alphabetic Presentation Forms
+    pub const ArabicPresentationFormsA: Block = Block(156); // FB50..FDFF; Arabic Presentation Forms-A
+    pub const VariationSelectors: Block = Block(157); // FE00..FE0F; Variation Selectors
+    pub const VerticalForms: Block = Block(158); // FE10..FE1F; Vertical Forms
+    pub const CombiningHalfMarks: Block = Block(159); // FE20..FE2F; Combining Half Marks
+    pub const CjkCompatibilityForms: Block = Block(160); // FE30..FE4F; CJK Compatibility Forms
+    pub const SmallFormVariants: Block = Block(161); // FE50..FE6F; Small Form Variants
+    pub const ArabicPresentationFormsB: Block = Block(162); // FE70..FEFF; Arabic Presentation Forms-B
+    pub const HalfwidthAndFullwidthForms: Block = Block(163); // FF00..FFEF; Halfwidth and Fullwidth Forms
+    pub const Specials: Block = Block(164); // FFF0..FFFF; Specials
+    pub const LinearBSyllabary: Block = Block(165); // 10000..1007F; Linear B Syllabary
+    pub const LinearBIdeograms: Block = Block(166); // 10080..100FF; Linear B Ideograms
+    pub const AegeanNumbers: Block = Block(167); // 10100..1013F; Aegean Numbers
+    pub const AncientGreekNumbers: Block = Block(168); // 10140..1018F; Ancient Greek Numbers
+    pub const AncientSymbols: Block = Block(169); // 10190..101CF; Ancient Symbols
+    pub const PhaistosDisc: Block = Block(170); // 101D0..101FF; Phaistos Disc
+    pub const Lycian: Block = Block(171); // 10280..1029F; Lycian
+    pub const Carian: Block = Block(172); // 102A0..102DF; Carian
+    pub const CopticEpactNumbers: Block = Block(173); // 102E0..102FF; Coptic Epact Numbers
+    pub const OldItalic: Block = Block(174); // 10300..1032F; Old Italic
+    pub const Gothic: Block = Block(175); // 10330..1034F; Gothic
+    pub const OldPermic: Block = Block(176); // 10350..1037F; Old Permic
+    pub const Ugaritic: Block = Block(177); // 10380..1039F; Ugaritic
+    pub const OldPersian: Block = Block(178); // 103A0..103DF; Old Persian
+    pub const Deseret: Block = Block(179); // 10400..1044F; Deseret
+    pub const Shavian: Block = Block(180); // 10450..1047F; Shavian
+    pub const Osmanya: Block = Block(181); // 10480..104AF; Osmanya
+    pub const Osage: Block = Block(182); // 104B0..104FF; Osage
+    pub const Elbasan: Block = Block(183); // 10500..1052F; Elbasan
+    pub const CaucasianAlbanian: Block = Block(184); // 10530..1056F; Caucasian Albanian
+    pub const Vithkuqi: Block = Block(185); // 10570..105BF; Vithkuqi
+    pub const Todhri: Block = Block(186); // 105C0..105FF; Todhri
+    pub const LinearA: Block = Block(187); // 10600..1077F; Linear A
+    pub const LatinExtendedF: Block = Block(188); // 10780..107BF; Latin Extended-F
+    pub const CypriotSyllabary: Block = Block(189); // 10800..1083F; Cypriot Syllabary
+    pub const ImperialAramaic: Block = Block(190); // 10840..1085F; Imperial Aramaic
+    pub const Palmyrene: Block = Block(191); // 10860..1087F; Palmyrene
+    pub const Nabataean: Block = Block(192); // 10880..108AF; Nabataean
+    pub const Hatran: Block = Block(193); // 108E0..108FF; Hatran
+    pub const Phoenician: Block = Block(194); // 10900..1091F; Phoenician
+    pub const Lydian: Block = Block(195); // 10920..1093F; Lydian
+    pub const Sidetic: Block = Block(196); // 10940..1095F; Sidetic
+    pub const MeroiticHieroglyphs: Block = Block(197); // 10980..1099F; Meroitic Hieroglyphs
+    pub const MeroiticCursive: Block = Block(198); // 109A0..109FF; Meroitic Cursive
+    pub const Kharoshthi: Block = Block(199); // 10A00..10A5F; Kharoshthi
+    pub const OldSouthArabian: Block = Block(200); // 10A60..10A7F; Old South Arabian
+    pub const OldNorthArabian: Block = Block(201); // 10A80..10A9F; Old North Arabian
+    pub const Manichaean: Block = Block(202); // 10AC0..10AFF; Manichaean
+    pub const Avestan: Block = Block(203); // 10B00..10B3F; Avestan
+    pub const InscriptionalParthian: Block = Block(204); // 10B40..10B5F; Inscriptional Parthian
+    pub const InscriptionalPahlavi: Block = Block(205); // 10B60..10B7F; Inscriptional Pahlavi
+    pub const PsalterPahlavi: Block = Block(206); // 10B80..10BAF; Psalter Pahlavi
+    pub const OldTurkic: Block = Block(207); // 10C00..10C4F; Old Turkic
+    pub const OldHungarian: Block = Block(208); // 10C80..10CFF; Old Hungarian
+    pub const HanifiRohingya: Block = Block(209); // 10D00..10D3F; Hanifi Rohingya
+    pub const Garay: Block = Block(210); // 10D40..10D8F; Garay
+    pub const RumiNumeralSymbols: Block = Block(211); // 10E60..10E7F; Rumi Numeral Symbols
+    pub const Yezidi: Block = Block(212); // 10E80..10EBF; Yezidi
+    pub const ArabicExtendedC: Block = Block(213); // 10EC0..10EFF; Arabic Extended-C
+    pub const OldSogdian: Block = Block(214); // 10F00..10F2F; Old Sogdian
+    pub const Sogdian: Block = Block(215); // 10F30..10F6F; Sogdian
+    pub const OldUyghur: Block = Block(216); // 10F70..10FAF; Old Uyghur
+    pub const Chorasmian: Block = Block(217); // 10FB0..10FDF; Chorasmian
+    pub const Elymaic: Block = Block(218); // 10FE0..10FFF; Elymaic
+    pub const Brahmi: Block = Block(219); // 11000..1107F; Brahmi
+    pub const Kaithi: Block = Block(220); // 11080..110CF; Kaithi
+    pub const SoraSompeng: Block = Block(221); // 110D0..110FF; Sora Sompeng
+    pub const Chakma: Block = Block(222); // 11100..1114F; Chakma
+    pub const Mahajani: Block = Block(223); // 11150..1117F; Mahajani
+    pub const Sharada: Block = Block(224); // 11180..111DF; Sharada
+    pub const SinhalaArchaicNumbers: Block = Block(225); // 111E0..111FF; Sinhala Archaic Numbers
+    pub const Khojki: Block = Block(226); // 11200..1124F; Khojki
+    pub const Multani: Block = Block(227); // 11280..112AF; Multani
+    pub const Khudawadi: Block = Block(228); // 112B0..112FF; Khudawadi
+    pub const Grantha: Block = Block(229); // 11300..1137F; Grantha
+    pub const TuluTigalari: Block = Block(230); // 11380..113FF; Tulu-Tigalari
+    pub const Newa: Block = Block(231); // 11400..1147F; Newa
+    pub const Tirhuta: Block = Block(232); // 11480..114DF; Tirhuta
+    pub const Siddham: Block = Block(233); // 11580..115FF; Siddham
+    pub const Modi: Block = Block(234); // 11600..1165F; Modi
+    pub const MongolianSupplement: Block = Block(235); // 11660..1167F; Mongolian Supplement
+    pub const Takri: Block = Block(236); // 11680..116CF; Takri
+    pub const MyanmarExtendedC: Block = Block(237); // 116D0..116FF; Myanmar Extended-C
+    pub const Ahom: Block = Block(238); // 11700..1174F; Ahom
+    pub const Dogra: Block = Block(239); // 11800..1184F; Dogra
+    pub const WarangCiti: Block = Block(240); // 118A0..118FF; Warang Citi
+    pub const DivesAkuru: Block = Block(241); // 11900..1195F; Dives Akuru
+    pub const Nandinagari: Block = Block(242); // 119A0..119FF; Nandinagari
+    pub const ZanabazarSquare: Block = Block(243); // 11A00..11A4F; Zanabazar Square
+    pub const Soyombo: Block = Block(244); // 11A50..11AAF; Soyombo
+    pub const UnifiedCanadianAboriginalSyllabicsExtendedA: Block = Block(245); // 11AB0..11ABF; Unified Canadian Aboriginal Syllabics Extended-A
+    pub const PauCinHau: Block = Block(246); // 11AC0..11AFF; Pau Cin Hau
+    pub const DevanagariExtendedA: Block = Block(247); // 11B00..11B5F; Devanagari Extended-A
+    pub const SharadaSupplement: Block = Block(248); // 11B60..11B7F; Sharada Supplement
+    pub const Sunuwar: Block = Block(249); // 11BC0..11BFF; Sunuwar
+    pub const Bhaiksuki: Block = Block(250); // 11C00..11C6F; Bhaiksuki
+    pub const Marchen: Block = Block(251); // 11C70..11CBF; Marchen
+    pub const MasaramGondi: Block = Block(252); // 11D00..11D5F; Masaram Gondi
+    pub const GunjalaGondi: Block = Block(253); // 11D60..11DAF; Gunjala Gondi
+    pub const TolongSiki: Block = Block(254); // 11DB0..11DEF; Tolong Siki
+    pub const Makasar: Block = Block(255); // 11EE0..11EFF; Makasar
+    pub const Kawi: Block = Block(256); // 11F00..11F5F; Kawi
+    pub const LisuSupplement: Block = Block(257); // 11FB0..11FBF; Lisu Supplement
+    pub const TamilSupplement: Block = Block(258); // 11FC0..11FFF; Tamil Supplement
+    pub const Cuneiform: Block = Block(259); // 12000..123FF; Cuneiform
+    pub const CuneiformNumbersAndPunctuation: Block = Block(260); // 12400..1247F; Cuneiform Numbers and Punctuation
+    pub const EarlyDynasticCuneiform: Block = Block(261); // 12480..1254F; Early Dynastic Cuneiform
+    pub const CyproMinoan: Block = Block(262); // 12F90..12FFF; Cypro-Minoan
+    pub const EgyptianHieroglyphs: Block = Block(263); // 13000..1342F; Egyptian Hieroglyphs
+    pub const EgyptianHieroglyphFormatControls: Block = Block(264); // 13430..1345F; Egyptian Hieroglyph Format Controls
+    pub const EgyptianHieroglyphsExtendedA: Block = Block(265); // 13460..143FF; Egyptian Hieroglyphs Extended-A
+    pub const AnatolianHieroglyphs: Block = Block(266); // 14400..1467F; Anatolian Hieroglyphs
+    pub const GurungKhema: Block = Block(267); // 16100..1613F; Gurung Khema
+    pub const BamumSupplement: Block = Block(268); // 16800..16A3F; Bamum Supplement
+    pub const Mro: Block = Block(269); // 16A40..16A6F; Mro
+    pub const Tangsa: Block = Block(270); // 16A70..16ACF; Tangsa
+    pub const BassaVah: Block = Block(271); // 16AD0..16AFF; Bassa Vah
+    pub const PahawhHmong: Block = Block(272); // 16B00..16B8F; Pahawh Hmong
+    pub const KiratRai: Block = Block(273); // 16D40..16D7F; Kirat Rai
+    pub const Medefaidrin: Block = Block(274); // 16E40..16E9F; Medefaidrin
+    pub const BeriaErfe: Block = Block(275); // 16EA0..16EDF; Beria Erfe
+    pub const Miao: Block = Block(276); // 16F00..16F9F; Miao
+    pub const IdeographicSymbolsAndPunctuation: Block = Block(277); // 16FE0..16FFF; Ideographic Symbols and Punctuation
+    pub const Tangut: Block = Block(278); // 17000..187FF; Tangut
+    pub const TangutComponents: Block = Block(279); // 18800..18AFF; Tangut Components
+    pub const KhitanSmallScript: Block = Block(280); // 18B00..18CFF; Khitan Small Script
+    pub const TangutSupplement: Block = Block(281); // 18D00..18D7F; Tangut Supplement
+    pub const TangutComponentsSupplement: Block = Block(282); // 18D80..18DFF; Tangut Components Supplement
+    pub const KanaExtendedB: Block = Block(283); // 1AFF0..1AFFF; Kana Extended-B
+    pub const KanaSupplement: Block = Block(284); // 1B000..1B0FF; Kana Supplement
+    pub const KanaExtendedA: Block = Block(285); // 1B100..1B12F; Kana Extended-A
+    pub const SmallKanaExtension: Block = Block(286); // 1B130..1B16F; Small Kana Extension
+    pub const Nushu: Block = Block(287); // 1B170..1B2FF; Nushu
+    pub const Duployan: Block = Block(288); // 1BC00..1BC9F; Duployan
+    pub const ShorthandFormatControls: Block = Block(289); // 1BCA0..1BCAF; Shorthand Format Controls
+    pub const SymbolsForLegacyComputingSupplement: Block = Block(290); // 1CC00..1CEBF; Symbols for Legacy Computing Supplement
+    pub const MiscellaneousSymbolsSupplement: Block = Block(291); // 1CEC0..1CEFF; Miscellaneous Symbols Supplement
+    pub const ZnamennyMusicalNotation: Block = Block(292); // 1CF00..1CFCF; Znamenny Musical Notation
+    pub const ByzantineMusicalSymbols: Block = Block(293); // 1D000..1D0FF; Byzantine Musical Symbols
+    pub const MusicalSymbols: Block = Block(294); // 1D100..1D1FF; Musical Symbols
+    pub const AncientGreekMusicalNotation: Block = Block(295); // 1D200..1D24F; Ancient Greek Musical Notation
+    pub const KaktovikNumerals: Block = Block(296); // 1D2C0..1D2DF; Kaktovik Numerals
+    pub const MayanNumerals: Block = Block(297); // 1D2E0..1D2FF; Mayan Numerals
+    pub const TaiXuanJingSymbols: Block = Block(298); // 1D300..1D35F; Tai Xuan Jing Symbols
+    pub const CountingRodNumerals: Block = Block(299); // 1D360..1D37F; Counting Rod Numerals
+    pub const MathematicalAlphanumericSymbols: Block = Block(300); // 1D400..1D7FF; Mathematical Alphanumeric Symbols
+    pub const SuttonSignwriting: Block = Block(301); // 1D800..1DAAF; Sutton SignWriting
+    pub const LatinExtendedG: Block = Block(302); // 1DF00..1DFFF; Latin Extended-G
+    pub const GlagoliticSupplement: Block = Block(303); // 1E000..1E02F; Glagolitic Supplement
+    pub const CyrillicExtendedD: Block = Block(304); // 1E030..1E08F; Cyrillic Extended-D
+    pub const NyiakengPuachueHmong: Block = Block(305); // 1E100..1E14F; Nyiakeng Puachue Hmong
+    pub const Toto: Block = Block(306); // 1E290..1E2BF; Toto
+    pub const Wancho: Block = Block(307); // 1E2C0..1E2FF; Wancho
+    pub const NagMundari: Block = Block(308); // 1E4D0..1E4FF; Nag Mundari
+    pub const OlOnal: Block = Block(309); // 1E5D0..1E5FF; Ol Onal
+    pub const TaiYo: Block = Block(310); // 1E6C0..1E6FF; Tai Yo
+    pub const EthiopicExtendedB: Block = Block(311); // 1E7E0..1E7FF; Ethiopic Extended-B
+    pub const MendeKikakui: Block = Block(312); // 1E800..1E8DF; Mende Kikakui
+    pub const Adlam: Block = Block(313); // 1E900..1E95F; Adlam
+    pub const IndicSiyaqNumbers: Block = Block(314); // 1EC70..1ECBF; Indic Siyaq Numbers
+    pub const OttomanSiyaqNumbers: Block = Block(315); // 1ED00..1ED4F; Ottoman Siyaq Numbers
+    pub const ArabicMathematicalAlphabeticSymbols: Block = Block(316); // 1EE00..1EEFF; Arabic Mathematical Alphabetic Symbols
+    pub const MahjongTiles: Block = Block(317); // 1F000..1F02F; Mahjong Tiles
+    pub const DominoTiles: Block = Block(318); // 1F030..1F09F; Domino Tiles
+    pub const PlayingCards: Block = Block(319); // 1F0A0..1F0FF; Playing Cards
+    pub const EnclosedAlphanumericSupplement: Block = Block(320); // 1F100..1F1FF; Enclosed Alphanumeric Supplement
+    pub const EnclosedIdeographicSupplement: Block = Block(321); // 1F200..1F2FF; Enclosed Ideographic Supplement
+    pub const MiscellaneousSymbolsAndPictographs: Block = Block(322); // 1F300..1F5FF; Miscellaneous Symbols and Pictographs
+    pub const Emoticons: Block = Block(323); // 1F600..1F64F; Emoticons
+    pub const OrnamentalDingbats: Block = Block(324); // 1F650..1F67F; Ornamental Dingbats
+    pub const TransportAndMapSymbols: Block = Block(325); // 1F680..1F6FF; Transport and Map Symbols
+    pub const AlchemicalSymbols: Block = Block(326); // 1F700..1F77F; Alchemical Symbols
+    pub const GeometricShapesExtended: Block = Block(327); // 1F780..1F7FF; Geometric Shapes Extended
+    pub const SupplementalArrowsC: Block = Block(328); // 1F800..1F8FF; Supplemental Arrows-C
+    pub const SupplementalSymbolsAndPictographs: Block = Block(329); // 1F900..1F9FF; Supplemental Symbols and Pictographs
+    pub const ChessSymbols: Block = Block(330); // 1FA00..1FA6F; Chess Symbols
+    pub const SymbolsAndPictographsExtendedA: Block = Block(331); // 1FA70..1FAFF; Symbols and Pictographs Extended-A
+    pub const SymbolsForLegacyComputing: Block = Block(332); // 1FB00..1FBFF; Symbols for Legacy Computing
+    pub const CjkUnifiedIdeographsExtensionB: Block = Block(333); // 20000..2A6DF; CJK Unified Ideographs Extension B
+    pub const CjkUnifiedIdeographsExtensionC: Block = Block(334); // 2A700..2B73F; CJK Unified Ideographs Extension C
+    pub const CjkUnifiedIdeographsExtensionD: Block = Block(335); // 2B740..2B81F; CJK Unified Ideographs Extension D
+    pub const CjkUnifiedIdeographsExtensionE: Block = Block(336); // 2B820..2CEAF; CJK Unified Ideographs Extension E
+    pub const CjkUnifiedIdeographsExtensionF: Block = Block(337); // 2CEB0..2EBEF; CJK Unified Ideographs Extension F
+    pub const CjkUnifiedIdeographsExtensionI: Block = Block(338); // 2EBF0..2EE5F; CJK Unified Ideographs Extension I
+    pub const CjkCompatibilityIdeographsSupplement: Block = Block(339); // 2F800..2FA1F; CJK Compatibility Ideographs Supplement
+    pub const CjkUnifiedIdeographsExtensionG: Block = Block(340); // 30000..3134F; CJK Unified Ideographs Extension G
+    pub const CjkUnifiedIdeographsExtensionH: Block = Block(341); // 31350..323AF; CJK Unified Ideographs Extension H
+    pub const CjkUnifiedIdeographsExtensionJ: Block = Block(342); // 323B0..3347F; CJK Unified Ideographs Extension J
+    pub const Tags: Block = Block(343); // E0000..E007F; Tags
+    pub const VariationSelectorsSupplement: Block = Block(344); // E0100..E01EF; Variation Selectors Supplement
+    pub const SupplementaryPrivateUseAreaA: Block = Block(345); // F0000..FFFFF; Supplementary Private Use Area-A
+    pub const SupplementaryPrivateUseAreaB: Block = Block(346); // 100000..10FFFF; Supplementary Private Use Area-B
+}
+#[test]
+fn block_consts();
+}
+
+make_enumerated_property! {
+    name: "Block";
+    short_name: "blk";
+    ident: Block;
+    data_marker: crate::provider::PropertyEnumBlockV1;
+    singleton: SINGLETON_PROPERTY_ENUM_BLOCK_V1;
+    ule_ty: <u16 as zerovec::ule::AsULE>::ULE;
+}
+
 pub use crate::code_point_set::BinaryProperty;
 
 macro_rules! make_binary_property {
@@ -3652,5 +4053,19 @@ mod test_enumerated_property_completeness {
             crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_VERTICAL_ORIENTATION_V1,
             VerticalOrientation::ALL_VALUES,
         );
+    }
+
+    #[test]
+    fn test_block_basics() {
+        assert_eq!(Block::BasicLatin.0, 1);
+        assert_eq!(Block(1), Block::BasicLatin);
+        assert_eq!(u16::from(Block::BasicLatin), 1);
+    }
+
+    #[test]
+    fn test_block_trie_value() {
+        use icu_collections::codepointtrie::TrieValue;
+        assert_eq!(Block::try_from_u32(1).unwrap(), Block::BasicLatin);
+        assert_eq!(Block::BasicLatin.to_u32(), 1);
     }
 }

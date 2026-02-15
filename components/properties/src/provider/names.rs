@@ -122,6 +122,12 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// `PropertyNameParseBlockV1`
+    PropertyNameParseBlockV1,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// `PropertyNameLongBidiClassV1`
     PropertyNameLongBidiClassV1,
     PropertyEnumToValueNameLinearMap<'static>,
@@ -314,6 +320,18 @@ icu_provider::data_marker!(
     PropertyNameShortScriptV1,
     PropertyScriptToIcuScriptMap<'static>,
     is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// `PropertyNameLongBlockV1`
+    PropertyNameLongBlockV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyNameShortBlockV1`
+    PropertyNameShortBlockV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
 );
 
 /// A set of characters and strings which share a particular property value.

@@ -504,6 +504,13 @@ expand!(
         PropertyNameShortVerticalOrientationV1[convert_linear],
         PropertyNameLongVerticalOrientationV1[convert_linear]
     ),
+    (
+        icu::properties::props::Block,
+        PropertyEnumBlockV1,
+        PropertyNameParseBlockV1,
+        PropertyNameShortBlockV1[convert_linear],
+        PropertyNameLongBlockV1[convert_linear]
+    ),
 );
 
 #[cfg(test)]

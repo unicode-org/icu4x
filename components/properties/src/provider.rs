@@ -23,22 +23,22 @@ pub use names::{
 };
 
 pub use names::{
-    PropertyNameLongBidiClassV1, PropertyNameLongEastAsianWidthV1,
+    PropertyNameLongBidiClassV1, PropertyNameLongBlockV1, PropertyNameLongEastAsianWidthV1,
     PropertyNameLongGeneralCategoryV1, PropertyNameLongGraphemeClusterBreakV1,
     PropertyNameLongHangulSyllableTypeV1, PropertyNameLongIndicConjunctBreakV1,
     PropertyNameLongIndicSyllabicCategoryV1, PropertyNameLongJoiningGroupV1,
     PropertyNameLongJoiningTypeV1, PropertyNameLongLineBreakV1, PropertyNameLongNumericTypeV1,
     PropertyNameLongScriptV1, PropertyNameLongSentenceBreakV1,
     PropertyNameLongVerticalOrientationV1, PropertyNameLongWordBreakV1,
-    PropertyNameParseBidiClassV1, PropertyNameParseCanonicalCombiningClassV1,
-    PropertyNameParseEastAsianWidthV1, PropertyNameParseGeneralCategoryMaskV1,
-    PropertyNameParseGeneralCategoryV1, PropertyNameParseGraphemeClusterBreakV1,
-    PropertyNameParseHangulSyllableTypeV1, PropertyNameParseIndicConjunctBreakV1,
-    PropertyNameParseIndicSyllabicCategoryV1, PropertyNameParseJoiningGroupV1,
-    PropertyNameParseJoiningTypeV1, PropertyNameParseLineBreakV1, PropertyNameParseNumericTypeV1,
-    PropertyNameParseScriptV1, PropertyNameParseSentenceBreakV1,
+    PropertyNameParseBidiClassV1, PropertyNameParseBlockV1,
+    PropertyNameParseCanonicalCombiningClassV1, PropertyNameParseEastAsianWidthV1,
+    PropertyNameParseGeneralCategoryMaskV1, PropertyNameParseGeneralCategoryV1,
+    PropertyNameParseGraphemeClusterBreakV1, PropertyNameParseHangulSyllableTypeV1,
+    PropertyNameParseIndicConjunctBreakV1, PropertyNameParseIndicSyllabicCategoryV1,
+    PropertyNameParseJoiningGroupV1, PropertyNameParseJoiningTypeV1, PropertyNameParseLineBreakV1,
+    PropertyNameParseNumericTypeV1, PropertyNameParseScriptV1, PropertyNameParseSentenceBreakV1,
     PropertyNameParseVerticalOrientationV1, PropertyNameParseWordBreakV1,
-    PropertyNameShortBidiClassV1, PropertyNameShortEastAsianWidthV1,
+    PropertyNameShortBidiClassV1, PropertyNameShortBlockV1, PropertyNameShortEastAsianWidthV1,
     PropertyNameShortGeneralCategoryV1, PropertyNameShortGraphemeClusterBreakV1,
     PropertyNameShortHangulSyllableTypeV1, PropertyNameShortIndicConjunctBreakV1,
     PropertyNameShortIndicSyllabicCategoryV1, PropertyNameShortJoiningGroupV1,
@@ -730,6 +730,12 @@ icu_provider::data_marker!(
     is_singleton = true,
 );
 icu_provider::data_marker!(
+    /// Data marker for the 'Block' Unicode property
+    PropertyEnumBlockV1,
+    PropertyCodePointMap<'static, Block>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
     /// Data marker for the 'BidiMirroringGlyph' Unicode property
     PropertyEnumBidiMirroringGlyphV1,
     PropertyCodePointMap<'static, BidiMirroringGlyph>,
@@ -1206,3 +1212,23 @@ icu_provider::data_struct!(
     ScriptWithExtensionsProperty<'_>,
     #[cfg(feature = "datagen")]
 );
+
+#[cfg(feature = "compiled_data")]
+impl Baked {
+    /// Stub for Block property to allow compilation without regenerating data
+    #[allow(missing_docs)]
+    pub const SINGLETON_PROPERTY_ENUM_BLOCK_V1: &'static PropertyCodePointMap<'static, Block> =
+        unsafe { core::mem::transmute(Self::SINGLETON_PROPERTY_ENUM_SCRIPT_V1) };
+    #[allow(missing_docs)]
+    pub const SINGLETON_PROPERTY_NAME_PARSE_BLOCK_V1: &'static names::PropertyValueNameToEnumMap<
+        'static,
+    > = unsafe { core::mem::transmute(Self::SINGLETON_PROPERTY_NAME_PARSE_SCRIPT_V1) };
+    #[allow(missing_docs)]
+    pub const SINGLETON_PROPERTY_NAME_SHORT_BLOCK_V1:
+        &'static names::PropertyEnumToValueNameLinearMap<'static> =
+        unsafe { core::mem::transmute(Self::SINGLETON_PROPERTY_NAME_SHORT_BIDI_CLASS_V1) };
+    #[allow(missing_docs)]
+    pub const SINGLETON_PROPERTY_NAME_LONG_BLOCK_V1:
+        &'static names::PropertyEnumToValueNameLinearMap<'static> =
+        unsafe { core::mem::transmute(Self::SINGLETON_PROPERTY_NAME_LONG_BIDI_CLASS_V1) };
+}
