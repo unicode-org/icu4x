@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::cal::Hebrew;
-use icu_calendar::Date;
+use icu_calendar::{Date, Gregorian};
 use icu_datetime::fieldsets;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
@@ -224,11 +224,7 @@ fn test_5387() {
 /// When an explicit `-u-hc-*` extension is provided, it should override the locale default.
 ///
 /// Regression test for <https://github.com/unicode-org/icu4x/issues/594>.
-///
-/// NOTE: This test requires the "experimental" feature to access
-/// components::Bag from resolved patterns. If that API is stabilized
-/// or removed, this test will need updating.
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 #[test]
 fn test_locale_default_hour_cycle() {
     use icu_datetime::provider::fields::components;
@@ -266,11 +262,9 @@ fn test_locale_default_hour_cycle() {
     for (locale_str, expected_hour_cycle) in cases {
         let locale: Locale = locale_str.parse().unwrap();
         let prefs = DateTimeFormatterPreferences::from(&locale);
-        let formatter = FixedCalendarDateTimeFormatter::<icu_calendar::Gregorian, _>::try_new(
-            prefs,
-            fieldsets::T::short(),
-        )
-        .unwrap();
+        let formatter =
+            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, fieldsets::T::short())
+                .unwrap();
         let formatted = formatter.format(&datetime);
         let resolved_pattern = formatted.pattern();
         let bag = components::Bag::from(&resolved_pattern);
@@ -291,11 +285,9 @@ fn test_locale_default_hour_cycle() {
     for (locale_str, expected_hour_cycle) in &[("en", HourCycle::H12), ("fr", HourCycle::H23)] {
         let locale: Locale = locale_str.parse().unwrap();
         let prefs = DateTimeFormatterPreferences::from(&locale);
-        let formatter = FixedCalendarDateTimeFormatter::<icu_calendar::Gregorian, _>::try_new(
-            prefs,
-            fieldsets::T::short(),
-        )
-        .unwrap();
+        let formatter =
+            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, fieldsets::T::short())
+                .unwrap();
         let formatted = formatter.format(&midnight_datetime);
         let resolved_pattern = formatted.pattern();
         let bag = components::Bag::from(&resolved_pattern);
