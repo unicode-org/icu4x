@@ -132,6 +132,7 @@ lazy_static::lazy_static! {
         // since Diplomat can't do generics. We also support Gregorian *formatter*
         // but we don't need a separate Gregorian Date.
         "icu::calendar::cal",
+        "icu::calendar::error::LunisolarDateError",
         "icu::calendar::IntoAnyCalendar",
         "icu::calendar::Date::try_new_buddhist",
         "icu::calendar::Date::try_new_chinese_with_calendar",

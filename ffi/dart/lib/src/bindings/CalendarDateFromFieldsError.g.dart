@@ -8,21 +8,56 @@ enum CalendarDateFromFieldsError {
   // ignore: public_member_api_docs
   unknown,
   // ignore: public_member_api_docs
-  outOfRange,
+  invalidDay,
   // ignore: public_member_api_docs
-  unknownEra,
+  invalidOrdinalMonth,
+  // ignore: public_member_api_docs
+  invalidEra,
   // ignore: public_member_api_docs
   monthCodeInvalidSyntax,
   // ignore: public_member_api_docs
-  monthCodeNotInCalendar,
+  monthNotInCalendar,
   // ignore: public_member_api_docs
-  monthCodeNotInYear,
+  monthNotInYear,
   // ignore: public_member_api_docs
   inconsistentYear,
   // ignore: public_member_api_docs
   inconsistentMonth,
   // ignore: public_member_api_docs
-  notEnoughFields;
+  notEnoughFields,
+  // ignore: public_member_api_docs
+  tooManyFields,
+  // ignore: public_member_api_docs
+  overflow;
+
+  int get _ffi {
+    switch (this) {
+      case unknown:
+        return 0;
+      case invalidDay:
+        return 1;
+      case invalidOrdinalMonth:
+        return 9;
+      case invalidEra:
+        return 2;
+      case monthCodeInvalidSyntax:
+        return 3;
+      case monthNotInCalendar:
+        return 4;
+      case monthNotInYear:
+        return 5;
+      case inconsistentYear:
+        return 6;
+      case inconsistentMonth:
+        return 7;
+      case notEnoughFields:
+        return 8;
+      case tooManyFields:
+        return 10;
+      case overflow:
+        return 11;
+    }
+  }
 
 }
 

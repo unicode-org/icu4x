@@ -4,7 +4,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarRangeError, MonthCodeError,
+    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError, MonthError,
     UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -178,7 +178,7 @@ impl DateFieldsResolver for Hebrew {
             // Neither 5731 nor 5732 is a leap year
             (5, true) => 5730,
             _ => {
-                return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+                return Err(EcmaReferenceYearError::MonthNotInCalendar);
             }
         };
         Ok(HebrewYear::compute(hebrew_year))
@@ -189,7 +189,7 @@ impl DateFieldsResolver for Hebrew {
         year: Self::YearInfo,
         month: Month,
         options: DateFromFieldsOptions,
-    ) -> Result<u8, MonthCodeError> {
+    ) -> Result<u8, MonthError> {
         let is_leap_year = year.keviyah.is_leap();
         let ordinal_month = match (month.number(), month.is_leap()) {
             (n @ 1..=12, false) => n + (n >= 6 && is_leap_year) as u8,
@@ -200,10 +200,10 @@ impl DateFieldsResolver for Hebrew {
                     // M05L maps to M06 in a common year
                     6
                 } else {
-                    return Err(MonthCodeError::NotInYear);
+                    return Err(MonthError::NotInYear);
                 }
             }
-            _ => return Err(MonthCodeError::NotInCalendar),
+            _ => return Err(MonthError::NotInCalendar),
         };
         Ok(ordinal_month)
     }
@@ -370,7 +370,7 @@ impl Date<Hebrew> {
         year: i32,
         month: Month,
         day: u8,
-    ) -> Result<Date<Hebrew>, LunisolarRangeError> {
+    ) -> Result<Date<Hebrew>, LunisolarDateError> {
         ArithmeticDate::try_from_ymd_lunisolar(year, month, day, &Hebrew)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))
