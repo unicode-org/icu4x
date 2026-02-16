@@ -64,9 +64,7 @@ pub enum DateError {
 
 impl core::error::Error for DateError {}
 
-/// Error type for date creation via [`Date::try_new_from_codes`].
-///
-/// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+/// Error type for date creation for lunisolar calendars.
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum LunisolarDateError {
@@ -82,9 +80,9 @@ pub enum LunisolarDateError {
     /// let err = Date::try_new_hebrew_v2(5785, Month::new(5), 50)
     ///     .expect_err("no month has 50 days");
     ///
-    /// assert!(matches!(err, LunisolarDateError::InvalidDay { .. }));
+    /// assert!(matches!(err, LunisolarDateError::InvalidDay { max: 30 }));
     /// ```
-    #[displaydoc("Invalid day for month")]
+    #[displaydoc("Invalid day for month, max is {max}")]
     InvalidDay {
         /// The maximum allowed value (the minimum is 1).
         max: u8,
@@ -106,9 +104,9 @@ pub enum LunisolarDateError {
     ///
     /// assert!(matches!(err, LunisolarDateError::MonthNotInYear));
     /// ```
-    #[displaydoc("The specified month exists in calendar, but not for this year")]
+    #[displaydoc("The specified month exists in this calendar, but not for this year")]
     MonthNotInYear,
-    /// The month code is invalid for the calendar.
+    /// The month is invalid for the calendar.
     ///
     /// # Examples
     ///
@@ -122,7 +120,7 @@ pub enum LunisolarDateError {
     ///
     /// assert!(matches!(err, LunisolarDateError::MonthNotInCalendar));
     /// ```
-    #[displaydoc("The specified month code does not exist in this calendar")]
+    #[displaydoc("The specified month does not exist in this calendar")]
     MonthNotInCalendar,
     /// The year exceeds the allowed range.
     ///
@@ -187,15 +185,15 @@ mod unstable {
         ///
         /// assert!(matches!(
         ///     err,
-        ///     DateFromFieldsError::InvalidDay { .. }
+        ///     DateFromFieldsError::InvalidDay { max: 30 }
         /// ));
         /// ```
-        #[displaydoc("Invalid day for month")]
+        #[displaydoc("Invalid day for month, max is {max}")]
         InvalidDay {
             /// The maximum allowed value (the minimum is 1).
             max: u8,
         },
-        /// A field is out of range for its domain.
+        /// The ordinal month is is invalid for the given year.
         ///
         /// # Examples
         ///
@@ -216,10 +214,10 @@ mod unstable {
         ///
         /// assert!(matches!(
         ///     err,
-        ///     DateFromFieldsError::InvalidOrdinalMonth { .. }
+        ///     DateFromFieldsError::InvalidOrdinalMonth { max: 12 }
         /// ));
         /// ```
-        #[displaydoc("Invalid ordinal month for year")]
+        #[displaydoc("Invalid ordinal month for year, max is {max}")]
         InvalidOrdinalMonth {
             /// The maximum allowed value (the minimum is 1).
             max: u8,
@@ -246,7 +244,7 @@ mod unstable {
         /// ```
         #[displaydoc("Invalid month code syntax")]
         MonthCodeInvalidSyntax,
-        /// The specified month code does not exist in this calendar.
+        /// The specified month does not exist in this calendar.
         ///
         /// # Examples
         ///
@@ -265,9 +263,9 @@ mod unstable {
         ///     .expect_err("no month M13 in Hebrew");
         /// assert_eq!(err, DateFromFieldsError::MonthNotInCalendar);
         /// ```
-        #[displaydoc("The specified month code does not exist in this calendar")]
+        #[displaydoc("The specified month does not exist in this calendar")]
         MonthNotInCalendar,
-        /// The specified month code exists in this calendar, but not in the specified year.
+        /// The specified month exists in this calendar, but not in the specified year.
         ///
         /// # Examples
         ///
@@ -286,7 +284,7 @@ mod unstable {
         ///     .expect_err("no month M05L in Hebrew year 5783");
         /// assert_eq!(err, DateFromFieldsError::MonthNotInYear);
         /// ```
-        #[displaydoc("The specified month exists in calendar, but not for this year")]
+        #[displaydoc("The specified month exists in this calendar, but not for this year")]
         MonthNotInYear,
         /// The era code is invalid for the calendar.
         ///
@@ -499,19 +497,19 @@ impl From<MonthCodeParseError> for DateFromFieldsError {
     }
 }
 
-/// Internal narrow error type for functions that only fail on month code operations
+/// Internal narrow error type for functions that only fail on month operations
 #[derive(Debug, PartialEq)]
-pub(crate) enum MonthCodeError {
+pub(crate) enum MonthError {
     NotInCalendar,
     NotInYear,
 }
 
-impl From<MonthCodeError> for DateFromFieldsError {
+impl From<MonthError> for DateFromFieldsError {
     #[inline]
-    fn from(value: MonthCodeError) -> Self {
+    fn from(value: MonthError) -> Self {
         match value {
-            MonthCodeError::NotInCalendar => DateFromFieldsError::MonthNotInCalendar,
-            MonthCodeError::NotInYear => DateFromFieldsError::MonthNotInYear,
+            MonthError::NotInCalendar => DateFromFieldsError::MonthNotInCalendar,
+            MonthError::NotInYear => DateFromFieldsError::MonthNotInYear,
         }
     }
 }

@@ -243,8 +243,8 @@ impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsEr
             icu_calendar::error::DateFromFieldsError::InconsistentYear => Self::InconsistentYear,
             icu_calendar::error::DateFromFieldsError::InconsistentMonth => Self::InconsistentMonth,
             icu_calendar::error::DateFromFieldsError::NotEnoughFields => Self::NotEnoughFields,
-            icu_calendar::DateFromFieldsError::TooManyFields => Self::TooManyFields,
-            icu_calendar::DateFromFieldsError::Overflow => Self::Overflow,
+            icu_calendar::error::DateFromFieldsError::TooManyFields => Self::TooManyFields,
+            icu_calendar::error::DateFromFieldsError::Overflow => Self::Overflow,
             _ => Self::Unknown,
         }
     }

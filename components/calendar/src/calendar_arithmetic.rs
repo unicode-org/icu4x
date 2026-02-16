@@ -6,8 +6,8 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::{
-    range_check, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError, MonthCodeError,
-    MonthCodeParseError, UnknownEraError,
+    range_check, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
+    MonthCodeParseError, MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
@@ -176,14 +176,14 @@ pub(crate) trait DateFieldsResolver: Calendar {
         year: Self::YearInfo,
         month: Month,
         _options: DateFromFieldsOptions,
-    ) -> Result<u8, MonthCodeError> {
+    ) -> Result<u8, MonthError> {
         match (month.number(), month.is_leap()) {
             (month_number, false)
                 if (1..=Self::months_in_provided_year(year)).contains(&month_number) =>
             {
                 Ok(month_number)
             }
-            _ => Err(MonthCodeError::NotInCalendar),
+            _ => Err(MonthError::NotInCalendar),
         }
     }
 
@@ -251,7 +251,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let month = calendar
             .ordinal_from_month(year, validated, Default::default())
             .map_err(|e| match e {
-                MonthCodeError::NotInCalendar | MonthCodeError::NotInYear => {
+                MonthError::NotInCalendar | MonthError::NotInYear => {
                     DateError::UnknownMonthCode(month_code)
                 }
             })?;
@@ -277,8 +277,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let month = calendar
             .ordinal_from_month(year, month, Default::default())
             .map_err(|e| match e {
-                MonthCodeError::NotInCalendar => LunisolarDateError::MonthNotInCalendar,
-                MonthCodeError::NotInYear => LunisolarDateError::MonthNotInYear,
+                MonthError::NotInCalendar => LunisolarDateError::MonthNotInCalendar,
+                MonthError::NotInYear => LunisolarDateError::MonthNotInYear,
             })?;
 
         let max_day = C::days_in_provided_month(year, month);
@@ -766,8 +766,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             .map_err(|e| {
                 // TODO: Use a narrower error type here. For now, convert into DateError.
                 match e {
-                    MonthCodeError::NotInCalendar => DateError::UnknownMonthCode(base_month.code()),
-                    MonthCodeError::NotInYear => DateError::UnknownMonthCode(base_month.code()),
+                    MonthError::NotInCalendar => DateError::UnknownMonthCode(base_month.code()),
+                    MonthError::NotInYear => DateError::UnknownMonthCode(base_month.code()),
                 }
             })?;
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
