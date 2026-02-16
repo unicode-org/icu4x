@@ -92,101 +92,58 @@ impl IterableDataProviderCached<CurrencyPatternsDataV1> for SourceDataProvider {
 #[test]
 fn test_basic() {
     use icu::locale::langid;
-    use writeable::assert_writeable_eq;
+    use icu_pattern::DoublePlaceholderPattern;
 
     let provider = SourceDataProvider::new_testing();
+
     let en: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("en").into(),
-            ),
+            id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
             ..Default::default()
         })
         .unwrap()
         .payload;
-    let plural_rules =
-        icu::plurals::PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into())
-            .unwrap();
-    let patterns_en = &en.get().patterns;
-    assert_writeable_eq!(
-        patterns_en
-            .get(0.into(), &plural_rules)
-            .interpolate((0, "USD")),
-        "0 USD"
-    );
-    assert_writeable_eq!(
-        patterns_en
-            .get(1.into(), &plural_rules)
-            .interpolate((1, "USD")),
-        "1 USD"
-    );
-    assert_writeable_eq!(
-        patterns_en
-            .get(2.into(), &plural_rules)
-            .interpolate((2, "USD")),
-        "2 USD"
+
+    assert_eq!(
+        en.get().patterns.elements.decode().map(|(_, p)| p),
+        PluralElements::new(
+            DoublePlaceholderPattern::try_from_str("{0} {1}", Default::default())
+                .unwrap()
+                .as_ref()
+        )
     );
 
     let ar: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("ar-EG").into(),
-            ),
+            id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let patterns_ar = &ar.get().patterns;
-    assert_writeable_eq!(
-        patterns_ar
-            .get(0.into(), &plural_rules)
-            .interpolate((0, "USD")),
-        "0 USD"
-    );
-    assert_writeable_eq!(
-        patterns_ar
-            .get(1.into(), &plural_rules)
-            .interpolate((1, "USD")),
-        "1 USD"
-    );
-    assert_writeable_eq!(
-        patterns_ar
-            .get(2.into(), &plural_rules)
-            .interpolate((2, "USD")),
-        "2 USD"
+    assert_eq!(
+        ar.get().patterns.elements.decode().map(|(_, p)| p),
+        PluralElements::new(
+            DoublePlaceholderPattern::try_from_str("{0} {1}", Default::default())
+                .unwrap()
+                .as_ref()
+        )
     );
 
-    let jp: DataPayload<CurrencyPatternsDataV1> = provider
+    let ja: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("ja").into(),
-            ),
+            id: DataIdentifierBorrowed::for_locale(&langid!("ja").into()),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let patterns_jp = &jp.get().patterns;
-    assert_writeable_eq!(
-        patterns_jp
-            .get(0.into(), &plural_rules)
-            .interpolate((0, "USD")),
-        "0USD"
-    );
-    assert_writeable_eq!(
-        patterns_jp
-            .get(1.into(), &plural_rules)
-            .interpolate((1, "USD")),
-        "1USD"
-    );
-    assert_writeable_eq!(
-        patterns_jp
-            .get(2.into(), &plural_rules)
-            .interpolate((2, "USD")),
-        "2USD"
+    assert_eq!(
+        ja.get().patterns.elements.decode().map(|(_, p)| p),
+        PluralElements::new(
+            DoublePlaceholderPattern::try_from_str("{0}{1}", Default::default())
+                .unwrap()
+                .as_ref()
+        )
     );
 }
