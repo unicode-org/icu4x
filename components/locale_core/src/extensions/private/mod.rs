@@ -112,7 +112,7 @@ impl Private {
         Err(ParseError::InvalidExtension)
     }
 
-    /// A constructor which takes a list of [`Subtag`].
+    /// A constructor which takes a list of [`Subtag`]s.
     ///
     /// The subtags should be in canonical form (lowercase).
     ///
