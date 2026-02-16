@@ -846,13 +846,9 @@ impl CollatorBorrowed<'static> {
 
     /// This creates a root collator using baked data only.
     ///
-    /// This constructor is:
-    /// - const
-    /// - infallible
-    /// - locale independent
-    ///
-    /// Intended for low level usage where locale resolution is unnecessary
-    #[cfg(feature = "compiled_data")]
+    /// # Feature
+    /// This API is enabled with the `unstable` feature.
+    #[cfg(feature = "unstable")]
     pub const fn new_root() -> Self {
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1
