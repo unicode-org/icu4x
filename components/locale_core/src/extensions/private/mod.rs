@@ -114,8 +114,6 @@ impl Private {
 
     /// A constructor which takes a list of [`Subtag`]s.
     ///
-    /// The subtags should be in canonical form (lowercase).
-    ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
