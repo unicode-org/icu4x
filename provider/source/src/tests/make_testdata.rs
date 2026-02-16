@@ -62,7 +62,7 @@ fn make_testdata() {
             .cloned()
             .map(Into::into)
             .map(DataLocaleFamily::single),
-        DeduplicationStrategy::None.into(),
+        DeduplicationStrategy::RetainBaseLanguages.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
     .with_segmenter_models([
