@@ -24,7 +24,7 @@ impl From<GroupingStrategy> for DecimalFormatterOptions {
     fn from(grouping_strategy: GroupingStrategy) -> Self {
         Self {
             grouping_strategy: Some(grouping_strategy),
-            fraction_grouping: None,
+            fraction_grouping: Some(grouping_strategy),
         }
     }
 }

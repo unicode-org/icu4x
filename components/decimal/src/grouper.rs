@@ -60,27 +60,24 @@ pub fn check_fraction(
     lower_magnitude: i16,
     magnitude: i16,
     strategy: GroupingStrategy,
-    min_grouping: u8,
-    grouping_size: u8,
+    sizes: GroupingSizes,
 ) -> bool {
     if magnitude >= 0 {
         return false;
     }
-    if grouping_size == 0 {
+    if sizes.primary == 0 {
         return false;
     }
     let min_grouping = {
         use GroupingStrategy::*;
         match strategy {
             Never | Auto => return false,
-            // Note: Auto and Always are the same for DecimalFormatter.
-            // When currencies are implemented, this will change.
-            Always => cmp::max(1, min_grouping) as i16,
-            Min2 => cmp::max(2, min_grouping) as i16,
+            Always => cmp::max(1, sizes.min_grouping) as i16,
+            Min2 => cmp::max(2, sizes.min_grouping) as i16,
         }
     };
 
-    let fraction = grouping_size as i16;
+    let fraction = sizes.primary as i16;
 
     // If there are fewer than `fraction + min_grouping` fraction digits,
     // we do not group.
