@@ -61,7 +61,7 @@ fn make_testdata() {
             .iter()
             .cloned()
             .map(Into::into)
-            .map(DataLocaleFamily::with_descendants),
+            .map(DataLocaleFamily::single),
         DeduplicationStrategy::None.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
