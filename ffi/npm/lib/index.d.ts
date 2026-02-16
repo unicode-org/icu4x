@@ -50,6 +50,8 @@ export { ZonedDateTime } from "./ZonedDateTime"
 
 export { ZonedIsoDateTime } from "./ZonedIsoDateTime"
 
+export { ZonedTime } from "./ZonedTime"
+
 export { Bidi } from "./Bidi"
 
 export { BidiInfo } from "./BidiInfo"

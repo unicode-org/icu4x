@@ -233,6 +233,7 @@ impl<A: AsCalendar> Date<A> {
         let c1 = self.calendar.as_calendar();
         let c2 = calendar.as_calendar();
         let inner = if c1.has_cheap_iso_conversion() && c2.has_cheap_iso_conversion() {
+            // no-op
             c2.from_iso(c1.to_iso(self.inner()))
         } else {
             // `from_rata_die` precondition is satified by `to_rata_die`

@@ -821,6 +821,25 @@ class ResultZonedIsoDateTimeNativeInt: Structure(), Structure.ByValue  {
         return listOf("union", "isOk")
     }
 }
+internal class ResultZonedTimeNativeIntUnion: Union() {
+    @JvmField
+    internal var ok: ZonedTimeNative = ZonedTimeNative()
+    @JvmField
+    internal var err: Int = 0
+}
+
+class ResultZonedTimeNativeInt: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultZonedTimeNativeIntUnion = ResultZonedTimeNativeIntUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+}
 
 
 internal class OptionUnit constructor(): Structure(), Structure.ByValue {@JvmField

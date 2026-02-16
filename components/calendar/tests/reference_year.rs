@@ -45,6 +45,8 @@ where
         for is_leap in [false, true] {
             let mut valid_day_number = 1;
             let month_validity = valid_md_condition(month_number, is_leap, valid_day_number);
+            // The last valid monthday produced with Overflow::Reject in this month
+            let mut last_valid_date = None;
             for day_number in 1..=32 {
                 let md_validity = valid_md_condition(month_number, is_leap, day_number);
                 if md_validity == ValidityState::Valid {
@@ -81,12 +83,19 @@ where
 
                 // Test round-trip (to valid day number)
                 if md_validity == ValidityState::ChineseConstrain {
+                    let input_month = fields.month.unwrap();
+                    let output_month = reference_date.month().value;
                     // When constraining in the Chinese calendar the month
                     // stays the same but loses leapiness.
                     assert_eq!(
-                        fields.month.unwrap().number(),
-                        reference_date.month().value.number(),
-                        "{fields:?} {cal:?}"
+                        input_month.number(),
+                        output_month.number(),
+                        "Month number should stay the same: {fields:?} {cal:?}"
+                    );
+                    assert_ne!(
+                        input_month.is_leap(),
+                        output_month.is_leap(),
+                        "Leap month should turn into regular month: {fields:?} {cal:?}"
                     );
                 } else {
                     assert_eq!(
@@ -118,6 +127,21 @@ where
                     ))
                 }
 
+                // Constrain *must* constrain to the last valid day in
+                // the month, except for when the leap month turns into a regular month
+                // in the Chinese/Dangi "nonexistant in modern times" leap month edge case.
+                if let Ok(reject_result) = reject_result {
+                    // We didn't need to constrain here, update the last valid date
+                    last_valid_date = Some(reject_result);
+                } else if let Some(last_valid_date) = last_valid_date {
+                    if md_validity != ValidityState::ChineseConstrain {
+                        assert_eq!(
+                            last_valid_date, reference_date,
+                            "Constrain should constrain to the last valid date in the month"
+                        );
+                    }
+                }
+
                 // Test that ordinal months cause it to fail (even if the month code is still set)
                 fields.ordinal_month = Some(month_number);
                 let ordinal_result = Date::try_from_fields(fields, options, cal);
@@ -135,7 +159,8 @@ enum ValidityState {
     Valid,
     Invalid,
     // Chinese/Korean have special behavior where certain leap month-day combos are specced
-    // as constraining to the regular month.
+    // as constraining to the regular month, because they are have not been found in the modern
+    // time range where implementations are expected to agree.
     ChineseConstrain,
 }
 
