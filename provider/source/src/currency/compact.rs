@@ -31,6 +31,8 @@ struct ParsedPattern {
 
 impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ShortCurrencyCompactV1>, DataError> {
+        self.check_req::<ShortCurrencyCompactV1>(req)?;
+
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
