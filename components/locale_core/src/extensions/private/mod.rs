@@ -60,11 +60,11 @@ pub(crate) const PRIVATE_EXT_STR: &str = "x";
 /// ```
 /// use icu::locale::extensions::private::{Private, Subtag};
 ///
-/// let subtag1: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
-/// let subtag2: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+/// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+/// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
 ///
 /// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
-/// assert_eq!(&private.to_string(), "x-bar-foo");
+/// assert_eq!(&private.to_string(), "x-foo-bar");
 /// ```
 ///
 /// [`Private Use Extensions`]: https://unicode.org/reports/tr35/#pu_extensions
@@ -112,11 +112,9 @@ impl Private {
         Err(ParseError::InvalidExtension)
     }
 
-    /// A constructor which takes a pre-sorted list of [`Subtag`].
+    /// A constructor which takes a list of [`Subtag`].
     ///
-    /// The caller is expected to provide a sorted and deduplicated vector of
-    /// [`Subtag`] elements as input. The subtags should already be in canonical
-    /// form (lowercase).
+    /// The subtags should be in canonical form (lowercase).
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
@@ -125,11 +123,11 @@ impl Private {
     /// ```
     /// use icu::locale::extensions::private::{Private, Subtag};
     ///
-    /// let subtag1: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
-    /// let subtag2: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     ///
     /// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
-    /// assert_eq!(&private.to_string(), "x-bar-foo");
+    /// assert_eq!(&private.to_string(), "x-foo-bar");
     /// ```
     #[cfg(feature = "alloc")]
     pub fn from_vec_unchecked(input: Vec<Subtag>) -> Self {
@@ -159,11 +157,11 @@ impl Private {
     /// ```
     /// use icu::locale::extensions::private::{Private, Subtag};
     ///
-    /// let subtag1: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
-    /// let subtag2: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     /// let mut private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
     ///
-    /// assert_eq!(&private.to_string(), "x-bar-foo");
+    /// assert_eq!(&private.to_string(), "x-foo-bar");
     ///
     /// private.clear();
     ///
