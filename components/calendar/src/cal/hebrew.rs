@@ -214,9 +214,6 @@ impl DateFieldsResolver for Hebrew {
             ordinal_month - (is_leap && ordinal_month >= 6) as u8,
             if ordinal_month == 6 && is_leap {
                 LeapStatus::Leap
-            } else if ordinal_month == 7 && is_leap {
-                // Use the leap name for Adar in a leap year
-                LeapStatus::FormattingLeap
             } else {
                 LeapStatus::Normal
             },
@@ -357,13 +354,13 @@ impl Date<Hebrew> {
     /// use icu::calendar::Date;
     /// use icu::calendar::types::Month;
     ///
-    /// let date = Date::try_new_hebrew_v2(5782, Month::new(6), 7)
+    /// let date = Date::try_new_hebrew_v2(5782, Month::leap(5), 7)
     ///     .expect("Failed to initialize Date instance.");
     ///
     /// assert_eq!(date.era_year().year, 5782);
     /// // Adar I
-    /// assert_eq!(date.month().number(), 6);
-    /// assert_eq!(date.month().is_formatting_leap(), true);
+    /// assert_eq!(date.month().number(), 5);
+    /// assert_eq!(date.month().is_leap(), true);
     /// assert_eq!(date.day_of_month().0, 7);
     /// ```
     pub fn try_new_hebrew_v2(

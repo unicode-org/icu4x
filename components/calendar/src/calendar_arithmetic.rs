@@ -582,13 +582,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         } else {
             let target_month = cal.month_from_ordinal(target.year(), target.month());
             if month != target_month {
-                let ordering = month.cmp_lexicographic(target_month);
                 if sign > 0 {
-                    if ordering.is_gt() {
+                    if month > target_month {
                         return true;
                     }
                 } else {
-                    if ordering.reverse().is_gt() {
+                    if month <= target_month {
                         return true;
                     }
                 }

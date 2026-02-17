@@ -3773,25 +3773,37 @@ impl RawDateTimeNamesBorrowed<'_> {
         let month_index = usize::from(month.number() - 1);
         let name = match month_names {
             MonthNames::Linear(linear) => {
-                if month.is_formatting_leap() {
+                if month.is_leap() {
                     None
                 } else {
                     linear.get(month_index)
                 }
             }
+            MonthNames::LeapLinear(hebrew) if hebrew.get(12).unwrap_or_default().is_empty() => {
+                if month.number() == 5 && month.is_leap() {
+                    // Adar I name in position 16
+                    hebrew.get(16)
+                } else if month.number() == 6 && month.ordinal == 7 {
+                    // Adar II name in position 17
+                    hebrew.get(17)
+                } else if month_index < 12 {
+                    hebrew.get(month_index)
+                } else {
+                    None
+                }
+            }
             MonthNames::LeapLinear(leap_linear) => {
                 let num_months = leap_linear.len() / 2;
-                if month.is_formatting_leap() {
+                if month.is_leap() {
                     leap_linear.get(month_index + num_months)
                 } else if month_index < num_months {
                     leap_linear.get(month_index)
                 } else {
                     None
                 }
-                .filter(|s| !s.is_empty())
             }
             MonthNames::LeapNumeric(leap_numeric) => {
-                if month.is_formatting_leap() {
+                if month.is_leap() {
                     return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric));
                 } else {
                     return Ok(MonthPlaceholderValue::Numeric);

@@ -6,7 +6,6 @@
 
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
-use core::cmp::Ordering;
 use core::fmt;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::AsULE;
@@ -483,31 +482,17 @@ impl fmt::Display for MonthCode {
 /// * `Month::leap(2)` = `M02L`
 ///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
-#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]
 pub struct Month {
     /// Month number between 0 and 99
     number: u8,
     leap_status: LeapStatus,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]
 pub(crate) enum LeapStatus {
     Normal,
     Leap,
-    FormattingLeap,
-}
-
-impl LeapStatus {
-    fn cmp_lexicographic(self, other: LeapStatus) -> Ordering {
-        use LeapStatus::*;
-        // FormattingLeap is ignored in .code() (folded into Normal)
-        match (self, other) {
-            (Normal | FormattingLeap, Normal | FormattingLeap) => Ordering::Equal,
-            (Leap, Leap) => Ordering::Equal,
-            (Normal | FormattingLeap, Leap) => Ordering::Less,
-            (Leap, Normal | FormattingLeap) => Ordering::Greater,
-        }
-    }
 }
 
 impl Month {
@@ -608,14 +593,6 @@ impl Month {
         self.leap_status == LeapStatus::Leap
     }
 
-    /// Returns whether the [`Month`] is a formatting-leap month
-    ///
-    /// This is true for months that format differently during leap years, even if they are not
-    /// considered leap months.
-    pub fn is_formatting_leap(self) -> bool {
-        self.leap_status == LeapStatus::Leap || self.leap_status == LeapStatus::FormattingLeap
-    }
-
     /// Returns the [`MonthCode`] for this month.
     pub fn code(self) -> MonthCode {
         #[allow(clippy::unwrap_used)] // by construction
@@ -629,32 +606,10 @@ impl Month {
             .unwrap(),
         )
     }
-
-    /// Returns the formatting [`MonthCode`] for this month.
-    ///
-    /// See [`Self::is_formatting_leap`].
-    pub fn formatting_code(self) -> MonthCode {
-        #[allow(clippy::unwrap_used)] // by construction
-        MonthCode(
-            TinyAsciiStr::try_from_raw([
-                b'M',
-                b'0' + self.number / 10,
-                b'0' + self.number % 10,
-                if self.is_formatting_leap() { b'L' } else { 0 },
-            ])
-            .unwrap(),
-        )
-    }
-
-    pub(crate) fn cmp_lexicographic(self, other: Self) -> Ordering {
-        self.number
-            .cmp(&other.number)
-            .then_with(|| self.leap_status.cmp_lexicographic(other.leap_status))
-    }
 }
 
 #[test]
-fn test_cmp_lexicographic() {
+fn test_month_cmp() {
     let months_in_order = [
         Month::new(1),
         Month::new(2),
@@ -667,9 +622,9 @@ fn test_cmp_lexicographic() {
         for j in i + 1..months_in_order.len() {
             let a = months_in_order[i];
             let b = months_in_order[j];
-            assert!(a.cmp_lexicographic(a).is_eq());
-            assert!(a.cmp_lexicographic(b).is_lt());
-            assert!(b.cmp_lexicographic(a).is_gt());
+            assert!(a == a);
+            assert!(a < b);
+            assert!(b > a);
         }
     }
 }
@@ -700,8 +655,8 @@ pub struct MonthInfo {
     #[deprecated(since = "2.2.0", note = "use `value.code()")]
     pub standard_code: MonthCode,
 
-    /// The [`Month::formatting_code()`] of [`Self::value`].
-    #[deprecated(since = "2.2.0", note = "use `value.formatting_code()")]
+    /// Deprecated
+    #[deprecated(since = "2.2.0")]
     pub formatting_code: MonthCode,
 }
 
@@ -755,14 +710,6 @@ impl MonthInfo {
     /// [`EastAsianTraditional`]: crate::cal::east_asian_traditional::EastAsianTraditional
     pub fn is_leap(self) -> bool {
         self.value.is_leap()
-    }
-
-    /// Returns whether the [`Month`] is a formatting-leap month
-    ///
-    /// This is true for months that should format as leap months, even if they are not
-    /// considered leap months.
-    pub fn is_formatting_leap(self) -> bool {
-        self.value.is_formatting_leap()
     }
 
     /// Gets the month number. A month number N is not necessarily the Nth month in the year
