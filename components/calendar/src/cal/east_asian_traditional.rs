@@ -643,11 +643,11 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         Ok(number + (number >= leap_month) as u8)
     }
 
-    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> types::Month {
+    fn month_info_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> types::MonthInfo {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.packed.leap_month().unwrap_or(14);
-        types::Month::new_unchecked(
+        let month = types::Month::new_unchecked(
             // subtract one if there was a leap month before
             ordinal_month - (ordinal_month >= leap_month) as u8,
             if ordinal_month == leap_month {
@@ -655,7 +655,14 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
             } else {
                 types::LeapStatus::Normal
             },
-        )
+        );
+        #[allow(deprecated)]
+        types::MonthInfo {
+            ordinal: ordinal_month,
+            value: month,
+            standard_code: month.code(),
+            formatting_code: month.code(),
+        }
     }
 
     fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {

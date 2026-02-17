@@ -494,7 +494,6 @@ pub struct Month {
 pub(crate) enum LeapStatus {
     Normal,
     Leap,
-    FormattingLeap,
 }
 
 impl LeapStatus {
@@ -502,10 +501,10 @@ impl LeapStatus {
         use LeapStatus::*;
         // FormattingLeap is ignored in .code() (folded into Normal)
         match (self, other) {
-            (Normal | FormattingLeap, Normal | FormattingLeap) => Ordering::Equal,
+            (Normal, Normal) => Ordering::Equal,
             (Leap, Leap) => Ordering::Equal,
-            (Normal | FormattingLeap, Leap) => Ordering::Less,
-            (Leap, Normal | FormattingLeap) => Ordering::Greater,
+            (Normal, Leap) => Ordering::Less,
+            (Leap, Normal) => Ordering::Greater,
         }
     }
 }
@@ -608,14 +607,6 @@ impl Month {
         self.leap_status == LeapStatus::Leap
     }
 
-    /// Returns whether the [`Month`] is a formatting-leap month
-    ///
-    /// This is true for months that format differently during leap years, even if they are not
-    /// considered leap months.
-    pub fn is_formatting_leap(self) -> bool {
-        self.leap_status == LeapStatus::Leap || self.leap_status == LeapStatus::FormattingLeap
-    }
-
     /// Returns the [`MonthCode`] for this month.
     pub fn code(self) -> MonthCode {
         #[allow(clippy::unwrap_used)] // by construction
@@ -625,22 +616,6 @@ impl Month {
                 b'0' + self.number / 10,
                 b'0' + self.number % 10,
                 if self.is_leap() { b'L' } else { 0 },
-            ])
-            .unwrap(),
-        )
-    }
-
-    /// Returns the formatting [`MonthCode`] for this month.
-    ///
-    /// See [`Self::is_formatting_leap`].
-    pub fn formatting_code(self) -> MonthCode {
-        #[allow(clippy::unwrap_used)] // by construction
-        MonthCode(
-            TinyAsciiStr::try_from_raw([
-                b'M',
-                b'0' + self.number / 10,
-                b'0' + self.number % 10,
-                if self.is_formatting_leap() { b'L' } else { 0 },
             ])
             .unwrap(),
         )
@@ -701,7 +676,6 @@ pub struct MonthInfo {
     pub standard_code: MonthCode,
 
     /// The [`Month::formatting_code()`] of [`Self::value`].
-    #[deprecated(since = "2.2.0", note = "use `value.formatting_code()")]
     pub formatting_code: MonthCode,
 }
 
@@ -711,16 +685,7 @@ impl MonthInfo {
         date: ArithmeticDate<C>,
     ) -> Self {
         let ordinal = date.month();
-        let value = c.month_from_ordinal(date.year(), ordinal);
-        #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
-        Self {
-            ordinal,
-            value,
-            #[allow(deprecated)]
-            standard_code: value.code(),
-            #[allow(deprecated)]
-            formatting_code: value.code(),
-        }
+        c.month_info_from_ordinal(date.year(), ordinal)
     }
 
     /// Returns the month number of the [`Month`].
@@ -761,8 +726,9 @@ impl MonthInfo {
     ///
     /// This is true for months that should format as leap months, even if they are not
     /// considered leap months.
+    #[allow(deprecated)]
     pub fn is_formatting_leap(self) -> bool {
-        self.value.is_formatting_leap()
+        self.standard_code != self.formatting_code
     }
 
     /// Gets the month number. A month number N is not necessarily the Nth month in the year
