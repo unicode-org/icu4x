@@ -117,11 +117,6 @@ impl TryFrom<&[u8]> for BinReprInfo {
         // contents of the repr info, we explicitly depend on little endian data
         // in order to ensure compatibility with `zerovec`.
         let (endianness, value) = (Endianness::try_from(value[0])?, &value[1..]);
-        if endianness != Endianness::Little {
-            return Err(BinaryDeserializerError::unsupported_format(
-                "big-endian bundles are not supported",
-            ));
-        }
 
         let (charset_family, value) = (CharsetFamily::try_from(value[0])?, &value[1..]);
         let (size_of_char, value) = (value[0], &value[1..]);

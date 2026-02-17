@@ -468,7 +468,7 @@ fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), BinaryDeserializerError> {
     // only fail if the slice is the wrong size.
     #[expect(clippy::unwrap_used)]
     let bytes = get_subslice(input, ..size_of::<u16>())?.try_into().unwrap();
-    let value = u16::from_le_bytes(bytes);
+    let value = u16::from_ne_bytes(bytes);
 
     let rest = get_subslice(input, size_of::<u16>()..)?;
     Ok((value, rest))
