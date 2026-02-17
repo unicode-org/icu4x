@@ -114,8 +114,7 @@ impl TryFrom<&[u8]> for BinReprInfo {
         let (reserved_word, value) = read_u16(value)?;
 
         let (endianness, value) = (Endianness::try_from(value[0])?, &value[1..]);
-        let native_le = cfg!(target_endian = "little");
-        if endianness != if native_le { Endianness::Little } else { Endianness::Big } {
+        if (endianness == Endianness::Little) == cfg!(target_endian = "little") {
             return Err(BinaryDeserializerError::unsupported_format(
                 "bundle endianness does not match platform endianness",
             ));
