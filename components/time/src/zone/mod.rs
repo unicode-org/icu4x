@@ -280,7 +280,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 ///
 /// // Extend to a TimeZoneInfo<AtTime> by adding a reference datetime
 /// let time_zone_at_time = time_zone.at_date_time(DateTime {
-///     date: Date::try_new_gregorian(2023, 12, 2).unwrap(),
+///     date: Date::try_new_iso(2023, 12, 2).unwrap(),
 ///     time: Time::start_of_day(),
 /// });
 /// ```
@@ -513,7 +513,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0600".parse().ok())
     ///     .at_date_time(DateTime {
-    ///         date: Date::try_new_gregorian(2023, 12, 2).unwrap(),
+    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
     ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
@@ -524,7 +524,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0500".parse().ok())
     ///     .at_date_time(DateTime {
-    ///         date: Date::try_new_gregorian(2023, 6, 2).unwrap(),
+    ///         date: Date::try_new_iso(2023, 6, 2).unwrap(),
     ///         time: Time::start_of_day(),
     ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
@@ -535,7 +535,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0700".parse().ok())
     ///     .at_date_time(DateTime {
-    ///         date: Date::try_new_gregorian(2023, 12, 2).unwrap(),
+    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
     ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
