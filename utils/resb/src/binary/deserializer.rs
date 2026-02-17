@@ -23,6 +23,11 @@ const SYSTEM_CHARSET_FAMILY: CharsetFamily = CharsetFamily::Ascii;
 
 /// Deserializes an instance of type `T` from bytes representing a binary ICU
 /// resource bundle.
+///
+/// The input data must be in the platform's native endianness. ICU4C resource
+/// bundles such as `zoneinfo64.res` are generated in both little endian and
+/// big endian formats; callers must ensure the appropriate format is provided
+/// for the target platform.
 pub fn from_words<'a, T>(input: &'a [u32]) -> Result<T, BinaryDeserializerError>
 where
     T: Deserialize<'a>,

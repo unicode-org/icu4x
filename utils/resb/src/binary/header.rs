@@ -113,10 +113,13 @@ impl TryFrom<&[u8]> for BinReprInfo {
         let (size, value) = read_u16(value)?;
         let (reserved_word, value) = read_u16(value)?;
 
-        // While the consumer is responsible for verifying acceptability of most
-        // contents of the repr info, we explicitly depend on little endian data
-        // in order to ensure compatibility with `zerovec`.
         let (endianness, value) = (Endianness::try_from(value[0])?, &value[1..]);
+        let native_le = cfg!(target_endian = "little");
+        if endianness != if native_le { Endianness::Little } else { Endianness::Big } {
+            return Err(BinaryDeserializerError::unsupported_format(
+                "bundle endianness does not match platform endianness",
+            ));
+        }
 
         let (charset_family, value) = (CharsetFamily::try_from(value[0])?, &value[1..]);
         let (size_of_char, value) = (value[0], &value[1..]);
