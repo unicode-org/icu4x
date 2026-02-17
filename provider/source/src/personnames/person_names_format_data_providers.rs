@@ -15,6 +15,8 @@ use crate::IterableDataProviderCached;
 
 impl DataProvider<PersonNamesFormatV1> for crate::SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1>, DataError> {
+        self.check_req::<PersonNamesFormatV1>(req)?;
+
         let data: &Resource = self
             .cldr()?
             .personnames()

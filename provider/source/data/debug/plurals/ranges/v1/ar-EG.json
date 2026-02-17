@@ -1,9 +1,0 @@
-{
-  "ranges": {
-    "other--one": "other",
-    "other--two": "other",
-    "zero--one": "zero",
-    "zero--two": "zero",
-    "one--two": "other"
-  }
-}
