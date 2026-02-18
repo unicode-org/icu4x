@@ -88,6 +88,7 @@ pub mod provider {
         impl_region_display_names_v1!(Baked);
         impl_script_display_names_v1!(Baked);
         impl_variant_display_names_v1!(Baked);
+        impl_locale_names_region_long_v1!(Baked);
         impl_percent_essentials_v1!(Baked);
         impl_person_names_format_v1!(Baked);
         impl_long_day_relative_v1!(Baked);
