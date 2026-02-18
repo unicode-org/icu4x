@@ -98,6 +98,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbols<'static> {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
                 min_grouping: numbers.minimum_grouping_digits,
+                fraction: 0,
             },
         })
     }
