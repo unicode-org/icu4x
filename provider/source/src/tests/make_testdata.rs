@@ -79,6 +79,12 @@ fn make_testdata() {
     .with_marker_attributes_filter("currency", |attrs| {
         matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
     })
+    .with_marker_attributes_filter("locale_names_region", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "001" | "419" | "FR" | "JP" | "CG" | "HK" | "ZA"
+        )
+    })
     .export(&provider, exporter)
     .unwrap();
 }

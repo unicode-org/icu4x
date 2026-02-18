@@ -13,8 +13,10 @@
 
 use crate::buf::BufferFormat;
 use crate::buf::BufferProvider;
+use crate::data_provider::BoundLocaleDataResponse;
 use crate::data_provider::DynamicDryDataProvider;
 use crate::prelude::*;
+use crate::unstable::BoundLocaleDataProvider;
 use crate::DryDataProvider;
 use serde::de::Deserialize;
 use yoke::Yokeable;
@@ -56,6 +58,26 @@ where
     /// ✨ *Enabled with the `serde` Cargo feature.*
     fn as_deserializing(&self) -> DeserializingBufferProvider<'_, Self> {
         DeserializingBufferProvider(self)
+    }
+}
+
+/// A [`BufferProvider`] that deserializes its data using Serde.
+#[derive(Debug)]
+pub struct DeserializingOwnedBufferProvider<P>(P);
+
+impl<P> DeserializingOwnedBufferProvider<P> {
+    /// Wraps the given provider in a [`DeserializingOwnedBufferProvider`].
+    ///
+    /// This requires enabling the deserialization Cargo feature
+    /// for the expected format(s):
+    ///
+    /// - `deserialize_json`
+    /// - `deserialize_postcard_1`
+    /// - `deserialize_bincode_1`
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    pub fn new(inner: P) -> Self {
+        Self(inner)
     }
 }
 
@@ -227,6 +249,30 @@ where
 {
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
         self.0.dry_load_data(M::INFO, req)
+    }
+}
+
+impl<P, M> BoundLocaleDataProvider<M> for DeserializingOwnedBufferProvider<P>
+where
+    M: DynamicDataMarker,
+    P: BoundLocaleDataProvider<BufferMarker>,
+    for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
+{
+    fn load_bound(
+        &self,
+        req: crate::request::DataAttributesRequest,
+    ) -> Result<BoundLocaleDataResponse<'_, M>, DataError> {
+        let buffer_response = self.0.load_bound(req)?;
+        let buffer_format = buffer_response.metadata.buffer_format.ok_or_else(|| {
+            DataErrorKind::Deserialize
+                .with_str_context("BufferProvider didn't set BufferFormat")
+                .with_debug_context(&req)
+        })?;
+        Ok(BoundLocaleDataResponse {
+            metadata: buffer_response.metadata,
+            payload: deserialize_impl::<M>(buffer_response.payload, buffer_format)
+                .map_err(|e| e.with_debug_context(&req))?,
+        })
     }
 }
 

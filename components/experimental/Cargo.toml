@@ -67,6 +67,7 @@ icu_provider = { path = "../../provider/core", features = ["std"]}
 icu_locale_data = { workspace = true }
 icu_properties_data = { workspace = true }
 icu_normalizer_data = { workspace = true }
+icu_provider_blob = { workspace = true, features = ["alloc"] }
 
 [features]
 default = ["compiled_data"]
@@ -75,6 +76,11 @@ datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "ti
 ryu = ["fixed_decimal/ryu"]
 log = ["dep:log"]
 serde = ["dep:serde", "zerovec/serde", "potential_utf/serde", "tinystr/serde", "icu_collections/serde", "icu_decimal/serde", "icu_list/serde", "icu_pattern/serde", "icu_plurals/serde", "icu_provider/alloc", "icu_provider/serde", "zerotrie/serde", "icu_normalizer/serde", "icu_casemap/serde"]
+
+[[bench]]
+name = "locale_names"
+path = "benches/locale_names/bench.rs"
+harness = false
 
 [[bench]]
 name = "transliterate"
