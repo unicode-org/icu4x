@@ -8,8 +8,15 @@ use criterion::{criterion_group, criterion_main};
 use icu_experimental::displaynames::provider::LocaleNamesRegionLongV1;
 use icu_experimental::provider::Baked;
 use icu_locale::{locale, DataLocale};
-use icu_provider::buf::AsDeserializingBufferProvider;
-use icu_provider::{DataIdentifierBorrowed, DataMarkerAttributes, DataProvider, DataRequest};
+use icu_provider::buf::{
+    AsDeserializingBufferProvider, DeserializingBufferProvider, DeserializingOwnedBufferProvider,
+};
+use icu_provider::unstable::{
+    BindLocaleDataProvider, BoundLocaleDataProvider, DataAttributesRequest,
+};
+use icu_provider::{
+    DataIdentifierBorrowed, DataMarker, DataMarkerAttributes, DataProvider, DataRequest,
+};
 use icu_provider_blob::BlobDataProvider;
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
@@ -530,6 +537,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
                         .unwrap_or_default();
                 }
             }
+            assert_eq!(sum, 801535);
             sum
         });
     });
@@ -555,6 +563,41 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
                             .unwrap_or_default();
                     }
                 }
+                assert_eq!(sum, 801535);
+                sum
+            });
+        });
+    }
+
+    if let Ok(path) = std::env::var("ICU4X_REGION_POSTCARD_PATH") {
+        group.bench_function("region/postcard/all/boundlocale", |bencher| {
+            let postcard = std::fs::read(&path).unwrap().into_boxed_slice();
+            let provider = BlobDataProvider::try_new_from_blob(postcard).unwrap();
+            bencher.iter(|| {
+                let mut sum = 0;
+                for locale in black_box(locales) {
+                    let req = DataRequest {
+                        metadata: Default::default(),
+                        id: DataIdentifierBorrowed::for_locale(locale),
+                    };
+                    let Ok(provider) = provider.bind_locale(LocaleNamesRegionLongV1::INFO, req)
+                    else {
+                        continue
+                    };
+                    let provider = DeserializingOwnedBufferProvider::new(provider.bound_provider);
+                    for attributes in black_box(attributeses) {
+                        sum += BoundLocaleDataProvider::<LocaleNamesRegionLongV1>::load_bound(
+                            &provider,
+                            DataAttributesRequest {
+                                metadata: Default::default(),
+                                marker_attributes: *attributes,
+                            },
+                        )
+                        .map(|resp| resp.payload.name.len())
+                        .unwrap_or_default();
+                    }
+                }
+                assert_eq!(sum, 801535);
                 sum
             });
         });
