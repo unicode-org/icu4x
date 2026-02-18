@@ -543,6 +543,38 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
         });
     });
 
+    group.bench_function("region/baked/10x10pct/1by1", |bencher| {
+        bencher.iter(|| {
+            let mut sum = 0;
+            let mut i = 0;
+            for locale in black_box(locales) {
+                i += 1;
+                if i % 10 != 0 {
+                    continue;
+                }
+                let mut j = 0;
+                for attributes in black_box(attributeses) {
+                    j += 1;
+                    if j % 10 != 0 {
+                        continue;
+                    }
+                    let req = DataRequest {
+                        metadata: Default::default(),
+                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            *attributes,
+                            locale,
+                        ),
+                    };
+                    sum += DataProvider::<LocaleNamesRegionLongV1>::load(&Baked, req)
+                        .map(|resp| resp.payload.get().name.len())
+                        .unwrap_or_default();
+                }
+            }
+            assert_eq!(sum, 6965);
+            sum
+        });
+    });
+
     group.bench_function("region/baked/all/old_map_struct", |bencher| {
         bencher.iter(|| {
             let mut sum = 0;
@@ -563,6 +595,40 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
                 }
             }
             assert_eq!(sum, 801535);
+            sum
+        });
+    });
+
+    group.bench_function("region/baked/10x10pct/old_map_struct", |bencher| {
+        bencher.iter(|| {
+            let mut sum = 0;
+            let mut i = 0;
+            for locale in black_box(locales) {
+                i += 1;
+                if i % 10 != 0 {
+                    continue;
+                }
+                let req = DataRequest {
+                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(locale),
+                };
+                let Ok(payload) = DataProvider::<RegionDisplayNamesV1>::load(&Baked, req) else {
+                    continue;
+                };
+                let payload = payload.payload.get();
+                let mut j = 0;
+                for attributes in black_box(attributeses) {
+                    j += 1;
+                    if j % 10 != 0 {
+                        continue;
+                    }
+                    let id_for_lookup = UnvalidatedTinyAsciiStr::try_from_utf8(attributes.as_bytes()).unwrap_or(UnvalidatedTinyAsciiStr::DEFAULT);
+                    sum += payload.names.get(&id_for_lookup)
+                        .map(|s| s.len())
+                        .unwrap_or_default();
+                }
+            }
+            assert_eq!(sum, 6965);
             sum
         });
     });
@@ -589,6 +655,43 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
                     }
                 }
                 assert_eq!(sum, 801535);
+                sum
+            });
+        });
+    }
+
+    if let Ok(path) = std::env::var("ICU4X_REGION_POSTCARD_PATH") {
+        group.bench_function("region/postcard/10x10pct/1by1", |bencher| {
+            let postcard = std::fs::read(&path).unwrap().into_boxed_slice();
+            let provider = BlobDataProvider::try_new_from_blob(postcard).unwrap();
+            let provider = provider.as_deserializing();
+            bencher.iter(|| {
+                let mut sum = 0;
+                let mut i = 0;
+                for locale in black_box(locales) {
+                    i += 1;
+                    if i % 10 != 0 {
+                        continue;
+                    }
+                    let mut j = 0;
+                    for attributes in black_box(attributeses) {
+                        j += 1;
+                        if j % 10 != 0 {
+                            continue;
+                        }
+                        let req = DataRequest {
+                            metadata: Default::default(),
+                            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                                *attributes,
+                                locale,
+                            ),
+                        };
+                        sum += DataProvider::<LocaleNamesRegionLongV1>::load(&provider, req)
+                            .map(|resp| resp.payload.get().name.len())
+                            .unwrap_or_default();
+                    }
+                }
+                assert_eq!(sum, 6965);
                 sum
             });
         });
@@ -623,6 +726,50 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
                     }
                 }
                 assert_eq!(sum, 801535);
+                sum
+            });
+        });
+    }
+
+    if let Ok(path) = std::env::var("ICU4X_REGION_POSTCARD_PATH") {
+        group.bench_function("region/postcard/10x10pct/boundlocale", |bencher| {
+            let postcard = std::fs::read(&path).unwrap().into_boxed_slice();
+            let provider = BlobDataProvider::try_new_from_blob(postcard).unwrap();
+            bencher.iter(|| {
+                let mut sum = 0;
+                let mut i = 0;
+                for locale in black_box(locales) {
+                    i += 1;
+                    if i % 10 != 0 {
+                        continue;
+                    }
+                    let req = DataRequest {
+                        metadata: Default::default(),
+                        id: DataIdentifierBorrowed::for_locale(locale),
+                    };
+                    let Ok(provider) = provider.bind_locale(LocaleNamesRegionLongV1::INFO, req)
+                    else {
+                        continue
+                    };
+                    let provider = DeserializingOwnedBufferProvider::new(provider.bound_provider);
+                    let mut j = 0;
+                    for attributes in black_box(attributeses) {
+                        j += 1;
+                        if j % 10 != 0 {
+                            continue;
+                        }
+                        sum += BoundLocaleDataProvider::<LocaleNamesRegionLongV1>::load_bound(
+                            &provider,
+                            DataAttributesRequest {
+                                metadata: Default::default(),
+                                marker_attributes: *attributes,
+                            },
+                        )
+                        .map(|resp| resp.payload.name.len())
+                        .unwrap_or_default();
+                    }
+                }
+                assert_eq!(sum, 6965);
                 sum
             });
         });
