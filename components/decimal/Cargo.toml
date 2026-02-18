@@ -60,6 +60,8 @@ harness = false
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true
-constructible_struct_adds_field = "allow" # 
+constructible_struct_adds_field = "allow" 
+struct_marked_non_exhaustive = "allow" 
+
 [lints]
 workspace = true
