@@ -5,7 +5,7 @@
 use criterion::{black_box, Criterion};
 use criterion::{criterion_group, criterion_main};
 
-use icu_experimental::displaynames::provider::LocaleNamesRegionLongV1;
+use icu_experimental::displaynames::provider::{LocaleNamesRegionLongV1, RegionDisplayNamesV1};
 use icu_experimental::provider::Baked;
 use icu_locale::{locale, DataLocale};
 use icu_provider::buf::{
@@ -18,6 +18,7 @@ use icu_provider::{
     DataIdentifierBorrowed, DataMarker, DataMarkerAttributes, DataProvider, DataRequest,
 };
 use icu_provider_blob::BlobDataProvider;
+use tinystr::UnvalidatedTinyAsciiStr;
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "locale_names";
@@ -534,6 +535,30 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
                     };
                     sum += DataProvider::<LocaleNamesRegionLongV1>::load(&Baked, req)
                         .map(|resp| resp.payload.get().name.len())
+                        .unwrap_or_default();
+                }
+            }
+            assert_eq!(sum, 801535);
+            sum
+        });
+    });
+
+    group.bench_function("region/baked/all/old_map_struct", |bencher| {
+        bencher.iter(|| {
+            let mut sum = 0;
+            for locale in black_box(locales) {
+                let req = DataRequest {
+                    metadata: Default::default(),
+                    id: DataIdentifierBorrowed::for_locale(locale),
+                };
+                let Ok(payload) = DataProvider::<RegionDisplayNamesV1>::load(&Baked, req) else {
+                    continue;
+                };
+                let payload = payload.payload.get();
+                for attributes in black_box(attributeses) {
+                    let id_for_lookup = UnvalidatedTinyAsciiStr::try_from_utf8(attributes.as_bytes()).unwrap_or(UnvalidatedTinyAsciiStr::DEFAULT);
+                    sum += payload.names.get(&id_for_lookup)
+                        .map(|s| s.len())
                         .unwrap_or_default();
                 }
             }
