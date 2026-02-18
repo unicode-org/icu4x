@@ -58,5 +58,8 @@ unstable = ["alloc", "dep:icu_pattern", "dep:icu_plurals"]
 name = "fixed_decimal_format"
 harness = false
 
+[package.metadata.cargo-semver-checks.lints]
+workspace = true
+constructible_struct_adds_field = "allow" # 
 [lints]
 workspace = true

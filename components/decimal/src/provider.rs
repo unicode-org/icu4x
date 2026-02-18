@@ -193,6 +193,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV1::INFO, DecimalDigitsV1
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
+#[non_exhaustive]
 pub struct GroupingSizes {
     /// The size of the first (lowest-magnitude) group.
     ///
@@ -212,6 +213,20 @@ pub struct GroupingSizes {
     ///
     /// If 0, grouping separators will never be shown in the fractional part.
     pub fraction: u8,
+}
+
+impl GroupingSizes {
+    /// Creates a new [`GroupingSizes`] with the given integer grouping parameters.
+    ///
+    /// Fraction grouping defaults to 0 (disabled).
+    pub const fn new(primary: u8, secondary: u8, min_grouping: u8) -> Self {
+        Self {
+            primary,
+            secondary,
+            min_grouping,
+            fraction: 0,
+        }
+    }
 }
 
 /// A stack representation of the strings used in [`DecimalSymbols`], i.e. a builder type
