@@ -12,7 +12,7 @@
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::ZeroMap;
+use zerovec::{VarZeroCow, ZeroMap};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
@@ -153,3 +153,25 @@ pub struct VariantDisplayNames<'data> {
 }
 
 icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
+/// [`SingleDisplayName`] provides the user-translated name for a part of a locale.
+pub struct SingleDisplayName<'data> {
+    /// The translated name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub name: VarZeroCow<'data, str>,
+}
+
+icu_provider::data_struct!(SingleDisplayName<'_>, #[cfg(feature = "datagen")]);
+
+icu_provider::data_marker!(
+    /// Data marker for collation tailorings.
+    LocaleNamesRegionLongV1,
+    "locale/names/region/long/v1",
+    SingleDisplayName<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_region",
+);

@@ -155,6 +155,7 @@ pub mod provider {
         super::displaynames::provider::RegionDisplayNamesV1::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1::INFO,
         super::displaynames::provider::VariantDisplayNamesV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionLongV1::INFO,
         super::measure::provider::UnitIdsV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
         super::relativetime::provider::LongDayRelativeV1::INFO,
