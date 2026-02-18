@@ -14,6 +14,7 @@ use icu::datetime::provider::semantic_skeletons::marker_attrs::{
     self, Context, Length, PatternLength,
 };
 use icu::datetime::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
@@ -339,6 +340,17 @@ fn months_convert(
 
     if calendar == DatagenCalendar::Hebrew {
         // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
+        let leap_pattern = SinglePlaceholderPattern::try_from_str(
+            &months["6"].replace(&months["5"], "{0}"),
+            Default::default(),
+        )
+        .unwrap();
+        let standard_after_leap_pattern = SinglePlaceholderPattern::try_from_str(
+            &months["7-yeartype-leap"].replace(&months["7"], "{0}"),
+            Default::default(),
+        )
+        .unwrap();
+
         let symbols = [
             months["1"].as_str(),
             months["2"].as_str(),
@@ -352,20 +364,11 @@ fn months_convert(
             months["11"].as_str(),
             months["12"].as_str(),
             months["13"].as_str(),
-            "",
-            "",
-            "",
-            "",
-            months["6"].as_str(),
-            months["7-yeartype-leap"].as_str(),
-            "",
-            "",
-            "",
-            "",
-            "",
+            &leap_pattern.store,
+            &standard_after_leap_pattern.store,
             "",
         ];
-        Ok(MonthNames::LeapLinear((&symbols).into()))
+        Ok(MonthNames::LeapPattern((&symbols).into()))
     } else {
         let months = months
             .iter()

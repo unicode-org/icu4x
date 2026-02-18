@@ -3782,6 +3782,7 @@ impl RawDateTimeNamesBorrowed<'_> {
                         .map(MonthPlaceholderValue::PlainString)
                 }
             }
+            #[cfg(feature = "serde")]
             MonthNames::LeapLinear(leap_linear) => {
                 let num_months = leap_linear.len() / 2;
                 if month.leap_status() != LeapStatus::Normal {
