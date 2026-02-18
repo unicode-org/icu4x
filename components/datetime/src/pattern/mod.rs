@@ -74,6 +74,7 @@ pub(crate) enum MonthPlaceholderValue<'a> {
     PlainString(&'a str),
     Numeric,
     NumericPattern(&'a SinglePlaceholderPattern),
+    StringPattern(&'a str, &'a SinglePlaceholderPattern),
 }
 
 /// Error returned from [`FixedCalendarDateTimeNames`]'s pattern load methods.

@@ -284,6 +284,12 @@ where
                         Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded)
                     }
                 }
+                Ok(MonthPlaceholderValue::StringPattern(string, substitution_pattern)) => {
+                    w.with_part(PART, |w| {
+                        substitution_pattern.interpolate([string]).write_to(w)
+                    })?;
+                    Ok(())
+                }
                 Err(e) => {
                     w.with_part(PART, |w| {
                         w.with_part(Part::ERROR, |w| w.write_str(&month.as_input().code().0))

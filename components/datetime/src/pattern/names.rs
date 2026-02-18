@@ -26,6 +26,7 @@ use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_decimal::DecimalFormatter;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 
 /// Choices for loading year names.
@@ -3771,12 +3772,14 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
         let month_index = usize::from(month.number() - 1);
-        let name = match month_names {
+        match month_names {
             MonthNames::Linear(linear) => {
                 if month.leap_status() != LeapStatus::Normal {
                     None
                 } else {
-                    linear.get(month_index)
+                    linear
+                        .get(month_index)
+                        .map(MonthPlaceholderValue::PlainString)
                 }
             }
             MonthNames::LeapLinear(leap_linear) => {
@@ -3788,19 +3791,41 @@ impl RawDateTimeNamesBorrowed<'_> {
                 } else {
                     None
                 }
+                .map(MonthPlaceholderValue::PlainString)
             }
             MonthNames::LeapNumeric(leap_numeric) => {
                 if month.leap_status() != LeapStatus::Normal {
-                    return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric));
+                    Some(MonthPlaceholderValue::NumericPattern(leap_numeric))
                 } else {
-                    return Ok(MonthPlaceholderValue::Numeric);
+                    Some(MonthPlaceholderValue::Numeric)
                 }
             }
-        };
+            MonthNames::LeapPattern(data) => if month_index < data.len() - 3 {
+                data.get(month_index)
+            } else {
+                None
+            }
+            .and_then(|normal_name| {
+                Some(match month.leap_status() {
+                    LeapStatus::Normal => MonthPlaceholderValue::PlainString(normal_name),
+                    LeapStatus::Leap => MonthPlaceholderValue::StringPattern(
+                        normal_name,
+                        SinglePlaceholderPattern::from_ref_store(&data[data.len() - 3]).ok()?,
+                    ),
+                    LeapStatus::StandardAfterLeap => MonthPlaceholderValue::StringPattern(
+                        normal_name,
+                        SinglePlaceholderPattern::from_ref_store(&data[data.len() - 2]).ok()?,
+                    ),
+                    _ => {
+                        debug_assert!(false, "unhandled LeapStatus");
+                        MonthPlaceholderValue::PlainString(normal_name)
+                    }
+                })
+            }),
+        }
         // Note: Always return `false` for the second argument since neo MonthNames
         // knows how to handle leap months and we don't need the fallback logic
-        name.map(MonthPlaceholderValue::PlainString)
-            .ok_or(GetNameForMonthError::InvalidMonthCode)
+        .ok_or(GetNameForMonthError::InvalidMonthCode)
     }
 
     pub(crate) fn get_name_for_weekday(
