@@ -13,18 +13,12 @@ pub struct DecimalFormatterOptions {
     ///
     /// Default is [`GroupingStrategy::Auto`]
     pub grouping_strategy: Option<GroupingStrategy>,
-
-    /// The grouping strategy to use for the fractional part of the number.
-    ///
-    /// If `None`, grouping separators will never be shown in the fractional part.
-    pub fraction_grouping: Option<GroupingStrategy>,
 }
 
 impl From<GroupingStrategy> for DecimalFormatterOptions {
     fn from(grouping_strategy: GroupingStrategy) -> Self {
         Self {
             grouping_strategy: Some(grouping_strategy),
-            fraction_grouping: Some(grouping_strategy),
         }
     }
 }

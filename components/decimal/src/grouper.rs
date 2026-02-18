@@ -65,19 +65,21 @@ pub fn check_fraction(
     if magnitude >= 0 {
         return false;
     }
-    if sizes.primary == 0 {
+    if sizes.fraction == 0 {
         return false;
     }
     let min_grouping = {
         use GroupingStrategy::*;
         match strategy {
-            Never | Auto => return false,
-            Always => cmp::max(1, sizes.min_grouping) as i16,
+            Never => return false,
+            // Note: Auto and Always are the same for DecimalFormatter.
+            // When currencies are implemented, this will change.
+            Auto | Always => cmp::max(1, sizes.min_grouping) as i16,
             Min2 => cmp::max(2, sizes.min_grouping) as i16,
         }
     };
 
-    let fraction = sizes.primary as i16;
+    let fraction = sizes.fraction as i16;
 
     // If there are fewer than `fraction + min_grouping` fraction digits,
     // we do not group.
@@ -106,16 +108,19 @@ fn test_grouper() {
         min_grouping: 1,
         primary: 3,
         secondary: 3,
+        fraction: 0,
     };
     let indic_sizes = GroupingSizes {
         min_grouping: 1,
         primary: 3,
         secondary: 2,
+        fraction: 0,
     };
     let western_sizes_min3 = GroupingSizes {
         min_grouping: 3,
         primary: 3,
         secondary: 3,
+        fraction: 0,
     };
 
     // primary=0 implies no grouping; the other fields are ignored
@@ -123,6 +128,7 @@ fn test_grouper() {
         min_grouping: 0,
         primary: 0,
         secondary: 0,
+        fraction: 0,
     };
 
     // secondary=0 implies that it inherits from primary
@@ -130,6 +136,7 @@ fn test_grouper() {
         min_grouping: 0,
         primary: 3,
         secondary: 0,
+        fraction: 0,
     };
 
     #[derive(Debug)]
@@ -254,87 +261,124 @@ fn test_fraction_grouper() {
     use icu_provider::prelude::*;
     use std::cell::RefCell;
     use writeable::assert_writeable_eq;
+    use zerovec::VarZeroCow;
 
-    let western_sizes = GroupingSizes {
-        min_grouping: 1,
-        primary: 3,
-        secondary: 3,
-    };
-    let sizes_2 = GroupingSizes {
-        min_grouping: 1,
-        primary: 2,
-        secondary: 2,
-    };
+    // Use thin space (U+202F) as grouping separator to produce valid
+    // NIST/SI-style output. Fraction grouping with comma separators
+    // would produce bogus output like "12,345.123,45".
+    fn make_symbols(sizes: GroupingSizes) -> DecimalSymbols<'static> {
+        let strings = DecimalSymbolStrsBuilder {
+            minus_sign_prefix: VarZeroCow::new_borrowed("-"),
+            minus_sign_suffix: VarZeroCow::new_borrowed(""),
+            plus_sign_prefix: VarZeroCow::new_borrowed("+"),
+            plus_sign_suffix: VarZeroCow::new_borrowed(""),
+            decimal_separator: VarZeroCow::new_borrowed("."),
+            grouping_separator: VarZeroCow::new_borrowed("\u{202F}"),
+            numsys: VarZeroCow::new_borrowed("latn"),
+        };
+        DecimalSymbols {
+            strings: VarZeroCow::from_encodeable(&strings),
+            grouping_sizes: sizes,
+        }
+    }
 
     #[derive(Debug)]
     struct TestCase {
         strategy: GroupingStrategy,
         sizes: GroupingSizes,
-        fraction_strategy: Option<GroupingStrategy>,
         input: &'static str,
         expected: &'static str,
     }
     let cases = [
+        // Basic fraction grouping by 3 with thin space
         TestCase {
             strategy: GroupingStrategy::Auto,
-            sizes: western_sizes,
-            fraction_strategy: Some(GroupingStrategy::Always),
+            sizes: GroupingSizes {
+                min_grouping: 1,
+                primary: 3,
+                secondary: 3,
+                fraction: 3,
+            },
             input: "0.1234567",
-            expected: "0.123,456,7",
+            expected: "0.123\u{202F}456\u{202F}7",
         },
+        // Fraction grouping by 2
         TestCase {
             strategy: GroupingStrategy::Auto,
-            sizes: sizes_2,
-            fraction_strategy: Some(GroupingStrategy::Always),
+            sizes: GroupingSizes {
+                min_grouping: 1,
+                primary: 2,
+                secondary: 2,
+                fraction: 2,
+            },
             input: "0.12345",
-            expected: "0.12,34,5",
+            expected: "0.12\u{202F}34\u{202F}5",
         },
+        // Never strategy disables everything
         TestCase {
             strategy: GroupingStrategy::Never,
-            sizes: western_sizes,
-            fraction_strategy: Some(GroupingStrategy::Never),
+            sizes: GroupingSizes {
+                min_grouping: 1,
+                primary: 3,
+                secondary: 3,
+                fraction: 3,
+            },
             input: "0.1234567",
             expected: "0.1234567",
         },
-        // Check that integer grouping still works
+        // Integer + fraction grouping with thin space
         TestCase {
             strategy: GroupingStrategy::Auto,
-            sizes: western_sizes,
-            fraction_strategy: Some(GroupingStrategy::Always),
-            input: "12345.123456",
-            expected: "12,345.123,456",
-        },
-        // NIST example: 4 digits don't group if min_grouping is 2
-        TestCase {
-            strategy: GroupingStrategy::Min2,
             sizes: GroupingSizes {
-                min_grouping: 1, // strategy Min2 overrides this to 2
+                min_grouping: 1,
                 primary: 3,
                 secondary: 3,
+                fraction: 3,
             },
-            fraction_strategy: Some(GroupingStrategy::Min2),
-            input: "0.1234",
-            expected: "0.1234",
+            input: "12345.123456",
+            expected: "12\u{202F}345.123\u{202F}456",
         },
+        // NIST: Min2 suppresses 4-digit groups (3 + min2 = 5 digits needed)
         TestCase {
             strategy: GroupingStrategy::Min2,
             sizes: GroupingSizes {
                 min_grouping: 1,
                 primary: 3,
                 secondary: 3,
+                fraction: 3,
             },
-            fraction_strategy: Some(GroupingStrategy::Min2),
+            input: "0.1234",
+            expected: "0.1234",
+        },
+        // NIST: 5 fraction digits → grouping appears
+        TestCase {
+            strategy: GroupingStrategy::Min2,
+            sizes: GroupingSizes {
+                min_grouping: 1,
+                primary: 3,
+                secondary: 3,
+                fraction: 3,
+            },
             input: "0.12345",
-            expected: "0.123,45",
+            expected: "0.123\u{202F}45",
+        },
+        // fraction: 0 means no fraction grouping
+        TestCase {
+            strategy: GroupingStrategy::Auto,
+            sizes: GroupingSizes {
+                min_grouping: 1,
+                primary: 3,
+                secondary: 3,
+                fraction: 0,
+            },
+            input: "0.1234567",
+            expected: "0.1234567",
         },
     ];
 
     for cas in &cases {
         let dec: Decimal = cas.input.parse().unwrap();
-        let symbols = DecimalSymbols {
-            grouping_sizes: cas.sizes,
-            ..DecimalSymbols::new_en_for_testing()
-        };
+        let symbols = make_symbols(cas.sizes);
         let digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         struct Provider(RefCell<Option<DecimalSymbols<'static>>>, [char; 10]);
         impl DataProvider<DecimalSymbolsV1> for Provider {
@@ -362,7 +406,6 @@ fn test_fraction_grouper() {
         let provider = Provider(RefCell::new(Some(symbols)), digits);
         let options = options::DecimalFormatterOptions {
             grouping_strategy: Some(cas.strategy),
-            fraction_grouping: cas.fraction_strategy,
         };
         let formatter =
             DecimalFormatter::try_new_unstable(&provider, Default::default(), options).unwrap();

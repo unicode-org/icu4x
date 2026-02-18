@@ -233,7 +233,7 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
                     if grouper::check_fraction(
                         lower_magnitude,
                         m,
-                        self.options.fraction_grouping.unwrap_or_default(),
+                        self.options.grouping_strategy.unwrap_or_default(),
                         self.symbols.grouping_sizes,
                     ) && range.peek().is_some()
                     {
@@ -319,29 +319,4 @@ pub fn test_es_mx() {
     let fmt = DecimalFormatter::try_new(locale, Default::default()).unwrap();
     let fd = "12345.67".parse().unwrap();
     assert_writeable_eq!(fmt.format(&fd), "12,345.67");
-}
-
-#[test]
-fn test_mixed_grouping() {
-    use icu_locale_core::locale;
-    use writeable::assert_writeable_eq;
-    let locale = locale!("en-US").into();
-    let options = DecimalFormatterOptions {
-        grouping_strategy: Some(GroupingStrategy::Auto),
-        fraction_grouping: Some(GroupingStrategy::Min2),
-    };
-    let fmt = DecimalFormatter::try_new(locale, options).unwrap();
-
-    // Integer grouping (Auto) + Fraction grouping (Min2)
-    // 1 digit fraction: no grouping
-    let d1 = "12345.1".parse().unwrap();
-    assert_writeable_eq!(fmt.format(&d1), "12,345.1");
-
-    // 4 digits fraction: Min2 suppression applies (size 3 + min_grouping 2 = 5 needed)
-    let d4 = "12345.1234".parse().unwrap();
-    assert_writeable_eq!(fmt.format(&d4), "12,345.1234");
-
-    // 5 digits fraction: grouping appears
-    let d5 = "12345.12345".parse().unwrap();
-    assert_writeable_eq!(fmt.format(&d5), "12,345.123,45");
 }
