@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 # These line boundary rules are based on UAX #14, Unicode Version 15.1.0.
-# https://www.unicode.org/reports/tr29/tr29-43.html
+# https://www.unicode.org/reports/tr14/tr14-51.html
 
 segmenter_type = "line"
 
