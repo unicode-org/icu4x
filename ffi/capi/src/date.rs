@@ -405,6 +405,7 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(icu::calendar::types::Month, Struct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::as_input, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let code = self.0.month().as_input().code();
