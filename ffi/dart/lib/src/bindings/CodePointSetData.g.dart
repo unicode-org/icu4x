@@ -58,43 +58,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
 
-  /// Produces a set for obtaining General Category Group values
-  /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C, using compiled data.
-  ///
-  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
-  ///
-  /// See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
-  factory CodePointSetData.generalCategoryGroup(GeneralCategoryGroup group) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_CodePointSetData_create_general_category_group_mv1(group._toFfi(temp.arena));
-    return CodePointSetData._fromFfi(result, []);
-  }
-
-  /// Produces a set for obtaining General Category Group values
-  /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C, using a provided data source.
-  ///
-  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
-  ///
-  /// See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory CodePointSetData.generalCategoryGroupWithProvider(DataProvider provider, int group) {
-    final result = _icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(provider._ffi, group);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return CodePointSetData._fromFfi(result.union.ok, []);
-  }
-
-  /// Get the `Ascii_Hex_Digit` value for a given character, using compiled data
+  /// Get the `ASCII_Hex_Digit` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
   static bool asciiHexDigitForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_ascii_hex_digit_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Ascii_Hex_Digit` property, using compiled data.
+  /// Create a set for the `ASCII_Hex_Digit` property, using compiled data.
   ///
   /// See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
   factory CodePointSetData.asciiHexDigit() {
@@ -102,7 +76,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Ascii_Hex_Digit` property, using a particular data source.
+  /// Create a set for the `ASCII_Hex_Digit` property, using a particular data source.
   ///
   /// See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
   ///
@@ -115,15 +89,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Alnum` value for a given character, using compiled data
+  /// Get the `alnum` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alnum.html) for more information.
   static bool alnumForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_alnum_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Alnum` property, using compiled data.
+  /// Create a set for the `alnum` property, using compiled data.
   ///
   /// See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alnum.html) for more information.
   factory CodePointSetData.alnum() {
@@ -131,7 +107,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Alnum` property, using a particular data source.
+  /// Create a set for the `alnum` property, using a particular data source.
   ///
   /// See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alnum.html) for more information.
   ///
@@ -147,6 +123,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Alphabetic` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alphabetic.html) for more information.
   static bool alphabeticForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_alphabetic_for_char_mv1(ch);
     return result;
@@ -176,6 +154,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Bidi_Control` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `BidiControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiControl.html) for more information.
   static bool bidiControlForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_bidi_control_for_char_mv1(ch);
     return result;
@@ -205,6 +185,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Bidi_Mirrored` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiMirrored.html) for more information.
   static bool bidiMirroredForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_bidi_mirrored_for_char_mv1(ch);
     return result;
@@ -231,15 +213,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Blank` value for a given character, using compiled data
+  /// Get the `blank` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Blank`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Blank.html) for more information.
   static bool blankForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_blank_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Blank` property, using compiled data.
+  /// Create a set for the `blank` property, using compiled data.
   ///
   /// See the [Rust documentation for `Blank`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Blank.html) for more information.
   factory CodePointSetData.blank() {
@@ -247,7 +231,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Blank` property, using a particular data source.
+  /// Create a set for the `blank` property, using a particular data source.
   ///
   /// See the [Rust documentation for `Blank`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Blank.html) for more information.
   ///
@@ -263,6 +247,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Cased` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Cased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Cased.html) for more information.
   static bool casedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_cased_for_char_mv1(ch);
     return result;
@@ -292,6 +278,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Case_Ignorable` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseIgnorable.html) for more information.
   static bool caseIgnorableForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_case_ignorable_for_char_mv1(ch);
     return result;
@@ -321,6 +309,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Full_Composition_Exclusion` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
   static bool fullCompositionExclusionForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_full_composition_exclusion_for_char_mv1(ch);
     return result;
@@ -350,6 +340,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Changes_When_Casefolded` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
   static bool changesWhenCasefoldedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_changes_when_casefolded_for_char_mv1(ch);
     return result;
@@ -379,6 +371,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Changes_When_Casemapped` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
   static bool changesWhenCasemappedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_changes_when_casemapped_for_char_mv1(ch);
     return result;
@@ -405,15 +399,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Changes_When_Nfkc_Casefolded` value for a given character, using compiled data
+  /// Get the `Changes_When_NFKC_Casefolded` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
   static bool changesWhenNfkcCasefoldedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_changes_when_nfkc_casefolded_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Changes_When_Nfkc_Casefolded` property, using compiled data.
+  /// Create a set for the `Changes_When_NFKC_Casefolded` property, using compiled data.
   ///
   /// See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
   factory CodePointSetData.changesWhenNfkcCasefolded() {
@@ -421,7 +417,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Changes_When_Nfkc_Casefolded` property, using a particular data source.
+  /// Create a set for the `Changes_When_NFKC_Casefolded` property, using a particular data source.
   ///
   /// See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
   ///
@@ -437,6 +433,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Changes_When_Lowercased` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
   static bool changesWhenLowercasedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_changes_when_lowercased_for_char_mv1(ch);
     return result;
@@ -466,6 +464,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Changes_When_Titlecased` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
   static bool changesWhenTitlecasedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_changes_when_titlecased_for_char_mv1(ch);
     return result;
@@ -495,6 +495,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Changes_When_Uppercased` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
   static bool changesWhenUppercasedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_changes_when_uppercased_for_char_mv1(ch);
     return result;
@@ -524,6 +526,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Dash` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Dash`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Dash.html) for more information.
   static bool dashForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_dash_for_char_mv1(ch);
     return result;
@@ -553,6 +557,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Deprecated` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Deprecated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Deprecated.html) for more information.
   static bool deprecatedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_deprecated_for_char_mv1(ch);
     return result;
@@ -582,6 +588,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Default_Ignorable_Code_Point` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
   static bool defaultIgnorableCodePointForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_default_ignorable_code_point_for_char_mv1(ch);
     return result;
@@ -611,6 +619,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Diacritic` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Diacritic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Diacritic.html) for more information.
   static bool diacriticForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_diacritic_for_char_mv1(ch);
     return result;
@@ -640,6 +650,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Emoji_Modifier_Base` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifierBase.html) for more information.
   static bool emojiModifierBaseForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_emoji_modifier_base_for_char_mv1(ch);
     return result;
@@ -669,6 +681,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Emoji_Component` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiComponent.html) for more information.
   static bool emojiComponentForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_emoji_component_for_char_mv1(ch);
     return result;
@@ -698,6 +712,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Emoji_Modifier` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifier.html) for more information.
   static bool emojiModifierForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_emoji_modifier_for_char_mv1(ch);
     return result;
@@ -727,6 +743,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Emoji` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Emoji`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Emoji.html) for more information.
   static bool emojiForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_emoji_for_char_mv1(ch);
     return result;
@@ -756,6 +774,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Emoji_Presentation` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiPresentation.html) for more information.
   static bool emojiPresentationForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_emoji_presentation_for_char_mv1(ch);
     return result;
@@ -785,6 +805,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Extender` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Extender`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Extender.html) for more information.
   static bool extenderForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_extender_for_char_mv1(ch);
     return result;
@@ -814,6 +836,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Extended_Pictographic` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ExtendedPictographic.html) for more information.
   static bool extendedPictographicForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_extended_pictographic_for_char_mv1(ch);
     return result;
@@ -840,15 +864,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Graph` value for a given character, using compiled data
+  /// Get the `graph` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Graph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Graph.html) for more information.
   static bool graphForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_graph_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Graph` property, using compiled data.
+  /// Create a set for the `graph` property, using compiled data.
   ///
   /// See the [Rust documentation for `Graph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Graph.html) for more information.
   factory CodePointSetData.graph() {
@@ -856,7 +882,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Graph` property, using a particular data source.
+  /// Create a set for the `graph` property, using a particular data source.
   ///
   /// See the [Rust documentation for `Graph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Graph.html) for more information.
   ///
@@ -872,6 +898,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Grapheme_Base` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeBase.html) for more information.
   static bool graphemeBaseForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_grapheme_base_for_char_mv1(ch);
     return result;
@@ -901,6 +929,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Grapheme_Extend` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeExtend.html) for more information.
   static bool graphemeExtendForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_grapheme_extend_for_char_mv1(ch);
     return result;
@@ -930,6 +960,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Grapheme_Link` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeLink.html) for more information.
   static bool graphemeLinkForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_grapheme_link_for_char_mv1(ch);
     return result;
@@ -959,6 +991,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Hex_Digit` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `HexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HexDigit.html) for more information.
   static bool hexDigitForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_hex_digit_for_char_mv1(ch);
     return result;
@@ -988,6 +1022,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Hyphen` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Hyphen`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Hyphen.html) for more information.
   static bool hyphenForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_hyphen_for_char_mv1(ch);
     return result;
@@ -1017,6 +1053,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
   static bool idCompatMathContinueForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_id_compat_math_continue_for_char_mv1(ch);
     return result;
@@ -1046,6 +1084,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `ID_Compat_Math_Start` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathStart.html) for more information.
   static bool idCompatMathStartForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_id_compat_math_start_for_char_mv1(ch);
     return result;
@@ -1072,15 +1112,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Id_Continue` value for a given character, using compiled data
+  /// Get the `ID_Continue` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
   static bool idContinueForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_id_continue_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Id_Continue` property, using compiled data.
+  /// Create a set for the `ID_Continue` property, using compiled data.
   ///
   /// See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
   factory CodePointSetData.idContinue() {
@@ -1088,7 +1130,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Id_Continue` property, using a particular data source.
+  /// Create a set for the `ID_Continue` property, using a particular data source.
   ///
   /// See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
   ///
@@ -1104,6 +1146,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Ideographic` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Ideographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Ideographic.html) for more information.
   static bool ideographicForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_ideographic_for_char_mv1(ch);
     return result;
@@ -1130,15 +1174,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Id_Start` value for a given character, using compiled data
+  /// Get the `ID_Start` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
   static bool idStartForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_id_start_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Id_Start` property, using compiled data.
+  /// Create a set for the `ID_Start` property, using compiled data.
   ///
   /// See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
   factory CodePointSetData.idStart() {
@@ -1146,7 +1192,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Id_Start` property, using a particular data source.
+  /// Create a set for the `ID_Start` property, using a particular data source.
   ///
   /// See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
   ///
@@ -1159,15 +1205,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Ids_Binary_Operator` value for a given character, using compiled data
+  /// Get the `IDS_Binary_Operator` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
   static bool idsBinaryOperatorForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_ids_binary_operator_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Ids_Binary_Operator` property, using compiled data.
+  /// Create a set for the `IDS_Binary_Operator` property, using compiled data.
   ///
   /// See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
   factory CodePointSetData.idsBinaryOperator() {
@@ -1175,7 +1223,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Ids_Binary_Operator` property, using a particular data source.
+  /// Create a set for the `IDS_Binary_Operator` property, using a particular data source.
   ///
   /// See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
   ///
@@ -1188,15 +1236,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Ids_Trinary_Operator` value for a given character, using compiled data
+  /// Get the `IDS_Trinary_Operator` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
   static bool idsTrinaryOperatorForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_ids_trinary_operator_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Ids_Trinary_Operator` property, using compiled data.
+  /// Create a set for the `IDS_Trinary_Operator` property, using compiled data.
   ///
   /// See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
   factory CodePointSetData.idsTrinaryOperator() {
@@ -1204,7 +1254,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Ids_Trinary_Operator` property, using a particular data source.
+  /// Create a set for the `IDS_Trinary_Operator` property, using a particular data source.
   ///
   /// See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
   ///
@@ -1217,15 +1267,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Ids_Unary_Operator` value for a given character, using compiled data
+  /// Get the `IDS_Unary_Operator` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
   static bool idsUnaryOperatorForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_ids_unary_operator_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Ids_Unary_Operator` property, using compiled data.
+  /// Create a set for the `IDS_Unary_Operator` property, using compiled data.
   ///
   /// See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
   factory CodePointSetData.idsUnaryOperator() {
@@ -1233,7 +1285,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Ids_Unary_Operator` property, using a particular data source.
+  /// Create a set for the `IDS_Unary_Operator` property, using a particular data source.
   ///
   /// See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
   ///
@@ -1249,6 +1301,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Join_Control` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `JoinControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoinControl.html) for more information.
   static bool joinControlForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_join_control_for_char_mv1(ch);
     return result;
@@ -1278,6 +1332,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Logical_Order_Exception` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LogicalOrderException.html) for more information.
   static bool logicalOrderExceptionForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_logical_order_exception_for_char_mv1(ch);
     return result;
@@ -1307,6 +1363,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Lowercase` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Lowercase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Lowercase.html) for more information.
   static bool lowercaseForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_lowercase_for_char_mv1(ch);
     return result;
@@ -1336,6 +1394,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Math` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Math`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Math.html) for more information.
   static bool mathForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_math_for_char_mv1(ch);
     return result;
@@ -1362,15 +1422,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Modifier_Combining_mark` value for a given character, using compiled data
+  /// Get the `Modifier_Combining_Mark` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
   static bool modifierCombiningMarkForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_modifier_combining_mark_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Modifier_Combining_mark` property, using compiled data.
+  /// Create a set for the `Modifier_Combining_Mark` property, using compiled data.
   ///
   /// See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
   factory CodePointSetData.modifierCombiningMark() {
@@ -1378,7 +1440,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Modifier_Combining_mark` property, using a particular data source.
+  /// Create a set for the `Modifier_Combining_Mark` property, using a particular data source.
   ///
   /// See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
   ///
@@ -1394,6 +1456,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Noncharacter_Code_Point` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
   static bool noncharacterCodePointForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1(ch);
     return result;
@@ -1420,15 +1484,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Nfc_Inert` value for a given character, using compiled data
+  /// Get the `NFC_Inert` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
   static bool nfcInertForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_nfc_inert_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Nfc_Inert` property, using compiled data.
+  /// Create a set for the `NFC_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
   factory CodePointSetData.nfcInert() {
@@ -1436,7 +1502,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Nfc_Inert` property, using a particular data source.
+  /// Create a set for the `NFC_Inert` property, using a particular data source.
   ///
   /// See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
   ///
@@ -1449,15 +1515,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Nfd_Inert` value for a given character, using compiled data
+  /// Get the `NFD_Inert` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
   static bool nfdInertForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_nfd_inert_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Nfd_Inert` property, using compiled data.
+  /// Create a set for the `NFD_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
   factory CodePointSetData.nfdInert() {
@@ -1465,7 +1533,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Nfd_Inert` property, using a particular data source.
+  /// Create a set for the `NFD_Inert` property, using a particular data source.
   ///
   /// See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
   ///
@@ -1478,15 +1546,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Nfkc_Inert` value for a given character, using compiled data
+  /// Get the `NFKC_Inert` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
   static bool nfkcInertForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_nfkc_inert_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Nfkc_Inert` property, using compiled data.
+  /// Create a set for the `NFKC_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
   factory CodePointSetData.nfkcInert() {
@@ -1494,7 +1564,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Nfkc_Inert` property, using a particular data source.
+  /// Create a set for the `NFKC_Inert` property, using a particular data source.
   ///
   /// See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
   ///
@@ -1507,15 +1577,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Nfkd_Inert` value for a given character, using compiled data
+  /// Get the `NFKD_Inert` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
   static bool nfkdInertForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_nfkd_inert_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Nfkd_Inert` property, using compiled data.
+  /// Create a set for the `NFKD_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
   factory CodePointSetData.nfkdInert() {
@@ -1523,7 +1595,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Nfkd_Inert` property, using a particular data source.
+  /// Create a set for the `NFKD_Inert` property, using a particular data source.
   ///
   /// See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
   ///
@@ -1539,6 +1611,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Pattern_Syntax` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternSyntax.html) for more information.
   static bool patternSyntaxForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_pattern_syntax_for_char_mv1(ch);
     return result;
@@ -1568,6 +1642,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Pattern_White_Space` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
   static bool patternWhiteSpaceForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_pattern_white_space_for_char_mv1(ch);
     return result;
@@ -1597,6 +1673,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Prepended_Concatenation_Mark` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
   static bool prependedConcatenationMarkForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_prepended_concatenation_mark_for_char_mv1(ch);
     return result;
@@ -1623,15 +1701,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Print` value for a given character, using compiled data
+  /// Get the `print` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Print`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Print.html) for more information.
   static bool printForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_print_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Print` property, using compiled data.
+  /// Create a set for the `print` property, using compiled data.
   ///
   /// See the [Rust documentation for `Print`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Print.html) for more information.
   factory CodePointSetData.print() {
@@ -1639,7 +1719,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Print` property, using a particular data source.
+  /// Create a set for the `print` property, using a particular data source.
   ///
   /// See the [Rust documentation for `Print`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Print.html) for more information.
   ///
@@ -1655,6 +1735,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Quotation_Mark` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.QuotationMark.html) for more information.
   static bool quotationMarkForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_quotation_mark_for_char_mv1(ch);
     return result;
@@ -1684,6 +1766,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Radical` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Radical`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Radical.html) for more information.
   static bool radicalForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_radical_for_char_mv1(ch);
     return result;
@@ -1713,6 +1797,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Regional_Indicator` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.RegionalIndicator.html) for more information.
   static bool regionalIndicatorForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_regional_indicator_for_char_mv1(ch);
     return result;
@@ -1742,6 +1828,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Soft_Dotted` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SoftDotted.html) for more information.
   static bool softDottedForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_soft_dotted_for_char_mv1(ch);
     return result;
@@ -1771,6 +1859,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Segment_Starter` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SegmentStarter.html) for more information.
   static bool segmentStarterForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_segment_starter_for_char_mv1(ch);
     return result;
@@ -1800,6 +1890,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Case_Sensitive` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseSensitive.html) for more information.
   static bool caseSensitiveForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_case_sensitive_for_char_mv1(ch);
     return result;
@@ -1829,6 +1921,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Sentence_Terminal` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceTerminal.html) for more information.
   static bool sentenceTerminalForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_sentence_terminal_for_char_mv1(ch);
     return result;
@@ -1858,6 +1952,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Terminal_Punctuation` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.TerminalPunctuation.html) for more information.
   static bool terminalPunctuationForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_terminal_punctuation_for_char_mv1(ch);
     return result;
@@ -1887,6 +1983,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Unified_Ideograph` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
   static bool unifiedIdeographForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_unified_ideograph_for_char_mv1(ch);
     return result;
@@ -1916,6 +2014,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Uppercase` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Uppercase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Uppercase.html) for more information.
   static bool uppercaseForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_uppercase_for_char_mv1(ch);
     return result;
@@ -1945,6 +2045,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Variation_Selector` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VariationSelector.html) for more information.
   static bool variationSelectorForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_variation_selector_for_char_mv1(ch);
     return result;
@@ -1974,6 +2076,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `White_Space` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WhiteSpace.html) for more information.
   static bool whiteSpaceForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_white_space_for_char_mv1(ch);
     return result;
@@ -2000,15 +2104,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Xdigit` value for a given character, using compiled data
+  /// Get the `xdigit` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Xdigit.html) for more information.
   static bool xdigitForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_xdigit_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Xdigit` property, using compiled data.
+  /// Create a set for the `xdigit` property, using compiled data.
   ///
   /// See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Xdigit.html) for more information.
   factory CodePointSetData.xdigit() {
@@ -2016,7 +2122,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Xdigit` property, using a particular data source.
+  /// Create a set for the `xdigit` property, using a particular data source.
   ///
   /// See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Xdigit.html) for more information.
   ///
@@ -2029,15 +2135,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Xid_Continue` value for a given character, using compiled data
+  /// Get the `XID_Continue` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
   static bool xidContinueForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_xid_continue_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Xid_Continue` property, using compiled data.
+  /// Create a set for the `XID_Continue` property, using compiled data.
   ///
   /// See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
   factory CodePointSetData.xidContinue() {
@@ -2045,7 +2153,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Xid_Continue` property, using a particular data source.
+  /// Create a set for the `XID_Continue` property, using a particular data source.
   ///
   /// See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
   ///
@@ -2058,15 +2166,17 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
-  /// Get the `Xid_Start` value for a given character, using compiled data
+  /// Get the `XID_Start` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  ///
+  /// See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
   static bool xidStartForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_xid_start_for_char_mv1(ch);
     return result;
   }
 
-  /// Create a set for the `Xid_Start` property, using compiled data.
+  /// Create a set for the `XID_Start` property, using compiled data.
   ///
   /// See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
   factory CodePointSetData.xidStart() {
@@ -2074,7 +2184,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
-  /// Create a set for the `Xid_Start` property, using a particular data source.
+  /// Create a set for the `XID_Start` property, using a particular data source.
   ///
   /// See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
   ///
@@ -2087,6 +2197,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set appropriate for ECMAScript (ECMA-262) RegExp Unicode property escapes, using compiled data.
   /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
   ///
   /// See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
@@ -2101,6 +2212,7 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set appropriate for ECMAScript (ECMA-262) RegExp Unicode property escapes, using a particular data source.
   /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
   ///
   /// See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
@@ -2136,16 +2248,6 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_iter_ranges_mv1(ffi.Poi
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_iter_ranges_complemented_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_iter_ranges_complemented_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@_DiplomatFfiUse('icu4x_CodePointSetData_create_general_category_group_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_GeneralCategoryGroupFfi)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_general_category_group_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_general_category_group_mv1(_GeneralCategoryGroupFfi group);
-
-@_DiplomatFfiUse('icu4x_CodePointSetData_create_general_category_group_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_general_category_group_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, int group);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_ascii_hex_digit_for_char_mv1')
 @ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_ascii_hex_digit_for_char_mv1')

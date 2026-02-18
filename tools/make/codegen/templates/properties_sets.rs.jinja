@@ -1,0 +1,131 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+// {{ crate::capi_properties::GENERATED_BY }}
+
+#[rustfmt::skip]
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+pub mod ffi {
+    use alloc::boxed::Box;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_properties::props::{
+        {%- for prop in binary_props %}
+        {{ prop.struct_name }},
+        {%- endfor %}
+    };
+
+    #[cfg(feature = "buffer_provider")]
+    use crate::unstable::errors::ffi::DataError;
+    use crate::unstable::properties_iter::ffi::CodePointRangeIterator;
+    #[cfg(feature = "buffer_provider")]
+    use crate::unstable::provider::ffi::DataProvider;
+
+    #[cfg(feature = "compiled_data")]
+    use diplomat_runtime::DiplomatChar;
+
+    #[diplomat::opaque]
+    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+    #[diplomat::rust_link(icu::properties, Mod)]
+    #[diplomat::rust_link(icu::properties::CodePointSetData, Struct)]
+    #[diplomat::rust_link(icu::properties::CodePointSetData::new, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed::new, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
+    pub struct CodePointSetData(pub icu_properties::CodePointSetData);
+
+    impl CodePointSetData {
+        /// Checks whether the code point is in the set.
+        #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed::contains, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::CodePointSetDataBorrowed::contains32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn contains(&self, cp: DiplomatChar) -> bool {
+            self.0.as_borrowed().contains32(cp)
+        }
+
+        /// Produces an iterator over ranges of code points contained in this set
+        #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed::iter_ranges, FnInStruct)]
+        pub fn iter_ranges<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges(),
+            )))
+        }
+
+        /// Produces an iterator over ranges of code points not contained in this set
+        #[diplomat::rust_link(
+            icu::properties::CodePointSetDataBorrowed::iter_ranges_complemented,
+            FnInStruct
+        )]
+        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges_complemented(),
+            )))
+        }
+
+        {%- for prop in binary_props %}
+
+        /// Get the `{{ prop.doc_name() }}` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[diplomat::rust_link(icu::properties::props::{{ prop.struct_name }}, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn {{ prop.func_name() }}_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<{{ prop.struct_name }}>().contains32(ch)
+        }
+        /// Create a set for the `{{ prop.doc_name() }}` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::{{ prop.struct_name }}, Struct)]
+        #[diplomat::attr(auto, named_constructor = "{{ prop.func_name() }}")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_{{ prop.func_name() }}() -> Box<CodePointSetData> {
+            Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::new::<{{ prop.struct_name }}>().static_to_owned(),
+            ))
+        }
+
+        /// Create a set for the `{{ prop.doc_name() }}` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::{{ prop.struct_name }}, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ prop.func_name() }}_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_{{ prop.func_name() }}_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<{{ prop.struct_name }}>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
+        }
+        {%- endfor %}
+
+        /// Create a set appropriate for ECMAScript (ECMA-262) RegExp Unicode property escapes, using compiled data.
+        /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
+        #[diplomat::rust_link(icu::properties::CodePointSetData::new_for_ecma262, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = named_constructors), named_constructor = "for_ecma262")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_for_ecma262(property_name: &DiplomatStr) -> Result<Box<CodePointSetData>, DataError> {
+            let data = icu_properties::CodePointSetData::new_for_ecma262(property_name)
+                .map_err(|_| DataError::Custom)?;
+            Ok(Box::new(CodePointSetData(data.static_to_owned())))
+        }
+
+        /// Create a set appropriate for ECMAScript (ECMA-262) RegExp Unicode property escapes, using a particular data source.
+        /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
+        #[diplomat::rust_link(icu::properties::CodePointSetData::new_for_ecma262, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_ecma262_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_for_ecma262_with_provider(
+            provider: &DataProvider,
+            property_name: &DiplomatStr,
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            let data = icu_properties::CodePointSetData::try_new_for_ecma262_unstable(
+                &provider.get_unstable()?,
+                property_name,
+            )
+            .map_err(|_e| DataError::Custom)?;
+            Ok(Box::new(CodePointSetData(data)))
+        }
+    }
+}

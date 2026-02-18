@@ -2,7 +2,6 @@
 import { CodePointRangeIterator } from "./CodePointRangeIterator.mjs"
 import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
-import { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -109,62 +108,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Produces a set for obtaining General Category Group values
-     * which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C, using compiled data.
-     *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
-     *
-     * See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
-     */
-    static createGeneralCategoryGroup(group) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-
-        const result = wasm.icu4x_CodePointSetData_create_general_category_group_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, group)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false));
-
-        try {
-            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
-        }
-
-        finally {
-            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
-        }
-    }
-
-    /**
-     * Produces a set for obtaining General Category Group values
-     * which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C, using a provided data source.
-     *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
-     *
-     * See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
-     */
-    static createGeneralCategoryGroupWithProvider(provider, group) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-
-
-        const result = wasm.icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, group);
-
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError.' + cause.value, { cause });
-            }
-            return new CodePointSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-
-        finally {
-            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            diplomatReceive.free();
-        }
-    }
-
-    /**
-     * Get the `Ascii_Hex_Digit` value for a given character, using compiled data
+     * Get the `ASCII_Hex_Digit` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
      */
     static asciiHexDigitForChar(ch) {
 
@@ -180,7 +128,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Ascii_Hex_Digit` property, using compiled data.
+     * Create a set for the `ASCII_Hex_Digit` property, using compiled data.
      *
      * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
      */
@@ -198,7 +146,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Ascii_Hex_Digit` property, using a particular data source.
+     * Create a set for the `ASCII_Hex_Digit` property, using a particular data source.
      *
      * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
      */
@@ -223,9 +171,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Alnum` value for a given character, using compiled data
+     * Get the `alnum` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alnum.html) for more information.
      */
     static alnumForChar(ch) {
 
@@ -241,7 +191,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Alnum` property, using compiled data.
+     * Create a set for the `alnum` property, using compiled data.
      *
      * See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alnum.html) for more information.
      */
@@ -259,7 +209,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Alnum` property, using a particular data source.
+     * Create a set for the `alnum` property, using a particular data source.
      *
      * See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alnum.html) for more information.
      */
@@ -287,6 +237,8 @@ export class CodePointSetData {
      * Get the `Alphabetic` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alphabetic.html) for more information.
      */
     static alphabeticForChar(ch) {
 
@@ -348,6 +300,8 @@ export class CodePointSetData {
      * Get the `Bidi_Control` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `BidiControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiControl.html) for more information.
      */
     static bidiControlForChar(ch) {
 
@@ -409,6 +363,8 @@ export class CodePointSetData {
      * Get the `Bidi_Mirrored` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiMirrored.html) for more information.
      */
     static bidiMirroredForChar(ch) {
 
@@ -467,9 +423,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Blank` value for a given character, using compiled data
+     * Get the `blank` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Blank`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Blank.html) for more information.
      */
     static blankForChar(ch) {
 
@@ -485,7 +443,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Blank` property, using compiled data.
+     * Create a set for the `blank` property, using compiled data.
      *
      * See the [Rust documentation for `Blank`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Blank.html) for more information.
      */
@@ -503,7 +461,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Blank` property, using a particular data source.
+     * Create a set for the `blank` property, using a particular data source.
      *
      * See the [Rust documentation for `Blank`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Blank.html) for more information.
      */
@@ -531,6 +489,8 @@ export class CodePointSetData {
      * Get the `Cased` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Cased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Cased.html) for more information.
      */
     static casedForChar(ch) {
 
@@ -592,6 +552,8 @@ export class CodePointSetData {
      * Get the `Case_Ignorable` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseIgnorable.html) for more information.
      */
     static caseIgnorableForChar(ch) {
 
@@ -653,6 +615,8 @@ export class CodePointSetData {
      * Get the `Full_Composition_Exclusion` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
      */
     static fullCompositionExclusionForChar(ch) {
 
@@ -714,6 +678,8 @@ export class CodePointSetData {
      * Get the `Changes_When_Casefolded` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
      */
     static changesWhenCasefoldedForChar(ch) {
 
@@ -775,6 +741,8 @@ export class CodePointSetData {
      * Get the `Changes_When_Casemapped` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
      */
     static changesWhenCasemappedForChar(ch) {
 
@@ -833,9 +801,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Changes_When_Nfkc_Casefolded` value for a given character, using compiled data
+     * Get the `Changes_When_NFKC_Casefolded` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
      */
     static changesWhenNfkcCasefoldedForChar(ch) {
 
@@ -851,7 +821,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Changes_When_Nfkc_Casefolded` property, using compiled data.
+     * Create a set for the `Changes_When_NFKC_Casefolded` property, using compiled data.
      *
      * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
      */
@@ -869,7 +839,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Changes_When_Nfkc_Casefolded` property, using a particular data source.
+     * Create a set for the `Changes_When_NFKC_Casefolded` property, using a particular data source.
      *
      * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
      */
@@ -897,6 +867,8 @@ export class CodePointSetData {
      * Get the `Changes_When_Lowercased` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
      */
     static changesWhenLowercasedForChar(ch) {
 
@@ -958,6 +930,8 @@ export class CodePointSetData {
      * Get the `Changes_When_Titlecased` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
      */
     static changesWhenTitlecasedForChar(ch) {
 
@@ -1019,6 +993,8 @@ export class CodePointSetData {
      * Get the `Changes_When_Uppercased` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
      */
     static changesWhenUppercasedForChar(ch) {
 
@@ -1080,6 +1056,8 @@ export class CodePointSetData {
      * Get the `Dash` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Dash`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Dash.html) for more information.
      */
     static dashForChar(ch) {
 
@@ -1141,6 +1119,8 @@ export class CodePointSetData {
      * Get the `Deprecated` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Deprecated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Deprecated.html) for more information.
      */
     static deprecatedForChar(ch) {
 
@@ -1202,6 +1182,8 @@ export class CodePointSetData {
      * Get the `Default_Ignorable_Code_Point` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
      */
     static defaultIgnorableCodePointForChar(ch) {
 
@@ -1263,6 +1245,8 @@ export class CodePointSetData {
      * Get the `Diacritic` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Diacritic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Diacritic.html) for more information.
      */
     static diacriticForChar(ch) {
 
@@ -1324,6 +1308,8 @@ export class CodePointSetData {
      * Get the `Emoji_Modifier_Base` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifierBase.html) for more information.
      */
     static emojiModifierBaseForChar(ch) {
 
@@ -1385,6 +1371,8 @@ export class CodePointSetData {
      * Get the `Emoji_Component` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiComponent.html) for more information.
      */
     static emojiComponentForChar(ch) {
 
@@ -1446,6 +1434,8 @@ export class CodePointSetData {
      * Get the `Emoji_Modifier` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifier.html) for more information.
      */
     static emojiModifierForChar(ch) {
 
@@ -1507,6 +1497,8 @@ export class CodePointSetData {
      * Get the `Emoji` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Emoji`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Emoji.html) for more information.
      */
     static emojiForChar(ch) {
 
@@ -1568,6 +1560,8 @@ export class CodePointSetData {
      * Get the `Emoji_Presentation` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiPresentation.html) for more information.
      */
     static emojiPresentationForChar(ch) {
 
@@ -1629,6 +1623,8 @@ export class CodePointSetData {
      * Get the `Extender` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Extender`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Extender.html) for more information.
      */
     static extenderForChar(ch) {
 
@@ -1690,6 +1686,8 @@ export class CodePointSetData {
      * Get the `Extended_Pictographic` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ExtendedPictographic.html) for more information.
      */
     static extendedPictographicForChar(ch) {
 
@@ -1748,9 +1746,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Graph` value for a given character, using compiled data
+     * Get the `graph` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Graph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Graph.html) for more information.
      */
     static graphForChar(ch) {
 
@@ -1766,7 +1766,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Graph` property, using compiled data.
+     * Create a set for the `graph` property, using compiled data.
      *
      * See the [Rust documentation for `Graph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Graph.html) for more information.
      */
@@ -1784,7 +1784,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Graph` property, using a particular data source.
+     * Create a set for the `graph` property, using a particular data source.
      *
      * See the [Rust documentation for `Graph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Graph.html) for more information.
      */
@@ -1812,6 +1812,8 @@ export class CodePointSetData {
      * Get the `Grapheme_Base` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeBase.html) for more information.
      */
     static graphemeBaseForChar(ch) {
 
@@ -1873,6 +1875,8 @@ export class CodePointSetData {
      * Get the `Grapheme_Extend` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeExtend.html) for more information.
      */
     static graphemeExtendForChar(ch) {
 
@@ -1934,6 +1938,8 @@ export class CodePointSetData {
      * Get the `Grapheme_Link` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeLink.html) for more information.
      */
     static graphemeLinkForChar(ch) {
 
@@ -1995,6 +2001,8 @@ export class CodePointSetData {
      * Get the `Hex_Digit` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `HexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HexDigit.html) for more information.
      */
     static hexDigitForChar(ch) {
 
@@ -2056,6 +2064,8 @@ export class CodePointSetData {
      * Get the `Hyphen` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Hyphen`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Hyphen.html) for more information.
      */
     static hyphenForChar(ch) {
 
@@ -2117,6 +2127,8 @@ export class CodePointSetData {
      * Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
      */
     static idCompatMathContinueForChar(ch) {
 
@@ -2178,6 +2190,8 @@ export class CodePointSetData {
      * Get the `ID_Compat_Math_Start` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathStart.html) for more information.
      */
     static idCompatMathStartForChar(ch) {
 
@@ -2236,9 +2250,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Id_Continue` value for a given character, using compiled data
+     * Get the `ID_Continue` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
      */
     static idContinueForChar(ch) {
 
@@ -2254,7 +2270,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Id_Continue` property, using compiled data.
+     * Create a set for the `ID_Continue` property, using compiled data.
      *
      * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
      */
@@ -2272,7 +2288,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Id_Continue` property, using a particular data source.
+     * Create a set for the `ID_Continue` property, using a particular data source.
      *
      * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
      */
@@ -2300,6 +2316,8 @@ export class CodePointSetData {
      * Get the `Ideographic` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Ideographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Ideographic.html) for more information.
      */
     static ideographicForChar(ch) {
 
@@ -2358,9 +2376,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Id_Start` value for a given character, using compiled data
+     * Get the `ID_Start` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
      */
     static idStartForChar(ch) {
 
@@ -2376,7 +2396,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Id_Start` property, using compiled data.
+     * Create a set for the `ID_Start` property, using compiled data.
      *
      * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
      */
@@ -2394,7 +2414,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Id_Start` property, using a particular data source.
+     * Create a set for the `ID_Start` property, using a particular data source.
      *
      * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
      */
@@ -2419,9 +2439,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Ids_Binary_Operator` value for a given character, using compiled data
+     * Get the `IDS_Binary_Operator` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
      */
     static idsBinaryOperatorForChar(ch) {
 
@@ -2437,7 +2459,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Ids_Binary_Operator` property, using compiled data.
+     * Create a set for the `IDS_Binary_Operator` property, using compiled data.
      *
      * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
      */
@@ -2455,7 +2477,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Ids_Binary_Operator` property, using a particular data source.
+     * Create a set for the `IDS_Binary_Operator` property, using a particular data source.
      *
      * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
      */
@@ -2480,9 +2502,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Ids_Trinary_Operator` value for a given character, using compiled data
+     * Get the `IDS_Trinary_Operator` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
      */
     static idsTrinaryOperatorForChar(ch) {
 
@@ -2498,7 +2522,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Ids_Trinary_Operator` property, using compiled data.
+     * Create a set for the `IDS_Trinary_Operator` property, using compiled data.
      *
      * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
      */
@@ -2516,7 +2540,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Ids_Trinary_Operator` property, using a particular data source.
+     * Create a set for the `IDS_Trinary_Operator` property, using a particular data source.
      *
      * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
      */
@@ -2541,9 +2565,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Ids_Unary_Operator` value for a given character, using compiled data
+     * Get the `IDS_Unary_Operator` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
      */
     static idsUnaryOperatorForChar(ch) {
 
@@ -2559,7 +2585,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Ids_Unary_Operator` property, using compiled data.
+     * Create a set for the `IDS_Unary_Operator` property, using compiled data.
      *
      * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
      */
@@ -2577,7 +2603,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Ids_Unary_Operator` property, using a particular data source.
+     * Create a set for the `IDS_Unary_Operator` property, using a particular data source.
      *
      * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
      */
@@ -2605,6 +2631,8 @@ export class CodePointSetData {
      * Get the `Join_Control` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `JoinControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoinControl.html) for more information.
      */
     static joinControlForChar(ch) {
 
@@ -2666,6 +2694,8 @@ export class CodePointSetData {
      * Get the `Logical_Order_Exception` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LogicalOrderException.html) for more information.
      */
     static logicalOrderExceptionForChar(ch) {
 
@@ -2727,6 +2757,8 @@ export class CodePointSetData {
      * Get the `Lowercase` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Lowercase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Lowercase.html) for more information.
      */
     static lowercaseForChar(ch) {
 
@@ -2788,6 +2820,8 @@ export class CodePointSetData {
      * Get the `Math` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Math`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Math.html) for more information.
      */
     static mathForChar(ch) {
 
@@ -2846,9 +2880,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Modifier_Combining_mark` value for a given character, using compiled data
+     * Get the `Modifier_Combining_Mark` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
      */
     static modifierCombiningMarkForChar(ch) {
 
@@ -2864,7 +2900,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Modifier_Combining_mark` property, using compiled data.
+     * Create a set for the `Modifier_Combining_Mark` property, using compiled data.
      *
      * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
      */
@@ -2882,7 +2918,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Modifier_Combining_mark` property, using a particular data source.
+     * Create a set for the `Modifier_Combining_Mark` property, using a particular data source.
      *
      * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
      */
@@ -2910,6 +2946,8 @@ export class CodePointSetData {
      * Get the `Noncharacter_Code_Point` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
      */
     static noncharacterCodePointForChar(ch) {
 
@@ -2968,9 +3006,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Nfc_Inert` value for a given character, using compiled data
+     * Get the `NFC_Inert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
      */
     static nfcInertForChar(ch) {
 
@@ -2986,7 +3026,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Nfc_Inert` property, using compiled data.
+     * Create a set for the `NFC_Inert` property, using compiled data.
      *
      * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
      */
@@ -3004,7 +3044,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Nfc_Inert` property, using a particular data source.
+     * Create a set for the `NFC_Inert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
      */
@@ -3029,9 +3069,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Nfd_Inert` value for a given character, using compiled data
+     * Get the `NFD_Inert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
      */
     static nfdInertForChar(ch) {
 
@@ -3047,7 +3089,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Nfd_Inert` property, using compiled data.
+     * Create a set for the `NFD_Inert` property, using compiled data.
      *
      * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
      */
@@ -3065,7 +3107,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Nfd_Inert` property, using a particular data source.
+     * Create a set for the `NFD_Inert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
      */
@@ -3090,9 +3132,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Nfkc_Inert` value for a given character, using compiled data
+     * Get the `NFKC_Inert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
      */
     static nfkcInertForChar(ch) {
 
@@ -3108,7 +3152,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Nfkc_Inert` property, using compiled data.
+     * Create a set for the `NFKC_Inert` property, using compiled data.
      *
      * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
      */
@@ -3126,7 +3170,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Nfkc_Inert` property, using a particular data source.
+     * Create a set for the `NFKC_Inert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
      */
@@ -3151,9 +3195,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Nfkd_Inert` value for a given character, using compiled data
+     * Get the `NFKD_Inert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
      */
     static nfkdInertForChar(ch) {
 
@@ -3169,7 +3215,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Nfkd_Inert` property, using compiled data.
+     * Create a set for the `NFKD_Inert` property, using compiled data.
      *
      * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
      */
@@ -3187,7 +3233,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Nfkd_Inert` property, using a particular data source.
+     * Create a set for the `NFKD_Inert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
      */
@@ -3215,6 +3261,8 @@ export class CodePointSetData {
      * Get the `Pattern_Syntax` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternSyntax.html) for more information.
      */
     static patternSyntaxForChar(ch) {
 
@@ -3276,6 +3324,8 @@ export class CodePointSetData {
      * Get the `Pattern_White_Space` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
      */
     static patternWhiteSpaceForChar(ch) {
 
@@ -3337,6 +3387,8 @@ export class CodePointSetData {
      * Get the `Prepended_Concatenation_Mark` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
      */
     static prependedConcatenationMarkForChar(ch) {
 
@@ -3395,9 +3447,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Print` value for a given character, using compiled data
+     * Get the `print` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Print`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Print.html) for more information.
      */
     static printForChar(ch) {
 
@@ -3413,7 +3467,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Print` property, using compiled data.
+     * Create a set for the `print` property, using compiled data.
      *
      * See the [Rust documentation for `Print`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Print.html) for more information.
      */
@@ -3431,7 +3485,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Print` property, using a particular data source.
+     * Create a set for the `print` property, using a particular data source.
      *
      * See the [Rust documentation for `Print`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Print.html) for more information.
      */
@@ -3459,6 +3513,8 @@ export class CodePointSetData {
      * Get the `Quotation_Mark` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.QuotationMark.html) for more information.
      */
     static quotationMarkForChar(ch) {
 
@@ -3520,6 +3576,8 @@ export class CodePointSetData {
      * Get the `Radical` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Radical`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Radical.html) for more information.
      */
     static radicalForChar(ch) {
 
@@ -3581,6 +3639,8 @@ export class CodePointSetData {
      * Get the `Regional_Indicator` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.RegionalIndicator.html) for more information.
      */
     static regionalIndicatorForChar(ch) {
 
@@ -3642,6 +3702,8 @@ export class CodePointSetData {
      * Get the `Soft_Dotted` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SoftDotted.html) for more information.
      */
     static softDottedForChar(ch) {
 
@@ -3703,6 +3765,8 @@ export class CodePointSetData {
      * Get the `Segment_Starter` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SegmentStarter.html) for more information.
      */
     static segmentStarterForChar(ch) {
 
@@ -3764,6 +3828,8 @@ export class CodePointSetData {
      * Get the `Case_Sensitive` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseSensitive.html) for more information.
      */
     static caseSensitiveForChar(ch) {
 
@@ -3825,6 +3891,8 @@ export class CodePointSetData {
      * Get the `Sentence_Terminal` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceTerminal.html) for more information.
      */
     static sentenceTerminalForChar(ch) {
 
@@ -3886,6 +3954,8 @@ export class CodePointSetData {
      * Get the `Terminal_Punctuation` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.TerminalPunctuation.html) for more information.
      */
     static terminalPunctuationForChar(ch) {
 
@@ -3947,6 +4017,8 @@ export class CodePointSetData {
      * Get the `Unified_Ideograph` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
      */
     static unifiedIdeographForChar(ch) {
 
@@ -4008,6 +4080,8 @@ export class CodePointSetData {
      * Get the `Uppercase` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Uppercase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Uppercase.html) for more information.
      */
     static uppercaseForChar(ch) {
 
@@ -4069,6 +4143,8 @@ export class CodePointSetData {
      * Get the `Variation_Selector` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VariationSelector.html) for more information.
      */
     static variationSelectorForChar(ch) {
 
@@ -4130,6 +4206,8 @@ export class CodePointSetData {
      * Get the `White_Space` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WhiteSpace.html) for more information.
      */
     static whiteSpaceForChar(ch) {
 
@@ -4188,9 +4266,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Xdigit` value for a given character, using compiled data
+     * Get the `xdigit` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Xdigit.html) for more information.
      */
     static xdigitForChar(ch) {
 
@@ -4206,7 +4286,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Xdigit` property, using compiled data.
+     * Create a set for the `xdigit` property, using compiled data.
      *
      * See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Xdigit.html) for more information.
      */
@@ -4224,7 +4304,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Xdigit` property, using a particular data source.
+     * Create a set for the `xdigit` property, using a particular data source.
      *
      * See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Xdigit.html) for more information.
      */
@@ -4249,9 +4329,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Xid_Continue` value for a given character, using compiled data
+     * Get the `XID_Continue` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
      */
     static xidContinueForChar(ch) {
 
@@ -4267,7 +4349,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Xid_Continue` property, using compiled data.
+     * Create a set for the `XID_Continue` property, using compiled data.
      *
      * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
      */
@@ -4285,7 +4367,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Xid_Continue` property, using a particular data source.
+     * Create a set for the `XID_Continue` property, using a particular data source.
      *
      * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
      */
@@ -4310,9 +4392,11 @@ export class CodePointSetData {
     }
 
     /**
-     * Get the `Xid_Start` value for a given character, using compiled data
+     * Get the `XID_Start` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
      */
     static xidStartForChar(ch) {
 
@@ -4328,7 +4412,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Xid_Start` property, using compiled data.
+     * Create a set for the `XID_Start` property, using compiled data.
      *
      * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
      */
@@ -4346,7 +4430,7 @@ export class CodePointSetData {
     }
 
     /**
-     * Create a set for the `Xid_Start` property, using a particular data source.
+     * Create a set for the `XID_Start` property, using a particular data source.
      *
      * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
      */
@@ -4371,6 +4455,7 @@ export class CodePointSetData {
     }
 
     /**
+     * Create a set appropriate for ECMAScript (ECMA-262) RegExp Unicode property escapes, using compiled data.
      * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
      *
      * See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
@@ -4401,6 +4486,7 @@ export class CodePointSetData {
     }
 
     /**
+     * Create a set appropriate for ECMAScript (ECMA-262) RegExp Unicode property escapes, using a particular data source.
      * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
      *
      * See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
