@@ -215,7 +215,7 @@ fn test_calendar_eras() {
                     Date::try_new_from_codes(
                         Some(era),
                         in_era.year().era().unwrap().year,
-                        in_era.month().value.code(),
+                        in_era.month().as_input().code(),
                         in_era.day_of_month().0,
                         cal,
                     ),
