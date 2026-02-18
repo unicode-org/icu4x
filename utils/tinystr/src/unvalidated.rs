@@ -40,7 +40,10 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
     /// Creates one of these from a byte slice, returning an error if the bytes are too long.
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, ParseError> {
         if bytes.len() > N {
-            return Err(ParseError::TooLong { max: N, len: bytes.len() });
+            return Err(ParseError::TooLong {
+                max: N,
+                len: bytes.len(),
+            });
         }
         let mut target = [0u8; N];
         target[0..bytes.len()].copy_from_slice(bytes);
