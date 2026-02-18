@@ -9,7 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_provider::prelude::*;
+use icu_provider::prelude::{zerofrom::ZeroFrom, *};
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroCow, ZeroMap};
@@ -165,7 +165,20 @@ pub struct SingleDisplayName<'data> {
     pub name: VarZeroCow<'data, str>,
 }
 
-icu_provider::data_struct!(SingleDisplayName<'_>, #[cfg(feature = "datagen")]);
+impl<'a> ZeroFrom<'a, str> for SingleDisplayName<'a> {
+    fn zero_from(name: &'a str) -> Self {
+        SingleDisplayName {
+            name: VarZeroCow::new_borrowed(name),
+        }
+    }
+}
+
+icu_provider::data_struct!(
+    SingleDisplayName<'_>,
+    varule: str,
+    #[cfg(feature = "datagen")]
+    encode_as_varule: |v: &SingleDisplayName<'_>| &*v.name
+);
 
 icu_provider::data_marker!(
     /// Data marker for collation tailorings.
