@@ -85,14 +85,17 @@ pub mod ffi {
     #[diplomat::attr(auto, error)]
     pub enum CalendarDateFromFieldsError {
         Unknown = 0x00,
-        OutOfRange = 0x01,
-        UnknownEra = 0x02,
+        InvalidDay = 0x01,
+        InvalidOrdinalMonth = 0x09,
+        InvalidEra = 0x02,
         MonthCodeInvalidSyntax = 0x03,
-        MonthCodeNotInCalendar = 0x04,
-        MonthCodeNotInYear = 0x05,
+        MonthNotInCalendar = 0x04,
+        MonthNotInYear = 0x05,
         InconsistentYear = 0x06,
         InconsistentMonth = 0x07,
         NotEnoughFields = 0x08,
+        TooManyFields = 0x0A,
+        Overflow = 0x0B,
     }
 
     #[derive(Debug, PartialEq, Eq)]
@@ -225,20 +228,23 @@ impl From<icu_calendar::DateError> for CalendarError {
 impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsError {
     fn from(e: icu_calendar::error::DateFromFieldsError) -> Self {
         match e {
-            icu_calendar::error::DateFromFieldsError::Range(_) => Self::OutOfRange,
-            icu_calendar::error::DateFromFieldsError::UnknownEra => Self::UnknownEra,
+            icu_calendar::error::DateFromFieldsError::InvalidDay { .. } => Self::InvalidDay,
+            icu_calendar::error::DateFromFieldsError::InvalidOrdinalMonth { .. } => {
+                Self::InvalidOrdinalMonth
+            }
+            icu_calendar::error::DateFromFieldsError::InvalidEra => Self::InvalidEra,
             icu_calendar::error::DateFromFieldsError::MonthCodeInvalidSyntax => {
                 Self::MonthCodeInvalidSyntax
             }
-            icu_calendar::error::DateFromFieldsError::MonthCodeNotInCalendar => {
-                Self::MonthCodeNotInCalendar
+            icu_calendar::error::DateFromFieldsError::MonthNotInCalendar => {
+                Self::MonthNotInCalendar
             }
-            icu_calendar::error::DateFromFieldsError::MonthCodeNotInYear => {
-                Self::MonthCodeNotInYear
-            }
+            icu_calendar::error::DateFromFieldsError::MonthNotInYear => Self::MonthNotInYear,
             icu_calendar::error::DateFromFieldsError::InconsistentYear => Self::InconsistentYear,
             icu_calendar::error::DateFromFieldsError::InconsistentMonth => Self::InconsistentMonth,
             icu_calendar::error::DateFromFieldsError::NotEnoughFields => Self::NotEnoughFields,
+            icu_calendar::error::DateFromFieldsError::TooManyFields => Self::TooManyFields,
+            icu_calendar::error::DateFromFieldsError::Overflow => Self::Overflow,
             _ => Self::Unknown,
         }
     }

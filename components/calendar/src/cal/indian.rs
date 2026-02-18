@@ -92,7 +92,7 @@ impl DateFieldsResolver for Indian {
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         let (ordinal_month, false) = (month.number(), month.is_leap()) else {
-            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+            return Err(EcmaReferenceYearError::MonthNotInCalendar);
         };
         // December 31, 1972 occurs on 10th month, 10th day, 1894 Shaka
         // Note: 1894 Shaka is also a leap year

@@ -86,6 +86,8 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "collation/implicithan/$LOCALES_unihan_data.toml",
     "collation/implicithan/$LOCALES_unihan_meta.toml",
     "collation/implicithan/$LOCALES_unihan_reord.toml",
+    "collation/implicithan/en_US_POSIX_standard_data.toml",
+    "collation/implicithan/en_US_POSIX_standard_meta.toml",
     "collation/implicithan/ko_search_data.toml",
     "collation/implicithan/ko_searchjl_data.toml",
     "collation/implicithan/ko_standard_data.toml",

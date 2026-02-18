@@ -5,7 +5,7 @@
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
 use crate::calendar_arithmetic::{DateFieldsResolver, PackWithMD};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarRangeError, MonthCodeError,
+    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError, MonthError,
     UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -91,7 +91,7 @@ fn ecma_reference_year_common(
         (12, false, _) => 1971,
         (12, true, _) => return Err(EcmaReferenceYearError::UseRegularIfConstrain),
 
-        (0 | 13.., _, _) => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
+        (0 | 13.., _, _) => return Err(EcmaReferenceYearError::MonthNotInCalendar),
     };
 
     Ok(extended_year)
@@ -466,7 +466,7 @@ impl Date<KoreanTraditional> {
         related_iso_year: i32,
         month: types::Month,
         day: u8,
-    ) -> Result<Date<KoreanTraditional>, LunisolarRangeError> {
+    ) -> Result<Date<KoreanTraditional>, LunisolarDateError> {
         let calendar = KoreanTraditional::new();
         ArithmeticDate::try_from_ymd_lunisolar(related_iso_year, month, day, &calendar)
             .map(ChineseDateInner)
@@ -619,7 +619,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         year: Self::YearInfo,
         month: types::Month,
         options: DateFromFieldsOptions,
-    ) -> Result<u8, MonthCodeError> {
+    ) -> Result<u8, MonthError> {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.packed.leap_month().unwrap_or(14);
@@ -631,12 +631,12 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         }
 
         let (number @ 1..13, leap) = (month.number(), month.is_leap()) else {
-            return Err(MonthCodeError::NotInCalendar);
+            return Err(MonthError::NotInCalendar);
         };
 
         if leap && options.overflow != Some(Overflow::Constrain) {
             // wrong leap month and not constraining
-            return Err(MonthCodeError::NotInYear);
+            return Err(MonthError::NotInYear);
         }
 
         // add one if there was a leap month before
@@ -809,7 +809,7 @@ impl Date<ChineseTraditional> {
         related_iso_year: i32,
         month: types::Month,
         day: u8,
-    ) -> Result<Date<ChineseTraditional>, LunisolarRangeError> {
+    ) -> Result<Date<ChineseTraditional>, LunisolarDateError> {
         let calendar = ChineseTraditional::new();
         ArithmeticDate::try_from_ymd_lunisolar(related_iso_year, month, day, &calendar)
             .map(ChineseDateInner)
@@ -1596,8 +1596,8 @@ mod test {
         for year in [4659, 4660] {
             let year = cal.year_info_from_extended(year);
             for (month, error) in [
-                (Month::leap(4), MonthCodeError::NotInYear),
-                (Month::new(13), MonthCodeError::NotInCalendar),
+                (Month::leap(4), MonthError::NotInYear),
+                (Month::new(13), MonthError::NotInCalendar),
             ] {
                 assert_eq!(
                     cal.ordinal_from_month(year, month, reject),
@@ -1730,7 +1730,7 @@ mod test {
         let cal = ChineseTraditional::new();
         assert!(matches!(
             Date::try_from_fields(fields, options, cal).unwrap_err(),
-            DateFromFieldsError::Range { .. }
+            DateFromFieldsError::Overflow
         ));
     }
 

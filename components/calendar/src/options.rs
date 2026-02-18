@@ -328,7 +328,7 @@ mod unstable {
         ///
         /// let err = Date::try_from_fields(fields, options, Hebrew)
         ///     .expect_err("Day is out of bounds");
-        /// assert!(matches!(err, DateFromFieldsError::Range { .. }));
+        /// assert!(matches!(err, DateFromFieldsError::InvalidDay { .. }));
         ///
         /// // Set the day to one that exists
         /// fields.day = Some(1);
@@ -340,7 +340,7 @@ mod unstable {
         ///
         /// let err = Date::try_from_fields(fields, options, Hebrew)
         ///     .expect_err("Month is out of bounds");
-        /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInYear));
+        /// assert!(matches!(err, DateFromFieldsError::MonthNotInYear));
         /// ```
         #[default]
         Reject,

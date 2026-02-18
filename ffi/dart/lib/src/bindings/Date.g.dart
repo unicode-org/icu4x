@@ -51,7 +51,7 @@ final class Date implements ffi.Finalizable {
     final temp = _FinalizedArena();
     final result = _icu4x_Date_from_fields_in_calendar_mv1(fields._toFfi(temp.arena), options._toFfi(temp.arena), calendar._ffi);
     if (!result.isOk) {
-      throw CalendarDateFromFieldsError.values[result.union.err];
+      throw CalendarDateFromFieldsError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return Date._fromFfi(result.union.ok, []);
   }

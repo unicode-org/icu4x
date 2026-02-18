@@ -560,6 +560,8 @@ impl SourceDataProvider {
                         ("collation/implicithan/ja_unihan_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/ja_unihan_data.toml").as_slice()),
                         ("collation/implicithan/ja_unihan_meta.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/ja_unihan_meta.toml").as_slice()),
                         ("collation/implicithan/ja_unihan_reord.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/ja_unihan_reord.toml").as_slice()),
+                        ("collation/implicithan/en_US_POSIX_standard_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/en_US_POSIX_standard_data.toml").as_slice()),
+                        ("collation/implicithan/en_US_POSIX_standard_meta.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/en_US_POSIX_standard_meta.toml").as_slice()),
                         ("collation/implicithan/ko_search_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/ko_search_data.toml").as_slice()),
                         ("collation/implicithan/ko_searchjl_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/ko_searchjl_data.toml").as_slice()),
                         ("collation/implicithan/ko_standard_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/ko_standard_data.toml").as_slice()),
