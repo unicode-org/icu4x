@@ -134,8 +134,12 @@ pub mod ffi {
                 numsys: "zyyy".into(),
             };
 
-            let grouping_sizes =
-                GroupingSizes::new(primary_group_size, secondary_group_size, min_group_size);
+            let grouping_sizes = GroupingSizes {
+                primary: primary_group_size,
+                secondary: secondary_group_size,
+                min_grouping: min_group_size,
+                fraction: 0,
+            };
 
             let mut options = DecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy.map(Into::into);

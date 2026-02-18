@@ -94,11 +94,12 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbols<'static> {
 
         Ok(Self {
             strings: strings.build(),
-            grouping_sizes: GroupingSizes::new(
-                parsed_pattern.positive.primary_grouping,
-                parsed_pattern.positive.secondary_grouping,
-                numbers.minimum_grouping_digits,
-            ),
+            grouping_sizes: GroupingSizes {
+                primary: parsed_pattern.positive.primary_grouping,
+                secondary: parsed_pattern.positive.secondary_grouping,
+                min_grouping: numbers.minimum_grouping_digits,
+                fraction: 0,
+            },
         })
     }
 }
