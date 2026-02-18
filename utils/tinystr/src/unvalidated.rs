@@ -27,9 +27,6 @@ impl<const N: usize> fmt::Debug for UnvalidatedTinyAsciiStr<N> {
 }
 
 impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
-    /// The empty string as a default value.
-    pub const DEFAULT: Self = Self([0u8; N]);
-
     #[inline]
     /// Converts into a [`TinyAsciiStr`]. Fails if the bytes are not valid ASCII.
     pub fn try_into_tinystr(self) -> Result<TinyAsciiStr<N>, ParseError> {
@@ -37,7 +34,8 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
     }
 
     #[inline]
-    /// Creates one of these from a byte slice, returning an error if the bytes are too long.
+    /// Creates one of these from a byte slice. Fails if the bytes are too long, but
+    /// does not check whether the bytes are a valid ASCII string.
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, ParseError> {
         if bytes.len() > N {
             return Err(ParseError::TooLong {

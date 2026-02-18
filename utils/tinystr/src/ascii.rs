@@ -19,6 +19,11 @@ pub struct TinyAsciiStr<const N: usize> {
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
+    /// The empty string.
+    pub const EMPTY: Self = Self {
+        bytes: [AsciiByte::B0; N],
+    };
+
     #[inline]
     pub const fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
