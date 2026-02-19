@@ -27,6 +27,7 @@ icu_provider = { workspace = true }
 utf16_iter = { path = "../../../utf16_iter", features = ["icu_collections"] }
 utf8_iter = { path = "../../../utf8_iter", features = ["icu_collections"] }
 smallvec = { workspace = true, features = ["union", "const_generics", "const_new"] } # alloc
+tinystr = { workspace = true, optional = true }
 zerovec = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
@@ -52,7 +53,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/s
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake", "icu_provider/export"]
 compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 latin1 = []
-unstable = []
+unstable = ["dep:tinystr"]
 
 [[bench]]
 name = "bench"

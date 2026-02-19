@@ -638,3 +638,20 @@ impl CollationSpecialPrimariesValidated<'_> {
         (field & mask) != 0
     }
 }
+
+/// Lists the locale and collation keyword combinations that the collator knows about.
+/// The `standard` collation is represented as the empty string.
+/// The root collation is represented as `und`.
+/// Chinese collations are listed as `und-Hani` with `und-Hant` and `und-Hans` resolving
+/// to `stroke` and `pinyin` despite not listing the collation keyword.
+#[cfg(all(feature = "compiled_data", feature = "unstable"))]
+pub fn list_locales() -> impl Iterator<Item = (DataLocale, tinystr::TinyAsciiStr<8>)> {
+    use icu_provider::baked::DataStore;
+    Baked::DATA_COLLATION_METADATA_V1.iter().map(|d| {
+        (
+            d.locale.clone(),
+            tinystr::TinyAsciiStr::<8>::try_from_str(d.marker_attributes.as_str())
+                .expect("Marker attribute invariants upheld"),
+        )
+    })
+}
