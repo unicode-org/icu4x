@@ -35,7 +35,7 @@ pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
 
-use core::{any, fmt, mem, slice};
+use core::{any, fmt, slice};
 
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
@@ -364,7 +364,7 @@ pub unsafe trait VarULE: 'static {
         use alloc::borrow::ToOwned;
         use core::alloc::Layout;
         let bytesvec = self.as_bytes().to_owned().into_boxed_slice();
-        let bytesvec = mem::ManuallyDrop::new(bytesvec);
+        let bytesvec = core::mem::ManuallyDrop::new(bytesvec);
         unsafe {
             // Get the pointer representation
             let ptr: *mut Self = Self::from_bytes_unchecked(&bytesvec) as *const Self as *mut Self;

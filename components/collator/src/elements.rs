@@ -420,7 +420,7 @@ impl CollationElement32 {
     pub(crate) fn tag(self) -> Tag {
         debug_assert!(self.low_byte() >= SPECIAL_CE32_LOW_BYTE);
         // Safety: Tag has values 0 to 15, which are filtered for with the 0xF mask.
-        unsafe { core::mem::transmute(self.low_byte() & 0xF) }
+        unsafe { core::mem::transmute::<u8, Tag>(self.low_byte() & 0xF) }
     }
 
     /// Expands to 64 bits if the expansion is to a single 64-bit collation

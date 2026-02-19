@@ -7,7 +7,7 @@ use crate::varzerovec::lengthless::VarZeroLengthlessSlice;
 use crate::vecs::VarZeroVecFormat;
 #[cfg(doc)]
 use crate::VarZeroSlice;
-use core::{fmt, mem};
+use core::fmt;
 
 /// This type is used by the custom derive to represent multiple [`VarULE`]
 /// fields packed into a single end-of-struct field. It is not recommended
@@ -50,9 +50,10 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
         );
         unsafe {
             // Safe since write_serializable_bytes produces a valid VarZeroLengthlessSlice buffer with the right format
-            let slice = <VarZeroLengthlessSlice<[u8], Format>>::from_bytes_unchecked_mut(output);
+            let slice = VarZeroLengthlessSlice::<[u8], Format>::from_bytes_unchecked_mut(output);
             // safe since `Self` is transparent over VarZeroLengthlessSlice<[u8], Format>
-            mem::transmute::<&mut VarZeroLengthlessSlice<[u8], Format>, &mut Self>(slice)
+            &mut *(slice as *mut VarZeroLengthlessSlice<[u8], Format>
+                as *mut MultiFieldsULE<LEN, Format>)
         }
     }
 
@@ -98,7 +99,9 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
     #[inline]
     pub unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &Self is transparent over &VZS<..> with the right format
-        mem::transmute(<VarZeroLengthlessSlice<[u8], Format>>::from_bytes_unchecked(bytes))
+        let slice = VarZeroLengthlessSlice::<[u8], Format>::from_bytes_unchecked(bytes);
+        &*(slice as *const VarZeroLengthlessSlice<[u8], Format>
+            as *const MultiFieldsULE<LEN, Format>)
     }
 
     /// Get the bytes behind this value
@@ -150,12 +153,14 @@ unsafe impl<const LEN: usize, Format: VarZeroVecFormat> VarULE for MultiFieldsUL
     /// This impl exists so that `EncodeAsVarULE` can work.
     #[inline]
     fn validate_bytes(slice: &[u8]) -> Result<(), UleError> {
-        <VarZeroLengthlessSlice<[u8], Format>>::parse_bytes(LEN as u32, slice).map(|_| ())
+        VarZeroLengthlessSlice::<[u8], Format>::parse_bytes(LEN as u32, slice).map(|_| ())
     }
 
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &Self is transparent over &VZS<..>
-        mem::transmute(<VarZeroLengthlessSlice<[u8], Format>>::from_bytes_unchecked(bytes))
+        let slice = VarZeroLengthlessSlice::<[u8], Format>::from_bytes_unchecked(bytes);
+        &*(slice as *const VarZeroLengthlessSlice<[u8], Format>
+            as *const MultiFieldsULE<LEN, Format>)
     }
 }

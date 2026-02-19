@@ -6,7 +6,7 @@
 
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
-use core::{marker::PhantomData, mem};
+use core::marker::PhantomData;
 
 /// The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type; for
 /// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`).
@@ -73,7 +73,7 @@ use core::{marker::PhantomData, mem};
 ///     }
 ///
 ///     unsafe fn make(from: Bar<'a>) -> Self {
-///         unsafe { mem::transmute(from) }
+///         unsafe { mem::transmute::<Self::Output, Self>(from) }
 ///     }
 ///
 ///     fn transform_mut<F>(&'a mut self, f: F)
@@ -258,15 +258,7 @@ where
     }
     #[inline]
     unsafe fn make(from: Cow<'a, T>) -> Self {
-        // i hate this
-        // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
-        // are the same
-        debug_assert!(size_of::<Cow<'a, T>>() == size_of::<Self>());
-        let ptr: *const Self = (&from as *const Self::Output).cast();
-        let _ = core::mem::ManuallyDrop::new(from);
-        // Safety: `ptr` is certainly valid, aligned and points to a properly initialized value, as
-        // it comes from a value that was moved into a ManuallyDrop.
-        unsafe { core::ptr::read(ptr) }
+        core::mem::transmute::<Self::Output, Self>(from)
     }
     #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
@@ -276,7 +268,9 @@ where
         // Cast away the lifetime of Self
         // Safety: this is equivalent to f(transmute(self)), and the documentation of the trait
         // method explains why doing so is sound.
-        unsafe { f(mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+        #[allow(clippy::unnecessary_cast)] // false positive, lifetimes differ
+        let y = unsafe { &mut *(self as *mut Self as *mut Self::Output) };
+        f(y)
     }
 }
 
@@ -297,7 +291,7 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
     unsafe fn make(from: &'a T) -> Self {
         // Safety: function safety invariant guarantees that the returned reference
         // will never be used beyond its original lifetime.
-        unsafe { mem::transmute(from) }
+        &*(from as *const T)
     }
     #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
@@ -307,7 +301,9 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
         // Cast away the lifetime of Self
         // Safety: this is equivalent to f(transmute(self)), and the documentation of the trait
         // method explains why doing so is sound.
-        unsafe { f(mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+        #[allow(clippy::unnecessary_cast)] // false positive, lifetimes differ
+        let y = unsafe { &mut *(self as *mut Self as *mut Self::Output) };
+        f(y)
     }
 }
 

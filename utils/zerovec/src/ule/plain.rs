@@ -284,14 +284,16 @@ impl AsULE for NonZeroI8 {
     type ULE = NonZeroU8;
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        // Safety: NonZeroU8 and NonZeroI8 have same size
-        unsafe { mem::transmute(self) }
+        // TODO: use cast_signed at 1.87 MSRV
+        // Safety: .get() is non-zero
+        unsafe { NonZeroU8::new_unchecked(self.get() as u8) }
     }
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        // Safety: NonZeroU8 and NonZeroI8 have same size
-        unsafe { mem::transmute(unaligned) }
+        // TODO: use cast_unsigned at 1.87 MSRV
+        // Safety: .get() is non-zero
+        unsafe { NonZeroI8::new_unchecked(unaligned.get() as i8) }
     }
 }
 
