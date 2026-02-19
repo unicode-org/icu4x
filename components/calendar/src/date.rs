@@ -96,12 +96,14 @@ impl<C> Deref for Ref<'_, C> {
 ///
 /// **The primary definition of this type is in the [`icu_calendar`](https://docs.rs/icu_calendar) crate. Other ICU4X crates re-export it for convenience.**
 ///
-/// This can work with wrappers around [`Calendar`] types,
-/// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
+/// Options to create one of these:
 ///
-/// This can be constructed from its fields via [`Self::try_new_from_codes()`], or can be
-/// constructed with one of the `new_<calendar>_date()` per-calendar methods (and then
-/// freely converted between calendars).
+/// 1. Generically from fields via [`Self::try_from_fields()`] or [`Self::try_new_from_codes()`]
+/// 2. With calendar-specific constructors, e.g. [`Self::try_new_chinese_traditional()`]
+/// 3. From a RFC 9557 string via [`Self::try_from_str()`]
+/// 4. From a [`RataDie`] via [`Self::from_rata_die()`]
+///
+/// # Examples
 ///
 /// ```rust
 /// use icu::calendar::Date;
