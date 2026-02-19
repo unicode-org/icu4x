@@ -194,7 +194,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// The default impl is for non-lunisolar calendars!
     #[inline]
     fn month_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> Month {
-        Month::new_unchecked(ordinal_month, types::LeapStatus::Normal)
+        Month::new_unchecked(ordinal_month, false)
     }
 
     // Date-to-RD conversion
@@ -595,13 +595,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         } else {
             let target_month = cal.month_from_ordinal(target.year(), target.month());
             if month != target_month {
-                let ordering = month.cmp_lexicographic(target_month);
                 if sign > 0 {
-                    if ordering.is_gt() {
+                    if month > target_month {
                         return true;
                     }
                 } else {
-                    if ordering.reverse().is_gt() {
+                    if month <= target_month {
                         return true;
                     }
                 }

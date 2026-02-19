@@ -212,14 +212,7 @@ impl DateFieldsResolver for Hebrew {
         let is_leap = year.keviyah.is_leap();
         Month::new_unchecked(
             ordinal_month - (is_leap && ordinal_month >= 6) as u8,
-            if ordinal_month == 6 && is_leap {
-                LeapStatus::Leap
-            } else if ordinal_month == 7 && is_leap {
-                // Use the leap name for Adar in a leap year
-                LeapStatus::FormattingLeap
-            } else {
-                LeapStatus::Normal
-            },
+            ordinal_month == 6 && is_leap,
         )
     }
 
@@ -331,7 +324,13 @@ impl Calendar for Hebrew {
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
-        MonthInfo::new(self, date.0)
+        let mut m = MonthInfo::new(self, date.0);
+        #[allow(deprecated)]
+        if m.number() == 6 && m.ordinal == 7 {
+            m.leap_status = LeapStatus::StandardAfterLeap;
+            m.formatting_code = Month::leap(6).code();
+        }
+        m
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -357,13 +356,13 @@ impl Date<Hebrew> {
     /// use icu::calendar::Date;
     /// use icu::calendar::types::Month;
     ///
-    /// let date = Date::try_new_hebrew_v2(5782, Month::new(6), 7)
+    /// let date = Date::try_new_hebrew_v2(5782, Month::leap(5), 7)
     ///     .expect("Failed to initialize Date instance.");
     ///
     /// assert_eq!(date.era_year().year, 5782);
     /// // Adar I
-    /// assert_eq!(date.month().number(), 6);
-    /// assert_eq!(date.month().is_formatting_leap(), true);
+    /// assert_eq!(date.month().number(), 5);
+    /// assert_eq!(date.month().is_leap(), true);
     /// assert_eq!(date.day_of_month().0, 7);
     /// ```
     pub fn try_new_hebrew_v2(
@@ -494,7 +493,7 @@ mod tests {
                 Date::try_new_from_codes(
                     Some(&date.era_year().era),
                     date.era_year().year,
-                    date.month().value.code(),
+                    date.month().as_input().code(),
                     date.day_of_month().0,
                     Hebrew
                 ),
@@ -504,7 +503,7 @@ mod tests {
             assert_eq!(
                 Date::try_new_hebrew_v2(
                     date.era_year().year,
-                    date.month().value,
+                    date.month().as_input(),
                     date.day_of_month().0,
                 ),
                 Ok(date)

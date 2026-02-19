@@ -459,7 +459,7 @@ impl Date<KoreanTraditional> {
     ///     .expect("Failed to initialize Date instance.");
     ///
     /// assert_eq!(date.cyclic_year().related_iso, 2025);
-    /// assert_eq!(date.month().value, Month::new(5));
+    /// assert_eq!(date.month().as_input(), Month::new(5));
     /// assert_eq!(date.day_of_month().0, 25);
     /// ```
     pub fn try_new_korean_traditional(
@@ -650,11 +650,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         types::Month::new_unchecked(
             // subtract one if there was a leap month before
             ordinal_month - (ordinal_month >= leap_month) as u8,
-            if ordinal_month == leap_month {
-                types::LeapStatus::Leap
-            } else {
-                types::LeapStatus::Normal
-            },
+            ordinal_month == leap_month,
         )
     }
 
@@ -802,7 +798,7 @@ impl Date<ChineseTraditional> {
     ///     .expect("Failed to initialize Date instance.");
     ///
     /// assert_eq!(date.cyclic_year().related_iso, 2025);
-    /// assert_eq!(date.month().value, Month::new(5));
+    /// assert_eq!(date.month().as_input(), Month::new(5));
     /// assert_eq!(date.day_of_month().0, 25);
     /// ```
     pub fn try_new_chinese_traditional(
@@ -1350,7 +1346,7 @@ mod test {
 
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
         assert_eq!(chinese.month().ordinal, 1);
-        assert_eq!(chinese.month().value, Month::new(1));
+        assert_eq!(chinese.month().as_input(), Month::new(1));
         assert_eq!(chinese.day_of_month().0, 1);
         assert_eq!(chinese.cyclic_year().year, 1);
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
@@ -1543,7 +1539,7 @@ mod test {
             let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             let chinese = iso.to_calendar(ChineseTraditional::new());
             assert_eq!(
-                chinese.month().value,
+                chinese.month().as_input(),
                 case.month,
                 "Month codes did not match for test case: {case:?}"
             );
@@ -1706,7 +1702,7 @@ mod test {
         };
         let date = Date::try_from_fields(fields, options, cal).unwrap();
         assert_eq!(
-            date.month().value,
+            date.month().as_input(),
             Month::new(1),
             "Month was successfully constrained"
         );
