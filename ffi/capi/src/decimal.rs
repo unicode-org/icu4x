@@ -138,6 +138,7 @@ pub mod ffi {
                 primary: primary_group_size,
                 secondary: secondary_group_size,
                 min_grouping: min_group_size,
+                fraction: 0,
             };
 
             let mut options = DecimalFormatterOptions::default();

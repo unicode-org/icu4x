@@ -207,6 +207,11 @@ pub struct GroupingSizes {
     /// The minimum number of digits required before the first group. For example, if `primary=3`
     /// and `min_grouping=2`, grouping separators will be present on 10,000 and above.
     pub min_grouping: u8,
+
+    /// The size of groups in the fractional part of the number.
+    ///
+    /// If 0, grouping separators will never be shown in the fractional part.
+    pub fraction: u8,
 }
 
 /// A stack representation of the strings used in [`DecimalSymbols`], i.e. a builder type
@@ -306,7 +311,6 @@ impl<'a> core::ops::Deref for DecimalSymbols<'a> {
 
 impl DecimalSymbols<'static> {
     /// Create a new en-US format for use in testing
-    #[cfg(feature = "datagen")]
     pub fn new_en_for_testing() -> Self {
         let strings = DecimalSymbolStrsBuilder {
             minus_sign_prefix: VarZeroCow::new_borrowed("-"),
@@ -323,6 +327,7 @@ impl DecimalSymbols<'static> {
                 primary: 3,
                 secondary: 3,
                 min_grouping: 1,
+                fraction: 0,
             },
         }
     }
