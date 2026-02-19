@@ -276,14 +276,14 @@ mod tests {
         serde_json::from_str::<DecimalFormat>(
             r#"{ "1000-count-other": "0k", "1000-count-other": "0K" }"#,
         )
-        .unwrap()
-        .as_compact_patterns(Default::default())
         .unwrap_err();
 
-        serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-one": "0" }"#)
-            .unwrap()
-            .as_compact_patterns(Default::default())
-            .unwrap_err();
+        assert!(
+            serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-one": "0" }"#)
+                .unwrap()
+                .standard
+                .is_empty()
+        );
 
         serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-other": "k" }"#)
             .unwrap()
@@ -292,12 +292,7 @@ mod tests {
 
         // Given this data, it is ambiguous whether the 10 000 should be formatted as 10 thousand or 1 myriad.
         serde_json::from_str::<DecimalFormat>(
-            r#"
-                        {
-                            "10000-count-other": "00 thousand",
-                            "10000-count-one": "0 myriad"
-                        }
-                    "#,
+            r#"{ "10000-count-other": "00 thousand", "10000-count-one": "0 myriad" }"#,
         )
         .unwrap()
         .as_compact_patterns(Default::default())

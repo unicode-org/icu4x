@@ -49,7 +49,6 @@ zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies
-displaydoc = { workspace = true }
 elsa = { workspace = true }
 flate2 = { workspace = true }
 itertools = { workspace = true }

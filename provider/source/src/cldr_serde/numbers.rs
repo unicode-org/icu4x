@@ -239,10 +239,16 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
                 M::Error::custom(format_args!("Too many digits in type {magnitude}"))
             })?;
 
-            patterns
+            if patterns
                 .entry(log10_type)
                 .or_default()
-                .insert(count.into(), access.next_value()?);
+                .insert(count.into(), access.next_value()?)
+                .is_some()
+            {
+                return Err(M::Error::custom(format_args!(
+                    "duplicate plural value {key}"
+                )));
+            };
         }
 
         let standard = patterns
@@ -278,6 +284,10 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
                 ))
             })
             .collect();
+
+        if patterns.is_empty() {
+            return Err(M::Error::custom("unhandled plural cases"));
+        }
 
         Ok(DecimalFormat {
             standard,

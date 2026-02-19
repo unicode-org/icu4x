@@ -1948,7 +1948,6 @@ dependencies = [
 name = "icu_provider_source"
 version = "2.1.2"
 dependencies = [
- "displaydoc",
  "elsa",
  "flate2",
  "icu",
