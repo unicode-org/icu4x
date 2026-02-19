@@ -109,7 +109,7 @@
 use alloc::boxed::Box;
 #[cfg(feature = "datagen")]
 #[cfg(feature = "unstable")]
-use alloc::{string::String, vec::Vec};
+use alloc::vec::Vec;
 #[cfg(feature = "unstable")]
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 #[cfg(feature = "unstable")]
@@ -432,7 +432,7 @@ impl<P: PatternBackend> CompactPatterns<'static, P> {
             (u8, icu_plurals::PluralElements<Box<Pattern<P>>>),
         >,
         zero_magnitude: Option<&icu_plurals::PluralElements<&Pattern<P>>>,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, DataError> {
         use icu_plurals::provider::FourBitMetadata;
         use icu_plurals::PluralElements;
         use zerovec::ule::encode_varule_to_box;
@@ -444,13 +444,14 @@ impl<P: PatternBackend> CompactPatterns<'static, P> {
             .zip(patterns.values().skip(1))
             .all(|(low, high)| low.0 <= high.0)
         {
-            Err(alloc::format!(
-                "Compact exponents should be nondecreasing: {:?}",
-                patterns
-                    .values()
-                    .map(|(exponent, _)| exponent)
-                    .collect::<Vec<_>>(),
-            ))?;
+            Err(
+                DataError::custom("Compact exponents should be nondecreasing").with_debug_context(
+                    &patterns
+                        .values()
+                        .map(|(exponent, _)| exponent)
+                        .collect::<Vec<_>>(),
+                ),
+            )?;
         }
 
         let mut deduplicated_patterns: Vec<(
@@ -480,10 +481,8 @@ impl<P: PatternBackend> CompactPatterns<'static, P> {
             // Store the exponent as a difference from the log10_type, i.e. the number of zeros
             // in the pattern, minus 1. No pattern should have more than 16 zeros.
             let Some(metadata) = FourBitMetadata::try_from_byte(log10_type - exponent) else {
-                return Err(alloc::format!(
-                    "Pattern has too many zeros {}",
-                    log10_type - exponent
-                ));
+                return Err(DataError::custom("Pattern has too many zeros")
+                    .with_debug_context(&(log10_type - exponent)));
             };
 
             deduplicated_patterns.push((log10_type, map.map(|p| (metadata, p))))

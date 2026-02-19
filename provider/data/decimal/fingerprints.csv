@@ -1,5 +1,5 @@
-decimal/compact/long/v1, <lookup>, 1297B, 209 identifiers
-decimal/compact/long/v1, <total>, 19093B, 15961B, 138 unique payloads
+decimal/compact/long/v1, <lookup>, 1302B, 210 identifiers
+decimal/compact/long/v1, <total>, 19187B, 16032B, 139 unique payloads
 decimal/compact/long/v1, af, 76B, 53B, 27934e5fadbac225
 decimal/compact/long/v1, ak, 89B, 66B, e7df9e1c1ef2e4f1
 decimal/compact/long/v1, am, 90B, 67B, 7ffba1229f34a4b7
@@ -165,6 +165,7 @@ decimal/compact/long/v1, sr, 207B, 185B, 40d089d7a7ea46a6
 decimal/compact/long/v1, sr-Latn, -> bs
 decimal/compact/long/v1, sv, 158B, 136B, 9bed2a9164c448cf
 decimal/compact/long/v1, sw, 74B, 51B, 84d1066aedc8db4
+decimal/compact/long/v1, sw-KE, 94B, 71B, c23d09fe74fb00aa
 decimal/compact/long/v1, ta, 153B, 131B, fee8f346e0bebe47
 decimal/compact/long/v1, ta/tamldec, -> ta
 decimal/compact/long/v1, te, 375B, 353B, 90b0b6135cfb8cf4

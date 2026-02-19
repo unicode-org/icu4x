@@ -8,7 +8,6 @@ use crate::SourceDataProvider;
 use icu::decimal::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-use std::convert::TryFrom;
 
 impl DataProvider<DecimalCompactShortV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalCompactShortV1>, DataError> {
@@ -27,23 +26,22 @@ impl DataProvider<DecimalCompactShortV1> for SourceDataProvider {
             &numbers.default_numbering_system
         };
 
-        let result = CompactPatterns::try_from(
-            &numbers
-                .numsys_data
-                .formats
-                .get(nsname)
-                .ok_or_else(|| {
-                    DataError::custom("Could not find formats for numbering system")
-                        .with_display_context(nsname)
-                })?
-                .short
-                .decimal_format,
-        )
-        .map_err(|s| {
-            DataError::custom("Could not create compact decimal patterns")
-                .with_display_context(&s)
-                .with_display_context(nsname)
-        })?;
+        let result = numbers
+            .numsys_data
+            .formats
+            .get(nsname)
+            .ok_or_else(|| {
+                DataError::custom("Could not find formats for numbering system")
+                    .with_display_context(nsname)
+            })?
+            .short
+            .decimal_format
+            .as_compact_patterns(*req.id.locale)
+            .map_err(|s| {
+                DataError::custom("Could not create compact decimal patterns")
+                    .with_display_context(&s)
+                    .with_display_context(nsname)
+            })?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -69,23 +67,22 @@ impl DataProvider<DecimalCompactLongV1> for SourceDataProvider {
             &numbers.default_numbering_system
         };
 
-        let result = CompactPatterns::try_from(
-            &numbers
-                .numsys_data
-                .formats
-                .get(nsname)
-                .ok_or_else(|| {
-                    DataError::custom("Could not find formats for numbering system")
-                        .with_display_context(nsname)
-                })?
-                .long
-                .decimal_format,
-        )
-        .map_err(|s| {
-            DataError::custom("Could not create compact decimal patterns")
-                .with_display_context(&s)
-                .with_display_context(nsname)
-        })?;
+        let result = numbers
+            .numsys_data
+            .formats
+            .get(nsname)
+            .ok_or_else(|| {
+                DataError::custom("Could not find formats for numbering system")
+                    .with_display_context(nsname)
+            })?
+            .long
+            .decimal_format
+            .as_compact_patterns(*req.id.locale)
+            .map_err(|s| {
+                DataError::custom("Could not create compact decimal patterns")
+                    .with_display_context(&s)
+                    .with_display_context(nsname)
+            })?;
 
         Ok(DataResponse {
             metadata: Default::default(),
