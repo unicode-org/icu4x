@@ -270,14 +270,15 @@ void main() {
       'Mi., 15.07.1446 AH, 14:32:12 Koordinierte Weltzeit',
     );
     expect(
-      () => ZonedDateTimeFormatter.specificLong(
-        locale,
-        DateTimeFormatter.ymdet(locale),
-      ).formatSameCalendar(
-        zonedDateTimeBuddhist.date,
-        zonedDateTimeBuddhist.time,
-        TimeZoneInfo.utc(),
-      ),
+      () =>
+          ZonedDateTimeFormatter.specificLong(
+            locale,
+            DateTimeFormatter.ymdet(locale),
+          ).formatSameCalendar(
+            zonedDateTimeBuddhist.date,
+            zonedDateTimeBuddhist.time,
+            TimeZoneInfo.utc(),
+          ),
       throwsA(
         DateTimeMismatchedCalendarError(
           thisKind: CalendarKind.hijriUmmAlQura,
