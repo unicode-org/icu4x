@@ -94,7 +94,7 @@ impl TryFrom<LocaleExtensions> for Extensions {
             .iter()
             .map(|v| private::Subtag::try_from_str(v).expect("Failed to add field."))
             .collect();
-        ext.private = private::Private::from_vec_unchecked(v);
+        ext.private = private::Private::from_vec(v);
         Ok(ext)
     }
 }

@@ -63,7 +63,7 @@ pub(crate) const PRIVATE_EXT_STR: &str = "x";
 /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
 /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
 ///
-/// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
+/// let private = Private::from_vec(vec![subtag1, subtag2]);
 /// assert_eq!(&private.to_string(), "x-foo-bar");
 /// ```
 ///
@@ -124,11 +124,11 @@ impl Private {
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     ///
-    /// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
+    /// let private = Private::from_vec(vec![subtag1, subtag2]);
     /// assert_eq!(&private.to_string(), "x-foo-bar");
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn from_vec_unchecked(input: Vec<Subtag>) -> Self {
+    pub fn from_vec(input: Vec<Subtag>) -> Self {
         Self(input.into())
     }
 
@@ -157,7 +157,7 @@ impl Private {
     ///
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
-    /// let mut private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
+    /// let mut private = Private::from_vec(vec![subtag1, subtag2]);
     ///
     /// assert_eq!(&private.to_string(), "x-foo-bar");
     ///
