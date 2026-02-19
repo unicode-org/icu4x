@@ -7,11 +7,164 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json>
 
+use core::fmt::{Display, Write};
+use icu::plurals::PluralElements;
 use icu_pattern::{DoublePlaceholder, PatternString};
+use icu_provider::DataError;
 use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::borrow::Cow;
+use std::collections::{BTreeMap, HashMap};
+
+/// Representation of a UTS-35 number pattern, including positive subpattern (required) and negative
+/// subpattern (optional).
+#[derive(Debug, PartialEq)]
+pub(crate) struct NumberPattern {
+    pub(crate) positive: Vec<NumberPatternItem>,
+    pub(crate) negative: Option<Vec<NumberPatternItem>>,
+}
+
+impl Display for NumberPattern {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for i in &self.positive {
+            f.write_str(i.as_str())?;
+        }
+        if let Some(n) = self.negative.as_ref() {
+            f.write_char(';')?;
+            for i in n {
+                f.write_str(i.as_str())?;
+            }
+        }
+        Ok(())
+    }
+}
+
+impl NumberPattern {
+    pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
+        let (p, n) = s
+            .split_once(';')
+            .map(|(p, n)| (p, Some(n)))
+            .unwrap_or((s, None));
+
+        fn parse_sub_pattern(s: &str) -> Result<Vec<NumberPatternItem>, DataError> {
+            let mut items = Vec::new();
+            let mut chars = s.chars().peekable();
+            let mut in_quote = false;
+            let mut string_buffer = String::new();
+
+            fn append_literal(items: &mut Vec<NumberPatternItem>, s: &str) {
+                if let Some(NumberPatternItem::Literal(last)) = items.last_mut() {
+                    last.push_str(s);
+                } else {
+                    items.push(NumberPatternItem::Literal(s.to_string()));
+                }
+            }
+
+            while let Some(c) = chars.next() {
+                if in_quote {
+                    if c == '\'' {
+                        if chars.peek() == Some(&'\'') {
+                            // Escaped quote ''
+                            string_buffer.push('\'');
+                            chars.next();
+                        } else {
+                            // End of quote
+                            in_quote = false;
+                            if !string_buffer.is_empty() {
+                                append_literal(&mut items, &string_buffer);
+                                string_buffer.clear();
+                            }
+                        }
+                    } else {
+                        string_buffer.push(c);
+                    }
+                } else {
+                    match c {
+                        '\'' => {
+                            in_quote = true;
+                        }
+                        '0' => items.push(NumberPatternItem::MandatoryDigit),
+                        '#' => items.push(NumberPatternItem::OptionalDigit),
+                        '.' => items.push(NumberPatternItem::DecimalSeparator),
+                        ',' => items.push(NumberPatternItem::GroupingSeparator),
+                        '¤' => items.push(NumberPatternItem::Currency),
+                        '%' => items.push(NumberPatternItem::Percent),
+                        '‰' => items.push(NumberPatternItem::PerMille),
+                        '+' => items.push(NumberPatternItem::PlusSign),
+                        '-' => items.push(NumberPatternItem::MinusSign),
+                        'E' => items.push(NumberPatternItem::Exponent),
+                        _ => {
+                            // Unquoted literal character
+                            let mut temp = String::new();
+                            temp.push(c);
+                            append_literal(&mut items, &temp);
+                        }
+                    }
+                }
+            }
+
+            if in_quote {
+                return Err(DataError::custom("UnclosedQuote"));
+            }
+            Ok(items)
+        }
+
+        Ok(Self {
+            positive: parse_sub_pattern(p)?,
+            negative: if let Some(n) = n {
+                Some(parse_sub_pattern(n)?)
+            } else {
+                None
+            },
+        })
+    }
+}
+
+impl<'de> Deserialize<'de> for NumberPattern {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = Cow::<str>::deserialize(deserializer)?;
+
+        Self::try_from_str(&s).map_err(D::Error::custom)
+    }
+}
+
+/// An item in a decimal pattern (used during parsing).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum NumberPatternItem {
+    Literal(String),
+    MandatoryDigit,
+    OptionalDigit,
+    DecimalSeparator,
+    GroupingSeparator,
+    Currency,
+    Percent,
+    PerMille,
+    PlusSign,
+    MinusSign,
+    Exponent,
+}
+
+impl NumberPatternItem {
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Literal(s) => s,
+            Self::MandatoryDigit => "0",
+            Self::OptionalDigit => "#",
+            Self::DecimalSeparator => ".",
+            Self::GroupingSeparator => ",",
+            Self::Currency => "¤",
+            Self::Percent => "%",
+            Self::PerMille => "‰",
+            Self::PlusSign => "+",
+            Self::MinusSign => "-",
+            Self::Exponent => "E",
+        }
+    }
+}
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Symbols {
@@ -30,7 +183,7 @@ pub(crate) struct Symbols {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct DecimalFormats {
-    pub(crate) standard: String,
+    pub(crate) standard: NumberPattern,
     pub(crate) long: DecimalFormatLength,
     pub(crate) short: DecimalFormatLength,
 }
@@ -43,28 +196,8 @@ pub(crate) struct DecimalFormatLength {
 
 #[derive(PartialEq, Debug, Default)]
 pub(crate) struct DecimalFormat {
-    pub(crate) patterns: Vec<CompactDecimalPattern>,
-}
-
-#[derive(PartialEq, Debug, Default)]
-pub(crate) struct CompactDecimalPattern {
-    /// The magnitude part of the pattern key.
-    ///
-    /// Examples:
-    /// - "1000000-count-zero" --> "1000000"
-    pub(crate) magnitude: String,
-
-    /// The count part of the pattern key.
-    ///
-    /// Examples:
-    /// - "1000000-count-zero" --> "zero"
-    pub(crate) count: String,
-
-    /// The pattern value.
-    ///
-    /// Examples:
-    /// - "1000-count-one": "¤0K" --> "¤0K"
-    pub(crate) pattern: String,
+    pub(crate) standard: BTreeMap<u8, PluralElements<NumberPattern>>,
+    pub(crate) alpha_next_to_number: BTreeMap<u8, PluralElements<NumberPattern>>,
 }
 
 impl<'de> Deserialize<'de> for DecimalFormat {
@@ -88,18 +221,68 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
     where
         M: MapAccess<'de>,
     {
-        let mut result = DecimalFormat::default();
+        let mut patterns = BTreeMap::<u8, BTreeMap<String, NumberPattern>>::new();
+
         while let Some(key) = access.next_key::<String>()? {
             let (magnitude, count) = key.split("-count-").next_tuple().ok_or_else(|| {
                 M::Error::invalid_value(Unexpected::Str(&key), &"key to contain -count-")
             })?;
-            result.patterns.push(CompactDecimalPattern {
-                magnitude: magnitude.to_string(),
-                count: count.to_string(),
-                pattern: access.next_value()?,
-            })
+
+            let mut type_bytes = magnitude.bytes();
+
+            if !(type_bytes.next() == Some(b'1') && type_bytes.all(|b| b == b'0')) {
+                return Err(M::Error::custom(format_args!(
+                    "Ill-formed type {magnitude}"
+                )));
+            }
+            let log10_type = u8::try_from(magnitude.len() - 1).map_err(|_| {
+                M::Error::custom(format_args!("Too many digits in type {magnitude}"))
+            })?;
+
+            patterns
+                .entry(log10_type)
+                .or_default()
+                .insert(count.into(), access.next_value()?);
         }
-        Ok(result)
+
+        let standard = patterns
+            .iter_mut()
+            .filter_map(|(k, v)| {
+                Some((
+                    *k,
+                    PluralElements::new(v.remove("other")?)
+                        .with_explicit_zero_value(v.remove("0"))
+                        .with_explicit_one_value(v.remove("1"))
+                        .with_zero_value(v.remove("zero"))
+                        .with_one_value(v.remove("one"))
+                        .with_two_value(v.remove("two"))
+                        .with_few_value(v.remove("few"))
+                        .with_many_value(v.remove("many")),
+                ))
+            })
+            .collect();
+
+        let alpha_next_to_number = patterns
+            .iter_mut()
+            .filter_map(|(k, v)| {
+                Some((
+                    *k,
+                    PluralElements::new(v.remove("other-alt-alphaNextToNumber")?)
+                        .with_explicit_zero_value(v.remove("0-alt-alphaNextToNumber"))
+                        .with_explicit_one_value(v.remove("1-alt-alphaNextToNumber"))
+                        .with_zero_value(v.remove("zero-alt-alphaNextToNumber"))
+                        .with_one_value(v.remove("one-alt-alphaNextToNumber"))
+                        .with_two_value(v.remove("two-alt-alphaNextToNumber"))
+                        .with_few_value(v.remove("few-alt-alphaNextToNumber"))
+                        .with_many_value(v.remove("many-alt-alphaNextToNumber")),
+                ))
+            })
+            .collect();
+
+        Ok(DecimalFormat {
+            standard,
+            alpha_next_to_number,
+        })
     }
 }
 
@@ -111,7 +294,7 @@ pub(crate) struct ShortCompactCurrencyPatterns {
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct CurrencyFormattingPatterns {
     /// Standard pattern
-    pub(crate) standard: String,
+    pub(crate) standard: NumberPattern,
 
     /// Contains the compact currency patterns for short compact currency formatting
     #[serde(rename = "short")]
@@ -119,7 +302,7 @@ pub(crate) struct CurrencyFormattingPatterns {
 
     /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
-    pub(crate) standard_alpha_next_to_number: Option<String>,
+    pub(crate) standard_alpha_next_to_number: Option<NumberPattern>,
 
     #[serde(rename = "unitPattern-count-0")]
     pub(crate) pattern_explicit_zero: Option<PatternString<DoublePlaceholder>>,

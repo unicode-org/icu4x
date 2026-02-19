@@ -3,31 +3,23 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::cldr_serde::numbers::NumberPatternItem;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 
+use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 use icu::decimal::provider::CompactPatterns;
 use icu::experimental::dimension::provider::currency::compact::*;
 use icu::plurals::PluralElements;
+use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::DoublePlaceholderPattern;
-use icu_pattern::QuoteMode;
+use icu_pattern::PatternItemCow;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
-
-#[derive(PartialOrd, Debug, PartialEq, Ord, Eq)]
-enum CurrencyPatternKind {
-    Standard,
-    AlphaNextToNumber,
-}
-
-#[derive(PartialEq, Clone, Debug)]
-struct ParsedPattern {
-    pattern: Box<DoublePlaceholderPattern>,
-    number_of_0s: Option<u8>,
-}
+use itertools::Itertools;
 
 impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ShortCurrencyCompactV1>, DataError> {
@@ -57,94 +49,12 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
             .currency_patterns
             .get(numbering_system)
             .and_then(|patterns| patterns.compact_short.as_ref())
-            .map(|short_compact| &short_compact.standard.patterns)
+            .map(|short_compact| &short_compact.standard)
         else {
             return Err(
                 DataErrorKind::IdentifierNotFound.with_req(ShortCurrencyCompactV1::INFO, req)
             );
         };
-
-        let mut parsed_patterns: BTreeMap<
-            (u8, CurrencyPatternKind),
-            BTreeMap<&str, ParsedPattern>,
-        > = BTreeMap::new();
-
-        for pattern in compact_patterns {
-            let mut type_bytes = pattern.magnitude.bytes();
-
-            if !(type_bytes.next() == Some(b'1') && type_bytes.all(|b| b == b'0')) {
-                return Err(DataError::custom("pattern")
-                    .with_display_context(&format!("Ill-formed type {}", pattern.magnitude)));
-            }
-            let log10_type = u8::try_from(pattern.magnitude.len() - 1).map_err(|_| {
-                DataError::custom("pattern")
-                    .with_display_context(&format!("Too many digits in type {}", pattern.magnitude))
-            })?;
-
-            // TODO: use negative patterns?
-            let pattern_str = pattern.pattern.split(';').next().unwrap();
-
-            let number_of_0s = pattern_str
-                .split('\'')
-                .enumerate()
-                .filter_map(|(i, chunk)| {
-                    (i % 2 == 0)
-                        .then(|| chunk.chars().filter(|&c| c == '0').count() as u8)
-                        .filter(|&n| n != 0)
-                })
-                .next();
-
-            let pattern_str = if let Some(number_of_zeros) = number_of_0s {
-                pattern_str.replace(
-                    &core::iter::repeat_n('0', number_of_zeros as usize).collect::<String>(),
-                    "{0}",
-                )
-            } else {
-                pattern_str.into()
-            }
-            .replace("¤", "{1}");
-
-            let parsed = DoublePlaceholderPattern::try_from_str(
-                &pattern_str,
-                QuoteMode::QuotingSupported.into(),
-            )
-            .map_err(|e| DataError::custom("pattern").with_display_context(&e))?;
-
-            if log10_type < number_of_0s.unwrap_or_default() {
-                return Err(DataError::custom("pattern").with_display_context(&format!(
-                    "Too many 0s in type 10^{}, ({}, implying nonpositive exponent c={}), pattern = {}",
-                    log10_type,
-                    number_of_0s.unwrap_or_default(),
-                    log10_type as i8 - number_of_0s.unwrap_or_default() as i8 + 1,
-                    pattern.pattern
-                )));
-            }
-
-            let (count, is_alpha_next) = match pattern.count.strip_suffix("-alt-alphaNextToNumber")
-            {
-                Some(count) => (count, CurrencyPatternKind::AlphaNextToNumber),
-                None => (&*pattern.count, CurrencyPatternKind::Standard),
-            };
-
-            parsed_patterns
-                .entry((log10_type, is_alpha_next))
-                .or_default()
-                .insert(
-                    count,
-                    ParsedPattern {
-                        pattern: parsed,
-                        number_of_0s,
-                    },
-                )
-                .map_or_else(
-                    || Ok(()),
-                    |_| {
-                        Err(DataError::custom("pattern").with_display_context(&format!(
-                            "Plural case {count:?} is duplicated for type 10^{log10_type}"
-                        )))
-                    },
-                )?;
-        }
 
         let mut standard_patterns: BTreeMap<
             u8,
@@ -154,58 +64,83 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
             u8,
             (u8, PluralElements<Box<DoublePlaceholderPattern>>),
         > = BTreeMap::new();
-        // Compute the exponents based on the numbers of 0s in the placeholders
-        // and the type values: the exponent is 3 for type=1000, "0K", as well
-        // as for type=10000, "00K", etc.
-        // Remove duplicates of the count=other case in the same iteration.
-        for ((log10_type, pattern_kind), mut parsed_plural_map) in parsed_patterns {
-            let Some(other) = parsed_plural_map.remove(&"other") else {
-                log::warn!(
-                    "Missing other case for type 10^{log10_type} {} {parsed_plural_map:?}",
-                    req.id.locale.language,
-                );
-                continue;
-            };
-            let parsed_plural_elements = PluralElements::new(other)
-                .with_explicit_one_value(parsed_plural_map.remove(&"1"))
-                .with_zero_value(parsed_plural_map.remove(&"zero"))
-                .with_one_value(parsed_plural_map.remove(&"one"))
-                .with_two_value(parsed_plural_map.remove(&"two"))
-                .with_few_value(parsed_plural_map.remove(&"few"))
-                .with_many_value(parsed_plural_map.remove(&"many"));
 
-            let other_number_of_0s = parsed_plural_elements
-                .other()
-                .number_of_0s
-                .unwrap_or_default();
+        for (target, source) in [
+            (&mut standard_patterns, &compact_patterns.standard),
+            (
+                &mut alpha_next_to_patterns,
+                &compact_patterns.alpha_next_to_number,
+            ),
+        ] {
+            for (&log10_type, pattern) in source {
+                let pattern = pattern.as_ref().try_map(|pattern| {
 
-            parsed_plural_elements
-                .try_for_each(|pattern| {
-                    if let Some(number_of_0s) = pattern.number_of_0s {
+                if pattern.negative.is_some() {
+                    log::warn!(
+                        "Unexpected negative pattern for {}: {}",
+                        req.id.locale,
+                        pattern
+                    );
+                }
+
+                let number_of_0s = Some(
+                    pattern.positive
+                        .iter()
+                        .filter(|&i| *i == NumberPatternItem::MandatoryDigit)
+                        .count() as u8,
+                )
+                .filter(|&n| n != 0);
+
+                let parsed = DoublePlaceholderPattern::try_from_items(
+                    pattern.positive
+                        .iter()
+                        .map(|i| match i {
+                            NumberPatternItem::MandatoryDigit => {
+                                PatternItemCow::Placeholder(DoublePlaceholderKey::Place0)
+                            }
+                            NumberPatternItem::Currency => {
+                                PatternItemCow::Placeholder(DoublePlaceholderKey::Place1)
+                            }
+                            i => PatternItemCow::Literal(Cow::Borrowed(i.as_str())),
+                        })
+                        .dedup(),
+                )
+                .map_err(|e| DataError::custom("pattern").with_display_context(&e))?;
+
+                if log10_type < number_of_0s.unwrap_or_default() {
+                    return Err(DataError::custom("pattern").with_display_context(&format!(
+                        "Too many 0s in type 10^{}, ({}, implying nonpositive exponent c={}), pattern = {:?}",
+                        log10_type,
+                        number_of_0s.unwrap_or_default(),
+                        log10_type as i8 - number_of_0s.unwrap_or_default() as i8 + 1,
+                        pattern
+                    )));
+                }
+
+                Ok((number_of_0s, parsed))
+                })?;
+
+                let other_number_of_0s = pattern.other().0.ok_or_else(|| {
+                    DataError::custom("Missing placeholder in other case")
+                        .with_display_context(&log10_type)
+                })?;
+
+                pattern.try_for_each(|pattern| {
+                    if let Some(number_of_0s) = pattern.0 {
                         if number_of_0s != other_number_of_0s {
-                            return Err(format!(
-                                "Inconsistent placeholders within type 10^{}: {} 0s vs {} 0s",
-                                log10_type, other_number_of_0s, number_of_0s,
-                            ));
+                            return Err(DataError::custom("Inconsistent placeholders within")
+                                .with_debug_context(&log10_type)
+                                .with_debug_context(&other_number_of_0s)
+                                .with_debug_context(&number_of_0s));
                         }
                     }
                     Ok(())
-                })
-                .unwrap();
+                })?;
 
-            let exponent = log10_type - other_number_of_0s + 1;
+                let exponent = log10_type - other_number_of_0s + 1;
 
-            match pattern_kind {
-                CurrencyPatternKind::Standard => &mut standard_patterns,
-                CurrencyPatternKind::AlphaNextToNumber => &mut alpha_next_to_patterns,
+                target.insert(log10_type, (exponent, pattern.map(|pattern| pattern.1)));
             }
-            .insert(
-                log10_type,
-                (
-                    exponent,
-                    parsed_plural_elements.map(|pattern| pattern.pattern),
-                ),
-            );
         }
 
         Ok(DataResponse {
