@@ -285,6 +285,16 @@ One suggested situation in which public fields would be acceptable is for user-f
 
 See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more.
 
+### Don't use cross-crate internal APIs :: suggested
+
+All public APIs, even those marked `#[doc(hidden)]`, add a cost to maintenance and integration:
+
+- Action at a distance: you might make a change to an internal API in one crate and all the tests pass only to discover that a client in another crate was assuming something else about that function's behavior.
+- Piecewise integration: when clients are in the process of updating crates, they may update one crate at a time, resulting in an ephemeral build breakage. Since we care about easing clients' integration processes, we should generally avoid causing this type of issue.
+- Use outside ICU4X: if an API is exported, it is subject to being used by clients, whether intentionally or unintentionally.
+
+If you are tempted to add an internal cross-crate API, take a step back, identify the fundamental need, and consider introducing a properly documented and tested public API.
+
 ## Derived Traits
 
 ### Debug Trait on Public Types :: suggested
