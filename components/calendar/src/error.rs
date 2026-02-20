@@ -480,6 +480,16 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
+/// The error returned by `year_info_from_extended_checked` when
+/// the extended year is outside of `GENEROUS_YEAR_RANGE`.
+pub(crate) struct YearOverflowError;
+
+impl From<YearOverflowError> for DateFromFieldsError {
+    fn from(_other: YearOverflowError) -> Self {
+        DateFromFieldsError::Overflow
+    }
+}
+
 /// Error for [`Month`](crate::types::Month) parsing
 #[derive(Debug)]
 #[non_exhaustive]

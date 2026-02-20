@@ -7,7 +7,7 @@ use calendrical_calculations::rata_die::RataDie;
 use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::{
     range_check, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
-    MonthCodeParseError, MonthError, UnknownEraError,
+    MonthCodeParseError, MonthError, UnknownEraError, YearOverflowError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
@@ -47,18 +47,6 @@ pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
 /// The tests in `extrema.rs` ensure that all in-range dates can be produced here,
 /// and that these year numbers map to out-of-range values for every era.
 pub const GENEROUS_YEAR_RANGE: RangeInclusive<i32> = -1_040_000..=1_040_000;
-
-/// This is like GENEROUS_YEAR_RANGE, but a bit wider to account for era arithmetic.
-///
-/// A year that was within the generous year range might get era-adjusted to being
-/// outside of it. Instead of performing the range check twice, we expect that
-/// our code may experience year values that are outside of but "near" the generous
-/// year range, and assert for SAFE_YEAR_RANGE in key spots where using a too-large
-/// year value might cause issues further down the line.
-///
-/// TLDR: GENEROUS_YEAR_RANGE is for early-checking user inputs. SAFE_YEAR_RANGE is for assertions to
-/// ensure that too-large year values are not sneaking in to the code somehow.
-pub const SAFE_YEAR_RANGE: RangeInclusive<i32> = -1_100_000..=1_100_000;
 
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
@@ -176,6 +164,16 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     /// Converts an extended year to a [`Self::YearInfo`].
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
+
+    fn year_info_from_extended_checked(
+        &self,
+        extended_year: i32,
+    ) -> Result<Self::YearInfo, YearOverflowError> {
+        if !GENEROUS_YEAR_RANGE.contains(&extended_year) {
+            return Err(YearOverflowError);
+        }
+        Ok(self.year_info_from_extended(extended_year))
+    }
 
     /// Calculates the ECMA reference year (represented as an extended year)
     /// for the month code and day, or an error if the month code and day are invalid.
@@ -356,11 +354,6 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
         let mut valid_month = None;
 
-        // NOTE: The year/extendedyear range check is important to avoid arithmetic
-        // overflow in `extended_year_from_era_year` and `year_info_from_extended`. It
-        // must happen before they are called.
-        // TODO: update to a wider year range that allows for the full RD range to constructed
-        //
         // To better match the Temporal specification's order of operations, we try
         // to return structural type errors (`NotEnoughFields`) before checking for range errors.
         // This isn't behavior we *must* have, but it is not much additional work to maintain
@@ -372,7 +365,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                         return Err(DateFromFieldsError::Overflow);
                     }
 
-                    calendar.year_info_from_extended(extended_year)
+                    calendar.year_info_from_extended_checked(extended_year)?
                 }
                 None => match missing_fields_strategy {
                     MissingFieldsStrategy::Reject => {
@@ -409,7 +402,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 if !GENEROUS_YEAR_RANGE.contains(&extended_year) {
                     return Err(DateFromFieldsError::Overflow);
                 }
-                let year = calendar.year_info_from_extended(extended_year);
+                let year = calendar.year_info_from_extended_checked(extended_year)?;
                 if let Some(extended_year) = fields.extended_year {
                     if year.to_extended_year() != extended_year {
                         return Err(DateFromFieldsError::InconsistentYear);
