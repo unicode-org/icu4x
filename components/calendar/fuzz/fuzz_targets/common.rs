@@ -4,7 +4,7 @@
 
 use arbitrary::Arbitrary;
 use icu_calendar::{Date, AnyCalendar};
-use icu_calendar::types::{DateFields, MonthCode};
+use icu_calendar::types::{DateFields, Month};
 use icu_calendar::options::*;
 
 
@@ -27,8 +27,6 @@ impl Ymd {
         } else {
             Some(Overflow::Reject)
         };
-
-        let code: MonthCode;
 
         let mut fields = DateFields::default();
         fields.extended_year = Some(self.year);
@@ -93,7 +91,7 @@ impl From<AnyCalendarKind> for icu_calendar::AnyCalendarKind {
             AnyCalendarKind::HijriTabularTypeIIThursday => Self::HijriTabularTypeIIThursday,
             AnyCalendarKind::HijriUmmAlQura => Self::HijriUmmAlQura,
             AnyCalendarKind::Iso => Self::Iso,
-            AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => Self::Japanese,
+            AnyCalendarKind::Japanese => Self::Japanese,
             AnyCalendarKind::Persian => Self::Persian,
             AnyCalendarKind::Roc => Self::Roc,
         }

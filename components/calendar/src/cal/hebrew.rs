@@ -4,8 +4,8 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError, MonthError,
-    UnknownEraError,
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
+    MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -135,13 +135,13 @@ impl DateFieldsResolver for Hebrew {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         match era {
-            b"am" => Ok(HebrewYear::compute(era_year)),
+            b"am" => Ok(era_year),
             _ => Err(UnknownEraError),
         }
     }
@@ -290,7 +290,7 @@ impl Calendar for Hebrew {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.0.added(duration, self, options).map(HebrewDateInner)
     }
 

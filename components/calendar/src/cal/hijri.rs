@@ -6,7 +6,9 @@ use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::PackWithMD;
 use crate::calendar_arithmetic::ToExtendedYear;
-use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
+use crate::error::{
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -844,22 +846,22 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         let extended_year = match era {
             b"ah" => era_year,
             b"bh" => 1 - era_year,
             _ => return Err(UnknownEraError),
         };
-        Ok(self.year_info_from_extended(extended_year))
+        Ok(extended_year)
     }
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        debug_assert!(crate::calendar_arithmetic::VALID_YEAR_RANGE.contains(&extended_year));
+        debug_assert!(crate::calendar_arithmetic::GENEROUS_YEAR_RANGE.contains(&extended_year));
         self.0.year(extended_year)
     }
 
@@ -940,7 +942,7 @@ impl<R: Rules> Calendar for Hijri<R> {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.0.added(duration, self, options).map(HijriDateInner)
     }
 

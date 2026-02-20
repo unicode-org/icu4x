@@ -325,7 +325,7 @@ macro_rules! make_any_calendar {
                 date: &Self::DateInner,
                 duration: $crate::types::DateDuration,
                 options: $crate::options::DateAddOptions,
-            ) -> Result<Self::DateInner, $crate::DateError> {
+            ) -> Result<Self::DateInner, $crate::error::DateAddError> {
                 let mut date = *date;
                 match (self, &mut date) {
                     $(
