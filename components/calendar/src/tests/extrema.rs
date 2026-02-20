@@ -3,9 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::{GENEROUS_YEAR_RANGE, VALID_RD_RANGE, VALID_YEAR_RANGE};
+use crate::duration::DateDuration;
+use crate::error::DateAddError;
 use crate::error::DateFromFieldsError;
-use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::{DateFields, Month};
+use crate::options::{DateAddOptions, DateDifferenceOptions, DateFromFieldsOptions, Overflow};
+use crate::types::{DateDurationUnit, DateFields, Month};
 use crate::Date;
 use calendrical_calculations::gregorian::fixed_from_gregorian;
 use calendrical_calculations::rata_die::RataDie;
@@ -50,6 +52,119 @@ super::test_all_cals!(
             Date::from_rata_die(*VALID_RD_RANGE.end() + 1, cal).to_rata_die(),
             *VALID_RD_RANGE.end()
         );
+    }
+);
+
+// Add one `unit` to a signed duration (in the direction of its sign)
+fn nudge_duration_by_unit(
+    mut duration: DateDuration,
+    unit: DateDurationUnit,
+    value: i32,
+) -> DateDuration {
+    match unit {
+        DateDurationUnit::Years => duration.years = duration.years.saturating_add_signed(value),
+        DateDurationUnit::Months => duration.months = duration.months.saturating_add_signed(value),
+        DateDurationUnit::Weeks => duration.weeks = duration.weeks.saturating_add_signed(value),
+        DateDurationUnit::Days => {
+            duration.days = duration.days.saturating_add_signed(i64::from(value))
+        }
+    }
+    duration
+}
+
+super::test_all_cals!(
+    #[ignore] // slow
+    fn check_added_extrema<C: Calendar + Copy>(cal: C) {
+        let min_date = Date::from_rata_die(*VALID_RD_RANGE.start(), cal);
+        let max_date = Date::from_rata_die(*VALID_RD_RANGE.end(), cal);
+        const RDS_TO_TEST: &[RataDie] = &[
+            *VALID_RD_RANGE.start(),
+            VALID_RD_RANGE.start().add(1),
+            VALID_RD_RANGE.start().add(5),
+            VALID_RD_RANGE.start().add(100),
+            VALID_RD_RANGE.start().add(10000),
+            RataDie::new(-1000),
+            RataDie::new(0),
+            RataDie::new(1000),
+            VALID_RD_RANGE.end().add(10000),
+            VALID_RD_RANGE.end().add(100),
+            VALID_RD_RANGE.end().add(5),
+            VALID_RD_RANGE.end().add(1),
+            *VALID_RD_RANGE.end(),
+        ];
+
+        let constrain = DateAddOptions {
+            overflow: Some(Overflow::Constrain),
+            ..Default::default()
+        };
+
+        let reject = DateAddOptions {
+            overflow: Some(Overflow::Reject),
+            ..Default::default()
+        };
+
+        for start_date in RDS_TO_TEST {
+            let start_date = Date::from_rata_die(*start_date, cal);
+            for unit in [
+                DateDurationUnit::Years,
+                // This is very very slow right now
+                // https://github.com/unicode-org/icu4x/issues/7077
+                // DateDurationUnit::Months,
+                DateDurationUnit::Weeks,
+                DateDurationUnit::Days,
+            ] {
+                let options = DateDifferenceOptions {
+                    largest_unit: Some(unit),
+                    ..Default::default()
+                };
+                let min_duration = start_date
+                    .try_until_with_options(&min_date, options)
+                    .unwrap();
+                let max_duration = start_date
+                    .try_until_with_options(&max_date, options)
+                    .unwrap();
+
+                // the nudge routine assumes a sign, but zero durations always have positive sign
+                // Explicitly set it before nudging
+                let mut min_duration_for_nudging = min_duration;
+                min_duration_for_nudging.is_negative = true;
+                let min_duration_plus_one =
+                    nudge_duration_by_unit(min_duration_for_nudging, unit, 1);
+                let max_duration_plus_one = nudge_duration_by_unit(max_duration, unit, 1);
+
+                for (date_bound, duration_bound, plus_one, bound) in [
+                    (min_date, min_duration, min_duration_plus_one, "min"),
+                    (max_date, max_duration, max_duration_plus_one, "max"),
+                ] {
+                    for overflow in [constrain, reject] {
+                        let added = start_date.try_added_with_options(duration_bound, overflow);
+                        if added.is_err() && overflow == reject {
+                            assert_ne!(added, Err(DateAddError::Overflow), "{start_date:?} + {duration_bound:?} should not produce overflow error in Reject mode");
+                        } else {
+                            assert_eq!(
+                                added,
+                                Ok(date_bound),
+                                "{start_date:?} + {duration_bound:?} should produce {bound} date"
+                            );
+                        }
+
+                        let added_plus_one = start_date.try_added_with_options(plus_one, overflow);
+                        if overflow == constrain {
+                            assert_eq!(
+                                added_plus_one,
+                                Err(DateAddError::Overflow),
+                                "{start_date:?} + {plus_one:?} should be out of range"
+                            );
+                        } else {
+                            assert!(
+                                added_plus_one.is_err(),
+                                "{start_date:?} + {plus_one:?} should be out of range"
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 );
 
