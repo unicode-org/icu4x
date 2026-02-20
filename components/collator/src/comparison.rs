@@ -844,6 +844,87 @@ impl CollatorBorrowed<'static> {
         })
     }
 
+    /// This creates a root collator using baked data only.
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "unstable")]
+    pub const fn new_root() -> Self {
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1
+                .ce32s
+                .as_slice()
+                .len()
+                == JAMO_COUNT
+        );
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                .last_primaries
+                .as_slice()
+                .len()
+                > (MaxVariable::Currency as usize)
+        );
+
+        Self {
+            special_primaries: const {
+                &CollationSpecialPrimariesValidated {
+                    last_primaries: zerovec::ZeroSlice::from_ule_slice(
+                        crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                            .last_primaries
+                            .as_slice()
+                            .as_ule_slice()
+                            .split_at(MaxVariable::Currency as usize)
+                            .0,
+                    )
+                    .as_zerovec(),
+                    numeric_primary:
+                        crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                            .numeric_primary,
+                    compressible_bytes: {
+                        const C: &[<u16 as AsULE>::ULE] =
+                            crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                                .last_primaries
+                                .as_slice()
+                                .as_ule_slice();
+                        if C.len() == MaxVariable::Currency as usize + 16 {
+                            let i = MaxVariable::Currency as usize;
+                            #[allow(clippy::indexing_slicing)]
+                            &[
+                                C[i],
+                                C[i + 1],
+                                C[i + 2],
+                                C[i + 3],
+                                C[i + 4],
+                                C[i + 5],
+                                C[i + 6],
+                                C[i + 7],
+                                C[i + 8],
+                                C[i + 9],
+                                C[i + 10],
+                                C[i + 11],
+                                C[i + 12],
+                                C[i + 13],
+                                C[i + 14],
+                                C[i + 15],
+                            ]
+                        } else {
+                            CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK
+                        }
+                    },
+                }
+            },
+            root: crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1,
+            tailoring: None,
+            jamo: crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1,
+            options: CollatorOptionsBitField::default(),
+            // Required for root collation correctness
+            diacritics: crate::provider::Baked::SINGLETON_COLLATION_DIACRITICS_V1,
+            reordering: None,
+            decompositions: icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1,
+            tables: icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1,
+            lithuanian_dot_above: false,
+        }
+    }
+
     /// Cheaply converts a [`CollatorBorrowed<'static>`] into a [`Collator`].
     ///
     /// Note: Due to branching and indirection, using [`Collator`] might inhibit some
