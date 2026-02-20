@@ -1018,14 +1018,32 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
             // UAX14 doesn't have Thai etc, so use another way.
             if self.options.word_option != LineBreakWordOption::BreakAll
-                && Y::use_complex_breaking(self, left_codepoint)
-                && Y::use_complex_breaking(self, right_codepoint)
             {
-                let result = Y::line_handle_complex_language(self, left_codepoint);
-                if result.is_some() {
-                    return result;
+                // Extended to handle SA-SPACE(s)-SA sequences
+                let should_use_complex = if Y::use_complex_breaking(self, left_codepoint) {
+                    if Y::use_complex_breaking(self, right_codepoint) {
+                        true  // SA × SA
+                    } else if right_prop == SP {
+                        // SA × SP - check if SA continues after space(s)
+                        self.peek_past_spaces_for_sa()
+                    } else {
+                        false
+                    }
+                } else {
+                    false
+                };
+
+                if should_use_complex {
+                    let result = Y::line_handle_complex_language(self, left_codepoint);
+                    if result.is_some() { 
+                        return result;
+                    }
                 }
-                // I may have to fetch text until non-SA character?.
+            }
+
+            // Suppress UAX#14 breaks at SA × SP when SA continues after space(s)
+            if left_prop == SA && right_prop == SP && self.peek_past_spaces_for_sa() {
+                continue;
             }
 
             // If break_state is equals or grater than 0, it is alias of property.
@@ -1206,6 +1224,31 @@ impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
             _ => false,
         }
     }
+
+    /// Helper: Check if spaces are followed by SA (complex script) characters.
+    /// Peeks past all consecutive SP (space) characters to see if SA continues.
+    /// Returns true if SA is found after space(s), false otherwise.
+    /// Restores iterator position before returning.
+    fn peek_past_spaces_for_sa(&mut self) -> bool {
+        let temp_iter = self.iter.clone();
+        let temp_pos = self.current_pos_data;
+        self.advance_iter();
+
+        let mut has_sa = false;
+        while let Some(c) = self.get_current_codepoint() {
+            let p = self.get_linebreak_property(c);
+            if p == SP {
+                self.advance_iter();
+            } else {
+                has_sa = p == SA;
+                break;
+            }
+        }
+
+        self.iter = temp_iter;
+        self.current_pos_data = temp_pos;
+        has_sa
+    }
 }
 
 impl LineBreakType for Utf8 {
@@ -1259,6 +1302,29 @@ fn line_handle_complex_language_utf8<T>(
 where
     T: LineBreakType<CharType = char>,
 {
+    /// Helper: Check if spaces are followed by more SA characters.
+    fn peek_past_spaces_for_sa<T>(iter: &mut LineBreakIterator<'_, '_, T>) -> bool
+    where
+        T: LineBreakType<CharType = char>,
+    {
+        let temp_iter = iter.iter.clone();
+        let temp_pos = iter.current_pos_data;
+
+        let mut has_sa = false;
+        while let Some(c) = iter.get_current_codepoint() {
+            if c == ' ' {
+                iter.advance_iter();
+            } else {
+                has_sa = T::use_complex_breaking(iter, c);
+                break;
+            }
+        }
+
+        iter.iter = temp_iter;
+        iter.current_pos_data = temp_pos;
+        has_sa
+    }
+
     // word segmenter doesn't define break rules for some languages such as Thai.
     let start_iter = iter.iter.clone();
     let start_point = iter.current_pos_data;
@@ -1269,7 +1335,12 @@ where
         s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
         if let Some(current_codepoint) = iter.get_current_codepoint() {
-            if !T::use_complex_breaking(iter, current_codepoint) {
+            // Continue collecting if SA, or if space(s) followed by SA
+            if T::use_complex_breaking(iter, current_codepoint) {
+                continue;
+            } else if current_codepoint == ' ' && peek_past_spaces_for_sa(iter) {
+                continue;
+            } else {
                 break;
             }
         } else {
