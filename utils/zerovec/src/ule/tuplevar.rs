@@ -67,6 +67,7 @@ macro_rules! tuple_varule {
         // 5. `from_bytes_unchecked` returns a fat pointer to the bytes.
         // 6. All other methods are left at their default impl.
         // 7. The inner ULEs have byte equality, so this composition has byte equality.
+        // 8. There are no concrete methods with the same name as VarULE trait methods.
         unsafe impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> VarULE for $name<$($T,)+ Format>
         {
             fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {

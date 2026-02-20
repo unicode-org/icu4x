@@ -128,6 +128,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     ///
     /// `bytes` need to be an output from [`VarZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         // self is really just a wrapper around a byte slice
         mem::transmute(bytes)
     }
@@ -257,6 +258,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// ```
     #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         &self.entire_slice
     }
 
@@ -272,6 +274,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     ///
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
     pub fn parse_bytes<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         <Self as VarULE>::parse_bytes(slice)
     }
 }
@@ -444,6 +447,7 @@ where
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. `as_bytes()` is equivalent to a regular transmute of the underlying data
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
+//  8. Concrete methods with the same name as VarULE trait methods have the same behavior as the trait methods.
 unsafe impl<T: VarULE + ?Sized + 'static, F: VarZeroVecFormat> VarULE for VarZeroSlice<T, F> {
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let _: VarZeroVecComponents<T, F> =
