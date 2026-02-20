@@ -28,8 +28,8 @@
 //! - Grapheme cluster segmenter, word segmenter, and sentence segmenter that are compatible with
 //!   [Unicode Standard Annex #29][UAX29], _Unicode Text Segmentation_.
 //!
-//! [UAX14]: https://www.unicode.org/reports/tr14/
-//! [UAX29]: https://www.unicode.org/reports/tr29/
+//! [UAX14]: https://www.unicode.org/reports/tr14/tr14-51.html
+//! [UAX29]: https://www.unicode.org/reports/tr29/tr29-47.html
 //! [`line-break`]: https://drafts.csswg.org/css-text-3/#line-break-property
 //! [`word-break`]: https://drafts.csswg.org/css-text-3/#word-break-property
 //!
