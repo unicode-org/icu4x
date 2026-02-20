@@ -416,6 +416,40 @@ pub trait PreferenceKey: Sized {
     }
 }
 
+// This utility macro needs to be split from the main `__define_preferences` macro
+// to gate the implementation behind the `alloc` feature; using `cfg(feature = "alloc")`
+// inside `__define_preferences` does not use the "alloc" feature from this
+// crate, it uses the "alloc" feature from the crate that expands (calls) the macro.
+#[macro_export]
+#[doc(hidden)]
+#[cfg(feature = "alloc")]
+macro_rules! __impl_into_locale {
+    ($name:ident, $($key:ident: $pref:ty),*) => {
+        impl From<$name> for $crate::Locale {
+            fn from(other: $name) -> Self {
+                use $crate::preferences::PreferenceKey;
+                let mut result = Self::from(other.locale_preferences);
+                $(
+                    if let Some(value) = other.$key {
+                        if let Some(ue) = <$pref>::unicode_extension_key() {
+                            let val = value.unicode_extension_value().unwrap();
+                            result.extensions.unicode.keywords.set(ue, val);
+                        }
+                    }
+                )*
+                result
+            }
+        }
+    }
+}
+
+#[macro_export]
+#[doc(hidden)]
+#[cfg(not(feature = "alloc"))]
+macro_rules! __impl_into_locale {
+    ($name:ident, $($key:ident: $pref:ty),*) => {};
+}
+
 /// A macro to facilitate generation of preferences struct.
 ///
 ///
@@ -516,21 +550,7 @@ macro_rules! __define_preferences {
             }
         }
 
-        // impl From<$name> for $crate::Locale {
-        //     fn from(other: $name) -> Self {
-        //         use $crate::preferences::PreferenceKey;
-        //         let mut result = Self::from(other.locale_preferences);
-        //         $(
-        //             if let Some(value) = other.$key {
-        //                 if let Some(ue) = <$pref>::unicode_extension_key() {
-        //                     let val = value.unicode_extension_value().unwrap();
-        //                     result.extensions.unicode.keywords.set(ue, val);
-        //                 }
-        //             }
-        //         )*
-        //         result
-        //     }
-        // }
+        $crate::__impl_into_locale!($name, $($key: $pref),*);
 
         impl $name {
             /// Extends the preferences with the values from another set of preferences.
