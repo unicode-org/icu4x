@@ -810,6 +810,27 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         cal: &C,
         options: DateAddOptions,
     ) -> Result<Self, DateAddError> {
+        // We preemptively protect ourselves from overly-large values
+        //
+        // This is mostly needed for avoiding overflows on Duration arithmetic,
+        // this could also be handled by updating DateDuration::add_foo_to()
+        // to return an error. However, that would lead to more error handling cluttering
+        // surpasses().
+        const GENEROUS_MAX_YEARS: u32 =
+            (*GENEROUS_YEAR_RANGE.end() - *GENEROUS_YEAR_RANGE.start()) as u32;
+        const GENEROUS_MAX_MONTHS: u32 = GENEROUS_MAX_YEARS * 13;
+        const GENEROUS_MAX_DAYS: u64 = GENEROUS_MAX_MONTHS as u64 * 31;
+
+        if duration.years > GENEROUS_MAX_YEARS
+            || duration.months > GENEROUS_MAX_MONTHS
+            || (duration.weeks as u64)
+                .saturating_mul(7)
+                .saturating_add(duration.days)
+                > GENEROUS_MAX_DAYS
+        {
+            return Err(DateAddError::Overflow);
+        }
+
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _isoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended_checked(
