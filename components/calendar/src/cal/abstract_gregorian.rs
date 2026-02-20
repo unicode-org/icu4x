@@ -50,12 +50,12 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
-        Ok(self.0.extended_from_era_year(Some(era), era_year)? + Y::EXTENDED_YEAR_OFFSET)
+    ) -> Result<i32, UnknownEraError> {
+        self.0.extended_from_era_year(Some(era), era_year)
     }
 
     #[inline]

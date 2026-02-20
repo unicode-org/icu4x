@@ -69,11 +69,11 @@ impl DateFieldsResolver for Indian {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         match era {
             b"shaka" => Ok(era_year),
             _ => Err(UnknownEraError),

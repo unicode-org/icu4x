@@ -93,14 +93,17 @@ impl DateFieldsResolver for Ethiopian {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         match (self.era_style(), era) {
-            (EthiopianEraStyle::AmeteMihret, b"am") => Ok(era_year + AMETE_MIHRET_OFFSET),
-            (_, b"aa") => Ok(era_year + AMETE_ALEM_OFFSET),
+            (EthiopianEraStyle::AmeteMihret, b"am") => Ok(era_year),
+            (EthiopianEraStyle::AmeteMihret, b"aa") => {
+                Ok(era_year - AMETE_MIHRET_OFFSET + AMETE_ALEM_OFFSET)
+            }
+            (EthiopianEraStyle::AmeteAlem, b"aa") => Ok(era_year),
             (_, _) => Err(UnknownEraError),
         }
     }

@@ -844,17 +844,17 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         let extended_year = match era {
             b"ah" => era_year,
             b"bh" => 1 - era_year,
             _ => return Err(UnknownEraError),
         };
-        Ok(self.year_info_from_extended(extended_year))
+        Ok(extended_year)
     }
 
     #[inline]

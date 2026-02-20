@@ -588,11 +588,11 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year(
         &self,
         _era: &[u8],
         _era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         // This calendar has no era codes
         Err(UnknownEraError)
     }
