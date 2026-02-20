@@ -7,7 +7,7 @@ use crate::cal::abstract_gregorian::{
 };
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
-use crate::{types, Date, DateError, RangeError};
+use crate::{types, Date, RangeError};
 use tinystr::tinystr;
 
 /// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)

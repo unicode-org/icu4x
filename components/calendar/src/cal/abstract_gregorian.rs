@@ -4,7 +4,9 @@
 
 use crate::cal::iso::{IsoDateInner, IsoEra};
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
-use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
+use crate::error::{
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::preferences::CalendarAlgorithm;
@@ -147,7 +149,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.added(duration, &AbstractGregorian(IsoEra), options)
     }
 
@@ -289,7 +291,7 @@ macro_rules! impl_with_abstract_gregorian {
                 date: &Self::DateInner,
                 duration: crate::types::DateDuration,
                 options: crate::options::DateAddOptions,
-            ) -> Result<Self::DateInner, DateError> {
+            ) -> Result<Self::DateInner, $crate::error::DateAddError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
                     .add(&date.0, duration, options)

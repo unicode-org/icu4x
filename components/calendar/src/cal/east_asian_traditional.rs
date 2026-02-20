@@ -5,8 +5,8 @@
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
 use crate::calendar_arithmetic::{DateFieldsResolver, PackWithMD};
 use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError, MonthError,
-    UnknownEraError,
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
+    MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -724,7 +724,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.0.added(duration, self, options).map(ChineseDateInner)
     }
 

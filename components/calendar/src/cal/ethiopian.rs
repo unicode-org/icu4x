@@ -5,7 +5,9 @@
 use crate::cal::coptic::CopticDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
-use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
+use crate::error::{
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -193,7 +195,7 @@ impl Calendar for Ethiopian {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         Coptic
             .add(&date.0, duration, options)
             .map(EthiopianDateInner)

@@ -143,9 +143,9 @@ pub enum LunisolarDateError {
 impl core::error::Error for LunisolarDateError {}
 
 #[cfg(feature = "unstable")]
-pub use unstable::DateFromFieldsError;
+pub use unstable::{DateAddError, DateFromFieldsError};
 #[cfg(not(feature = "unstable"))]
-pub(crate) use unstable::DateFromFieldsError;
+pub(crate) use unstable::{DateAddError, DateFromFieldsError};
 
 mod unstable {
     pub use super::*;
@@ -461,6 +461,40 @@ mod unstable {
     }
 
     impl core::error::Error for DateFromFieldsError {}
+
+    /// Error type for date addition via [`Date::try_add_with_options`].
+    ///
+    /// [`Date::try_add_with_options`]: crate::Date::try_add_with_options
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[derive(Debug, Copy, Clone, PartialEq, Display)]
+    #[non_exhaustive]
+    pub enum DateAddError {
+        /// The day is invalid for the given month.
+        #[displaydoc("Invalid day for month, max is {max}")]
+        InvalidDay {
+            /// The maximum allowed value (the minimum is 1).
+            max: u8,
+        },
+        /// The specified month does not exist in this calendar.
+        #[displaydoc("The specified month does not exist in this calendar")]
+        MonthNotInCalendar,
+        /// The specified month exists in this calendar, but not in the specified year.
+        #[displaydoc("The specified month exists in this calendar, but not for this year")]
+        MonthNotInYear,
+        /// The date is out of range.
+        #[displaydoc("Result out of range")]
+        Overflow,
+    }
+
+    impl core::error::Error for DateAddError {}
 }
 
 /// Internal narrow error type for functions that only fail on unknown eras
@@ -520,6 +554,26 @@ impl From<MonthError> for DateFromFieldsError {
         match value {
             MonthError::NotInCalendar => DateFromFieldsError::MonthNotInCalendar,
             MonthError::NotInYear => DateFromFieldsError::MonthNotInYear,
+        }
+    }
+}
+
+impl From<MonthError> for DateAddError {
+    #[inline]
+    fn from(value: MonthError) -> Self {
+        match value {
+            MonthError::NotInCalendar => DateAddError::MonthNotInCalendar,
+            MonthError::NotInYear => DateAddError::MonthNotInYear,
+        }
+    }
+}
+
+impl From<MonthError> for LunisolarDateError {
+    #[inline]
+    fn from(value: MonthError) -> Self {
+        match value {
+            MonthError::NotInCalendar => LunisolarDateError::MonthNotInCalendar,
+            MonthError::NotInYear => LunisolarDateError::MonthNotInYear,
         }
     }
 }

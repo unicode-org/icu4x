@@ -6,7 +6,7 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::{
-    range_check, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
+    range_check, DateAddError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
     MonthCodeParseError, MonthError, UnknownEraError, YearOverflowError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -165,6 +165,11 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// Converts an extended year to a [`Self::YearInfo`].
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
 
+    /// `year_info_from_extended` will debug assert if given a too-large year
+    /// value. Most constructors range check for much smaller ranges,
+    /// but operations that only enforce the `VALID_RD_RANGE` should
+    /// be careful what they feed to it. They can use this checked version
+    /// instead.
     fn year_info_from_extended_checked(
         &self,
         extended_year: i32,
@@ -304,12 +309,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         }
         let year = calendar.year_info_from_extended(year);
 
-        let month = calendar
-            .ordinal_from_month(year, month, Default::default())
-            .map_err(|e| match e {
-                MonthError::NotInCalendar => LunisolarDateError::MonthNotInCalendar,
-                MonthError::NotInYear => LunisolarDateError::MonthNotInYear,
-            })?;
+        let month = calendar.ordinal_from_month(year, month, Default::default())?;
 
         let max_day = C::days_in_provided_month(year, month);
         if !(1..=max_day).contains(&day) {
@@ -784,25 +784,17 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         duration: DateDuration,
         cal: &C,
         options: DateAddOptions,
-    ) -> Result<Self, DateError> {
+    ) -> Result<Self, DateAddError> {
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _isoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
         let base_month = cal.month_from_ordinal(self.year(), self.month());
-        let m0 = cal
-            .ordinal_from_month(
-                y0,
-                base_month,
-                DateFromFieldsOptions::from_add_options(options),
-            )
-            .map_err(|e| {
-                // TODO: Use a narrower error type here. For now, convert into DateError.
-                match e {
-                    MonthError::NotInCalendar => DateError::UnknownMonthCode(base_month.code()),
-                    MonthError::NotInYear => DateError::UnknownMonthCode(base_month.code()),
-                }
-            })?;
+        let m0 = cal.ordinal_from_month(
+            y0,
+            base_month,
+            DateFromFieldsOptions::from_add_options(options),
+        )?;
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
@@ -816,11 +808,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             //   1. If _overflow_ is ~reject~, throw a *RangeError* exception.
             // Note: ICU4X default is constrain here
             if matches!(options.overflow, Some(Overflow::Reject)) {
-                return Err(DateError::Range {
-                    field: "day",
-                    value: i32::from(base_day),
-                    min: 1,
-                    max: i32::from(end_of_month.day()),
+                return Err(DateAddError::InvalidDay {
+                    max: end_of_month.day(),
                 });
             }
             end_of_month.day()
