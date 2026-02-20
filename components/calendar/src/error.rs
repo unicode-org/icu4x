@@ -524,6 +524,11 @@ impl From<YearOverflowError> for DateFromFieldsError {
     }
 }
 
+impl From<YearOverflowError> for DateAddError {
+    fn from(_other: YearOverflowError) -> Self {
+        DateAddError::Overflow
+    }
+}
 /// Error for [`Month`](crate::types::Month) parsing
 #[derive(Debug)]
 #[non_exhaustive]
