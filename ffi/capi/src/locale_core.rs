@@ -6,6 +6,7 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_locale_core::locale;
 
     use crate::unstable::errors::ffi::LocaleParseError;
 
@@ -190,6 +191,61 @@ pub mod ffi {
         #[diplomat::attr(auto, comparison)]
         pub fn compare_to(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
+        }
+    }
+
+    /// A type that provides access to `'static` Locales, to avoid
+    /// needing to parse user locales when the code knows what locale it wants.
+    ///
+    /// In most cases, you should be taking a locale from the user, but in some
+    /// limited cases you may be parsing from a limited set of locales and not
+    /// wish to pull in full-fledged parsing code.
+    ///
+    /// For now, this only supports locales that have special meaning to `icu_casemap`,
+    /// since it only cares about a small set of locales and locale parsing takes
+    /// up a relatively large amount of binary size in the context of casemapping.
+    ///
+    /// Please file an issue on ICU4X if you have a use case for more locales here.
+    #[diplomat::attr(not(cpp), disable)]
+    #[diplomat::opaque]
+    pub struct LocaleStatics;
+
+    impl LocaleStatics {
+        /// Construct a [`Locale`] "und".
+        pub fn und() -> &'static Locale {
+            static UND: Locale = Locale(icu_locale_core::Locale::UNKNOWN);
+            &UND
+        }
+
+        /// Construct a [`Locale`] "az".
+        pub fn az() -> &'static Locale {
+            static AZ: Locale = Locale(locale!("az"));
+            &AZ
+        }
+        /// Construct a [`Locale`] "el".
+        pub fn el() -> &'static Locale {
+            static EL: Locale = Locale(locale!("el"));
+            &EL
+        }
+        /// Construct a [`Locale`] "hy".
+        pub fn hy() -> &'static Locale {
+            static HY: Locale = Locale(locale!("hy"));
+            &HY
+        }
+        /// Construct a [`Locale`] "lt".
+        pub fn lt() -> &'static Locale {
+            static LT: Locale = Locale(locale!("lt"));
+            &LT
+        }
+        /// Construct a [`Locale`] "nl".
+        pub fn nl() -> &'static Locale {
+            static NL: Locale = Locale(locale!("nl"));
+            &NL
+        }
+        /// Construct a [`Locale`] "tr".
+        pub fn tr() -> &'static Locale {
+            static TR: Locale = Locale(locale!("tr"));
+            &TR
         }
     }
 }
