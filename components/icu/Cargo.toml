@@ -156,6 +156,10 @@ name = "code_line_diff"
 required-features = ["serde"]
 
 [[example]]
+name = "coll_mis"
+required-features = ["serde"]
+
+[[example]]
 name = "and_list"
 
 [[example]]
