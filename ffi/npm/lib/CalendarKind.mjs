@@ -30,6 +30,7 @@ export class CalendarKind {
         ["HijriSimulatedMecca", 18],
         ["HijriTabularTypeIiThursday", 14],
         ["HijriUmmAlQura", 15],
+        ["Julian", 19],
         ["Persian", 16],
         ["Roc", 17]
     ]);
@@ -97,6 +98,7 @@ export class CalendarKind {
         [18]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 18),
         [14]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 14),
         [15]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 15),
+        [19]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 19),
         [16]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 16),
         [17]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 17),
     };
@@ -167,6 +169,10 @@ export class CalendarKind {
      * The kind of a Hijri Umm al-Qura calendar
      */
     static HijriUmmAlQura = CalendarKind.#objectValues[15];
+    /**
+     * The kind of a Julian calendar,
+     */
+    static Julian = CalendarKind.#objectValues[19];
     /**
      * The kind of a Persian calendar
      */

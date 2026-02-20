@@ -30,6 +30,7 @@ enum class CalendarKind(val inner: Int) {
     HijriSimulatedMecca(18),
     HijriTabularTypeIIThursday(14),
     HijriUmmAlQura(15),
+    Julian(19),
     Persian(16),
     Roc(17);
 
@@ -59,6 +60,7 @@ enum class CalendarKind(val inner: Int) {
                 18 -> HijriSimulatedMecca
                 14 -> HijriTabularTypeIIThursday
                 15 -> HijriUmmAlQura
+                19 -> Julian
                 16 -> Persian
                 17 -> Roc
                 else -> throw RuntimeException("Failed to find variant ${native} of type CalendarKind")

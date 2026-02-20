@@ -366,7 +366,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -401,7 +401,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -436,7 +436,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -471,7 +471,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -506,7 +506,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -541,7 +541,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -577,7 +577,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -612,7 +612,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -647,7 +647,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -682,7 +682,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -717,7 +717,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -752,7 +752,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
@@ -787,7 +787,7 @@ let termini = Object.assign({
                 name: "self_calendar_kind",
                 type: "CalendarKind",
                 typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Julian", "Persian", "Roc"]
             }
             
         ]
