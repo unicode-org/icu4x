@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{VALID_RD_RANGE, VALID_YEAR_RANGE};
-use crate::types::Month;
+use crate::calendar_arithmetic::{GENEROUS_YEAR_RANGE, VALID_RD_RANGE, VALID_YEAR_RANGE};
+use crate::error::DateFromFieldsError;
+use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::types::{DateFields, Month};
 use crate::Date;
 use calendrical_calculations::gregorian::fixed_from_gregorian;
 use calendrical_calculations::rata_die::RataDie;
@@ -47,6 +49,159 @@ super::test_all_cals!(
         assert_eq!(
             Date::from_rata_die(*VALID_RD_RANGE.end() + 1, cal).to_rata_die(),
             *VALID_RD_RANGE.end()
+        );
+    }
+);
+
+super::test_all_cals!(
+    fn check_from_fields_extrema<C: Calendar + Copy>(cal: C) {
+        let min_date = Date::from_rata_die(*VALID_RD_RANGE.start(), cal);
+        let max_date = Date::from_rata_die(*VALID_RD_RANGE.end(), cal);
+
+        let first_era = min_date.year().era().map(|e| e.era);
+        let last_era = max_date.year().era().map(|e| e.era);
+
+        let constrain = DateFromFieldsOptions {
+            overflow: Some(Overflow::Constrain),
+            ..Default::default()
+        };
+        let reject = DateFromFieldsOptions {
+            overflow: Some(Overflow::Reject),
+            ..Default::default()
+        };
+
+        // First we want to test that large values all get range checked
+        for era in [first_era, last_era, None] {
+            // We want to ensure that the "early" generous year range check
+            // AND the
+            for year in [
+                *GENEROUS_YEAR_RANGE.start() - 1,
+                *GENEROUS_YEAR_RANGE.start(),
+                *GENEROUS_YEAR_RANGE.start() + 5,
+                *GENEROUS_YEAR_RANGE.end() + 1,
+                *GENEROUS_YEAR_RANGE.end(),
+                *GENEROUS_YEAR_RANGE.end() - 5,
+            ] {
+                let mut fields = DateFields {
+                    day: Some(1),
+                    month: Some(Month::new(1)),
+                    ..Default::default()
+                };
+
+                if let Some(era) = era.as_ref() {
+                    fields.era_year = Some(year);
+                    fields.era = Some(era.as_bytes());
+                } else {
+                    fields.extended_year = Some(year);
+                }
+
+                let result_constrain = Date::try_from_fields(fields, constrain, cal);
+                assert_eq!(
+                    result_constrain,
+                    Err(DateFromFieldsError::Overflow),
+                    "{year}-01-01, era {era:?} should fail to construct (constrain)"
+                );
+
+                let result_reject = Date::try_from_fields(fields, reject, cal);
+                assert_eq!(
+                    result_reject,
+                    Err(DateFromFieldsError::Overflow),
+                    "{year}-01-01, era {era:?} should fail to construct (reject)"
+                );
+            }
+        }
+
+        // Next we want to check that the range check applies exactly at the VALID_RD_RANGE
+        // border.
+
+        let min_day = min_date.day_of_month().0;
+        let min_month = min_date.month().ordinal;
+        let min_year = min_date.year().extended_year();
+
+        // Check that the lowest date roundtrips
+        let min_fields = DateFields {
+            day: Some(min_day),
+            ordinal_month: Some(min_month),
+            extended_year: Some(min_year),
+            ..Default::default()
+        };
+        let min_constrain = Date::try_from_fields(min_fields, constrain, cal);
+        assert_eq!(
+            min_constrain,
+            Ok(min_date),
+            "Min date {min_date:?} should roundtrip via {min_fields:?}"
+        );
+
+        // Then check that the date before that does not.
+        let min_minus_one = if min_day > 1 {
+            DateFields {
+                day: Some(min_day - 1),
+                ..min_fields
+            }
+        } else if min_month > 1 {
+            DateFields {
+                day: Some(50), // Should constrain
+                ordinal_month: Some(min_month - 1),
+                ..min_fields
+            }
+        } else {
+            DateFields {
+                day: Some(50), // Should constrain
+                ordinal_month: Some(50),
+                extended_year: Some(min_year - 1),
+                ..Default::default()
+            }
+        };
+        let min_minus_one_constrain = Date::try_from_fields(min_minus_one, constrain, cal);
+        assert_eq!(
+            min_minus_one_constrain,
+            Err(DateFromFieldsError::Overflow),
+            "Min date {min_date:?} minus one should fail to construct via {min_minus_one_constrain:?}"
+        );
+
+        let max_day = max_date.day_of_month().0;
+        let max_month = max_date.month().ordinal;
+        let max_year = max_date.year().extended_year();
+
+        // Check that the highest date roundtrips
+        let max_fields = DateFields {
+            day: Some(max_day),
+            ordinal_month: Some(max_month),
+            extended_year: Some(max_year),
+            ..Default::default()
+        };
+        let max_constrain = Date::try_from_fields(max_fields, constrain, cal);
+        assert_eq!(
+            max_constrain,
+            Ok(max_date),
+            "Max date {max_date:?} should roundtrip via {max_fields:?}"
+        );
+
+        // Then check that the date after that does not.
+        let max_plus_one = if max_day < min_date.days_in_month() {
+            DateFields {
+                day: Some(max_day + 1),
+                ..max_fields
+            }
+        } else if max_month < min_date.months_in_year() {
+            DateFields {
+                day: Some(1),
+                ordinal_month: Some(max_month + 1),
+                ..max_fields
+            }
+        } else {
+            DateFields {
+                day: Some(1),
+                ordinal_month: Some(1),
+                extended_year: Some(max_year + 1),
+                ..Default::default()
+            }
+        };
+        let max_plus_one_constrain = Date::try_from_fields(max_plus_one, constrain, cal);
+        assert_eq!(
+            max_plus_one_constrain,
+            Err(DateFromFieldsError::Overflow),
+            "Min date {max_date:?} minus one should fail to construct via {max_plus_one_constrain:?}"
         );
     }
 );

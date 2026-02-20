@@ -22,14 +22,43 @@ use core::ops::RangeInclusive;
 pub const VALID_YEAR_RANGE: RangeInclusive<i32> = -9999..=9999;
 
 /// This is a fundamental invariant of `ArithmeticDate` and by extension all our
-/// date types. Because this range slightly exceeds the [`VALID_YEAR_RANGE`], only
-/// the valid year range is checked in constructors. Only the `Date::from_rata_die`
-/// constructor actually uses this, but for clamping instead of erroring.
-// This range is the tightest possible range that includes all valid years for all
-// calendars, this is asserted in [`test_validity_ranges`].
+/// date types. Because this range exceeds the [`VALID_YEAR_RANGE`], only
+/// the valid year range is checked in most constructors.
+///
+/// This is the range used by `Date::from_rata_die`, `Date::try_from_fields`,
+/// and Date arithmetic operations.
 pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
     calendrical_calculations::gregorian::fixed_from_gregorian(-999999, 1, 1)
         ..=calendrical_calculations::gregorian::fixed_from_gregorian(999999, 12, 31);
+
+/// We *must* ensure dates are within `VALID_RD_RANGE` some point before constructing them.
+///
+/// However, we may need to perform a fair amount of calendar arithmetic before
+/// getting to the point where we know if we are in range, and the calendar arithmetic
+/// is fragile (chance of math issues, slowness, debug assertions) at high ranges.
+///
+/// So we try to early-check year values where possible. We use a "generous" year range
+/// which is known to be wider than the valid year range for any era in any currently
+/// supported calendar.
+///
+/// `VALID_RD_RANGE` maps to 1031332 BH..=1030050 AH in the Islamic calendars, which have
+/// the shortest years. We pick a slightly wider
+///
+/// The tests in `extrema.rs` ensure that all in-range dates can be produced here,
+/// and that these year numbers map to out-of-range values for every era.
+pub const GENEROUS_YEAR_RANGE: RangeInclusive<i32> = -1_040_000..=1_040_000;
+
+/// This is like GENEROUS_YEAR_RANGE, but a bit wider to account for era arithmetic.
+///
+/// A year that was within the generous year range might get era-adjusted to being
+/// outside of it. Instead of performing the range check twice, we expect that
+/// our code may experience year values that are outside of but "near" the generous
+/// year range, and assert for SAFE_YEAR_RANGE in key spots where using a too-large
+/// year value might cause issues further down the line.
+///
+/// TLDR: GENEROUS_YEAR_RANGE is for early-checking user inputs. SAFE_YEAR_RANGE is for assertions to
+/// ensure that too-large year values are not sneaking in to the code somehow.
+pub const SAFE_YEAR_RANGE: RangeInclusive<i32> = -1_100_000..=1_100_000;
 
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
@@ -336,7 +365,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let year = match (fields.era, fields.era_year) {
             (None, None) => match fields.extended_year {
                 Some(extended_year) => {
-                    if !VALID_YEAR_RANGE.contains(&extended_year) {
+                    if !GENEROUS_YEAR_RANGE.contains(&extended_year) {
                         return Err(DateFromFieldsError::Overflow);
                     }
 
@@ -370,11 +399,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 },
             },
             (Some(era), Some(era_year)) => {
-                if !VALID_YEAR_RANGE.contains(&era_year) {
+                if !GENEROUS_YEAR_RANGE.contains(&era_year) {
                     return Err(DateFromFieldsError::Overflow);
                 }
                 let year = calendar.year_info_from_era(era, era_year)?;
-                if !VALID_YEAR_RANGE.contains(&year.to_extended_year()) {
+                if !GENEROUS_YEAR_RANGE.contains(&year.to_extended_year()) {
                     return Err(DateFromFieldsError::Overflow);
                 }
                 if let Some(extended_year) = fields.extended_year {
@@ -437,7 +466,14 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         } else {
             return Err(DateFromFieldsError::InvalidDay { max: max_day });
         };
-        // date is in the valid year range, and therefore in the valid RD range
+        let rd = C::to_rata_die_inner(year, month, day);
+
+        // We early checked for a generous range of years, now we must check
+        // to ensure we are actually in range for our core invariant.
+        if !VALID_RD_RANGE.contains(&rd) {
+            return Err(DateFromFieldsError::Overflow);
+        }
+        // We just checked the RD range above
         Ok(Self::new_unchecked(year, month, day))
     }
 
