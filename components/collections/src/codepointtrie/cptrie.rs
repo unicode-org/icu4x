@@ -412,12 +412,10 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // actual trie type agrees with the semantics of the typed wrapper.
         match self.header.trie_type {
             TrieType::Fast => Typed::Fast(unsafe {
-                core::mem::transmute::<&CodePointTrie<'trie, T>, &FastCodePointTrie<'trie, T>>(self)
+                &*(self as *const CodePointTrie<'trie, T> as *const FastCodePointTrie<'trie, T>)
             }),
             TrieType::Small => Typed::Small(unsafe {
-                core::mem::transmute::<&CodePointTrie<'trie, T>, &SmallCodePointTrie<'trie, T>>(
-                    self,
-                )
+                &*(self as *const CodePointTrie<'trie, T> as *const SmallCodePointTrie<'trie, T>)
             }),
         }
     }

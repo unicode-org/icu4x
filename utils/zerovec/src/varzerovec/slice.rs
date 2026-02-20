@@ -9,7 +9,6 @@ use crate::ule::*;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::marker::PhantomData;
-use core::mem;
 
 use core::ops::Index;
 use core::ops::Range;
@@ -110,7 +109,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// Construct a new empty [`VarZeroSlice`]
     pub const fn new_empty() -> &'static Self {
         // The empty VZV is special-cased to the empty slice
-        unsafe { mem::transmute(&[] as &[u8]) }
+        unsafe { &*(&[] as *const [u8] as *const Self) }
     }
 
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
@@ -129,7 +128,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// `bytes` need to be an output from [`VarZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // self is really just a wrapper around a byte slice
-        mem::transmute(bytes)
+        &*(bytes as *const [u8] as *const Self)
     }
 
     /// Get the number of elements in this slice
@@ -446,14 +445,14 @@ where
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static, F: VarZeroVecFormat> VarULE for VarZeroSlice<T, F> {
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        let _: VarZeroVecComponents<T, F> =
-            VarZeroVecComponents::parse_bytes(bytes).map_err(|_| UleError::parse::<Self>())?;
+        let _ = VarZeroVecComponents::<T, F>::parse_bytes(bytes)
+            .map_err(|_| UleError::parse::<Self>())?;
         Ok(())
     }
 
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // self is really just a wrapper around a byte slice
-        mem::transmute(bytes)
+        &*(bytes as *const [u8] as *const Self)
     }
 
     fn as_bytes(&self) -> &[u8] {

@@ -111,7 +111,11 @@ impl LocaleFallbacker {
         // as invariant. However, they are covariant, and in non-const code this covariance can be safely triggered
         // using Yokeable::transform. In const code we must transmute. In the long run we should
         // be able to `transform()` in const code, and also we will have hopefully improved map polymorphism (#3128)
-        unsafe { core::mem::transmute(LocaleFallbackerBorrowed::<'static>::new()) }
+        unsafe {
+            core::mem::transmute::<LocaleFallbackerBorrowed<'static>, LocaleFallbackerBorrowed<'a>>(
+                LocaleFallbackerBorrowed::new(),
+            )
+        }
     }
 
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,

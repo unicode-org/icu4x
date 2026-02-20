@@ -6,7 +6,6 @@ use super::components::VarZeroVecComponents;
 use super::*;
 use crate::ule::*;
 use core::marker::PhantomData;
-use core::mem;
 
 /// A slice representing the index and data tables of a [`VarZeroVec`],
 /// *without* any length fields. The length field is expected to be stored elsewhere.
@@ -57,7 +56,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     /// The length associated with this value will be the length associated with the original slice.
     pub(crate) const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // self is really just a wrapper around a byte slice
-        mem::transmute(bytes)
+        &*(bytes as *const [u8] as *const Self)
     }
 
     /// Uses a `&mut [u8]` buffer as a `VarZeroLengthlessSlice<T>` without any verification.
@@ -70,7 +69,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     /// The length associated with this value will be the length associated with the original slice.
     pub(crate) unsafe fn from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut Self {
         // self is really just a wrapper around a byte slice
-        mem::transmute(bytes)
+        &mut *(bytes as *mut [u8] as *mut VarZeroLengthlessSlice<T, F>)
     }
 
     /// Get one of this slice's elements

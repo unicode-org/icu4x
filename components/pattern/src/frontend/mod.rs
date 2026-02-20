@@ -146,7 +146,7 @@ impl<B: PatternBackend> Pattern<B> {
     #[cfg(feature = "alloc")]
     pub(crate) const fn from_boxed_store_unchecked(store: Box<B::Store>) -> Box<Self> {
         // Safety: Pattern is repr(transparent) over B::Store
-        unsafe { core::mem::transmute(store) }
+        unsafe { core::mem::transmute::<Box<B::Store>, Box<Self>>(store) }
     }
 
     #[doc(hidden)] // databake

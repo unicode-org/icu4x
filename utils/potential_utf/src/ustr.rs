@@ -61,7 +61,7 @@ impl PotentialUtf8 {
     #[inline]
     pub const fn from_bytes(other: &[u8]) -> &Self {
         // Safety: PotentialUtf8 is transparent over [u8]
-        unsafe { core::mem::transmute(other) }
+        unsafe { &*(other as *const [u8] as *const Self) }
     }
 
     /// Create a [`PotentialUtf8`] from a string slice.
@@ -77,7 +77,7 @@ impl PotentialUtf8 {
     #[cfg(feature = "alloc")]
     pub fn from_boxed_bytes(other: Box<[u8]>) -> Box<Self> {
         // Safety: PotentialUtf8 is transparent over [u8]
-        unsafe { core::mem::transmute(other) }
+        unsafe { core::mem::transmute::<Box<[u8]>, Box<Self>>(other) }
     }
 
     /// Create a [`PotentialUtf8`] from a boxed `str`.
@@ -272,7 +272,7 @@ impl PotentialUtf16 {
     #[inline]
     pub const fn from_slice(other: &[u16]) -> &Self {
         // Safety: PotentialUtf16 is transparent over [u16]
-        unsafe { core::mem::transmute(other) }
+        unsafe { &*(other as *const [u16] as *const Self) }
     }
 
     /// Iterates the characters of the string.

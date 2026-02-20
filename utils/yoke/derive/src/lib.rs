@@ -318,29 +318,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     self
                 }
                 #[inline]
-                unsafe fn make(this: Self::Output) -> Self {
-                    // Unfortunately, Rust doesn't think `mem::transmute` is possible,
-                    // since it's not sure the sizes are the same.
-                    ::core::debug_assert_eq!(
-                        ::core::mem::size_of::<Self::Output>(),
-                        ::core::mem::size_of::<Self>(),
-                    );
-                    let this = ::core::mem::ManuallyDrop::new(this);
-                    // `Deref` coercion and then `&` to `*const` coercion.
-                    let ptr: *const Self = (&this as &Self::Output as *const Self::Output).cast();
-
-                    unsafe { ::core::ptr::read(ptr) }
+                unsafe fn make(from: Self::Output) -> Self {
+                    ::core::mem::transmute::<Self::Output, Self>(from)
                 }
                 #[inline]
                 fn transform_mut<F>(&#yoke_lt mut self, f: F)
                 where
                     F: 'static + for<#bound_lt> FnOnce(&#bound_lt mut Self::Output) {
-                    unsafe {
-                        f(::core::mem::transmute::<
-                            &#yoke_lt mut Self,
-                            &#yoke_lt mut Self::Output,
-                        >(self))
-                    }
+                    let y = unsafe { &mut *(self as *mut Self as *mut Self::Output) };
+                    f(y)
                 }
             }
         };
@@ -526,7 +512,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         #yokeable_checks
                     }
                 }
-                let output: &#yoke_lt Self::Output = unsafe { ::core::mem::transmute(self) };
+                let output = unsafe { ::core::mem::transmute::<&#yoke_lt Self, &#yoke_lt Self::Output>(self) };
                 if false {
                     // Same deal as above.
                     #[allow(dead_code)]
@@ -543,42 +529,18 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
             #[inline]
             fn transform_owned(self) -> Self::Output {
-                // Unfortunately, Rust doesn't think `mem::transmute` is possible,
-                // since it's not sure the sizes are the same.
-                ::core::debug_assert_eq!(
-                    ::core::mem::size_of::<Self>(),
-                    ::core::mem::size_of::<Self::Output>(),
-                );
-                let this = ::core::mem::ManuallyDrop::new(self);
-                // `Deref` coercion and then `&` to `*const` coercion.
-                let ptr: *const Self::Output = (&this as &Self as *const Self).cast();
-
-                unsafe { ::core::ptr::read(ptr) }
+                unsafe { ::core::mem::transmute::<Self, Self::Output>(self) }
             }
             #[inline]
-            unsafe fn make(this: Self::Output) -> Self {
-                // Unfortunately, Rust doesn't think `mem::transmute` is possible,
-                // since it's not sure the sizes are the same.
-                ::core::debug_assert_eq!(
-                    ::core::mem::size_of::<Self::Output>(),
-                    ::core::mem::size_of::<Self>(),
-                );
-                let this = ::core::mem::ManuallyDrop::new(this);
-                // `Deref` coercion and then `&` to `*const` coercion.
-                let ptr: *const Self = (&this as &Self::Output as *const Self::Output).cast();
-
-                unsafe { ::core::ptr::read(ptr) }
+            unsafe fn make(from: Self::Output) -> Self {
+                unsafe { ::core::mem::transmute::<Self::Output, Self>(from) }
             }
             #[inline]
             fn transform_mut<F>(&#yoke_lt mut self, f: F)
             where
                 F: 'static + for<#bound_lt> FnOnce(&#bound_lt mut Self::Output) {
-                unsafe {
-                    f(::core::mem::transmute::<
-                        &#yoke_lt mut Self,
-                        &#yoke_lt mut Self::Output,
-                    >(self))
-                }
+                let y = unsafe { &mut *(self as *mut Self as *mut Self::Output) };
+                f(y)
             }
         }
     }
