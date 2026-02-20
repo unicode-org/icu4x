@@ -479,6 +479,9 @@ impl_attrs! {
         (ATTR_T, STR_T, "j"),
         (ATTR_T12, STR_T12, "h"),
         (ATTR_T24, STR_T24, "h0"),
+        (ATTR_TV, STR_TV, "jv"),
+        (ATTR_T12V, STR_T12V, "hv"),
+        (ATTR_T24V, STR_T24V, "h0v"),
     ]
 }
 
