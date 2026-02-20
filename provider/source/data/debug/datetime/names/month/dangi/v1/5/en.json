@@ -1,5 +1,5 @@
 {
-  "LeapLinear": [
+  "LeapPattern": [
     "First Month",
     "Second Month",
     "Third Month",
@@ -12,17 +12,8 @@
     "Tenth Month",
     "Eleventh Month",
     "Twelfth Month",
-    "First Monthbis",
-    "Second Monthbis",
-    "Third Monthbis",
-    "Fourth Monthbis",
-    "Fifth Monthbis",
-    "Sixth Monthbis",
-    "Seventh Monthbis",
-    "Eighth Monthbis",
-    "Ninth Monthbis",
-    "Tenth Monthbis",
-    "Eleventh Monthbis",
-    "Twelfth Monthbis"
+    "\u0001bis",
+    "\u0000",
+    "\u0000\u0001"
   ]
 }

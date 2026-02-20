@@ -286,12 +286,16 @@ pub enum MonthNames<'data> {
     ///
     /// Found for solar and pure lunar calendars
     Linear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+
+    #[cfg(feature = "serde")]
     /// Month codes M01, M02, M03, .. M01L, M02L, ...
     ///
     /// Empty entries for non-present month codes. Will have an equal number of leap and non-leap
     /// entries.
     ///
     /// Found for lunisolar and lunisidereal calendars
+    ///
+    /// Not used anymore, but kept around for serde stabililty.
     LeapLinear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 
     /// This represents the formatting to apply to numeric values to produce the corresponding
@@ -308,6 +312,13 @@ pub enum MonthNames<'data> {
         )]
         Cow<'data, SinglePlaceholderPattern>,
     ),
+
+    /// This represents the formatting to apply to calendars with leap months.
+    /// The last three elements are patterns:
+    /// * N-3: `SinglePlaceholderPattern` for leap months
+    /// * N-2: `SinglePlaceholderPattern` for standard months after leap months
+    /// * N-1: `DoublePlaceholderPattern` for combined leap months
+    LeapPattern(VarZeroVec<'data, str>),
 }
 
 icu_provider::data_struct!(

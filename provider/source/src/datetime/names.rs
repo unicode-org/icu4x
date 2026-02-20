@@ -14,11 +14,11 @@ use icu::datetime::provider::semantic_skeletons::marker_attrs::{
     self, Context, Length, PatternLength,
 };
 use icu::datetime::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
-use writeable::Writeable;
 use zerovec::VarZeroCow;
 
 /// Most keys don't have short symbols (except weekdays)
@@ -312,22 +312,6 @@ fn years_convert(
     }
 }
 
-/// Returns the number of regular months in a calendar, as well as whether it is
-/// has leap months
-fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
-    match cal {
-        DatagenCalendar::Hebrew | DatagenCalendar::Chinese | DatagenCalendar::Dangi => (24, true),
-        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => (13, false),
-        DatagenCalendar::Gregorian
-        | DatagenCalendar::Buddhist
-        | DatagenCalendar::Japanese
-        | DatagenCalendar::Indian
-        | DatagenCalendar::Persian
-        | DatagenCalendar::Hijri
-        | DatagenCalendar::Roc => (12, false),
-    }
-}
-
 #[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn months_convert(
     _datagen: &SourceDataProvider,
@@ -352,96 +336,70 @@ fn months_convert(
         )));
     }
 
-    let months = data.months.get_symbols(context, length);
-
-    let (month_count, has_leap) = calendar_months(calendar);
-    let mut symbols = vec![Cow::Borrowed(""); month_count];
+    let months = &data.months.get_symbols(context, length).0;
 
     if calendar == DatagenCalendar::Hebrew {
-        for (k, v) in months.0.iter() {
-            // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
-            //
-            // So we need to handle the 6 and 7 cases as leap months, and everything after 6 needs to
-            // be offset by 1
-            let index = if k == "7-yeartype-leap" {
-                // Adar II => M06L:
-                // * 12 months in a year
-                // * M06 is the 6th month
-                // * -1 because the data is zero-indexed
-                12 + 6 - 1
-            } else if k == "6" {
-                // Adar I => M05L:
-                // * 12 months in a year
-                // * M05 is the 5th month
-                // * -1 because the data is zero-indexed
-                12 + 5 - 1
-            } else {
-                let mut index: usize = k
+        // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
+        let leap_pattern = SinglePlaceholderPattern::try_from_str(
+            &months["6"].replace(&months["5"], "{0}"),
+            Default::default(),
+        )
+        .unwrap();
+        let standard_after_leap_pattern = SinglePlaceholderPattern::try_from_str(
+            &months["7-yeartype-leap"].replace(&months["7"], "{0}"),
+            Default::default(),
+        )
+        .unwrap();
+
+        let symbols = [
+            months["1"].as_str(),
+            months["2"].as_str(),
+            months["3"].as_str(),
+            months["4"].as_str(),
+            months["5"].as_str(),
+            months["7"].as_str(),
+            months["8"].as_str(),
+            months["9"].as_str(),
+            months["10"].as_str(),
+            months["11"].as_str(),
+            months["12"].as_str(),
+            months["13"].as_str(),
+            &leap_pattern.store,
+            &standard_after_leap_pattern.store,
+            "",
+        ];
+        Ok(MonthNames::LeapPattern((&symbols).into()))
+    } else {
+        let months = months
+            .iter()
+            .map(|(k, v)| {
+                let index: usize = k
                     .parse()
                     .expect("CLDR month indices must parse as numbers!");
-
-                if index > 5 {
-                    index -= 1;
-                }
                 if index == 0 {
                     panic!("CLDR month indices cannot be zero");
                 }
+                (index, v.as_str())
+            })
+            .collect::<BTreeMap<_, _>>();
 
-                index - 1
-            };
-
-            symbols[index] = (&**v).into();
-        }
-        Ok(MonthNames::LeapLinear((&symbols).into()))
-    } else {
-        for (k, v) in months.0.iter() {
-            let index: usize = k
-                .parse()
-                .expect("CLDR month indices must parse as numbers!");
-            if index == 0 {
-                panic!("CLDR month indices cannot be zero");
-            }
-
-            symbols[index - 1] = v.into();
+        if *months.last_key_value().unwrap().0 != months.len() {
+            panic!("Calendar {calendar:?} does not have data for all months: {months:?}");
         }
 
-        let nonleap = if has_leap {
-            month_count / 2
-        } else {
-            month_count
-        };
+        let mut symbols = months.into_values().collect::<Vec<_>>();
 
-        for (i, val) in symbols.iter().take(nonleap).enumerate() {
-            if val.is_empty() {
-                panic!("Calendar {calendar:?} does not have data for month {i}; found data for {symbols:?}");
-            }
-        }
-
-        if has_leap {
-            // This branch is only for chinese-like calendars with N regular months and N potential leap months
-            // rather than hebrew-like where there's one or two special leap months
-            debug_assert!(
-                calendar != DatagenCalendar::Hebrew,
-                "Hebrew calendar should have been handled in the branch above"
-            );
-            let patterns = data
-                .month_patterns
-                .as_ref()
-                .expect("Calendar with leap months must have monthPatterns");
-            let leap = &patterns.get_symbols(context, length).leap;
-
-            for i in 0..nonleap {
-                if symbols[i].is_empty() {
-                    continue;
-                }
-                let replaced = leap
+        if let Some(patterns) = data.month_patterns.as_ref() {
+            symbols.push(&patterns.get_symbols(context, length).leap.0.store);
+            symbols.push(
+                &patterns
+                    .get_symbols(context, length)
+                    .standard_after_leap
                     .0
-                    .interpolate([&symbols[i]])
-                    .write_to_string()
-                    .into_owned();
-                symbols[nonleap + i] = replaced.into();
-            }
-            Ok(MonthNames::LeapLinear((&symbols).into()))
+                    .store,
+            );
+            symbols.push(&patterns.get_symbols(context, length).combined.0.store);
+            Ok(MonthNames::LeapPattern((&symbols).into()))
         } else {
             Ok(MonthNames::Linear((&symbols).into()))
         }

@@ -104,6 +104,10 @@ pub(crate) struct MonthSymbols(pub(crate) HashMap<String, String>);
 #[derive(Debug, PartialEq, Clone, Deserialize)]
 pub(crate) struct MonthPatternSymbols {
     pub(crate) leap: PatternString<SinglePlaceholder>,
+    #[serde(default, rename = "standardAfterLeap")]
+    pub(crate) standard_after_leap: PatternString<SinglePlaceholder>,
+    #[serde(default)]
+    pub(crate) combined: PatternString<DoublePlaceholder>,
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]

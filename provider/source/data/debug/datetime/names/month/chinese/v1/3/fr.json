@@ -1,5 +1,5 @@
 {
-  "LeapLinear": [
+  "LeapPattern": [
     "1yuè",
     "2yuè",
     "3yuè",
@@ -12,17 +12,8 @@
     "10yuè",
     "11yuè",
     "12yuè",
-    "1yuèbis",
-    "2yuèbis",
-    "3yuèbis",
-    "4yuèbis",
-    "5yuèbis",
-    "6yuèbis",
-    "7yuèbis",
-    "8yuèbis",
-    "9yuèbis",
-    "10yuèbis",
-    "11yuèbis",
-    "12yuèbis"
+    "\u0001bis",
+    "\u0000",
+    "\u0000\u0001"
   ]
 }

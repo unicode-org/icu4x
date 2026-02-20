@@ -10,7 +10,6 @@ pub(crate) mod serde;
 mod zerovec;
 
 use crate::common::*;
-#[cfg(feature = "alloc")]
 use crate::Error;
 #[cfg(feature = "alloc")]
 use crate::Parser;
@@ -153,6 +152,12 @@ impl<B: PatternBackend> Pattern<B> {
     pub const fn from_ref_store_unchecked(store: &B::Store) -> &Self {
         // Safety: Pattern is repr(transparent) over B::Store
         unsafe { &*(store as *const B::Store as *const Self) }
+    }
+
+    #[doc(hidden)] // databake
+    pub fn from_ref_store(store: &B::Store) -> Result<&Self, Error> {
+        B::validate_store(store)?;
+        Ok(Self::from_ref_store_unchecked(store))
     }
 }
 
