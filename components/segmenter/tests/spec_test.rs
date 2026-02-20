@@ -212,6 +212,14 @@ fn word_break_test(file: &'static str) {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
+        let iter_rev = segmenter.segment_str(&s);
+        let mut result_rev: Vec<usize> = iter_rev.rev().collect();
+        result_rev.reverse();
+        if result != result_rev {
+             println!("Forward: {:?}", result);
+             println!("Reverse: {:?}", result_rev);
+             panic!("Word break reverse iteration failed for ->{}", s);
+        }
         if result != test.break_result_utf8 {
             use icu::properties::{props::WordBreak, CodePointMapData};
             let wb = CodePointMapData::<WordBreak>::new();
@@ -291,6 +299,14 @@ fn grapheme_break_test(file: &'static str) {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
+        let iter_rev = segmenter.segment_str(&s);
+        let mut result_rev: Vec<usize> = iter_rev.rev().collect();
+        result_rev.reverse();
+        if result != result_rev {
+             println!("Forward: {:?}", result);
+             println!("Reverse: {:?}", result_rev);
+             panic!("Grapheme break reverse iteration failed for -> {}", s);
+        }
         if result != test.break_result_utf8 {
             use icu::properties::{props::GraphemeClusterBreak, CodePointMapData};
             let gcb = CodePointMapData::<GraphemeClusterBreak>::new();
@@ -370,6 +386,14 @@ fn sentence_break_test(file: &'static str) {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
+        let iter_rev = segmenter.segment_str(&s);
+        let mut result_rev: Vec<usize> = iter_rev.rev().collect();
+        result_rev.reverse();
+        if result != result_rev {
+             println!("Forward: {:?}", result);
+             println!("Reverse: {:?}", result_rev);
+             panic!("Sentence break reverse iteration failed for -> {}", s);
+        }
         if result != test.break_result_utf8 {
             use icu::properties::{props::SentenceBreak, CodePointMapData};
             let sb = CodePointMapData::<SentenceBreak>::new();

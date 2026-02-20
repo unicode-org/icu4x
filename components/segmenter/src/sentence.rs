@@ -219,6 +219,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             data: self.data,
             complex: None,
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: self.locale_override,
             handle_complex_language: empty_handle_complex_language,
         })
@@ -240,6 +241,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             data: self.data,
             complex: None,
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: self.locale_override,
             handle_complex_language: empty_handle_complex_language,
         })
@@ -256,6 +258,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             data: self.data,
             complex: None,
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: self.locale_override,
             handle_complex_language: empty_handle_complex_language,
         })
@@ -273,6 +276,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             data: self.data,
             complex: None,
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: self.locale_override,
             handle_complex_language: empty_handle_complex_language,
         })

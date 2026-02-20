@@ -906,6 +906,19 @@ pub struct LineBreakIterator<'data, 's, Y: LineBreakType> {
     complex: ComplexPayloadsBorrowed<'data>,
 }
 
+impl<Y: LineBreakType> DoubleEndedIterator for LineBreakIterator<'_, '_, Y> {
+    fn next_back(&mut self) -> Option<Self::Item> {       
+        if let Some(&last_res) = self.result_cache.first() {
+             if let Some(res) = self.result_cache.pop() {
+                 return Some(res);
+             }
+        }
+
+        let (pos, code_point) = self.iter.next_back()?;
+        None 
+    }
+}
+
 impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
     type Item = usize;
 
