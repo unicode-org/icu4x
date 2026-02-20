@@ -232,6 +232,7 @@ impl DateTimeInputUnchecked {
     fn resolve_time_precision(
         &self,
         time_precision: TimePrecision,
+        prefer_keep_minutes: bool,
     ) -> (PackedSkeletonVariant, Option<SubsecondDigits>) {
         match time_precision {
             TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
@@ -240,7 +241,7 @@ impl DateTimeInputUnchecked {
             TimePrecision::Subsecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
             TimePrecision::MinuteOptional => {
                 let minute = self.minute.unwrap_or_default();
-                if minute.is_zero() {
+                if minute.is_zero() && !prefer_keep_minutes {
                     (PackedSkeletonVariant::Standard, None)
                 } else {
                     (PackedSkeletonVariant::Variant0, None)
@@ -362,7 +363,25 @@ impl TimePatternSelectionData {
     ) -> Option<TimePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let time_precision = options.time_precision.unwrap_or_default();
-        let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
+
+        let prefer_keep_minutes = if matches!(time_precision, TimePrecision::MinuteOptional) {
+            let standard_pattern = payload.get(options.length(), PackedSkeletonVariant::Standard);
+            standard_pattern.metadata.prefer_keep_minutes()
+                || standard_pattern.items.iter().any(|item| {
+                    matches!(
+                        item,
+                        PatternItem::Field(Field {
+                            symbol: FieldSymbol::Hour(fields::Hour::H23),
+                            ..
+                        })
+                    )
+                })
+        } else {
+            false
+        };
+
+        let (variant, subsecond_digits) =
+            input.resolve_time_precision(time_precision, prefer_keep_minutes);
         Some(TimePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),
             options.alignment,
