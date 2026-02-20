@@ -149,6 +149,69 @@ pub mod ffi {
             Ok(())
         }
 
+        // --- Variants ---
+
+        /// Returns a string representation of the [`Locale`] variants.
+        #[diplomat::rust_link(icu::locale::Variants, Struct)]
+        pub fn variants(&self, write: &mut diplomat_runtime::DiplomatWrite) {
+            let _infallible = self.0.id.variants.write_to(write);
+        }
+
+        /// Returns the number of variants in this [`Locale`].
+        #[diplomat::rust_link(icu::locale::Variants, Struct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn variant_count(&self) -> usize {
+            self.0.id.variants.len()
+        }
+
+        /// Returns the variant at the given index, or nothing if the index is out of bounds.
+        #[diplomat::rust_link(icu::locale::Variants, Struct)]
+        pub fn variant_at(
+            &self,
+            index: usize,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Option<()> {
+            let _infallible = self.0.id.variants.get(index)?.write_to(write);
+            Some(())
+        }
+
+        /// Returns whether the [`Locale`] has a specific variant.
+        #[diplomat::rust_link(icu::locale::Variants, Struct)]
+        pub fn has_variant(&self, s: &DiplomatStr) -> bool {
+            icu_locale_core::subtags::Variant::try_from_utf8(s)
+                .map(|v| self.0.id.variants.contains(&v))
+                .unwrap_or(false)
+        }
+
+        /// Adds a variant to the [`Locale`].
+        ///
+        /// Returns an error if the variant string is invalid.
+        /// Returns `true` if the variant was added, `false` if already present.
+        #[diplomat::rust_link(icu::locale::Variants::push, FnInStruct)]
+        pub fn add_variant(&mut self, s: &DiplomatStr) -> Result<bool, LocaleParseError> {
+            let variant = icu_locale_core::subtags::Variant::try_from_utf8(s)?;
+            Ok(self.0.id.variants.push(variant))
+        }
+
+        /// Removes a variant from the [`Locale`].
+        ///
+        /// Returns `true` if the variant was removed, `false` if not present.
+        /// Returns `false` for invalid variant strings (they cannot exist in the locale).
+        #[diplomat::rust_link(icu::locale::Variants::remove, FnInStruct)]
+        pub fn remove_variant(&mut self, s: &DiplomatStr) -> bool {
+            icu_locale_core::subtags::Variant::try_from_utf8(s)
+                .map(|v| self.0.id.variants.remove(&v))
+                .unwrap_or(false)
+        }
+
+        /// Clears all variants from the [`Locale`].
+        #[diplomat::rust_link(icu::locale::Variants::clear, FnInStruct)]
+        pub fn clear_variants(&mut self) {
+            self.0.id.variants.clear();
+        }
+
+        // --- Other ---
+
         /// Normalizes a locale string.
         #[diplomat::rust_link(icu::locale::Locale::normalize, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::normalize_utf8, FnInStruct, hidden)]

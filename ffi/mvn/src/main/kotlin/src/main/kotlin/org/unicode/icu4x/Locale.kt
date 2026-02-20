@@ -19,6 +19,13 @@ internal interface LocaleLib: Library {
     fun icu4x_Locale_set_region_mv1(handle: Pointer, s: Slice): ResultUnitInt
     fun icu4x_Locale_script_mv1(handle: Pointer, write: Pointer): OptionUnit
     fun icu4x_Locale_set_script_mv1(handle: Pointer, s: Slice): ResultUnitInt
+    fun icu4x_Locale_variants_mv1(handle: Pointer, write: Pointer): Unit
+    fun icu4x_Locale_variant_count_mv1(handle: Pointer): FFISizet
+    fun icu4x_Locale_variant_at_mv1(handle: Pointer, index: FFISizet, write: Pointer): OptionUnit
+    fun icu4x_Locale_has_variant_mv1(handle: Pointer, s: Slice): Byte
+    fun icu4x_Locale_add_variant_mv1(handle: Pointer, s: Slice): ResultByteInt
+    fun icu4x_Locale_remove_variant_mv1(handle: Pointer, s: Slice): Byte
+    fun icu4x_Locale_clear_variants_mv1(handle: Pointer): Unit
     fun icu4x_Locale_normalize_mv1(s: Slice, write: Pointer): ResultUnitInt
     fun icu4x_Locale_to_string_mv1(handle: Pointer, write: Pointer): Unit
     fun icu4x_Locale_normalizing_eq_mv1(handle: Pointer, other: Slice): Byte
@@ -245,6 +252,96 @@ class Locale internal constructor (
         } else {
             return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
         }
+    }
+    
+    /** Returns a string representation of the [Locale] variants.
+    *
+    *See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+    */
+    fun variants(): String {
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_Locale_variants_mv1(handle, write);
+        
+        val returnString = DW.writeToString(write)
+        return returnString
+    }
+    
+    /** Returns the number of variants in this [Locale].
+    *
+    *See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+    */
+    fun variantCount(): ULong {
+        
+        val returnVal = lib.icu4x_Locale_variant_count_mv1(handle);
+        return (returnVal.toULong())
+    }
+    
+    /** Returns the variant at the given index, or nothing if the index is out of bounds.
+    *
+    *See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+    */
+    fun variantAt(index: ULong): String? {
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_Locale_variant_at_mv1(handle, FFISizet(index), write);
+        
+        returnVal.option() ?: return null
+
+        val returnString = DW.writeToString(write)
+        return returnString
+                                
+    }
+    
+    /** Returns whether the [Locale] has a specific variant.
+    *
+    *See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+    */
+    fun hasVariant(s: String): Boolean {
+        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        
+        val returnVal = lib.icu4x_Locale_has_variant_mv1(handle, sSlice);
+        return (returnVal > 0)
+    }
+    
+    /** Adds a variant to the [Locale].
+    *
+    *Returns an error if the variant string is invalid.
+    *Returns `true` if the variant was added, `false` if already present.
+    *
+    *See the [Rust documentation for `push`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.push) for more information.
+    */
+    fun addVariant(s: String): Result<Boolean> {
+        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        
+        val returnVal = lib.icu4x_Locale_add_variant_mv1(handle, sSlice);
+        if (returnVal.isOk == 1.toByte()) {
+            return (returnVal.union.ok > 0).ok()
+        } else {
+            return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+        }
+    }
+    
+    /** Removes a variant from the [Locale].
+    *
+    *Returns `true` if the variant was removed, `false` if not present.
+    *Returns `false` for invalid variant strings (they cannot exist in the locale).
+    *
+    *See the [Rust documentation for `remove`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.remove) for more information.
+    */
+    fun removeVariant(s: String): Boolean {
+        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        
+        val returnVal = lib.icu4x_Locale_remove_variant_mv1(handle, sSlice);
+        return (returnVal > 0)
+    }
+    
+    /** Clears all variants from the [Locale].
+    *
+    *See the [Rust documentation for `clear`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.clear) for more information.
+    */
+    fun clearVariants(): Unit {
+        
+        val returnVal = lib.icu4x_Locale_clear_variants_mv1(handle);
+        
     }
     
     /** Returns a string representation of [Locale].
