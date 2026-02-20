@@ -10,6 +10,7 @@ use icu::experimental::displaynames::provider::*;
 use icu::locale::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::VarZeroCow;
 
 impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<RegionDisplayNamesV1>, DataError> {
@@ -45,6 +46,67 @@ impl IterableDataProviderCached<RegionDisplayNamesV1> for SourceDataProvider {
             })
             .map(DataIdentifierCow::from_locale)
             .collect())
+    }
+}
+
+impl DataProvider<LocaleNamesRegionLongV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesRegionLongV1>, DataError> {
+        self.check_req::<LocaleNamesRegionLongV1>(req)?;
+
+        let data: &cldr_serde::displaynames::region::Resource = self
+            .cldr()?
+            .displaynames()
+            .read_and_parse(req.id.locale, "territories.json")?;
+
+        let name = data
+            .main
+            .value
+            .localedisplaynames
+            .regions
+            .get(req.id.marker_attributes.as_str())
+            .ok_or_else(|| {
+                DataError::custom("data for RegionDisplayNames")
+                    .with_req(LocaleNamesRegionLongV1::INFO, req)
+            })?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(SingleDisplayName {
+                name: VarZeroCow::from_encodeable(&name),
+            }),
+        })
+    }
+}
+
+impl IterableDataProviderCached<LocaleNamesRegionLongV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        let mut result = HashSet::new();
+        let displaynames = self.cldr()?.displaynames();
+        for locale in displaynames.list_locales()?.filter(|locale| {
+            // The directory might exist without territories.json
+            self.cldr()
+                .unwrap()
+                .displaynames()
+                .file_exists(locale, "territories.json")
+                .unwrap_or_default()
+        }) {
+            let data: &cldr_serde::displaynames::region::Resource =
+                displaynames.read_and_parse(&locale, "territories.json")?;
+            for region_str in data.main.value.localedisplaynames.regions.keys() {
+                if region_str.contains("-alt-") {
+                    continue;
+                }
+                let data_identifier = DataIdentifierCow::from_owned(
+                    DataMarkerAttributes::try_from_string(region_str.clone()).map_err(|_| {
+                        DataError::custom("Failed to parse region as attribute")
+                            .with_debug_context(&region_str)
+                    })?,
+                    locale,
+                );
+                result.insert(data_identifier);
+            }
+        }
+        Ok(result)
     }
 }
 
