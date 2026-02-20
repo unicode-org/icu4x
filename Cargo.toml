@@ -324,6 +324,11 @@ codegen-units = 1
 inherits = "dev"
 debug-assertions = false
 
+# wasmi is painfully slow in dev, which impacts datagen tests
+[profile.dev.package.wasmi]
+opt-level = 3
+codegen-units = 1
+
 # For slow tests
 [profile.release-with-assertions]
 inherits = "release"
