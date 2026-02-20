@@ -29,7 +29,7 @@ int main() {
 
     bool saw_unexpected_output = false;
 
-    std::unique_ptr<IsoDate> date = IsoDate::create(2022, 07, 11).ok().value();
+    std::unique_ptr<IsoDate> date = IsoDate::create(2022, 7, 11).ok().value();
     std::unique_ptr<Time> time = Time::create(13, 06, 42, 0).ok().value();
     std::string out;
 
@@ -262,6 +262,35 @@ int main() {
         saw_unexpected_output = true;
     }
     std::cout << std::endl;
+
+    // Gregorian (Success)
+    std::unique_ptr<Calendar> cal_greg = Calendar::create(CalendarKind::Gregorian);
+    std::unique_ptr<Date> date_greg = Date::from_iso_in_calendar(2022, 7, 11, *cal_greg.get()).ok().value();
+    out = fmt_mdt_generic_short->format_same_calendar(*date_greg.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MDT Generic Short (Gregorian Same Calendar): " << out;
+    if (out != "11 jul, 13:06 hora de Chicago") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    // Coptic (Fail)
+    std::unique_ptr<Calendar> cal_coptic = Calendar::create(CalendarKind::Coptic);
+    std::unique_ptr<Date> date_coptic = Date::from_iso_in_calendar(2022, 7, 11, *cal_coptic.get()).ok().value();
+    auto result_coptic = fmt_mdt_generic_short->format_same_calendar(*date_coptic.get(), *time.get(), *time_zone_info.get());
+    if (result_coptic.is_ok()) {
+        std::cout << "Fieldset MDT Generic Short (Coptic Same Calendar): Unexpected success!" << std::endl;
+        saw_unexpected_output = true;
+    }
+
+    // Iso (Fail)
+    std::unique_ptr<Calendar> cal_iso = Calendar::create(CalendarKind::Iso);
+    std::unique_ptr<Date> date_iso = Date::from_iso_in_calendar(2022, 7, 11, *cal_iso.get()).ok().value();
+    auto result_iso = fmt_mdt_generic_short->format_same_calendar(*date_iso.get(), *time.get(), *time_zone_info.get());
+    if (result_iso.is_ok()) {
+        std::cout << "Fieldset MDT Generic Short (Iso Same Calendar): Unexpected success!" << std::endl;
+        saw_unexpected_output = true;
+    }
 
     std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_generic_long = ZonedDateTimeFormatter::create_generic_long(*locale.get(), *fmt_mdt).ok().value();
     out = fmt_mdt_generic_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
