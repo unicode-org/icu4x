@@ -171,6 +171,44 @@ fn test_en_overlap_patterns() {
     );
 }
 
+/// Regression test for <https://github.com/unicode-org/icu4x/issues/594>.
+/// Verify that the datagen pipeline correctly infers locale-specific hour cycles
+/// from CLDR time skeleton patterns.
+#[test]
+fn test_preferred_hour_cycle_by_locale() {
+    use icu::datetime::provider::pattern::CoarseHourCycle;
+
+    let provider = SourceDataProvider::new_testing();
+
+    // (locale, expected coarse hour cycle)
+    // Note: CoarseHourCycle naming is asymmetric (H11H12 vs H23) per its definition.
+    let cases = [
+        ("en", CoarseHourCycle::H11H12), // US English → h12
+        ("fr", CoarseHourCycle::H23),    // French → h23
+        // en-GB is not available in the test data, but en-ZA (South Africa) is,
+        // and it typically follows UK conventions (h23).
+        // TODO: Add en-GB when it becomes available in SourceDataProvider::new_testing() data.
+        ("en-ZA", CoarseHourCycle::H23), // South Africa English → h23
+        ("ja", CoarseHourCycle::H23),    // Japanese → h23
+    ];
+
+    for (locale_str, expected) in cases {
+        let locale = locale_str.parse::<DataLocale>().unwrap();
+        // Load the CLDR data (dates resource) for the locale
+        let data = provider
+            .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))
+            .expect("Failed to load dates resource");
+
+        // Directly test the inference function
+        let actual = preferred_hour_cycle(&data, &locale);
+
+        assert_eq!(
+            actual, expected,
+            "Locale {locale_str}: expected {expected:?}, got {actual:?}"
+        );
+    }
+}
+
 /// This is a test that should eventually be moved to CLDR.
 ///
 /// See: <https://unicode-org.atlassian.net/browse/CLDR-14993>

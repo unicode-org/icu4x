@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::cal::Hebrew;
-use icu_calendar::Date;
+use icu_calendar::{Date, Gregorian};
 use icu_datetime::fieldsets;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
@@ -216,4 +216,87 @@ fn test_5387() {
     assert_writeable_eq!(formatter_auto.format(&datetime), "Fri 2:15:16\u{202f}PM");
     assert_writeable_eq!(formatter_h12.format(&datetime), "Fri, 2:15:16\u{202f}PM");
     assert_writeable_eq!(formatter_h24.format(&datetime), "Fri, 14:15:16");
+}
+
+/// Verify that formatting with no explicit hour cycle preference defaults to the
+/// locale's region-based hour cycle per CLDR data.
+///
+/// When an explicit `-u-hc-*` extension is provided, it should override the locale default.
+///
+/// Regression test for <https://github.com/unicode-org/icu4x/issues/594>.
+#[cfg(feature = "unstable")]
+#[test]
+fn test_locale_default_hour_cycle() {
+    use icu_datetime::provider::fields::components;
+    use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+
+    // Use hour=21 (9 PM) — hour > 12 ensures h12 and h23 produce visibly different output.
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2024, 1, 15).unwrap(),
+        time: Time::try_new(21, 22, 0, 0).unwrap(),
+    };
+
+    // (locale string, expected hour cycle)
+    //
+    // Note: the field set below uses `fieldsets::T::short()` with no explicit hour cycle.
+    // The `DateTimeFormatterPreferences::from(&locale)` does NOT inject a default hour_cycle
+    // preference unless the locale string contains `-u-hc-*`. This ensures we are testing
+    // the "no preference" path where the locale's baked-in default takes effect.
+    //
+    // NOTE: es-US/es-ES pair omitted — baked test data does not include
+    // both variants. The en/en-GB pair covers the same region-resolution logic.
+    let cases: &[(&str, HourCycle)] = &[
+        // h12 locales — expect AM/PM patterns
+        ("en", HourCycle::H12), // US English → h12
+        ("ko", HourCycle::H12), // Korean → h12
+        // h23 locales — expect 24-hour patterns
+        ("fr", HourCycle::H23),    // French → h23
+        ("ja", HourCycle::H23),    // Japanese → h23
+        ("de", HourCycle::H23),    // German → h23
+        ("en-GB", HourCycle::H23), // British English → h23 (region override)
+        // Explicit -u-hc- extension overrides locale default
+        ("fr-u-hc-h12", HourCycle::H12), // French forced to h12
+        ("en-u-hc-h23", HourCycle::H23), // English forced to h23
+    ];
+
+    for (locale_str, expected_hour_cycle) in cases {
+        let locale: Locale = locale_str.parse().unwrap();
+        let prefs = DateTimeFormatterPreferences::from(&locale);
+        let formatter =
+            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, fieldsets::T::short())
+                .unwrap();
+        let formatted = formatter.format(&datetime);
+        let resolved_pattern = formatted.pattern();
+        let bag = components::Bag::from(&resolved_pattern);
+
+        assert_eq!(
+            bag.hour_cycle,
+            Some(*expected_hour_cycle),
+            "Locale {locale_str}: expected hour cycle {expected_hour_cycle:?}, got {:?}",
+            bag.hour_cycle,
+        );
+    }
+
+    // Edge case: midnight (hour=0) — verifies h11/h12 vs h23 distinction at boundary
+    let midnight_datetime = DateTime {
+        date: Date::try_new_gregorian(2024, 1, 15).unwrap(),
+        time: Time::try_new(0, 0, 0, 0).unwrap(),
+    };
+    for (locale_str, expected_hour_cycle) in &[("en", HourCycle::H12), ("fr", HourCycle::H23)] {
+        let locale: Locale = locale_str.parse().unwrap();
+        let prefs = DateTimeFormatterPreferences::from(&locale);
+        let formatter =
+            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, fieldsets::T::short())
+                .unwrap();
+        let formatted = formatter.format(&midnight_datetime);
+        let resolved_pattern = formatted.pattern();
+        let bag = components::Bag::from(&resolved_pattern);
+
+        assert_eq!(
+            bag.hour_cycle,
+            Some(*expected_hour_cycle),
+            "Midnight edge case — Locale {locale_str}: expected {expected_hour_cycle:?}, got {:?}",
+            bag.hour_cycle,
+        );
+    }
 }
