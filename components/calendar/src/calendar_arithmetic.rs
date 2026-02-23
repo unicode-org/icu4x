@@ -560,7 +560,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     ///
     /// This does *not* necessarily produce something within [`VALID_RD_RANGE`], but it will ensure things
     /// are within [`GENEROUS_YEAR_RANGE`].
-    pub(crate) fn new_balanced(
+    fn new_balanced(
         year: C::YearInfo,
         ordinal_month: i64,
         day: i64,
