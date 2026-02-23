@@ -101,7 +101,7 @@ impl<C: DateFieldsResolver> Hash for ArithmeticDate<C> {
     }
 }
 
-/// Same data as ArithmeticDate, but may be out of [`VALID_RD_RANGE`]
+/// Same data as [`ArithmeticDate`], but may be out of [`VALID_RD_RANGE`]
 #[derive(Debug)]
 struct UncheckedArithmeticDate<C: DateFieldsResolver> {
     year: C::YearInfo,
@@ -110,7 +110,7 @@ struct UncheckedArithmeticDate<C: DateFieldsResolver> {
 }
 
 impl<C: DateFieldsResolver> UncheckedArithmeticDate<C> {
-    fn to_checked(self) -> Result<ArithmeticDate<C>, YearOverflowError> {
+    fn into_checked(self) -> Result<ArithmeticDate<C>, YearOverflowError> {
         let rd = C::to_rata_die_inner(self.year, self.ordinal_month, self.day);
         if !VALID_RD_RANGE.contains(&rd) {
             return Err(YearOverflowError);
@@ -915,7 +915,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             cal,
         )?;
 
-        Ok(balanced.to_checked()?)
+        Ok(balanced.into_checked()?)
     }
 
     /// Implements the Temporal abstract operation `NonISODateUntil`.
@@ -951,6 +951,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Ordering::Equal => return DateDuration::default(),
             Ordering::Less => -1i64,
         };
+
         // 1. Let _years_ be 0.
         // 1. If _largestUnit_ is ~year~, then
         //   1. Let _candidateYears_ be _sign_.
