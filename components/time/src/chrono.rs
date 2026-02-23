@@ -36,16 +36,12 @@ impl From<chrono::FixedOffset> for UtcOffset {
     }
 }
 
-#[cfg(feature = "compiled_data")]
-impl From<chrono_tz::Tz> for TimeZone {
-    fn from(chrono: chrono_tz::Tz) -> Self {
-        crate::zone::IanaParser::new().parse(chrono.name())
-    }
-}
-
-#[cfg(feature = "compiled_data")]
-impl From<&chrono::DateTime<chrono_tz::Tz>> for ZonedDateTime<Gregorian, TimeZoneInfo<Base>> {
-    fn from(chrono: &chrono::DateTime<chrono_tz::Tz>) -> Self {
+impl<Tz: chrono::TimeZone> From<&chrono::DateTime<Tz>>
+    for ZonedDateTime<Gregorian, TimeZoneInfo<Base>>
+where
+    TimeZone: From<Tz>,
+{
+    fn from(chrono: &chrono::DateTime<Tz>) -> Self {
         use chrono::Offset;
 
         let date = chrono.date_naive().into();
@@ -57,9 +53,12 @@ impl From<&chrono::DateTime<chrono_tz::Tz>> for ZonedDateTime<Gregorian, TimeZon
     }
 }
 
-#[cfg(feature = "compiled_data")]
-impl From<&chrono::DateTime<chrono_tz::Tz>> for ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>> {
-    fn from(chrono: &chrono::DateTime<chrono_tz::Tz>) -> Self {
+impl<Tz: chrono::TimeZone> From<&chrono::DateTime<Tz>>
+    for ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>>
+where
+    TimeZone: From<Tz>,
+{
+    fn from(chrono: &chrono::DateTime<Tz>) -> Self {
         let ZonedDateTime::<_, TimeZoneInfo<Base>> { date, time, zone } = chrono.into();
 
         ZonedDateTime {
@@ -70,36 +69,18 @@ impl From<&chrono::DateTime<chrono_tz::Tz>> for ZonedDateTime<Gregorian, TimeZon
                 time,
             }),
         }
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl From<chrono_tz::Tz> for TimeZone {
+    fn from(chrono: chrono_tz::Tz) -> Self {
+        crate::zone::IanaParser::new().parse(chrono.name())
     }
 }
 
 impl From<chrono::Utc> for TimeZone {
     fn from(chrono::Utc: chrono::Utc) -> Self {
         TimeZone(icu_locale_core::subtags::subtag!("utc"))
-    }
-}
-
-impl From<&chrono::DateTime<chrono::Utc>> for ZonedDateTime<Gregorian, TimeZoneInfo<Base>> {
-    fn from(chrono: &chrono::DateTime<chrono::Utc>) -> Self {
-        let date = chrono.date_naive().into();
-        let time = chrono.time().into();
-        let zone = TimeZone::from(chrono::Utc).with_offset(Some(UtcOffset::zero()));
-
-        ZonedDateTime { date, time, zone }
-    }
-}
-
-impl From<&chrono::DateTime<chrono::Utc>> for ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>> {
-    fn from(chrono: &chrono::DateTime<chrono::Utc>) -> Self {
-        let ZonedDateTime::<_, TimeZoneInfo<Base>> { date, time, zone } = chrono.into();
-
-        ZonedDateTime {
-            date,
-            time,
-            zone: zone.at_date_time_iso(DateTime {
-                date: date.to_calendar(icu_calendar::Iso),
-                time,
-            }),
-        }
     }
 }

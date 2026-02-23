@@ -256,8 +256,10 @@ impl<Tz: chrono::TimeZone> GetField<RataDie> for chrono::DateTime<Tz> {
     }
 }
 
-#[cfg(feature = "compiled_data")]
-impl GetField<TimeZone> for chrono::DateTime<chrono_tz::Tz> {
+impl<Tz: chrono::TimeZone> GetField<TimeZone> for chrono::DateTime<Tz>
+where
+    TimeZone: From<Tz>,
+{
     #[inline]
     fn get_field(&self) -> TimeZone {
         TimeZone::from(self.timezone())
@@ -307,8 +309,10 @@ impl ConvertCalendar for chrono::NaiveDateTime {
     }
 }
 
-#[cfg(feature = "compiled_data")]
-impl ConvertCalendar for chrono::DateTime<chrono_tz::Tz> {
+impl<Tz: chrono::TimeZone> ConvertCalendar for chrono::DateTime<Tz>
+where
+    for<'a> ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>>: From<&'a chrono::DateTime<Tz>>,
+{
     type Converted<'a> =
         <ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>> as ConvertCalendar>::Converted<'a>;
 
