@@ -163,7 +163,7 @@ icu_provider::data_marker!(
     "decimal/digits/v1",
     [char; 10],
     #[cfg(feature = "datagen")]
-    attributes_domain = "numbering-system"
+    attributes_domain = "numbering_system"
 );
 
 #[cfg(feature = "datagen")]

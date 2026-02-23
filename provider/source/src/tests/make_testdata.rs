@@ -85,7 +85,7 @@ fn make_testdata() {
             "001" | "419" | "FR" | "JP" | "CG" | "HK" | "ZA"
         )
     })
-    .with_marker_attributes_filter("numbering-system", |attrs| {
+    .with_marker_attributes_filter("numbering_system", |attrs| {
         matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")
     })
     .with_marker_attributes_filter("transliterator", |attrs| {
