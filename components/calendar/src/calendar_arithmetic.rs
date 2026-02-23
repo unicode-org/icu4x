@@ -51,6 +51,17 @@ pub(crate) const VALID_RD_RANGE: RangeInclusive<RataDie> =
 /// use this check, and that these year numbers map to out-of-range values for every era.
 pub(crate) const GENEROUS_YEAR_RANGE: RangeInclusive<i32> = -1_040_000..=1_040_000;
 
+/// This is the year range all calendar specific computation can assume their data to be in.
+///
+/// It is wider than [`GENEROUS_YEAR_RANGE`]: `GENEROUS_YEAR_RANGE` is used for checking user
+/// input, this is more of an internal invariant for assertions. New calendar implementations
+/// must ensure they do not have overflows or panics for year (era year or extended year) within this range.
+///
+/// This value is computed by going past the max value producible by adding a duration,
+/// which is preemptively capped at `GENEROUS_MAX_YEARS`, `GENEROUS_MAX_MONTHS, `GENEROUS_MAX_DAYS`
+/// in `added()`.
+pub(crate) const SAFE_YEAR_RANGE: RangeInclusive<i32> = -8_000_000..=8_000_000;
+
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
 pub(crate) struct ArithmeticDate<C: DateFieldsResolver>(<C::YearInfo as PackWithMD>::Packed);
@@ -183,7 +194,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// Converts the era and era year to a [`Self::YearInfo`]. If the calendar does not have eras,
     /// this should always return an Err result.
     ///
-    /// Precondition: `era_year` is in [`GENEROUS_YEAR_RANGE`].
+    /// Precondition: `era_year` is in [`SAFE_YEAR_RANGE`].
     fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
@@ -566,7 +577,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ordinal_month: i64,
         day: i64,
         cal: &C,
-    ) -> Result<UncheckedArithmeticDate<C>, YearOverflowError> {
+    ) -> UncheckedArithmeticDate<C> {
         // 1. Let _resolvedYear_ be _arithmeticYear_.
         // 1. Let _resolvedMonth_ be _ordinalMonth_.
         let mut resolved_year = year;
@@ -578,8 +589,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //   1. Set _monthsInYear_ to CalendarMonthsInYear(_calendar_, _resolvedYear_).
         //   1. Set _resolvedMonth_ to _resolvedMonth_ + _monthsInYear_.
         while resolved_month <= 0 {
-            resolved_year =
-                cal.year_info_from_extended_checked(resolved_year.to_extended_year() - 1)?;
+            resolved_year = cal.year_info_from_extended(resolved_year.to_extended_year() - 1);
             months_in_year = C::months_in_provided_year(resolved_year);
             resolved_month += i64::from(months_in_year);
         }
@@ -589,8 +599,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //   1. Set _monthsInYear_ to CalendarMonthsInYear(_calendar_, _resolvedYear_).
         while resolved_month > i64::from(months_in_year) {
             resolved_month -= i64::from(months_in_year);
-            resolved_year =
-                cal.year_info_from_extended_checked(resolved_year.to_extended_year() + 1)?;
+            resolved_year = cal.year_info_from_extended(resolved_year.to_extended_year() + 1);
             months_in_year = C::months_in_provided_year(resolved_year);
         }
         debug_assert!(u8::try_from(resolved_month).is_ok());
@@ -608,8 +617,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 //     1. Set _resolvedYear_ to _resolvedYear_ - 1.
                 //     1. Set _monthsInYear_ to CalendarMonthsInYear(_calendar_, _resolvedYear_).
                 //     1. Set _resolvedMonth_ to _monthsInYear_.
-                resolved_year =
-                    cal.year_info_from_extended_checked(resolved_year.to_extended_year() - 1)?;
+                resolved_year = cal.year_info_from_extended(resolved_year.to_extended_year() - 1);
                 months_in_year = C::months_in_provided_year(resolved_year);
                 resolved_month = months_in_year;
             }
@@ -629,8 +637,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 //     1. Set _resolvedYear_ to _resolvedYear_ + 1.
                 //     1. Set _monthsInYear_ to CalendarMonthsInYear(_calendar_, _resolvedYear_).
                 //     1. Set _resolvedMonth_ to 1.
-                resolved_year =
-                    cal.year_info_from_extended_checked(resolved_year.to_extended_year() + 1)?;
+                resolved_year = cal.year_info_from_extended(resolved_year.to_extended_year() + 1);
                 months_in_year = C::months_in_provided_year(resolved_year);
                 resolved_month = 1;
             }
@@ -640,11 +647,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         debug_assert!(u8::try_from(resolved_day).is_ok());
         let resolved_day = resolved_day as u8;
         // 1. Return the Record { [[Year]]: _resolvedYear_, [[Month]]: _resolvedMonth_, [[Day]]: _resolvedDay_ }.
-        Ok(UncheckedArithmeticDate {
+        UncheckedArithmeticDate {
             year: resolved_year,
             ordinal_month: resolved_month,
             day: resolved_day,
-        })
+        }
     }
 
     /// Implements the Temporal abstract operation `CompareSurpasses` based on month code
@@ -772,11 +779,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             }
         };
         // 1. Let _monthsAdded_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _months_, 1).
-        let Ok(months_added) = Self::new_balanced(y0, duration.add_months_to(m0), 1, cal) else {
-            // Any operation that brings us out of range will have surpassed any valid date input
-            // we might have received
-            return true;
-        };
+        let months_added = Self::new_balanced(y0, duration.add_months_to(m0), 1, cal);
+
         // 1. If CompareSurpasses(_sign_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]], _parts_.[[Day]], _calDate2_) is *true*, return *true*.
         if Self::compare_surpasses_ordinal(
             sign,
@@ -792,14 +796,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             return false;
         }
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]] + 1, 0).
-        let Ok(end_of_month) = Self::new_balanced(
+        let end_of_month = Self::new_balanced(
             months_added.year,
             i64::from(months_added.ordinal_month) + 1,
             0,
             cal,
-        ) else {
-            return true;
-        };
+        );
         // 1. Let _baseDay_ be _parts_.[[Day]].
         let base_day = parts.day();
         // 1. If _baseDay_ &le; _endOfMonth_.[[Day]], then
@@ -814,14 +816,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _daysInWeek_ be 7 (the number of days in a week for all supported calendars).
         // 1. Let _balancedDate_ be BalanceNonISODate(_calendar_, _endOfMonth_.[[Year]], _endOfMonth_.[[Month]], _regulatedDay_ + _daysInWeek_ * _weeks_ + _days_).
         // 1. Return CompareSurpasses(_sign_, _balancedDate_.[[Year]], _balancedDate_.[[Month]], _balancedDate_.[[Day]], _calDate2_).
-        let Ok(balanced_date) = Self::new_balanced(
+        let balanced_date = Self::new_balanced(
             end_of_month.year,
             i64::from(end_of_month.ordinal_month),
             duration.add_weeks_and_days_to(regulated_day),
             cal,
-        ) else {
-            return true;
-        };
+        );
 
         Self::compare_surpasses_ordinal(
             sign,
@@ -887,7 +887,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Err(MonthError::NotInYear) => return Err(DateAddError::MonthNotInYear),
         };
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
-        let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal)?;
+        let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
         let base_day = self.day();
         // 1. If _baseDay_ &le; _endOfMonth_.[[Day]], then
@@ -914,7 +914,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             i64::from(end_of_month.ordinal_month),
             duration.add_weeks_and_days_to(regulated_day),
             cal,
-        )?;
+        );
 
         Ok(balanced.into_checked()?)
     }
