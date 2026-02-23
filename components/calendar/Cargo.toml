@@ -66,6 +66,10 @@ chrono_0_4 = ["dep:chrono"]
 alloc = ["icu_locale_core/alloc", "tinystr/alloc", "serde?/alloc"]
 
 [[bench]]
+name = "until"
+harness = false
+
+[[bench]]
 name = "date"
 harness = false
 

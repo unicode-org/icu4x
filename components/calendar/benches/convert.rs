@@ -7,6 +7,9 @@ use criterion::{
 };
 use icu_calendar::{Calendar, Date};
 
+#[macro_use]
+mod common;
+
 fn bench_calendar<C: Copy + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
@@ -27,70 +30,7 @@ fn bench_calendar<C: Copy + Calendar>(
 fn convert_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("convert");
 
-    bench_calendar(&mut group, "calendar/iso", icu::calendar::cal::Iso);
-
-    bench_calendar(
-        &mut group,
-        "calendar/buddhist",
-        icu::calendar::cal::Buddhist,
-    );
-
-    bench_calendar(&mut group, "calendar/coptic", icu::calendar::cal::Coptic);
-
-    bench_calendar(
-        &mut group,
-        "calendar/ethiopic",
-        icu::calendar::cal::Ethiopian::new(),
-    );
-
-    bench_calendar(&mut group, "calendar/indian", icu::calendar::cal::Indian);
-
-    bench_calendar(&mut group, "calendar/julian", icu::calendar::cal::Julian);
-
-    bench_calendar(
-        &mut group,
-        "calendar/chinese_cached",
-        icu::calendar::cal::ChineseTraditional::new(),
-    );
-
-    bench_calendar(
-        &mut group,
-        "calendar/gregorian",
-        icu::calendar::cal::Gregorian,
-    );
-
-    bench_calendar(&mut group, "calendar/hebrew", icu::calendar::cal::Hebrew);
-
-    #[allow(deprecated)]
-    bench_calendar(
-        &mut group,
-        "calendar/islamic/observational",
-        icu::calendar::cal::Hijri::new_simulated_mecca(),
-    );
-
-    bench_calendar(
-        &mut group,
-        "calendar/islamic/civil",
-        icu::calendar::cal::Hijri::new_tabular(
-            icu::calendar::cal::hijri::TabularAlgorithmLeapYears::TypeII,
-            icu::calendar::cal::hijri::TabularAlgorithmEpoch::Friday,
-        ),
-    );
-
-    bench_calendar(
-        &mut group,
-        "calendar/islamic/ummalqura",
-        icu::calendar::cal::Hijri::new_umm_al_qura(),
-    );
-
-    bench_calendar(
-        &mut group,
-        "calendar/islamic/tabular",
-        icu::calendar::cal::Hijri::new_tabular(
-            icu::calendar::cal::hijri::TabularAlgorithmLeapYears::TypeII,
-            icu::calendar::cal::hijri::TabularAlgorithmEpoch::Thursday,
-        ),
-    );
+    bench_all_calendars!(group, bench_calendar);
 
     group.finish();
 }
