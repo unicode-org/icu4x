@@ -18,12 +18,12 @@ use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
 use core::ops::RangeInclusive;
 
-/// This is checked by constructors. Internally we don't care about this invariant.
+/// This is checked by convenience constructors and `from_codes`.
+/// Internally we don't care about this invariant.
 pub const CONSTRUCTOR_YEAR_RANGE: RangeInclusive<i32> = -9999..=9999;
 
 /// This is a fundamental invariant of `ArithmeticDate` and by extension all our
-/// date types. Because this range exceeds the [`CONSTRUCTOR_YEAR_RANGE`], only
-/// the valid year range is checked in most constructors.
+/// date types. Constructors that don't check [`CONSTRUCTOR_YEAR_RANGE`] check this range.
 ///
 /// This is the range used by `Date::from_rata_die`, `Date::try_from_fields`,
 /// and Date arithmetic operations.
@@ -103,14 +103,14 @@ impl<C: DateFieldsResolver> Hash for ArithmeticDate<C> {
 
 /// Same data as ArithmeticDate, but may be out of [`VALID_RD_RANGE`]
 #[derive(Debug)]
-pub(crate) struct UncheckedArithmeticDate<C: DateFieldsResolver> {
+struct UncheckedArithmeticDate<C: DateFieldsResolver> {
     year: C::YearInfo,
     ordinal_month: u8,
     day: u8,
 }
 
 impl<C: DateFieldsResolver> UncheckedArithmeticDate<C> {
-    pub(crate) fn to_checked(self) -> Result<ArithmeticDate<C>, YearOverflowError> {
+    fn to_checked(self) -> Result<ArithmeticDate<C>, YearOverflowError> {
         let rd = C::to_rata_die_inner(self.year, self.ordinal_month, self.day);
         if !VALID_RD_RANGE.contains(&rd) {
             return Err(YearOverflowError);
@@ -183,8 +183,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// Converts the era and era year to a [`Self::YearInfo`]. If the calendar does not have eras,
     /// this should always return an Err result.
     ///
-    /// This function does not guard against overflow, please range-check input years
-    /// against [`CONSTRUCTOR_YEAR_RANGE`] or [`GENEROUS_YEAR_RANGE`] before passing to it.
+    /// Precondition: `era_year` is in [`GENEROUS_YEAR_RANGE`].
     fn extended_year_from_era_year(
         &self,
         era: &[u8],
@@ -192,13 +191,27 @@ pub(crate) trait DateFieldsResolver: Calendar {
     ) -> Result<i32, UnknownEraError>;
 
     /// Converts an extended year to a [`Self::YearInfo`].
+    ///
+    /// Precondition: `extended_year` is in [`GENEROUS_YEAR_RANGE`].
+    ///
+    /// Some calendars with complex calculations use this precondition to
+    /// ensure that the year is in a range where their arithmetic code is well-behaved.
+    ///
+    /// Calendar implementors who need this are encouraged to debug assert that the invariant
+    /// is upheld.
+    ///
+    /// This should primarily be used in constructors that range-check with
+    /// the very narrow [`CONSTRUCTOR_YEAR_RANGE`], after that check. If the
+    /// constructor checks [`VALID_RD_RANGE`], please use `year_info_from_extended_checked`.
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
 
-    /// `year_info_from_extended` will debug assert if given a too-large year
-    /// value. Most constructors range check for much smaller ranges,
-    /// but operations that only enforce the `VALID_RD_RANGE` should
-    /// be careful what they feed to it. They can use this checked version
-    /// instead.
+    /// `year_info_from_extended` has a precondition of the year being within
+    /// [`GENEROUS_YEAR_RANGE`].
+    ///
+    /// Most constructors range check for much smaller ranges and don't need to
+    /// bother explicitly checking that, but operations that only enforce the
+    /// [`VALID_RD_RANGE`] should be careful what they feed to it. They can use
+    /// this checked version instead.
     fn year_info_from_extended_checked(
         &self,
         extended_year: i32,
