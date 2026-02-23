@@ -17,25 +17,25 @@ impl ByteStr {
         input: &'l [(&'a [u8], usize)],
     ) -> &'l [(&'a ByteStr, usize)] {
         // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { core::mem::transmute(input) }
+        unsafe { &*(input as *const [(&'a [u8], usize)] as *const [(&'a Self, usize)]) }
     }
 
     pub const fn from_str_slice_with_value<'a, 'l>(
         input: &'l [(&'a str, usize)],
     ) -> &'l [(&'a ByteStr, usize)] {
         // Safety: str and ByteStr have the same layout, and ByteStr is less restrictive
-        unsafe { core::mem::transmute(input) }
+        unsafe { &*(input as *const [(&'a str, usize)] as *const [(&'a Self, usize)]) }
     }
 
     pub fn from_bytes(input: &[u8]) -> &Self {
         // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { core::mem::transmute(input) }
+        unsafe { &*(input as *const [u8] as *const Self) }
     }
 
     #[cfg(feature = "serde")]
     pub fn from_boxed_bytes(input: Box<[u8]>) -> Box<Self> {
         // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { core::mem::transmute(input) }
+        unsafe { core::mem::transmute::<Box<[u8]>, Box<Self>>(input) }
     }
 
     #[allow(dead_code)] // may want this in the future

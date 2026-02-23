@@ -716,7 +716,7 @@ macro_rules! to {
     ($self:ident, $to:ident, $later_char_to:ident $(,$first_char_to:ident)?) => {{
         let mut i = 0;
         if N <= 4 {
-            let aligned = Aligned4::from_ascii_bytes(&$self.bytes).$to().to_ascii_bytes();
+            let aligned = Aligned4::from_ascii_bytes(&$self.bytes).$to();
             // Won't panic because self.bytes has length N and aligned has length >= N
             #[expect(clippy::indexing_slicing)]
             while i < N {
@@ -724,7 +724,7 @@ macro_rules! to {
                 i += 1;
             }
         } else if N <= 8 {
-            let aligned = Aligned8::from_ascii_bytes(&$self.bytes).$to().to_ascii_bytes();
+            let aligned = Aligned8::from_ascii_bytes(&$self.bytes).$to();
             // Won't panic because self.bytes has length N and aligned has length >= N
             #[expect(clippy::indexing_slicing)]
             while i < N {
@@ -733,19 +733,11 @@ macro_rules! to {
             }
         } else {
             while i < N && $self.bytes[i] as u8 != AsciiByte::B0 as u8 {
-                // SAFETY: AsciiByte is repr(u8) and has same size as u8
-                unsafe {
-                    $self.bytes[i] = core::mem::transmute::<u8, AsciiByte>(
-                        ($self.bytes[i] as u8).$later_char_to()
-                    );
-                }
+                $self.bytes[i] = $self.bytes[i].$later_char_to();
                 i += 1;
             }
-            // SAFETY: AsciiByte is repr(u8) and has same size as u8
             $(
-                $self.bytes[0] = unsafe {
-                    core::mem::transmute::<u8, AsciiByte>(($self.bytes[0] as u8).$first_char_to())
-                };
+                $self.bytes[0] = $self.bytes[0].$first_char_to();
             )?
         }
         $self

@@ -265,7 +265,7 @@ impl PerfectByteHashMap<[u8]> {
     #[inline]
     pub fn from_bytes(bytes: &[u8]) -> &Self {
         // Safety: Self is repr(transparent) over [u8]
-        unsafe { core::mem::transmute(bytes) }
+        unsafe { &*(bytes as *const [u8] as *const Self) }
     }
 }
 

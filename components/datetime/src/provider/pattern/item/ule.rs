@@ -240,7 +240,7 @@ impl GenericPatternItemULE {
             // Safety: The two types are repr(transparent) over [u8; 3].
             // When a Literal, the two ULEs have the same repr,
             // as shown in the above assertion (and the class docs).
-            Ok(unsafe { core::mem::transmute::<&GenericPatternItemULE, &PatternItemULE>(self) })
+            Ok(unsafe { &*(self as *const GenericPatternItemULE as *const PatternItemULE) })
         }
     }
 }
