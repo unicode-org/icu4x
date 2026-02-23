@@ -85,6 +85,24 @@ fn make_testdata() {
             "001" | "419" | "FR" | "JP" | "CG" | "HK" | "ZA"
         )
     })
+    .with_marker_attributes_filter("numbering_system", |attrs| {
+        matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")
+    })
+    .with_marker_attributes_filter("transliterator", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "de-t-de-d0-ascii"
+                | "el-latn-t-s0-ascii"
+                | "el-latn-t-el-m0-bgn"
+                | "und-arab-t-und-beng"
+                | "und-latn-t-s0-ascii"
+                | "und-t-d0-publish"
+                | "und-t-s0-publish"
+                | "und-t-und-latn-d0-ascii"
+                | "und-x-bengali-interind"
+                | "und-x-interind-arabic"
+        )
+    })
     .export(&provider, exporter)
     .unwrap();
 }
