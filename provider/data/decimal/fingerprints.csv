@@ -446,7 +446,7 @@ decimal/digits/v1, und/telu, 40B, 40B, 4084dfba70dc949
 decimal/digits/v1, und/thai, 40B, 40B, 470541c261160c5a
 decimal/digits/v1, und/tibt, 40B, 40B, a199e0054f3d55b9
 decimal/digits/v1, und/vaii, 40B, 40B, f3247f156118e197
-decimal/symbols/v1, <lookup>, 1387B, 272 identifiers
+decimal/symbols/v1, <lookup>, 1392B, 273 identifiers
 decimal/symbols/v1, <total>, 2307B, 963B, 48 unique payloads
 decimal/symbols/v1, af, 47B, 19B, 3e51d5d2bbc1f2d7
 decimal/symbols/v1, ar, 52B, 24B, c3d6103c042fed33
@@ -578,6 +578,7 @@ decimal/symbols/v1, fi, 49B, 21B, 6bbabd47c5fe3c2c
 decimal/symbols/v1, fo, -> eu
 decimal/symbols/v1, fr, -> en-FR
 decimal/symbols/v1, fr-CA, -> af
+decimal/symbols/v1, fr-CH, 46B, 18B, acadb0fc0beb0701
 decimal/symbols/v1, fr-LU, -> ast
 decimal/symbols/v1, fr-MA, -> ast
 decimal/symbols/v1, fy, -> ast
@@ -622,7 +623,7 @@ decimal/symbols/v1, kxv-Telu/telu, 46B, 18B, 62e3bf87d9863250
 decimal/symbols/v1, ky, -> af
 decimal/symbols/v1, lb, -> ast
 decimal/symbols/v1, lij, -> ast
-decimal/symbols/v1, lmo, 46B, 18B, acadb0fc0beb0701
+decimal/symbols/v1, lmo, -> fr-CH
 decimal/symbols/v1, lo, -> ast
 decimal/symbols/v1, lo/laoo, 46B, 18B, c7da81f6bae79e2f
 decimal/symbols/v1, lt, -> fi
