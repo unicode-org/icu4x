@@ -65,7 +65,7 @@ impl DateFieldsResolver for Persian {
     }
 
     #[inline]
-    fn extended_year_from_era_year(
+    fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
         era_year: i32,

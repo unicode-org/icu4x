@@ -20,14 +20,14 @@ use core::ops::RangeInclusive;
 
 /// This is checked by convenience constructors and `from_codes`.
 /// Internally we don't care about this invariant.
-pub const CONSTRUCTOR_YEAR_RANGE: RangeInclusive<i32> = -9999..=9999;
+pub(crate) const CONSTRUCTOR_YEAR_RANGE: RangeInclusive<i32> = -9999..=9999;
 
 /// This is a fundamental invariant of `ArithmeticDate` and by extension all our
 /// date types. Constructors that don't check [`CONSTRUCTOR_YEAR_RANGE`] check this range.
 ///
 /// This is the range used by `Date::from_rata_die`, `Date::try_from_fields`,
 /// and Date arithmetic operations.
-pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
+pub(crate) const VALID_RD_RANGE: RangeInclusive<RataDie> =
     calendrical_calculations::gregorian::fixed_from_gregorian(-999999, 1, 1)
         ..=calendrical_calculations::gregorian::fixed_from_gregorian(999999, 12, 31);
 
@@ -49,7 +49,7 @@ pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
 ///
 /// The tests in `extrema.rs` ensure that all in-range dates can be produced by the APIs that,
 /// use this check, and that these year numbers map to out-of-range values for every era.
-pub const GENEROUS_YEAR_RANGE: RangeInclusive<i32> = -1_040_000..=1_040_000;
+pub(crate) const GENEROUS_YEAR_RANGE: RangeInclusive<i32> = -1_040_000..=1_040_000;
 
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
@@ -184,7 +184,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// this should always return an Err result.
     ///
     /// Precondition: `era_year` is in [`GENEROUS_YEAR_RANGE`].
-    fn extended_year_from_era_year(
+    fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
         era_year: i32,
@@ -314,7 +314,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         calendar: &C,
     ) -> Result<Self, DateError> {
         let extended_year = if let Some(era) = era {
-            calendar.extended_year_from_era_year(
+            calendar.extended_year_from_era_year_unchecked(
                 era.as_bytes(),
                 range_check(year, "era_year", CONSTRUCTOR_YEAR_RANGE)?,
             )?
@@ -435,7 +435,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 if !GENEROUS_YEAR_RANGE.contains(&era_year) {
                     return Err(DateFromFieldsError::Overflow);
                 }
-                let extended_year = calendar.extended_year_from_era_year(era, era_year)?;
+                let extended_year =
+                    calendar.extended_year_from_era_year_unchecked(era, era_year)?;
                 let year = calendar.year_info_from_extended_checked(extended_year)?;
                 if let Some(extended_year) = fields.extended_year {
                     if year.to_extended_year() != extended_year {
@@ -538,7 +539,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         cal: &C,
     ) -> Result<Self, DateError> {
-        let extended_year = cal.extended_year_from_era_year(
+        let extended_year = cal.extended_year_from_era_year_unchecked(
             era.as_bytes(),
             range_check(year, "era_year", CONSTRUCTOR_YEAR_RANGE)?,
         )?;

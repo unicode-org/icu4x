@@ -588,7 +588,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     }
 
     #[inline]
-    fn extended_year_from_era_year(
+    fn extended_year_from_era_year_unchecked(
         &self,
         _era: &[u8],
         _era_year: i32,

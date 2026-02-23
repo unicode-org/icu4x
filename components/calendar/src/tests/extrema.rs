@@ -86,10 +86,10 @@ super::test_all_cals!(
             RataDie::new(-1000),
             RataDie::new(0),
             RataDie::new(1000),
-            VALID_RD_RANGE.end().add(10000),
-            VALID_RD_RANGE.end().add(100),
-            VALID_RD_RANGE.end().add(5),
-            VALID_RD_RANGE.end().add(1),
+            VALID_RD_RANGE.end().add(-10000),
+            VALID_RD_RANGE.end().add(-100),
+            VALID_RD_RANGE.end().add(-5),
+            VALID_RD_RANGE.end().add(-1),
             *VALID_RD_RANGE.end(),
         ];
 
@@ -188,7 +188,7 @@ super::test_all_cals!(
         // First we want to test that large values all get range checked
         for era in [first_era, last_era, None] {
             // We want to ensure that the "early" generous year range check
-            // AND the
+            // AND the RD check both run but return the same errors.
             for year in [
                 *GENEROUS_YEAR_RANGE.start() - 1,
                 *GENEROUS_YEAR_RANGE.start(),
