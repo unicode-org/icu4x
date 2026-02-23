@@ -481,12 +481,13 @@ mod unstable {
         #[displaydoc("Invalid day for month, max is {max}")]
         InvalidDay {
             /// The maximum allowed value (the minimum is 1).
+            ///
+            /// This is only possible with [`Overflow::Reject`](crate::options::Overflow::Reject).
             max: u8,
         },
-        /// The specified month does not exist in this calendar.
-        #[displaydoc("The specified month does not exist in this calendar")]
-        MonthNotInCalendar,
         /// The specified month exists in this calendar, but not in the specified year.
+        ///
+        /// This is only possible with [`Overflow::Reject`](crate::options::Overflow::Reject).
         #[displaydoc("The specified month exists in this calendar, but not for this year")]
         MonthNotInYear,
         /// The date is out of range.
@@ -559,16 +560,6 @@ impl From<MonthError> for DateFromFieldsError {
         match value {
             MonthError::NotInCalendar => DateFromFieldsError::MonthNotInCalendar,
             MonthError::NotInYear => DateFromFieldsError::MonthNotInYear,
-        }
-    }
-}
-
-impl From<MonthError> for DateAddError {
-    #[inline]
-    fn from(value: MonthError) -> Self {
-        match value {
-            MonthError::NotInCalendar => DateAddError::MonthNotInCalendar,
-            MonthError::NotInYear => DateAddError::MonthNotInYear,
         }
     }
 }
