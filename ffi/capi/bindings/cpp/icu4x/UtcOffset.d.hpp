@@ -34,9 +34,9 @@ public:
   /**
    * Creates an offset from seconds.
    *
-   * Errors if the offset seconds are out of range.
+   * Does not error.
    *
-   * See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
+   * See the [Rust documentation for `from_seconds`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.UtcOffset.html#method.from_seconds) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_seconds(int32_t seconds);
 

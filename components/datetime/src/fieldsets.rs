@@ -1792,7 +1792,7 @@ pub mod zone {
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let utc_offset = Some(UtcOffset::from_seconds(-6 * 3600).unwrap();
+        /// let utc_offset = UtcOffset::from_seconds(-6 * 3600);
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
@@ -1827,7 +1827,7 @@ pub mod zone {
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let utc_offset = Some(UtcOffset::from_seconds(-6 * 3600).unwrap();
+        /// let utc_offset = UtcOffset::from_seconds(-6 * 3600);
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),

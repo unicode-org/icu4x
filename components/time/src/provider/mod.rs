@@ -166,9 +166,7 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                         None
                     }
                 }
-                .map(|d| {
-                    UtcOffset::from_seconds(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)
-                }),
+                .map(|d| UtcOffset::from_seconds(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)),
             },
             mzmsk: match (dst as u8 & 0b1100_0000) >> 6 {
                 0b00 => MetazoneMembershipKind::BehavesLikeGolden,
