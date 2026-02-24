@@ -960,8 +960,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // We don't want to spend time incrementally bumping it up one year
         // at a time, so let's pre-guess a year delta that is guaranteed to not
         // surpass.
-        let min_years =
-            i64::from(other.year().to_extended_year() - self.year().to_extended_year()) - sign;
+        let year_diff = other.year().to_extended_year() - self.year().to_extended_year();
+        let min_years = if year_diff == 0 {
+            0
+        } else {
+            i64::from(year_diff) - sign
+        };
 
         debug_assert!(!self.surpasses(
             other,
@@ -979,12 +983,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
-            let mut candidate_years = if min_years == 0 {
-                sign
-            } else {
+            let mut candidate_years = sign;
+            if min_years != 0 {
                 // Optimization: we start with min_years since it is guaranteed to not
                 // surpass.
-                min_years
+                candidate_years = min_years
             };
 
             while !self.surpasses(
@@ -1009,26 +1012,26 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             options.largest_unit,
             Some(DateDurationUnit::Years) | Some(DateDurationUnit::Months)
         ) {
-            let mut candidate_months =
-                if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
-                    // Optimization: No current calendar supports years with month length < 12.
-                    // If something is at least N full years away, it is also at least 12*N full months away.
-                    //
-                    // In the future we can introduce per-calendar routines that are better at estimating a month count.
-                    //
-                    // We only need to apply this optimization for largest_unit = Months. If the largest_unit is years then
-                    // our candidate date is already pretty close and won't need more than 12 iterations to get there.
-                    let min_months = min_years * 12;
-                    debug_assert!(!self.surpasses(
-                        other,
-                        DateDuration::from_signed_ymwd(years, min_months, 0, 0),
-                        sign,
-                        cal,
-                    ));
-                    min_months
-                } else {
-                    sign
-                };
+            let mut candidate_months = sign;
+
+            if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
+                // Optimization: No current calendar supports years with month length < 12.
+                // If something is at least N full years away, it is also at least 12*N full months away.
+                //
+                // In the future we can introduce per-calendar routines that are better at estimating a month count.
+                //
+                // We only need to apply this optimization for largest_unit = Months. If the largest_unit is years then
+                // our candidate date is already pretty close and won't need more than 12 iterations to get there.
+                let min_months = min_years * 12;
+                debug_assert!(!self.surpasses(
+                    other,
+                    DateDuration::from_signed_ymwd(years, min_months, 0, 0),
+                    sign,
+                    cal,
+                ));
+                candidate_months = min_months
+            }
+
             while !self.surpasses(
                 other,
                 DateDuration::from_signed_ymwd(years, candidate_months, 0, 0),
