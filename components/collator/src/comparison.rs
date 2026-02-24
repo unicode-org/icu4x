@@ -847,6 +847,7 @@ impl CollatorBorrowed<'static> {
     /// This creates a root collator using baked data only.
     ///
     /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
     #[cfg(feature = "unstable")]
     pub const fn new_root() -> Self {
         const _: () = assert!(
