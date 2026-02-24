@@ -157,7 +157,7 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
-    /// The digits for a given numbering system. This data ought to be stored in the `und` locale with an auxiliary key
+    /// The digits for a given numbering system. This data ought to be stored in the `und` locale with a marker attribute
     /// set to the numbering system code.
     DecimalDigitsV1,
     "decimal/digits/v1",
