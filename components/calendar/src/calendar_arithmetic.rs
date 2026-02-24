@@ -324,16 +324,14 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateError> {
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
         let extended_year = if let Some(era) = era {
-            calendar.extended_year_from_era_year_unchecked(
-                era.as_bytes(),
-                range_check(year, "era_year", CONSTRUCTOR_YEAR_RANGE)?,
-            )?
+            calendar.extended_year_from_era_year_unchecked(era.as_bytes(), year)?
         } else {
             year
         };
-        let extended_year = range_check(extended_year, "extended_year", CONSTRUCTOR_YEAR_RANGE)?;
         let year = calendar.year_info_from_extended(extended_year);
+        
         let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
             MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
         })?;
@@ -345,7 +343,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 }
             })?;
 
-        let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
 
         // date is in the valid year range, and therefore in the valid RD range
         Ok(ArithmeticDate::new_unchecked(year, month, day))
@@ -527,15 +525,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         cal: &C,
     ) -> Result<Self, RangeError> {
-        let year_info =
-            cal.year_info_from_extended(range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?);
-        // check the extended year in terms of the year
-        let offset = year - year_info.to_extended_year();
-        range_check(
-            year, // == year_info.to_extended_year() + offset
-            "year",
-            (CONSTRUCTOR_YEAR_RANGE.start() + offset)..=(CONSTRUCTOR_YEAR_RANGE.end() + offset),
-        )?;
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
+        let year_info = cal.year_info_from_extended(year);
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
         // date is in the valid year range, and therefore in the valid RD range
@@ -550,12 +541,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         cal: &C,
     ) -> Result<Self, DateError> {
-        let extended_year = cal.extended_year_from_era_year_unchecked(
-            era.as_bytes(),
-            range_check(year, "era_year", CONSTRUCTOR_YEAR_RANGE)?,
-        )?;
-        // check the extended year in terms of the year
-        range_check(extended_year, "extended_year", CONSTRUCTOR_YEAR_RANGE)?;
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
+        let extended_year = cal.extended_year_from_era_year_unchecked(era.as_bytes(), year)?;
         let year_info = cal.year_info_from_extended(extended_year);
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
