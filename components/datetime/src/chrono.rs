@@ -6,11 +6,9 @@ use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, UnstableSealed
 use chrono::{Datelike, Offset};
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
 use icu_calendar::{AnyCalendar, Date, Gregorian};
-#[cfg(feature = "compiled_data")]
 use icu_time::zone::models::AtTime;
 use icu_time::zone::{UtcOffset, ZoneNameTimestamp};
 use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
-#[cfg(feature = "compiled_data")]
 use icu_time::{TimeZone, TimeZoneInfo};
 
 impl UnstableSealed for chrono::NaiveTime {}
