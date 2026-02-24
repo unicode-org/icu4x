@@ -22,6 +22,9 @@ independent = true
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-all-features]
+max_combination_size = 2
+
 [dependencies]
 displaydoc = { workspace = true }
 

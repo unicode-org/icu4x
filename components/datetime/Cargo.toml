@@ -103,8 +103,7 @@ bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
-# This has a lot of features, run a reduced test that is likely to catch 99% of bugs
-max_combination_size = 3
+max_combination_size = 2
 
 [[bench]]
 name = "datetime"

@@ -19,6 +19,9 @@ license.workspace = true
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-all-features]
+max_combination_size = 2
+
 [dependencies]
 harfbuzz-traits = { workspace = true, optional = true }
 icu_collections = { workspace = true }

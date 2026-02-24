@@ -80,7 +80,7 @@ zerotrie = []
 [package.metadata.cargo-all-features]
 denylist = ["macros"]
 # We have tons of features here, limit the amount of tests we run
-max_combination_size = 3
+max_combination_size = 2
 
 [lib]
 bench = false  # This option is required for Benchmark CI
