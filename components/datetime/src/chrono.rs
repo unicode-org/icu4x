@@ -336,7 +336,7 @@ fn chrono() {
     use writeable::assert_writeable_eq;
 
     let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)
-        .with_timezone(&"Asia/Tokyo".parse().unwrap());
+        .with_timezone(&"Asia/Tokyo".parse::<chrono_tz::Tz>().unwrap());
 
     let ymdt = DateTimeFormatter::try_new(
         locale!("ja-u-ca-japanese").into(),

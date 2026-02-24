@@ -1544,6 +1544,7 @@ dependencies = [
  "bincode",
  "calendrical_calculations",
  "chrono",
+ "chrono-tz",
  "criterion",
  "databake",
  "displaydoc",
