@@ -26,12 +26,15 @@ fn bench_calendar<C: Copy + Calendar>(
     let now = Date::from_rata_die(RataDie::new(0), calendar);
     let mut options = DateDifferenceOptions::default();
     options.largest_unit = Some(unit);
-    group.bench_function(&format!("{name}/far_past"), |b| {
+    group.bench_function(format!("{name}/far_past"), |b| {
         b.iter(|| black_box(far_past.try_until_with_options(&now, options).unwrap()))
     });
-    // group.bench_function(&format!("{name}/very_far_past"), |b| {
-    //     b.iter(|| black_box(very_far_past.try_until_with_options(&now, options).unwrap()))
-    // });
+    // Still slow :/
+    if unit != DateDurationUnit::Months {
+        group.bench_function(format!("{name}/very_far_past"), |b| {
+            b.iter(|| black_box(very_far_past.try_until_with_options(&now, options).unwrap()))
+        });
+    }
 }
 
 fn convert_benches(c: &mut Criterion) {
