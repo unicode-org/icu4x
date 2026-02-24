@@ -363,7 +363,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         }
         let year = calendar.year_info_from_extended(year);
 
-        let month = calendar.ordinal_from_month(year, month, Default::default())?;
+        let month = match calendar.ordinal_from_month(year, month, Default::default()) {
+            Ok(month) => month,
+            Err(MonthError::NotInCalendar) => return Err(LunisolarDateError::MonthNotInCalendar),
+            Err(MonthError::NotInYear) => return Err(LunisolarDateError::MonthNotInYear),
+        };
 
         let max_day = C::days_in_provided_month(year, month);
         if !(1..=max_day).contains(&day) {

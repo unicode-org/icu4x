@@ -627,16 +627,6 @@ impl From<MonthError> for DateFromFieldsError {
     }
 }
 
-impl From<MonthError> for LunisolarDateError {
-    #[inline]
-    fn from(value: MonthError) -> Self {
-        match value {
-            MonthError::NotInCalendar => LunisolarDateError::MonthNotInCalendar,
-            MonthError::NotInYear => LunisolarDateError::MonthNotInYear,
-        }
-    }
-}
-
 mod inner {
     /// Internal narrow error type for calculating the ECMA reference year
     ///
