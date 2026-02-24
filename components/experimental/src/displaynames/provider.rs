@@ -9,7 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_provider::prelude::{zerofrom::ZeroFrom, *};
+use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroCow, ZeroMap};
@@ -154,37 +154,11 @@ pub struct VariantDisplayNames<'data> {
 
 icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
-/// [`SingleDisplayName`] provides the user-translated name for a part of a locale.
-pub struct SingleDisplayName<'data> {
-    /// The translated name.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub name: VarZeroCow<'data, str>,
-}
-
-impl<'a> ZeroFrom<'a, str> for SingleDisplayName<'a> {
-    fn zero_from(name: &'a str) -> Self {
-        SingleDisplayName {
-            name: VarZeroCow::new_borrowed(name),
-        }
-    }
-}
-
-icu_provider::data_struct!(
-    SingleDisplayName<'_>,
-    varule: str,
-    #[cfg(feature = "datagen")]
-    encode_as_varule: |v: &SingleDisplayName<'_>| &*v.name
-);
-
 icu_provider::data_marker!(
-    /// Data marker for collation tailorings.
+    /// Data marker for display names.
     LocaleNamesRegionLongV1,
     "locale/names/region/long/v1",
-    SingleDisplayName<'static>,
+    VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
 );
