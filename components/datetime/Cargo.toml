@@ -103,7 +103,7 @@ bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
-max_combination_size = 2
+max_combination_size = 3
 
 [[bench]]
 name = "datetime"

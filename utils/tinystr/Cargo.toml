@@ -23,7 +23,7 @@ independent = true
 all-features = true
 
 [package.metadata.cargo-all-features]
-max_combination_size = 2
+max_combination_size = 3
 
 [dependencies]
 displaydoc = { workspace = true }

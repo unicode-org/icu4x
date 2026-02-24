@@ -80,4 +80,4 @@ required-features = ["serde"]
 workspace = true
 
 [package.metadata.cargo-all-features]
-max_combination_size = 2
+max_combination_size = 3

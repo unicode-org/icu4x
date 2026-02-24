@@ -20,7 +20,7 @@ rust-version = "1.82"
 all-features = true
 
 [package.metadata.cargo-all-features]
-max_combination_size = 2
+max_combination_size = 3
 
 [dependencies]
 databake = { workspace = true, features = ["derive"], optional = true }
