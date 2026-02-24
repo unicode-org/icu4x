@@ -34,6 +34,9 @@ serde = { workspace = true, features = ["derive"], optional = true }
 icu_calendar_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
+chrono = { workspace = true, optional = true }
+jiff = { workspace = true, optional = true }
+
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["logging"] }
 icu = { path = "../../components/icu", default-features = false }
@@ -57,6 +60,8 @@ serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]
 compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 unstable = []
+jiff_0_2 = ["dep:jiff"]
+chrono_0_4 = ["dep:chrono"]
 
 alloc = ["icu_locale_core/alloc", "tinystr/alloc", "serde?/alloc"]
 

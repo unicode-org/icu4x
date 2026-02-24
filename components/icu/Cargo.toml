@@ -44,14 +44,15 @@ memchr = { workspace = true, optional = true }
 icu_provider = { workspace = true }
 
 [dev-dependencies]
-icu_datetime = { path = "../../components/datetime", features = ["serde"] }
+icu_datetime = { path = "../../components/datetime", features = ["serde", "jiff_0_2", "chrono_0_4"] }
+icu_host_info = { path = "../../utils/host_info", features = ["datetime"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 writeable = { path = "../../utils/writeable" }
-jiff = { version = "0.2", default-features = false, features = ["tzdb-bundle-always", "std"] }
-chrono = { version = "0.4", default-features = false }
-chrono-tz = { version = "0.10", default-features = false }
+jiff = { workspace = true, features = ["tzdb-bundle-always", "tz-system", "std"] }
+chrono = { workspace = true }
+chrono-tz = { workspace = true }
 
 [features]
 default = [

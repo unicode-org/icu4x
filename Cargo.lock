@@ -1326,6 +1326,7 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_experimental",
+ "icu_host_info",
  "icu_list",
  "icu_locale",
  "icu_normalizer",
@@ -1397,6 +1398,7 @@ name = "icu_calendar"
 version = "2.1.1"
 dependencies = [
  "calendrical_calculations",
+ "chrono",
  "criterion",
  "databake",
  "displaydoc",
@@ -1408,6 +1410,7 @@ dependencies = [
  "insta",
  "itertools 0.14.0",
  "ixdtf",
+ "jiff",
  "serde",
  "serde_json",
  "simple_logger",
@@ -1545,6 +1548,8 @@ version = "2.1.1"
 dependencies = [
  "bincode",
  "calendrical_calculations",
+ "chrono",
+ "chrono-tz",
  "criterion",
  "databake",
  "displaydoc",
@@ -1561,6 +1566,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_time",
+ "jiff",
  "potential_utf",
  "serde",
  "serde_json",
@@ -2016,6 +2022,8 @@ name = "icu_time"
 version = "2.1.1"
 dependencies = [
  "calendrical_calculations",
+ "chrono",
+ "chrono-tz",
  "databake",
  "displaydoc",
  "icu",
@@ -2026,6 +2034,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_time_data",
  "ixdtf",
+ "jiff",
  "serde",
  "tinystr",
  "writeable",
@@ -2126,6 +2135,7 @@ dependencies = [
  "portable-atomic",
  "portable-atomic-util",
  "serde",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
