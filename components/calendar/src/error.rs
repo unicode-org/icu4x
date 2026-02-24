@@ -143,9 +143,9 @@ pub enum LunisolarDateError {
 impl core::error::Error for LunisolarDateError {}
 
 #[cfg(feature = "unstable")]
-pub use unstable::DateFromFieldsError;
+pub use unstable::{DateAddError, DateFromFieldsError};
 #[cfg(not(feature = "unstable"))]
-pub(crate) use unstable::DateFromFieldsError;
+pub(crate) use unstable::{DateAddError, DateFromFieldsError};
 
 mod unstable {
     pub use super::*;
@@ -461,6 +461,104 @@ mod unstable {
     }
 
     impl core::error::Error for DateFromFieldsError {}
+
+    /// Error type for date addition via [`Date::try_add_with_options`].
+    ///
+    /// [`Date::try_add_with_options`]: crate::Date::try_add_with_options
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[derive(Debug, Copy, Clone, PartialEq, Display)]
+    #[non_exhaustive]
+    pub enum DateAddError {
+        /// The day is invalid for the given month.
+        ///
+        /// This is only possible with [`Overflow::Reject`](crate::options::Overflow::Reject).
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateAddError;
+        /// use icu::calendar::options::{DateAddOptions, Overflow};
+        /// use icu::calendar::types::DateDuration;
+        ///
+        /// // There is a day 31 in October but not in November.
+        /// let d = Date::try_new_iso(2025, 10, 31).unwrap();
+        /// let duration = DateDuration::for_months(1);
+        ///
+        /// let mut options = DateAddOptions::default();
+        /// options.overflow = Some(Overflow::Reject);
+        ///
+        /// let err = d
+        ///     .try_added_with_options(duration, options)
+        ///     .expect_err("no day 31 in November");
+        ///
+        /// assert!(matches!(err, DateAddError::InvalidDay { max: 30 }));
+        /// ```
+        #[displaydoc("Invalid day for month, max is {max}")]
+        InvalidDay {
+            /// The maximum allowed value (the minimum is 1).
+            max: u8,
+        },
+        /// The specified month exists in this calendar, but not in the specified year.
+        ///
+        /// This is only possible with [`Overflow::Reject`](crate::options::Overflow::Reject).
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::cal::Hebrew;
+        /// use icu::calendar::types::{DateDuration, Month};
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateAddError;
+        /// use icu::calendar::options::{DateAddOptions, Overflow};
+        ///
+        /// // Hebrew year 5784 is a leap year, 5785 is not.
+        /// // Adar I (the leap month) is month 5 in a leap year.
+        /// let d = Date::try_new_hebrew_v2(5784, Month::leap(5), 1).unwrap();
+        /// let duration = DateDuration::for_years(1);
+        ///
+        /// let mut options = DateAddOptions::default();
+        /// options.overflow = Some(Overflow::Reject);
+        ///
+        /// let err = d
+        ///     .try_added_with_options(duration, options)
+        ///     .expect_err("5785 is not a leap year");
+        ///
+        /// assert_eq!(err, DateAddError::MonthNotInYear);
+        /// ```
+        #[displaydoc("The specified month exists in this calendar, but not for this year")]
+        MonthNotInYear,
+        /// The date is out of range.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateAddError;
+        /// use icu::calendar::types::DateDuration;
+        ///
+        /// let d = Date::try_new_iso(2025, 1, 1).unwrap();
+        /// let duration = DateDuration::for_years(1_000_000);
+        ///
+        /// let err = d
+        ///     .try_added_with_options(duration, Default::default())
+        ///     .expect_err("date overflow");
+        ///
+        /// assert_eq!(err, DateAddError::Overflow);
+        /// ```
+        #[displaydoc("Result out of range")]
+        Overflow,
+    }
+
+    impl core::error::Error for DateAddError {}
 }
 
 /// Internal narrow error type for functions that only fail on unknown eras
@@ -480,6 +578,21 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
+/// The error returned by `year_info_from_extended_checked` when
+/// the extended year is outside of `GENEROUS_YEAR_RANGE`.
+pub(crate) struct YearOverflowError;
+
+impl From<YearOverflowError> for DateFromFieldsError {
+    fn from(_other: YearOverflowError) -> Self {
+        DateFromFieldsError::Overflow
+    }
+}
+
+impl From<YearOverflowError> for DateAddError {
+    fn from(_other: YearOverflowError) -> Self {
+        DateAddError::Overflow
+    }
+}
 /// Error for [`Month`](crate::types::Month) parsing
 #[derive(Debug)]
 #[non_exhaustive]
@@ -510,6 +623,16 @@ impl From<MonthError> for DateFromFieldsError {
         match value {
             MonthError::NotInCalendar => DateFromFieldsError::MonthNotInCalendar,
             MonthError::NotInYear => DateFromFieldsError::MonthNotInYear,
+        }
+    }
+}
+
+impl From<MonthError> for LunisolarDateError {
+    #[inline]
+    fn from(value: MonthError) -> Self {
+        match value {
+            MonthError::NotInCalendar => LunisolarDateError::MonthNotInCalendar,
+            MonthError::NotInYear => LunisolarDateError::MonthNotInYear,
         }
     }
 }

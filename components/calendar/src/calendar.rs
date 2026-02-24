@@ -5,7 +5,7 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
-use crate::error::{DateError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Iso};
@@ -138,7 +138,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError>;
+    ) -> Result<Self::DateInner, DateAddError>;
 
     /// Calculate `date2 - date` as a duration
     ///

@@ -7,7 +7,7 @@ use crate::cal::abstract_gregorian::{
 };
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
-use crate::{types, Date, DateError, RangeError};
+use crate::{types, Date, RangeError};
 use tinystr::tinystr;
 
 /// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)
@@ -91,7 +91,7 @@ impl Iso {
 mod test {
     use super::*;
     use crate::{
-        calendar_arithmetic::{VALID_RD_RANGE, VALID_YEAR_RANGE},
+        calendar_arithmetic::{CONSTRUCTOR_YEAR_RANGE, VALID_RD_RANGE},
         types::{DateDuration, RataDie, Weekday},
     };
 
@@ -127,7 +127,7 @@ mod test {
             },
             // Lowest allowed YMD
             TestCase {
-                year: *VALID_YEAR_RANGE.start(),
+                year: *CONSTRUCTOR_YEAR_RANGE.start(),
                 month: 1,
                 day: 1,
                 rd: RataDie::new(-3652424),
@@ -136,7 +136,7 @@ mod test {
             },
             // Highest allowed YMD
             TestCase {
-                year: *VALID_YEAR_RANGE.end(),
+                year: *CONSTRUCTOR_YEAR_RANGE.end(),
                 month: 12,
                 day: 31,
                 rd: RataDie::new(3652059),
@@ -181,8 +181,8 @@ mod test {
                     Err(RangeError {
                         field: "year",
                         value: case.year,
-                        min: *VALID_YEAR_RANGE.start(),
-                        max: *VALID_YEAR_RANGE.end()
+                        min: *CONSTRUCTOR_YEAR_RANGE.start(),
+                        max: *CONSTRUCTOR_YEAR_RANGE.end()
                     }),
                     "{case:?}"
                 )

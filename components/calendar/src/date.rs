@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::VALID_RD_RANGE;
-use crate::error::{DateError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
@@ -333,7 +333,7 @@ impl<A: AsCalendar> Date<A> {
         &mut self,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<(), DateError> {
+    ) -> Result<(), DateAddError> {
         let inner = self
             .calendar
             .as_calendar()
@@ -358,7 +358,7 @@ impl<A: AsCalendar> Date<A> {
         mut self,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self, DateError> {
+    ) -> Result<Self, DateAddError> {
         self.try_add_with_options(duration, options)?;
         Ok(self)
     }

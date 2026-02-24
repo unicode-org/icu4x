@@ -8,7 +8,7 @@ use crate::cal::abstract_gregorian::{
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
-use crate::{types, Date, DateError, RangeError};
+use crate::{types, Date, RangeError};
 use tinystr::tinystr;
 
 impl_with_abstract_gregorian!(Gregorian, GregorianDateInner, CeBce, _x, CeBce);

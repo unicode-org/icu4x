@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{VALID_RD_RANGE, VALID_YEAR_RANGE};
+use crate::calendar_arithmetic::{CONSTRUCTOR_YEAR_RANGE, VALID_RD_RANGE};
 use crate::*;
 
 // Check rd -> date -> iso -> date -> rd for whole range
@@ -36,7 +36,7 @@ super::test_all_cals!(
         let months = (1..19)
             .flat_map(|i| [types::Month::new(i), types::Month::leap(i)].into_iter())
             .collect::<Vec<_>>();
-        for year in VALID_YEAR_RANGE {
+        for year in CONSTRUCTOR_YEAR_RANGE {
             if year % 50000 == 0 {
                 println!("{} {year:?}", cal.as_calendar().debug_name());
             }
