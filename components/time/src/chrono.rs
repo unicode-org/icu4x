@@ -32,7 +32,7 @@ impl From<chrono::NaiveDateTime> for DateTime<Gregorian> {
 
 impl From<chrono::FixedOffset> for UtcOffset {
     fn from(chrono: chrono::FixedOffset) -> Self {
-        UtcOffset::from_seconds_unchecked(chrono.local_minus_utc())
+        UtcOffset::from_seconds(chrono.local_minus_utc())
     }
 }
 

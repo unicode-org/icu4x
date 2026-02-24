@@ -371,10 +371,7 @@ fn test_time_zone_format_offset_seconds() {
     let tzf =
         FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), LocalizedOffsetLong)
             .unwrap();
-    assert_writeable_eq!(
-        tzf.format(&UtcOffset::try_from_seconds(12).unwrap()),
-        "GMT+00:00:12",
-    );
+    assert_writeable_eq!(tzf.format(&UtcOffset::from_seconds(12)), "GMT+00:00:12",);
 }
 
 #[test]

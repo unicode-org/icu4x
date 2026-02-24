@@ -946,7 +946,7 @@ macro_rules! impl_zone_marker {
         ///
         /// // Time zone info for America/Chicago in the summer
         /// let zone = TimeZone::from_iana_id("America/Chicago")
-        ///     .with_offset(UtcOffset::try_from_seconds(-5 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(-5 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// assert_writeable_eq!(
@@ -1317,7 +1317,7 @@ pub mod zone {
         ///
         /// // Time zone info for Europe/Istanbul in the winter
         /// let zone = TimeZone::from_iana_id("Europe/Istanbul")
-        ///     .with_offset(UtcOffset::try_from_seconds(3 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(3 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 1, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
@@ -1342,7 +1342,7 @@ pub mod zone {
         ///
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone::from_iana_id("America/Chicago")
-        ///     .with_offset(UtcOffset::try_from_seconds(-4 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(-4 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
@@ -1413,7 +1413,7 @@ pub mod zone {
         ///
         /// // Time zone info for Asia/Tokyo
         /// let zone = TimeZone::from_iana_id("Asia/Tokyo")
-        ///     .with_offset(UtcOffset::try_from_seconds(9 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(9 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 1, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
@@ -1439,7 +1439,7 @@ pub mod zone {
         ///
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone::from_iana_id("America/Chicago")
-        ///     .with_offset(UtcOffset::try_from_seconds(-4 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(-4 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
@@ -1505,7 +1505,7 @@ pub mod zone {
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let utc_offset = UtcOffset::try_from_seconds(-6 * 3600).unwrap();
+        /// let utc_offset = UtcOffset::from_seconds(-6 * 3600);
         /// let time_zone_basic = TimeZone::from_iana_id("America/Chicago").with_offset(Some(utc_offset));
         ///
         /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
@@ -1552,7 +1552,7 @@ pub mod zone {
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let utc_offset = UtcOffset::try_from_seconds(-6 * 3600).unwrap();
+        /// let utc_offset = UtcOffset::from_seconds(-6 * 3600);
         /// let time_zone_basic = TimeZone::from_iana_id("America/Chicago").with_offset(Some(utc_offset));
         ///
         /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
@@ -1600,7 +1600,7 @@ pub mod zone {
         ///
         /// // Time zone info for Europe/Istanbul in the winter
         /// let zone = TimeZone::from_iana_id("Europe/Istanbul")
-        ///     .with_offset(UtcOffset::try_from_seconds(3 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(3 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 1, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
@@ -1625,7 +1625,7 @@ pub mod zone {
         ///
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone::from_iana_id("America/Chicago")
-        ///     .with_offset(UtcOffset::try_from_seconds(-4 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(-4 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
@@ -1697,7 +1697,7 @@ pub mod zone {
         ///
         /// // Time zone info for Asia/Tokyo
         /// let zone = TimeZone::from_iana_id("Asia/Tokyo")
-        ///     .with_offset(UtcOffset::try_from_seconds(9 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(9 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 1, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
@@ -1723,7 +1723,7 @@ pub mod zone {
         ///
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone::from_iana_id("America/Chicago")
-        ///     .with_offset(UtcOffset::try_from_seconds(-4 * 3600).ok())
+        ///     .with_offset(Some(UtcOffset::from_seconds(-4 * 3600)))
         ///     .at_date_time_iso(DateTime{ date: Date::try_new_iso(2022, 8, 29).unwrap(), time: Time::start_of_day() });
         ///
         /// let fmt = NoCalendarFormatter::try_new(
@@ -1792,7 +1792,7 @@ pub mod zone {
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let utc_offset = UtcOffset::try_from_seconds(-6 * 3600).unwrap();
+        /// let utc_offset = Some(UtcOffset::from_seconds(-6 * 3600).unwrap();
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
@@ -1827,7 +1827,7 @@ pub mod zone {
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let utc_offset = UtcOffset::try_from_seconds(-6 * 3600).unwrap();
+        /// let utc_offset = Some(UtcOffset::from_seconds(-6 * 3600).unwrap();
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),

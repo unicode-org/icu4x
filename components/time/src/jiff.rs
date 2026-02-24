@@ -37,7 +37,7 @@ impl From<jiff::civil::DateTime> for DateTime<Gregorian> {
 
 impl From<jiff::tz::Offset> for UtcOffset {
     fn from(jiff: jiff::tz::Offset) -> Self {
-        UtcOffset::from_seconds_unchecked(jiff.seconds())
+        UtcOffset::from_seconds(jiff.seconds())
     }
 }
 

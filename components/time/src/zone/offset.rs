@@ -14,14 +14,12 @@ use displaydoc::Display;
 
 use super::ZoneNameTimestamp;
 
-/// The time zone offset was invalid. Must be within ±18:00:00.
+/// The time zone offset was invalid.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)]
 pub struct InvalidOffsetError;
 
 /// An offset from Coordinated Universal Time (UTC).
-///
-/// Supports ±18:00:00.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default, PartialOrd, Ord)]
@@ -30,7 +28,8 @@ pub struct UtcOffset(i32);
 impl UtcOffset {
     /// Attempt to create a [`UtcOffset`] from a seconds input.
     ///
-    /// Returns [`InvalidOffsetError`] if the seconds are out of bounds.
+    /// Returns [`InvalidOffsetError`] if the seconds are not in ±18:00:00.
+    #[deprecated(since = "2.2.0", note = "use `from_seconds`")]
     pub const fn try_from_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
         if seconds.unsigned_abs() > 18 * 60 * 60 {
             Err(InvalidOffsetError)
@@ -45,8 +44,6 @@ impl UtcOffset {
     }
 
     /// Parse a [`UtcOffset`] from bytes.
-    ///
-    /// The offset must range from UTC-12 to UTC+14.
     ///
     /// The string must be an ISO-8601 time zone designator:
     /// e.g. Z
@@ -129,12 +126,29 @@ impl UtcOffset {
             return Err(InvalidOffsetError);
         };
 
-        Self::try_from_seconds(offset_sign * (hours * 60 + minutes) * 60)
+        let Some(x) = hours.checked_mul(60) else {
+            return Err(InvalidOffsetError);
+        };
+        let Some(x) = x.checked_add(minutes) else {
+            return Err(InvalidOffsetError);
+        };
+        let Some(x) = x.checked_mul(60 * offset_sign) else {
+            return Err(InvalidOffsetError);
+        };
+
+        Ok(Self::from_seconds(x))
     }
 
-    /// Create a [`UtcOffset`] from a seconds input without checking bounds.
+    /// Create a [`UtcOffset`] from a seconds input.
     #[inline]
+    #[deprecated(since = "2.2.0", note = "use `from_seconds`")]
     pub const fn from_seconds_unchecked(seconds: i32) -> Self {
+        Self(seconds)
+    }
+
+    /// Create a [`UtcOffset`] from a seconds input.
+    #[inline]
+    pub const fn from_seconds(seconds: i32) -> Self {
         Self(seconds)
     }
 
@@ -350,11 +364,11 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///     .unwrap();
     /// assert_eq!(
     ///     offsets.standard,
-    ///     UtcOffset::try_from_seconds(-7 * 3600).unwrap()
+    ///     UtcOffset::from_seconds(-7 * 3600)
     /// );
     /// assert_eq!(
     ///     offsets.daylight,
-    ///     Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap())
+    ///     Some(UtcOffset::from_seconds(-6 * 3600))
     /// );
     ///
     /// // America/Phoenix does not
@@ -366,7 +380,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///     .unwrap();
     /// assert_eq!(
     ///     offsets.standard,
-    ///     UtcOffset::try_from_seconds(-7 * 3600).unwrap()
+    ///     UtcOffset::from_seconds(-7 * 3600)
     /// );
     /// assert_eq!(offsets.daylight, None);
     /// ```

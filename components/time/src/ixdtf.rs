@@ -118,14 +118,13 @@ impl From<icu_calendar::ParseError> for ParseError {
 }
 
 impl UtcOffset {
-    fn try_from_utc_offset_record(record: UtcOffsetRecord) -> Result<Self, ParseError> {
+    fn from_utc_offset_record(record: UtcOffsetRecord) -> Self {
         let hour_seconds = i32::from(record.hour()) * 3600;
         let minute_seconds = i32::from(record.minute()) * 60;
-        Self::try_from_seconds(
+        Self::from_seconds(
             i32::from(record.sign() as i8)
                 * (hour_seconds + minute_seconds + i32::from(record.second().unwrap_or(0))),
         )
-        .map_err(Into::into)
     }
 }
 
@@ -255,7 +254,7 @@ impl<'a> Intermediate<'a> {
         let Some(offset) = self.offset else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
-        UtcOffset::try_from_utc_offset_record(offset)
+        Ok(UtcOffset::from_utc_offset_record(offset))
     }
 
     fn location_only(
@@ -294,7 +293,7 @@ impl<'a> Intermediate<'a> {
         };
 
         if let Some(offset) = self.offset {
-            let offset = UtcOffset::try_from_utc_offset_record(offset)?;
+            let offset = UtcOffset::from_utc_offset_record(offset);
             if zone.offset().is_some_and(|i| i != offset) {
                 return Err(ParseError::RequiresCalculation);
             }
@@ -315,7 +314,7 @@ impl<'a> Intermediate<'a> {
         };
         Ok(iana_parser
             .parse_from_utf8(iana_identifier)
-            .with_offset(Some(UtcOffset::try_from_utc_offset_record(offset)?)))
+            .with_offset(Some(UtcOffset::from_utc_offset_record(offset))))
     }
 }
 
@@ -448,7 +447,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// assert_eq!(zoneddatetime.zone.id(), TimeZone::from_iana_id("America/Chicago"));
     /// assert_eq!(
     ///     zoneddatetime.zone.offset(),
-    ///     Some(UtcOffset::try_from_seconds(-5 * 3600).unwrap())
+    ///     Some(UtcOffset::from_seconds(-5 * 3600))
     /// );
     /// let _ = zoneddatetime.zone.zone_name_timestamp();
     /// ```
@@ -475,7 +474,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset.zone,
-    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
+    ///     UtcOffset::from_seconds(-5 * 3600)
     /// );
     /// ```
     ///
@@ -505,7 +504,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset_annotation.zone,
-    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
+    ///     UtcOffset::from_seconds(-5 * 3600)
     /// );
     ///
     /// assert_eq!(
@@ -539,7 +538,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     consistent_tz_from_both.zone,
-    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
+    ///     UtcOffset::from_seconds(-5 * 3600)
     /// );
     ///
     /// let inconsistent_tz_from_both = ZonedDateTime::try_offset_only_from_str(
@@ -722,7 +721,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// assert_eq!(zonedtime.zone.id(), TimeZone(subtag!("uschi")));
     /// assert_eq!(
     ///     zonedtime.zone.offset(),
-    ///     Some(UtcOffset::try_from_seconds(-5 * 3600).unwrap())
+    ///     Some(UtcOffset::from_seconds(-5 * 3600))
     /// );
     /// let _ = zonedtime.zone.zone_name_timestamp();
     /// ```
@@ -748,7 +747,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset.zone,
-    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
+    ///     UtcOffset::from_seconds(-5 * 3600)
     /// );
     /// ```
     ///
@@ -776,7 +775,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset_annotation.zone,
-    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
+    ///     UtcOffset::from_seconds(-5 * 3600)
     /// );
     ///
     /// assert_eq!(
@@ -809,7 +808,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     consistent_tz_from_both.zone,
-    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
+    ///     UtcOffset::from_seconds(-5 * 3600)
     /// );
     ///
     /// let inconsistent_tz_from_both = ZonedTime::try_offset_only_from_str(
@@ -971,11 +970,10 @@ mod test {
 
     #[test]
     fn max_possible_rfc_9557_utc_offset() {
-        assert_eq!(
-            ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19+23:59:59.999999999", Iso)
-                .unwrap_err(),
-            ParseError::InvalidOffsetError
-        );
+        ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19+23:59:59.999999999", Iso)
+            .unwrap();
+        ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19+24:00:00.000000000", Iso)
+            .unwrap_err();
     }
 
     #[test]

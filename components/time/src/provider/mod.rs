@@ -136,7 +136,7 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
     fn from_unaligned([std, dst]: Self::ULE) -> Self {
         Self {
             offsets: VariantOffsets {
-                standard: UtcOffset::from_seconds_unchecked(if std == i8::MAX {
+                standard: UtcOffset::from_seconds(if std == i8::MAX {
                     // Special bit pattern for value that appears in TZDB but is not
                     // representable by our schema.
                     -2670
@@ -167,7 +167,7 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                     }
                 }
                 .map(|d| {
-                    UtcOffset::from_seconds_unchecked(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)
+                    UtcOffset::from_seconds(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)
                 }),
             },
             mzmsk: match (dst as u8 & 0b1100_0000) >> 6 {
@@ -615,8 +615,8 @@ impl AsULE for VariantOffsets {
         }
 
         Self {
-            standard: UtcOffset::from_seconds_unchecked(decode(std)),
-            daylight: (dst != 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + dst))),
+            standard: UtcOffset::from_seconds(decode(std)),
+            daylight: (dst != 0).then(|| UtcOffset::from_seconds(decode(std + dst))),
         }
     }
 

@@ -422,13 +422,13 @@ impl ZonedDateTime<Iso, UtcOffset> {
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::ZonedDateTime;
     ///
-    /// let max_offset = UtcOffset::try_from_seconds(14 * 3600).unwrap();
+    /// let max_offset = UtcOffset::from_seconds(14 * 3600);
     /// let zdt_max = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
     ///         i64::MAX,
     ///         max_offset
     ///     );
     ///
-    /// let min_offset = UtcOffset::try_from_seconds(-12 * 3600).unwrap();
+    /// let min_offset = UtcOffset::from_seconds(-12 * 3600);
     /// let zdt_min = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
     ///         i64::MIN,
     ///         min_offset

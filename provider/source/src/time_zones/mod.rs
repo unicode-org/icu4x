@@ -221,8 +221,8 @@ impl SourceDataProvider {
                                 )
                             });
 
-                        let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std as i32));
-                        os.daylight = daylight.map(|o| UtcOffset::from_seconds_unchecked(o as i32));
+                        let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds(std as i32));
+                        os.daylight = daylight.map(|o| UtcOffset::from_seconds(o as i32));
 
                         offsets_and_metazones.entry(tz).or_default().push((
                             start,

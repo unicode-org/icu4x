@@ -52,7 +52,7 @@ fn main() {
 
         let tzi = tz
             .time_zone
-            .with_offset(Some(UtcOffset::from_seconds_unchecked(lo.seconds())))
+            .with_offset(Some(UtcOffset::from_seconds(lo.seconds())))
             .with_zone_name_timestamp(reference_timestamp);
 
         grouped_tzs
@@ -75,9 +75,7 @@ fn main() {
                             "/{}",
                             offset_formatter.format(
                                 &tzi.id()
-                                    .with_offset(Some(UtcOffset::from_seconds_unchecked(
-                                        hi.seconds()
-                                    )))
+                                    .with_offset(Some(UtcOffset::from_seconds(hi.seconds())))
                                     .with_zone_name_timestamp(reference_timestamp)
                             )
                         )

@@ -276,7 +276,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// let id = TimeZone(subtag!("uschi"));
 ///
 /// // Create a TimeZoneInfo<Base> by associating the ID with an offset
-/// let time_zone = id.with_offset(UtcOffset::try_from_seconds(-6 * 3600).ok());
+/// let time_zone = id.with_offset(Some(UtcOffset::from_seconds(-6 * 3600)));
 ///
 /// // Extend to a TimeZoneInfo<AtTime> by adding a local time
 /// let time_zone_at_time = time_zone.at_date_time_iso(DateTime {
@@ -345,32 +345,32 @@ impl TimeZone {
         #[allow(clippy::identity_op, clippy::neg_multiply)]
         let correct_offset = match self.0.as_str().as_bytes() {
             b"utc" | b"gmt" => Some(UtcOffset::zero()),
-            b"utce01" => Some(UtcOffset::from_seconds_unchecked(1 * 60 * 60)),
-            b"utce02" => Some(UtcOffset::from_seconds_unchecked(2 * 60 * 60)),
-            b"utce03" => Some(UtcOffset::from_seconds_unchecked(3 * 60 * 60)),
-            b"utce04" => Some(UtcOffset::from_seconds_unchecked(4 * 60 * 60)),
-            b"utce05" => Some(UtcOffset::from_seconds_unchecked(5 * 60 * 60)),
-            b"utce06" => Some(UtcOffset::from_seconds_unchecked(6 * 60 * 60)),
-            b"utce07" => Some(UtcOffset::from_seconds_unchecked(7 * 60 * 60)),
-            b"utce08" => Some(UtcOffset::from_seconds_unchecked(8 * 60 * 60)),
-            b"utce09" => Some(UtcOffset::from_seconds_unchecked(9 * 60 * 60)),
-            b"utce10" => Some(UtcOffset::from_seconds_unchecked(10 * 60 * 60)),
-            b"utce11" => Some(UtcOffset::from_seconds_unchecked(11 * 60 * 60)),
-            b"utce12" => Some(UtcOffset::from_seconds_unchecked(12 * 60 * 60)),
-            b"utce13" => Some(UtcOffset::from_seconds_unchecked(13 * 60 * 60)),
-            b"utce14" => Some(UtcOffset::from_seconds_unchecked(14 * 60 * 60)),
-            b"utcw01" => Some(UtcOffset::from_seconds_unchecked(-1 * 60 * 60)),
-            b"utcw02" => Some(UtcOffset::from_seconds_unchecked(-2 * 60 * 60)),
-            b"utcw03" => Some(UtcOffset::from_seconds_unchecked(-3 * 60 * 60)),
-            b"utcw04" => Some(UtcOffset::from_seconds_unchecked(-4 * 60 * 60)),
-            b"utcw05" => Some(UtcOffset::from_seconds_unchecked(-5 * 60 * 60)),
-            b"utcw06" => Some(UtcOffset::from_seconds_unchecked(-6 * 60 * 60)),
-            b"utcw07" => Some(UtcOffset::from_seconds_unchecked(-7 * 60 * 60)),
-            b"utcw08" => Some(UtcOffset::from_seconds_unchecked(-8 * 60 * 60)),
-            b"utcw09" => Some(UtcOffset::from_seconds_unchecked(-9 * 60 * 60)),
-            b"utcw10" => Some(UtcOffset::from_seconds_unchecked(-10 * 60 * 60)),
-            b"utcw11" => Some(UtcOffset::from_seconds_unchecked(-11 * 60 * 60)),
-            b"utcw12" => Some(UtcOffset::from_seconds_unchecked(-12 * 60 * 60)),
+            b"utce01" => Some(UtcOffset::from_seconds(1 * 3600)),
+            b"utce02" => Some(UtcOffset::from_seconds(2 * 3600)),
+            b"utce03" => Some(UtcOffset::from_seconds(3 * 3600)),
+            b"utce04" => Some(UtcOffset::from_seconds(4 * 3600)),
+            b"utce05" => Some(UtcOffset::from_seconds(5 * 3600)),
+            b"utce06" => Some(UtcOffset::from_seconds(6 * 3600)),
+            b"utce07" => Some(UtcOffset::from_seconds(7 * 3600)),
+            b"utce08" => Some(UtcOffset::from_seconds(8 * 3600)),
+            b"utce09" => Some(UtcOffset::from_seconds(9 * 3600)),
+            b"utce10" => Some(UtcOffset::from_seconds(10 * 3600)),
+            b"utce11" => Some(UtcOffset::from_seconds(11 * 3600)),
+            b"utce12" => Some(UtcOffset::from_seconds(12 * 3600)),
+            b"utce13" => Some(UtcOffset::from_seconds(13 * 3600)),
+            b"utce14" => Some(UtcOffset::from_seconds(14 * 3600)),
+            b"utcw01" => Some(UtcOffset::from_seconds(-1 * 3600)),
+            b"utcw02" => Some(UtcOffset::from_seconds(-2 * 3600)),
+            b"utcw03" => Some(UtcOffset::from_seconds(-3 * 3600)),
+            b"utcw04" => Some(UtcOffset::from_seconds(-4 * 3600)),
+            b"utcw05" => Some(UtcOffset::from_seconds(-5 * 3600)),
+            b"utcw06" => Some(UtcOffset::from_seconds(-6 * 3600)),
+            b"utcw07" => Some(UtcOffset::from_seconds(-7 * 3600)),
+            b"utcw08" => Some(UtcOffset::from_seconds(-8 * 3600)),
+            b"utcw09" => Some(UtcOffset::from_seconds(-9 * 3600)),
+            b"utcw10" => Some(UtcOffset::from_seconds(-10 * 3600)),
+            b"utcw11" => Some(UtcOffset::from_seconds(-11 * 3600)),
+            b"utcw12" => Some(UtcOffset::from_seconds(-12 * 3600)),
             _ => None,
         };
 
@@ -502,7 +502,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// // Chicago at UTC-6
     /// let info = TimeZone::from_iana_id("America/Chicago")
-    ///     .with_offset(UtcOffset::try_from_seconds(-6 * 3600).ok())
+    ///     .with_offset(Some(UtcOffset::from_seconds(-6 * 3600)))
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -513,7 +513,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// // Chicago at at UTC-5
     /// let info = TimeZone::from_iana_id("America/Chicago")
-    ///     .with_offset(UtcOffset::try_from_seconds(-5 * 3600).ok())
+    ///     .with_offset(Some(UtcOffset::from_seconds(-5 * 3600)))
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 6, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -524,7 +524,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// // Chicago at UTC-7
     /// let info = TimeZone::from_iana_id("America/Chicago")
-    ///     .with_offset(UtcOffset::try_from_seconds(-7 * 3600).ok())
+    ///     .with_offset(Some(UtcOffset::from_seconds(-7 * 3600)))
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -607,7 +607,7 @@ fn test_zone_info_equality() {
     // offset inferred
     assert_eq!(
         TimeZone::from_iana_id("Etc/GMT-8").with_offset(None),
-        TimeZone::UNKNOWN.with_offset(Some(UtcOffset::from_seconds_unchecked(8 * 60 * 60)))
+        TimeZone::UNKNOWN.with_offset(Some(UtcOffset::from_seconds(8 * 3600)))
     );
     assert_eq!(
         TimeZone::from_iana_id("Etc/UTC").with_offset(None),
@@ -624,19 +624,19 @@ fn test_zone_info_equality() {
     assert_eq!(
         IanaParser::new()
             .parse("Etc/GMT-8")
-            .with_offset(Some(UtcOffset::from_seconds_unchecked(123))),
+            .with_offset(Some(UtcOffset::from_seconds(123))),
         TimeZoneInfo::unknown()
     );
     assert_eq!(
         IanaParser::new()
             .parse("Etc/UTC")
-            .with_offset(Some(UtcOffset::from_seconds_unchecked(123))),
+            .with_offset(Some(UtcOffset::from_seconds(123))),
         TimeZoneInfo::unknown(),
     );
     assert_eq!(
         IanaParser::new()
             .parse("Etc/GMT")
-            .with_offset(Some(UtcOffset::from_seconds_unchecked(123))),
+            .with_offset(Some(UtcOffset::from_seconds(123))),
         TimeZoneInfo::unknown()
     );
 }

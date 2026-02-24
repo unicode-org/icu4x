@@ -39,18 +39,15 @@ pub mod ffi {
     impl UtcOffset {
         /// Creates an offset from seconds.
         ///
-        /// Errors if the offset seconds are out of range.
-        #[diplomat::rust_link(icu::time::zone::UtcOffset::try_from_seconds, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::time::zone::UtcOffset::from_seconds_unchecked,
-            FnInStruct,
-            hidden
-        )]
+        /// Does not error.
+        #[diplomat::rust_link(icu::time::zone::UtcOffset::from_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::time::zone::UtcOffset::from_seconds, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::time::zone::UtcOffset::try_from_seconds, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "from_seconds")]
         pub fn from_seconds(seconds: i32) -> Result<Box<UtcOffset>, TimeZoneInvalidOffsetError> {
-            Ok(Box::new(Self(icu_time::zone::UtcOffset::try_from_seconds(
+            Ok(Box::new(Self(icu_time::zone::UtcOffset::from_seconds(
                 seconds,
-            )?)))
+            ))))
         }
 
         /// Creates an offset from a string.
