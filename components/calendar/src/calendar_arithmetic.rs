@@ -331,7 +331,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             year
         };
         let year = calendar.year_info_from_extended(extended_year);
-        
+
         let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
             MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
         })?;
