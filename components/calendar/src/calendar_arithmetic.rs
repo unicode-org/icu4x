@@ -58,7 +58,7 @@ pub(crate) const GENEROUS_YEAR_RANGE: RangeInclusive<i32> = -1_040_000..=1_040_0
 /// must ensure they do not have overflows or panics for year (era year or extended year) within this range.
 ///
 /// This value is computed by going past the max value producible by adding a duration,
-/// which is preemptively capped at `GENEROUS_MAX_YEARS`, `GENEROUS_MAX_MONTHS, `GENEROUS_MAX_DAYS`
+/// which is preemptively capped at `GENEROUS_MAX_YEARS`, `GENEROUS_MAX_MONTHS`, `GENEROUS_MAX_DAYS`
 /// in `added()`.
 pub(crate) const SAFE_YEAR_RANGE: RangeInclusive<i32> = -8_000_000..=8_000_000;
 
