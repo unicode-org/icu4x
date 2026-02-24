@@ -916,7 +916,6 @@ impl CollatorBorrowed<'static> {
             tailoring: None,
             jamo: crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1,
             options: CollatorOptionsBitField::default(),
-            // Required for root collation correctness
             diacritics: crate::provider::Baked::SINGLETON_COLLATION_DIACRITICS_V1,
             reordering: None,
             decompositions: icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1,
