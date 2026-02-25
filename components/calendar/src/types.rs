@@ -493,7 +493,8 @@ pub enum LeapStatus {
     Normal,
     /// A leap month.
     Leap,
-    /// A standard month that has a corresponding leap month.
+    /// A standard month that has a corresponding leap month
+    /// in the same year.
     ///
     /// "Corresponding" is used in a formatting sense here:
     /// even though the Hebrew "Adar I" is `M05L`, the
