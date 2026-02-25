@@ -155,7 +155,7 @@ pub struct VariantDisplayNames<'data> {
 icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
 icu_provider::data_marker!(
-    /// Data marker for display names.
+    /// Data marker for region display names.
     LocaleNamesRegionLongV1,
     "locale/names/region/long/v1",
     VarZeroCow<'static, str>,
