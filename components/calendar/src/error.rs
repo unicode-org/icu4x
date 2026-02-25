@@ -433,7 +433,8 @@ mod unstable {
         /// ```
         #[displaydoc("Not enough fields")]
         NotEnoughFields,
-        /// The date is out of range.
+        /// The date is out of range (see docs on [`Date`](crate::Date)
+        /// for more information about `Date`'s fundamental range invariant).
         ///
         /// # Examples
         ///
@@ -536,7 +537,8 @@ mod unstable {
         /// ```
         #[displaydoc("The specified month exists in this calendar, but not for this year")]
         MonthNotInYear,
-        /// The date is out of range.
+        /// The date is out of range (see docs on [`Date`](crate::Date)
+        /// for more information about `Date`'s fundamental range invariant).
         ///
         /// # Examples
         ///
