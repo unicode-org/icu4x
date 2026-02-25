@@ -315,12 +315,12 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
             offsets: VariantOffsets,
             mz: Option<MetazoneInfo>,
         ) -> VariantOffsetsWithMetazoneMembershipKind {
-            VariantOffsetsWithMetazoneMembershipKind {
+            VariantOffsetsWithMetazoneMembershipKind::try_new(
                 offsets,
-                mzmsk: mz
-                    .map(|i| i.kind)
+                mz.map(|i| i.kind)
                     .unwrap_or(MetazoneMembershipKind::BehavesLikeGolden),
-            }
+            )
+            .expect("all TZDB offsets are encodeable in VariantOffsetsWithMetazoneMembershipKind")
         }
 
         let mut offsets = BTreeSet::new();

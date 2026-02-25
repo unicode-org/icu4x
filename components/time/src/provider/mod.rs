@@ -124,10 +124,43 @@ impl VariantOffsets {
 /// A [`VariantOffsets`] and a [`MetazoneMembershipKind`] packed into one byte.
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub struct VariantOffsetsWithMetazoneMembershipKind {
-    /// The offsets. Currently uses 3 bits.
-    pub offsets: VariantOffsets,
-    /// Metazone membership metadata. Currently uses 2 bits.
-    pub mzmsk: MetazoneMembershipKind,
+    // The offsets. Currently uses 3 bits.
+    // Invariants:
+    // 1. offsets.standard is x:00, x:10, x:15, x:20, x:30, x:40, x:45, x:50, or 00:44:30
+    // 2. (offsets.standard.as_seconds() / SECONDS_TO_EIGHTS_OF_HOURS).abs() + 1 < i8::MAX
+    // 3. offsets.dst - offset.standard is 0, 0:30, 1:00, 1:30, 2:00, -1:00
+    offsets: VariantOffsets,
+    // Metazone membership metadata. Currently uses 2 bits.
+    mzmsk: MetazoneMembershipKind,
+}
+
+impl VariantOffsetsWithMetazoneMembershipKind {
+    /// Fails if the offsets are not encodeable. All offsets as of TZDB 2025b are encodeable.
+    pub fn try_new(offsets: VariantOffsets, mzmsk: MetazoneMembershipKind) -> Option<Self> {
+        let offset = offsets.standard.to_seconds();
+        if offset != -2670 {
+            if offset.abs() % 60 != 0 {
+                return None;
+            }
+            if !matches!(offset.abs() / 60 % 60, 0 | 10 | 15 | 20 | 30 | 45 | 40 | 50) {
+                return None;
+            }
+
+            if (offset / SECONDS_TO_EIGHTS_OF_HOURS).abs() + 1 >= i8::MAX as i32 {
+                return None;
+            }
+        }
+
+        match offsets
+            .daylight
+            .map(|o| o.to_seconds() - offsets.standard.to_seconds())
+        {
+            None | Some(0) | Some(1800) | Some(3600) | Some(5400) | Some(7200) | Some(-3600) => {}
+            _ => return None,
+        }
+
+        Some(Self { offsets, mzmsk })
+    }
 }
 
 impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
@@ -188,7 +221,6 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                 // representable by our schema.
                 i8::MAX
             } else {
-                debug_assert_eq!(offset.abs() % 60, 0);
                 let scaled = match offset.abs() / 60 % 60 {
                     0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
                     10 | 40 => {
@@ -199,12 +231,9 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                         // stored as 22.5, 52.5, need to add one
                         offset / SECONDS_TO_EIGHTS_OF_HOURS + offset.signum()
                     }
-                    _ => {
-                        debug_assert!(false, "{offset:?}");
-                        offset / SECONDS_TO_EIGHTS_OF_HOURS
-                    }
+                    _ => unreachable!("by invariant 1"),
                 };
-                debug_assert!(i8::MIN as i32 <= scaled && scaled < i8::MAX as i32);
+                // by invariant 2
                 scaled as i8
             },
             match self
@@ -219,10 +248,7 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                 Some(5400) => 4,
                 Some(7200) => 5,
                 Some(-3600) => 6,
-                Some(x) => {
-                    debug_assert!(false, "unhandled DST value {x}");
-                    0
-                }
+                _ => unreachable!("by invariant 3"),
             } | (match self.mzmsk {
                 MetazoneMembershipKind::BehavesLikeGolden => 0b00u8,
                 MetazoneMembershipKind::CustomTransitions => 0b10,
