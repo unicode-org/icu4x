@@ -198,3 +198,12 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_script",
 );
+
+icu_provider::data_marker!(
+    /// Data marker for short script display names.
+    LocaleNamesScriptShortV1,
+    "locale/names/script/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_script",
+);

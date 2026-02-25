@@ -94,7 +94,7 @@ fn make_testdata() {
     .with_marker_attributes_filter("locale_names_script", |attrs| {
         matches!(
             attrs.as_str(),
-            "Latn" | "Cyrl" | "Hans" | "Hant" | "Deva" | "Arab"
+            "Latn" | "Cyrl" | "Hans" | "Hant" | "Deva" | "Arab" | "Cans"
         )
     })
     .with_marker_attributes_filter("numbering_system", |attrs| {
