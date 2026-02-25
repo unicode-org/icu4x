@@ -15,11 +15,9 @@ use icu::datetime::provider::semantic_skeletons::marker_attrs::{
 };
 use icu::datetime::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
 use icu_provider::prelude::*;
-use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
-use zerovec::VarZeroCow;
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -276,21 +274,11 @@ fn years_convert(
             .max()
             .unwrap_or_default();
 
-        if calendar == DatagenCalendar::Japanese {
-            // The Japanese calendar didn't produce era indices until 2.2.0. To keep
-            // new-data-old-code working, we need to produce `YearNames::VariableEras`.
-            let kv = eras
-                .iter()
-                .map(|(&(k, _), &v)| (PotentialUtf8::from_str(k), v))
-                .unzip::<_, _, Vec<_>, Vec<_>>();
-            Ok(YearNames::VariableEras(VarZeroCow::from_encodeable(&kv)))
-        } else {
-            let mut out_eras = vec![""; max_icu4x_era_index];
-            for ((_, idx), era) in eras {
-                out_eras[idx] = era;
-            }
-            Ok(YearNames::FixedEras((&out_eras).into()))
+        let mut out_eras = vec![""; max_icu4x_era_index];
+        for ((_, idx), era) in eras {
+            out_eras[idx] = era;
         }
+        Ok(YearNames::FixedEras((&out_eras).into()))
     } else if let Some(years) = data
         .cyclic_name_sets
         .as_ref()
