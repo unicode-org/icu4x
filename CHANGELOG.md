@@ -148,6 +148,7 @@ Fully filled in up to 30c187f4b7
         - Add `ZeroAsciiDenseSparse2dTrie` for more efficient storage of data keys with many attributes (unicode-org#7264, unicode-org#7304, unicode-org#7305)
     - `zerovec`: `0.11.5 -> ???`
         - `schemars` support (unicode-org#7209)
+        - Niche-optimize `Result<(), UleError>` and `Result<(), VarZeroVecFormatError>` (#2801)
     - `zerovec`: No change (`0.11.2`)
     - `zoneinfo64`: `0.2.1 -> ???`
         - Internal cleanups
