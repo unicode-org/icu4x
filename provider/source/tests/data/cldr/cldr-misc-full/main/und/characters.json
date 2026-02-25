@@ -20,6 +20,10 @@
           "word-initial": "… {0}",
           "word-medial": "{0} … {1}"
         },
+        "(": "[",
+        "（": "［",
+        ")": "]",
+        "）": "］",
         "moreInformation": "?",
         "lenient-scope-date": {
           "-": "[\\- ‑ . /]",

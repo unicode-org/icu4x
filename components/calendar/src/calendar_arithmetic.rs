@@ -6,7 +6,7 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::{
-    range_check, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
+    range_check, DateAddError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
     MonthCodeParseError, MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -18,18 +18,49 @@ use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
 use core::ops::RangeInclusive;
 
-/// This is checked by constructors. Internally we don't care about this invariant.
-pub const VALID_YEAR_RANGE: RangeInclusive<i32> = -9999..=9999;
+/// This is checked by convenience constructors and `from_codes`.
+/// Internally we don't care about this invariant.
+pub(crate) const CONSTRUCTOR_YEAR_RANGE: RangeInclusive<i32> = -9999..=9999;
 
 /// This is a fundamental invariant of `ArithmeticDate` and by extension all our
-/// date types. Because this range slightly exceeds the [`VALID_YEAR_RANGE`], only
-/// the valid year range is checked in constructors. Only the `Date::from_rata_die`
-/// constructor actually uses this, but for clamping instead of erroring.
-// This range is the tightest possible range that includes all valid years for all
-// calendars, this is asserted in [`test_validity_ranges`].
-pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
+/// date types. Constructors that don't check [`CONSTRUCTOR_YEAR_RANGE`] check this range.
+///
+/// This is the range used by `Date::from_rata_die`, `Date::try_from_fields`,
+/// and Date arithmetic operations.
+pub(crate) const VALID_RD_RANGE: RangeInclusive<RataDie> =
     calendrical_calculations::gregorian::fixed_from_gregorian(-999999, 1, 1)
         ..=calendrical_calculations::gregorian::fixed_from_gregorian(999999, 12, 31);
+
+/// This is a year range that exceeds the RD range for all calendars.
+///
+/// We *must* ensure dates are within `VALID_RD_RANGE` some point before constructing them.
+///
+/// However, we may need to perform a fair amount of calendar arithmetic before
+/// getting to the point where we know if we are in range, and the calendar arithmetic
+/// is fragile (chance of math issues, slowness, debug assertions) at high ranges.
+///
+/// So we try to early-check year values where possible. We use a "generous" year range
+/// which is known to be wider than the valid RD range for any era in any currently
+/// supported calendar.
+///
+/// `VALID_RD_RANGE` maps to 1031332 BH..=1030050 AH in the Islamic calendars, which have
+/// the shortest years. We pick a slightly wider range so that temporary intermediate
+/// values are not affected by this.
+///
+/// The tests in `extrema.rs` ensure that all in-range dates can be produced by the APIs that,
+/// use this check, and that these year numbers map to out-of-range values for every era.
+pub(crate) const GENEROUS_YEAR_RANGE: RangeInclusive<i32> = -1_040_000..=1_040_000;
+
+/// This is the year range all calendar specific computation can assume their data to be in.
+///
+/// It is wider than [`GENEROUS_YEAR_RANGE`]: `GENEROUS_YEAR_RANGE` is used for checking user
+/// input, this is more of an internal invariant for assertions. New calendar implementations
+/// must ensure they do not have overflows or panics for year (era year or extended year) within this range.
+///
+/// This value is computed by going past the max value producible by adding a duration,
+/// which is preemptively capped at `GENEROUS_MAX_YEARS`, `GENEROUS_MAX_MONTHS`, `GENEROUS_MAX_DAYS`
+/// in `added()`.
+pub(crate) const SAFE_YEAR_RANGE: RangeInclusive<i32> = -8_000_000..=8_000_000;
 
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
@@ -78,6 +109,29 @@ impl<C: DateFieldsResolver> Hash for ArithmeticDate<C> {
         self.year().to_extended_year().hash(state);
         self.month().hash(state);
         self.day().hash(state);
+    }
+}
+
+/// Same data as [`ArithmeticDate`], but may be out of [`VALID_RD_RANGE`]
+#[derive(Debug)]
+struct UncheckedArithmeticDate<C: DateFieldsResolver> {
+    year: C::YearInfo,
+    ordinal_month: u8,
+    day: u8,
+}
+
+impl<C: DateFieldsResolver> UncheckedArithmeticDate<C> {
+    fn into_checked(self) -> Option<ArithmeticDate<C>> {
+        let rd = C::to_rata_die_inner(self.year, self.ordinal_month, self.day);
+        if !VALID_RD_RANGE.contains(&rd) {
+            return None;
+        }
+        // Invariant checked above
+        Some(ArithmeticDate::new_unchecked(
+            self.year,
+            self.ordinal_month,
+            self.day,
+        ))
     }
 }
 
@@ -139,13 +193,27 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     /// Converts the era and era year to a [`Self::YearInfo`]. If the calendar does not have eras,
     /// this should always return an Err result.
-    fn year_info_from_era(
+    ///
+    /// Precondition: `era_year` is in [`SAFE_YEAR_RANGE`].
+    fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError>;
+    ) -> Result<i32, UnknownEraError>;
 
     /// Converts an extended year to a [`Self::YearInfo`].
+    ///
+    /// Precondition: `extended_year` is in [`GENEROUS_YEAR_RANGE`].
+    ///
+    /// Some calendars with complex calculations use this precondition to
+    /// ensure that the year is in a range where their arithmetic code is well-behaved.
+    ///
+    /// Calendar implementors who need this are encouraged to debug assert that the invariant
+    /// is upheld.
+    ///
+    /// This should primarily be used in constructors that range-check with
+    /// the very narrow [`CONSTRUCTOR_YEAR_RANGE`], after that check. If the
+    /// constructor checks [`VALID_RD_RANGE`], please use `year_info_from_extended_checked`.
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
 
     /// Calculates the ECMA reference year (represented as an extended year)
@@ -219,7 +287,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         C::YearInfo::unpack_day(self.0)
     }
 
-    // Precondition: the date is in the VALID_RD_RANGE
+    /// Precondition: the date is in `VALID_RD_RANGE`.
+    ///
+    /// Use `UncheckedArithmeticDate` if you wish to generate intermediate out-of-range dates.
     #[inline]
     pub(crate) fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
         ArithmeticDate(C::YearInfo::pack(year, month, day))
@@ -229,7 +299,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ArithmeticDate::new_unchecked(self.year(), self.month(), self.day())
     }
 
-    // Used by `from_codes`, checks `VALID_YEAR_RANGE`
+    // Used by `from_codes`, checks `CONSTRUCTOR_YEAR_RANGE`
     pub(crate) fn from_era_year_month_code_day(
         era: Option<&str>,
         year: i32,
@@ -237,14 +307,14 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateError> {
-        let year = if let Some(era) = era {
-            let year = calendar
-                .year_info_from_era(era.as_bytes(), range_check(year, "year", VALID_YEAR_RANGE)?)?;
-            range_check(year.to_extended_year(), "era_year", VALID_YEAR_RANGE)?;
-            year
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
+        let extended_year = if let Some(era) = era {
+            calendar.extended_year_from_era_year_unchecked(era.as_bytes(), year)?
         } else {
-            calendar.year_info_from_extended(range_check(year, "extended_year", VALID_YEAR_RANGE)?)
+            year
         };
+        let year = calendar.year_info_from_extended(extended_year);
+
         let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
             MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
         })?;
@@ -256,30 +326,29 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 }
             })?;
 
-        let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
 
         // date is in the valid year range, and therefore in the valid RD range
         Ok(ArithmeticDate::new_unchecked(year, month, day))
     }
 
-    // Used by calendar-specific constructors (lunisolar), checks `VALID_YEAR_RANGE`
+    // Used by calendar-specific constructors (lunisolar), checks `CONSTRUCTOR_YEAR_RANGE`
     pub(crate) fn try_from_ymd_lunisolar(
         year: i32,
         month: Month,
         day: u8,
         calendar: &C,
     ) -> Result<Self, LunisolarDateError> {
-        if !VALID_YEAR_RANGE.contains(&year) {
+        if !CONSTRUCTOR_YEAR_RANGE.contains(&year) {
             return Err(LunisolarDateError::InvalidYear);
         }
         let year = calendar.year_info_from_extended(year);
 
-        let month = calendar
-            .ordinal_from_month(year, month, Default::default())
-            .map_err(|e| match e {
-                MonthError::NotInCalendar => LunisolarDateError::MonthNotInCalendar,
-                MonthError::NotInYear => LunisolarDateError::MonthNotInYear,
-            })?;
+        let month = match calendar.ordinal_from_month(year, month, Default::default()) {
+            Ok(month) => month,
+            Err(MonthError::NotInCalendar) => return Err(LunisolarDateError::MonthNotInCalendar),
+            Err(MonthError::NotInYear) => return Err(LunisolarDateError::MonthNotInYear),
+        };
 
         let max_day = C::days_in_provided_month(year, month);
         if !(1..=max_day).contains(&day) {
@@ -324,11 +393,6 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
         let mut valid_month = None;
 
-        // NOTE: The year/extendedyear range check is important to avoid arithmetic
-        // overflow in `year_info_from_era` and `year_info_from_extended`. It
-        // must happen before they are called.
-        // TODO: update to a wider year range that allows for the full RD range to constructed
-        //
         // To better match the Temporal specification's order of operations, we try
         // to return structural type errors (`NotEnoughFields`) before checking for range errors.
         // This isn't behavior we *must* have, but it is not much additional work to maintain
@@ -336,10 +400,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let year = match (fields.era, fields.era_year) {
             (None, None) => match fields.extended_year {
                 Some(extended_year) => {
-                    if !VALID_YEAR_RANGE.contains(&extended_year) {
+                    if !GENEROUS_YEAR_RANGE.contains(&extended_year) {
                         return Err(DateFromFieldsError::Overflow);
                     }
-
                     calendar.year_info_from_extended(extended_year)
                 }
                 None => match missing_fields_strategy {
@@ -370,13 +433,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 },
             },
             (Some(era), Some(era_year)) => {
-                if !VALID_YEAR_RANGE.contains(&era_year) {
+                if !GENEROUS_YEAR_RANGE.contains(&era_year) {
                     return Err(DateFromFieldsError::Overflow);
                 }
-                let year = calendar.year_info_from_era(era, era_year)?;
-                if !VALID_YEAR_RANGE.contains(&year.to_extended_year()) {
-                    return Err(DateFromFieldsError::Overflow);
-                }
+                let extended_year =
+                    calendar.extended_year_from_era_year_unchecked(era, era_year)?;
+                let year = calendar.year_info_from_extended(extended_year);
                 if let Some(extended_year) = fields.extended_year {
                     if year.to_extended_year() != extended_year {
                         return Err(DateFromFieldsError::InconsistentYear);
@@ -437,32 +499,33 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         } else {
             return Err(DateFromFieldsError::InvalidDay { max: max_day });
         };
-        // date is in the valid year range, and therefore in the valid RD range
+        let rd = C::to_rata_die_inner(year, month, day);
+
+        // We early checked for a generous range of years, now we must check
+        // to ensure we are actually in range for our core invariant.
+        if !VALID_RD_RANGE.contains(&rd) {
+            return Err(DateFromFieldsError::Overflow);
+        }
+        // We just checked the RD range above
         Ok(Self::new_unchecked(year, month, day))
     }
 
-    // Used by calendar-specific constructors (non-lunisolar), checks `VALID_YEAR_RANGE`
+    // Used by calendar-specific constructors (non-lunisolar), checks `CONSTRUCTOR_YEAR_RANGE`
     pub(crate) fn from_year_month_day(
         year: i32,
         month: u8,
         day: u8,
         cal: &C,
     ) -> Result<Self, RangeError> {
-        let year_info = cal.year_info_from_extended(range_check(year, "year", VALID_YEAR_RANGE)?);
-        // check the extended year in terms of the year
-        let offset = year - year_info.to_extended_year();
-        range_check(
-            year, // == year_info.to_extended_year() + offset
-            "year",
-            (VALID_YEAR_RANGE.start() + offset)..=(VALID_YEAR_RANGE.end() + offset),
-        )?;
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
+        let year_info = cal.year_info_from_extended(year);
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
         // date is in the valid year range, and therefore in the valid RD range
         Ok(ArithmeticDate::new_unchecked(year_info, month, day))
     }
 
-    // Used by calendar-specific constructors (Japanese), checks `VALID_YEAR_RANGE`
+    // Used by calendar-specific constructors (Japanese), checks `CONSTRUCTOR_YEAR_RANGE`
     pub(crate) fn from_era_year_month_day(
         era: &str,
         year: i32,
@@ -470,17 +533,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         cal: &C,
     ) -> Result<Self, DateError> {
-        let year_info = cal.year_info_from_era(
-            era.as_bytes(),
-            range_check(year, "era_year", VALID_YEAR_RANGE)?,
-        )?;
-        // check the extended year in terms of the year
-        let offset = year - year_info.to_extended_year();
-        range_check(
-            year, // == year_info.to_extended_year() + offset
-            "extended_year",
-            (VALID_YEAR_RANGE.start() + offset)..=(VALID_YEAR_RANGE.end() + offset),
-        )?;
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
+        let extended_year = cal.extended_year_from_era_year_unchecked(era.as_bytes(), year)?;
+        let year_info = cal.year_info_from_extended(extended_year);
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
         // date is in the valid year range, and therefore in the valid RD range
@@ -491,7 +546,17 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     ///
     /// This takes a year, month, and day, where the month and day might be out of range, then
     /// balances excess months into the year field and excess days into the month field.
-    pub(crate) fn new_balanced(year: C::YearInfo, ordinal_month: i64, day: i64, cal: &C) -> Self {
+    ///
+    /// In addition to specced behavior, this guarantees that it will produce an in-generous-year-range date.
+    ///
+    /// This does *not* necessarily produce something within [`VALID_RD_RANGE`], but it will ensure things
+    /// are within [`GENEROUS_YEAR_RANGE`].
+    fn new_balanced(
+        year: C::YearInfo,
+        ordinal_month: i64,
+        day: i64,
+        cal: &C,
+    ) -> UncheckedArithmeticDate<C> {
         // 1. Let _resolvedYear_ be _arithmeticYear_.
         // 1. Let _resolvedMonth_ be _ordinalMonth_.
         let mut resolved_year = year;
@@ -561,8 +626,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         debug_assert!(u8::try_from(resolved_day).is_ok());
         let resolved_day = resolved_day as u8;
         // 1. Return the Record { [[Year]]: _resolvedYear_, [[Month]]: _resolvedMonth_, [[Day]]: _resolvedDay_ }.
-        // TODO: does not obey precondition
-        Self::new_unchecked(resolved_year, resolved_month, resolved_day)
+        UncheckedArithmeticDate {
+            year: resolved_year,
+            ordinal_month: resolved_month,
+            day: resolved_day,
+        }
     }
 
     /// Implements the Temporal abstract operation `CompareSurpasses` based on month code
@@ -691,11 +759,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         };
         // 1. Let _monthsAdded_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _months_, 1).
         let months_added = Self::new_balanced(y0, duration.add_months_to(m0), 1, cal);
+
         // 1. If CompareSurpasses(_sign_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]], _parts_.[[Day]], _calDate2_) is *true*, return *true*.
         if Self::compare_surpasses_ordinal(
             sign,
-            months_added.year(),
-            months_added.month(),
+            months_added.year,
+            months_added.ordinal_month,
             parts.day(),
             cal_date_2,
         ) {
@@ -707,8 +776,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         }
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]] + 1, 0).
         let end_of_month = Self::new_balanced(
-            months_added.year(),
-            i64::from(months_added.month()) + 1,
+            months_added.year,
+            i64::from(months_added.ordinal_month) + 1,
             0,
             cal,
         );
@@ -718,25 +787,26 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //   1. Let _regulatedDay_ be _baseDay_.
         // 1. Else,
         //   1. Let _regulatedDay_ be _endOfMonth_.[[Day]].
-        let regulated_day = if base_day < end_of_month.day() {
+        let regulated_day = if base_day < end_of_month.day {
             base_day
         } else {
-            end_of_month.day()
+            end_of_month.day
         };
         // 1. Let _daysInWeek_ be 7 (the number of days in a week for all supported calendars).
         // 1. Let _balancedDate_ be BalanceNonISODate(_calendar_, _endOfMonth_.[[Year]], _endOfMonth_.[[Month]], _regulatedDay_ + _daysInWeek_ * _weeks_ + _days_).
         // 1. Return CompareSurpasses(_sign_, _balancedDate_.[[Year]], _balancedDate_.[[Month]], _balancedDate_.[[Day]], _calDate2_).
         let balanced_date = Self::new_balanced(
-            end_of_month.year(),
-            i64::from(end_of_month.month()),
+            end_of_month.year,
+            i64::from(end_of_month.ordinal_month),
             duration.add_weeks_and_days_to(regulated_day),
             cal,
         );
+
         Self::compare_surpasses_ordinal(
             sign,
-            balanced_date.year(),
-            balanced_date.month(),
-            balanced_date.day(),
+            balanced_date.year,
+            balanced_date.ordinal_month,
+            balanced_date.day,
             cal_date_2,
         )
     }
@@ -750,56 +820,84 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         duration: DateDuration,
         cal: &C,
         options: DateAddOptions,
-    ) -> Result<Self, DateError> {
+    ) -> Result<Self, DateAddError> {
+        // We preemptively protect ourselves from overly-large values
+        //
+        // This is mostly needed for avoiding overflows on Duration arithmetic,
+        // this could also be handled by updating DateDuration::add_foo_to()
+        // to return an error. However, that would lead to more error handling cluttering
+        // surpasses().
+        const GENEROUS_MAX_YEARS: u32 =
+            (*GENEROUS_YEAR_RANGE.end() - *GENEROUS_YEAR_RANGE.start()) as u32;
+        const GENEROUS_MAX_MONTHS: u32 = GENEROUS_MAX_YEARS * 13;
+        const GENEROUS_MAX_DAYS: u64 = GENEROUS_MAX_MONTHS as u64 * 31;
+
+        if duration.years > GENEROUS_MAX_YEARS
+            || duration.months > GENEROUS_MAX_MONTHS
+            || (duration.weeks as u64)
+                .saturating_mul(7)
+                .saturating_add(duration.days)
+                > GENEROUS_MAX_DAYS
+        {
+            return Err(DateAddError::Overflow);
+        }
+
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _isoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
-        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
+        let extended_year = duration.add_years_to(self.year().to_extended_year());
+        if !GENEROUS_YEAR_RANGE.contains(&extended_year) {
+            return Err(DateAddError::Overflow);
+        }
+        let y0 = cal.year_info_from_extended(extended_year);
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
         let base_month = cal.month_from_ordinal(self.year(), self.month());
-        let m0 = cal
-            .ordinal_from_month(
-                y0,
-                base_month,
-                DateFromFieldsOptions::from_add_options(options),
-            )
-            .map_err(|e| {
-                // TODO: Use a narrower error type here. For now, convert into DateError.
-                match e {
-                    MonthError::NotInCalendar => DateError::UnknownMonthCode(base_month.code()),
-                    MonthError::NotInYear => DateError::UnknownMonthCode(base_month.code()),
-                }
-            })?;
+        let m0_result = cal.ordinal_from_month(
+            y0,
+            base_month,
+            DateFromFieldsOptions::from_add_options(options),
+        );
+        let m0 = match m0_result {
+            Ok(m0) => m0,
+            Err(MonthError::NotInCalendar) => {
+                debug_assert!(
+                    false,
+                    "Should never get NotInCalendar when performing arithmetic"
+                );
+                return Err(DateAddError::MonthNotInYear);
+            }
+            Err(MonthError::NotInYear) => return Err(DateAddError::MonthNotInYear),
+        };
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
         let base_day = self.day();
         // 1. If _baseDay_ &le; _endOfMonth_.[[Day]], then
         //   1. Let _regulatedDay_ be _baseDay_.
-        let regulated_day = if base_day <= end_of_month.day() {
+        let regulated_day = if base_day <= end_of_month.day {
             base_day
         } else {
             // 1. Else,
             //   1. If _overflow_ is ~reject~, throw a *RangeError* exception.
             // Note: ICU4X default is constrain here
             if matches!(options.overflow, Some(Overflow::Reject)) {
-                return Err(DateError::Range {
-                    field: "day",
-                    value: i32::from(base_day),
-                    min: 1,
-                    max: i32::from(end_of_month.day()),
+                return Err(DateAddError::InvalidDay {
+                    max: end_of_month.day,
                 });
             }
-            end_of_month.day()
+            end_of_month.day
         };
+
         // 1. Let _balancedDate_ be BalanceNonISODate(_calendar_, _endOfMonth_.[[Year]], _endOfMonth_.[[Month]], _regulatedDay_ + 7 * _duration_.[[Weeks]] + _duration_.[[Days]]).
         // 1. Let _result_ be ? CalendarIntegersToISO(_calendar_, _balancedDate_.[[Year]], _balancedDate_.[[Month]], _balancedDate_.[[Day]]).
         // 1. Return _result_.
-        Ok(Self::new_balanced(
-            end_of_month.year(),
-            i64::from(end_of_month.month()),
+        let balanced = Self::new_balanced(
+            end_of_month.year,
+            i64::from(end_of_month.ordinal_month),
             duration.add_weeks_and_days_to(regulated_day),
             cal,
-        ))
+        );
+
+        balanced.into_checked().ok_or(DateAddError::Overflow)
     }
 
     /// Implements the Temporal abstract operation `NonISODateUntil`.
@@ -835,15 +933,40 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Ordering::Equal => return DateDuration::default(),
             Ordering::Less => -1i64,
         };
+
+        // We don't want to spend time incrementally bumping it up one year
+        // at a time, so let's pre-guess a year delta that is guaranteed to not
+        // surpass.
+        let year_diff = other.year().to_extended_year() - self.year().to_extended_year();
+        let min_years = if year_diff == 0 {
+            0
+        } else {
+            i64::from(year_diff) - sign
+        };
+
+        debug_assert!(!self.surpasses(
+            other,
+            DateDuration::from_signed_ymwd(min_years, 0, 0, 0),
+            sign,
+            cal,
+        ));
+
         // 1. Let _years_ be 0.
         // 1. If _largestUnit_ is ~year~, then
         //   1. Let _candidateYears_ be _sign_.
         //   1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _candidateYears_, 0, 0, 0) is *false*,
         //     1. Set _years_ to _candidateYears_.
         //     1. Set _candidateYears_ to _candidateYears_ + _sign_.
+
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
             let mut candidate_years = sign;
+            if min_years != 0 {
+                // Optimization: we start with min_years since it is guaranteed to not
+                // surpass.
+                candidate_years = min_years
+            };
+
             while !self.surpasses(
                 other,
                 DateDuration::from_signed_ymwd(candidate_years, 0, 0, 0),
@@ -854,6 +977,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_years += sign;
             }
         }
+
         // 1. Let _months_ be 0.
         // 1. If _largestUnit_ is ~year~ or _largestUnit_ is ~month~, then
         //   1. Let _candidateMonths_ be _sign_.
@@ -866,6 +990,25 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Some(DateDurationUnit::Years) | Some(DateDurationUnit::Months)
         ) {
             let mut candidate_months = sign;
+
+            if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
+                // Optimization: No current calendar supports years with month length < 12.
+                // If something is at least N full years away, it is also at least 12*N full months away.
+                //
+                // In the future we can introduce per-calendar routines that are better at estimating a month count.
+                //
+                // We only need to apply this optimization for largest_unit = Months. If the largest_unit is years then
+                // our candidate date is already pretty close and won't need more than 12 iterations to get there.
+                let min_months = min_years * 12;
+                debug_assert!(!self.surpasses(
+                    other,
+                    DateDuration::from_signed_ymwd(years, min_months, 0, 0),
+                    sign,
+                    cal,
+                ));
+                candidate_months = min_months
+            }
+
             while !self.surpasses(
                 other,
                 DateDuration::from_signed_ymwd(years, candidate_months, 0, 0),
@@ -901,6 +1044,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //   1. Set _days_ to _candidateDays_.
         //   1. Set _candidateDays_ to _candidateDays_ + _sign_.
         let mut days = 0;
+        // There is no pressing need to optimize candidate_days here: the early-return RD arithmetic
+        // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
+        // arrive here with a candidate date that is at most 31 days off. We can run this loop 31 times.
         let mut candidate_days = sign;
         while !self.surpasses(
             other,
@@ -1003,8 +1149,12 @@ mod tests {
         ];
 
         // Valid RDs can represent all valid years
-        assert!(lowest_years.iter().all(|y| y <= VALID_YEAR_RANGE.start()));
-        assert!(highest_years.iter().all(|y| y >= VALID_YEAR_RANGE.end()));
+        assert!(lowest_years
+            .iter()
+            .all(|y| y <= CONSTRUCTOR_YEAR_RANGE.start()));
+        assert!(highest_years
+            .iter()
+            .all(|y| y >= CONSTRUCTOR_YEAR_RANGE.end()));
 
         // All years are 21-bits
         assert!(-lowest_years.iter().copied().min().unwrap() < 1 << 20);

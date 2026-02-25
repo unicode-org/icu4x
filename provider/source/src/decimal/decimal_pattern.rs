@@ -6,109 +6,11 @@
 //!
 //! Spec reference: <https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns>
 
-use displaydoc::Display;
-#[cfg(feature = "unstable")]
-use icu_pattern::{DoublePlaceholderKey, PatternItemCow};
-use itertools::Itertools;
-use std::str::FromStr;
+use icu_provider::DataError;
 
-#[derive(Display, Debug, PartialEq)]
-pub(crate) enum Error {
-    #[displaydoc("No body in decimal subpattern")]
-    NoBodyInSubpattern,
-    #[displaydoc("Unclosed quote in pattern")]
-    UnclosedQuote,
-    #[displaydoc("Non-literal item in prefix or suffix")]
-    InvalidAffixItem,
-    #[displaydoc("More than two grouping separators in pattern")]
-    TooManyGroupingSeparators,
-    #[displaydoc("Invalid item in pattern body")]
-    InvalidBodyItem,
-    #[displaydoc("Mandatory digit after optional digit in fraction")]
-    MandatoryAfterOptional,
-}
-
-/// An item in a decimal pattern (used during parsing).
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) enum DecimalPatternItem {
-    Literal(String),
-    MandatoryDigit,
-    OptionalDigit,
-    DecimalSeparator,
-    GroupingSeparator,
-    Currency,
-    Percent,
-    PerMille,
-    PlusSign,
-    MinusSign,
-    Exponent,
-}
-
-/// Tokenizes a decimal pattern string into items.
-/// Handles quoted literals and special pattern characters.
-fn tokenize_pattern(s: &str) -> Result<Vec<DecimalPatternItem>, Error> {
-    let mut items = Vec::new();
-    let mut chars = s.chars().peekable();
-    let mut in_quote = false;
-    let mut string_buffer = String::new();
-
-    fn append_literal(items: &mut Vec<DecimalPatternItem>, s: &str) {
-        if let Some(DecimalPatternItem::Literal(last)) = items.last_mut() {
-            last.push_str(s);
-        } else {
-            items.push(DecimalPatternItem::Literal(s.to_string()));
-        }
-    }
-
-    while let Some(c) = chars.next() {
-        if in_quote {
-            if c == '\'' {
-                if chars.peek() == Some(&'\'') {
-                    // Escaped quote ''
-                    string_buffer.push('\'');
-                    chars.next();
-                } else {
-                    // End of quote
-                    in_quote = false;
-                    if !string_buffer.is_empty() {
-                        append_literal(&mut items, &string_buffer);
-                        string_buffer.clear();
-                    }
-                }
-            } else {
-                string_buffer.push(c);
-            }
-        } else {
-            match c {
-                '\'' => {
-                    in_quote = true;
-                }
-                '0' => items.push(DecimalPatternItem::MandatoryDigit),
-                '#' => items.push(DecimalPatternItem::OptionalDigit),
-                '.' => items.push(DecimalPatternItem::DecimalSeparator),
-                ',' => items.push(DecimalPatternItem::GroupingSeparator),
-                '¤' => items.push(DecimalPatternItem::Currency),
-                '%' => items.push(DecimalPatternItem::Percent),
-                '‰' => items.push(DecimalPatternItem::PerMille),
-                '+' => items.push(DecimalPatternItem::PlusSign),
-                '-' => items.push(DecimalPatternItem::MinusSign),
-                'E' => items.push(DecimalPatternItem::Exponent),
-                _ => {
-                    // Unquoted literal character
-                    let mut temp = String::new();
-                    temp.push(c);
-                    append_literal(&mut items, &temp);
-                }
-            }
-        }
-    }
-
-    if in_quote {
-        return Err(Error::UnclosedQuote);
-    }
-
-    Ok(items)
-}
+#[cfg(test)]
+use crate::cldr_serde::numbers::NumberPattern;
+use crate::cldr_serde::numbers::NumberPatternItem;
 
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]
@@ -121,36 +23,32 @@ pub(crate) struct DecimalSubPattern {
     pub(crate) max_fraction_digits: u8,
 }
 
-impl FromStr for DecimalSubPattern {
-    type Err = Error;
-
-    fn from_str(subpattern: &str) -> Result<Self, Self::Err> {
-        let items = tokenize_pattern(subpattern)?;
-
+impl DecimalSubPattern {
+    pub fn try_from_items(items: &[NumberPatternItem]) -> Result<Self, DataError> {
         // Find the first body token (digit placeholder, separator)
         let body_start = items.iter().position(|item| {
             matches!(
                 item,
-                DecimalPatternItem::MandatoryDigit
-                    | DecimalPatternItem::OptionalDigit
-                    | DecimalPatternItem::GroupingSeparator
-                    | DecimalPatternItem::DecimalSeparator
+                NumberPatternItem::MandatoryDigit
+                    | NumberPatternItem::OptionalDigit
+                    | NumberPatternItem::GroupingSeparator
+                    | NumberPatternItem::DecimalSeparator
             )
         });
 
         let body_start = match body_start {
             Some(i) => i,
-            None => return Err(Error::NoBodyInSubpattern),
+            None => return Err(DataError::custom("NoBodyInSubpattern")),
         };
 
         // Find the last body token
         let body_end = items.iter().rposition(|item| {
             matches!(
                 item,
-                DecimalPatternItem::MandatoryDigit
-                    | DecimalPatternItem::OptionalDigit
-                    | DecimalPatternItem::GroupingSeparator
-                    | DecimalPatternItem::DecimalSeparator
+                NumberPatternItem::MandatoryDigit
+                    | NumberPatternItem::OptionalDigit
+                    | NumberPatternItem::GroupingSeparator
+                    | NumberPatternItem::DecimalSeparator
             )
         });
         let body_end = body_end.unwrap_or(body_start);
@@ -159,13 +57,8 @@ impl FromStr for DecimalSubPattern {
         let mut prefix = String::new();
         for item in &items[..body_start] {
             match item {
-                DecimalPatternItem::Literal(s) => prefix.push_str(s),
-                DecimalPatternItem::Currency => prefix.push('¤'),
-                DecimalPatternItem::Percent => prefix.push('%'),
-                DecimalPatternItem::PerMille => prefix.push('‰'),
-                DecimalPatternItem::PlusSign => prefix.push('+'),
-                DecimalPatternItem::MinusSign => prefix.push('-'),
-                _ => return Err(Error::InvalidAffixItem),
+                NumberPatternItem::Literal(s) => prefix.push_str(s),
+                _ => return Err(DataError::custom("InvalidAffixItem")),
             }
         }
 
@@ -173,13 +66,8 @@ impl FromStr for DecimalSubPattern {
         let mut suffix = String::new();
         for item in &items[body_end + 1..] {
             match item {
-                DecimalPatternItem::Literal(s) => suffix.push_str(s),
-                DecimalPatternItem::Currency => suffix.push('¤'),
-                DecimalPatternItem::Percent => suffix.push('%'),
-                DecimalPatternItem::PerMille => suffix.push('‰'),
-                DecimalPatternItem::PlusSign => suffix.push('+'),
-                DecimalPatternItem::MinusSign => suffix.push('-'),
-                _ => return Err(Error::InvalidAffixItem),
+                NumberPatternItem::Literal(s) => suffix.push_str(s),
+                _ => return Err(DataError::custom("InvalidAffixItem")),
             }
         }
 
@@ -187,18 +75,18 @@ impl FromStr for DecimalSubPattern {
         let body_items = &items[body_start..=body_end];
         for item in body_items {
             match item {
-                DecimalPatternItem::DecimalSeparator
-                | DecimalPatternItem::GroupingSeparator
-                | DecimalPatternItem::MandatoryDigit
-                | DecimalPatternItem::OptionalDigit => {}
-                _ => return Err(Error::InvalidBodyItem),
+                NumberPatternItem::DecimalSeparator
+                | NumberPatternItem::GroupingSeparator
+                | NumberPatternItem::MandatoryDigit
+                | NumberPatternItem::OptionalDigit => {}
+                _ => return Err(DataError::custom("InvalidBodyItem")),
             }
         }
 
         // Find decimal separator position
         let decimal_pos = body_items
             .iter()
-            .position(|item| matches!(item, DecimalPatternItem::DecimalSeparator));
+            .position(|item| matches!(item, NumberPatternItem::DecimalSeparator));
 
         // Calculate grouping sizes from the integer part
         let integer_items = if let Some(pos) = decimal_pos {
@@ -212,7 +100,7 @@ impl FromStr for DecimalSubPattern {
             .iter()
             .enumerate()
             .filter_map(|(i, item)| {
-                if matches!(item, DecimalPatternItem::GroupingSeparator) {
+                if matches!(item, NumberPatternItem::GroupingSeparator) {
                     Some(i)
                 } else {
                     None
@@ -222,7 +110,7 @@ impl FromStr for DecimalSubPattern {
 
         // Reject if there are more than two grouping separators
         if grouping_positions.len() > 2 {
-            return Err(Error::TooManyGroupingSeparators);
+            return Err(DataError::custom("TooManyGroupingSeparators"));
         }
 
         // Count digits after each grouping separator to determine grouping sizes
@@ -236,7 +124,7 @@ impl FromStr for DecimalSubPattern {
                 .filter(|item| {
                     matches!(
                         item,
-                        DecimalPatternItem::MandatoryDigit | DecimalPatternItem::OptionalDigit
+                        NumberPatternItem::MandatoryDigit | NumberPatternItem::OptionalDigit
                     )
                 })
                 .count() as u8;
@@ -249,7 +137,7 @@ impl FromStr for DecimalSubPattern {
                     .filter(|item| {
                         matches!(
                             item,
-                            DecimalPatternItem::MandatoryDigit | DecimalPatternItem::OptionalDigit
+                            NumberPatternItem::MandatoryDigit | NumberPatternItem::OptionalDigit
                         )
                     })
                     .count() as u8
@@ -268,12 +156,12 @@ impl FromStr for DecimalSubPattern {
             let mut seen_optional = false;
             for item in fraction_items {
                 match item {
-                    DecimalPatternItem::MandatoryDigit => {
+                    NumberPatternItem::MandatoryDigit => {
                         if seen_optional {
-                            return Err(Error::MandatoryAfterOptional);
+                            return Err(DataError::custom("MandatoryAfterOptional"));
                         }
                     }
-                    DecimalPatternItem::OptionalDigit => {
+                    NumberPatternItem::OptionalDigit => {
                         seen_optional = true;
                     }
                     _ => {}
@@ -282,18 +170,18 @@ impl FromStr for DecimalSubPattern {
 
             let mandatory: u8 = fraction_items
                 .iter()
-                .filter(|item| matches!(item, DecimalPatternItem::MandatoryDigit))
+                .filter(|item| matches!(item, NumberPatternItem::MandatoryDigit))
                 .count() as u8;
             let optional: u8 = fraction_items
                 .iter()
-                .filter(|item| matches!(item, DecimalPatternItem::OptionalDigit))
+                .filter(|item| matches!(item, NumberPatternItem::OptionalDigit))
                 .count() as u8;
             (mandatory, mandatory + optional)
         } else {
             (0, 0)
         };
 
-        Ok(Self {
+        Ok(DecimalSubPattern {
             prefix,
             suffix,
             primary_grouping,
@@ -304,65 +192,18 @@ impl FromStr for DecimalSubPattern {
     }
 }
 
-impl DecimalSubPattern {
-    #[cfg(feature = "unstable")]
-    pub(crate) fn to_pattern_items(&self) -> Vec<PatternItemCow<'_, DoublePlaceholderKey>> {
-        use std::borrow::Cow;
-        vec![
-            PatternItemCow::Literal(Cow::Borrowed(&self.prefix)),
-            PatternItemCow::Placeholder(DoublePlaceholderKey::Place0),
-            PatternItemCow::Literal(Cow::Borrowed(&self.suffix)),
-        ]
-    }
-}
-
-/// Representation of a UTS-35 number pattern, including positive subpattern (required) and negative
-/// subpattern (optional).
-#[derive(Debug, PartialEq)]
-pub(crate) struct DecimalPattern {
-    pub(crate) positive: DecimalSubPattern,
-    pub(crate) negative: Option<DecimalSubPattern>,
-}
-
-impl FromStr for DecimalPattern {
-    type Err = Error;
-
-    fn from_str(pattern: &str) -> Result<Self, Self::Err> {
-        // Example patterns:
-        // #,##0
-        // #,##,##0.###
-        // #,##0.00;#,##0.00-
-        // 0;0-
-        let (positive, negative) = match pattern.split(';').next_tuple() {
-            Some((u, s)) => (u.parse()?, Some(s.parse()?)),
-            None => (pattern.parse()?, None),
-        };
-        Ok(Self { positive, negative })
-    }
-}
-
-impl DecimalPattern {
-    // Returns affixes in the form (prefix, suffix)
-    pub(crate) fn localize_sign(&self, sign_str: &str) -> (String, String) {
-        // UTS 35: the absence of a negative pattern means a single prefixed sign
-        let signed_affixes = self
-            .negative
-            .as_ref()
-            .map(|subpattern| (subpattern.prefix.as_str(), subpattern.suffix.as_str()))
-            .unwrap_or_else(|| ("-", ""));
-        (
-            signed_affixes.0.replace('-', sign_str),
-            signed_affixes.1.replace('-', sign_str),
-        )
-    }
-}
-
 #[test]
 fn test_basic() {
+    #[derive(PartialEq, Debug)]
+    struct DecimalPattern {
+        positive: DecimalSubPattern,
+        negative: Option<DecimalSubPattern>,
+    }
+
     #[derive(Debug)]
     struct TestCase<'s> {
         pub(crate) pattern: &'s str,
-        pub(crate) expected: Result<DecimalPattern, Error>,
+        pub(crate) expected: Result<DecimalPattern, DataError>,
     }
     let cases = [
         TestCase {
@@ -444,11 +285,11 @@ fn test_basic() {
         },
         TestCase {
             pattern: "xyz",
-            expected: Err(Error::NoBodyInSubpattern),
+            expected: Err(DataError::custom("NoBodyInSubpattern")),
         },
         TestCase {
             pattern: "xyz;abc",
-            expected: Err(Error::NoBodyInSubpattern),
+            expected: Err(DataError::custom("NoBodyInSubpattern")),
         },
         // Test quoted literals
         TestCase {
@@ -512,7 +353,16 @@ fn test_basic() {
         },
     ];
     for cas in &cases {
-        let actual = DecimalPattern::from_str(cas.pattern);
+        let actual = NumberPattern::try_from_str(cas.pattern).and_then(|a| {
+            Ok(DecimalPattern {
+                positive: DecimalSubPattern::try_from_items(&a.positive)?,
+                negative: a
+                    .negative
+                    .as_ref()
+                    .map(|n| DecimalSubPattern::try_from_items(n))
+                    .transpose()?,
+            })
+        });
         assert_eq!(cas.expected, actual, "Pattern: {}", cas.pattern);
     }
 }
@@ -520,33 +370,42 @@ fn test_basic() {
 #[test]
 fn test_quoted_literals() {
     // Test escaped quote
-    let pattern = DecimalPattern::from_str("'O''clock'#,##0.###").unwrap();
-    assert_eq!(pattern.positive.prefix, "O'clock");
+    let pattern = NumberPattern::try_from_str("'O''clock'#,##0.###").unwrap();
+    assert_eq!(
+        pattern.positive[0],
+        NumberPatternItem::Literal("O'clock".into())
+    );
 
     // Test quoted special characters
-    let pattern = DecimalPattern::from_str("'#'#,##0.###").unwrap();
-    assert_eq!(pattern.positive.prefix, "#");
+    let pattern = NumberPattern::try_from_str("'#'#,##0.###").unwrap();
+    assert_eq!(pattern.positive[0], NumberPatternItem::Literal("#".into()));
 }
 
 #[test]
 fn test_reject_three_grouping_separators() {
     // Three grouping separators should be rejected
-    let result = DecimalPattern::from_str("#,##,##,##0");
-    assert_eq!(result, Err(Error::TooManyGroupingSeparators));
+    let result = DecimalSubPattern::try_from_items(
+        &NumberPattern::try_from_str("#,##,##,##0").unwrap().positive,
+    );
+    assert_eq!(result, Err(DataError::custom("TooManyGroupingSeparators")));
 }
 
 #[test]
 fn test_reject_mandatory_after_optional_in_fraction() {
     // Pattern like #,##0.#0 is invalid (mandatory after optional)
-    let result = DecimalPattern::from_str("#,##0.#0");
-    assert_eq!(result, Err(Error::MandatoryAfterOptional));
+    let result = DecimalSubPattern::try_from_items(
+        &NumberPattern::try_from_str("#,##0.#0").unwrap().positive,
+    );
+    assert_eq!(result, Err(DataError::custom("MandatoryAfterOptional")));
 
     // Valid: mandatory then optional
-    let result = DecimalPattern::from_str("#,##0.00##");
+    let result = DecimalSubPattern::try_from_items(
+        &NumberPattern::try_from_str("#,##0.00##").unwrap().positive,
+    );
     assert!(result.is_ok());
     let pattern = result.unwrap();
-    assert_eq!(pattern.positive.min_fraction_digits, 2);
-    assert_eq!(pattern.positive.max_fraction_digits, 4);
+    assert_eq!(pattern.min_fraction_digits, 2);
+    assert_eq!(pattern.max_fraction_digits, 4);
 }
 
 #[test]
@@ -559,6 +418,8 @@ fn test_reject_invalid_body_item() {
     // so a literal in between would be caught.
 
     // Test: pattern with percent in the body (not allowed)
-    let result = DecimalPattern::from_str("#,##0%0.###");
-    assert_eq!(result, Err(Error::InvalidBodyItem));
+    let result = DecimalSubPattern::try_from_items(
+        &NumberPattern::try_from_str("#,##0%0.###").unwrap().positive,
+    );
+    assert_eq!(result, Err(DataError::custom("InvalidBodyItem")));
 }

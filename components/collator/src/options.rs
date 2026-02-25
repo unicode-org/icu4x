@@ -517,7 +517,7 @@ impl CollatorOptionsBitField {
         }
         // Safety: Strength is repr(u8) and has discriminants between 0 and 7. The
         // above code ensures that, since the mask puts us `≤ 8`
-        unsafe { core::mem::transmute(bits as u8) }
+        unsafe { core::mem::transmute::<u8, Strength>(bits as u8) }
     }
 
     /// This is the BCP47 key `ks`. See the enum for examples.
@@ -537,7 +537,7 @@ impl CollatorOptionsBitField {
         // Safe, because we mask two bits and shift them to the low
         // two bits and the enum has values for 0 to 3, inclusive.
         unsafe {
-            core::mem::transmute(
+            core::mem::transmute::<u8, MaxVariable>(
                 ((self.0 & CollatorOptionsBitField::MAX_VARIABLE_MASK)
                     >> CollatorOptionsBitField::MAX_VARIABLE_SHIFT) as u8,
             )

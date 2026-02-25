@@ -49,7 +49,6 @@ zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies
-displaydoc = { workspace = true }
 elsa = { workspace = true }
 flate2 = { workspace = true }
 itertools = { workspace = true }
@@ -101,6 +100,7 @@ icu_experimental = []
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
+max_combination_size = 3
 
 [lints]
 workspace = true

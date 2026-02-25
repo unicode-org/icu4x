@@ -240,10 +240,13 @@ diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "f71e
 # EXTRA_BLOB_DEPS
 # EXTRA_FS_DEPS
 arrayvec = { version = "0.7.2", default-features = false }
+chrono = { version = "0.4", default-features = false }
+chrono-tz = { version = "0.10", default-features = false }
 core_maths = { version = "0.1.0", default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.9.0", default-features = false }
 harfbuzz-traits = { version = "0.6.0", default-features = false }
+jiff = { version = "0.2", default-features = false }
 libc_alloc = { version = "1.0.6", default-features = false }
 log = { version = "0.4.17", default-features = false }
 memchr = { version = "2.6.0", default-features = false }
@@ -342,6 +345,7 @@ debug = true
 clippy.alloc-instead-of-core = "warn"
 clippy.branches-sharing-code = "warn"
 clippy.collection_is_never_read = "warn"
+clippy.crosspointer_transmute = "warn"
 clippy.dbg_macro = "warn"
 clippy.debug_assert_with_mut_call = "warn"
 clippy.doc_markdown = "warn"
@@ -352,12 +356,21 @@ clippy.infinite_loop = "warn"
 clippy.large_stack_arrays = "warn"
 clippy.mismatching_type_param_order = "warn"
 clippy.missing_fields_in_debug = "warn"
+clippy.missing_transmute_annotations = "warn"
 clippy.negative_feature_names = "warn"
 clippy.or-fun-call = "warn"
 clippy.same_functions_in_if_condition = "warn"
 clippy.todo = "warn"
+clippy.transmute_bytes_to_str = "warn"
+clippy.transmute_int_to_bool = "warn"
+clippy.transmute_int_to_non_zero = "warn"
+clippy.transmute_ptr_to_ptr = "warn"
+clippy.transmute_ptr_to_ref = "warn"
+clippy.transmute_undefined_repr = "warn"
+clippy.transmutes_expressible_as_ptr_casts = "warn"
 clippy.trivially_copy_pass_by_ref = "deny"
 clippy.unnecessary-wraps = "warn"
+clippy.useless_transmute = "warn"
 clippy.wildcard_dependencies = "warn"
 rust.missing_debug_implementations = "deny"
 rust.trivial_numeric_casts = "deny"

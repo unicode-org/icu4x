@@ -15,7 +15,6 @@ use super::*;
 use crate::varzerovec::{Index16, VarZeroVecFormat};
 use core::fmt;
 use core::marker::PhantomData;
-use core::mem;
 use zerofrom::ZeroFrom;
 
 macro_rules! tuple_varule {
@@ -89,7 +88,7 @@ macro_rules! tuple_varule {
 
                 // This type is repr(transparent) over MultiFieldsULE<$len>, so its slices can be transmuted
                 // Field invariant upheld here: validate_bytes above validates every field for being the right type
-                mem::transmute::<&MultiFieldsULE<$len, Format>, &Self>(multi)
+                &*(multi as *const MultiFieldsULE<$len, Format> as *const $name<$($T,)+ Format>)
             }
         }
 

@@ -1105,7 +1105,7 @@
                 "hms": "hh:mm:ss a",
                 "Hms": "HH:mm:ss",
                 "hv": "h a v",
-                "Hv": "HH'h' v",
+                "Hv": "HH v",
                 "M": "L",
                 "Md": "d-M",
                 "MEd": "E, d-M",

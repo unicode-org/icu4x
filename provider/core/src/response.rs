@@ -749,7 +749,7 @@ where
         M2: DynamicDataMarker<DataStruct = M::DataStruct>,
     {
         // SAFETY: As seen in the implementation of `cast`, the struct is the same, it's just the generic that changes.
-        unsafe { core::mem::transmute(self) }
+        unsafe { &*(self as *const DataPayload<M> as *const DataPayload<M2>) }
     }
 
     /// Convert a [`DataPayload`] to one of the same type with runtime type checking.

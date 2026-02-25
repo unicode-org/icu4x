@@ -1,5 +1,5 @@
-decimal/compact/long/v1, <lookup>, 1297B, 209 identifiers
-decimal/compact/long/v1, <total>, 19093B, 15961B, 138 unique payloads
+decimal/compact/long/v1, <lookup>, 1302B, 210 identifiers
+decimal/compact/long/v1, <total>, 19187B, 16032B, 139 unique payloads
 decimal/compact/long/v1, af, 76B, 53B, 27934e5fadbac225
 decimal/compact/long/v1, ak, 89B, 66B, e7df9e1c1ef2e4f1
 decimal/compact/long/v1, am, 90B, 67B, 7ffba1229f34a4b7
@@ -165,6 +165,7 @@ decimal/compact/long/v1, sr, 207B, 185B, 40d089d7a7ea46a6
 decimal/compact/long/v1, sr-Latn, -> bs
 decimal/compact/long/v1, sv, 158B, 136B, 9bed2a9164c448cf
 decimal/compact/long/v1, sw, 74B, 51B, 84d1066aedc8db4
+decimal/compact/long/v1, sw-KE, 94B, 71B, c23d09fe74fb00aa
 decimal/compact/long/v1, ta, 153B, 131B, fee8f346e0bebe47
 decimal/compact/long/v1, ta/tamldec, -> ta
 decimal/compact/long/v1, te, 375B, 353B, 90b0b6135cfb8cf4
@@ -445,7 +446,7 @@ decimal/digits/v1, und/telu, 40B, 40B, 4084dfba70dc949
 decimal/digits/v1, und/thai, 40B, 40B, 470541c261160c5a
 decimal/digits/v1, und/tibt, 40B, 40B, a199e0054f3d55b9
 decimal/digits/v1, und/vaii, 40B, 40B, f3247f156118e197
-decimal/symbols/v1, <lookup>, 1387B, 272 identifiers
+decimal/symbols/v1, <lookup>, 1392B, 273 identifiers
 decimal/symbols/v1, <total>, 2307B, 963B, 48 unique payloads
 decimal/symbols/v1, af, 47B, 19B, 3e51d5d2bbc1f2d7
 decimal/symbols/v1, ar, 52B, 24B, c3d6103c042fed33
@@ -577,6 +578,7 @@ decimal/symbols/v1, fi, 49B, 21B, 6bbabd47c5fe3c2c
 decimal/symbols/v1, fo, -> eu
 decimal/symbols/v1, fr, -> en-FR
 decimal/symbols/v1, fr-CA, -> af
+decimal/symbols/v1, fr-CH, 46B, 18B, acadb0fc0beb0701
 decimal/symbols/v1, fr-LU, -> ast
 decimal/symbols/v1, fr-MA, -> ast
 decimal/symbols/v1, fy, -> ast
@@ -621,7 +623,7 @@ decimal/symbols/v1, kxv-Telu/telu, 46B, 18B, 62e3bf87d9863250
 decimal/symbols/v1, ky, -> af
 decimal/symbols/v1, lb, -> ast
 decimal/symbols/v1, lij, -> ast
-decimal/symbols/v1, lmo, 46B, 18B, acadb0fc0beb0701
+decimal/symbols/v1, lmo, -> fr-CH
 decimal/symbols/v1, lo, -> ast
 decimal/symbols/v1, lo/laoo, 46B, 18B, c7da81f6bae79e2f
 decimal/symbols/v1, lt, -> fi

@@ -19,6 +19,9 @@ rust-version = "1.82"
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-all-features]
+max_combination_size = 3
+
 [dependencies]
 databake = { workspace = true, features = ["derive"], optional = true }
 displaydoc = { workspace = true }

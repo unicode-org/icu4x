@@ -123,7 +123,7 @@ impl<Store: ?Sized> ZeroTrieSimpleAscii<Store> {
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
-            core::mem::transmute(s)
+            &*(s as *const Store as *const Self)
         }
     }
 }
@@ -190,7 +190,7 @@ impl<Store: ?Sized> ZeroAsciiIgnoreCaseTrie<Store> {
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
-            core::mem::transmute(s)
+            &*(s as *const Store as *const Self)
         }
     }
 }
@@ -235,7 +235,7 @@ impl<Store: ?Sized> ZeroTriePerfectHash<Store> {
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
-            core::mem::transmute(s)
+            &*(s as *const Store as *const Self)
         }
     }
 }
@@ -265,7 +265,7 @@ impl<Store: ?Sized> ZeroTrieExtendedCapacity<Store> {
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
-            core::mem::transmute(s)
+            &*(s as *const Store as *const Self)
         }
     }
 }

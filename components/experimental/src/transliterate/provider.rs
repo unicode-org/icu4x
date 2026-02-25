@@ -38,6 +38,8 @@ icu_provider::data_marker!(
     RuleBasedTransliterator<'static>,
     #[cfg(feature = "datagen")]
     expose_baked_consts = true,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "transliterator",
 );
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).

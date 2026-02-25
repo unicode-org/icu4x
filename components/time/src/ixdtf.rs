@@ -445,10 +445,10 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// assert_eq!(zoneddatetime.time.minute.number(), 8);
     /// assert_eq!(zoneddatetime.time.second.number(), 19);
     /// assert_eq!(zoneddatetime.time.subsecond.number(), 0);
-    /// assert_eq!(zoneddatetime.zone.id(), TimeZone(subtag!("uschi")));
+    /// assert_eq!(zoneddatetime.zone.id(), TimeZone::from_iana_id("America/Chicago"));
     /// assert_eq!(
     ///     zoneddatetime.zone.offset(),
-    ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
+    ///     Some(UtcOffset::try_from_seconds(-5 * 3600).unwrap())
     /// );
     /// let _ = zoneddatetime.zone.zone_name_timestamp();
     /// ```
@@ -475,7 +475,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
     /// );
     /// ```
     ///
@@ -505,7 +505,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset_annotation.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
     /// );
     ///
     /// assert_eq!(
@@ -539,7 +539,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     consistent_tz_from_both.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
     /// );
     ///
     /// let inconsistent_tz_from_both = ZonedDateTime::try_offset_only_from_str(
@@ -722,7 +722,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// assert_eq!(zonedtime.zone.id(), TimeZone(subtag!("uschi")));
     /// assert_eq!(
     ///     zonedtime.zone.offset(),
-    ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
+    ///     Some(UtcOffset::try_from_seconds(-5 * 3600).unwrap())
     /// );
     /// let _ = zonedtime.zone.zone_name_timestamp();
     /// ```
@@ -748,7 +748,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
     /// );
     /// ```
     ///
@@ -776,7 +776,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     tz_from_offset_annotation.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
     /// );
     ///
     /// assert_eq!(
@@ -809,7 +809,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(
     ///     consistent_tz_from_both.zone,
-    ///     UtcOffset::try_from_seconds(-18000).unwrap()
+    ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
     /// );
     ///
     /// let inconsistent_tz_from_both = ZonedTime::try_offset_only_from_str(

@@ -88,6 +88,7 @@ pub mod provider {
         impl_region_display_names_v1!(Baked);
         impl_script_display_names_v1!(Baked);
         impl_variant_display_names_v1!(Baked);
+        impl_locale_names_region_long_v1!(Baked);
         impl_percent_essentials_v1!(Baked);
         impl_person_names_format_v1!(Baked);
         impl_long_day_relative_v1!(Baked);
@@ -155,6 +156,7 @@ pub mod provider {
         super::displaynames::provider::RegionDisplayNamesV1::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1::INFO,
         super::displaynames::provider::VariantDisplayNamesV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionLongV1::INFO,
         super::measure::provider::UnitIdsV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
         super::relativetime::provider::LongDayRelativeV1::INFO,

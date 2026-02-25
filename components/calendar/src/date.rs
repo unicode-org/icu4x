@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::VALID_RD_RANGE;
-use crate::error::{DateError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
@@ -103,6 +103,25 @@ impl<C> Deref for Ref<'_, C> {
 /// 3. From a RFC 9557 string via [`Self::try_from_str()`]
 /// 4. From a [`RataDie`] via [`Self::from_rata_die()`]
 ///
+/// # Date ranges
+///
+/// *Most* `Date` constructors will refuse to construct dates from `year` values outside of the range
+/// `-9999..=9999`, however since that is a per-calendar value, it is possible to escape that range
+/// by changing the era/calendar. Furthermore, this is not the case for [`Date::try_from_fields`] and
+/// date arithmetic APIs: these APIs let you construct dates outside of that range.
+///
+/// `Date` types have a fundamental range invariant as well, and ICU4X will refuse to construct
+/// dates outside of that range, regardless of the calendar.
+/// ICU4X APIs will return an `Overflow` error (e.g. `DateAddError::Overflow`) in these cases, or clamp
+/// in the case of `Date::from_rata_die()`.
+///
+/// This range is currently dates with an ISO year between `-999_999..=999_999`, but
+/// ICU4X reserves the right to change these bounds in the future.
+///
+/// Since `icu_calendar` is intended to be usable by implementors of the ECMA Temporal specification,
+/// this range will never be smaller than Temporal's validity range, which roughly maps to ISO years
+/// -271,821 to 275,760 (precisely speaking, it is ± 100,000,000 days from January 1, 1970).
+///
 /// # Examples
 ///
 /// ```rust
@@ -126,8 +145,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// The year is interpreted as an [`extended_year`](Date::extended_year) if no era is provided.
     ///
-    /// This function accepts years in the range `-9999..=9999`, where the `extended_year`
-    /// is also in the range `-9999..=9999`.
+    /// This function accepts years in the range `-9999..=9999`.
     #[inline]
     pub fn try_new_from_codes(
         era: Option<&str>,
@@ -148,8 +166,8 @@ impl<A: AsCalendar> Date<A> {
     /// and the month as either ordinal or month code. It can constrain out-of-bounds values
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
-    /// This function accepts years in the range `-9999..=9999`, where the `extended_year`
-    /// is also in the range `-9999..=9999`.
+    /// This API will not construct dates outside of the fundamental range described on the [`Date`] type
+    /// instead returning [`DateFromFieldsError::Overflow`].
     ///
     /// # Examples
     ///
@@ -193,8 +211,11 @@ impl<A: AsCalendar> Date<A> {
 
     /// Construct a date from a [`RataDie`] and a calendar.
     ///
-    /// This method is guaranteed to round trip with [`Date::to_rata_die`]. Inputs
-    /// that were not produced by [`Date::to_rata_die`] might be clamped:
+    /// This method is guaranteed to round trip with [`Date::to_rata_die`].
+    ///
+    /// For other values, This API will not construct dates outside of the fundamental range
+    /// described on the [`Date`] type instead clamping the result:
+    ///
     /// ```rust
     /// use icu::calendar::{Date, Gregorian, types::RataDie};
     ///
@@ -319,6 +340,9 @@ impl<A: AsCalendar> Date<A> {
 
     /// Add a `duration` to this date, mutating it
     ///
+    /// This API will not construct dates outside of the fundamental range described on the [`Date`] type,
+    /// instead returning [`DateAddError::Overflow`].
+    ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
@@ -333,7 +357,7 @@ impl<A: AsCalendar> Date<A> {
         &mut self,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<(), DateError> {
+    ) -> Result<(), DateAddError> {
         let inner = self
             .calendar
             .as_calendar()
@@ -342,7 +366,10 @@ impl<A: AsCalendar> Date<A> {
         Ok(())
     }
 
-    /// Add a `duration` to this date, returning the new one
+    /// Add a `duration` to this date, returning the new one.
+    ///
+    /// This API will not construct dates outside of the fundamental range described on the [`Date`] type,
+    /// instead returning [`DateAddError::Overflow`].
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -358,7 +385,7 @@ impl<A: AsCalendar> Date<A> {
         mut self,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self, DateError> {
+    ) -> Result<Self, DateAddError> {
         self.try_add_with_options(duration, options)?;
         Ok(self)
     }

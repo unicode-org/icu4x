@@ -12,7 +12,7 @@
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::ZeroMap;
+use zerovec::{VarZeroCow, ZeroMap};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
@@ -153,3 +153,12 @@ pub struct VariantDisplayNames<'data> {
 }
 
 icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+icu_provider::data_marker!(
+    /// Data marker for region display names.
+    LocaleNamesRegionLongV1,
+    "locale/names/region/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_region",
+);

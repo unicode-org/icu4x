@@ -464,7 +464,7 @@ where
 
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
-        core::mem::transmute(bytes)
+        &*(bytes as *const [u8] as *const Self)
     }
 }
 
@@ -479,7 +479,7 @@ where
     /// The bytes must be valid according to [`PluralElementsPackedULE::validate_bytes`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
-        core::mem::transmute(bytes)
+        &*(bytes as *const [u8] as *const Self)
     }
 
     /// Returns a tuple with:
