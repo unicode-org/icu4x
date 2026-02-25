@@ -141,6 +141,67 @@ impl IterableDataProviderCached<LocaleNamesLanguageLongV1> for SourceDataProvide
     }
 }
 
+impl DataProvider<LocaleNamesLanguageShortV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesLanguageShortV1>, DataError> {
+        self.check_req::<LocaleNamesLanguageShortV1>(req)?;
+
+        let data: &cldr_serde::displaynames::language::Resource = self
+            .cldr()?
+            .displaynames()
+            .read_and_parse(req.id.locale, "languages.json")?;
+
+        let mut key = req.id.marker_attributes.as_str().to_string();
+        key.push_str(ALT_SHORT_SUBSTRING);
+
+        let name = data
+            .main
+            .value
+            .localedisplaynames
+            .languages
+            .get(&key)
+            .ok_or_else(|| {
+                DataError::custom("data for LanguageDisplayNames")
+                    .with_req(LocaleNamesLanguageShortV1::INFO, req)
+            })?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
+        })
+    }
+}
+
+impl IterableDataProviderCached<LocaleNamesLanguageShortV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        let mut result = HashSet::new();
+        let displaynames = self.cldr()?.displaynames();
+        for locale in displaynames.list_locales()?.filter(|locale| {
+            // The directory might exist without languages.json
+            self.cldr()
+                .unwrap()
+                .displaynames()
+                .file_exists(locale, "languages.json")
+                .unwrap_or_default()
+        }) {
+            let data: &cldr_serde::displaynames::language::Resource =
+                displaynames.read_and_parse(&locale, "languages.json")?;
+            for language_str in data.main.value.localedisplaynames.languages.keys() {
+                if let Some(language) = language_str.strip_suffix(ALT_SHORT_SUBSTRING) {
+                    let data_identifier = DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_string(language.to_string()).map_err(|_| {
+                            DataError::custom("Failed to parse language as attribute")
+                                .with_debug_context(&language)
+                        })?,
+                        locale,
+                    );
+                    result.insert(data_identifier);
+                }
+            }
+        }
+        Ok(result)
+    }
+}
+
 /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
 const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short display names data variants for a given language. For example: "az-alt-short".
@@ -380,5 +441,23 @@ mod tests {
             .payload;
 
         assert_eq!(&**data.get(), "Afar");
+    }
+
+    #[test]
+    fn test_locale_names_language_short() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("en-GB").unwrap(),
+                    &langid!("en").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "UK English");
     }
 }

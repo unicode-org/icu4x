@@ -180,3 +180,12 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
 );
+
+icu_provider::data_marker!(
+    /// Data marker for short language display names.
+    LocaleNamesLanguageShortV1,
+    "locale/names/language/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
