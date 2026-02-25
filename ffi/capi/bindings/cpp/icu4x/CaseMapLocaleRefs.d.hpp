@@ -1,5 +1,5 @@
-#ifndef ICU4X_CaseMapLocaleConsts_D_HPP
-#define ICU4X_CaseMapLocaleConsts_D_HPP
+#ifndef ICU4X_CaseMapLocaleRefs_D_HPP
+#define ICU4X_CaseMapLocaleRefs_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -19,7 +19,7 @@ class Locale;
 
 namespace icu4x {
 namespace capi {
-    struct CaseMapLocaleConsts;
+    struct CaseMapLocaleRefs;
 } // namespace capi
 } // namespace
 
@@ -32,58 +32,56 @@ namespace icu4x {
  * limited cases you may be parsing from a limited set of locales and not
  * wish to pull in full-fledged parsing code.
  *
- * For now, this only supports locales that have special meaning to `icu_casemap`,
+ * This type is for locales that have special meaning to `CaseMap`,
  * since it only cares about a small set of locales and locale parsing takes
  * up a relatively large amount of binary size in the context of casemapping.
- *
- * Please file an issue on ICU4X if you have a use case for more locales here.
  */
-class CaseMapLocaleConsts {
+class CaseMapLocaleRefs {
 public:
 
   /**
-   * Construct a {@link Locale} "az".
+   * Returns a borrowed "az" {@link Locale}.
    */
   inline static const icu4x::Locale& az();
 
   /**
-   * Construct a {@link Locale} "el".
+   * Returns a borrowed "el" {@link Locale}.
    */
   inline static const icu4x::Locale& el();
 
   /**
-   * Construct a {@link Locale} "hy".
+   * Returns a borrowed "hy" {@link Locale}.
    */
   inline static const icu4x::Locale& hy();
 
   /**
-   * Construct a {@link Locale} "lt".
+   * Returns a borrowed "lt" {@link Locale}.
    */
   inline static const icu4x::Locale& lt();
 
   /**
-   * Construct a {@link Locale} "nl".
+   * Returns a borrowed "nl" {@link Locale}.
    */
   inline static const icu4x::Locale& nl();
 
   /**
-   * Construct a {@link Locale} "tr".
+   * Returns a borrowed "tr" {@link Locale}.
    */
   inline static const icu4x::Locale& tr();
 
-    inline const icu4x::capi::CaseMapLocaleConsts* AsFFI() const;
-    inline icu4x::capi::CaseMapLocaleConsts* AsFFI();
-    inline static const icu4x::CaseMapLocaleConsts* FromFFI(const icu4x::capi::CaseMapLocaleConsts* ptr);
-    inline static icu4x::CaseMapLocaleConsts* FromFFI(icu4x::capi::CaseMapLocaleConsts* ptr);
+    inline const icu4x::capi::CaseMapLocaleRefs* AsFFI() const;
+    inline icu4x::capi::CaseMapLocaleRefs* AsFFI();
+    inline static const icu4x::CaseMapLocaleRefs* FromFFI(const icu4x::capi::CaseMapLocaleRefs* ptr);
+    inline static icu4x::CaseMapLocaleRefs* FromFFI(icu4x::capi::CaseMapLocaleRefs* ptr);
     inline static void operator delete(void* ptr);
 private:
-    CaseMapLocaleConsts() = delete;
-    CaseMapLocaleConsts(const icu4x::CaseMapLocaleConsts&) = delete;
-    CaseMapLocaleConsts(icu4x::CaseMapLocaleConsts&&) noexcept = delete;
-    CaseMapLocaleConsts operator=(const icu4x::CaseMapLocaleConsts&) = delete;
-    CaseMapLocaleConsts operator=(icu4x::CaseMapLocaleConsts&&) noexcept = delete;
+    CaseMapLocaleRefs() = delete;
+    CaseMapLocaleRefs(const icu4x::CaseMapLocaleRefs&) = delete;
+    CaseMapLocaleRefs(icu4x::CaseMapLocaleRefs&&) noexcept = delete;
+    CaseMapLocaleRefs operator=(const icu4x::CaseMapLocaleRefs&) = delete;
+    CaseMapLocaleRefs operator=(icu4x::CaseMapLocaleRefs&&) noexcept = delete;
     static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // ICU4X_CaseMapLocaleConsts_D_HPP
+#endif // ICU4X_CaseMapLocaleRefs_D_HPP

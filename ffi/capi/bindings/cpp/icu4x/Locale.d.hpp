@@ -52,12 +52,13 @@ public:
   inline static std::unique_ptr<icu4x::Locale> unknown();
 
   /**
-   * Construct an unknown {@link Locale} "und" as a C++ const/static,
-   * without allocating.
+   * Returns a borrowed unknown ("und") {@link Locale}, without allocating
    *
    * (Can potentially be exposed to other backends if they gain static support)
+   *
+   * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
    */
-  inline static const icu4x::Locale& unknown_static();
+  inline static const icu4x::Locale& unknown_ref();
 
   /**
    * Clones the {@link Locale}.

@@ -503,42 +503,40 @@ pub mod ffi {
     /// limited cases you may be parsing from a limited set of locales and not
     /// wish to pull in full-fledged parsing code.
     ///
-    /// For now, this only supports locales that have special meaning to `icu_casemap`,
+    /// This type is for locales that have special meaning to `CaseMap`,
     /// since it only cares about a small set of locales and locale parsing takes
     /// up a relatively large amount of binary size in the context of casemapping.
-    ///
-    /// Please file an issue on ICU4X if you have a use case for more locales here.
     #[diplomat::attr(not(cpp), disable)]
     #[diplomat::opaque]
-    pub struct CaseMapLocaleConsts;
+    pub struct CaseMapLocaleRefs;
 
-    impl CaseMapLocaleConsts {
-        /// Construct a [`Locale`] "az".
+    impl CaseMapLocaleRefs {
+        /// Returns a borrowed "az" [`Locale`].
         pub fn az() -> &'static Locale {
             static AZ: Locale = Locale(locale!("az"));
             &AZ
         }
-        /// Construct a [`Locale`] "el".
+        /// Returns a borrowed "el" [`Locale`].
         pub fn el() -> &'static Locale {
             static EL: Locale = Locale(locale!("el"));
             &EL
         }
-        /// Construct a [`Locale`] "hy".
+        /// Returns a borrowed "hy" [`Locale`].
         pub fn hy() -> &'static Locale {
             static HY: Locale = Locale(locale!("hy"));
             &HY
         }
-        /// Construct a [`Locale`] "lt".
+        /// Returns a borrowed "lt" [`Locale`].
         pub fn lt() -> &'static Locale {
             static LT: Locale = Locale(locale!("lt"));
             &LT
         }
-        /// Construct a [`Locale`] "nl".
+        /// Returns a borrowed "nl" [`Locale`].
         pub fn nl() -> &'static Locale {
             static NL: Locale = Locale(locale!("nl"));
             &NL
         }
-        /// Construct a [`Locale`] "tr".
+        /// Returns a borrowed "tr" [`Locale`].
         pub fn tr() -> &'static Locale {
             static TR: Locale = Locale(locale!("tr"));
             &TR
