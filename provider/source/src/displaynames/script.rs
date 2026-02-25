@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::displaynames::{ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use core::convert::TryFrom;
@@ -30,152 +31,25 @@ impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<LocaleNamesScriptLongV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesScriptLongV1>, DataError> {
-        self.check_req::<LocaleNamesScriptLongV1>(req)?;
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesScriptLongV1,
+    cldr_serde::displaynames::script::Resource,
+    "scripts.json",
+    scripts,
+    None::<&str>,
+    "ScriptDisplayNames"
+);
 
-        let data: &cldr_serde::displaynames::script::Resource = self
-            .cldr()?
-            .displaynames()
-            .read_and_parse(req.id.locale, "scripts.json")?;
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesScriptShortV1,
+    cldr_serde::displaynames::script::Resource,
+    "scripts.json",
+    scripts,
+    Some(ALT_SHORT_SUBSTRING),
+    "ScriptDisplayNames"
+);
 
-        let name = data
-            .main
-            .value
-            .localedisplaynames
-            .scripts
-            .get(req.id.marker_attributes.as_str())
-            .ok_or_else(|| {
-                DataError::custom("data for ScriptDisplayNames")
-                    .with_req(LocaleNamesScriptLongV1::INFO, req)
-            })?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
-        })
-    }
-}
-
-impl IterableDataProviderCached<LocaleNamesScriptLongV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let mut result = HashSet::new();
-        let displaynames = self.cldr()?.displaynames();
-        for locale in displaynames.list_locales()?.filter(|locale| {
-            // The directory might exist without scripts.json
-            self.cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(locale, "scripts.json")
-                .unwrap_or_default()
-        }) {
-            let data: &cldr_serde::displaynames::script::Resource =
-                displaynames.read_and_parse(&locale, "scripts.json")?;
-            for script_str in data.main.value.localedisplaynames.scripts.keys() {
-                if script_str.contains("-alt-") {
-                    continue;
-                }
-                let data_identifier = DataIdentifierCow::from_owned(
-                    DataMarkerAttributes::try_from_string(script_str.clone()).map_err(|_| {
-                        DataError::custom("Failed to parse script as attribute")
-                            .with_debug_context(&script_str)
-                    })?,
-                    locale,
-                );
-                result.insert(data_identifier);
-            }
-        }
-        Ok(result)
-    }
-}
-
-impl DataProvider<LocaleNamesScriptShortV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesScriptShortV1>, DataError> {
-        self.check_req::<LocaleNamesScriptShortV1>(req)?;
-
-        let data: &cldr_serde::displaynames::script::Resource = self
-            .cldr()?
-            .displaynames()
-            .read_and_parse(req.id.locale, "scripts.json")?;
-
-        let mut key = req.id.marker_attributes.as_str().to_string();
-        key.push_str(ALT_SHORT_SUBSTRING);
-
-        let name = data
-            .main
-            .value
-            .localedisplaynames
-            .scripts
-            .get(&key)
-            .ok_or_else(|| {
-                DataError::custom("data for ScriptDisplayNames")
-                    .with_req(LocaleNamesScriptShortV1::INFO, req)
-            })?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
-        })
-    }
-}
-
-impl IterableDataProviderCached<LocaleNamesScriptShortV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let mut result = HashSet::new();
-        let displaynames = self.cldr()?.displaynames();
-        for locale in displaynames.list_locales()?.filter(|locale| {
-            // The directory might exist without scripts.json
-            self.cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(locale, "scripts.json")
-                .unwrap_or_default()
-        }) {
-            let data: &cldr_serde::displaynames::script::Resource =
-                displaynames.read_and_parse(&locale, "scripts.json")?;
-            for script_str in data.main.value.localedisplaynames.scripts.keys() {
-                if let Some(script) = script_str.strip_suffix(ALT_SHORT_SUBSTRING) {
-                    let data_identifier = DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(script.to_string()).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse script as attribute")
-                                    .with_debug_context(&script)
-                            },
-                        )?,
-                        locale,
-                    );
-                    result.insert(data_identifier);
-                }
-            }
-        }
-        Ok(result)
-    }
-}
-
-impl IterableDataProviderCached<ScriptDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .displaynames()
-            .list_locales()?
-            .filter(|locale| {
-                // The directory might exist without scripts.json
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(locale, "scripts.json")
-                    .unwrap_or_default()
-            })
-            .map(DataIdentifierCow::from_locale)
-            .collect())
-    }
-}
-
-/// Substring used to denote alternative display names data variants for a given script. For example: "BA-alt-short", "TL-alt-variant".
-// TODO(#3316): Distinguish stand-alone ("Traditional Han") from default ("Traditional")
-const ALT_SUBSTRING: &str = "-alt-";
-/// Substring used to denote short display names data variants for a given script. For example: "az-alt-short".
-const ALT_SHORT_SUBSTRING: &str = "-alt-short";
+crate::displaynames::impl_displaynames_main_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
 
 impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
     type Error = ParseError;

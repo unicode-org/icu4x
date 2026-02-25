@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::displaynames::{
+    ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING,
+};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 
@@ -44,309 +47,44 @@ impl DataProvider<LocaleDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<LanguageDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .displaynames()
-            .list_locales()?
-            .filter(|locale| {
-                // The directory might exist without languages.json
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(locale, "languages.json")
-                    .unwrap_or_default()
-            })
-            .map(DataIdentifierCow::from_locale)
-            .collect())
-    }
-}
+crate::displaynames::impl_displaynames_main_iter_v1!(LanguageDisplayNamesV1, "languages.json");
+crate::displaynames::impl_displaynames_main_iter_v1!(LocaleDisplayNamesV1, "languages.json");
 
-impl IterableDataProviderCached<LocaleDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .displaynames()
-            .list_locales()?
-            .filter(|locale| {
-                // The directory might exist without languages.json
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(locale, "languages.json")
-                    .unwrap_or_default()
-            })
-            .map(DataIdentifierCow::from_locale)
-            .collect())
-    }
-}
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageLongV1,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    None::<&str>,
+    "LanguageDisplayNames"
+);
 
-impl DataProvider<LocaleNamesLanguageLongV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesLanguageLongV1>, DataError> {
-        self.check_req::<LocaleNamesLanguageLongV1>(req)?;
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageShortV1,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    Some(ALT_SHORT_SUBSTRING),
+    "LanguageDisplayNames"
+);
 
-        let data: &cldr_serde::displaynames::language::Resource = self
-            .cldr()?
-            .displaynames()
-            .read_and_parse(req.id.locale, "languages.json")?;
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageMenuShortV1,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    Some(ALT_MENU_SUBSTRING),
+    "LanguageDisplayNames"
+);
 
-        let name = data
-            .main
-            .value
-            .localedisplaynames
-            .languages
-            .get(req.id.marker_attributes.as_str())
-            .ok_or_else(|| {
-                DataError::custom("data for LanguageDisplayNames")
-                    .with_req(LocaleNamesLanguageLongV1::INFO, req)
-            })?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
-        })
-    }
-}
-
-impl IterableDataProviderCached<LocaleNamesLanguageLongV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let mut result = HashSet::new();
-        let displaynames = self.cldr()?.displaynames();
-        for locale in displaynames.list_locales()?.filter(|locale| {
-            // The directory might exist without languages.json
-            self.cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(locale, "languages.json")
-                .unwrap_or_default()
-        }) {
-            let data: &cldr_serde::displaynames::language::Resource =
-                displaynames.read_and_parse(&locale, "languages.json")?;
-            for language_str in data.main.value.localedisplaynames.languages.keys() {
-                if language_str.contains("-alt-") {
-                    continue;
-                }
-                let data_identifier = DataIdentifierCow::from_owned(
-                    DataMarkerAttributes::try_from_string(language_str.clone()).map_err(|_| {
-                        DataError::custom("Failed to parse language as attribute")
-                            .with_debug_context(&language_str)
-                    })?,
-                    locale,
-                );
-                result.insert(data_identifier);
-            }
-        }
-        Ok(result)
-    }
-}
-
-impl DataProvider<LocaleNamesLanguageShortV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LocaleNamesLanguageShortV1>, DataError> {
-        self.check_req::<LocaleNamesLanguageShortV1>(req)?;
-
-        let data: &cldr_serde::displaynames::language::Resource = self
-            .cldr()?
-            .displaynames()
-            .read_and_parse(req.id.locale, "languages.json")?;
-
-        let mut key = req.id.marker_attributes.as_str().to_string();
-        key.push_str(ALT_SHORT_SUBSTRING);
-
-        let name = data
-            .main
-            .value
-            .localedisplaynames
-            .languages
-            .get(&key)
-            .ok_or_else(|| {
-                DataError::custom("data for LanguageDisplayNames")
-                    .with_req(LocaleNamesLanguageShortV1::INFO, req)
-            })?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
-        })
-    }
-}
-
-impl IterableDataProviderCached<LocaleNamesLanguageShortV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let mut result = HashSet::new();
-        let displaynames = self.cldr()?.displaynames();
-        for locale in displaynames.list_locales()?.filter(|locale| {
-            // The directory might exist without languages.json
-            self.cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(locale, "languages.json")
-                .unwrap_or_default()
-        }) {
-            let data: &cldr_serde::displaynames::language::Resource =
-                displaynames.read_and_parse(&locale, "languages.json")?;
-            for language_str in data.main.value.localedisplaynames.languages.keys() {
-                if let Some(language) = language_str.strip_suffix(ALT_SHORT_SUBSTRING) {
-                    let data_identifier = DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(language.to_string()).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse language as attribute")
-                                    .with_debug_context(&language)
-                            },
-                        )?,
-                        locale,
-                    );
-                    result.insert(data_identifier);
-                }
-            }
-        }
-        Ok(result)
-    }
-}
-
-impl DataProvider<LocaleNamesLanguageMenuShortV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LocaleNamesLanguageMenuShortV1>, DataError> {
-        self.check_req::<LocaleNamesLanguageMenuShortV1>(req)?;
-
-        let data: &cldr_serde::displaynames::language::Resource = self
-            .cldr()?
-            .displaynames()
-            .read_and_parse(req.id.locale, "languages.json")?;
-
-        let mut key = req.id.marker_attributes.as_str().to_string();
-        key.push_str(ALT_MENU_SUBSTRING);
-
-        let name = data
-            .main
-            .value
-            .localedisplaynames
-            .languages
-            .get(&key)
-            .ok_or_else(|| {
-                DataError::custom("data for LanguageDisplayNames")
-                    .with_req(LocaleNamesLanguageMenuShortV1::INFO, req)
-            })?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
-        })
-    }
-}
-
-impl IterableDataProviderCached<LocaleNamesLanguageMenuShortV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let mut result = HashSet::new();
-        let displaynames = self.cldr()?.displaynames();
-        for locale in displaynames.list_locales()?.filter(|locale| {
-            // The directory might exist without languages.json
-            self.cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(locale, "languages.json")
-                .unwrap_or_default()
-        }) {
-            let data: &cldr_serde::displaynames::language::Resource =
-                displaynames.read_and_parse(&locale, "languages.json")?;
-            for language_str in data.main.value.localedisplaynames.languages.keys() {
-                if let Some(language) = language_str.strip_suffix(ALT_MENU_SUBSTRING) {
-                    let data_identifier = DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(language.to_string()).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse language as attribute")
-                                    .with_debug_context(&language)
-                            },
-                        )?,
-                        locale,
-                    );
-                    result.insert(data_identifier);
-                }
-            }
-        }
-        Ok(result)
-    }
-}
-
-impl DataProvider<LocaleNamesLanguageMenuLongV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LocaleNamesLanguageMenuLongV1>, DataError> {
-        self.check_req::<LocaleNamesLanguageMenuLongV1>(req)?;
-
-        let data: &cldr_serde::displaynames::language::Resource = self
-            .cldr()?
-            .displaynames()
-            .read_and_parse(req.id.locale, "languages.json")?;
-
-        let mut key = req.id.marker_attributes.as_str().to_string();
-        key.push_str(ALT_LONG_SUBSTRING);
-
-        let name = data
-            .main
-            .value
-            .localedisplaynames
-            .languages
-            .get(&key)
-            .ok_or_else(|| {
-                DataError::custom("data for LanguageDisplayNames")
-                    .with_req(LocaleNamesLanguageMenuLongV1::INFO, req)
-            })?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
-        })
-    }
-}
-
-impl IterableDataProviderCached<LocaleNamesLanguageMenuLongV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let mut result = HashSet::new();
-        let displaynames = self.cldr()?.displaynames();
-        for locale in displaynames.list_locales()?.filter(|locale| {
-            // The directory might exist without languages.json
-            self.cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(locale, "languages.json")
-                .unwrap_or_default()
-        }) {
-            let data: &cldr_serde::displaynames::language::Resource =
-                displaynames.read_and_parse(&locale, "languages.json")?;
-            for language_str in data.main.value.localedisplaynames.languages.keys() {
-                if let Some(language) = language_str.strip_suffix(ALT_LONG_SUBSTRING) {
-                    let data_identifier = DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(language.to_string()).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse language as attribute")
-                                    .with_debug_context(&language)
-                            },
-                        )?,
-                        locale,
-                    );
-                    result.insert(data_identifier);
-                }
-            }
-        }
-        Ok(result)
-    }
-}
-
-/// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
-const ALT_SUBSTRING: &str = "-alt-";
-/// Substring used to denote short display names data variants for a given language. For example: "az-alt-short".
-const ALT_SHORT_SUBSTRING: &str = "-alt-short";
-/// Substring used to denote long display names data variants for a given language. For example: "az-alt-long".
-const ALT_LONG_SUBSTRING: &str = "-alt-long";
-/// Substring used to denote menu display names data variants for a given language. For example: "az-alt-menu".
-const ALT_MENU_SUBSTRING: &str = "-alt-menu";
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageMenuLongV1,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    Some(ALT_LONG_SUBSTRING),
+    "LanguageDisplayNames"
+);
 
 impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
