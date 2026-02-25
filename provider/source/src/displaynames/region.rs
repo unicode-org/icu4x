@@ -71,9 +71,7 @@ impl DataProvider<LocaleNamesRegionLongV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(SingleDisplayName {
-                name: VarZeroCow::from_encodeable(&name),
-            }),
+            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(&name)),
         })
     }
 }
