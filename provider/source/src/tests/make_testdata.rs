@@ -91,6 +91,12 @@ fn make_testdata() {
             "aa" | "bn" | "en" | "fr" | "ru" | "zh" | "en-GB" | "zh-Hant" | "de-CH"
         )
     })
+    .with_marker_attributes_filter("locale_names_script", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "Latn" | "Cyrl" | "Hans" | "Hant" | "Deva" | "Arab"
+        )
+    })
     .with_marker_attributes_filter("numbering_system", |attrs| {
         matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")
     })

@@ -142,7 +142,10 @@ impl IterableDataProviderCached<LocaleNamesLanguageLongV1> for SourceDataProvide
 }
 
 impl DataProvider<LocaleNamesLanguageShortV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesLanguageShortV1>, DataError> {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<LocaleNamesLanguageShortV1>, DataError> {
         self.check_req::<LocaleNamesLanguageShortV1>(req)?;
 
         let data: &cldr_serde::displaynames::language::Resource = self
@@ -188,10 +191,12 @@ impl IterableDataProviderCached<LocaleNamesLanguageShortV1> for SourceDataProvid
             for language_str in data.main.value.localedisplaynames.languages.keys() {
                 if let Some(language) = language_str.strip_suffix(ALT_SHORT_SUBSTRING) {
                     let data_identifier = DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(language.to_string()).map_err(|_| {
-                            DataError::custom("Failed to parse language as attribute")
-                                .with_debug_context(&language)
-                        })?,
+                        DataMarkerAttributes::try_from_string(language.to_string()).map_err(
+                            |_| {
+                                DataError::custom("Failed to parse language as attribute")
+                                    .with_debug_context(&language)
+                            },
+                        )?,
                         locale,
                     );
                     result.insert(data_identifier);
