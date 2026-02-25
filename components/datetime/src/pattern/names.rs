@@ -3807,7 +3807,7 @@ impl RawDateTimeNamesBorrowed<'_> {
                     Some(MonthPlaceholderValue::Numeric)
                 }
             }
-            MonthNames::LeapPattern(data) => if month_index < data.len() - 3 {
+            MonthNames::LeapPattern(data) => if month_index < data.len() - 2 {
                 data.get(month_index)
             } else {
                 None
@@ -3817,11 +3817,11 @@ impl RawDateTimeNamesBorrowed<'_> {
                     LeapStatus::Normal => MonthPlaceholderValue::PlainString(normal_name),
                     LeapStatus::Leap => MonthPlaceholderValue::StringPattern(
                         normal_name,
-                        SinglePlaceholderPattern::from_ref_store(&data[data.len() - 3]).ok()?,
+                        SinglePlaceholderPattern::from_ref_store(&data[data.len() - 2]).ok()?,
                     ),
                     LeapStatus::LeapBase => MonthPlaceholderValue::StringPattern(
                         normal_name,
-                        SinglePlaceholderPattern::from_ref_store(&data[data.len() - 2]).ok()?,
+                        SinglePlaceholderPattern::from_ref_store(&data[data.len() - 1]).ok()?,
                     ),
                     _ => {
                         debug_assert!(false, "unhandled LeapStatus");

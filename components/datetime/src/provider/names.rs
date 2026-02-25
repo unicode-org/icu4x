@@ -314,10 +314,9 @@ pub enum MonthNames<'data> {
     ),
 
     /// This represents the formatting to apply to calendars with leap months.
-    /// The last three elements are patterns:
-    /// * N-3: `SinglePlaceholderPattern` for leap months
-    /// * N-2: `SinglePlaceholderPattern` for standard months after leap months
-    /// * N-1: `DoublePlaceholderPattern` for combined leap months
+    /// The last two elements are patterns:
+    /// * N-2: `SinglePlaceholderPattern` for leap months
+    /// * N-1: `SinglePlaceholderPattern` for leap base months
     LeapPattern(VarZeroVec<'data, str>),
 }
 

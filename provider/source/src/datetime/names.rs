@@ -339,14 +339,22 @@ fn months_convert(
     let months = &data.months.get_symbols(context, length).0;
 
     if calendar == DatagenCalendar::Hebrew {
-        // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
+        let shevat = &months["5"];
+        let adar_i = &months["6"];
+        let adar = &months["7"];
+        let adar_ii = &months["7-yeartype-leap"];
+        // Adar I is the only leap month, so we can hardcode it as the leap pattern. The placeholder
+        // is the normal fifth month (Shevat), we can try reducing the data size by using it (but it
+        // should not actually match).
         let leap_pattern = SinglePlaceholderPattern::try_from_str(
-            &months["6"].replace(&months["5"], "{0}"),
+            &adar_i.replace(shevat, "{0}"),
             Default::default(),
         )
         .unwrap();
-        let standard_after_leap_pattern = SinglePlaceholderPattern::try_from_str(
-            &months["7-yeartype-leap"].replace(&months["7"], "{0}"),
+        // Adar II is the only leap-base month, so we can hardcode it as the leap-base pattern. The
+        // placeholder is the normal sixth month (Adar), we can reduce the data size by using it.
+        let leap_base_pattern = SinglePlaceholderPattern::try_from_str(
+            &adar_ii.replace(adar, "{0}"),
             Default::default(),
         )
         .unwrap();
@@ -365,8 +373,7 @@ fn months_convert(
             months["12"].as_str(),
             months["13"].as_str(),
             &leap_pattern.store,
-            &standard_after_leap_pattern.store,
-            "",
+            &leap_base_pattern.store,
         ];
         Ok(MonthNames::LeapPattern((&symbols).into()))
     } else {
@@ -391,14 +398,8 @@ fn months_convert(
 
         if let Some(patterns) = data.month_patterns.as_ref() {
             symbols.push(&patterns.get_symbols(context, length).leap.0.store);
-            symbols.push(
-                &patterns
-                    .get_symbols(context, length)
-                    .standard_after_leap
-                    .0
-                    .store,
-            );
-            symbols.push(&patterns.get_symbols(context, length).combined.0.store);
+            // Leap bases format as normal months for non-Hebrew
+            symbols.push(&SinglePlaceholderPattern::PASS_THROUGH.store);
             Ok(MonthNames::LeapPattern((&symbols).into()))
         } else {
             Ok(MonthNames::Linear((&symbols).into()))
