@@ -51,6 +51,7 @@ include!("long_hour_relative_v1.rs.data");
 include!("units_names_length_outlier_v1.rs.data");
 include!("short_second_relative_v1.rs.data");
 include!("variant_display_names_v1.rs.data");
+include!("locale_names_language_menu_long_v1.rs.data");
 include!("narrow_month_relative_v1.rs.data");
 include!("narrow_day_relative_v1.rs.data");
 include!("transliterator_rules_v1.rs.data");
@@ -154,6 +155,7 @@ macro_rules! impl_data_provider {
         impl_units_names_length_outlier_v1!($provider);
         impl_short_second_relative_v1!($provider);
         impl_variant_display_names_v1!($provider);
+        impl_locale_names_language_menu_long_v1!($provider);
         impl_narrow_month_relative_v1!($provider);
         impl_narrow_day_relative_v1!($provider);
         impl_transliterator_rules_v1!($provider);

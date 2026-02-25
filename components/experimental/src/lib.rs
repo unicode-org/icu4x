@@ -93,6 +93,7 @@ pub mod provider {
         impl_locale_names_language_long_v1!(Baked);
         impl_locale_names_language_short_v1!(Baked);
         impl_locale_names_language_menu_short_v1!(Baked);
+        impl_locale_names_language_menu_long_v1!(Baked);
         impl_locale_names_script_long_v1!(Baked);
         impl_locale_names_script_short_v1!(Baked);
         impl_locale_names_variant_long_v1!(Baked);
@@ -169,6 +170,7 @@ pub mod provider {
         super::displaynames::provider::LocaleNamesLanguageLongV1::INFO,
         super::displaynames::provider::LocaleNamesLanguageShortV1::INFO,
         super::displaynames::provider::LocaleNamesLanguageMenuShortV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMenuLongV1::INFO,
         super::displaynames::provider::LocaleNamesScriptLongV1::INFO,
         super::displaynames::provider::LocaleNamesScriptShortV1::INFO,
         super::displaynames::provider::LocaleNamesVariantLongV1::INFO,
