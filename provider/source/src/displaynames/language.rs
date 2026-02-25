@@ -11,6 +11,7 @@ use icu::locale::subtags::Language;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::VarZeroCow;
 
 impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LanguageDisplayNamesV1>, DataError> {
@@ -78,6 +79,65 @@ impl IterableDataProviderCached<LocaleDisplayNamesV1> for SourceDataProvider {
             })
             .map(DataIdentifierCow::from_locale)
             .collect())
+    }
+}
+
+impl DataProvider<LocaleNamesLanguageLongV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesLanguageLongV1>, DataError> {
+        self.check_req::<LocaleNamesLanguageLongV1>(req)?;
+
+        let data: &cldr_serde::displaynames::language::Resource = self
+            .cldr()?
+            .displaynames()
+            .read_and_parse(req.id.locale, "languages.json")?;
+
+        let name = data
+            .main
+            .value
+            .localedisplaynames
+            .languages
+            .get(req.id.marker_attributes.as_str())
+            .ok_or_else(|| {
+                DataError::custom("data for LanguageDisplayNames")
+                    .with_req(LocaleNamesLanguageLongV1::INFO, req)
+            })?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
+        })
+    }
+}
+
+impl IterableDataProviderCached<LocaleNamesLanguageLongV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        let mut result = HashSet::new();
+        let displaynames = self.cldr()?.displaynames();
+        for locale in displaynames.list_locales()?.filter(|locale| {
+            // The directory might exist without languages.json
+            self.cldr()
+                .unwrap()
+                .displaynames()
+                .file_exists(locale, "languages.json")
+                .unwrap_or_default()
+        }) {
+            let data: &cldr_serde::displaynames::language::Resource =
+                displaynames.read_and_parse(&locale, "languages.json")?;
+            for language_str in data.main.value.localedisplaynames.languages.keys() {
+                if language_str.contains("-alt-") {
+                    continue;
+                }
+                let data_identifier = DataIdentifierCow::from_owned(
+                    DataMarkerAttributes::try_from_string(language_str.clone()).map_err(|_| {
+                        DataError::custom("Failed to parse language as attribute")
+                            .with_debug_context(&language_str)
+                    })?,
+                    locale,
+                );
+                result.insert(data_identifier);
+            }
+        }
+        Ok(result)
     }
 }
 
@@ -302,5 +362,23 @@ mod tests {
                 .unwrap(),
             "Swiss High German"
         );
+    }
+
+    #[test]
+    fn test_locale_names_language_long() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageLongV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("aa").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Afar");
     }
 }
