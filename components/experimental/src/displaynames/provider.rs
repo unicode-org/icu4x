@@ -191,6 +191,15 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
+    /// Data marker for menu-short language display names.
+    LocaleNamesLanguageMenuShortV1,
+    "locale/names/language/menu_short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
     /// Data marker for script display names.
     LocaleNamesScriptLongV1,
     "locale/names/script/long/v1",

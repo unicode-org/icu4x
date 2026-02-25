@@ -15,6 +15,7 @@ include!("long_minute_relative_v1.rs.data");
 include!("currency_patterns_data_v1.rs.data");
 include!("long_quarter_relative_v1.rs.data");
 include!("short_month_relative_v1.rs.data");
+include!("locale_names_language_menu_short_v1.rs.data");
 include!("locale_names_script_long_v1.rs.data");
 include!("locale_names_variant_short_v1.rs.data");
 include!("locale_names_language_short_v1.rs.data");
@@ -117,6 +118,7 @@ macro_rules! impl_data_provider {
         impl_currency_patterns_data_v1!($provider);
         impl_long_quarter_relative_v1!($provider);
         impl_short_month_relative_v1!($provider);
+        impl_locale_names_language_menu_short_v1!($provider);
         impl_locale_names_script_long_v1!($provider);
         impl_locale_names_variant_short_v1!($provider);
         impl_locale_names_language_short_v1!($provider);
