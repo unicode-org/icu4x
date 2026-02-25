@@ -193,7 +193,7 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// Data marker for menu-short language display names.
     LocaleNamesLanguageMenuShortV1,
-    "locale/names/language/menu_short/v1",
+    "locale/names/language/menu/short/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
@@ -202,7 +202,7 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// Data marker for menu-long language display names.
     LocaleNamesLanguageMenuLongV1,
-    "locale/names/language/menu_long/v1",
+    "locale/names/language/menu/long/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
