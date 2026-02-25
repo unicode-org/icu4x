@@ -64,13 +64,14 @@ impl RegionDisplayName {
         ///     DisplayNamesPreferences, RegionDisplayName,
         /// };
         /// use icu::locale::{locale, subtags::region};
+        /// use writeable::assert_writeable_eq;
         ///
         /// let mut prefs = DisplayNamesPreferences::default();
         /// prefs.locale_preferences = (&locale!("en-001")).into();
         /// let display_name = RegionDisplayName::try_new(prefs, region!("AE"))
         ///     .expect("Data should load successfully");
         ///
-        /// assert_eq!(display_name.to_string(), "United Arab Emirates");
+        /// assert_writeable_eq!(display_name, "United Arab Emirates");
         /// ```
         functions: [
             try_new,
@@ -610,9 +611,10 @@ fn test_language_display() {
 fn test_region_load_long() {
     use icu_locale_core::locale;
     use icu_locale_core::subtags::region;
+    use writeable::assert_writeable_eq;
 
     let mut prefs = DisplayNamesPreferences::default();
     prefs.locale_preferences = (&locale!("en-001")).into();
     let data = RegionDisplayName::try_new(prefs, region!("AE")).unwrap();
-    assert_eq!(data.to_string(), "United Arab Emirates");
+    assert_writeable_eq!(data, "United Arab Emirates");
 }
