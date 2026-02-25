@@ -97,6 +97,9 @@ fn make_testdata() {
             "Latn" | "Cyrl" | "Hans" | "Hant" | "Deva" | "Arab" | "Cans"
         )
     })
+    .with_marker_attributes_filter("locale_names_variant", |attrs| {
+        matches!(attrs.as_str(), "POSIX")
+    })
     .with_marker_attributes_filter("numbering_system", |attrs| {
         matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")
     })

@@ -207,3 +207,12 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_script",
 );
+
+icu_provider::data_marker!(
+    /// Data marker for variant display names.
+    LocaleNamesVariantLongV1,
+    "locale/names/variant/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_variant",
+);

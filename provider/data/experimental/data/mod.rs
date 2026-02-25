@@ -3,6 +3,7 @@ include!("short_day_relative_v1.rs.data");
 include!("long_second_relative_v1.rs.data");
 include!("person_names_format_v1.rs.data");
 include!("percent_essentials_v1.rs.data");
+include!("locale_names_variant_long_v1.rs.data");
 include!("units_names_mass_outlier_v1.rs.data");
 include!("short_quarter_relative_v1.rs.data");
 include!("short_week_relative_v1.rs.data");
@@ -103,6 +104,7 @@ macro_rules! impl_data_provider {
         impl_long_second_relative_v1!($provider);
         impl_person_names_format_v1!($provider);
         impl_percent_essentials_v1!($provider);
+        impl_locale_names_variant_long_v1!($provider);
         impl_units_names_mass_outlier_v1!($provider);
         impl_short_quarter_relative_v1!($provider);
         impl_short_week_relative_v1!($provider);
