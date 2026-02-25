@@ -89,6 +89,69 @@ impl IterableDataProviderCached<LocaleNamesVariantLongV1> for SourceDataProvider
     }
 }
 
+impl DataProvider<LocaleNamesVariantShortV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesVariantShortV1>, DataError> {
+        self.check_req::<LocaleNamesVariantShortV1>(req)?;
+
+        let data: &cldr_serde::displaynames::variant::Resource = self
+            .cldr()?
+            .displaynames()
+            .read_and_parse(req.id.locale, "variants.json")?;
+
+        let mut key = req.id.marker_attributes.as_str().to_string();
+        key.push_str(ALT_SHORT_SUBSTRING);
+
+        let name = data
+            .main
+            .value
+            .localedisplaynames
+            .variants
+            .get(&key)
+            .ok_or_else(|| {
+                DataError::custom("data for VariantDisplayNames")
+                    .with_req(LocaleNamesVariantShortV1::INFO, req)
+            })?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(name)),
+        })
+    }
+}
+
+impl IterableDataProviderCached<LocaleNamesVariantShortV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        let mut result = HashSet::new();
+        let displaynames = self.cldr()?.displaynames();
+        for locale in displaynames.list_locales()?.filter(|locale| {
+            // The directory might exist without variants.json
+            self.cldr()
+                .unwrap()
+                .displaynames()
+                .file_exists(locale, "variants.json")
+                .unwrap_or_default()
+        }) {
+            let data: &cldr_serde::displaynames::variant::Resource =
+                displaynames.read_and_parse(&locale, "variants.json")?;
+            for variant_str in data.main.value.localedisplaynames.variants.keys() {
+                if let Some(variant) = variant_str.strip_suffix(ALT_SHORT_SUBSTRING) {
+                    let data_identifier = DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_string(variant.to_string()).map_err(
+                            |_| {
+                                DataError::custom("Failed to parse variant as attribute")
+                                    .with_debug_context(&variant)
+                            },
+                        )?,
+                        locale,
+                    );
+                    result.insert(data_identifier);
+                }
+            }
+        }
+        Ok(result)
+    }
+}
+
 impl IterableDataProviderCached<VariantDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
@@ -110,6 +173,8 @@ impl IterableDataProviderCached<VariantDisplayNamesV1> for SourceDataProvider {
 
 /// Substring used to denote alternative display names data variants for a given variant. For example: "FONUPA-alt-secondary".
 const ALT_SUBSTRING: &str = "-alt-";
+/// Substring used to denote short display names data variants for a given variant. For example: "POSIX-alt-short".
+const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     type Error = ParseError;

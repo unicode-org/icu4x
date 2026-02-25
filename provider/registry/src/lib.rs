@@ -310,6 +310,7 @@ macro_rules! registry(
             icu::experimental::displaynames::provider::LocaleNamesScriptLongV1: LocaleNamesScriptLongV1,
             icu::experimental::displaynames::provider::LocaleNamesScriptShortV1: LocaleNamesScriptShortV1,
             icu::experimental::displaynames::provider::LocaleNamesVariantLongV1: LocaleNamesVariantLongV1,
+            icu::experimental::displaynames::provider::LocaleNamesVariantShortV1: LocaleNamesVariantShortV1,
             icu::experimental::measure::provider::UnitIdsV1: UnitIdsV1,
             icu::experimental::relativetime::provider::LongSecondRelativeV1: LongSecondRelativeV1,
             icu::experimental::relativetime::provider::ShortSecondRelativeV1: ShortSecondRelativeV1,
