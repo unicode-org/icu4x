@@ -4,13 +4,19 @@
 
 use core::fmt::Display;
 
+/// Starts at 1 for niche optimization of `Result<(), VarZeroVecFormatError>`
 #[derive(Debug)]
+#[repr(u8)]
 pub enum VarZeroVecFormatError {
     /// The byte buffer was not in the appropriate format for [`VarZeroVec`](crate::VarZeroVec).
-    Metadata,
+    Metadata = 1,
     /// One of the values could not be decoded.
     Values(crate::ule::UleError),
 }
+
+// Ensure niche optimization is working
+const _: () =
+    assert!(size_of::<Result<(), VarZeroVecFormatError>>() == size_of::<VarZeroVecFormatError>());
 
 impl core::error::Error for VarZeroVecFormatError {}
 

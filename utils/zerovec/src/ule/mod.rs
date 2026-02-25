@@ -400,8 +400,12 @@ pub use zerovec_derive::ULE;
 pub use zerovec_derive::VarULE;
 
 /// An error type to be used for decoding slices of ULE types
+///
+/// Starts at 1 so that `Result<(), UleError>` is niche-optimized
+/// (see <https://github.com/unicode-org/icu4x/issues/2801>)
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
+#[repr(u8)]
 pub enum UleError {
     /// Attempted to parse a buffer into a slice of the given ULE type but its
     /// length was not compatible.
@@ -409,7 +413,7 @@ pub enum UleError {
     /// Typically created by a [`ULE`] impl via [`UleError::length()`].
     ///
     /// [`ULE`]: crate::ule::ULE
-    InvalidLength { ty: &'static str, len: usize },
+    InvalidLength { ty: &'static str, len: usize } = 1,
     /// The byte sequence provided for `ty` failed to parse correctly in the
     /// given ULE type.
     ///
@@ -418,6 +422,9 @@ pub enum UleError {
     /// [`ULE`]: crate::ule::ULE
     ParseError { ty: &'static str },
 }
+
+// Ensure niche optimization is working
+const _: () = assert!(size_of::<Result<(), UleError>>() == size_of::<UleError>());
 
 impl fmt::Display for UleError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
