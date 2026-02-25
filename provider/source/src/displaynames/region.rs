@@ -108,6 +108,69 @@ impl IterableDataProviderCached<LocaleNamesRegionLongV1> for SourceDataProvider 
     }
 }
 
+impl DataProvider<LocaleNamesRegionShortV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesRegionShortV1>, DataError> {
+        self.check_req::<LocaleNamesRegionShortV1>(req)?;
+
+        let data: &cldr_serde::displaynames::region::Resource = self
+            .cldr()?
+            .displaynames()
+            .read_and_parse(req.id.locale, "territories.json")?;
+
+        let mut key = req.id.marker_attributes.as_str().to_string();
+        key.push_str(SHORT_SUBSTRING);
+
+        let name = data
+            .main
+            .value
+            .localedisplaynames
+            .regions
+            .get(&key)
+            .ok_or_else(|| {
+                DataError::custom("data for RegionDisplayNames")
+                    .with_req(LocaleNamesRegionShortV1::INFO, req)
+            })?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(&name)),
+        })
+    }
+}
+
+impl IterableDataProviderCached<LocaleNamesRegionShortV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        let mut result = HashSet::new();
+        let displaynames = self.cldr()?.displaynames();
+        for locale in displaynames.list_locales()?.filter(|locale| {
+            // The directory might exist without territories.json
+            self.cldr()
+                .unwrap()
+                .displaynames()
+                .file_exists(locale, "territories.json")
+                .unwrap_or_default()
+        }) {
+            let data: &cldr_serde::displaynames::region::Resource =
+                displaynames.read_and_parse(&locale, "territories.json")?;
+            for region_str in data.main.value.localedisplaynames.regions.keys() {
+                if let Some(region) = region_str.strip_suffix(SHORT_SUBSTRING) {
+                    let data_identifier = DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_string(region.to_string()).map_err(
+                            |_| {
+                                DataError::custom("Failed to parse region as attribute")
+                                    .with_debug_context(&region)
+                            },
+                        )?,
+                        locale,
+                    );
+                    result.insert(data_identifier);
+                }
+            }
+        }
+        Ok(result)
+    }
+}
+
 /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
 const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
@@ -186,5 +249,23 @@ mod tests {
                 .unwrap(),
             "Bosnia"
         );
+    }
+
+    #[test]
+    fn test_locale_names_region_short() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesRegionShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("BA").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Bosnia");
     }
 }

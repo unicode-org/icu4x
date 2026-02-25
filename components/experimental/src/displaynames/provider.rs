@@ -162,3 +162,12 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
 );
+
+icu_provider::data_marker!(
+    /// Data marker for short region display names.
+    LocaleNamesRegionShortV1,
+    "locale/names/region/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_region",
+);

@@ -304,6 +304,7 @@ macro_rules! registry(
             icu::experimental::displaynames::provider::ScriptDisplayNamesV1: ScriptDisplayNamesV1,
             icu::experimental::displaynames::provider::VariantDisplayNamesV1: VariantDisplayNamesV1,
             icu::experimental::displaynames::provider::LocaleNamesRegionLongV1: LocaleNamesRegionLongV1,
+            icu::experimental::displaynames::provider::LocaleNamesRegionShortV1: LocaleNamesRegionShortV1,
             icu::experimental::measure::provider::UnitIdsV1: UnitIdsV1,
             icu::experimental::relativetime::provider::LongSecondRelativeV1: LongSecondRelativeV1,
             icu::experimental::relativetime::provider::ShortSecondRelativeV1: ShortSecondRelativeV1,
