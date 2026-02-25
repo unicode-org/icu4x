@@ -3781,7 +3781,13 @@ impl RawDateTimeNamesBorrowed<'_> {
             }
             MonthNames::LeapLinear(leap_linear) => {
                 let num_months = leap_linear.len() / 2;
-                if month.leap_status() != LeapStatus::Normal {
+                if month.leap_status() == LeapStatus::Leap {
+                    leap_linear.get(month_index + num_months)
+                } else if month.leap_status() == LeapStatus::LeapBase
+                    && month.number() < month.ordinal
+                {
+                    // Detects Hebrew (base after leap) vs Chinese (base before leap).
+                    // In Hebrew, we use leap names for LeapBase months.
                     leap_linear.get(month_index + num_months)
                 } else if month_index < num_months {
                     leap_linear.get(month_index)
