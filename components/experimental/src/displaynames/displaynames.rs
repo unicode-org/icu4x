@@ -52,6 +52,55 @@ pub struct RegionDisplayName {
     payload: DataPayload<LocaleNamesRegionLongV1>,
 }
 
+impl RegionDisplayName {
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
+        /// Loads the long region display name for a given region and locale using compiled data.
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::{
+        ///     DisplayNamesPreferences, RegionDisplayName,
+        /// };
+        /// use icu::locale::{locale, subtags::region};
+        ///
+        /// let mut prefs = DisplayNamesPreferences::default();
+        /// prefs.locale_preferences = (&locale!("en-001")).into();
+        /// let display_name = RegionDisplayName::try_new(prefs, region!("AE"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_eq!(display_name.to_string(), "United Arab Emirates");
+        /// ```
+        functions: [
+            try_new,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesRegionLongV1> + ?Sized>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        region: Region,
+    ) -> Result<Self, DataError> {
+        let locale = LocaleNamesRegionLongV1::make_locale(prefs.locale_preferences);
+        let payload = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str(region.as_str())
+                        .map_err(|_| DataError::custom("Invalid region"))?,
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+        Ok(Self { payload })
+    }
+}
+
 impl writeable::Writeable for RegionDisplayName {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         sink.write_str(self.payload.get())
@@ -110,53 +159,6 @@ impl RegionDisplayNames {
         .or_else(|| data.names.get(&region.to_tinystr().to_unvalidated()))
         // TODO: Respect options.fallback
     }
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::load_long)]
-    pub fn load_long_unstable<D: DataProvider<LocaleNamesRegionLongV1> + ?Sized>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        region: Region,
-    ) -> Result<RegionDisplayName, DataError> {
-        let locale = LocaleNamesRegionLongV1::make_locale(prefs.locale_preferences);
-        let payload = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(region.as_str())
-                        .map_err(|_| DataError::custom("Invalid region"))?,
-                    &locale,
-                ),
-                ..Default::default()
-            })?
-            .payload;
-        Ok(RegionDisplayName { payload })
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<RegionDisplayName, DataError>,
-        /// Loads the long region display name for a given region and locale using compiled data.
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, RegionDisplayNames,
-        /// };
-        /// use icu::locale::{locale, subtags::region};
-        ///
-        /// let mut prefs = DisplayNamesPreferences::default();
-        /// prefs.locale_preferences = (&locale!("en-001")).into();
-        /// let display_name = RegionDisplayNames::load_long(prefs, region!("AE"))
-        ///     .expect("Data should load successfully");
-        ///
-        /// assert_eq!(display_name.to_string(), "United Arab Emirates");
-        /// ```
-        functions: [
-            load_long,
-            load_long_with_buffer_provider,
-            load_long_unstable,
-            Self
-        ]
-    );
 }
 
 /// Lookup of the locale-specific display names by script code.
@@ -611,6 +613,6 @@ fn test_region_load_long() {
 
     let mut prefs = DisplayNamesPreferences::default();
     prefs.locale_preferences = (&locale!("en-001")).into();
-    let data = RegionDisplayNames::load_long(prefs, region!("AE")).unwrap();
+    let data = RegionDisplayName::try_new(prefs, region!("AE")).unwrap();
     assert_eq!(data.to_string(), "United Arab Emirates");
 }
