@@ -934,15 +934,39 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Ordering::Less => -1i64,
         };
 
+        // We don't want to spend time incrementally bumping it up one year
+        // at a time, so let's pre-guess a year delta that is guaranteed to not
+        // surpass.
+        let year_diff = other.year().to_extended_year() - self.year().to_extended_year();
+        let min_years = if year_diff == 0 {
+            0
+        } else {
+            i64::from(year_diff) - sign
+        };
+
+        debug_assert!(!self.surpasses(
+            other,
+            DateDuration::from_signed_ymwd(min_years, 0, 0, 0),
+            sign,
+            cal,
+        ));
+
         // 1. Let _years_ be 0.
         // 1. If _largestUnit_ is ~year~, then
         //   1. Let _candidateYears_ be _sign_.
         //   1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _candidateYears_, 0, 0, 0) is *false*,
         //     1. Set _years_ to _candidateYears_.
         //     1. Set _candidateYears_ to _candidateYears_ + _sign_.
+
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
             let mut candidate_years = sign;
+            if min_years != 0 {
+                // Optimization: we start with min_years since it is guaranteed to not
+                // surpass.
+                candidate_years = min_years
+            };
+
             while !self.surpasses(
                 other,
                 DateDuration::from_signed_ymwd(candidate_years, 0, 0, 0),
@@ -953,6 +977,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_years += sign;
             }
         }
+
         // 1. Let _months_ be 0.
         // 1. If _largestUnit_ is ~year~ or _largestUnit_ is ~month~, then
         //   1. Let _candidateMonths_ be _sign_.
@@ -965,6 +990,25 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Some(DateDurationUnit::Years) | Some(DateDurationUnit::Months)
         ) {
             let mut candidate_months = sign;
+
+            if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
+                // Optimization: No current calendar supports years with month length < 12.
+                // If something is at least N full years away, it is also at least 12*N full months away.
+                //
+                // In the future we can introduce per-calendar routines that are better at estimating a month count.
+                //
+                // We only need to apply this optimization for largest_unit = Months. If the largest_unit is years then
+                // our candidate date is already pretty close and won't need more than 12 iterations to get there.
+                let min_months = min_years * 12;
+                debug_assert!(!self.surpasses(
+                    other,
+                    DateDuration::from_signed_ymwd(years, min_months, 0, 0),
+                    sign,
+                    cal,
+                ));
+                candidate_months = min_months
+            }
+
             while !self.surpasses(
                 other,
                 DateDuration::from_signed_ymwd(years, candidate_months, 0, 0),
@@ -1000,6 +1044,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //   1. Set _days_ to _candidateDays_.
         //   1. Set _candidateDays_ to _candidateDays_ + _sign_.
         let mut days = 0;
+        // There is no pressing need to optimize candidate_days here: the early-return RD arithmetic
+        // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
+        // arrive here with a candidate date that is at most 31 days off. We can run this loop 31 times.
         let mut candidate_days = sign;
         while !self.surpasses(
             other,
