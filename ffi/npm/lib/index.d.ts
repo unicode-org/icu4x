@@ -20,6 +20,8 @@ export { IsoWeekOfYear, IsoWeekOfYear_obj } from "./IsoWeekOfYear"
 
 export { DisplayNamesOptions, DisplayNamesOptions_obj } from "./DisplayNamesOptions"
 
+export { CalendarMismatchedCalendarError } from "./CalendarMismatchedCalendarError"
+
 export { DateTimeMismatchedCalendarError, DateTimeMismatchedCalendarError_obj } from "./DateTimeMismatchedCalendarError"
 
 export { DecimalLimitError } from "./DecimalLimitError"
@@ -273,8 +275,6 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle"
 export { LanguageDisplay } from "./LanguageDisplay"
 
 export { CalendarDateAddError } from "./CalendarDateAddError"
-
-export { CalendarDateDifferenceError } from "./CalendarDateDifferenceError"
 
 export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError"
 

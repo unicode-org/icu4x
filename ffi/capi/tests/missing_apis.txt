@@ -15,7 +15,6 @@
 
 
 icu::calendar::error::EcmaReferenceYearError#Enum
-icu::calendar::error::MismatchedCalendarError#Struct
 icu::calendar::types::LeapStatus#Enum
 icu::calendar::types::Month::leap#FnInStruct
 icu::calendar::types::Month::new#FnInStruct

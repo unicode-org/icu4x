@@ -16,7 +16,7 @@ pub mod ffi {
     use crate::unstable::calendar::ffi::Calendar;
     #[cfg(feature = "unstable")]
     use crate::unstable::errors::ffi::{
-        CalendarDateAddError, CalendarDateDifferenceError, CalendarDateFromFieldsError,
+        CalendarDateAddError, CalendarDateFromFieldsError, CalendarMismatchedCalendarError,
         DateDurationParseError,
     };
     use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
@@ -644,7 +644,7 @@ pub mod ffi {
             duration: DateDuration,
             options: DateAddOptions,
         ) -> Result<Box<Date>, CalendarDateAddError> {
-            Ok(Box::new(Date(self.0.clone().try_added_with_options(
+            Ok(Box::new(Date(self.0.try_added_with_options(
                 duration.into(),
                 options.into(),
             )?)))
@@ -659,10 +659,11 @@ pub mod ffi {
             &self,
             other: &Date,
             options: DateDifferenceOptions,
-        ) -> Result<DateDuration, CalendarDateDifferenceError> {
+        ) -> Result<DateDuration, CalendarMismatchedCalendarError> {
             Ok(self
                 .0
-                .try_until_with_options(&other.0, options.into())?
+                .try_until_with_options(&other.0, options.into())
+                .map_err(|_| CalendarMismatchedCalendarError)?
                 .into())
         }
     }

@@ -17,13 +17,13 @@ namespace capi { struct Date; }
 class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
+struct CalendarMismatchedCalendarError;
 struct DateAddOptions;
 struct DateDifferenceOptions;
 struct DateDuration;
 struct DateFields;
 struct DateFromFieldsOptions;
 class CalendarDateAddError;
-class CalendarDateDifferenceError;
 class CalendarDateFromFieldsError;
 class CalendarError;
 class Rfc9557ParseError;
@@ -269,7 +269,7 @@ public:
    *
    * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
    */
-  inline icu4x::diplomat::result<icu4x::DateDuration, icu4x::CalendarDateDifferenceError> try_until_with_options(const icu4x::Date& other, icu4x::DateDifferenceOptions options) const;
+  inline icu4x::diplomat::result<icu4x::DateDuration, icu4x::CalendarMismatchedCalendarError> try_until_with_options(const icu4x::Date& other, icu4x::DateDifferenceOptions options) const;
 
     inline const icu4x::capi::Date* AsFFI() const;
     inline icu4x::capi::Date* AsFFI();

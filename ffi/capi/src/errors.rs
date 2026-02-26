@@ -113,14 +113,11 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::calendar::cal::AnyCalendarDifferenceError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::error::MismatchedCalendarError, Struct, compact)]
     #[cfg(all(feature = "unstable", feature = "calendar"))]
     #[non_exhaustive]
     #[diplomat::attr(auto, error)]
-    pub enum CalendarDateDifferenceError {
-        Unknown = 0x00,
-        MismatchedCalendars = 0x01,
-    }
+    pub struct CalendarMismatchedCalendarError;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -314,19 +311,6 @@ impl From<icu_calendar::error::DateDurationParseError> for DateDurationParseErro
             icu_calendar::error::DateDurationParseError::NumberOverflow => Self::NumberOverflow,
             icu_calendar::error::DateDurationParseError::PlusNotAllowed => Self::PlusNotAllowed,
             _ => unreachable!(),
-        }
-    }
-}
-
-#[cfg(feature = "calendar")]
-#[cfg(all(feature = "unstable", feature = "calendar"))]
-impl From<icu_calendar::cal::AnyCalendarDifferenceError> for CalendarDateDifferenceError {
-    fn from(e: icu_calendar::cal::AnyCalendarDifferenceError) -> Self {
-        match e {
-            icu_calendar::cal::AnyCalendarDifferenceError::MismatchedCalendars => {
-                Self::MismatchedCalendars
-            }
-            _ => Self::Unknown,
         }
     }
 }

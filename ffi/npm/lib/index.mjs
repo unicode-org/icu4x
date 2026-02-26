@@ -18,6 +18,8 @@ export { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
+export { CalendarMismatchedCalendarError } from "./CalendarMismatchedCalendarError.mjs"
+
 export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError.mjs"
 
 export { DecimalLimitError } from "./DecimalLimitError.mjs"
@@ -271,8 +273,6 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle.mjs"
 export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
 export { CalendarDateAddError } from "./CalendarDateAddError.mjs"
-
-export { CalendarDateDifferenceError } from "./CalendarDateDifferenceError.mjs"
 
 export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError.mjs"
 

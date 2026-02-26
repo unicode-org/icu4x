@@ -20,10 +20,10 @@ part 'BidiPairedBracketType.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarDateAddError.g.dart';
-part 'CalendarDateDifferenceError.g.dart';
 part 'CalendarDateFromFieldsError.g.dart';
 part 'CalendarError.g.dart';
 part 'CalendarKind.g.dart';
+part 'CalendarMismatchedCalendarError.g.dart';
 part 'CanonicalCombiningClass.g.dart';
 part 'CanonicalCombiningClassMap.g.dart';
 part 'CanonicalComposition.g.dart';
@@ -272,6 +272,32 @@ class _FinalizedArena {
     for (final edge in lifetimeAppendArray) {
       edge.add(this);
     }
+  }
+}
+
+final class _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfiUnion extends ffi.Union {
+  external _DateDurationFfi ok;
+
+}
+
+final class _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi extends ffi.Struct {
+  external _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi.ok(_DateDurationFfi val) {
+    final struct = ffi.Struct.create<_ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi.err() {
+    final struct = ffi.Struct.create<_ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi>();
+    struct.isOk = false;
+    return struct;
   }
 }
 

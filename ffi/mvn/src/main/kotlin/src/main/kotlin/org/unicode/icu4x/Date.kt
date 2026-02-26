@@ -31,7 +31,7 @@ internal interface DateLib: Library {
     fun icu4x_Date_is_in_leap_year_mv1(handle: Pointer): Byte
     fun icu4x_Date_calendar_mv1(handle: Pointer): Pointer
     fun icu4x_Date_try_add_with_options_mv1(handle: Pointer, duration: DateDurationNative, options: DateAddOptionsNative): ResultPointerInt
-    fun icu4x_Date_try_until_with_options_mv1(handle: Pointer, other: Pointer, options: DateDifferenceOptionsNative): ResultDateDurationNativeInt
+    fun icu4x_Date_try_until_with_options_mv1(handle: Pointer, other: Pointer, options: DateDifferenceOptionsNative): ResultDateDurationNativeCalendarMismatchedCalendarErrorNative
 }
 /** An ICU4X Date object capable of containing a date for any calendar.
 *
@@ -405,7 +405,7 @@ class Date internal constructor (
             val returnStruct = DateDuration.fromNative(returnVal.union.ok)
             return returnStruct.ok()
         } else {
-            return CalendarDateDifferenceErrorError(CalendarDateDifferenceError.fromNative(returnVal.union.err)).err()
+            return CalendarMismatchedCalendarError().err()
         }
     }
 
