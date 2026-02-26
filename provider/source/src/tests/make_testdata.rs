@@ -86,16 +86,10 @@ fn make_testdata() {
         )
     })
     .with_marker_attributes_filter("locale_names_language", |attrs| {
-        matches!(
-            attrs.as_str(),
-            "fr" | "zh" | "en-GB" | "zh-Hant" | "de-CH"
-        )
+        matches!(attrs.as_str(), "fr" | "zh" | "en-GB" | "zh-Hant" | "de-CH")
     })
     .with_marker_attributes_filter("locale_names_script", |attrs| {
-        matches!(
-            attrs.as_str(),
-            "Latn" | "Hans" | "Hant" | "Cans"
-        )
+        matches!(attrs.as_str(), "Latn" | "Hans" | "Hant" | "Cans")
     })
     .with_marker_attributes_filter("locale_names_variant", |attrs| {
         matches!(attrs.as_str(), "POSIX")

@@ -35,8 +35,7 @@ macro_rules! impl_displaynames_v1 {
                     .$field
                     .get(&key)
                     .ok_or_else(|| {
-                        DataError::custom(concat!("data for ", $label))
-                            .with_req($marker::INFO, req)
+                        DataError::custom(concat!("data for ", $label)).with_req($marker::INFO, req)
                     })?;
 
                 Ok(DataResponse {
