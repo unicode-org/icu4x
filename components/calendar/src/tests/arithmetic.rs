@@ -102,11 +102,6 @@ super::test_all_cals!(
 
         let mut durations = Vec::new();
 
-        // Check +/- 65 days
-        for i in (-65..=65).filter(|i| *i != 0) {
-            durations.push(new_duration(0, 0, 0, i));
-        }
-
         // Check +/- 30 months
         for i in (-30..=30).filter(|i| *i != 0) {
             durations.push(new_duration(0, i, 0, 0));
@@ -221,5 +216,36 @@ super::test_all_cals!(
         }
 
         insta::assert_snapshot!(format!("date_arithmetic_{}", cal.debug_name()), outputs);
+    }
+);
+
+super::test_all_cals!(
+    fn test_day_arithmetic<C: Calendar + Copy>(cal: C) {
+        let start_date = Date::try_new_iso(2000, 1, 1).unwrap();
+        let end_date = Date::try_new_iso(2004, 12, 31).unwrap();
+        let start_rd = start_date.to_rata_die();
+        let end_rd = end_date.to_rata_die();
+
+        let add_options = DateAddOptions {
+            overflow: Some(Overflow::Constrain),
+        };
+        let diff_options = DateDifferenceOptions {
+            largest_unit: Some(DateDurationUnit::Days),
+        };
+
+        for rd_offset in 0..=(end_rd - start_rd) {
+            let date = Date::from_rata_die(start_rd + rd_offset, cal);
+
+            // Check +/- 65 days
+            for i in -65..=65 {
+                let duration = DateDuration::for_days(i);
+                let added_date = date.try_added_with_options(duration, add_options).unwrap();
+                let calculated_duration = date
+                    .try_until_with_options(&added_date, diff_options)
+                    .unwrap();
+                assert_eq!(duration, calculated_duration);
+                assert_eq!(i, added_date.to_rata_die() - date.to_rata_die());
+            }
+        }
     }
 );
