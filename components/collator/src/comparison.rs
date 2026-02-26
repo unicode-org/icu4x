@@ -848,7 +848,7 @@ impl CollatorBorrowed<'static> {
     ///
     /// ✨ *Enabled with the `unstable` Cargo feature.*
     #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "unstable")]
+    #[cfg(feature = "unstable")]    
     pub const fn new_root() -> Self {
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1
@@ -912,12 +912,12 @@ impl CollatorBorrowed<'static> {
                         }
                     },
                 }
-            },
+            },         
             root: crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1,
             tailoring: None,
             jamo: crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1,
             options: CollatorOptionsBitField::default(),
-            diacritics: crate::provider::Baked::SINGLETON_COLLATION_DIACRITICS_V1,
+            diacritics: crate::provider::Baked::COLLATION_DIACRITICS_V1_UND,
             reordering: None,
             decompositions: icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1,
             tables: icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1,
