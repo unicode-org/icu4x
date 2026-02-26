@@ -397,10 +397,7 @@ impl<A: AsCalendar> Date<A> {
             .calendar
             .as_calendar()
             .add(&self.inner, duration, options)?;
-        Ok(Self {
-            inner,
-            calendar: self.calendar.clone(),
-        })
+        Ok(Self::from_raw(inner, self.calendar.clone()))
     }
 
     /// Calculating the duration between `other - self`
