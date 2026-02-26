@@ -274,12 +274,7 @@ impl<Tz: chrono::TimeZone> GetField<Option<UtcOffset>> for chrono::DateTime<Tz> 
 impl<Tz: chrono::TimeZone> GetField<ZoneNameTimestamp> for chrono::DateTime<Tz> {
     #[inline]
     fn get_field(&self) -> ZoneNameTimestamp {
-        ZoneNameTimestamp::from_zoned_date_time_iso(
-            ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-                self.timestamp() * 1000,
-                UtcOffset::zero(),
-            ),
-        )
+        ZoneNameTimestamp::from_epoch_seconds(self.timestamp())
     }
 }
 

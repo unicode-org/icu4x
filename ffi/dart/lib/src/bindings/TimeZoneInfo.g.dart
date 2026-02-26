@@ -66,7 +66,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_epoch_seconds)
   TimeZoneInfo atTimestamp(int timestamp) {
     final result = _icu4x_TimeZoneInfo_at_timestamp_mv1(_ffi, timestamp);
     return TimeZoneInfo._fromFfi(result, []);

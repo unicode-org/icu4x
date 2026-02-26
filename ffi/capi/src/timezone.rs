@@ -194,6 +194,11 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::rust_link(
+            icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
             icu::time::zone::ZoneNameTimestamp::far_in_future,
             FnInStruct,
             hidden
@@ -223,21 +228,15 @@ pub mod ffi {
         /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_zone_name_timestamp, FnInStruct)]
         #[diplomat::rust_link(
-            icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso,
+            icu::time::zone::ZoneNameTimestamp::from_epoch_seconds,
             FnInStruct,
             compact
         )]
-        #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp, Struct, compact)]
         pub fn at_timestamp(&self, timestamp: i64) -> Box<Self> {
             Box::new(Self {
-                zone_name_timestamp: Some(
-                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
-                        icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-                            timestamp,
-                            icu_time::zone::UtcOffset::zero(),
-                        ),
-                    ),
-                ),
+                zone_name_timestamp: Some(icu_time::zone::ZoneNameTimestamp::from_epoch_seconds(
+                    timestamp / 1000,
+                )),
                 ..*self
             })
         }
