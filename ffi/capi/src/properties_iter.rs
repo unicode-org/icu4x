@@ -24,7 +24,7 @@ pub mod ffi {
 
     /// An iterator over code point ranges, produced by `CodePointSetData` or
     /// one of the `CodePointMapData` types
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     pub struct CodePointRangeIterator<'a>(
         pub Box<dyn Iterator<Item = RangeInclusive<DiplomatChar>> + 'a>,
     );

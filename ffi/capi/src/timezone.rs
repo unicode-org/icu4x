@@ -283,7 +283,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
         #[allow(deprecated)]
         pub fn infer_variant(
-            &mut self,
+            &self,
             _offset_calculator: &crate::unstable::variant_offset::ffi::VariantOffsetsCalculator,
         ) -> Option<()> {
             Some(())

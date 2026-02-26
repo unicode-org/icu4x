@@ -11,7 +11,7 @@ pub mod ffi {
 
     use writeable::Writeable;
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
     #[diplomat::rust_link(icu::locale::Locale, Struct)]
     #[diplomat::rust_link(icu::locale::DataLocale, Struct, hidden)]

@@ -229,7 +229,7 @@ pub mod ffi {
     }
 
     /// Bidi information for a single processed paragraph
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct BidiParagraph<'info>(pub unicode_bidi::Paragraph<'info, 'info>);
 
