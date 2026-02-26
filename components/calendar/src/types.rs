@@ -493,12 +493,14 @@ pub enum LeapStatus {
     Normal,
     /// A leap month.
     Leap,
-    /// A month that is not itself considered a leap month, but might
-    /// have special formatting because it occurs after a leap month.
+    /// A standard month that has a corresponding leap month
+    /// in the same year.
     ///
-    /// An example of this is the Hebrew month "Adar", which is called
-    /// "Adar II" when it follows the leap month "Adar I".
-    StandardAfterLeap,
+    /// "Corresponding" is used in a formatting sense here:
+    /// even though the Hebrew "Adar I" is `M05L`, the
+    /// `LeapBase` will be `M06` (not `M05`), so formatting
+    /// knows to produce "Adar II".
+    LeapBase,
 }
 
 impl Month {

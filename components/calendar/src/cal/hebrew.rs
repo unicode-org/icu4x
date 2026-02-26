@@ -325,10 +325,17 @@ impl Calendar for Hebrew {
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
         let mut m = MonthInfo::new(self, date.0);
-        #[allow(deprecated)]
+        // Even though the leap month is modeled as M05L,
+        // the actual leap base is M06.
         if m.number() == 6 && m.ordinal == 7 {
-            m.leap_status = LeapStatus::StandardAfterLeap;
-            m.formatting_code = Month::leap(6).code();
+            m.leap_status = LeapStatus::LeapBase;
+            #[allow(deprecated)]
+            {
+                // This is an ICU4X invention, it's not needed by
+                // formatting anymore, but we keep producing it
+                // for now.
+                m.formatting_code = Month::leap(6).code();
+            }
         }
         m
     }
