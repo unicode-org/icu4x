@@ -660,6 +660,25 @@ class UnitError internal constructor(): Exception("Rust error result for Unit") 
     }
 }
 
+internal class ResultDateDurationNativeIntUnion: Union() {
+    @JvmField
+    internal var ok: DateDurationNative = DateDurationNative()
+    @JvmField
+    internal var err: Int = 0
+}
+
+class ResultDateDurationNativeInt: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultDateDurationNativeIntUnion = ResultDateDurationNativeIntUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+}
 internal class ResultDateTimeNativeIntUnion: Union() {
     @JvmField
     internal var ok: DateTimeNative = DateTimeNative()

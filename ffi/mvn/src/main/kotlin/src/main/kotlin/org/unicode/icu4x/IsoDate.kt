@@ -25,6 +25,7 @@ internal interface IsoDateLib: Library {
     fun icu4x_IsoDate_days_in_month_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_days_in_year_mv1(handle: Pointer): FFIUint16
     fun icu4x_IsoDate_try_added_with_options_mv1(handle: Pointer, duration: DateDurationNative, options: DateAddOptionsNative): ResultPointerInt
+    fun icu4x_IsoDate_try_until_with_options_mv1(handle: Pointer, other: Pointer, options: DateDifferenceOptionsNative): DateDurationNative
 }
 /** An ICU4X Date object capable of containing a ISO-8601 date
 *
@@ -275,6 +276,19 @@ class IsoDate internal constructor (
         } else {
             return CalendarDateAddErrorError(CalendarDateAddError.fromNative(returnVal.union.err)).err()
         }
+    }
+    
+    /** Calculating the duration between `other - self`
+    *
+    *🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+    */
+    fun tryUntilWithOptions(other: IsoDate, options: DateDifferenceOptions): DateDuration {
+        
+        val returnVal = lib.icu4x_IsoDate_try_until_with_options_mv1(handle, other.handle, options.toNative());
+        val returnStruct = DateDuration.fromNative(returnVal)
+        return returnStruct
     }
 
 }

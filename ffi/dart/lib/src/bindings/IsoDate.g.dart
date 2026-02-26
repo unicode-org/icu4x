@@ -195,6 +195,17 @@ final class IsoDate implements ffi.Finalizable {
     return IsoDate._fromFfi(result.union.ok, []);
   }
 
+  /// Calculating the duration between `other - self`
+  ///
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+  ///
+  /// See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+  DateDuration tryUntilWithOptions(IsoDate other, DateDifferenceOptions options) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_IsoDate_try_until_with_options_mv1(_ffi, other._ffi, options._toFfi(temp.arena));
+    return DateDuration._fromFfi(result);
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_IsoDate_destroy_mv1')
@@ -291,5 +302,10 @@ external int _icu4x_IsoDate_days_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateDurationFfi, _DateAddOptionsFfi)>(isLeaf: true, symbol: 'icu4x_IsoDate_try_added_with_options_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDate_try_added_with_options_mv1(ffi.Pointer<ffi.Opaque> self, _DateDurationFfi duration, _DateAddOptionsFfi options);
+
+@_DiplomatFfiUse('icu4x_IsoDate_try_until_with_options_mv1')
+@ffi.Native<_DateDurationFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateDifferenceOptionsFfi)>(isLeaf: true, symbol: 'icu4x_IsoDate_try_until_with_options_mv1')
+// ignore: non_constant_identifier_names
+external _DateDurationFfi _icu4x_IsoDate_try_until_with_options_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other, _DateDifferenceOptionsFfi options);
 
 // dart format on

@@ -4,6 +4,7 @@ import { CalendarDateAddError } from "./CalendarDateAddError.mjs"
 import { CalendarError } from "./CalendarError.mjs"
 import { Date } from "./Date.mjs"
 import { DateAddOptions } from "./DateAddOptions.mjs"
+import { DateDifferenceOptions } from "./DateDifferenceOptions.mjs"
 import { DateDuration } from "./DateDuration.mjs"
 import { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 import { Rfc9557ParseError } from "./Rfc9557ParseError.mjs"
@@ -405,6 +406,33 @@ export class IsoDate {
                 throw new globalThis.Error('CalendarDateAddError.' + cause.value, { cause });
             }
             return new IsoDate(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Calculating the duration between `other - self`
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
+     * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+     */
+    tryUntilWithOptions(other, options) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 24, 8, false);
+
+
+        const result = wasm.icu4x_IsoDate_try_until_with_options_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue, DateDifferenceOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateDifferenceOptions._sizeBytes), functionCleanupArena, {}, false));
+
+        try {
+            return DateDuration._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
 
         finally {

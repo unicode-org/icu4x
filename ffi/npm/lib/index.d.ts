@@ -8,6 +8,8 @@ export { CollatorOptions, CollatorOptions_obj } from "./CollatorOptions"
 
 export { DateAddOptions, DateAddOptions_obj } from "./DateAddOptions"
 
+export { DateDifferenceOptions, DateDifferenceOptions_obj } from "./DateDifferenceOptions"
+
 export { DateDuration, DateDuration_obj } from "./DateDuration"
 
 export { DateFields, DateFields_obj } from "./DateFields"
@@ -271,6 +273,8 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle"
 export { LanguageDisplay } from "./LanguageDisplay"
 
 export { CalendarDateAddError } from "./CalendarDateAddError"
+
+export { CalendarDateDifferenceError } from "./CalendarDateDifferenceError"
 
 export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError"
 

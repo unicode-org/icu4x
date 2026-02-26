@@ -15,7 +15,9 @@ pub mod ffi {
 
     use crate::unstable::calendar::ffi::Calendar;
     #[cfg(feature = "unstable")]
-    use crate::unstable::errors::ffi::{CalendarDateAddError, CalendarDateFromFieldsError};
+    use crate::unstable::errors::ffi::{
+        CalendarDateAddError, CalendarDateDifferenceError, CalendarDateFromFieldsError,
+    };
     use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
 
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
@@ -55,6 +57,12 @@ pub mod ffi {
     #[cfg(feature = "unstable")]
     pub struct DateAddOptions {
         pub overflow: DiplomatOption<DateOverflow>,
+    }
+
+    #[diplomat::rust_link(icu::calendar::options::DateDifferenceOptions, Struct)]
+    #[cfg(feature = "unstable")]
+    pub struct DateDifferenceOptions {
+        pub largest_unit: DiplomatOption<DateDurationUnit>,
     }
 
     #[diplomat::opaque]
@@ -226,6 +234,22 @@ pub mod ffi {
             Ok(Box::new(IsoDate(
                 self.0.clone().try_added_with_options(duration.into(), options.into())?,
             )))
+        }
+
+        /// Calculating the duration between `other - self`
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::Date::try_until_with_options, FnInStruct)]
+        #[cfg(feature = "unstable")]
+        pub fn try_until_with_options(
+            &self,
+            other: &IsoDate,
+            options: DateDifferenceOptions,
+        ) -> DateDuration {
+            self.0
+                .try_until_with_options(&other.0, options.into())
+                .unwrap() // Infallible for Iso
+                .into()
         }
     }
 
@@ -568,6 +592,22 @@ pub mod ffi {
                 self.0.clone().try_added_with_options(duration.into(), options.into())?,
             )))
         }
+
+        /// Calculating the duration between `other - self`
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::Date::try_until_with_options, FnInStruct)]
+        #[cfg(feature = "unstable")]
+        pub fn try_until_with_options(
+            &self,
+            other: &Date,
+            options: DateDifferenceOptions,
+        ) -> Result<DateDuration, CalendarDateDifferenceError> {
+            Ok(self
+                .0
+                .try_until_with_options(&other.0, options.into())?
+                .into())
+        }
     }
 
     #[diplomat::rust_link(icu::calendar::types::IsoWeekOfYear, Struct)]
@@ -618,6 +658,18 @@ impl<'a> From<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
     }
 }
 
+impl From<icu_calendar::types::DateDuration> for ffi::DateDuration {
+    fn from(other: icu_calendar::types::DateDuration) -> Self {
+        Self {
+            is_negative: other.is_negative,
+            years: other.years,
+            months: other.months,
+            weeks: other.weeks,
+            days: other.days,
+        }
+    }
+}
+
 #[cfg(feature = "unstable")]
 impl From<ffi::DateDuration> for icu_calendar::types::DateDuration {
     fn from(other: ffi::DateDuration) -> Self {
@@ -636,6 +688,15 @@ impl From<ffi::DateAddOptions> for icu_calendar::options::DateAddOptions {
     fn from(other: ffi::DateAddOptions) -> Self {
         let mut options = Self::default();
         options.overflow = other.overflow.into_converted_option();
+        options
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl From<ffi::DateDifferenceOptions> for icu_calendar::options::DateDifferenceOptions {
+    fn from(other: ffi::DateDifferenceOptions) -> Self {
+        let mut options = Self::default();
+        options.largest_unit = other.largest_unit.into_converted_option();
         options
     }
 }

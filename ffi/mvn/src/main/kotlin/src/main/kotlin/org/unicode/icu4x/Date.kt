@@ -31,6 +31,7 @@ internal interface DateLib: Library {
     fun icu4x_Date_is_in_leap_year_mv1(handle: Pointer): Byte
     fun icu4x_Date_calendar_mv1(handle: Pointer): Pointer
     fun icu4x_Date_try_added_with_options_mv1(handle: Pointer, duration: DateDurationNative, options: DateAddOptionsNative): ResultPointerInt
+    fun icu4x_Date_try_until_with_options_mv1(handle: Pointer, other: Pointer, options: DateDifferenceOptionsNative): ResultDateDurationNativeInt
 }
 /** An ICU4X Date object capable of containing a date for any calendar.
 *
@@ -388,6 +389,23 @@ class Date internal constructor (
             return returnOpaque.ok()
         } else {
             return CalendarDateAddErrorError(CalendarDateAddError.fromNative(returnVal.union.err)).err()
+        }
+    }
+    
+    /** Calculating the duration between `other - self`
+    *
+    *🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+    */
+    fun tryUntilWithOptions(other: Date, options: DateDifferenceOptions): Result<DateDuration> {
+        
+        val returnVal = lib.icu4x_Date_try_until_with_options_mv1(handle, other.handle, options.toNative());
+        if (returnVal.isOk == 1.toByte()) {
+            val returnStruct = DateDuration.fromNative(returnVal.union.ok)
+            return returnStruct.ok()
+        } else {
+            return CalendarDateDifferenceErrorError(CalendarDateDifferenceError.fromNative(returnVal.union.err)).err()
         }
     }
 

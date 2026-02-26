@@ -296,6 +296,22 @@ final class Date implements ffi.Finalizable {
     return Date._fromFfi(result.union.ok, []);
   }
 
+  /// Calculating the duration between `other - self`
+  ///
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+  ///
+  /// See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+  ///
+  /// Throws [CalendarDateDifferenceError] on failure.
+  DateDuration tryUntilWithOptions(Date other, DateDifferenceOptions options) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Date_try_until_with_options_mv1(_ffi, other._ffi, options._toFfi(temp.arena));
+    if (!result.isOk) {
+      throw CalendarDateDifferenceError.values[result.union.err];
+    }
+    return DateDuration._fromFfi(result.union.ok);
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_Date_destroy_mv1')
@@ -427,5 +443,10 @@ external ffi.Pointer<ffi.Opaque> _icu4x_Date_calendar_mv1(ffi.Pointer<ffi.Opaque
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateDurationFfi, _DateAddOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Date_try_added_with_options_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_try_added_with_options_mv1(ffi.Pointer<ffi.Opaque> self, _DateDurationFfi duration, _DateAddOptionsFfi options);
+
+@_DiplomatFfiUse('icu4x_Date_try_until_with_options_mv1')
+@ffi.Native<_ResultDateDurationFfiInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateDifferenceOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Date_try_until_with_options_mv1')
+// ignore: non_constant_identifier_names
+external _ResultDateDurationFfiInt32 _icu4x_Date_try_until_with_options_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other, _DateDifferenceOptionsFfi options);
 
 // dart format on

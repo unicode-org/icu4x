@@ -113,6 +113,17 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::cal::AnyCalendarDifferenceError, Enum, compact)]
+    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
+    pub enum CalendarDateDifferenceError {
+        Unknown = 0x00,
+        MismatchedCalendars = 0x01,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
     #[cfg(feature = "calendar")]
@@ -273,6 +284,27 @@ impl From<icu_calendar::error::DateAddError> for CalendarDateAddError {
             icu_calendar::error::DateAddError::Overflow => Self::Overflow,
             _ => Self::Unknown,
         }
+    }
+}
+
+#[cfg(feature = "calendar")]
+#[cfg(all(feature = "unstable", feature = "calendar"))]
+impl From<icu_calendar::cal::AnyCalendarDifferenceError> for CalendarDateDifferenceError {
+    fn from(e: icu_calendar::cal::AnyCalendarDifferenceError) -> Self {
+        match e {
+            icu_calendar::cal::AnyCalendarDifferenceError::MismatchedCalendars => {
+                Self::MismatchedCalendars
+            }
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
+#[cfg(all(feature = "unstable", feature = "calendar"))]
+impl From<core::convert::Infallible> for CalendarDateDifferenceError {
+    fn from(value: core::convert::Infallible) -> Self {
+        match value {}
     }
 }
 

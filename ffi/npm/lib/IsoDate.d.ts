@@ -5,6 +5,8 @@ import type { CalendarError } from "./CalendarError"
 import type { Date } from "./Date"
 import type { DateAddOptions } from "./DateAddOptions"
 import type { DateAddOptions_obj } from "./DateAddOptions"
+import type { DateDifferenceOptions } from "./DateDifferenceOptions"
+import type { DateDifferenceOptions_obj } from "./DateDifferenceOptions"
 import type { DateDuration } from "./DateDuration"
 import type { DateDuration_obj } from "./DateDuration"
 import type { IsoWeekOfYear } from "./IsoWeekOfYear"
@@ -151,6 +153,15 @@ export class IsoDate {
      * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
      */
     tryAddedWithOptions(duration: DateDuration_obj, options: DateAddOptions_obj): IsoDate;
+
+    /**
+     * Calculating the duration between `other - self`
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
+     * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+     */
+    tryUntilWithOptions(other: IsoDate, options: DateDifferenceOptions_obj): DateDuration;
 
     /**
      * Creates a new {@link IsoDate} from the specified date.

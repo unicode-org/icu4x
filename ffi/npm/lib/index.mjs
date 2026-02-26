@@ -6,6 +6,8 @@ export { CollatorOptions } from "./CollatorOptions.mjs"
 
 export { DateAddOptions } from "./DateAddOptions.mjs"
 
+export { DateDifferenceOptions } from "./DateDifferenceOptions.mjs"
+
 export { DateDuration } from "./DateDuration.mjs"
 
 export { DateFields } from "./DateFields.mjs"
@@ -269,6 +271,8 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle.mjs"
 export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
 export { CalendarDateAddError } from "./CalendarDateAddError.mjs"
+
+export { CalendarDateDifferenceError } from "./CalendarDateDifferenceError.mjs"
 
 export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError.mjs"
 
