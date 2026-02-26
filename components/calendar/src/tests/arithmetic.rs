@@ -3,11 +3,71 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::options::{DateAddOptions, DateDifferenceOptions, Overflow};
-use crate::types::{DateDuration, DateDurationUnit};
-use crate::{AsCalendar, Date};
+use crate::types::{DateDuration, DateDurationUnit, Month};
+use crate::{AsCalendar, Calendar, Date};
+use core::fmt;
+
+struct ArithmeticDateForDebug {
+    pub year: i32,
+    pub month: Month,
+    pub day: u8,
+}
+
+impl<C> From<Date<C>> for ArithmeticDateForDebug
+where
+    C: Calendar,
+{
+    fn from(value: Date<C>) -> Self {
+        Self {
+            year: value.year().extended_year(),
+            month: value.month().as_input(),
+            day: value.day_of_month().0,
+        }
+    }
+}
+
+impl fmt::Display for ArithmeticDateForDebug {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:4}.{}.{:<2}", self.year, self.month.code().0, self.day)
+    }
+}
+
+struct TestOutput {
+    pub cal: &'static str,
+    pub start: ArithmeticDateForDebug,
+    pub end: ArithmeticDateForDebug,
+    pub duration: DateDuration,
+}
+
+impl fmt::Display for TestOutput {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} {} {:2}y {:2}m {:2}w {:2}d = {} ({})",
+            self.start,
+            if self.duration.is_negative { '-' } else { '+' },
+            self.duration.years,
+            self.duration.months,
+            self.duration.weeks,
+            self.duration.days,
+            self.end,
+            self.cal
+        )
+    }
+}
+
+struct TestOutputs(Vec<TestOutput>);
+
+impl fmt::Display for TestOutputs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for output in self.0.iter() {
+            writeln!(f, "{}", output)?;
+        }
+        Ok(())
+    }
+}
 
 super::test_all_cals!(
-    #[ignore]
     fn test_arithmetic<C: Calendar + Copy>(cal: C) {
         fn new_duration(years: i32, months: i32, weeks: i32, days: i32) -> DateDuration {
             let is_negative = years < 0 || months < 0 || weeks < 0 || days < 0;
@@ -29,40 +89,40 @@ super::test_all_cals!(
         let mut durations = Vec::new();
 
         // Check +/- 65 days
-        for i in -65..=65 {
+        for i in (-65..=65).filter(|i| *i != 0) {
             durations.push(new_duration(0, 0, 0, i));
         }
 
         // Check +/- 30 months
-        for i in -30..=30 {
+        for i in (-30..=30).filter(|i| *i != 0) {
             durations.push(new_duration(0, i, 0, 0));
         }
 
         // Check +/- 30 months with +/- 1 day
-        for i in -30i32..=30 {
+        for i in (-30i32..=30).filter(|i| *i != 0) {
             let days = i.signum();
             durations.push(new_duration(0, i, 0, days));
         }
 
         // Check +/- 10 years
-        for i in -10..=10 {
+        for i in (-10..=10).filter(|i| *i != 0) {
             durations.push(new_duration(i, 0, 0, 0));
         }
 
         // Check +/- 10 years with +/- 1 month
-        for i in -10i32..=10 {
+        for i in (-10i32..=10).filter(|i| *i != 0) {
             let months = i.signum();
             durations.push(new_duration(i, months, 0, 0));
         }
 
         // Check +/- 10 years with +/- 1 day
-        for i in -10i32..=10 {
+        for i in (-10i32..=10).filter(|i| *i != 0) {
             let days = i.signum();
             durations.push(new_duration(i, 0, 0, days));
         }
 
         // Check +/- 10 years with +/- 1 month and +/- 1 day
-        for i in -10i32..=10 {
+        for i in (-10i32..=10).filter(|i| *i != 0) {
             let s = i.signum();
             durations.push(new_duration(i, s, 0, s));
         }
@@ -76,8 +136,14 @@ super::test_all_cals!(
             overflow: Some(Overflow::Constrain),
         };
 
+        let mut outputs = TestOutputs(Vec::new());
+
         for rd_offset in 0..=(end_rd - start_rd) {
             let date = Date::from_rata_die(start_rd + rd_offset, cal);
+            if date.day_of_month().0 > 2 && date.day_of_month().0 < 27 {
+                // Most interesting cases are at the beginning or end of the month
+                continue;
+            }
 
             for duration in &durations {
                 let mut diff_options = DateDifferenceOptions::default();
@@ -111,6 +177,20 @@ super::test_all_cals!(
                         )
                     });
 
+                let output = TestOutput {
+                    cal: cal.debug_name(),
+                    start: date.into(),
+                    end: added_date.into(),
+                    duration: calculated_duration,
+                };
+
+                // The durations should have the same sign!
+                assert_eq!(
+                    duration.is_negative, calculated_duration.is_negative,
+                    "{output}"
+                );
+                assert_eq!(duration.is_negative, date > added_date, "{output}");
+
                 // Round-trip check
                 let added_back = date
                     .try_added_with_options(calculated_duration, add_options)
@@ -120,7 +200,11 @@ super::test_all_cals!(
                     "Round trip failed for {:?} + {:?} -> {:?}. Got duration {:?} which led to {:?}",
                     date, duration, added_date, calculated_duration, added_back
                 );
+
+                outputs.0.push(output);
             }
         }
+
+        insta::assert_snapshot!(format!("date_arithmetic_{}", cal.debug_name()), outputs);
     }
 );
