@@ -601,7 +601,7 @@ mod unstable {
     ///
     /// N
     #[derive(Clone, Copy, PartialEq, Debug, Display)]
-    #[displaydoc("Attempted to diff two Date<AnyCalendar>`s with different calendars")]
+    #[displaydoc("Attempted to diff two `Date<AnyCalendar>`s with different calendars")]
     #[allow(
         clippy::exhaustive_structs,
         reason = "This is the only possible error with paired AnyCalendar operations"
