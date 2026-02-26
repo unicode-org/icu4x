@@ -6,6 +6,12 @@ export { TitlecaseOptions, TitlecaseOptions_obj } from "./TitlecaseOptions"
 
 export { CollatorOptions, CollatorOptions_obj } from "./CollatorOptions"
 
+export { DateAddOptions, DateAddOptions_obj } from "./DateAddOptions"
+
+export { DateDifferenceOptions, DateDifferenceOptions_obj } from "./DateDifferenceOptions"
+
+export { DateDuration, DateDuration_obj } from "./DateDuration"
+
 export { DateFields, DateFields_obj } from "./DateFields"
 
 export { DateFromFieldsOptions, DateFromFieldsOptions_obj } from "./DateFromFieldsOptions"
@@ -242,6 +248,8 @@ export { CollatorNumericOrdering } from "./CollatorNumericOrdering"
 
 export { CollatorStrength } from "./CollatorStrength"
 
+export { DateDurationUnit } from "./DateDurationUnit"
+
 export { DateMissingFieldsStrategy } from "./DateMissingFieldsStrategy"
 
 export { DateOverflow } from "./DateOverflow"
@@ -264,11 +272,17 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle"
 
 export { LanguageDisplay } from "./LanguageDisplay"
 
+export { CalendarDateAddError } from "./CalendarDateAddError"
+
+export { CalendarDateDifferenceError } from "./CalendarDateDifferenceError"
+
 export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError"
 
 export { CalendarError } from "./CalendarError"
 
 export { DataError } from "./DataError"
+
+export { DateDurationParseError } from "./DateDurationParseError"
 
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 

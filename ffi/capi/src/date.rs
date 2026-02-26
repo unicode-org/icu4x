@@ -15,7 +15,10 @@ pub mod ffi {
 
     use crate::unstable::calendar::ffi::Calendar;
     #[cfg(feature = "unstable")]
-    use crate::unstable::errors::ffi::CalendarDateFromFieldsError;
+    use crate::unstable::errors::ffi::{
+        CalendarDateAddError, CalendarDateDifferenceError, CalendarDateFromFieldsError,
+        DateDurationParseError,
+    };
     use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
 
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
@@ -30,6 +33,94 @@ pub mod ffi {
         Saturday,
         Sunday,
     }
+
+    #[diplomat::enum_convert(icu_calendar::types::DateDurationUnit, needs_wildcard)]
+    #[diplomat::rust_link(icu::calendar::types::DateDurationUnit, Enum)]
+    #[cfg(feature = "unstable")]
+    #[non_exhaustive]
+    pub enum DateDurationUnit {
+        Years,
+        Months,
+        Weeks,
+        Days,
+    }
+
+    #[diplomat::rust_link(icu::calendar::types::DateDuration, Struct)]
+    #[cfg(feature = "unstable")]
+    pub struct DateDuration {
+        pub is_negative: bool,
+        pub years: u32,
+        pub months: u32,
+        pub weeks: u32,
+        pub days: u64,
+    }
+
+    #[cfg(feature = "unstable")]
+    impl DateDuration {
+        /// Creates a new [`DateDuration`] from an ISO 8601 string.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::calendar::types::DateDuration::try_from_utf8,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::from_str, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(v: &DiplomatStr) -> Result<DateDuration, DateDurationParseError> {
+            Ok(icu_calendar::types::DateDuration::try_from_utf8(v)?.into())
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of years.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_years, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_years(years: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_years(years).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of months.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_months, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_months(months: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_months(months).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of weeks.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_weeks, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_weeks(weeks: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_weeks(weeks).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of days.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_days, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_days(days: i64) -> DateDuration {
+            icu_calendar::types::DateDuration::for_days(days).into()
+        }
+    }
+
+    #[diplomat::rust_link(icu::calendar::options::DateAddOptions, Struct)]
+    #[cfg(feature = "unstable")]
+    pub struct DateAddOptions {
+        pub overflow: DiplomatOption<DateOverflow>,
+    }
+
+    #[diplomat::rust_link(icu::calendar::options::DateDifferenceOptions, Struct)]
+    #[cfg(feature = "unstable")]
+    pub struct DateDifferenceOptions {
+        pub largest_unit: DiplomatOption<DateDurationUnit>,
+    }
+
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     /// An ICU4X Date object capable of containing a ISO-8601 date
@@ -184,6 +275,37 @@ pub mod ffi {
         #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn days_in_year(&self) -> u16 {
             self.0.days_in_year()
+        }
+
+        /// Returns a new [`IsoDate`] with the given duration added to it.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_add_with_options, FnInStruct, hidden)]
+        #[cfg(feature = "unstable")]
+        pub fn try_add_with_options(
+            &self,
+            duration: DateDuration,
+            options: DateAddOptions,
+        ) -> Result<Box<IsoDate>, CalendarDateAddError> {
+            Ok(Box::new(IsoDate(self.0.try_added_with_options(
+                duration.into(),
+                options.into(),
+            )?)))
+        }
+
+        /// Calculating the duration between `other - self`
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::Date::try_until_with_options, FnInStruct)]
+        #[cfg(feature = "unstable")]
+        pub fn until_with_options(
+            &self,
+            other: &IsoDate,
+            options: DateDifferenceOptions,
+        ) -> DateDuration {
+            let Ok(duration) = self.0.try_until_with_options(&other.0, options.into());
+            duration.into()
         }
     }
 
@@ -511,6 +633,38 @@ pub mod ffi {
         pub fn calendar(&self) -> Box<Calendar> {
             Box::new(Calendar(self.0.calendar().clone()))
         }
+
+        /// Returns a new [`Date`] with the given duration added to it.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
+        #[cfg(feature = "unstable")]
+        pub fn try_add_with_options(
+            &self,
+            duration: DateDuration,
+            options: DateAddOptions,
+        ) -> Result<Box<Date>, CalendarDateAddError> {
+            Ok(Box::new(Date(self.0.clone().try_added_with_options(
+                duration.into(),
+                options.into(),
+            )?)))
+        }
+
+        /// Calculating the duration between `other - self`
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::Date::try_until_with_options, FnInStruct)]
+        #[cfg(feature = "unstable")]
+        pub fn try_until_with_options(
+            &self,
+            other: &Date,
+            options: DateDifferenceOptions,
+        ) -> Result<DateDuration, CalendarDateDifferenceError> {
+            Ok(self
+                .0
+                .try_until_with_options(&other.0, options.into())?
+                .into())
+        }
     }
 
     #[diplomat::rust_link(icu::calendar::types::IsoWeekOfYear, Struct)]
@@ -558,5 +712,49 @@ impl<'a> From<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
         fields.day = other.day.into();
 
         fields
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl From<icu_calendar::types::DateDuration> for ffi::DateDuration {
+    fn from(other: icu_calendar::types::DateDuration) -> Self {
+        Self {
+            is_negative: other.is_negative,
+            years: other.years,
+            months: other.months,
+            weeks: other.weeks,
+            days: other.days,
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl From<ffi::DateDuration> for icu_calendar::types::DateDuration {
+    fn from(other: ffi::DateDuration) -> Self {
+        Self {
+            is_negative: other.is_negative,
+            years: other.years,
+            months: other.months,
+            weeks: other.weeks,
+            days: other.days,
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl From<ffi::DateAddOptions> for icu_calendar::options::DateAddOptions {
+    fn from(other: ffi::DateAddOptions) -> Self {
+        let mut options = Self::default();
+        options.overflow = other.overflow.into_converted_option();
+        options
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl From<ffi::DateDifferenceOptions> for icu_calendar::options::DateDifferenceOptions {
+    fn from(other: ffi::DateDifferenceOptions) -> Self {
+        let mut options = Self::default();
+        options.largest_unit = other.largest_unit.into_converted_option();
+        options
     }
 }
