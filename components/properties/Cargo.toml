@@ -53,3 +53,13 @@ workspace = true
 
 [lints]
 workspace = true
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = { workspace = true }
+
+[lib]
+bench = false  # This option is required for Benchmark CI
+
+[[bench]]
+name = "properties_bench"
+harness = false

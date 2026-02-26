@@ -1819,6 +1819,7 @@ version = "2.1.1"
 name = "icu_properties"
 version = "2.1.2"
 dependencies = [
+ "criterion",
  "databake",
  "harfbuzz-traits",
  "icu",
