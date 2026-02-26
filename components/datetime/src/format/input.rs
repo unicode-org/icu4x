@@ -73,6 +73,7 @@ impl DateTimeInputUnchecked {
         self.day_of_month = Some(date_in_calendar.day_of_month());
         self.weekday = Some(date_in_calendar.weekday());
         self.day_of_year = Some(date_in_calendar.day_of_year());
+        self.rata_die = Some(date_in_calendar.to_rata_die());
     }
 
     /// Sets all fields from a [`Time`] input.
