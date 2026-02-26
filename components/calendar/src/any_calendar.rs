@@ -102,7 +102,7 @@ macro_rules! make_any_calendar {
         impl $crate::Calendar for $any_calendar_ident {
             type DateInner = $any_date_ident;
             type Year = $crate::types::YearInfo;
-            type DifferenceError = $crate::error::AnyCalendarDifferenceError;
+            type DifferenceError = $crate::error::MismatchedCalendarError;
 
             fn from_codes(
                 &self,
@@ -365,7 +365,7 @@ macro_rules! make_any_calendar {
                         }
                     )*
                     _ => {
-                        return Err($crate::error::AnyCalendarDifferenceError::MismatchedCalendars);
+                        return Err($crate::error::MismatchedCalendarError);
                     }
                 };
                 Ok(r)
