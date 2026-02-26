@@ -37,6 +37,7 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_calendar::types::DateDurationUnit, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::types::DateDurationUnit, Enum)]
     #[cfg(feature = "unstable")]
+    #[non_exhaustive]
     pub enum DateDurationUnit {
         Years,
         Months,
@@ -54,10 +55,15 @@ pub mod ffi {
         pub days: u64,
     }
 
+    #[cfg(feature = "unstable")]
     impl DateDuration {
         /// Creates a new [`DateDuration`] from an ISO 8601 string.
         #[diplomat::rust_link(icu::calendar::types::DateDuration::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::calendar::types::DateDuration::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::calendar::types::DateDuration::try_from_utf8,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::rust_link(icu::calendar::types::DateDuration::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<DateDuration, DateDurationParseError> {
@@ -265,15 +271,17 @@ pub mod ffi {
         ///
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_add_with_options, FnInStruct, hidden)]
         #[cfg(feature = "unstable")]
         pub fn try_added_with_options(
             &self,
             duration: DateDuration,
             options: DateAddOptions,
         ) -> Result<Box<IsoDate>, CalendarDateAddError> {
-            Ok(Box::new(IsoDate(
-                self.0.clone().try_added_with_options(duration.into(), options.into())?,
-            )))
+            Ok(Box::new(IsoDate(self.0.try_added_with_options(
+                duration.into(),
+                options.into(),
+            )?)))
         }
 
         /// Calculating the duration between `other - self`
@@ -628,9 +636,10 @@ pub mod ffi {
             duration: DateDuration,
             options: DateAddOptions,
         ) -> Result<Box<Date>, CalendarDateAddError> {
-            Ok(Box::new(Date(
-                self.0.clone().try_added_with_options(duration.into(), options.into())?,
-            )))
+            Ok(Box::new(Date(self.0.clone().try_added_with_options(
+                duration.into(),
+                options.into(),
+            )?)))
         }
 
         /// Calculating the duration between `other - self`
@@ -698,6 +707,7 @@ impl<'a> From<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
     }
 }
 
+#[cfg(feature = "unstable")]
 impl From<icu_calendar::types::DateDuration> for ffi::DateDuration {
     fn from(other: icu_calendar::types::DateDuration) -> Self {
         Self {
