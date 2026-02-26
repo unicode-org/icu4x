@@ -7,13 +7,13 @@ use crate::types::{DateDuration, DateDurationUnit, Month};
 use crate::{AsCalendar, Calendar, Date};
 use core::fmt;
 
-struct ArithmeticDateForDebug {
+struct ArithmeticDateForLogging {
     pub year: i32,
     pub month: Month,
     pub day: u8,
 }
 
-impl<C> From<Date<C>> for ArithmeticDateForDebug
+impl<C> From<Date<C>> for ArithmeticDateForLogging
 where
     C: Calendar,
 {
@@ -26,33 +26,47 @@ where
     }
 }
 
-impl fmt::Display for ArithmeticDateForDebug {
+impl fmt::Display for ArithmeticDateForLogging {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:4}.{}.{:<2}", self.year, self.month.code().0, self.day)
     }
 }
 
+struct DateDurationForLogging(DateDuration);
+
+impl fmt::Display for DateDurationForLogging {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} {:2}y {:2}m {:2}w {:2}d",
+            if self.0.is_negative { '-' } else { '+' },
+            self.0.years,
+            self.0.months,
+            self.0.weeks,
+            self.0.days
+        )
+    }
+}
+
 struct TestOutput {
     pub cal: &'static str,
-    pub start: ArithmeticDateForDebug,
-    pub end: ArithmeticDateForDebug,
-    pub duration: DateDuration,
+    pub start: ArithmeticDateForLogging,
+    pub end: ArithmeticDateForLogging,
+    pub duration: DateDurationForLogging,
+    pub calculated_duration: DateDurationForLogging,
 }
 
 impl fmt::Display for TestOutput {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{} {} {:2}y {:2}m {:2}w {:2}d = {} ({})",
-            self.start,
-            if self.duration.is_negative { '-' } else { '+' },
-            self.duration.years,
-            self.duration.months,
-            self.duration.weeks,
-            self.duration.days,
-            self.end,
-            self.cal
-        )
+            "{} {} = {} ({})",
+            self.start, self.duration, self.end, self.cal
+        )?;
+        if self.duration.0 != self.calculated_duration.0 {
+            write!(f, "; round-trip duration: {}", self.calculated_duration)?;
+        }
+        Ok(())
     }
 }
 
@@ -181,7 +195,8 @@ super::test_all_cals!(
                     cal: cal.debug_name(),
                     start: date.into(),
                     end: added_date.into(),
-                    duration: calculated_duration,
+                    duration: DateDurationForLogging(*duration),
+                    calculated_duration: DateDurationForLogging(calculated_duration),
                 };
 
                 // The durations should have the same sign!
