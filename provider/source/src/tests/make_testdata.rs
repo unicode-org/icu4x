@@ -88,13 +88,13 @@ fn make_testdata() {
     .with_marker_attributes_filter("locale_names_language", |attrs| {
         matches!(
             attrs.as_str(),
-            "aa" | "bn" | "en" | "fr" | "ru" | "zh" | "en-GB" | "zh-Hant" | "de-CH"
+            "fr" | "zh" | "en-GB" | "zh-Hant" | "de-CH"
         )
     })
     .with_marker_attributes_filter("locale_names_script", |attrs| {
         matches!(
             attrs.as_str(),
-            "Latn" | "Cyrl" | "Hans" | "Hant" | "Deva" | "Arab" | "Cans"
+            "Latn" | "Hans" | "Hant" | "Cans"
         )
     })
     .with_marker_attributes_filter("locale_names_variant", |attrs| {
