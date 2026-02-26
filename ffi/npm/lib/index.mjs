@@ -4,6 +4,10 @@ export { TitlecaseOptions } from "./TitlecaseOptions.mjs"
 
 export { CollatorOptions } from "./CollatorOptions.mjs"
 
+export { DateAddOptions } from "./DateAddOptions.mjs"
+
+export { DateDuration } from "./DateDuration.mjs"
+
 export { DateFields } from "./DateFields.mjs"
 
 export { DateFromFieldsOptions } from "./DateFromFieldsOptions.mjs"
@@ -240,6 +244,8 @@ export { CollatorNumericOrdering } from "./CollatorNumericOrdering.mjs"
 
 export { CollatorStrength } from "./CollatorStrength.mjs"
 
+export { DateDurationUnit } from "./DateDurationUnit.mjs"
+
 export { DateMissingFieldsStrategy } from "./DateMissingFieldsStrategy.mjs"
 
 export { DateOverflow } from "./DateOverflow.mjs"
@@ -261,6 +267,8 @@ export { DisplayNamesFallback } from "./DisplayNamesFallback.mjs"
 export { DisplayNamesStyle } from "./DisplayNamesStyle.mjs"
 
 export { LanguageDisplay } from "./LanguageDisplay.mjs"
+
+export { CalendarDateAddError } from "./CalendarDateAddError.mjs"
 
 export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError.mjs"
 

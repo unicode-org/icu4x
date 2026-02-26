@@ -100,6 +100,19 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::error::DateAddError, Enum, compact)]
+    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
+    pub enum CalendarDateAddError {
+        Unknown = 0x00,
+        InvalidDay = 0x01,
+        MonthNotInYear = 0x02,
+        Overflow = 0x03,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
     #[cfg(feature = "calendar")]
@@ -245,6 +258,19 @@ impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsEr
             icu_calendar::error::DateFromFieldsError::NotEnoughFields => Self::NotEnoughFields,
             icu_calendar::error::DateFromFieldsError::TooManyFields => Self::TooManyFields,
             icu_calendar::error::DateFromFieldsError::Overflow => Self::Overflow,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
+#[cfg(all(feature = "unstable", feature = "calendar"))]
+impl From<icu_calendar::error::DateAddError> for CalendarDateAddError {
+    fn from(e: icu_calendar::error::DateAddError) -> Self {
+        match e {
+            icu_calendar::error::DateAddError::InvalidDay { .. } => Self::InvalidDay,
+            icu_calendar::error::DateAddError::MonthNotInYear => Self::MonthNotInYear,
+            icu_calendar::error::DateAddError::Overflow => Self::Overflow,
             _ => Self::Unknown,
         }
     }

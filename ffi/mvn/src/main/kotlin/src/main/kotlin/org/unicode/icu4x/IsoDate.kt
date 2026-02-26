@@ -24,6 +24,7 @@ internal interface IsoDateLib: Library {
     fun icu4x_IsoDate_months_in_year_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_days_in_month_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_days_in_year_mv1(handle: Pointer): FFIUint16
+    fun icu4x_IsoDate_try_added_with_options_mv1(handle: Pointer, duration: DateDurationNative, options: DateAddOptionsNative): ResultPointerInt
 }
 /** An ICU4X Date object capable of containing a ISO-8601 date
 *
@@ -254,6 +255,26 @@ class IsoDate internal constructor (
         
         val returnVal = lib.icu4x_IsoDate_days_in_year_mv1(handle);
         return (returnVal.toUShort())
+    }
+    
+    /** Returns a new [IsoDate] with the given duration added to it.
+    *
+    *🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
+    */
+    fun tryAddedWithOptions(duration: DateDuration, options: DateAddOptions): Result<IsoDate> {
+        
+        val returnVal = lib.icu4x_IsoDate_try_added_with_options_mv1(handle, duration.toNative(), options.toNative());
+        if (returnVal.isOk == 1.toByte()) {
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal.union.ok 
+            val returnOpaque = IsoDate(handle, selfEdges)
+            CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
+            return returnOpaque.ok()
+        } else {
+            return CalendarDateAddErrorError(CalendarDateAddError.fromNative(returnVal.union.err)).err()
+        }
     }
 
 }

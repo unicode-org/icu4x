@@ -15,7 +15,7 @@ pub mod ffi {
 
     use crate::unstable::calendar::ffi::Calendar;
     #[cfg(feature = "unstable")]
-    use crate::unstable::errors::ffi::CalendarDateFromFieldsError;
+    use crate::unstable::errors::ffi::{CalendarDateAddError, CalendarDateFromFieldsError};
     use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
 
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
@@ -30,6 +30,33 @@ pub mod ffi {
         Saturday,
         Sunday,
     }
+
+    #[diplomat::enum_convert(icu_calendar::types::DateDurationUnit, needs_wildcard)]
+    #[diplomat::rust_link(icu::calendar::types::DateDurationUnit, Enum)]
+    #[cfg(feature = "unstable")]
+    pub enum DateDurationUnit {
+        Years,
+        Months,
+        Weeks,
+        Days,
+    }
+
+    #[diplomat::rust_link(icu::calendar::types::DateDuration, Struct)]
+    #[cfg(feature = "unstable")]
+    pub struct DateDuration {
+        pub is_negative: bool,
+        pub years: u32,
+        pub months: u32,
+        pub weeks: u32,
+        pub days: u64,
+    }
+
+    #[diplomat::rust_link(icu::calendar::options::DateAddOptions, Struct)]
+    #[cfg(feature = "unstable")]
+    pub struct DateAddOptions {
+        pub overflow: DiplomatOption<DateOverflow>,
+    }
+
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     /// An ICU4X Date object capable of containing a ISO-8601 date
@@ -184,6 +211,21 @@ pub mod ffi {
         #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn days_in_year(&self) -> u16 {
             self.0.days_in_year()
+        }
+
+        /// Returns a new [`IsoDate`] with the given duration added to it.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
+        #[cfg(feature = "unstable")]
+        pub fn try_added_with_options(
+            &self,
+            duration: DateDuration,
+            options: DateAddOptions,
+        ) -> Result<Box<IsoDate>, CalendarDateAddError> {
+            Ok(Box::new(IsoDate(
+                self.0.clone().try_added_with_options(duration.into(), options.into())?,
+            )))
         }
     }
 
@@ -511,6 +553,21 @@ pub mod ffi {
         pub fn calendar(&self) -> Box<Calendar> {
             Box::new(Calendar(self.0.calendar().clone()))
         }
+
+        /// Returns a new [`Date`] with the given duration added to it.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+        #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
+        #[cfg(feature = "unstable")]
+        pub fn try_added_with_options(
+            &self,
+            duration: DateDuration,
+            options: DateAddOptions,
+        ) -> Result<Box<Date>, CalendarDateAddError> {
+            Ok(Box::new(Date(
+                self.0.clone().try_added_with_options(duration.into(), options.into())?,
+            )))
+        }
     }
 
     #[diplomat::rust_link(icu::calendar::types::IsoWeekOfYear, Struct)]
@@ -558,5 +615,27 @@ impl<'a> From<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
         fields.day = other.day.into();
 
         fields
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl From<ffi::DateDuration> for icu_calendar::types::DateDuration {
+    fn from(other: ffi::DateDuration) -> Self {
+        Self {
+            is_negative: other.is_negative,
+            years: other.years,
+            months: other.months,
+            weeks: other.weeks,
+            days: other.days,
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl From<ffi::DateAddOptions> for icu_calendar::options::DateAddOptions {
+    fn from(other: ffi::DateAddOptions) -> Self {
+        let mut options = Self::default();
+        options.overflow = other.overflow.into_converted_option();
+        options
     }
 }

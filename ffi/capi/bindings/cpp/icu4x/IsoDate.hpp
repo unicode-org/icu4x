@@ -12,8 +12,11 @@
 #include <optional>
 #include <cstdlib>
 #include "Calendar.hpp"
+#include "CalendarDateAddError.hpp"
 #include "CalendarError.hpp"
 #include "Date.hpp"
+#include "DateAddOptions.hpp"
+#include "DateDuration.hpp"
 #include "IsoWeekOfYear.hpp"
 #include "Rfc9557ParseError.hpp"
 #include "Weekday.hpp"
@@ -59,6 +62,9 @@ namespace capi {
     uint8_t icu4x_IsoDate_days_in_month_mv1(const icu4x::capi::IsoDate* self);
 
     uint16_t icu4x_IsoDate_days_in_year_mv1(const icu4x::capi::IsoDate* self);
+
+    typedef struct icu4x_IsoDate_try_added_with_options_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarDateAddError err;}; bool is_ok;} icu4x_IsoDate_try_added_with_options_mv1_result;
+    icu4x_IsoDate_try_added_with_options_mv1_result icu4x_IsoDate_try_added_with_options_mv1(const icu4x::capi::IsoDate* self, icu4x::capi::DateDuration duration, icu4x::capi::DateAddOptions options);
 
     void icu4x_IsoDate_destroy_mv1(IsoDate* self);
 
@@ -152,6 +158,13 @@ inline uint8_t icu4x::IsoDate::days_in_month() const {
 inline uint16_t icu4x::IsoDate::days_in_year() const {
     auto result = icu4x::capi::icu4x_IsoDate_days_in_year_mv1(this->AsFFI());
     return result;
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarDateAddError> icu4x::IsoDate::try_added_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const {
+    auto result = icu4x::capi::icu4x_IsoDate_try_added_with_options_mv1(this->AsFFI(),
+        duration.AsFFI(),
+        options.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarDateAddError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarDateAddError>(icu4x::diplomat::Err<icu4x::CalendarDateAddError>(icu4x::CalendarDateAddError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::IsoDate* icu4x::IsoDate::AsFFI() const {
