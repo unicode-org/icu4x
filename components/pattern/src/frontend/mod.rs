@@ -154,7 +154,7 @@ impl<B: PatternBackend> Pattern<B> {
         unsafe { &*(store as *const B::Store as *const Self) }
     }
 
-    #[doc(hidden)] // databake
+    #[doc(hidden)] // B::Store is doc(hidden)
     pub fn from_ref_store(store: &B::Store) -> Result<&Self, Error> {
         B::validate_store(store)?;
         Ok(Self::from_ref_store_unchecked(store))
