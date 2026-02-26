@@ -7,6 +7,11 @@ import com.sun.jna.Pointer
 import com.sun.jna.Structure
 
 internal interface DateDurationLib: Library {
+    fun icu4x_DateDuration_from_string_mv1(v: Slice): ResultDateDurationNativeInt
+    fun icu4x_DateDuration_for_years_mv1(years: Int): DateDurationNative
+    fun icu4x_DateDuration_for_months_mv1(months: Int): DateDurationNative
+    fun icu4x_DateDuration_for_weeks_mv1(weeks: Int): DateDurationNative
+    fun icu4x_DateDuration_for_days_mv1(days: Long): DateDurationNative
 }
 
 internal class DateDurationNative: Structure(), Structure.ByValue {
@@ -87,6 +92,72 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
             return DateDuration(isNegative, years, months, weeks, days)
         }
 
+        @JvmStatic
+        
+        /** Creates a new [DateDuration] from an ISO 8601 string.
+        *
+        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
+        */
+        fun fromString(v: String): Result<DateDuration> {
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
+            
+            val returnVal = lib.icu4x_DateDuration_from_string_mv1(vSliceMemory.slice);
+            if (returnVal.isOk == 1.toByte()) {
+                val returnStruct = DateDuration.fromNative(returnVal.union.ok)
+                vSliceMemory?.close()
+                return returnStruct.ok()
+            } else {
+                return DateDurationParseErrorError(DateDurationParseError.fromNative(returnVal.union.err)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Returns a new [DateDuration] representing a number of years.
+        *
+        *See the [Rust documentation for `for_years`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
+        */
+        fun forYears(years: Int): DateDuration {
+            
+            val returnVal = lib.icu4x_DateDuration_for_years_mv1(years);
+            val returnStruct = DateDuration.fromNative(returnVal)
+            return returnStruct
+        }
+        @JvmStatic
+        
+        /** Returns a new [DateDuration] representing a number of months.
+        *
+        *See the [Rust documentation for `for_months`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
+        */
+        fun forMonths(months: Int): DateDuration {
+            
+            val returnVal = lib.icu4x_DateDuration_for_months_mv1(months);
+            val returnStruct = DateDuration.fromNative(returnVal)
+            return returnStruct
+        }
+        @JvmStatic
+        
+        /** Returns a new [DateDuration] representing a number of weeks.
+        *
+        *See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
+        */
+        fun forWeeks(weeks: Int): DateDuration {
+            
+            val returnVal = lib.icu4x_DateDuration_for_weeks_mv1(weeks);
+            val returnStruct = DateDuration.fromNative(returnVal)
+            return returnStruct
+        }
+        @JvmStatic
+        
+        /** Returns a new [DateDuration] representing a number of days.
+        *
+        *See the [Rust documentation for `for_days`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
+        */
+        fun forDays(days: Long): DateDuration {
+            
+            val returnVal = lib.icu4x_DateDuration_for_days_mv1(days);
+            val returnStruct = DateDuration.fromNative(returnVal)
+            return returnStruct
+        }
     }
     internal fun toNative(): DateDurationNative {
         var native = DateDurationNative()

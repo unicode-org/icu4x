@@ -17,6 +17,7 @@ pub mod ffi {
     #[cfg(feature = "unstable")]
     use crate::unstable::errors::ffi::{
         CalendarDateAddError, CalendarDateDifferenceError, CalendarDateFromFieldsError,
+        DateDurationParseError,
     };
     use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
 
@@ -51,6 +52,45 @@ pub mod ffi {
         pub months: u32,
         pub weeks: u32,
         pub days: u64,
+    }
+
+    impl DateDuration {
+        /// Creates a new [`DateDuration`] from an ISO 8601 string.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::from_str, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(v: &DiplomatStr) -> Result<DateDuration, DateDurationParseError> {
+            Ok(icu_calendar::types::DateDuration::try_from_utf8(v)?.into())
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of years.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_years, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_years(years: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_years(years).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of months.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_months, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_months(months: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_months(months).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of weeks.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_weeks, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_weeks(weeks: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_weeks(weeks).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of days.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_days, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_days(days: i64) -> DateDuration {
+            icu_calendar::types::DateDuration::for_days(days).into()
+        }
     }
 
     #[diplomat::rust_link(icu::calendar::options::DateAddOptions, Struct)]

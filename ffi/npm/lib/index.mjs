@@ -280,6 +280,8 @@ export { CalendarError } from "./CalendarError.mjs"
 
 export { DataError } from "./DataError.mjs"
 
+export { DateDurationParseError } from "./DateDurationParseError.mjs"
+
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 
 export { DateTimeWriteError } from "./DateTimeWriteError.mjs"

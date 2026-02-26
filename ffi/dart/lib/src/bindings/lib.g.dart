@@ -52,6 +52,7 @@ part 'Date.g.dart';
 part 'DateAddOptions.g.dart';
 part 'DateDifferenceOptions.g.dart';
 part 'DateDuration.g.dart';
+part 'DateDurationParseError.g.dart';
 part 'DateDurationUnit.g.dart';
 part 'DateFields.g.dart';
 part 'DateFormatter.g.dart';

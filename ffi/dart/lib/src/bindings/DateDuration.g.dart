@@ -56,6 +56,52 @@ final class DateDuration {
     return struct;
   }
 
+  /// Creates a new [DateDuration] from an ISO 8601 string.
+  ///
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
+  ///
+  /// Throws [DateDurationParseError] on failure.
+  factory DateDuration.fromString(String v) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_DateDuration_from_string_mv1(v._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      throw DateDurationParseError.values[result.union.err];
+    }
+    return DateDuration._fromFfi(result.union.ok);
+  }
+
+  /// Returns a new [DateDuration] representing a number of years.
+  ///
+  /// See the [Rust documentation for `for_years`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
+  factory DateDuration.forYears(int years) {
+    final result = _icu4x_DateDuration_for_years_mv1(years);
+    return DateDuration._fromFfi(result);
+  }
+
+  /// Returns a new [DateDuration] representing a number of months.
+  ///
+  /// See the [Rust documentation for `for_months`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
+  factory DateDuration.forMonths(int months) {
+    final result = _icu4x_DateDuration_for_months_mv1(months);
+    return DateDuration._fromFfi(result);
+  }
+
+  /// Returns a new [DateDuration] representing a number of weeks.
+  ///
+  /// See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
+  factory DateDuration.forWeeks(int weeks) {
+    final result = _icu4x_DateDuration_for_weeks_mv1(weeks);
+    return DateDuration._fromFfi(result);
+  }
+
+  /// Returns a new [DateDuration] representing a number of days.
+  ///
+  /// See the [Rust documentation for `for_days`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
+  factory DateDuration.forDays(int days) {
+    final result = _icu4x_DateDuration_for_days_mv1(days);
+    return DateDuration._fromFfi(result);
+  }
+
 
   @override
   bool operator ==(Object other) =>
@@ -75,5 +121,30 @@ final class DateDuration {
         days,
       ]);
 }
+
+@_DiplomatFfiUse('icu4x_DateDuration_from_string_mv1')
+@ffi.Native<_ResultDateDurationFfiInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_DateDuration_from_string_mv1')
+// ignore: non_constant_identifier_names
+external _ResultDateDurationFfiInt32 _icu4x_DateDuration_from_string_mv1(_SliceUtf8 v);
+
+@_DiplomatFfiUse('icu4x_DateDuration_for_years_mv1')
+@ffi.Native<_DateDurationFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateDuration_for_years_mv1')
+// ignore: non_constant_identifier_names
+external _DateDurationFfi _icu4x_DateDuration_for_years_mv1(int years);
+
+@_DiplomatFfiUse('icu4x_DateDuration_for_months_mv1')
+@ffi.Native<_DateDurationFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateDuration_for_months_mv1')
+// ignore: non_constant_identifier_names
+external _DateDurationFfi _icu4x_DateDuration_for_months_mv1(int months);
+
+@_DiplomatFfiUse('icu4x_DateDuration_for_weeks_mv1')
+@ffi.Native<_DateDurationFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateDuration_for_weeks_mv1')
+// ignore: non_constant_identifier_names
+external _DateDurationFfi _icu4x_DateDuration_for_weeks_mv1(int weeks);
+
+@_DiplomatFfiUse('icu4x_DateDuration_for_days_mv1')
+@ffi.Native<_DateDurationFfi Function(ffi.Int64)>(isLeaf: true, symbol: 'icu4x_DateDuration_for_days_mv1')
+// ignore: non_constant_identifier_names
+external _DateDurationFfi _icu4x_DateDuration_for_days_mv1(int days);
 
 // dart format on

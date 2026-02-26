@@ -282,6 +282,8 @@ export { CalendarError } from "./CalendarError"
 
 export { DataError } from "./DataError"
 
+export { DateDurationParseError } from "./DateDurationParseError"
+
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 
 export { DateTimeWriteError } from "./DateTimeWriteError"
