@@ -175,7 +175,7 @@ impl Predictor {
 
             if i > 1 {
                 if let Some(map) = self.model.get("BW1") {
-                    let key: String = chars[i - 2..=i-1].iter().collect();
+                    let key: String = chars[i - 2..=i - 1].iter().collect();
                     score += map.get(&key).copied().unwrap_or(0) << 1;
                 }
             }
@@ -187,7 +187,7 @@ impl Predictor {
 
             if i + 1 < chars.len() {
                 if let Some(map) = self.model.get("BW3") {
-                    let key: String = chars[i..=i+1].iter().collect();
+                    let key: String = chars[i..=i + 1].iter().collect();
                     score += map.get(&key).copied().unwrap_or(0) << 1;
                 }
             }
@@ -294,9 +294,7 @@ fn rust_matches_python_probs() {
             .to_string();
     let mask = predictor.predict(&sentence);
 
-    let sentence =
-        "ประเทศไทย หรือชื่อทางการว่า ราชอาณาจักรไทย เดิมเรียกว่า สยาม"
-            .to_string();
+    let sentence = "ประเทศไทย หรือชื่อทางการว่า ราชอาณาจักรไทย เดิมเรียกว่า สยาม".to_string();
     let mask_thai = predictor_thai.predict_thai(&sentence);
 
     assert_eq!(mask.len(), python.len());
