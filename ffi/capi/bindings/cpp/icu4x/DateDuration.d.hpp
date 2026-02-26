@@ -46,12 +46,16 @@ struct DateDuration {
   /**
    * Creates a new {@link DateDuration} from an ISO 8601 string.
    *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
    */
   inline static icu4x::diplomat::result<icu4x::DateDuration, icu4x::DateDurationParseError> from_string(std::string_view v);
 
   /**
    * Returns a new {@link DateDuration} representing a number of years.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
    * See the [Rust documentation for `for_years`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
    */
@@ -60,6 +64,8 @@ struct DateDuration {
   /**
    * Returns a new {@link DateDuration} representing a number of months.
    *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `for_months`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
    */
   inline static icu4x::DateDuration for_months(int32_t months);
@@ -67,12 +73,16 @@ struct DateDuration {
   /**
    * Returns a new {@link DateDuration} representing a number of weeks.
    *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
    */
   inline static icu4x::DateDuration for_weeks(int32_t weeks);
 
   /**
    * Returns a new {@link DateDuration} representing a number of days.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
    * See the [Rust documentation for `for_days`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
    */

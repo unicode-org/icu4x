@@ -58,6 +58,8 @@ final class DateDuration {
 
   /// Creates a new [DateDuration] from an ISO 8601 string.
   ///
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+  ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
   ///
   /// Throws [DateDurationParseError] on failure.
@@ -72,6 +74,8 @@ final class DateDuration {
 
   /// Returns a new [DateDuration] representing a number of years.
   ///
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+  ///
   /// See the [Rust documentation for `for_years`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
   factory DateDuration.forYears(int years) {
     final result = _icu4x_DateDuration_for_years_mv1(years);
@@ -79,6 +83,8 @@ final class DateDuration {
   }
 
   /// Returns a new [DateDuration] representing a number of months.
+  ///
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
   /// See the [Rust documentation for `for_months`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
   factory DateDuration.forMonths(int months) {
@@ -88,6 +94,8 @@ final class DateDuration {
 
   /// Returns a new [DateDuration] representing a number of weeks.
   ///
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+  ///
   /// See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
   factory DateDuration.forWeeks(int weeks) {
     final result = _icu4x_DateDuration_for_weeks_mv1(weeks);
@@ -95,6 +103,8 @@ final class DateDuration {
   }
 
   /// Returns a new [DateDuration] representing a number of days.
+  ///
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
   /// See the [Rust documentation for `for_days`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
   factory DateDuration.forDays(int days) {

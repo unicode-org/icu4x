@@ -579,13 +579,13 @@ export class Date {
      *
      * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
      */
-    tryAddedWithOptions(duration, options) {
+    tryAddWithOptions(duration, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_try_added_with_options_mv1(diplomatReceive.buffer, this.ffiValue, DateDuration._fromSuppliedValue(diplomatRuntime.internalConstructor, duration)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateDuration._sizeBytes), functionCleanupArena, {}, false), DateAddOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateAddOptions._sizeBytes), functionCleanupArena, {}, false));
+        const result = wasm.icu4x_Date_try_add_with_options_mv1(diplomatReceive.buffer, this.ffiValue, DateDuration._fromSuppliedValue(diplomatRuntime.internalConstructor, duration)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateDuration._sizeBytes), functionCleanupArena, {}, false), DateAddOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateAddOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {

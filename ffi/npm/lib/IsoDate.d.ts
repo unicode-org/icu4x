@@ -152,7 +152,7 @@ export class IsoDate {
      *
      * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
      */
-    tryAddedWithOptions(duration: DateDuration_obj, options: DateAddOptions_obj): IsoDate;
+    tryAddWithOptions(duration: DateDuration_obj, options: DateAddOptions_obj): IsoDate;
 
     /**
      * Calculating the duration between `other - self`
@@ -161,7 +161,7 @@ export class IsoDate {
      *
      * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
      */
-    tryUntilWithOptions(other: IsoDate, options: DateDifferenceOptions_obj): DateDuration;
+    untilWithOptions(other: IsoDate, options: DateDifferenceOptions_obj): DateDuration;
 
     /**
      * Creates a new {@link IsoDate} from the specified date.

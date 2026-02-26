@@ -332,14 +332,6 @@ impl From<icu_calendar::cal::AnyCalendarDifferenceError> for CalendarDateDiffere
 }
 
 #[cfg(feature = "calendar")]
-#[cfg(all(feature = "unstable", feature = "calendar"))]
-impl From<core::convert::Infallible> for CalendarDateDifferenceError {
-    fn from(value: core::convert::Infallible) -> Self {
-        match value {}
-    }
-}
-
-#[cfg(feature = "calendar")]
 impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {

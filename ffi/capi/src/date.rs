@@ -58,6 +58,8 @@ pub mod ffi {
     #[cfg(feature = "unstable")]
     impl DateDuration {
         /// Creates a new [`DateDuration`] from an ISO 8601 string.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::types::DateDuration::try_from_str, FnInStruct)]
         #[diplomat::rust_link(
             icu::calendar::types::DateDuration::try_from_utf8,
@@ -71,6 +73,8 @@ pub mod ffi {
         }
 
         /// Returns a new [`DateDuration`] representing a number of years.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::types::DateDuration::for_years, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn for_years(years: i32) -> DateDuration {
@@ -78,6 +82,8 @@ pub mod ffi {
         }
 
         /// Returns a new [`DateDuration`] representing a number of months.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::types::DateDuration::for_months, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn for_months(months: i32) -> DateDuration {
@@ -85,6 +91,8 @@ pub mod ffi {
         }
 
         /// Returns a new [`DateDuration`] representing a number of weeks.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::types::DateDuration::for_weeks, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn for_weeks(weeks: i32) -> DateDuration {
@@ -92,6 +100,8 @@ pub mod ffi {
         }
 
         /// Returns a new [`DateDuration`] representing a number of days.
+        ///
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::types::DateDuration::for_days, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn for_days(days: i64) -> DateDuration {
@@ -273,7 +283,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::try_add_with_options, FnInStruct, hidden)]
         #[cfg(feature = "unstable")]
-        pub fn try_added_with_options(
+        pub fn try_add_with_options(
             &self,
             duration: DateDuration,
             options: DateAddOptions,
@@ -289,15 +299,13 @@ pub mod ffi {
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::Date::try_until_with_options, FnInStruct)]
         #[cfg(feature = "unstable")]
-        pub fn try_until_with_options(
+        pub fn until_with_options(
             &self,
             other: &IsoDate,
             options: DateDifferenceOptions,
         ) -> DateDuration {
-            self.0
-                .try_until_with_options(&other.0, options.into())
-                .unwrap() // Infallible for Iso
-                .into()
+            let Ok(duration) = self.0.try_until_with_options(&other.0, options.into());
+            duration.into()
         }
     }
 
@@ -631,7 +639,7 @@ pub mod ffi {
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
         #[cfg(feature = "unstable")]
-        pub fn try_added_with_options(
+        pub fn try_add_with_options(
             &self,
             duration: DateDuration,
             options: DateAddOptions,

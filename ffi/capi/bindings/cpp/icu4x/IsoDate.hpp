@@ -64,10 +64,10 @@ namespace capi {
 
     uint16_t icu4x_IsoDate_days_in_year_mv1(const icu4x::capi::IsoDate* self);
 
-    typedef struct icu4x_IsoDate_try_added_with_options_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarDateAddError err;}; bool is_ok;} icu4x_IsoDate_try_added_with_options_mv1_result;
-    icu4x_IsoDate_try_added_with_options_mv1_result icu4x_IsoDate_try_added_with_options_mv1(const icu4x::capi::IsoDate* self, icu4x::capi::DateDuration duration, icu4x::capi::DateAddOptions options);
+    typedef struct icu4x_IsoDate_try_add_with_options_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarDateAddError err;}; bool is_ok;} icu4x_IsoDate_try_add_with_options_mv1_result;
+    icu4x_IsoDate_try_add_with_options_mv1_result icu4x_IsoDate_try_add_with_options_mv1(const icu4x::capi::IsoDate* self, icu4x::capi::DateDuration duration, icu4x::capi::DateAddOptions options);
 
-    icu4x::capi::DateDuration icu4x_IsoDate_try_until_with_options_mv1(const icu4x::capi::IsoDate* self, const icu4x::capi::IsoDate* other, icu4x::capi::DateDifferenceOptions options);
+    icu4x::capi::DateDuration icu4x_IsoDate_until_with_options_mv1(const icu4x::capi::IsoDate* self, const icu4x::capi::IsoDate* other, icu4x::capi::DateDifferenceOptions options);
 
     void icu4x_IsoDate_destroy_mv1(IsoDate* self);
 
@@ -163,15 +163,15 @@ inline uint16_t icu4x::IsoDate::days_in_year() const {
     return result;
 }
 
-inline icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarDateAddError> icu4x::IsoDate::try_added_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const {
-    auto result = icu4x::capi::icu4x_IsoDate_try_added_with_options_mv1(this->AsFFI(),
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarDateAddError> icu4x::IsoDate::try_add_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const {
+    auto result = icu4x::capi::icu4x_IsoDate_try_add_with_options_mv1(this->AsFFI(),
         duration.AsFFI(),
         options.AsFFI());
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarDateAddError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarDateAddError>(icu4x::diplomat::Err<icu4x::CalendarDateAddError>(icu4x::CalendarDateAddError::FromFFI(result.err)));
 }
 
-inline icu4x::DateDuration icu4x::IsoDate::try_until_with_options(const icu4x::IsoDate& other, icu4x::DateDifferenceOptions options) const {
-    auto result = icu4x::capi::icu4x_IsoDate_try_until_with_options_mv1(this->AsFFI(),
+inline icu4x::DateDuration icu4x::IsoDate::until_with_options(const icu4x::IsoDate& other, icu4x::DateDifferenceOptions options) const {
+    auto result = icu4x::capi::icu4x_IsoDate_until_with_options_mv1(this->AsFFI(),
         other.AsFFI(),
         options.AsFFI());
     return icu4x::DateDuration::FromFFI(result);

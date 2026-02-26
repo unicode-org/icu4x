@@ -287,9 +287,9 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
   ///
   /// Throws [CalendarDateAddError] on failure.
-  Date tryAddedWithOptions(DateDuration duration, DateAddOptions options) {
+  Date tryAddWithOptions(DateDuration duration, DateAddOptions options) {
     final temp = _FinalizedArena();
-    final result = _icu4x_Date_try_added_with_options_mv1(_ffi, duration._toFfi(temp.arena), options._toFfi(temp.arena));
+    final result = _icu4x_Date_try_add_with_options_mv1(_ffi, duration._toFfi(temp.arena), options._toFfi(temp.arena));
     if (!result.isOk) {
       throw CalendarDateAddError.values[result.union.err];
     }
@@ -439,10 +439,10 @@ external bool _icu4x_Date_is_in_leap_year_mv1(ffi.Pointer<ffi.Opaque> self);
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_Date_calendar_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_try_added_with_options_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateDurationFfi, _DateAddOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Date_try_added_with_options_mv1')
+@_DiplomatFfiUse('icu4x_Date_try_add_with_options_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateDurationFfi, _DateAddOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Date_try_add_with_options_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Date_try_added_with_options_mv1(ffi.Pointer<ffi.Opaque> self, _DateDurationFfi duration, _DateAddOptionsFfi options);
+external _ResultOpaqueInt32 _icu4x_Date_try_add_with_options_mv1(ffi.Pointer<ffi.Opaque> self, _DateDurationFfi duration, _DateAddOptionsFfi options);
 
 @_DiplomatFfiUse('icu4x_Date_try_until_with_options_mv1')
 @ffi.Native<_ResultDateDurationFfiInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateDifferenceOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Date_try_until_with_options_mv1')

@@ -260,7 +260,7 @@ public:
    *
    * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
    */
-  inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError> try_added_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const;
+  inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError> try_add_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const;
 
   /**
    * Calculating the duration between `other - self`

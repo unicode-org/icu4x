@@ -241,7 +241,7 @@ export class Date {
      *
      * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
      */
-    tryAddedWithOptions(duration: DateDuration_obj, options: DateAddOptions_obj): Date;
+    tryAddWithOptions(duration: DateDuration_obj, options: DateAddOptions_obj): Date;
 
     /**
      * Calculating the duration between `other - self`

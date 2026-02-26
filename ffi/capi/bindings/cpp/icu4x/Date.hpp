@@ -84,8 +84,8 @@ namespace capi {
 
     icu4x::capi::Calendar* icu4x_Date_calendar_mv1(const icu4x::capi::Date* self);
 
-    typedef struct icu4x_Date_try_added_with_options_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarDateAddError err;}; bool is_ok;} icu4x_Date_try_added_with_options_mv1_result;
-    icu4x_Date_try_added_with_options_mv1_result icu4x_Date_try_added_with_options_mv1(const icu4x::capi::Date* self, icu4x::capi::DateDuration duration, icu4x::capi::DateAddOptions options);
+    typedef struct icu4x_Date_try_add_with_options_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarDateAddError err;}; bool is_ok;} icu4x_Date_try_add_with_options_mv1_result;
+    icu4x_Date_try_add_with_options_mv1_result icu4x_Date_try_add_with_options_mv1(const icu4x::capi::Date* self, icu4x::capi::DateDuration duration, icu4x::capi::DateAddOptions options);
 
     typedef struct icu4x_Date_try_until_with_options_mv1_result {union {icu4x::capi::DateDuration ok; icu4x::capi::CalendarDateDifferenceError err;}; bool is_ok;} icu4x_Date_try_until_with_options_mv1_result;
     icu4x_Date_try_until_with_options_mv1_result icu4x_Date_try_until_with_options_mv1(const icu4x::capi::Date* self, const icu4x::capi::Date* other, icu4x::capi::DateDifferenceOptions options);
@@ -246,8 +246,8 @@ inline std::unique_ptr<icu4x::Calendar> icu4x::Date::calendar() const {
     return std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result));
 }
 
-inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError> icu4x::Date::try_added_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const {
-    auto result = icu4x::capi::icu4x_Date_try_added_with_options_mv1(this->AsFFI(),
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError> icu4x::Date::try_add_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const {
+    auto result = icu4x::capi::icu4x_Date_try_add_with_options_mv1(this->AsFFI(),
         duration.AsFFI(),
         options.AsFFI());
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError>(icu4x::diplomat::Err<icu4x::CalendarDateAddError>(icu4x::CalendarDateAddError::FromFFI(result.err)));
