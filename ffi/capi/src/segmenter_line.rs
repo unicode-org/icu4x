@@ -16,7 +16,7 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_segmenter::options::LineBreakOptions;
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut] // TODO (#7704): This is unsound
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::LineSegmenter, Struct)]
     #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed, Struct, hidden)]
@@ -52,21 +52,21 @@ pub mod ffi {
         pub word_option: DiplomatOption<LineBreakWordOption>,
     }
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorUtf8<'a>(
         icu_segmenter::iterators::LineBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorUtf16<'a>(
         icu_segmenter::iterators::LineBreakIterator<'a, 'a, Utf16>,
     );
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorLatin1<'a>(

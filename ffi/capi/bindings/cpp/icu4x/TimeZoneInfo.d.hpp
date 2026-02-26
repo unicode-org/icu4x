@@ -121,7 +121,7 @@ public:
    * \deprecated does nothing
    */
   [[deprecated("does nothing")]]
-  inline std::optional<std::monostate> infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator);
+  inline std::optional<std::monostate> infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator) const;
 
   /**
    * See the [Rust documentation for `variant`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
