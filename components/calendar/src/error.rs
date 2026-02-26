@@ -143,9 +143,9 @@ pub enum LunisolarDateError {
 impl core::error::Error for LunisolarDateError {}
 
 #[cfg(feature = "unstable")]
-pub use unstable::{DateAddError, DateFromFieldsError};
+pub use unstable::{AnyCalendarDifferenceError, DateAddError, DateFromFieldsError};
 #[cfg(not(feature = "unstable"))]
-pub(crate) use unstable::{DateAddError, DateFromFieldsError};
+pub(crate) use unstable::{AnyCalendarDifferenceError, DateAddError, DateFromFieldsError};
 
 mod unstable {
     pub use super::*;
@@ -561,6 +561,42 @@ mod unstable {
     }
 
     impl core::error::Error for DateAddError {}
+
+    /// Error returned when comparing two [`Date`](crate::Date)s with [`AnyCalendar`](crate::AnyCalendar).
+    #[derive(Clone, Copy, PartialEq, Debug, Display)]
+    #[non_exhaustive]
+    pub enum AnyCalendarDifferenceError {
+        /// The calendars of the two dates being compared are not equal.
+        ///
+        /// To compare dates in different calendars, convert them to the same calendar first.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::cal::AnyCalendarDifferenceError;
+        /// use icu::calendar::Date;
+        ///
+        /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
+        /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
+        ///
+        /// assert_eq!(
+        ///     d1.try_until_with_options(&d2, Default::default())
+        ///         .unwrap_err(),
+        ///     AnyCalendarDifferenceError::MismatchedCalendars,
+        /// );
+        ///
+        /// // To compare the dates, convert them to the same calendar,
+        /// // such as ISO.
+        ///
+        /// d1.to_iso()
+        ///     .try_until_with_options(&d2.to_iso(), Default::default())
+        ///     .unwrap();
+        /// ```
+        #[displaydoc("The specified month does not exist in this calendar")]
+        MismatchedCalendars,
+    }
+
+    impl core::error::Error for AnyCalendarDifferenceError {}
 }
 
 /// Internal narrow error type for functions that only fail on unknown eras
