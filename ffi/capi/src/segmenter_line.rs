@@ -16,7 +16,7 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_segmenter::options::LineBreakOptions;
 
-    #[diplomat::opaque_mut] // TODO (#7704): This is unsound
+    #[diplomat::opaque]
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::LineSegmenter, Struct)]
     #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed, Struct, hidden)]
