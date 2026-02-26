@@ -371,6 +371,10 @@ impl<A: AsCalendar> Date<A> {
     /// This API will not construct dates outside of the fundamental range described on the [`Date`] type,
     /// instead returning [`DateAddError::Overflow`].
     ///
+    /// This clones the calendar: the calendars in this crate are cheap to clone (and usually `Copy`), but
+    /// the `A` wrapper you are using may not be. Consider using a wrapper like [`Ref`] for `A` if the cloning
+    /// will be a problem.
+    ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
@@ -382,12 +386,21 @@ impl<A: AsCalendar> Date<A> {
     #[cfg(feature = "unstable")]
     #[inline]
     pub fn try_added_with_options(
-        mut self,
+        &self,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self, DateAddError> {
-        self.try_add_with_options(duration, options)?;
-        Ok(self)
+    ) -> Result<Self, DateAddError>
+    where
+        A: Clone,
+    {
+        let inner = self
+            .calendar
+            .as_calendar()
+            .add(&self.inner, duration, options)?;
+        Ok(Self {
+            inner,
+            calendar: self.calendar.clone(),
+        })
     }
 
     /// Calculating the duration between `other - self`
