@@ -624,23 +624,19 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         month: types::Month,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthError> {
-        let leap_month = year.packed.leap_month();
-
-        // leap_month identifies the ordinal month number of the leap month,
-        // so its month number will be leap_month - 1
-        if let Some(lm) = leap_month {
-            if month == types::Month::leap(lm - 1) {
-                return Ok(lm);
-            }
-        }
+        let (number @ 1..=12, leap) = (month.number(), month.is_leap()) else {
+            return Err(MonthError::NotInCalendar);
+        };
 
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
-        let leap_month_sentinel = leap_month.unwrap_or(14);
+        let leap_month_sentinel = year.packed.leap_month().unwrap_or(14);
 
-        let (number @ 1..13, leap) = (month.number(), month.is_leap()) else {
-            return Err(MonthError::NotInCalendar);
-        };
+        // leap_month identifies the ordinal month number of the leap month,
+        // so its month number will be leap_month - 1
+        if month == types::Month::leap(leap_month_sentinel - 1) {
+            return Ok(leap_month_sentinel);
+        }
 
         if leap && options.overflow != Some(Overflow::Constrain) {
             // wrong leap month and not constraining
