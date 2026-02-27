@@ -629,7 +629,7 @@ impl From<UnknownEraError> for DateFromFieldsError {
 }
 
 /// Error for [`Month`](crate::types::Month) parsing
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum MonthCodeParseError {
     /// Invalid syntax

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::{
-    error::DateFromFieldsError,
+    error::{DateFromFieldsError, MonthCodeParseError},
     options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow},
     types::{DateFields, Month},
     AnyCalendar, AnyCalendarKind, Date, Ref,
@@ -31,7 +31,11 @@ static UNIVERSAL_MONTH_CODES: &[&str] = &[
 fn test_month_parsing() {
     for &code in INVALID_SYNTAX {
         let result = Month::try_from_str(code);
-        assert!(result.is_err(), "Should have failed to parse: {code}");
+        assert_eq!(
+            result.unwrap_err(),
+            MonthCodeParseError::InvalidSyntax,
+            "Should have failed with InvalidSyntax: {code}"
+        );
     }
 
     let valid_syntax: Vec<&str> = UNIVERSAL_MONTH_CODES
