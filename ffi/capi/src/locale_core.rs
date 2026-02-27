@@ -47,9 +47,9 @@ pub mod ffi {
             Box::new(Locale(icu_locale_core::Locale::UNKNOWN))
         }
 
-        /// Returns a borrowed unknown ("und") [`Locale`], without allocating
-        ///
-        /// (Can potentially be exposed to other backends if they gain static support)
+        /// Returns a borrowed unknown ("und") [`Locale`], without allocating.
+        //
+        // (Can potentially be exposed to other backends if they gain static support)
         #[diplomat::attr(not(cpp), disable)]
         #[diplomat::rust_link(icu::locale::Locale::UNKNOWN, AssociatedConstantInStruct)]
         pub fn unknown_ref() -> &'static Locale {

@@ -52,9 +52,7 @@ public:
   inline static std::unique_ptr<icu4x::Locale> unknown();
 
   /**
-   * Returns a borrowed unknown ("und") {@link Locale}, without allocating
-   *
-   * (Can potentially be exposed to other backends if they gain static support)
+   * Returns a borrowed unknown ("und") {@link Locale}, without allocating.
    *
    * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
    */
