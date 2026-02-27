@@ -55,6 +55,7 @@ icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
 ureq = { workspace = true }
 chrono-tz = { workspace = true }
+jiff = { workspace = true, features = ["std", "tzdb-bundle-always"] }
 
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

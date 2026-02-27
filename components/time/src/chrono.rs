@@ -84,3 +84,9 @@ impl From<chrono::Utc> for TimeZone {
         TimeZone(icu_locale_core::subtags::subtag!("utc"))
     }
 }
+
+impl From<chrono::FixedOffset> for TimeZone {
+    fn from(_: chrono::FixedOffset) -> Self {
+        TimeZone::UNKNOWN
+    }
+}
