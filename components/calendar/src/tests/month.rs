@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_locale::preferences::extensions::unicode::keywords::CalendarAlgorithm;
+
 use crate::error::{DateFromFieldsError, MonthCodeParseError};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateFields, Month, MonthCode};
@@ -71,24 +73,35 @@ crate::tests::test_all_cals!(
         let mut valid_month_codes = UNIVERSAL_MONTH_CODES.to_vec();
         let mut invalid_month_codes = NOT_IN_ANY_CALENDAR.to_vec();
 
+        let cal_alg = cal.calendar_algorithm();
         let debug_name = cal.debug_name();
 
-        if debug_name.contains("Chinese") || debug_name.contains("Korean") {
+        if matches!(
+            cal_alg,
+            Some(CalendarAlgorithm::Chinese | CalendarAlgorithm::Dangi)
+        ) {
             valid_month_codes.extend_from_slice(CHINESE_ONLY);
         } else {
             invalid_month_codes.extend_from_slice(CHINESE_ONLY);
         }
 
-        if debug_name.contains("Chinese")
-            || debug_name.contains("Korean")
-            || debug_name.contains("Hebrew")
-        {
+        if matches!(
+            cal_alg,
+            Some(CalendarAlgorithm::Chinese | CalendarAlgorithm::Dangi | CalendarAlgorithm::Hebrew)
+        ) {
             valid_month_codes.extend_from_slice(CHINESE_HEBREW);
         } else {
             invalid_month_codes.extend_from_slice(CHINESE_HEBREW);
         }
 
-        if debug_name.contains("Coptic") || debug_name.contains("Ethiopian") {
+        if matches!(
+            cal_alg,
+            Some(
+                CalendarAlgorithm::Coptic
+                    | CalendarAlgorithm::Ethiopic
+                    | CalendarAlgorithm::Ethioaa
+            )
+        ) {
             valid_month_codes.extend_from_slice(COPTIC_ONLY);
         } else {
             invalid_month_codes.extend_from_slice(COPTIC_ONLY);

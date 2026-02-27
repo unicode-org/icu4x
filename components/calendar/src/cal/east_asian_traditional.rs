@@ -1131,6 +1131,13 @@ impl Rules for EastAsianTraditionalYears {
         }
     }
 
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        match self.1 {
+            EastAsianCalendarKind::Chinese => Some(CalendarAlgorithm::Chinese),
+            EastAsianCalendarKind::Korean => Some(CalendarAlgorithm::Dangi),
+        }
+    }
+
     fn ecma_reference_year(
         &self,
         month: types::Month,
