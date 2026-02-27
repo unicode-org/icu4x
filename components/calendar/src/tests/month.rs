@@ -76,7 +76,6 @@ crate::tests::test_all_cals!(
         let mut invalid_month_codes = NOT_IN_ANY_CALENDAR.to_vec();
 
         let cal_alg = cal.calendar_algorithm();
-        let debug_name = cal.debug_name();
 
         if matches!(
             cal_alg,
@@ -121,7 +120,7 @@ crate::tests::test_all_cals!(
                     Ok(_) => (),
                     Err(DateFromFieldsError::MonthNotInYear) => (),
                     Err(e) => {
-                        panic!("Should have succeeded, but failed: {debug_name:?} {extended_year} {month_code} {e:?}");
+                        panic!("Should have succeeded, but failed: {extended_year} {month_code} {e:?}");
                     }
                 }
             }
@@ -132,11 +131,11 @@ crate::tests::test_all_cals!(
                 match result {
                     Err(DateFromFieldsError::MonthNotInCalendar) => (),
                     Ok(_) => {
-                        panic!("Should have failed, but succeeded: {debug_name:?} {extended_year} {month_code}");
+                        panic!("Should have failed, but succeeded: {extended_year} {month_code}");
                     }
                     Err(e) => {
                         panic!(
-                            "Failed with wrong error: {debug_name:?} {extended_year} {month_code} {e:?}"
+                            "Failed with wrong error: {extended_year} {month_code} {e:?}"
                         );
                     }
                 }
@@ -154,7 +153,7 @@ crate::tests::test_all_cals!(
             match Date::try_from_fields(fields, options, cal) {
                 Ok(_) => (),
                 Err(e) => {
-                    panic!("Should have succeeded, but failed: {debug_name:?} {month_code} {e:?} (reference year)");
+                    panic!("Should have succeeded, but failed: {month_code} {e:?} (reference year)");
                 }
             }
         }
@@ -164,11 +163,11 @@ crate::tests::test_all_cals!(
                 Err(DateFromFieldsError::MonthNotInCalendar) => (),
                 Ok(_) => {
                     panic!(
-                        "Should have failed, but succeeded: {debug_name:?} {month_code} (reference year)"
+                        "Should have failed, but succeeded: {month_code} (reference year)"
                     );
                 }
                 Err(e) => {
-                    panic!("Failed with wrong error: {debug_name:?} {month_code} {e:?} (reference year)");
+                    panic!("Failed with wrong error: {month_code} {e:?} (reference year)");
                 }
             }
         }
