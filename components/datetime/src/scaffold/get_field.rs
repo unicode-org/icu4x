@@ -390,6 +390,8 @@ where
     }
 }
 
+impl UnstableSealed for Weekday {}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for Date<A> {
     #[inline]
     fn get_field(&self) {}
@@ -422,6 +424,11 @@ impl GetField<()> for UtcOffset {
 }
 
 impl<O: TimeZoneModel> GetField<()> for TimeZoneInfo<O> {
+    #[inline]
+    fn get_field(&self) {}
+}
+
+impl GetField<()> for Weekday {
     #[inline]
     fn get_field(&self) {}
 }

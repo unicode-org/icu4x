@@ -10,6 +10,7 @@ use crate::MismatchedCalendarError;
 use core::marker::PhantomData;
 use icu_calendar::cal;
 use icu_calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
+use icu_calendar::types::Weekday;
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
@@ -600,6 +601,11 @@ impl CalMarkers<ErasedPackedPatterns> for FullDataCalMarkers {
 }
 
 /// A type that can be converted into a specific calendar system.
+///
+/// You often want to set `Converted` to an ICU4X built-in type.
+///
+/// If the type is not calendar-specific, such as a time or time zone, set `Converted`
+/// to the same type and return it in the implementation.
 // This trait is implementable
 pub trait ConvertCalendar {
     /// The converted type. This can be the same as the receiver type.
@@ -649,8 +655,24 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar
     }
 }
 
+impl ConvertCalendar for UtcOffset {
+    type Converted<'a> = UtcOffset;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
 impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
     type Converted<'a> = TimeZoneInfo<O>;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
+impl ConvertCalendar for Weekday {
+    type Converted<'a> = Weekday;
     #[inline]
     fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
         *self
@@ -727,7 +749,16 @@ impl<O: TimeZoneModel> InSameCalendar for TimeZoneInfo<O> {
     }
 }
 
+impl InSameCalendar for Weekday {
+    #[inline]
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
+    }
+}
+
 /// An input associated with a fixed, static calendar.
+///
+/// Inputs that are not calendar-specific should blanket-impl this for all `C`.
 // This trait is implementable
 pub trait InFixedCalendar<C> {}
 
@@ -745,3 +776,5 @@ impl<C, Z> InFixedCalendar<C> for ZonedTime<Z> {}
 impl<C> InFixedCalendar<C> for UtcOffset {}
 
 impl<C, O: TimeZoneModel> InFixedCalendar<C> for TimeZoneInfo<O> {}
+
+impl<C> InFixedCalendar<C> for Weekday {}
