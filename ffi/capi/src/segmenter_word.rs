@@ -24,7 +24,7 @@ pub mod ffi {
         Letter = 2,
     }
 
-    #[diplomat::opaque_mut] // TODO (#7704): This is unsound
+    #[diplomat::opaque]
     /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::WordSegmenter, Struct)]
     #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed, Struct, hidden)]
