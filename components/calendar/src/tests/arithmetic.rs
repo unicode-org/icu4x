@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::options::{DateAddOptions, DateDifferenceOptions, Overflow};
-use crate::types::{DateDuration, DateDurationUnit, Month, MonthCode};
+use crate::types::{DateDuration, DateDurationUnit, Month};
 use crate::{AsCalendar, Calendar, Date};
 use core::fmt;
 
