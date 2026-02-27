@@ -601,6 +601,11 @@ impl CalMarkers<ErasedPackedPatterns> for FullDataCalMarkers {
 }
 
 /// A type that can be converted into a specific calendar system.
+///
+/// You often want to set `Converted` to an ICU4X built-in type.
+///
+/// If the type is not calendar-specific, such as a time or time zone, set `Converted`
+/// to the same type and return it in the implementation.
 // This trait is implementable
 pub trait ConvertCalendar {
     /// The converted type. This can be the same as the receiver type.
@@ -752,6 +757,8 @@ impl InSameCalendar for Weekday {
 }
 
 /// An input associated with a fixed, static calendar.
+///
+/// Inputs that are not calendar-specific should blanket-impl this for all `C`.
 // This trait is implementable
 pub trait InFixedCalendar<C> {}
 
