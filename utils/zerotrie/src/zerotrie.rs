@@ -662,6 +662,7 @@ macro_rules! impl_zerotrie_subtype {
         //  6. `parse_bytes()` is left to its default impl
         //  7. byte equality is semantic equality
         #[cfg(feature = "zerovec")]
+        #[allow(unsafe_code)] // ULE impls are documented
         unsafe impl<Store> zerovec::ule::VarULE for $name<Store>
         where
             Store: zerovec::ule::VarULE,
