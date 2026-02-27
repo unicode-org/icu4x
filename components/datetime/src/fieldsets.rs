@@ -1022,7 +1022,7 @@ impl_date_marker!(
 );
 
 impl_date_marker!(
-    /// Format a weekday using [`Weekday`](icu_calendar::types::Weekday):
+    /// Format a weekday using [`Weekday`]:
     ///
     /// ```
     /// use icu::calendar::Gregorian;
