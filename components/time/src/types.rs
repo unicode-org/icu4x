@@ -317,40 +317,14 @@ impl Ord for ZonedDateTime<Iso, UtcOffset> {
         let mut srd = self.date.to_rata_die();
         let mut ord = other.date.to_rata_die();
 
-        // If the RDs are three days apart, even with maximum/minimum
-        // times and offsets, the UTC days will still be at at least
-        // one day apart
-        if srd + 3 <= ord {
-            return core::cmp::Ordering::Less;
-        }
-        if srd - 3 >= ord {
-            return core::cmp::Ordering::Greater;
-        }
+        let mut ss = self.time.seconds_since_midnight() as i64 - self.zone.to_seconds() as i64;
+        let mut os = other.time.seconds_since_midnight() as i64 - other.zone.to_seconds() as i64;
 
-        let mut ss = self.time.seconds_since_midnight() as i32 - self.zone.to_seconds();
-        let mut os = other.time.seconds_since_midnight() as i32 - other.zone.to_seconds();
+        srd += ss / 86400;
+        ord += os / 86400;
 
-        // the seconds can wrap into the day
-
-        if ss < 0 {
-            srd -= 1;
-            ss += 24 * 60 * 60;
-        }
-        if ss > 24 * 60 * 60 {
-            srd += 1;
-            ss -= 24 * 60 * 60;
-        }
-
-        if os < 0 {
-            ord -= 1;
-            os += 24 * 60 * 60;
-        }
-        if os > 24 * 60 * 60 {
-            ord += 1;
-            os -= 24 * 60 * 60;
-        }
-
-        // the subseconds cannot wrap into the seconds
+        ss %= 86400;
+        os %= 86400;
 
         srd.cmp(&ord)
             .then(ss.cmp(&os))
