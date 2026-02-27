@@ -195,6 +195,7 @@ impl Extensions {
     }
 
     #[expect(clippy::type_complexity)]
+    #[cfg_attr(not(feature = "alloc"), expect(clippy::needless_borrow))]
     pub(crate) fn as_tuple(
         &self,
     ) -> (
