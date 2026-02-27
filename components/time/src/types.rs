@@ -312,7 +312,7 @@ where
 
 const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
-impl Ord for ZonedDateTime<Iso, UtcOffset> {
+impl<A: AsCalendar> Ord for ZonedDateTime<A, UtcOffset> {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
         let mut srd = self.date.to_rata_die();
         let mut ord = other.date.to_rata_die();
@@ -357,8 +357,13 @@ impl Ord for ZonedDateTime<Iso, UtcOffset> {
             .then(self.time.subsecond.cmp(&other.time.subsecond))
     }
 }
-impl PartialOrd for ZonedDateTime<Iso, UtcOffset> {
-    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+
+impl<A> PartialOrd<ZonedDateTime<A, UtcOffset>> for ZonedDateTime<A, UtcOffset>
+where
+    A: AsCalendar,
+    Date<A>: PartialEq<Date<A>>,
+{
+    fn partial_cmp(&self, other: &ZonedDateTime<A, UtcOffset>) -> Option<core::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }

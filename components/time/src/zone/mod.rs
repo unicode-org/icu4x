@@ -53,6 +53,7 @@ pub mod windows;
 mod zone_name_timestamp;
 
 use icu_calendar::types::RataDie;
+use icu_calendar::AsCalendar;
 #[cfg(feature = "compiled_data")]
 use icu_locale_core::subtags::Region;
 #[doc(inline)]
@@ -285,8 +286,8 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// );
 ///
 /// // ... or by adding a local time
-/// let time_zone_at_time = time_zone.at_date_time_iso(DateTime {
-///     date: Date::try_new_iso(2023, 12, 2).unwrap(),
+/// let time_zone_at_time = time_zone.at_date_time(DateTime {
+///     date: Date::try_new_gregorian(2023, 12, 2).unwrap(),
 ///     time: Time::start_of_day(),
 /// });
 /// ```
@@ -451,14 +452,23 @@ impl TimeZoneInfo<models::Base> {
 
     /// Sets the [`ZoneNameTimestamp`] to the given datetime.
     ///
-    /// If the offset is knonw, the datetime is interpreted as a local time,
+    /// If the offset is known, the datetime is interpreted as a local time,
     /// otherwise as UTC. This produces correct results for the vast majority
     /// of cases, however close to metazone changes (Eastern Time -> Central Time)
     /// it might be incorrect if the offset is not known.
     ///
     /// Also see [`Self::with_zone_name_timestamp`].
-    pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
+    pub fn at_date_time<C: AsCalendar>(
+        self,
+        date_time: DateTime<C>,
+    ) -> TimeZoneInfo<models::AtTime> {
         self.at_rd_time(date_time.date.to_rata_die(), date_time.time)
+    }
+
+    /// Use [`Self::at_date_time`].
+    #[deprecated(since = "2.2.0", note = "use `Self::at_date_time`")]
+    pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
+        self.at_date_time(date_time)
     }
 
     pub(crate) fn at_rd_time(self, rd: RataDie, time: Time) -> TimeZoneInfo<models::AtTime> {
