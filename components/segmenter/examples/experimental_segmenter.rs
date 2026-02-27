@@ -18,7 +18,7 @@ use std::time::SystemTime;
 
 const REPETITIONS: usize = 1000;
 
-fn main_adaboost(args: &[String]) {
+fn main_radaboost(args: &[String]) {
     let segmenter = Predictor::for_test();
     let s = &args[0];
     let start_time = SystemTime::now();
@@ -70,6 +70,24 @@ fn main_cnn(args: &[String]) {
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
 }
 
+fn main_adaboost(args: &[String]) {
+    let segmenter = Predictor::for_test_thai();
+    let s = &args[0];
+    let start_time = SystemTime::now();
+    for _ in 0..REPETITIONS {
+        segmenter.predict_thai(s);
+    }
+    let elapsed = start_time.elapsed().unwrap();
+    println!("Output:");
+    let mut prev = 0;
+    for breakpoint in segmenter.predict_thai_breakpoints(s) {
+        print!("{}|", &s[prev..breakpoint]);
+        prev = breakpoint;
+    }
+    println!();
+    println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
+}
+
 fn main_lstm(mut args: &[String]) {
     let mut options = WordBreakOptions::default();
     let mut langid = None;
@@ -104,6 +122,7 @@ fn main() {
         return;
     }
     match args[1].as_str() {
+        "radaboost" => main_radaboost(&args[2..]),
         "adaboost" => main_adaboost(&args[2..]),
         "dict" | "dictionary" => main_dict(&args[2..]),
         "cnn" => main_cnn(&args[2..]),
