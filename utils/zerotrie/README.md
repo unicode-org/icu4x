@@ -10,6 +10,15 @@ data structure. Instead, it supports conversion to and from [`LiteMap`] and [`BT
 
 There are multiple variants of [`ZeroTrie`] optimized for different use cases.
 
+## Safe Rust
+
+All runtime lookup code in this crate is 100% safe Rust.
+
+A small amount of unsafe Rust is used in these situations:
+
+- Constructing unsized transparent newtypes (i.e. <https://github.com/rust-lang/rust/issues/18806>)
+- Implementing unsafe traits when the `zerovec` feature is enabled
+
 ## Examples
 
 ```rust
