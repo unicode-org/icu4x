@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::field_reassign_with_default)] // use public API
+
 use icu_locale::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 
 use crate::error::{DateFromFieldsError, MonthCodeParseError};
