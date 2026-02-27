@@ -37,6 +37,7 @@ serde = { workspace = true, features = ["derive"], optional = true }
 
 chrono = { workspace = true, optional = true }
 jiff = { workspace = true, optional = true }
+time = { workspace = true, optional = true }
 chrono-tz = { workspace = true, optional = true }
 
 icu_time_data = { workspace = true, optional = true }
@@ -58,6 +59,7 @@ compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data", "icu_provide
 alloc = ["zerotrie/alloc", "serde?/alloc", "zerovec/alloc"]
 jiff_0_2 = ["dep:jiff", "icu_calendar/jiff_0_2"]
 chrono_0_4 = ["dep:chrono", "dep:chrono-tz", "icu_calendar/chrono_0_4"]
+time_0_3 = ["dep:time", "icu_calendar/time_0_3"]
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true
