@@ -2,12 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{
-    error::{DateFromFieldsError, MonthCodeParseError},
-    options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow},
-    types::{DateFields, Month},
-    AnyCalendar, AnyCalendarKind, Date, Ref,
-};
+use crate::error::{DateFromFieldsError, MonthCodeParseError};
+use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
+use crate::types::{DateFields, Month, MonthCode};
+use crate::Date;
 
 static INVALID_SYNTAX: &[&str] = &[
     "M", "M0", "M1", "01L", "L01", "M001", "M110", "MxxL", "m01", "M02l",
@@ -38,14 +36,13 @@ fn test_month_parsing() {
         );
     }
 
-    let valid_syntax: Vec<&str> = UNIVERSAL_MONTH_CODES
+    let valid_syntax = UNIVERSAL_MONTH_CODES
         .iter()
         .chain(NOT_IN_ANY_CALENDAR.iter())
         .chain(CHINESE_ONLY.iter())
         .chain(CHINESE_HEBREW.iter())
         .chain(COPTIC_ONLY.iter())
-        .copied()
-        .collect();
+        .copied();
 
     for code in valid_syntax {
         let result = Month::try_from_str(code);
@@ -54,84 +51,77 @@ fn test_month_parsing() {
         let number = month.number();
         let is_leap = month.is_leap();
 
-        let expected_number = (code.as_bytes()[1] - b'0') * 10 + (code.as_bytes()[2] - b'0');
-        let expected_leap = code.as_bytes().len() == 4 && code.as_bytes()[3] == b'L';
+        let expected_number = code[1..3].parse::<u8>().unwrap();
+        let expected_leap = code.ends_with('L');
 
         assert_eq!(number, expected_number, "Wrong number for {code}");
         assert_eq!(is_leap, expected_leap, "Wrong leap status for {code}");
+
+        // Test roundtrip
+        assert_eq!(
+            month.code(),
+            MonthCode(code.parse().unwrap()),
+            "Roundtrip failed for {code}"
+        );
     }
 }
 
-#[test]
-fn test_month_fields() {
-    for kind in [
-        AnyCalendarKind::Buddhist,
-        AnyCalendarKind::Chinese,
-        AnyCalendarKind::Coptic,
-        AnyCalendarKind::Dangi,
-        AnyCalendarKind::Ethiopian,
-        AnyCalendarKind::EthiopianAmeteAlem,
-        AnyCalendarKind::Gregorian,
-        AnyCalendarKind::Hebrew,
-        AnyCalendarKind::HijriUmmAlQura,
-    ] {
-        let cal = AnyCalendar::new(kind);
-
+crate::tests::test_all_cals!(
+    fn test_month_fields<C: Calendar + Copy>(cal: C) {
         let mut valid_month_codes = UNIVERSAL_MONTH_CODES.to_vec();
         let mut invalid_month_codes = NOT_IN_ANY_CALENDAR.to_vec();
 
-        if matches!(kind, AnyCalendarKind::Chinese | AnyCalendarKind::Dangi) {
+        let debug_name = cal.debug_name();
+
+        if debug_name.contains("Chinese") || debug_name.contains("Korean") {
             valid_month_codes.extend_from_slice(CHINESE_ONLY);
         } else {
             invalid_month_codes.extend_from_slice(CHINESE_ONLY);
         }
 
-        if matches!(
-            kind,
-            AnyCalendarKind::Chinese | AnyCalendarKind::Dangi | AnyCalendarKind::Hebrew
-        ) {
+        if debug_name.contains("Chinese")
+            || debug_name.contains("Korean")
+            || debug_name.contains("Hebrew")
+        {
             valid_month_codes.extend_from_slice(CHINESE_HEBREW);
         } else {
             invalid_month_codes.extend_from_slice(CHINESE_HEBREW);
         }
 
-        if matches!(
-            kind,
-            AnyCalendarKind::Coptic
-                | AnyCalendarKind::Ethiopian
-                | AnyCalendarKind::EthiopianAmeteAlem
-        ) {
+        if debug_name.contains("Coptic") || debug_name.contains("Ethiopian") {
             valid_month_codes.extend_from_slice(COPTIC_ONLY);
         } else {
             invalid_month_codes.extend_from_slice(COPTIC_ONLY);
         }
 
         // Test with full dates
-        for extended_year in -100..=100 {
+        for extended_year in -100..100 {
             let options = DateFromFieldsOptions::default();
             let mut fields = DateFields::default();
             fields.extended_year = Some(extended_year);
             fields.day = Some(1);
             for month_code in valid_month_codes.iter() {
                 fields.month = Some(Month::try_from_str(month_code).unwrap());
-                match Date::try_from_fields(fields, options, Ref(&cal)) {
+                match Date::try_from_fields(fields, options, cal) {
                     Ok(_) => (),
                     Err(DateFromFieldsError::MonthNotInYear) => (),
                     Err(e) => {
-                        panic!("Should have succeeded, but failed: {kind:?} {extended_year} {month_code} {e:?}");
+                        panic!("Should have succeeded, but failed: {debug_name:?} {extended_year} {month_code} {e:?}");
                     }
                 }
             }
             for month_code in invalid_month_codes.iter() {
-                fields.month = Some(Month::try_from_str(month_code).unwrap());
-                match Date::try_from_fields(fields, options, Ref(&cal)) {
+                let month = Month::try_from_str(month_code).unwrap();
+                fields.month = Some(month);
+                let result = Date::try_from_fields(fields, options, cal);
+                match result {
                     Err(DateFromFieldsError::MonthNotInCalendar) => (),
                     Ok(_) => {
-                        panic!("Should have failed, but succeeded: {kind:?} {extended_year} {month_code}");
+                        panic!("Should have failed, but succeeded: {debug_name:?} {extended_year} {month_code}");
                     }
                     Err(e) => {
                         panic!(
-                            "Failed with wrong error: {kind:?} {extended_year} {month_code} {e:?}"
+                            "Failed with wrong error: {debug_name:?} {extended_year} {month_code} {e:?}"
                         );
                     }
                 }
@@ -146,26 +136,26 @@ fn test_month_fields() {
         options.overflow = Some(Overflow::Constrain);
         for month_code in valid_month_codes.iter() {
             fields.month = Some(Month::try_from_str(month_code).unwrap());
-            match Date::try_from_fields(fields, options, Ref(&cal)) {
+            match Date::try_from_fields(fields, options, cal) {
                 Ok(_) => (),
                 Err(e) => {
-                    panic!("Should have succeeded, but failed: {kind:?} {month_code} {e:?} (reference year)");
+                    panic!("Should have succeeded, but failed: {debug_name:?} {month_code} {e:?} (reference year)");
                 }
             }
         }
         for month_code in invalid_month_codes.iter() {
             fields.month = Some(Month::try_from_str(month_code).unwrap());
-            match Date::try_from_fields(fields, options, Ref(&cal)) {
+            match Date::try_from_fields(fields, options, cal) {
                 Err(DateFromFieldsError::MonthNotInCalendar) => (),
                 Ok(_) => {
                     panic!(
-                        "Should have failed, but succeeded: {kind:?} {month_code} (reference year)"
+                        "Should have failed, but succeeded: {debug_name:?} {month_code} (reference year)"
                     );
                 }
                 Err(e) => {
-                    panic!("Failed with wrong error: {kind:?} {month_code} {e:?} (reference year)");
+                    panic!("Failed with wrong error: {debug_name:?} {month_code} {e:?} (reference year)");
                 }
             }
         }
     }
-}
+);

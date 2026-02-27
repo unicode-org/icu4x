@@ -205,7 +205,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 
     /// The debug name for the calendar defined by these [`Rules`].
     fn debug_name(&self) -> &'static str {
-        "Chinese (custom)"
+        "EastAsianTraditional (custom)"
     }
 
     /// The BCP-47 [`CalendarAlgorithm`] for the calendar defined by these [`Rules`], if defined.
