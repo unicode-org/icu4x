@@ -285,15 +285,15 @@ One suggested situation in which public fields would be acceptable is for user-f
 
 See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more.
 
-### Don't use cross-crate internal APIs :: suggested
+### Cross-crate internal APIs :: suggested
 
-All public APIs, even those marked `#[doc(hidden)]`, add a cost to maintenance and integration:
+Cross-crate internal APIs (public APIs marked `#[doc(hidden)]` for use by other ICU4X crates) allow sharing functionality between crates. If used, they must adhere to the following requirements:
 
-- Action at a distance: you might make a change to an internal API in one crate and all the tests pass only to discover that a client in another crate was assuming something else about that function's behavior.
-- Piecewise integration: when clients are in the process of updating crates, they may update one crate at a time, resulting in an ephemeral build breakage. Since we care about easing clients' integration processes, we should generally avoid causing this type of issue.
-- Use outside ICU4X: if an API is exported, it is subject to being used by clients, whether intentionally or unintentionally.
+- **Action at a distance:** A change to an internal API in one crate can break assumptions in another. To mitigate this, cross-crate internal APIs should be documented and tested to the same level of scrutiny as public APIs.
+- **Piecewise integration:** When clients update one crate at a time, they may experience ephemeral build breakages if these APIs change. Taking care to not break users of these APIs is especially important in foundational crates like `icu_provider` and `icu_locale_core`, which do not use `~` dependencies and thus have higher upgrade hazards.
+- **Use outside ICU4X:** Exported APIs can be discovered and used by clients. To discourage this, name such APIs explicitly (e.g., including `unstable` or `internal` in the name).
 
-If you are tempted to add an internal cross-crate API, take a step back, identify the fundamental need, and consider introducing a properly documented and tested public API.
+In other words, spend time on the design of these APIs, treating them with the same care as public APIs even if they are not yet stabilized.
 
 ## Derived Traits
 
