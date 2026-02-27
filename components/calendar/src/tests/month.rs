@@ -4,10 +4,9 @@
 
 #![allow(clippy::field_reassign_with_default)] // use public API
 
-use icu_locale::preferences::extensions::unicode::keywords::CalendarAlgorithm;
-
 use crate::error::{DateFromFieldsError, MonthCodeParseError};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
+use crate::preferences::CalendarAlgorithm;
 use crate::types::{DateFields, Month, MonthCode};
 use crate::Date;
 
@@ -120,7 +119,9 @@ crate::tests::test_all_cals!(
                     Ok(_) => (),
                     Err(DateFromFieldsError::MonthNotInYear) => (),
                     Err(e) => {
-                        panic!("Should have succeeded, but failed: {extended_year} {month_code} {e:?}");
+                        panic!(
+                            "Should have succeeded, but failed: {extended_year} {month_code} {e:?}"
+                        );
                     }
                 }
             }
@@ -134,9 +135,7 @@ crate::tests::test_all_cals!(
                         panic!("Should have failed, but succeeded: {extended_year} {month_code}");
                     }
                     Err(e) => {
-                        panic!(
-                            "Failed with wrong error: {extended_year} {month_code} {e:?}"
-                        );
+                        panic!("Failed with wrong error: {extended_year} {month_code} {e:?}");
                     }
                 }
             }
@@ -153,7 +152,9 @@ crate::tests::test_all_cals!(
             match Date::try_from_fields(fields, options, cal) {
                 Ok(_) => (),
                 Err(e) => {
-                    panic!("Should have succeeded, but failed: {month_code} {e:?} (reference year)");
+                    panic!(
+                        "Should have succeeded, but failed: {month_code} {e:?} (reference year)"
+                    );
                 }
             }
         }
@@ -162,9 +163,7 @@ crate::tests::test_all_cals!(
             match Date::try_from_fields(fields, options, cal) {
                 Err(DateFromFieldsError::MonthNotInCalendar) => (),
                 Ok(_) => {
-                    panic!(
-                        "Should have failed, but succeeded: {month_code} (reference year)"
-                    );
+                    panic!("Should have failed, but succeeded: {month_code} (reference year)");
                 }
                 Err(e) => {
                     panic!("Failed with wrong error: {month_code} {e:?} (reference year)");
