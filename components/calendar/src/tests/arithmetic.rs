@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::options::{DateAddOptions, DateDifferenceOptions, Overflow};
-use crate::types::{DateDuration, DateDurationUnit, Month};
+use crate::types::{DateDuration, DateDurationUnit, Month, MonthCode};
 use crate::{AsCalendar, Calendar, Date};
 use core::fmt;
 
@@ -211,7 +211,97 @@ super::test_all_cals!(
                     date, duration, added_date, calculated_duration, added_back
                 );
 
-                outputs.0.push(output);
+                // Either test the duration against a known result or add it to the snapshot
+                assert_eq!(duration.weeks, 0);
+                if duration.months == 0 && duration.days == 0 {
+                    // Years should have arithmetic behavior.
+                    assert_eq!(
+                        duration.add_years_to(date.year().extended_year()),
+                        added_date.year().extended_year(),
+                        "{output}"
+                    );
+                    // Month or day could constrain; add the ones that do to the snapshot.
+                    if date.month() != added_date.month()
+                        || date.day_of_month() != added_date.day_of_month()
+                    {
+                        outputs.0.push(output);
+                    } else {
+                        // Make sure we aren't skipping any normalized-duration tests
+                        assert_eq!(*duration, calculated_duration);
+                    }
+                } else if duration.years == 0 && duration.days == 0 {
+                    // Months should have arithmetic behavior.
+                    let earlier = std::cmp::min(date, added_date);
+                    let later = std::cmp::max(date, added_date);
+                    let mut month_diff = 0;
+                    month_diff -= earlier.month().ordinal as i32;
+                    month_diff += later.month().ordinal as i32;
+                    for y in earlier.year().extended_year()..later.year().extended_year() {
+                        month_diff +=
+                            Date::try_new_from_codes(None, y, Month::new(1).code(), 1, cal)
+                                .unwrap()
+                                .months_in_year() as i32;
+                    }
+                    assert_eq!(duration.months, month_diff.unsigned_abs(), "{output}");
+                    // Days could constrain; add the ones that do to the snapshot.
+                    if date.day_of_month() != added_date.day_of_month() {
+                        outputs.0.push(output);
+                    } else {
+                        // Make sure we aren't skipping any normalized-duration tests
+                        assert_eq!(*duration, calculated_duration);
+                    }
+                } else if duration.years != 0 && duration.months != 0 && duration.days == 0 {
+                    // These cases are some of the trickiest. Toss them all in the snapshots!
+                    outputs.0.push(output);
+                } else if duration.years == 0 && duration.months != 0 && duration.days == 1 {
+                    // This should add months, constrain, and add a day.
+                    // Month-constrain by itself is tested by other cases.
+                    let signed_months = duration.add_months_to(0);
+                    let expected_rd = date
+                        .try_added_with_options(
+                            DateDuration::for_months(signed_months as i32),
+                            add_options,
+                        )
+                        .unwrap()
+                        .to_rata_die()
+                        + signed_months.signum();
+                    assert_eq!(added_date.to_rata_die(), expected_rd, "{output}");
+                    // Only add the snapshot if the duration was normalized
+                    if *duration != calculated_duration {
+                        outputs.0.push(output);
+                    }
+                } else if duration.years != 0 && duration.months == 0 && duration.days == 1 {
+                    // This should add years, constrain, and add a day.
+                    // Year-constrain by itself is tested by other cases.
+                    let signed_years = duration.add_years_to(0);
+                    let expected_rd = date
+                        .try_added_with_options(DateDuration::for_years(signed_years), add_options)
+                        .unwrap()
+                        .to_rata_die()
+                        + signed_years.signum() as i64;
+                    assert_eq!(added_date.to_rata_die(), expected_rd, "{output}");
+                    // Only add the snapshot if the duration was normalized
+                    if *duration != calculated_duration {
+                        outputs.0.push(output);
+                    }
+                } else if duration.years != 0 && duration.months != 0 && duration.days == 1 {
+                    // This should add years and months, constrain, and add a day.
+                    // Year-month-constrain by itself is tested by other cases.
+                    let mut year_month_duration = *duration;
+                    year_month_duration.days = 0;
+                    let expected_rd = date
+                        .try_added_with_options(year_month_duration, add_options)
+                        .unwrap()
+                        .to_rata_die()
+                        + if duration.is_negative { -1 } else { 1 } as i64;
+                    assert_eq!(added_date.to_rata_die(), expected_rd, "{output}");
+                    // Only add the snapshot if the duration was normalized
+                    if *duration != calculated_duration {
+                        outputs.0.push(output);
+                    }
+                } else {
+                    panic!("Not covered: {output}");
+                }
             }
         }
 
