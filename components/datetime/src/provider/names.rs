@@ -231,7 +231,7 @@ size_test!(YearNames, year_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -245,6 +245,52 @@ pub enum YearNames<'data> {
     VariableEras(#[cfg_attr(feature = "serde", serde(borrow))] YearNamesMap<'data>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+}
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for YearNames<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use alloc::vec::Vec;
+
+        #[derive(serde::Serialize)]
+        enum Raw<'a> {
+            FixedEras(&'a VarZeroVec<'a, str>),
+            VariableEras(&'a YearNamesMap<'a>),
+            Cyclic(&'a VarZeroVec<'a, str>),
+        }
+
+        let x: YearNamesMap;
+
+        match self {
+            // Japanese eras are now generated as `FixedEras`, but we want to keep serializing
+            // them as VariableEras. They are the only calendar with 7 eras.
+            Self::FixedEras(e) if e.len() == 7 => {
+                let mut kvs = [
+                    PotentialUtf8::from_str("bce"),
+                    PotentialUtf8::from_str("ce"),
+                    PotentialUtf8::from_str("meiji"),
+                    PotentialUtf8::from_str("taisho"),
+                    PotentialUtf8::from_str("showa"),
+                    PotentialUtf8::from_str("heisei"),
+                    PotentialUtf8::from_str("reiwa"),
+                ]
+                .into_iter()
+                .zip(e.iter())
+                .collect::<Vec<_>>();
+                kvs.sort_unstable();
+                let (ks, vs) = kvs.into_iter().unzip::<_, _, Vec<_>, Vec<_>>();
+                x = VarZeroCow::from_encodeable(&(ks, vs));
+                Raw::VariableEras(&x)
+            }
+            Self::FixedEras(e) => Raw::FixedEras(e),
+            Self::VariableEras(e) => Raw::VariableEras(e),
+            Self::Cyclic(c) => Raw::Cyclic(c),
+        }
+        .serialize(serializer)
+    }
 }
 
 icu_provider::data_struct!(

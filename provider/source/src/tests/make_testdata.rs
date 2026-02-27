@@ -10,6 +10,7 @@ use icu_provider::prelude::*;
 use icu_provider_export::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
+use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::sync::Mutex;
 
@@ -110,7 +111,7 @@ fn make_testdata() {
 struct ZeroCopyCheckExporter {
     zero_copy_violations: Mutex<BTreeSet<DataMarkerInfo>>,
     zero_copy_transient_violations: Mutex<BTreeSet<DataMarkerInfo>>,
-    rountrip_errors: Mutex<BTreeSet<(DataMarkerInfo, String)>>,
+    rountrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
 }
 
 // Types in this list cannot be zero-copy deserialized.
@@ -185,16 +186,20 @@ impl DataExporter for ZeroCopyCheckExporter {
         icu_provider_registry::registry!(cb);
 
         if payload_before != &payload_after {
-            self.rountrip_errors.lock().expect("poison").insert((
-                marker,
-                id.locale.to_string()
-                    + if id.marker_attributes.is_empty() {
-                        ""
-                    } else {
-                        "-x"
-                    }
-                    + id.marker_attributes.as_str(),
-            ));
+            self.rountrip_errors
+                .lock()
+                .expect("poison")
+                .entry(marker)
+                .or_default()
+                .insert(
+                    id.locale.to_string()
+                        + if id.marker_attributes.is_empty() {
+                            ""
+                        } else {
+                            "-x"
+                        }
+                        + id.marker_attributes.as_str(),
+                );
         }
 
         if deallocated != allocated {
@@ -219,10 +224,10 @@ impl DataExporter for ZeroCopyCheckExporter {
     }
 
     fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
-        assert_eq!(
-            self.rountrip_errors.get_mut().expect("poison"),
-            &mut BTreeSet::default()
-        );
+        let rountrip_errors = self.rountrip_errors.get_mut().expect("poison");
+        // These serialize to a different variant for stability
+        rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesYearJapaneseV1::INFO);
+        assert_eq!(rountrip_errors, &mut BTreeMap::default());
 
         let violations = self
             .zero_copy_violations
