@@ -26,7 +26,11 @@ mod qing_data;
 #[path = "east_asian_traditional/simple.rs"]
 mod simple;
 
-#[derive(PartialEq)]
+static CHINESE_DEBUG_NAME: &str = "Chinese";
+
+static KOREAN_DEBUG_NAME: &str = "Korean";
+
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum EastAsianCalendarKind {
     Chinese,
     Korean,
@@ -307,7 +311,7 @@ impl Rules for China {
     }
 
     fn debug_name(&self) -> &'static str {
-        "Chinese"
+        CHINESE_DEBUG_NAME
     }
 }
 
@@ -441,7 +445,7 @@ impl Rules for Korea {
         Some(CalendarAlgorithm::Dangi)
     }
     fn debug_name(&self) -> &'static str {
-        "Korean"
+        KOREAN_DEBUG_NAME
     }
 }
 
@@ -1096,20 +1100,23 @@ impl PackedEastAsianTraditionalYearData {
 // Precalculates Chinese years, significant performance improvement for big tests
 #[cfg(test)]
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct EastAsianTraditionalYears(&'static [EastAsianTraditionalYear], &'static str);
+pub(crate) struct EastAsianTraditionalYears(
+    &'static [EastAsianTraditionalYear],
+    EastAsianCalendarKind,
+);
 
 #[cfg(test)]
 impl EastAsianTraditionalYears {
     pub fn china() -> Self {
         static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
             std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| China.year(i)).collect());
-        Self(&R, "Chinese (China)")
+        Self(&R, EastAsianCalendarKind::Chinese)
     }
 
     pub fn korea() -> Self {
         static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
             std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| Korea.year(i)).collect());
-        Self(&R, "Chinese (Korea)")
+        Self(&R, EastAsianCalendarKind::Korean)
     }
 }
 
@@ -1122,7 +1129,18 @@ impl Rules for EastAsianTraditionalYears {
     }
 
     fn debug_name(&self) -> &'static str {
-        self.1
+        match self.1 {
+            EastAsianCalendarKind::Chinese => CHINESE_DEBUG_NAME,
+            EastAsianCalendarKind::Korean => KOREAN_DEBUG_NAME,
+        }
+    }
+
+    fn ecma_reference_year(
+        &self,
+        month: types::Month,
+        day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
+        ecma_reference_year_common(month, day, self.1)
     }
 }
 
