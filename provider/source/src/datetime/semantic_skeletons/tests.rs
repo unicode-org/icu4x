@@ -200,7 +200,7 @@ fn test_preferred_hour_cycle_by_locale() {
             .expect("Failed to load dates resource");
 
         // Directly test the inference function
-        let actual = preferred_hour_cycle(&data, &locale);
+        let actual = preferred_hour_cycle(data, &locale);
 
         assert_eq!(
             actual, expected,
