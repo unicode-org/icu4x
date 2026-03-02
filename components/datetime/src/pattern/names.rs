@@ -3839,6 +3839,7 @@ impl RawDateTimeNamesBorrowed<'_> {
             .ok_or(GetNameForEraError::NotLoaded)?;
 
         match year_names {
+            #[cfg(feature = "serde")]
             YearNames::VariableEras(era_names) => {
                 get_year_name_from_map(era_names, era_year.era.as_str().into())
                     .ok_or(GetNameForEraError::InvalidEraCode)

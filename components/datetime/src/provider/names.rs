@@ -8,8 +8,11 @@ use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
+#[cfg(feature = "serde")]
 use potential_utf::PotentialUtf8;
-use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec};
+#[cfg(feature = "serde")]
+use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice};
+use zerovec::VarZeroVec;
 
 icu_provider::data_marker!(
     /// `DatetimeNamesYearBuddhistV1`
@@ -242,6 +245,7 @@ pub enum YearNames<'data> {
     FixedEras(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
     /// This calendar has a variable set of eras with numeric years, this stores the era names mapped from
     /// era code to the name.
+    #[cfg(feature = "serde")]
     VariableEras(#[cfg_attr(feature = "serde", serde(borrow))] YearNamesMap<'data>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
@@ -266,7 +270,7 @@ impl serde::Serialize for YearNames<'_> {
 
         match self {
             // Japanese eras are now generated as `FixedEras`, but we want to keep serializing
-            // them as VariableEras. They are the only calendar with 7 eras.
+            // them as VariableEras. It's the only calendar with 7 eras.
             Self::FixedEras(e) if e.len() == 7 => {
                 let mut kvs = [
                     PotentialUtf8::from_str("bce"),
@@ -298,9 +302,11 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
+#[cfg(feature = "serde")]
 type YearNamesMap<'data> =
     VarZeroCow<'data, Tuple2VarULE<VarZeroSlice<PotentialUtf8>, VarZeroSlice<str>>>;
 
+#[cfg(feature = "serde")]
 pub(crate) fn get_year_name_from_map<'a>(
     map: &'a YearNamesMap<'_>,
     year: &PotentialUtf8,
