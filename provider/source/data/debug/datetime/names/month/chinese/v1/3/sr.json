@@ -1,5 +1,5 @@
 {
-  "LeapPattern": [
+  "LeapLinear": [
     "M01",
     "M02",
     "M03",
@@ -12,7 +12,17 @@
     "M10",
     "M11",
     "M12",
-    "\u0001bis",
-    "\u0001"
+    "M01bis",
+    "M02bis",
+    "M03bis",
+    "M04bis",
+    "M05bis",
+    "M06bis",
+    "M07bis",
+    "M08bis",
+    "M09bis",
+    "M10bis",
+    "M11bis",
+    "M12bis"
   ]
 }

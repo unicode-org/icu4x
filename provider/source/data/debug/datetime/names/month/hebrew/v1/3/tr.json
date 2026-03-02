@@ -1,5 +1,5 @@
 {
-  "LeapPattern": [
+  "LeapLinear": [
     "Tişri",
     "Heşvan",
     "Kislev",
@@ -12,7 +12,17 @@
     "Tamuz",
     "Av",
     "Elul",
-    "\u0000Adar Rişon",
-    "\u0000Veadar"
+    "",
+    "",
+    "",
+    "",
+    "Adar Rişon",
+    "Veadar",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "LeapPattern": [
+  "LeapLinear": [
     "zhēngyuè",
     "èryuè",
     "sānyuè",
@@ -12,7 +12,17 @@
     "shíyuè",
     "shíyīyuè",
     "shí’èryuè",
-    "\u0001bis",
-    "\u0001"
+    "zhēngyuèbis",
+    "èryuèbis",
+    "sānyuèbis",
+    "sìyuèbis",
+    "wǔyuèbis",
+    "liùyuèbis",
+    "qīyuèbis",
+    "bāyuèbis",
+    "jiǔyuèbis",
+    "shíyuèbis",
+    "shíyīyuèbis",
+    "shí’èryuèbis"
   ]
 }

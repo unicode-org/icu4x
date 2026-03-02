@@ -1,5 +1,5 @@
 {
-  "LeapPattern": [
+  "LeapLinear": [
     "tichri",
     "hèchvan",
     "kislev",
@@ -12,7 +12,17 @@
     "tamouz",
     "av",
     "éloul",
-    "\u0000adar I",
-    "\u0001 II"
+    "",
+    "",
+    "",
+    "",
+    "adar I",
+    "adar II",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
   ]
 }
