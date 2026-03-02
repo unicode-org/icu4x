@@ -116,6 +116,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     "--output-format",
                     "json",
                 ])
+                .env_remove("RUSTDOCFLAGS")
                 .output()
                 .expect("failed to execute rustdoc");
             if !output.status.success() {
