@@ -26,11 +26,7 @@ mod qing_data;
 #[path = "east_asian_traditional/simple.rs"]
 mod simple;
 
-static CHINESE_DEBUG_NAME: &str = "Chinese";
-
-static KOREAN_DEBUG_NAME: &str = "Korean";
-
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(PartialEq)]
 enum EastAsianCalendarKind {
     Chinese,
     Korean,
@@ -311,7 +307,7 @@ impl Rules for China {
     }
 
     fn debug_name(&self) -> &'static str {
-        CHINESE_DEBUG_NAME
+        "Chinese"
     }
 }
 
@@ -445,7 +441,7 @@ impl Rules for Korea {
         Some(CalendarAlgorithm::Dangi)
     }
     fn debug_name(&self) -> &'static str {
-        KOREAN_DEBUG_NAME
+        "Korean"
     }
 }
 
@@ -1096,46 +1092,40 @@ impl PackedEastAsianTraditionalYearData {
 // Precalculates Chinese years, significant performance improvement for big tests
 #[cfg(test)]
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct EastAsianTraditionalYears(
-    &'static [EastAsianTraditionalYear],
-    EastAsianCalendarKind,
-);
+pub(crate) struct EastAsianTraditionalYears<R: Rules>(&'static [EastAsianTraditionalYear], R);
 
 #[cfg(test)]
-impl EastAsianTraditionalYears {
+impl EastAsianTraditionalYears<China> {
     pub fn china() -> Self {
         static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
             std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| China.year(i)).collect());
-        Self(&R, EastAsianCalendarKind::Chinese)
-    }
-
-    pub fn korea() -> Self {
-        static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
-            std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| Korea.year(i)).collect());
-        Self(&R, EastAsianCalendarKind::Korean)
+        Self(&R, China)
     }
 }
 
 #[cfg(test)]
-impl crate::cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
+impl EastAsianTraditionalYears<Korea> {
+    pub fn korea() -> Self {
+        static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
+            std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| Korea.year(i)).collect());
+        Self(&R, Korea)
+    }
+}
+
 #[cfg(test)]
-impl Rules for EastAsianTraditionalYears {
+impl<R: Rules> crate::cal::scaffold::UnstableSealed for EastAsianTraditionalYears<R> {}
+#[cfg(test)]
+impl<R: Rules> Rules for EastAsianTraditionalYears<R> {
     fn year(&self, related_iso: i32) -> EastAsianTraditionalYear {
         self.0[(related_iso + 1100000) as usize]
     }
 
     fn debug_name(&self) -> &'static str {
-        match self.1 {
-            EastAsianCalendarKind::Chinese => CHINESE_DEBUG_NAME,
-            EastAsianCalendarKind::Korean => KOREAN_DEBUG_NAME,
-        }
+        self.1.debug_name()
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
-        match self.1 {
-            EastAsianCalendarKind::Chinese => Some(CalendarAlgorithm::Chinese),
-            EastAsianCalendarKind::Korean => Some(CalendarAlgorithm::Dangi),
-        }
+        self.1.calendar_algorithm()
     }
 
     fn ecma_reference_year(
@@ -1143,7 +1133,11 @@ impl Rules for EastAsianTraditionalYears {
         month: types::Month,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        ecma_reference_year_common(month, day, self.1)
+        self.1.ecma_reference_year(month, day)
+    }
+
+    fn year_containing_rd(&self, rd: RataDie) -> EastAsianTraditionalYear {
+        self.1.year_containing_rd(rd)
     }
 }
 
