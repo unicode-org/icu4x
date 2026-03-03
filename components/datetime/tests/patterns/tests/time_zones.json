@@ -1,7 +1,7 @@
 [
   {
     "locale": "en",
-    "datetime": "2021-07-11T12:00:00.000-07:00[America/Los_Angeles]",
+    "datetime": "2026-07-11T12:00:00.000-07:00[America/Los_Angeles]",
     "expectations": {
       "z": "PDT",
       "zzzz": "Pacific Daylight Time",
@@ -11,6 +11,102 @@
 
       "VVV": "Los Angeles",
       "VVVV": "Los Angeles Time",
+
+      "O": "GMT-7",
+      "OOOO": "GMT-07:00",
+
+      "x": "-07",
+      "X": "-07",
+
+      "xx": "-0700",
+      "XX": "-0700",
+
+      "xxx": "-07:00",
+      "XXX": "-07:00",
+
+      "xxxx": "-0700",
+      "XXXX": "-0700",
+
+      "xxxxx": "-07:00",
+      "XXXXX": "-07:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2026-07-11T12:00:00.000-07:00[America/Vancouver]",
+    "expectations": {
+      "z": "PDT",
+      "zzzz": "Pacific Daylight Time",
+
+      "v": "PT (Vancouver)",
+      "vvvv": "Pacific Time (Vancouver)",
+
+      "VVV": "Vancouver",
+      "VVVV": "Vancouver Time",
+
+      "O": "GMT-7",
+      "OOOO": "GMT-07:00",
+
+      "x": "-07",
+      "X": "-07",
+
+      "xx": "-0700",
+      "XX": "-0700",
+
+      "xxx": "-07:00",
+      "XXX": "-07:00",
+
+      "xxxx": "-0700",
+      "XXXX": "-0700",
+
+      "xxxxx": "-07:00",
+      "XXXXX": "-07:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2026-12-11T12:00:00.000-08:00[America/Los_Angeles]",
+    "expectations": {
+      "z": "PST",
+      "zzzz": "Pacific Standard Time",
+
+      "v": "PT",
+      "vvvv": "Pacific Time",
+
+      "VVV": "Los Angeles",
+      "VVVV": "Los Angeles Time",
+
+      "O": "GMT-8",
+      "OOOO": "GMT-08:00",
+
+      "x": "-08",
+      "X": "-08",
+
+      "xx": "-0800",
+      "XX": "-0800",
+
+      "xxx": "-08:00",
+      "XXX": "-08:00",
+
+      "xxxx": "-0800",
+      "XXXX": "-0800",
+
+      "xxxxx": "-08:00",
+      "XXXXX": "-08:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2026-12-11T12:00:00.000-07:00[America/Vancouver]",
+    "expectations": {
+      "z": "PDT",
+      "zzzz": "Pacific Daylight Time",
+
+      "v": "PT (Vancouver)",
+      "vvvv": "Pacific Time (Vancouver)",
+
+      "VVV": "Vancouver",
+      "VVVV": "Vancouver Time",
 
       "O": "GMT-7",
       "OOOO": "GMT-07:00",
