@@ -385,8 +385,10 @@ impl serde::Serialize for MonthNames<'_> {
                         .collect::<Vec<_>>()
                 };
 
-                z = VarZeroVecOwned::try_from_elements(&r).unwrap().into();
-
+                #[allow(clippy::unwrap_used)] // small enough
+                {
+                    z = VarZeroVecOwned::try_from_elements(&r).unwrap().into();
+                }
                 Raw::LeapLinear(&z)
             }
         }

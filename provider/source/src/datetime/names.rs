@@ -380,9 +380,18 @@ fn months_convert(
                 months["11"].as_str(),
                 months["12"].as_str(),
                 // For lack of a better solution, we call Adar I and Adar II "a" and "b" instead.
-                &SinglePlaceholderPattern::try_from_str(&format!("{}a", &months["6"]), Default::default()).unwrap().store,
-                &SinglePlaceholderPattern::try_from_str(&format!("{}b", &months["6"]), Default::default()).unwrap().store,
-                "",
+                &SinglePlaceholderPattern::try_from_str(
+                    &format!("{}a", &months["6"]),
+                    Default::default(),
+                )
+                .unwrap()
+                .store,
+                &SinglePlaceholderPattern::try_from_str(
+                    &format!("{}b", &months["6"]),
+                    Default::default(),
+                )
+                .unwrap()
+                .store,
             ])
                 .into(),
         ))
