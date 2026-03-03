@@ -10,9 +10,9 @@ use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 #[cfg(feature = "serde")]
 use potential_utf::PotentialUtf8;
+use zerovec::VarZeroVec;
 #[cfg(feature = "serde")]
 use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice};
-use zerovec::VarZeroVec;
 
 icu_provider::data_marker!(
     /// `DatetimeNamesYearBuddhistV1`
