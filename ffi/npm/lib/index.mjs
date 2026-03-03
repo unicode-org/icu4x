@@ -4,6 +4,12 @@ export { TitlecaseOptions } from "./TitlecaseOptions.mjs"
 
 export { CollatorOptions } from "./CollatorOptions.mjs"
 
+export { DateAddOptions } from "./DateAddOptions.mjs"
+
+export { DateDifferenceOptions } from "./DateDifferenceOptions.mjs"
+
+export { DateDuration } from "./DateDuration.mjs"
+
 export { DateFields } from "./DateFields.mjs"
 
 export { DateFromFieldsOptions } from "./DateFromFieldsOptions.mjs"
@@ -11,6 +17,8 @@ export { DateFromFieldsOptions } from "./DateFromFieldsOptions.mjs"
 export { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
+
+export { CalendarMismatchedCalendarError } from "./CalendarMismatchedCalendarError.mjs"
 
 export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError.mjs"
 
@@ -240,6 +248,8 @@ export { CollatorNumericOrdering } from "./CollatorNumericOrdering.mjs"
 
 export { CollatorStrength } from "./CollatorStrength.mjs"
 
+export { DateDurationUnit } from "./DateDurationUnit.mjs"
+
 export { DateMissingFieldsStrategy } from "./DateMissingFieldsStrategy.mjs"
 
 export { DateOverflow } from "./DateOverflow.mjs"
@@ -262,11 +272,15 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle.mjs"
 
 export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
+export { CalendarDateAddError } from "./CalendarDateAddError.mjs"
+
 export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError.mjs"
 
 export { CalendarError } from "./CalendarError.mjs"
 
 export { DataError } from "./DataError.mjs"
+
+export { DateDurationParseError } from "./DateDurationParseError.mjs"
 
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 

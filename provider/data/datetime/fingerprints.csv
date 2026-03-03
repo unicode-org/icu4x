@@ -4035,21 +4035,19 @@ datetime/names/month/gregorian/v1, zu/4, 68B, 38B, 67e07a3abf626b67
 datetime/names/month/gregorian/v1, zu/4s, -> af/4
 datetime/names/month/gregorian/v1, zu/5, 135B, 105B, 7e31381c7df0021f
 datetime/names/month/gregorian/v1, zu/5s, -> zu/5
-datetime/names/month/hebrew/v1, <lookup>, 1005B, 230 identifiers
-datetime/names/month/hebrew/v1, <total>, 11183B, 10883B, 64 unique payloads
+datetime/names/month/hebrew/v1, <lookup>, 994B, 228 identifiers
+datetime/names/month/hebrew/v1, <total>, 11037B, 10763B, 62 unique payloads
 datetime/names/month/hebrew/v1, ar/3, 200B, 197B, fb334304498f6dab
 datetime/names/month/hebrew/v1, ar/3s, -> ar/3
 datetime/names/month/hebrew/v1, ar/5, -> ar/3
 datetime/names/month/hebrew/v1, ar/5s, -> ar/3
-datetime/names/month/hebrew/v1, ast/4, 80B, 69B, d2fa64de55f84112
-datetime/names/month/hebrew/v1, ast/4s, 82B, 71B, 4e33d69fc48c5db8
 datetime/names/month/hebrew/v1, bg/3, 185B, 182B, d6301dde1d4d6ec3
 datetime/names/month/hebrew/v1, bg/3s, -> bg/3
 datetime/names/month/hebrew/v1, bg/5, -> bg/3
 datetime/names/month/hebrew/v1, bg/5s, -> bg/3
 datetime/names/month/hebrew/v1, bn/3, 250B, 251B, 1edae236ed4f0f0b
 datetime/names/month/hebrew/v1, bn/3s, -> bn/3
-datetime/names/month/hebrew/v1, bn/4, 113B, 104B, 6c61f707d4c8e9fe
+datetime/names/month/hebrew/v1, bn/4, 117B, 109B, 1f6a541da06d553f
 datetime/names/month/hebrew/v1, bn/4s, -> bn/4
 datetime/names/month/hebrew/v1, bn/5, -> bn/3
 datetime/names/month/hebrew/v1, bn/5s, -> bn/3
@@ -4093,7 +4091,7 @@ datetime/names/month/hebrew/v1, fa/5, -> fa/3
 datetime/names/month/hebrew/v1, fa/5s, -> fa/3
 datetime/names/month/hebrew/v1, ff-Adlm/3, 312B, 317B, fecc6e10541c8aa9
 datetime/names/month/hebrew/v1, ff-Adlm/3s, -> ff-Adlm/3
-datetime/names/month/hebrew/v1, ff-Adlm/4, 130B, 122B, 3d1b5a07438a59b3
+datetime/names/month/hebrew/v1, ff-Adlm/4, 134B, 127B, 1284531fff1ddc83
 datetime/names/month/hebrew/v1, ff-Adlm/4s, -> ff-Adlm/4
 datetime/names/month/hebrew/v1, ff-Adlm/5, -> ff-Adlm/3
 datetime/names/month/hebrew/v1, ff-Adlm/5s, -> ff-Adlm/3
@@ -4169,7 +4167,7 @@ datetime/names/month/hebrew/v1, ml/5, -> ml/3
 datetime/names/month/hebrew/v1, ml/5s, -> ml/3
 datetime/names/month/hebrew/v1, mr/3, 250B, 251B, 5bd369b39599df39
 datetime/names/month/hebrew/v1, mr/3s, -> mr/3
-datetime/names/month/hebrew/v1, mr/4, 113B, 104B, 5d147571e87d5913
+datetime/names/month/hebrew/v1, mr/4, 117B, 109B, facefe52bb879b26
 datetime/names/month/hebrew/v1, mr/4s, -> mr/4
 datetime/names/month/hebrew/v1, mr/5, -> mr/3
 datetime/names/month/hebrew/v1, mr/5s, -> mr/3
@@ -4243,7 +4241,7 @@ datetime/names/month/hebrew/v1, uk/5, -> uk/3
 datetime/names/month/hebrew/v1, uk/5s, -> uk/3
 datetime/names/month/hebrew/v1, und/3, -> es-419/3
 datetime/names/month/hebrew/v1, und/3s, -> es-419/3
-datetime/names/month/hebrew/v1, und/4, 79B, 68B, 7f2382559090b8b7
+datetime/names/month/hebrew/v1, und/4, 83B, 73B, 8f1a93be8046ab33
 datetime/names/month/hebrew/v1, und/4s, -> und/4
 datetime/names/month/hebrew/v1, und/5, -> es-419/3
 datetime/names/month/hebrew/v1, und/5s, -> es-419/3

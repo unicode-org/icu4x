@@ -13,7 +13,7 @@ pub mod ffi {
 
     use writeable::Writeable;
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(fixed_decimal::Decimal, Typedef)]
     pub struct Decimal(pub fixed_decimal::Decimal);
 

@@ -17,8 +17,13 @@ namespace capi { struct Date; }
 class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
+struct CalendarMismatchedCalendarError;
+struct DateAddOptions;
+struct DateDifferenceOptions;
+struct DateDuration;
 struct DateFields;
 struct DateFromFieldsOptions;
+class CalendarDateAddError;
 class CalendarDateFromFieldsError;
 class CalendarError;
 class Rfc9557ParseError;
@@ -247,6 +252,24 @@ public:
    * See the [Rust documentation for `calendar`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.calendar) for more information.
    */
   inline std::unique_ptr<icu4x::Calendar> calendar() const;
+
+  /**
+   * Returns a new {@link Date} with the given duration added to it.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
+   * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
+   */
+  inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError> try_add_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const;
+
+  /**
+   * Calculating the duration between `other - self`
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
+   * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+   */
+  inline icu4x::diplomat::result<icu4x::DateDuration, icu4x::CalendarMismatchedCalendarError> try_until_with_options(const icu4x::Date& other, icu4x::DateDifferenceOptions options) const;
 
     inline const icu4x::capi::Date* AsFFI() const;
     inline icu4x::capi::Date* AsFFI();

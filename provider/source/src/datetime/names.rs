@@ -338,7 +338,55 @@ fn months_convert(
 
     let months = &data.months.get_symbols(context, length).0;
 
-    if calendar == DatagenCalendar::Hebrew {
+    if calendar == DatagenCalendar::Hebrew
+        && length == Length::Narrow
+        && months["10"].starts_with(&months["1"])
+        && months["11"].starts_with(&months["1"])
+        && months["12"].starts_with(&months["1"])
+        && months["13"].starts_with(&months["1"])
+    {
+        // CLDR currently has these locales that have data for Hebrew narrow months:
+        // * und: uses digits "6", "7", "7"
+        // * ast: uses digits, "6", "7", "7b"
+        // * bn: uses digits, "৬", "৭", "৭"
+        // * fa: uses words, "آ", "و", "و" (<- RTL)
+        // * ff-Adlm: uses digits, "𞥖", "𞥗", "𞥗" (<- RTL)
+        // * fi: uses letters, "A", "A", "A"
+        // * he: uses words, "א״א", "אד׳" ,"א״ב" (<- RTL)
+        // * ml: uses letters, "അ I", "അ.", "അ II",
+        // * mr: uses digits, "६", "७", "७",
+        // where the names are for Adar I, Adar, Adar II in that order.
+
+        // Unlike CLDR, ICU4X does not consider Adar/Adar II to have number 7 (and subsequent
+        // months to be shifted), so we have to special-case the locales that use digits.
+        // We detect this by checking whether the names for month["1n"] starts with the name
+        // for month["1"]. This branch will therefore be taken for und, ast, bn, ff-Adlm, and mr.
+
+        // The CLDR 48 data, for e.g. fa, can be inspected at
+        // https://github.com/unicode-org/cldr-json/blob/48.0.0/cldr-json/cldr-cal-hebrew-full/main/fa/ca-hebrew.json#L28-L43
+
+        Ok(MonthNames::LeapPattern(
+            (&[
+                months["1"].as_str(),
+                months["2"].as_str(),
+                months["3"].as_str(),
+                months["4"].as_str(),
+                months["5"].as_str(),
+                months["6"].as_str(),
+                months["7"].as_str(),
+                months["8"].as_str(),
+                months["9"].as_str(),
+                months["10"].as_str(),
+                months["11"].as_str(),
+                months["12"].as_str(),
+                // For lack of a better solution, we call Adar I and Adar II "a" and "b" instead.
+                &SinglePlaceholderPattern::try_from_str(&format!("{}a", &months["6"]), Default::default()).unwrap().store,
+                &SinglePlaceholderPattern::try_from_str(&format!("{}b", &months["6"]), Default::default()).unwrap().store,
+                "",
+            ])
+                .into(),
+        ))
+    } else if calendar == DatagenCalendar::Hebrew {
         let shevat = &months["5"];
         let adar_i = &months["6"];
         let adar = &months["7"];

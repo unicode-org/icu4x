@@ -31,20 +31,20 @@ pub mod ffi {
     #[diplomat::demo(custom_func = "../../../tools/web-demo/custom/WordSegmenter.mjs")]
     pub struct WordSegmenter(icu_segmenter::WordSegmenter);
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct WordBreakIteratorUtf8<'a>(
         icu_segmenter::iterators::WordBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct WordBreakIteratorUtf16<'a>(
         icu_segmenter::iterators::WordBreakIterator<'a, 'a, Utf16>,
     );
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct WordBreakIteratorLatin1<'a>(
@@ -271,35 +271,6 @@ pub mod ffi {
                     locale.into(),
                 )?,
             )))
-        }
-
-        /// Loads available LSMT models from the given provider.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::load_lstm, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed::load_lstm, FnInStruct, hidden)]
-        #[cfg(feature = "buffer_provider")]
-        pub fn load_lstm_models_with_provider(
-            &mut self,
-            provider: &DataProvider,
-        ) -> Result<(), DataError> {
-            self.0.load_lstm_with_buffer_provider(&provider.get()?)?;
-            Ok(())
-        }
-
-        /// Loads available dictionary models from the given provider.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::load_dictionary, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::segmenter::WordSegmenterBorrowed::load_dictionary,
-            FnInStruct,
-            hidden
-        )]
-        #[cfg(feature = "buffer_provider")]
-        pub fn load_dictinoary_models_with_provider(
-            &mut self,
-            provider: &DataProvider,
-        ) -> Result<(), DataError> {
-            self.0
-                .load_dictionary_with_buffer_provider(&provider.get()?)?;
-            Ok(())
         }
 
         /// Segments a string.
