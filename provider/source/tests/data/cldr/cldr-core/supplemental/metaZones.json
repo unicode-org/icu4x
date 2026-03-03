@@ -2338,8 +2338,7 @@
             "Vancouver": [
               {
                 "usesMetazone": {
-                  "_mzone": "America_Pacific",
-                  "_dstOffset": "-07"
+                  "_mzone": "America_Pacific"
                 }
               }
             ],
