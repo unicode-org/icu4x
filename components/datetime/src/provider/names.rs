@@ -320,6 +320,7 @@ pub enum MonthNames<'data> {
     LeapPattern(VarZeroVec<'data, str>),
 }
 
+// Stability, don't want to serialize ::LeapPattern
 #[cfg(feature = "serde")]
 impl serde::Serialize for MonthNames<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
