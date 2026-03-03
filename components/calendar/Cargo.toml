@@ -39,6 +39,7 @@ icu_locale = { workspace = true, optional = true }
 
 chrono = { workspace = true, optional = true }
 jiff = { workspace = true, optional = true }
+time = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["logging"] }
@@ -49,6 +50,7 @@ serde_json = { workspace = true }
 simple_logger = { workspace = true }
 ureq = { workspace = true }
 insta = "1.38.0"
+time = { workspace = true, features = ["large-dates"]}
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
@@ -65,6 +67,7 @@ compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compile
 unstable = []
 jiff_0_2 = ["dep:jiff"]
 chrono_0_4 = ["dep:chrono"]
+time_0_3 = ["dep:time"]
 
 alloc = ["icu_locale_core/alloc", "tinystr/alloc", "serde?/alloc"]
 

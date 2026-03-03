@@ -35,3 +35,17 @@ fn assert_range() {
     assert!(VALID_RD_RANGE
         .contains(&(RataDie::new(0) + chrono::NaiveDate::MAX.num_days_from_ce() as i64)));
 }
+
+impl From<chrono::Weekday> for crate::types::Weekday {
+    fn from(value: chrono::Weekday) -> Self {
+        match value {
+            chrono::Weekday::Mon => Self::Monday,
+            chrono::Weekday::Tue => Self::Tuesday,
+            chrono::Weekday::Wed => Self::Wednesday,
+            chrono::Weekday::Thu => Self::Thursday,
+            chrono::Weekday::Fri => Self::Friday,
+            chrono::Weekday::Sat => Self::Saturday,
+            chrono::Weekday::Sun => Self::Sunday,
+        }
+    }
+}
