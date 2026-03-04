@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options::{DateAddOptions, DateDifferenceOptions, Overflow};
-use crate::types::{DateDuration, DateDurationUnit, Month};
+use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit, Overflow};
+use crate::types::{DateDuration, Month};
 use crate::{AsCalendar, Calendar, Date};
 use core::fmt;
 

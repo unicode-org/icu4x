@@ -6,8 +6,10 @@ use crate::calendar_arithmetic::{CONSTRUCTOR_YEAR_RANGE, GENEROUS_YEAR_RANGE, VA
 use crate::duration::DateDuration;
 use crate::error::DateAddError;
 use crate::error::DateFromFieldsError;
-use crate::options::{DateAddOptions, DateDifferenceOptions, DateFromFieldsOptions, Overflow};
-use crate::types::{DateDurationUnit, DateFields, Month};
+use crate::options::{
+    DateAddOptions, DateDifferenceOptions, DateDurationUnit, DateFromFieldsOptions, Overflow,
+};
+use crate::types::{DateFields, Month};
 use crate::Date;
 use calendrical_calculations::gregorian::fixed_from_gregorian;
 use calendrical_calculations::rata_die::RataDie;

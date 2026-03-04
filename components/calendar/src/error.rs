@@ -570,7 +570,7 @@ mod unstable {
     /// use icu::calendar::error::MismatchedCalendarError;
     /// use icu::calendar::Date;
     /// use icu::calendar::options::DateDifferenceOptions;
-    /// use icu::calendar::types::DateDurationUnit;
+    /// use icu::calendar::options::DateDurationUnit;
     ///
     /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
     /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
