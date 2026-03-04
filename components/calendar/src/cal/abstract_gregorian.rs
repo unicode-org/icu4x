@@ -156,6 +156,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
+        _: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
@@ -301,13 +302,14 @@ macro_rules! impl_with_abstract_gregorian {
             #[cfg(feature = "unstable")]
             fn until(
                 &self,
+                _: &Self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
                 options: crate::options::DateDifferenceOptions,
             ) -> Result<crate::types::DateDuration, Self::DifferenceError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .until(&date1.0, &date2.0, options)
+                    .until(&crate::cal::abstract_gregorian::AbstractGregorian($eras_expr), &date1.0, &date2.0, options)
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {

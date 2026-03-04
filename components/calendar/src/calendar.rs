@@ -156,6 +156,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
+        other: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,

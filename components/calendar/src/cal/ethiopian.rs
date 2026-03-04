@@ -204,11 +204,12 @@ impl Calendar for Ethiopian {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
+        _: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
     ) -> Result<types::DateDuration, Self::DifferenceError> {
-        Coptic.until(&date1.0, &date2.0, options)
+        Coptic.until(&Coptic, &date1.0, &date2.0, options)
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {

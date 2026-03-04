@@ -731,6 +731,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
+        _: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,

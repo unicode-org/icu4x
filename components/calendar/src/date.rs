@@ -443,7 +443,7 @@ impl<A: AsCalendar> Date<A> {
     ) -> Result<types::DateDuration, <A::Calendar as Calendar>::DifferenceError> {
         self.calendar
             .as_calendar()
-            .until(self.inner(), other.inner(), options)
+            .until(other.calendar(), self.inner(), other.inner(), options)
     }
 
     /// Construct a date from raw values for a given calendar. This does not check any

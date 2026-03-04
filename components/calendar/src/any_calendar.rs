@@ -348,20 +348,21 @@ macro_rules! make_any_calendar {
             #[$unstable_cfg]
             fn until(
                 &self,
+                other: &Self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
                 options: $crate::options::DateDifferenceOptions,
             ) -> Result<$crate::types::DateDuration, Self::DifferenceError> {
-                let Ok(r) = match (self, date1, date2) {
+                let Ok(r) = match (self, other, date1, date2) {
                     $(
-                        (Self::$variant(ref c1), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
-                            c1.until(d1, d2, options)
+                        (Self::$variant(ref c1), Self::$variant(ref c2), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2) && AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
+                            c1.until(c2, d1, d2, options)
                         }
                     )+
                     $(
                         #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c1), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
-                            c1.until(d1, d2, options)
+                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2) && AnyCalendarable::identity(c1) == *q1 && q1 == q2  => {
+                            c1.until(c2, d1, d2, options)
                         }
                     )*
                     _ => {

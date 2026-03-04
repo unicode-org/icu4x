@@ -949,6 +949,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
+        _: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
