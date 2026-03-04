@@ -15,7 +15,8 @@ include = [
 ]
 
 authors.workspace = true
-categories.workspace = true
+categories = ["internationalization", "localization", "external-ffi-bindings", "no-std", "embedded"]
+keywords = ["ffi", "internationalization"]
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true

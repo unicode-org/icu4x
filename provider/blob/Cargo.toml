@@ -8,6 +8,7 @@ description = "ICU4X data provider that reads from blobs in memory"
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["data-loading", "data"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

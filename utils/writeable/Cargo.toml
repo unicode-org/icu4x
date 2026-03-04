@@ -14,6 +14,8 @@ license.workspace = true
 repository.workspace = true
 rust-version = "1.82"
 
+keywords = ["formatting", "text-generation", "string", "no-std"]
+
 [package.metadata.workspaces]
 independent = true
 

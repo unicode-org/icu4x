@@ -15,6 +15,8 @@ license.workspace = true
 repository.workspace = true
 rust-version = "1.82"
 
+keywords = ["compression", "binary"]
+
 [package.metadata.workspaces]
 independent = true
 

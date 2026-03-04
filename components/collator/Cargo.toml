@@ -9,6 +9,7 @@ version.workspace = true
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["unicode", "sorting", "alphabetical"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

@@ -7,7 +7,7 @@ name = "databake-derive"
 description = "Custom derive for the databake crate"
 version = "0.2.0"
 categories = ["rust-patterns", "memory-management", "development-tools::procedural-macro-helpers", "development-tools::build-utils"]
-keywords = ["zerocopy", "serialization", "const", "proc"]
+keywords = ["data-loading", "zerocopy", "serialization", "const"]
 
 authors.workspace = true
 edition.workspace = true

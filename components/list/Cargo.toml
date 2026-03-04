@@ -9,6 +9,7 @@ description = "ECMA-402 ListFormatter"
 license.workspace = true
 authors.workspace = true
 categories.workspace = true
+keywords = ["unicode", "formatting", "internationalization"]
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true

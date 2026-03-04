@@ -8,6 +8,7 @@ description = "API for normalizing text into Unicode Normalization Forms"
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["unicode", "normalization", "text-processing"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

@@ -10,6 +10,7 @@ version = "0.4.1"
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["data", "unicode"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

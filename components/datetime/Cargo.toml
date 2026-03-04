@@ -8,6 +8,7 @@ description = "Human-readable formatting of dates, times, and time zones in hund
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["unicode", "formatting", "date", "time"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

@@ -9,6 +9,7 @@ version = "0.2.3"
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["zero-copy", "serialization", "memory-efficiency", "trie"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

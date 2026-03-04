@@ -13,6 +13,7 @@ repository.workspace = true
 homepage.workspace = true
 license.workspace = true
 categories.workspace = true
+keywords = ["text-processing", "encoding"]
 include.workspace = true
 
 [dependencies]

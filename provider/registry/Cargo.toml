@@ -13,6 +13,7 @@ repository.workspace = true
 homepage.workspace = true
 license.workspace = true
 categories.workspace = true
+keywords = ["data-loading", "data"]
 include.workspace = true
 
 [dev-dependencies]
