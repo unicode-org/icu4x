@@ -20,7 +20,7 @@ use crate::error::DateDurationParseError;
 /// ```rust
 /// use icu::calendar::options::DateDifferenceOptions;
 /// use icu::calendar::types::DateDuration;
-/// use icu::calendar::types::DateDurationUnit;
+/// use icu::calendar::options::DateDurationUnit;
 /// use icu::calendar::types::Weekday;
 /// use icu::calendar::Date;
 ///
@@ -133,30 +133,6 @@ pub struct DateDuration {
     pub weeks: u32,
     /// The number of days
     pub days: u64,
-}
-
-/// A "duration unit" used to specify the minimum or maximum duration of time to
-/// care about.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
-///
-/// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
-/// </div>
-///
-/// ✨ *Enabled with the `unstable` Cargo feature.*
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-#[allow(clippy::exhaustive_enums)] // this type should be stable
-pub enum DateDurationUnit {
-    /// Duration in years
-    Years,
-    /// Duration in months
-    Months,
-    /// Duration in weeks
-    Weeks,
-    /// Duration in days
-    Days,
 }
 
 impl DateDuration {

@@ -4,12 +4,12 @@
 
 use calendrical_calculations::rata_die::RataDie;
 
-use crate::duration::{DateDuration, DateDurationUnit};
+use crate::duration::DateDuration;
 use crate::error::{
     range_check, DateAddError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
     MonthCodeParseError, MonthError, UnknownEraError,
 };
-use crate::options::{DateAddOptions, DateDifferenceOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateFields, Month};
 use crate::{types, Calendar, DateError, RangeError};

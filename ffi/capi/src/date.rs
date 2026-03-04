@@ -34,8 +34,8 @@ pub mod ffi {
         Sunday,
     }
 
-    #[diplomat::enum_convert(icu_calendar::types::DateDurationUnit, needs_wildcard)]
-    #[diplomat::rust_link(icu::calendar::types::DateDurationUnit, Enum)]
+    #[diplomat::enum_convert(icu_calendar::options::DateDurationUnit, needs_wildcard)]
+    #[diplomat::rust_link(icu::calendar::options::DateDurationUnit, Enum)]
     #[cfg(feature = "unstable")]
     #[non_exhaustive]
     pub enum DateDurationUnit {

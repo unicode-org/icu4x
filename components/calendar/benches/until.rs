@@ -5,8 +5,8 @@
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::options::DateDifferenceOptions;
-use icu_calendar::types::{DateDurationUnit, RataDie};
+use icu_calendar::options::{DateDifferenceOptions, DateDurationUnit};
+use icu_calendar::types::RataDie;
 use icu_calendar::{Calendar, Date};
 
 #[macro_use]
