@@ -263,6 +263,7 @@ where
 impl PerfectByteHashMap<[u8]> {
     /// Creates an instance from pre-existing bytes. See [`Self::as_bytes`].
     #[inline]
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     pub fn from_bytes(bytes: &[u8]) -> &Self {
         // Safety: Self is repr(transparent) over [u8]
         unsafe { &*(bytes as *const [u8] as *const Self) }
