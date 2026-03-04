@@ -33,11 +33,11 @@ jobs:
           body = re.sub(r'<!--.*?-->', '', body, flags=re.DOTALL)
           
           # Find # Changelog section header (case-insensitive)
-          header_match = re.search(r'^#\s*Changelog\b(.*?)$', body, re.IGNORECASE | re.MULTILINE)
+          header_match = re.search(r'^##\s*Changelog\b(.*?)$', body, re.IGNORECASE | re.MULTILINE)
           
           if not header_match:
-              print("::error::No '# Changelog' section found in the PR description.")
-              print("Please add a '# Changelog' section to your PR body.")
+              print("::error::No '## Changelog' section found in the PR description.")
+              print("Please add a '## Changelog' section to your PR body.")
               sys.exit(1)
           
           header_suffix = header_match.group(1).strip()
@@ -65,8 +65,8 @@ jobs:
               sys.exit(0)
           
           if not content:
-              print("::error::The '# Changelog' section is empty.")
-              print("Please provide a changelog entry, or use '# Changelog (N/A)' or '# Changelog: TBD' if appropriate.")
+              print("::error::The '## Changelog' section is empty.")
+              print("Please provide a changelog entry, or use '## Changelog (N/A)' or '## Changelog: TBD' if appropriate.")
               sys.exit(1)
           
           print("Changelog check passed.")

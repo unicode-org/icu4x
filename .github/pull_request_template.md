@@ -7,6 +7,6 @@ Please see https://github.com/unicode-org/icu4x/blob/main/CONTRIBUTING.md for ge
 information on contributing to ICU4X.
 -->
 
-# Changelog
+## Changelog
 
 <!-- Please fill in according to documents/process/changelog.md -->

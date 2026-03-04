@@ -6,9 +6,9 @@ ICU4X uses a collaborative changelog process where the burden of writing changel
 
 Every PR that introduces user-visible changes, new APIs, or significant improvements must include a changelog entry.
 
-### The `# Changelog` Section
+### The `## Changelog` Section
 
-The PR template includes a mandatory `# Changelog` section at the end of the description. CI enforces that this section contains something, or is explicitly marked N/A.
+The PR template includes a mandatory `## Changelog` section at the end of the description. CI enforces that this section contains something, or is explicitly marked N/A.
 
 
 **PR Authors** are primarily responsible for writing the changelog entry in this section. If the PR contains multiple changes that belong in different sections of the final changelog (e.g., a component change and a utility change), provide .
