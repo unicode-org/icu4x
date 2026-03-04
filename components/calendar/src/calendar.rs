@@ -9,6 +9,7 @@ use crate::error::{DateAddError, DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Iso};
+use core::cmp::Ordering;
 use core::fmt;
 
 /// A calendar implementation
@@ -29,12 +30,18 @@ use core::fmt;
 pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The internal type used to represent dates
     ///
-    /// Equality and ordering should observe normal calendar semantics.
+    /// The `Copy` and `PartialOrd` bounds are not used anymore.
     type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
     /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
-    /// The type of error returned by `until`
-    type DifferenceError: fmt::Debug;
+    /// In case of parameterized calendars, the error that is returned when two
+    /// [`Date`](crate::Date) objects with different calendars interact (`until`,
+    /// `eq_dates`, `cmp_dates`).
+    ///
+    /// Set this to [`core::convert::Infallible`] if the type is a singleton or
+    /// the parameterization does not affect calendar semantics. This
+    /// will unlock [`Date`](crate::Date)'s [`PartialOrd`] implementation.
+    type IdentityError: fmt::Debug;
 
     /// Construct a date from era/month codes and fields
     ///
@@ -160,7 +167,23 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError>;
+    ) -> Result<types::DateDuration, Self::IdentityError>;
+
+    /// Compares two [`Self::DateInner`]s and their associated calendars under [`PartialEq`] semantics.
+    fn eq_dates(
+        &self,
+        other: &Self,
+        a: &Self::DateInner,
+        b: &Self::DateInner,
+    ) -> Result<bool, Self::IdentityError>;
+
+    /// Compares two [`Self::DateInner`]s and their associated calendars under [`PartialOrd`]/[`Ord`] semantics.
+    fn cmp_dates(
+        &self,
+        other: &Self,
+        a: &Self::DateInner,
+        b: &Self::DateInner,
+    ) -> Result<Ordering, Self::IdentityError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

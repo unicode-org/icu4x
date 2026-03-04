@@ -203,6 +203,17 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
+    /// In case of parameterized rules, the error that is returned when two
+    /// [`Date`] objects with different rules interact (`until`, `eq_dates`,
+    /// `cmp_dates`).
+    ///
+    /// Set this to [`core::convert::Infallible`] if the type is a singleton or
+    /// the parameterization does not affect calendar semantics.
+    type IdentityError: core::fmt::Debug;
+
+    /// Checks whether two [`Rules`] values are equal for the purpose of [`Date`] interaction.
+    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError>;
+
     /// The debug name for the calendar defined by these [`Rules`].
     fn debug_name(&self) -> &'static str {
         "EastAsianTraditional (custom)"
@@ -300,6 +311,12 @@ impl Rules for China {
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
         ecma_reference_year_common(month, day, EastAsianCalendarKind::Chinese)
+    }
+
+    type IdentityError = core::convert::Infallible;
+
+    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+        Ok(())
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -435,6 +452,12 @@ impl Rules for Korea {
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
         ecma_reference_year_common(month, day, EastAsianCalendarKind::Korean)
+    }
+
+    type IdentityError = core::convert::Infallible;
+
+    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+        Ok(())
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -663,7 +686,7 @@ impl<R: Rules> crate::cal::scaffold::UnstableSealed for EastAsianTraditional<R> 
 impl<R: Rules> Calendar for EastAsianTraditional<R> {
     type DateInner = ChineseDateInner<R>;
     type Year = types::CyclicYear;
-    type DifferenceError = core::convert::Infallible;
+    type IdentityError = R::IdentityError;
 
     fn from_codes(
         &self,
@@ -731,12 +754,33 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
-        _: &Self,
+        other: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
+    ) -> Result<types::DateDuration, Self::IdentityError> {
+        self.0.check_identity(&other.0)?;
         Ok(date1.0.until(&date2.0, self, options))
+    }
+
+    fn eq_dates(
+        &self,
+        other: &Self,
+        a: &Self::DateInner,
+        b: &Self::DateInner,
+    ) -> Result<bool, Self::IdentityError> {
+        self.0.check_identity(&other.0)?;
+        Ok(a == b)
+    }
+
+    fn cmp_dates(
+        &self,
+        other: &Self,
+        a: &Self::DateInner,
+        b: &Self::DateInner,
+    ) -> Result<core::cmp::Ordering, Self::IdentityError> {
+        self.0.check_identity(&other.0)?;
+        Ok(a.cmp(b))
     }
 
     /// Obtain a name for the calendar for debug printing
@@ -1139,6 +1183,12 @@ impl<R: Rules> Rules for EastAsianTraditionalYears<R> {
 
     fn year_containing_rd(&self, rd: RataDie) -> EastAsianTraditionalYear {
         self.1.year_containing_rd(rd)
+    }
+
+    type IdentityError = R::IdentityError;
+
+    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
+        self.1.check_identity(&other.1)
     }
 }
 

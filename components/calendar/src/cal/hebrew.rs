@@ -225,7 +225,7 @@ impl crate::cal::scaffold::UnstableSealed for Hebrew {}
 impl Calendar for Hebrew {
     type DateInner = HebrewDateInner;
     type Year = types::EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type IdentityError = core::convert::Infallible;
 
     fn from_codes(
         &self,
@@ -297,12 +297,30 @@ impl Calendar for Hebrew {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
-        _: &Self,
+        &Self: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
+    ) -> Result<types::DateDuration, Self::IdentityError> {
         Ok(date1.0.until(&date2.0, self, options))
+    }
+
+    fn eq_dates(
+        &self,
+        &Self: &Self,
+        a: &Self::DateInner,
+        b: &Self::DateInner,
+    ) -> Result<bool, Self::IdentityError> {
+        Ok(a == b)
+    }
+
+    fn cmp_dates(
+        &self,
+        &Self: &Self,
+        a: &Self::DateInner,
+        b: &Self::DateInner,
+    ) -> Result<core::cmp::Ordering, Self::IdentityError> {
+        Ok(a.cmp(b))
     }
 
     fn debug_name(&self) -> &'static str {

@@ -30,6 +30,10 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
         None
     }
 
+    type IdentityError: core::fmt::Debug;
+
+    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError>;
+
     fn debug_name(&self) -> &'static str;
 }
 
@@ -84,7 +88,7 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
     type Year = EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type IdentityError = Y::IdentityError;
 
     fn from_codes(
         &self,
@@ -156,12 +160,33 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
-        _: &Self,
+        other: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
+    ) -> Result<types::DateDuration, Self::IdentityError> {
+        self.0.check_identity(&other.0)?;
         Ok(date1.until(date2, &AbstractGregorian(IsoEra), options))
+    }
+
+    fn eq_dates(
+        &self,
+        other: &Self,
+        a: &Self::DateInner,
+        b: &Self::DateInner,
+    ) -> Result<bool, Self::IdentityError> {
+        self.0.check_identity(&other.0)?;
+        Ok(a == b)
+    }
+
+    fn cmp_dates(
+        &self,
+        other: &Self,
+        a: &Self::DateInner,
+        b: &Self::DateInner,
+    ) -> Result<core::cmp::Ordering, Self::IdentityError> {
+        self.0.check_identity(&other.0)?;
+        Ok(a.cmp(b))
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
@@ -213,7 +238,7 @@ macro_rules! impl_with_abstract_gregorian {
         impl crate::Calendar for $cal_ty {
             type DateInner = $inner_date_ty;
             type Year = types::EraYear;
-            type DifferenceError = core::convert::Infallible;
+            type IdentityError = core::convert::Infallible;
 
             fn from_codes(
                 &self,
@@ -302,14 +327,42 @@ macro_rules! impl_with_abstract_gregorian {
             #[cfg(feature = "unstable")]
             fn until(
                 &self,
-                _: &Self,
+                other: &Self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
                 options: crate::options::DateDifferenceOptions,
-            ) -> Result<crate::types::DateDuration, Self::DifferenceError> {
+            ) -> Result<crate::types::DateDuration, Self::IdentityError> {
                 let $self_ident = self;
-                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .until(&crate::cal::abstract_gregorian::AbstractGregorian($eras_expr), &date1.0, &date2.0, options)
+                let c1 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                let $self_ident = other;
+                let c2 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                c1.until(&c2, &date1.0, &date2.0, options)
+            }
+
+            fn eq_dates(
+                &self,
+                other: &Self,
+                date1: &Self::DateInner,
+                date2: &Self::DateInner,
+            ) -> Result<bool, Self::IdentityError> {
+                let $self_ident = self;
+                let c1 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                let $self_ident = other;
+                let c2 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                c1.eq_dates(&c2, &date1.0, &date2.0)
+            }
+
+            fn cmp_dates(
+                &self,
+                other: &Self,
+                date1: &Self::DateInner,
+                date2: &Self::DateInner,
+            ) -> Result<core::cmp::Ordering, Self::IdentityError> {
+                let $self_ident = self;
+                let c1 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                let $self_ident = other;
+                let c2 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                c1.cmp_dates(&c2, &date1.0, &date2.0)
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {

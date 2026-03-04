@@ -22,6 +22,12 @@ impl hijri::Rules for IranSighting {
             .year(extended_year)
         })
     }
+
+    type IdentityError = core::convert::Infallible;
+
+    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+        Ok(())
+    }
 }
 
 static QAMARI: LazyLock<HashMap<i32, hijri::HijriYear>> = LazyLock::new(|| {

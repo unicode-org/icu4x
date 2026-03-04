@@ -102,7 +102,7 @@ macro_rules! make_any_calendar {
         impl $crate::Calendar for $any_calendar_ident {
             type DateInner = $any_date_ident;
             type Year = $crate::types::YearInfo;
-            type DifferenceError = $crate::error::MismatchedCalendarError;
+            type IdentityError = $crate::error::MismatchedCalendarError;
 
             fn from_codes(
                 &self,
@@ -352,7 +352,7 @@ macro_rules! make_any_calendar {
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
                 options: $crate::options::DateDifferenceOptions,
-            ) -> Result<$crate::types::DateDuration, Self::DifferenceError> {
+            ) -> Result<$crate::types::DateDuration, Self::IdentityError> {
                 let Ok(r) = match (self, other, date1, date2) {
                     $(
                         (Self::$variant(ref c1), Self::$variant(ref c2), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2) && AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
@@ -368,6 +368,42 @@ macro_rules! make_any_calendar {
                     _ => {
                         return Err($crate::error::MismatchedCalendarError);
                     }
+                };
+                Ok(r)
+            }
+
+            fn eq_dates(&self, other: &Self, date1: &Self::DateInner, date2: &Self::DateInner) -> Result<bool, Self::IdentityError> {
+                let Ok(r) = match (self, other, date1, date2) {
+                    $(
+                        (Self::$variant(ref c1), Self::$variant(ref c2), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2) && AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
+                            c1.eq_dates(c2, d1, d2)
+                        }
+                    )+
+                    $(
+                        #[allow(deprecated)]
+                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2) && AnyCalendarable::identity(c1) == *q1 && q1 == q2  => {
+                            c1.eq_dates(c2, d1, d2)
+                        }
+                    )*
+                    _ => return Err($crate::error::MismatchedCalendarError),
+                };
+                Ok(r)
+            }
+
+            fn cmp_dates(&self, other: &Self, date1: &Self::DateInner, date2: &Self::DateInner) -> Result<core::cmp::Ordering, Self::IdentityError> {
+                let Ok(r) = match (self, other, date1, date2) {
+                    $(
+                        (Self::$variant(ref c1), Self::$variant(ref c2), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2) && AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
+                            c1.cmp_dates(c2, d1, d2)
+                        }
+                    )+
+                    $(
+                        #[allow(deprecated)]
+                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2) && AnyCalendarable::identity(c1) == *q1 && q1 == q2  => {
+                            c1.cmp_dates(c2, d1, d2)
+                        }
+                    )*
+                    _ => return Err($crate::error::MismatchedCalendarError),
                 };
                 Ok(r)
             }

@@ -440,7 +440,7 @@ impl<A: AsCalendar> Date<A> {
         &self,
         other: &Date<B>,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, <A::Calendar as Calendar>::DifferenceError> {
+    ) -> Result<types::DateDuration, <A::Calendar as Calendar>::IdentityError> {
         self.calendar
             .as_calendar()
             .until(other.calendar(), self.inner(), other.inner(), options)
@@ -584,7 +584,9 @@ where
     B: AsCalendar<Calendar = C>,
 {
     fn eq(&self, other: &Date<B>) -> bool {
-        self.inner.eq(&other.inner)
+        self.calendar()
+            .eq_dates(other.calendar(), &self.inner, &other.inner)
+            .unwrap_or(false)
     }
 }
 
@@ -597,18 +599,22 @@ where
     B: AsCalendar<Calendar = C>,
 {
     fn partial_cmp(&self, other: &Date<B>) -> Option<core::cmp::Ordering> {
-        self.inner.partial_cmp(&other.inner)
+        self.calendar()
+            .cmp_dates(other.calendar(), &self.inner, &other.inner)
+            .ok()
     }
 }
 
 impl<C, A> Ord for Date<A>
 where
-    C: Calendar,
-    C::DateInner: Ord,
+    C: Calendar<IdentityError = core::convert::Infallible>,
     A: AsCalendar<Calendar = C>,
 {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.inner.cmp(&other.inner)
+        let Ok(r) = self
+            .calendar()
+            .cmp_dates(other.calendar(), &self.inner, &other.inner);
+        r
     }
 }
 

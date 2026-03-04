@@ -15,7 +15,7 @@ use icu_calendar::Date;
 /// on the ground.
 ///
 /// [^1]: See [`calendrical_calculations::islamic::observational_islamic_from_fixed`]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct ReingoldSimulation;
 
 impl icu_calendar::cal::scaffold::UnstableSealed for ReingoldSimulation {}
@@ -42,6 +42,12 @@ impl Rules for ReingoldSimulation {
             }),
         )
         .unwrap()
+    }
+
+    type IdentityError = core::convert::Infallible;
+
+    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+        Ok(())
     }
 
     fn debug_name(&self) -> &'static str {

@@ -113,9 +113,12 @@ impl CldrCalendar for cal::Indian {
 /// impl icu::datetime::scaffold::UnstableSealed for MyRules {}
 ///
 /// impl hijri::Rules for MyRules {
-///     fn year(&self, _year: i32) -> hijri::HijriYear {
-///         todo!()
-///     }
+///      // ...
+/// #    fn year(&self, _year: i32) -> hijri::HijriYear {
+/// #        todo!()
+/// #    }
+/// #    type IdentityError = core::convert::Infallible;
+/// #    fn check_identity(&self, _: &Self) -> Result<(), Self::IdentityError> { Ok(()) }
 /// }
 ///
 /// impl FormattableHijriRules for MyRules {

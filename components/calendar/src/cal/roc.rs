@@ -74,6 +74,12 @@ impl GregorianYears for RocEra {
         }
     }
 
+    type IdentityError = core::convert::Infallible;
+
+    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+        Ok(())
+    }
+
     fn debug_name(&self) -> &'static str {
         "ROC"
     }
