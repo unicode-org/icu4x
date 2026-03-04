@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `DateDurationUnit`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.DateDurationUnit.html) for more information.
+ * See the [Rust documentation for `DateDurationUnit`](https://docs.rs/icu/2.1.1/icu/calendar/options/enum.DateDurationUnit.html) for more information.
  */
 export class DateDurationUnit {
     #value = undefined;
