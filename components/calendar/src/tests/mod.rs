@@ -8,6 +8,7 @@ mod date_arithmetic_snapshot;
 mod exhaustive;
 mod extended_year;
 mod extrema;
+mod month;
 mod not_enough_fields;
 
 macro_rules! test_all_cals {

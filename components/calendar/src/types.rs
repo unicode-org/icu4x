@@ -546,11 +546,11 @@ impl Month {
     /// See [`Self::try_from_str()`].
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
         match *bytes {
-            [b'M', tens, ones] => Ok(Self {
+            [b'M', tens @ b'0'..=b'9', ones @ b'0'..=b'9'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
                 is_leap: false,
             }),
-            [b'M', tens, ones, b'L'] => Ok(Self {
+            [b'M', tens @ b'0'..=b'9', ones @ b'0'..=b'9', b'L'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
                 is_leap: true,
             }),
