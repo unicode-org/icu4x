@@ -641,7 +641,7 @@ pub mod ffi {
             duration: DateDuration,
             options: DateAddOptions,
         ) -> Result<Box<Date>, CalendarDateAddError> {
-            Ok(Box::new(Date(self.0.try_added_with_options(
+            Ok(Box::new(Date(self.0.clone().try_added_with_options(
                 duration.into(),
                 options.into(),
             )?)))
