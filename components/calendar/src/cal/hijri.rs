@@ -395,11 +395,12 @@ impl Rules for TabularAlgorithm {
         }
     }
 
-    type IdentityError = core::convert::Infallible;
+    type IdentityError = crate::error::MismatchedCalendarError;
 
     fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
-        // TODO: this should probably return an error
-        let _ignored = other;
+        if self != other {
+            return Err(crate::error::MismatchedCalendarError);
+        }
         Ok(())
     }
 }

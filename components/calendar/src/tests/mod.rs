@@ -17,7 +17,7 @@ macro_rules! test_all_cals {
             #[allow(unused_imports)]
             use super::*;
 
-            fn test<C: crate::Calendar + Copy>(cal: C) where Date<C>: Ord {
+            fn test<C: crate::Calendar + Copy>(cal: C) {
                 let $cal = cal;
                 $tt
             }

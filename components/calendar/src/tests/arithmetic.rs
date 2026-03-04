@@ -231,8 +231,11 @@ super::test_all_cals!(
                     }
                 } else if duration.years == 0 && duration.days == 0 {
                     // Months should have arithmetic behavior.
-                    let earlier = std::cmp::min(date, added_date);
-                    let later = std::cmp::max(date, added_date);
+                    let (earlier, later) = if date < added_date {
+                        (date, added_date)
+                    } else {
+                        (added_date, date)
+                    };
                     let mut month_diff = 0;
                     month_diff -= earlier.month().ordinal as i32;
                     month_diff += later.month().ordinal as i32;
