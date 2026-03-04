@@ -14,6 +14,8 @@ pub(crate) use unstable::{
 };
 
 mod unstable {
+    use crate::duration::DateDurationUnit;
+
     /// Options bag for [`Date::try_from_fields`](crate::Date::try_from_fields).
     ///
     /// <div class="stab unstable">
@@ -177,6 +179,9 @@ mod unstable {
         /// associative or commutative in subsequent arithmetic operations, and it might require
         /// [`Overflow::Constrain`] in addition.
         ///
+        /// The resultant duration will not have any `weeks` value unless [`DateDurationUnit::Weeks`]
+        /// is explicitly specified as `largest_unit`.
+        ///
         /// # Examples
         ///
         /// ```
@@ -206,6 +211,7 @@ mod unstable {
         /// assert_eq!(
         ///     d1.try_until_with_options(&d2, options_weeks).unwrap(),
         ///     DateDuration {
+        ///         // This is the only time there is a `weeks` value.
         ///         weeks: 58,
         ///         days: 4,
         ///         ..Default::default()
@@ -239,7 +245,7 @@ mod unstable {
         /// [`Months`]: crate::types::DateDurationUnit::Months
         /// [`Years`]: crate::types::DateDurationUnit::Years
         /// [`DateDuration`]: crate::types::DateDuration
-        pub largest_unit: Option<crate::duration::DateDurationUnit>,
+        pub largest_unit: Option<DateDurationUnit>,
     }
 
     /// Whether to constrain or reject out-of-bounds values when constructing a Date.

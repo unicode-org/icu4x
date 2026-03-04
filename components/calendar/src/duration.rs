@@ -136,7 +136,7 @@ pub struct DateDuration {
 }
 
 /// A "duration unit" used to specify the minimum or maximum duration of time to
-/// care about
+/// care about.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
