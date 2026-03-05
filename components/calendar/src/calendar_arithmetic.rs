@@ -910,22 +910,6 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         cal: &C,
         options: DateDifferenceOptions,
     ) -> DateDuration {
-        // Fast path for day/week diffs
-        // Avoids quadratic behavior in surpasses() for days/weeks
-        if matches!(
-            options.largest_unit,
-            Some(DateDurationUnit::Days) | Some(DateDurationUnit::Weeks)
-        ) {
-            let from = self.to_rata_die();
-            let to = other.to_rata_die();
-            let diff = to - from;
-            if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
-                return DateDuration::for_weeks_and_days(diff);
-            } else {
-                return DateDuration::for_days(diff);
-            }
-        }
-
         // 1. Let _sign_ be -1 × CompareISODate(_one_, _two_).
         // 1. If _sign_ = 0, return ZeroDateDuration().
         let sign = match other.cmp(self) {
@@ -1026,36 +1010,52 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 )
             });
         }
-        // 1. Let _weeks_ be 0.
-        // 1. If _largestUnit_ is ~week~, then
-        //   1. Let _candidateWeeks_ be _sign_.
-        //   1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _years_, _months_, _candidateWeeks_, 0) is *false*,
-        //     1. Set _weeks_ to _candidateWeeks_.
-        //     1. Set _candidateWeeks_ to _candidateWeeks_ + sign.
-        let mut weeks = 0;
-        if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
-            weeks = binary_search(0, sign, |c| {
-                self.surpasses(
-                    other,
-                    DateDuration::from_signed_ymwd(years, months, c, 0),
-                    sign,
-                    cal,
+
+        let without_days = if matches!(
+            options.largest_unit,
+            Some(DateDurationUnit::Days) | Some(DateDurationUnit::Weeks)
+        ) {
+            self.to_rata_die()
+        } else {
+            // This is an inlined and simplified version of `.added()`
+            let year_info =
+                cal.year_info_from_extended(self.year().to_extended_year() + years as i32);
+
+            #[allow(clippy::unwrap_used)] // month_from_ordinal output is valid input
+            let constrained_ordinal = cal
+                .ordinal_from_month(
+                    year_info,
+                    cal.month_from_ordinal(self.year(), self.month()),
+                    DateFromFieldsOptions {
+                        overflow: Some(Overflow::Constrain),
+                        ..Default::default()
+                    },
                 )
-            });
-        }
-        // There is no pressing need to optimize start here: the early-return RD arithmetic
-        // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
-        // arrive here with a candidate date that is at most 31 days off.
-        let days = binary_search(0, sign, |c| {
-            self.surpasses(
-                other,
-                DateDuration::from_signed_ymwd(years, months, weeks, c),
-                sign,
+                .unwrap();
+
+            let end_of_month =
+                Self::new_balanced(year_info, constrained_ordinal as i64 + months + 1, 0, cal);
+
+            let year_month_date = Self::new_balanced(
+                end_of_month.year,
+                i64::from(end_of_month.ordinal_month),
+                i64::from(core::cmp::min(self.day(), end_of_month.day)),
                 cal,
+            );
+            C::to_rata_die_inner(
+                year_month_date.year,
+                year_month_date.ordinal_month,
+                year_month_date.day,
             )
-        });
+        };
+        let days = other.to_rata_die() - without_days;
+
+        if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
+            return DateDuration::for_weeks_and_days(days);
+        }
+
         // 1. Return ! CreateDateDurationRecord(_years_, _months_, _weeks_, _days_).
-        DateDuration::from_signed_ymwd(years, months, weeks, days)
+        DateDuration::from_signed_ymwd(years, months, 0, days)
     }
 }
 
