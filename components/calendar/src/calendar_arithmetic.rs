@@ -945,6 +945,34 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             }
         }
 
+        #[inline(always)]
+        fn binary_search(start: i64, sign: i64, test: impl Fn(i64) -> bool) -> i64 {
+            // Logarithmic search for an upper bound
+            let mut i = sign;
+            let mut lower_bound = start;
+            let mut upper_bound = loop {
+                if test(start + i) {
+                    break lower_bound + i;
+                }
+                lower_bound = start + i;
+                i *= 2;
+            };
+
+            debug_assert!(!test(lower_bound));
+            debug_assert!(test(upper_bound));
+
+            while lower_bound * sign + 1 < upper_bound * sign {
+                let mid = lower_bound.midpoint(upper_bound);
+                if test(mid) {
+                    upper_bound = mid;
+                } else {
+                    lower_bound = mid;
+                }
+            }
+
+            lower_bound
+        }
+
         // We don't want to spend time incrementally bumping it up one year
         // at a time, so let's pre-guess a year delta that is guaranteed to not
         // surpass.
@@ -955,27 +983,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             i64::from(year_diff) - sign
         };
 
-        debug_assert!(!self.surpasses(
-            other,
-            DateDuration::from_signed_ymwd(min_years, 0, 0, 0),
-            sign,
-            cal,
-        ));
-
-        // 1. Let _years_ be 0.
-        // 1. If _largestUnit_ is ~year~, then
-        //   1. Let _candidateYears_ be _sign_.
-        //   1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _candidateYears_, 0, 0, 0) is *false*,
-        //     1. Set _years_ to _candidateYears_.
-        //     1. Set _candidateYears_ to _candidateYears_ + _sign_.
-
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
-            // Optimization: we start with min_years since it is guaranteed to not
-            // surpass.
-            let start = min_years;
-
-            years = linear_search(start, sign, |c| {
+            // We can use a linear search starting from `min_years`, as we're
+            // at most one year away.
+            years = linear_search(min_years, sign, |c| {
                 self.surpasses(other, DateDuration::from_signed_ymwd(c, 0, 0, 0), sign, cal)
             });
         }
@@ -1004,7 +1016,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 0
             };
 
-            months = linear_search(start, sign, |c| {
+            // Here we should use a binary search
+            months = binary_search(start, sign, |c| {
                 self.surpasses(
                     other,
                     DateDuration::from_signed_ymwd(years, c, 0, 0),
@@ -1021,7 +1034,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //     1. Set _candidateWeeks_ to _candidateWeeks_ + sign.
         let mut weeks = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
-            weeks = linear_search(0, sign, |c| {
+            weeks = binary_search(0, sign, |c| {
                 self.surpasses(
                     other,
                     DateDuration::from_signed_ymwd(years, months, c, 0),
@@ -1033,7 +1046,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // There is no pressing need to optimize start here: the early-return RD arithmetic
         // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
         // arrive here with a candidate date that is at most 31 days off.
-        let days = linear_search(0, sign, |c| {
+        let days = binary_search(0, sign, |c| {
             self.surpasses(
                 other,
                 DateDuration::from_signed_ymwd(years, months, weeks, c),
