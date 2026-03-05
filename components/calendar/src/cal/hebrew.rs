@@ -135,14 +135,9 @@ impl DateFieldsResolver for Hebrew {
     }
 
     #[inline]
-    fn min_months_from_inner(start: HebrewYear, years: i64) -> i64 {
-        // (7y+1)/19 is the number of leap years before year y. Compute the
-        // number of leap years in the start year, up to but not including the
-        // end year.
-        let count_leaps = |y: i64| (7 * y + 1).div_euclid(19);
-        let start_year = start.value.into();
-        let end_year = start_year + years;
-        12 * years + (count_leaps(end_year) - count_leaps(start_year)).abs()
+    fn min_months_from_inner(_start: HebrewYear, years: i64) -> i64 {
+        // There are 7 leap years in every 19-year Metonic cycle.
+        235 * years / 19
     }
 
     #[inline]

@@ -908,41 +908,6 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         balanced.into_checked().ok_or(DateAddError::Overflow)
     }
 
-    /// Implements the Temporal operation `NonISODateAdd`, but without any bounds checks.
-    ///
-    /// For internal use by `until()` where the operation is known to succeed.
-    /// Follows `Overflow::Constrain` logic.
-    fn added_without_checks(&self, duration: DateDuration, cal: &C) -> UncheckedArithmeticDate<C> {
-        let extended_year = duration.add_years_to(self.year().to_extended_year());
-        let y0 = cal.year_info_from_extended(extended_year);
-        let base_month = cal.month_from_ordinal(self.year(), self.month());
-        let m0 = cal
-            .ordinal_from_month(
-                y0,
-                base_month,
-                DateFromFieldsOptions {
-                    overflow: Some(Overflow::Constrain),
-                    ..Default::default()
-                },
-            )
-            .unwrap_or(0);
-
-        let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
-        let base_day = self.day();
-        let regulated_day = if base_day <= end_of_month.day {
-            base_day
-        } else {
-            end_of_month.day
-        };
-
-        Self::new_balanced(
-            end_of_month.year,
-            i64::from(end_of_month.ordinal_month),
-            duration.add_weeks_and_days_to(regulated_day),
-            cal,
-        )
-    }
-
     /// Implements the Temporal abstract operation `NonISODateUntil`.
     ///
     /// This takes two dates (`self` and `other`), then returns a duration that, when
@@ -1080,16 +1045,25 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             }
         }
 
-        // Now that we have `years`, `months`, and `weeks`, we can compute
-        // `days` directly by subtracting RD values of the intermediate date
-        // (self + YMW) and the target date (`other`).
-        let from_date = self.added_without_checks(
-            DateDuration::from_signed_ymwd(years, months, weeks, 0),
+        // 1. Let _days_ be 0.
+        // 1. Let _candidateDays_ be _sign_.
+        // 1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _years_, _months_, _weeks_, _candidateDays_) is *false*,
+        //   1. Set _days_ to _candidateDays_.
+        //   1. Set _candidateDays_ to _candidateDays_ + _sign_.
+        let mut days = 0;
+        // There is no pressing need to optimize candidate_days here: the early-return RD arithmetic
+        // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
+        // arrive here with a candidate date that is at most 31 days off. We can run this loop 31 times.
+        let mut candidate_days = sign;
+        while !self.surpasses(
+            other,
+            DateDuration::from_signed_ymwd(years, months, weeks, candidate_days),
+            sign,
             cal,
-        );
-        let from = C::to_rata_die_inner(from_date.year, from_date.ordinal_month, from_date.day);
-        let to = other.to_rata_die();
-        let days = to - from;
+        ) {
+            days = candidate_days;
+            candidate_days += sign;
+        }
 
         // 1. Return ! CreateDateDurationRecord(_years_, _months_, _weeks_, _days_).
         DateDuration::from_signed_ymwd(years, months, weeks, days)
