@@ -607,14 +607,21 @@ where
 
 impl<C, A> Ord for Date<A>
 where
-    C: Calendar<IdentityError = core::convert::Infallible>,
+    C: Calendar,
+    C::DateInner: Ord,
     A: AsCalendar<Calendar = C>,
 {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        let Ok(r) = self
+        match self
             .calendar()
-            .cmp_dates(other.calendar(), &self.inner, &other.inner);
-        r
+            .cmp_dates(other.calendar(), &self.inner, &other.inner)
+        {
+            Ok(o) => o,
+            Err(_) => {
+                debug_assert!(false, "buggy Ord");
+                self.inner().cmp(other.inner())
+            }
+        }
     }
 }
 
