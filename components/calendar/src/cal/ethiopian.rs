@@ -95,6 +95,11 @@ impl DateFieldsResolver for Ethiopian {
     }
 
     #[inline]
+    fn min_months_from_inner(start: Self::YearInfo, years: i64) -> i64 {
+        Coptic::min_months_from_inner(start, years)
+    }
+
+    #[inline]
     fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],

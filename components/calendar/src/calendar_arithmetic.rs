@@ -235,6 +235,14 @@ pub(crate) trait DateFieldsResolver: Calendar {
         12
     }
 
+    /// The minimum number of months over `years` years, starting from the given year.
+    ///
+    /// The default impl is for non-lunisolar calendars with 12 months!
+    #[inline]
+    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
+        12 * years
+    }
+
     /// Calculates the ordinal month for the given year and month code.
     ///
     /// The default impl is for non-lunisolar calendars!
@@ -902,7 +910,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
     /// Implements the Temporal abstract operation `NonISODateUntil`.
     ///
-    /// This takes a duration (`self`) and a date (`other`), then returns a duration that, when
+    /// This takes two dates (`self` and `other`), then returns a duration that, when
     /// added to `self`, results in `other`, with largest unit according to `options`.
     pub(crate) fn until(
         &self,
@@ -992,14 +1000,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             let mut candidate_months = sign;
 
             if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
-                // Optimization: No current calendar supports years with month length < 12.
-                // If something is at least N full years away, it is also at least 12*N full months away.
-                //
-                // In the future we can introduce per-calendar routines that are better at estimating a month count.
-                //
-                // We only need to apply this optimization for largest_unit = Months. If the largest_unit is years then
-                // our candidate date is already pretty close and won't need more than 12 iterations to get there.
-                let min_months = min_years * 12;
+                // If largest_unit = Months, then compute the calendar-specific minimum number of
+                // months corresponding to min_years. For solar calendars, this is 12 * min_years.
+                // For the Hebrew calendar, a leap month is added for 7 out of 19 years. East Asian
+                // Calendars do not provide a specialized implementation of `min_months_from()`
+                // because it would be too expensive to calculate; they default to 12 * min_years.
+                let min_months = self.min_months_from(min_years);
                 debug_assert!(!self.surpasses(
                     other,
                     DateDuration::from_signed_ymwd(years, min_months, 0, 0),
@@ -1038,27 +1044,32 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_weeks += sign;
             }
         }
-        // 1. Let _days_ be 0.
-        // 1. Let _candidateDays_ be _sign_.
-        // 1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _years_, _months_, _weeks_, _candidateDays_) is *false*,
-        //   1. Set _days_ to _candidateDays_.
-        //   1. Set _candidateDays_ to _candidateDays_ + _sign_.
-        let mut days = 0;
-        // There is no pressing need to optimize candidate_days here: the early-return RD arithmetic
-        // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
-        // arrive here with a candidate date that is at most 31 days off. We can run this loop 31 times.
-        let mut candidate_days = sign;
-        while !self.surpasses(
-            other,
-            DateDuration::from_signed_ymwd(years, months, weeks, candidate_days),
-            sign,
-            cal,
-        ) {
-            days = candidate_days;
-            candidate_days += sign;
-        }
+
+        // Now that we have `years`, `months`, and `weeks`, we can compute
+        // `days` directly by subtracting RD values of the intermediate date
+        // (`self`` + YMW) and the target date (`other`).
+        #[allow(clippy::expect_used)] // added() cannot fail: years/months/weeks validated above
+        let from = self
+            .added(
+                DateDuration::from_signed_ymwd(years, months, weeks, 0),
+                cal,
+                DateAddOptions {
+                    overflow: Some(Overflow::Constrain),
+                    ..Default::default()
+                },
+            )
+            .expect("Intermediate date should be valid")
+            .to_rata_die();
+        let to = other.to_rata_die();
+        let days = to - from;
+
         // 1. Return ! CreateDateDurationRecord(_years_, _months_, _weeks_, _days_).
         DateDuration::from_signed_ymwd(years, months, weeks, days)
+    }
+
+    /// The minimum number of months over `years` years, starting from `self.year()`.
+    pub(crate) fn min_months_from(self, years: i64) -> i64 {
+        C::min_months_from_inner(self.year(), years)
     }
 }
 

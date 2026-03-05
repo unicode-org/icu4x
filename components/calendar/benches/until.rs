@@ -37,7 +37,7 @@ fn bench_calendar<C: Copy + Calendar>(
     }
 }
 
-fn convert_benches(c: &mut Criterion) {
+fn until_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("until/years");
     bench_all_calendars!(group, bench_calendar, DateDurationUnit::Years);
     group.finish();
@@ -55,5 +55,5 @@ fn convert_benches(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, convert_benches);
+criterion_group!(benches, until_benches);
 criterion_main!(benches);
