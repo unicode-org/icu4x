@@ -24,12 +24,22 @@ class TimeZoneInfo internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class TimeZoneInfoCleaner(val handle: Pointer, val lib: TimeZoneInfoLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class TimeZoneInfoCleaner(val handle: Pointer, val lib: TimeZoneInfoLib) : Runnable {
         override fun run() {
             lib.icu4x_TimeZoneInfo_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
     }
 
     companion object {
@@ -46,8 +56,7 @@ class TimeZoneInfo internal constructor (
             val returnVal = lib.icu4x_TimeZoneInfo_utc_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = TimeZoneInfo(handle, selfEdges)
-            CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+            val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
             return returnOpaque
         }
     }
@@ -59,8 +68,7 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_id_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZone(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
+        val returnOpaque = TimeZone(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -83,8 +91,7 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_at_date_time_iso_mv1(handle, date.handle, time.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneInfo(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -105,8 +112,7 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_at_timestamp_mv1(handle, timestamp);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneInfo(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -131,8 +137,7 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_with_variant_mv1(handle, timeVariant.toNative());
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneInfo(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -143,8 +148,7 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_offset_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal ?: return null
-        val returnOpaque = UtcOffset(handle, selfEdges)
-        CLEANER.register(returnOpaque, UtcOffset.UtcOffsetCleaner(handle, UtcOffset.lib));
+        val returnOpaque = UtcOffset(handle, selfEdges, true)
         return returnOpaque
     }
     

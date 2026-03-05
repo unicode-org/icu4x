@@ -76,9 +76,13 @@ enum class SentenceBreak {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
             val returnVal = lib.icu4x_SentenceBreak_try_from_str_mv1(sSliceMemory.slice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return SentenceBreak.fromNative(intermediateOption)
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return SentenceBreak.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     

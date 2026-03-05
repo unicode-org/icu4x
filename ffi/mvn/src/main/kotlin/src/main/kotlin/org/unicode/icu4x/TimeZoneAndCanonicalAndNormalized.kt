@@ -74,7 +74,7 @@ class TimeZoneAndCanonicalAndNormalized (var timeZone: TimeZone, var canonical: 
         val NATIVESIZE: Long = Native.getNativeSize(TimeZoneAndCanonicalAndNormalizedNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: TimeZoneAndCanonicalAndNormalizedNative, aEdges: List<Any?>): TimeZoneAndCanonicalAndNormalized {
-            val timeZone: TimeZone = TimeZone(nativeStruct.timeZone, listOf())
+            val timeZone: TimeZone = TimeZone(nativeStruct.timeZone, listOf(), true)
             val canonical: String = PrimitiveArrayTools.getUtf8(nativeStruct.canonical)
             val normalized: String = PrimitiveArrayTools.getUtf8(nativeStruct.normalized)
 

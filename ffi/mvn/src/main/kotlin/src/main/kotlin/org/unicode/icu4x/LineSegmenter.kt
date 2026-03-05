@@ -21,12 +21,22 @@ class LineSegmenter internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LineSegmenterCleaner(val handle: Pointer, val lib: LineSegmenterLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LineSegmenterCleaner(val handle: Pointer, val lib: LineSegmenterLib) : Runnable {
         override fun run() {
             lib.icu4x_LineSegmenter_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
     }
 
     companion object {
@@ -44,8 +54,7 @@ class LineSegmenter internal constructor (
             val returnVal = lib.icu4x_LineSegmenter_create_auto_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LineSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
+            val returnOpaque = LineSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -60,8 +69,7 @@ class LineSegmenter internal constructor (
             val returnVal = lib.icu4x_LineSegmenter_create_lstm_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LineSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
+            val returnOpaque = LineSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -76,8 +84,7 @@ class LineSegmenter internal constructor (
             val returnVal = lib.icu4x_LineSegmenter_create_dictionary_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LineSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
+            val returnOpaque = LineSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -92,8 +99,7 @@ class LineSegmenter internal constructor (
             val returnVal = lib.icu4x_LineSegmenter_create_for_non_complex_scripts_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LineSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
+            val returnOpaque = LineSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
     }

@@ -34,12 +34,22 @@ class CaseMapper internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CaseMapperCleaner(val handle: Pointer, val lib: CaseMapperLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CaseMapperCleaner(val handle: Pointer, val lib: CaseMapperLib) : Runnable {
         override fun run() {
             lib.icu4x_CaseMapper_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CaseMapper.CaseMapperCleaner(handle, CaseMapper.lib));
     }
 
     companion object {
@@ -56,8 +66,7 @@ class CaseMapper internal constructor (
             val returnVal = lib.icu4x_CaseMapper_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CaseMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, CaseMapper.CaseMapperCleaner(handle, CaseMapper.lib));
+            val returnOpaque = CaseMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -69,14 +78,14 @@ class CaseMapper internal constructor (
         fun createWithProvider(provider: DataProvider): Result<CaseMapper> {
             
             val returnVal = lib.icu4x_CaseMapper_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CaseMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, CaseMapper.CaseMapperCleaner(handle, CaseMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CaseMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -89,9 +98,13 @@ class CaseMapper internal constructor (
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_CaseMapper_lowercase_with_compiled_data_mv1(sSliceMemory.slice, locale.handle, write);
-            
-            val returnString = DW.writeToString(write)
-            return returnString
+            try {
+                
+                val returnString = DW.writeToString(write)
+                return returnString
+            } finally {
+                sSliceMemory.close()
+            }
         }
         @JvmStatic
         
@@ -103,9 +116,13 @@ class CaseMapper internal constructor (
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(sSliceMemory.slice, locale.handle, write);
-            
-            val returnString = DW.writeToString(write)
-            return returnString
+            try {
+                
+                val returnString = DW.writeToString(write)
+                return returnString
+            } finally {
+                sSliceMemory.close()
+            }
         }
         @JvmStatic
         
@@ -172,9 +189,13 @@ class CaseMapper internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_CaseMapper_lowercase_mv1(handle, sSliceMemory.slice, locale.handle, write);
-        
-        val returnString = DW.writeToString(write)
-        return returnString
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Returns the full uppercase mapping of the given string
@@ -185,9 +206,13 @@ class CaseMapper internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_CaseMapper_uppercase_mv1(handle, sSliceMemory.slice, locale.handle, write);
-        
-        val returnString = DW.writeToString(write)
-        return returnString
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Case-folds the characters in the given string
@@ -198,9 +223,13 @@ class CaseMapper internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_CaseMapper_fold_mv1(handle, sSliceMemory.slice, write);
-        
-        val returnString = DW.writeToString(write)
-        return returnString
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Case-folds the characters in the given string
@@ -212,9 +241,13 @@ class CaseMapper internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_CaseMapper_fold_turkic_mv1(handle, sSliceMemory.slice, write);
-        
-        val returnString = DW.writeToString(write)
-        return returnString
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Adds all simple case mappings and the full case folding for `c` to `builder`.

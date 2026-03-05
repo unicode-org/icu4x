@@ -42,12 +42,22 @@ class Date internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class DateCleaner(val handle: Pointer, val lib: DateLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class DateCleaner(val handle: Pointer, val lib: DateLib) : Runnable {
         override fun run() {
             lib.icu4x_Date_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Date.DateCleaner(handle, Date.lib));
     }
 
     companion object {
@@ -63,14 +73,14 @@ class Date internal constructor (
         fun fromIsoInCalendar(isoYear: Int, isoMonth: UByte, isoDay: UByte, calendar: Calendar): Result<Date> {
             
             val returnVal = lib.icu4x_Date_from_iso_in_calendar_mv1(isoYear, FFIUint8(isoMonth), FFIUint8(isoDay), calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Date(handle, selfEdges)
-                CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Date(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -88,16 +98,19 @@ class Date internal constructor (
             val monthCodeSliceMemory = PrimitiveArrayTools.borrowUtf8(monthCode)
             
             val returnVal = lib.icu4x_Date_from_codes_in_calendar_mv1(eraCodeSliceMemory.slice, year, monthCodeSliceMemory.slice, FFIUint8(day), calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Date(handle, selfEdges)
-                CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
-                eraCodeSliceMemory?.close()
-                monthCodeSliceMemory?.close()
-                return returnOpaque.ok()
-            } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = Date(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                eraCodeSliceMemory.close()
+                monthCodeSliceMemory.close()
             }
         }
         @JvmStatic
@@ -109,14 +122,14 @@ class Date internal constructor (
         fun fromRataDie(rd: Long, calendar: Calendar): Result<Date> {
             
             val returnVal = lib.icu4x_Date_from_rata_die_mv1(rd, calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Date(handle, selfEdges)
-                CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Date(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -129,15 +142,18 @@ class Date internal constructor (
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
             val returnVal = lib.icu4x_Date_from_string_mv1(vSliceMemory.slice, calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Date(handle, selfEdges)
-                CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
-                vSliceMemory?.close()
-                return returnOpaque.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = Date(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }
@@ -151,8 +167,7 @@ class Date internal constructor (
         val returnVal = lib.icu4x_Date_to_calendar_mv1(handle, calendar.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Date(handle, selfEdges)
-        CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+        val returnOpaque = Date(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -165,8 +180,7 @@ class Date internal constructor (
         val returnVal = lib.icu4x_Date_to_iso_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = IsoDate(handle, selfEdges)
-        CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
+        val returnOpaque = IsoDate(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -367,8 +381,7 @@ class Date internal constructor (
         val returnVal = lib.icu4x_Date_calendar_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Calendar(handle, selfEdges)
-        CLEANER.register(returnOpaque, Calendar.CalendarCleaner(handle, Calendar.lib));
+        val returnOpaque = Calendar(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -381,14 +394,14 @@ class Date internal constructor (
     fun tryAddWithOptions(duration: DateDuration, options: DateAddOptions): Result<Date> {
         
         val returnVal = lib.icu4x_Date_try_add_with_options_mv1(handle, duration.toNative(), options.toNative());
-        if (returnVal.isOk == 1.toByte()) {
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
             val selfEdges: List<Any> = listOf()
-            val handle = returnVal.union.ok 
-            val returnOpaque = Date(handle, selfEdges)
-            CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+            val handle = nativeOkVal 
+            val returnOpaque = Date(handle, selfEdges, true)
             return returnOpaque.ok()
         } else {
-            return CalendarDateAddErrorError(CalendarDateAddError.fromNative(returnVal.union.err)).err()
+            return CalendarDateAddErrorError(CalendarDateAddError.fromNative(returnVal.getNativeErr()!!)).err()
         }
     }
     
@@ -401,8 +414,9 @@ class Date internal constructor (
     fun tryUntilWithOptions(other: Date, options: DateDifferenceOptions): Result<DateDuration> {
         
         val returnVal = lib.icu4x_Date_try_until_with_options_mv1(handle, other.handle, options.toNative());
-        if (returnVal.isOk == 1.toByte()) {
-            val returnStruct = DateDuration.fromNative(returnVal.union.ok)
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
+            val returnStruct = DateDuration.fromNative(nativeOkVal)
             return returnStruct.ok()
         } else {
             return CalendarMismatchedCalendarError().err()

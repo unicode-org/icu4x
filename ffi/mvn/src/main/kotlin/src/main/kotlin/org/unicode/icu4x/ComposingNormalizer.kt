@@ -22,12 +22,22 @@ class ComposingNormalizer internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class ComposingNormalizerCleaner(val handle: Pointer, val lib: ComposingNormalizerLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class ComposingNormalizerCleaner(val handle: Pointer, val lib: ComposingNormalizerLib) : Runnable {
         override fun run() {
             lib.icu4x_ComposingNormalizer_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, ComposingNormalizer.ComposingNormalizerCleaner(handle, ComposingNormalizer.lib));
     }
 
     companion object {
@@ -44,8 +54,7 @@ class ComposingNormalizer internal constructor (
             val returnVal = lib.icu4x_ComposingNormalizer_create_nfc_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = ComposingNormalizer(handle, selfEdges)
-            CLEANER.register(returnOpaque, ComposingNormalizer.ComposingNormalizerCleaner(handle, ComposingNormalizer.lib));
+            val returnOpaque = ComposingNormalizer(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -57,14 +66,14 @@ class ComposingNormalizer internal constructor (
         fun createNfcWithProvider(provider: DataProvider): Result<ComposingNormalizer> {
             
             val returnVal = lib.icu4x_ComposingNormalizer_create_nfc_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ComposingNormalizer(handle, selfEdges)
-                CLEANER.register(returnOpaque, ComposingNormalizer.ComposingNormalizerCleaner(handle, ComposingNormalizer.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ComposingNormalizer(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -78,8 +87,7 @@ class ComposingNormalizer internal constructor (
             val returnVal = lib.icu4x_ComposingNormalizer_create_nfkc_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = ComposingNormalizer(handle, selfEdges)
-            CLEANER.register(returnOpaque, ComposingNormalizer.ComposingNormalizerCleaner(handle, ComposingNormalizer.lib));
+            val returnOpaque = ComposingNormalizer(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -91,14 +99,14 @@ class ComposingNormalizer internal constructor (
         fun createNfkcWithProvider(provider: DataProvider): Result<ComposingNormalizer> {
             
             val returnVal = lib.icu4x_ComposingNormalizer_create_nfkc_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ComposingNormalizer(handle, selfEdges)
-                CLEANER.register(returnOpaque, ComposingNormalizer.ComposingNormalizerCleaner(handle, ComposingNormalizer.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ComposingNormalizer(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -114,9 +122,13 @@ class ComposingNormalizer internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_ComposingNormalizer_normalize_mv1(handle, sSliceMemory.slice, write);
-        
-        val returnString = DW.writeToString(write)
-        return returnString
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Check if a string is normalized
@@ -130,7 +142,11 @@ class ComposingNormalizer internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
         
         val returnVal = lib.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(handle, sSliceMemory.slice);
-        return (returnVal > 0)
+        try {
+            return (returnVal > 0)
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Return the index a slice of potentially-invalid UTF-16 is normalized up to
@@ -141,7 +157,11 @@ class ComposingNormalizer internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
         
         val returnVal = lib.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(handle, sSliceMemory.slice);
-        return (returnVal.toULong())
+        try {
+            return (returnVal.toULong())
+        } finally {
+            sSliceMemory.close()
+        }
     }
 
 }

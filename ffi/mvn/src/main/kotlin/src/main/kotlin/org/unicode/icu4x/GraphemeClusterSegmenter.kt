@@ -20,12 +20,22 @@ class GraphemeClusterSegmenter internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class GraphemeClusterSegmenterCleaner(val handle: Pointer, val lib: GraphemeClusterSegmenterLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class GraphemeClusterSegmenterCleaner(val handle: Pointer, val lib: GraphemeClusterSegmenterLib) : Runnable {
         override fun run() {
             lib.icu4x_GraphemeClusterSegmenter_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, GraphemeClusterSegmenter.GraphemeClusterSegmenterCleaner(handle, GraphemeClusterSegmenter.lib));
     }
 
     companion object {
@@ -42,8 +52,7 @@ class GraphemeClusterSegmenter internal constructor (
             val returnVal = lib.icu4x_GraphemeClusterSegmenter_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = GraphemeClusterSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, GraphemeClusterSegmenter.GraphemeClusterSegmenterCleaner(handle, GraphemeClusterSegmenter.lib));
+            val returnOpaque = GraphemeClusterSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -55,14 +64,14 @@ class GraphemeClusterSegmenter internal constructor (
         fun createWithProvider(provider: DataProvider): Result<GraphemeClusterSegmenter> {
             
             val returnVal = lib.icu4x_GraphemeClusterSegmenter_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = GraphemeClusterSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, GraphemeClusterSegmenter.GraphemeClusterSegmenterCleaner(handle, GraphemeClusterSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = GraphemeClusterSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

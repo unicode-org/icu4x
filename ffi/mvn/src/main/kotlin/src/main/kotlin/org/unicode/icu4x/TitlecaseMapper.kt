@@ -17,12 +17,22 @@ class TitlecaseMapper internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class TitlecaseMapperCleaner(val handle: Pointer, val lib: TitlecaseMapperLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class TitlecaseMapperCleaner(val handle: Pointer, val lib: TitlecaseMapperLib) : Runnable {
         override fun run() {
             lib.icu4x_TitlecaseMapper_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, TitlecaseMapper.TitlecaseMapperCleaner(handle, TitlecaseMapper.lib));
     }
 
     companion object {
@@ -37,14 +47,14 @@ class TitlecaseMapper internal constructor (
         fun create(): Result<TitlecaseMapper> {
             
             val returnVal = lib.icu4x_TitlecaseMapper_create_mv1();
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = TitlecaseMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, TitlecaseMapper.TitlecaseMapperCleaner(handle, TitlecaseMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = TitlecaseMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -56,14 +66,14 @@ class TitlecaseMapper internal constructor (
         fun createWithProvider(provider: DataProvider): Result<TitlecaseMapper> {
             
             val returnVal = lib.icu4x_TitlecaseMapper_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = TitlecaseMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, TitlecaseMapper.TitlecaseMapperCleaner(handle, TitlecaseMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = TitlecaseMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

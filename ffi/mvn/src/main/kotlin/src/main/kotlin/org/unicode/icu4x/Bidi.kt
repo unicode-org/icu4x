@@ -24,12 +24,22 @@ class Bidi internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class BidiCleaner(val handle: Pointer, val lib: BidiLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class BidiCleaner(val handle: Pointer, val lib: BidiLib) : Runnable {
         override fun run() {
             lib.icu4x_Bidi_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Bidi.BidiCleaner(handle, Bidi.lib));
     }
 
     companion object {
@@ -44,8 +54,7 @@ class Bidi internal constructor (
             val returnVal = lib.icu4x_Bidi_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Bidi(handle, selfEdges)
-            CLEANER.register(returnOpaque, Bidi.BidiCleaner(handle, Bidi.lib));
+            val returnOpaque = Bidi(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -55,14 +64,14 @@ class Bidi internal constructor (
         fun createWithProvider(provider: DataProvider): Result<Bidi> {
             
             val returnVal = lib.icu4x_Bidi_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Bidi(handle, selfEdges)
-                CLEANER.register(returnOpaque, Bidi.BidiCleaner(handle, Bidi.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Bidi(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -130,12 +139,14 @@ class Bidi internal constructor (
         val levelsSliceMemory = PrimitiveArrayTools.borrow(levels)
         
         val returnVal = lib.icu4x_Bidi_reorder_visual_mv1(handle, levelsSliceMemory.slice);
-        val selfEdges: List<Any> = listOf()
-        val handle = returnVal 
-        val returnOpaque = ReorderedIndexMap(handle, selfEdges)
-        CLEANER.register(returnOpaque, ReorderedIndexMap.ReorderedIndexMapCleaner(handle, ReorderedIndexMap.lib));
-        levelsSliceMemory?.close()
-        return returnOpaque
+        try {
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = ReorderedIndexMap(handle, selfEdges, true)
+            return returnOpaque
+        } finally {
+            levelsSliceMemory.close()
+        }
     }
 
 }

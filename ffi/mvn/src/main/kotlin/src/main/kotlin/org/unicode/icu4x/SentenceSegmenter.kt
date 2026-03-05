@@ -20,12 +20,22 @@ class SentenceSegmenter internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class SentenceSegmenterCleaner(val handle: Pointer, val lib: SentenceSegmenterLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class SentenceSegmenterCleaner(val handle: Pointer, val lib: SentenceSegmenterLib) : Runnable {
         override fun run() {
             lib.icu4x_SentenceSegmenter_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, SentenceSegmenter.SentenceSegmenterCleaner(handle, SentenceSegmenter.lib));
     }
 
     companion object {
@@ -42,8 +52,7 @@ class SentenceSegmenter internal constructor (
             val returnVal = lib.icu4x_SentenceSegmenter_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = SentenceSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, SentenceSegmenter.SentenceSegmenterCleaner(handle, SentenceSegmenter.lib));
+            val returnOpaque = SentenceSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -53,14 +62,14 @@ class SentenceSegmenter internal constructor (
         fun createWithContentLocale(locale: Locale): Result<SentenceSegmenter> {
             
             val returnVal = lib.icu4x_SentenceSegmenter_create_with_content_locale_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = SentenceSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, SentenceSegmenter.SentenceSegmenterCleaner(handle, SentenceSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = SentenceSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -70,14 +79,14 @@ class SentenceSegmenter internal constructor (
         fun createWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<SentenceSegmenter> {
             
             val returnVal = lib.icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = SentenceSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, SentenceSegmenter.SentenceSegmenterCleaner(handle, SentenceSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = SentenceSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

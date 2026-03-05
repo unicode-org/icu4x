@@ -18,12 +18,22 @@ class Calendar internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CalendarCleaner(val handle: Pointer, val lib: CalendarLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CalendarCleaner(val handle: Pointer, val lib: CalendarLib) : Runnable {
         override fun run() {
             lib.icu4x_Calendar_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Calendar.CalendarCleaner(handle, Calendar.lib));
     }
 
     companion object {
@@ -40,8 +50,7 @@ class Calendar internal constructor (
             val returnVal = lib.icu4x_Calendar_create_mv1(kind.toNative());
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Calendar(handle, selfEdges)
-            CLEANER.register(returnOpaque, Calendar.CalendarCleaner(handle, Calendar.lib));
+            val returnOpaque = Calendar(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -53,14 +62,14 @@ class Calendar internal constructor (
         fun createWithProvider(provider: DataProvider, kind: CalendarKind): Result<Calendar> {
             
             val returnVal = lib.icu4x_Calendar_create_with_provider_mv1(provider.handle, kind.toNative());
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Calendar(handle, selfEdges)
-                CLEANER.register(returnOpaque, Calendar.CalendarCleaner(handle, Calendar.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Calendar(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

@@ -29,12 +29,22 @@ class WordSegmenter internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class WordSegmenterCleaner(val handle: Pointer, val lib: WordSegmenterLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class WordSegmenterCleaner(val handle: Pointer, val lib: WordSegmenterLib) : Runnable {
         override fun run() {
             lib.icu4x_WordSegmenter_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
     }
 
     companion object {
@@ -55,8 +65,7 @@ class WordSegmenter internal constructor (
             val returnVal = lib.icu4x_WordSegmenter_create_auto_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = WordSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+            val returnOpaque = WordSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -72,14 +81,14 @@ class WordSegmenter internal constructor (
         fun createAutoWithContentLocale(locale: Locale): Result<WordSegmenter> {
             
             val returnVal = lib.icu4x_WordSegmenter_create_auto_with_content_locale_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WordSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WordSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -95,14 +104,14 @@ class WordSegmenter internal constructor (
         fun createAutoWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<WordSegmenter> {
             
             val returnVal = lib.icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WordSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WordSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -120,8 +129,7 @@ class WordSegmenter internal constructor (
             val returnVal = lib.icu4x_WordSegmenter_create_lstm_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = WordSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+            val returnOpaque = WordSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -137,14 +145,14 @@ class WordSegmenter internal constructor (
         fun createLstmWithContentLocale(locale: Locale): Result<WordSegmenter> {
             
             val returnVal = lib.icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WordSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WordSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -160,14 +168,14 @@ class WordSegmenter internal constructor (
         fun createLstmWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<WordSegmenter> {
             
             val returnVal = lib.icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WordSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WordSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -185,8 +193,7 @@ class WordSegmenter internal constructor (
             val returnVal = lib.icu4x_WordSegmenter_create_dictionary_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = WordSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+            val returnOpaque = WordSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -202,14 +209,14 @@ class WordSegmenter internal constructor (
         fun createDictionaryWithContentLocale(locale: Locale): Result<WordSegmenter> {
             
             val returnVal = lib.icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WordSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WordSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -225,14 +232,14 @@ class WordSegmenter internal constructor (
         fun createDictionaryWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<WordSegmenter> {
             
             val returnVal = lib.icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WordSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WordSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -247,8 +254,7 @@ class WordSegmenter internal constructor (
             val returnVal = lib.icu4x_WordSegmenter_create_for_non_complex_scripts_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = WordSegmenter(handle, selfEdges)
-            CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+            val returnOpaque = WordSegmenter(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -261,14 +267,14 @@ class WordSegmenter internal constructor (
         fun createForNonComplexScriptsWithContentLocale(locale: Locale): Result<WordSegmenter> {
             
             val returnVal = lib.icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WordSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WordSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -281,14 +287,14 @@ class WordSegmenter internal constructor (
         fun createForNonComplexScriptsWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<WordSegmenter> {
             
             val returnVal = lib.icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WordSegmenter(handle, selfEdges)
-                CLEANER.register(returnOpaque, WordSegmenter.WordSegmenterCleaner(handle, WordSegmenter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WordSegmenter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
