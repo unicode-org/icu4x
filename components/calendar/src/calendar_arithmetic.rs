@@ -934,6 +934,17 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Ordering::Less => -1i64,
         };
 
+        #[inline(always)]
+        fn linear_search(mut i: i64, sign: i64, surpasses: impl Fn(i64) -> bool) -> i64 {
+            debug_assert!(!surpasses(i));
+            loop {
+                if surpasses(i + sign) {
+                    break i;
+                }
+                i += sign;
+            }
+        }
+
         // We don't want to spend time incrementally bumping it up one year
         // at a time, so let's pre-guess a year delta that is guaranteed to not
         // surpass.
@@ -960,22 +971,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
-            let mut candidate_years = sign;
-            if min_years != 0 {
-                // Optimization: we start with min_years since it is guaranteed to not
-                // surpass.
-                candidate_years = min_years
-            };
+            // Optimization: we start with min_years since it is guaranteed to not
+            // surpass.
+            let start = min_years;
 
-            while !self.surpasses(
-                other,
-                DateDuration::from_signed_ymwd(candidate_years, 0, 0, 0),
-                sign,
-                cal,
-            ) {
-                years = candidate_years;
-                candidate_years += sign;
-            }
+            years = linear_search(start, sign, |c| {
+                self.surpasses(other, DateDuration::from_signed_ymwd(c, 0, 0, 0), sign, cal)
+            });
         }
 
         // 1. Let _months_ be 0.
@@ -989,9 +991,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             options.largest_unit,
             Some(DateDurationUnit::Years) | Some(DateDurationUnit::Months)
         ) {
-            let mut candidate_months = sign;
-
-            if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
+            let start = if options.largest_unit == Some(DateDurationUnit::Months) {
                 // Optimization: No current calendar supports years with month length < 12.
                 // If something is at least N full years away, it is also at least 12*N full months away.
                 //
@@ -999,25 +999,19 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 //
                 // We only need to apply this optimization for largest_unit = Months. If the largest_unit is years then
                 // our candidate date is already pretty close and won't need more than 12 iterations to get there.
-                let min_months = min_years * 12;
-                debug_assert!(!self.surpasses(
+                min_years * 12
+            } else {
+                0
+            };
+
+            months = linear_search(start, sign, |c| {
+                self.surpasses(
                     other,
-                    DateDuration::from_signed_ymwd(years, min_months, 0, 0),
+                    DateDuration::from_signed_ymwd(years, c, 0, 0),
                     sign,
                     cal,
-                ));
-                candidate_months = min_months
-            }
-
-            while !self.surpasses(
-                other,
-                DateDuration::from_signed_ymwd(years, candidate_months, 0, 0),
-                sign,
-                cal,
-            ) {
-                months = candidate_months;
-                candidate_months += sign;
-            }
+                )
+            });
         }
         // 1. Let _weeks_ be 0.
         // 1. If _largestUnit_ is ~week~, then
@@ -1027,36 +1021,26 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //     1. Set _candidateWeeks_ to _candidateWeeks_ + sign.
         let mut weeks = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
-            let mut candidate_weeks = sign;
-            while !self.surpasses(
+            weeks = linear_search(0, sign, |c| {
+                self.surpasses(
+                    other,
+                    DateDuration::from_signed_ymwd(years, months, c, 0),
+                    sign,
+                    cal,
+                )
+            });
+        }
+        // There is no pressing need to optimize start here: the early-return RD arithmetic
+        // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
+        // arrive here with a candidate date that is at most 31 days off.
+        let days = linear_search(0, sign, |c| {
+            self.surpasses(
                 other,
-                DateDuration::from_signed_ymwd(years, months, candidate_weeks, 0),
+                DateDuration::from_signed_ymwd(years, months, weeks, c),
                 sign,
                 cal,
-            ) {
-                weeks = candidate_weeks;
-                candidate_weeks += sign;
-            }
-        }
-        // 1. Let _days_ be 0.
-        // 1. Let _candidateDays_ be _sign_.
-        // 1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _years_, _months_, _weeks_, _candidateDays_) is *false*,
-        //   1. Set _days_ to _candidateDays_.
-        //   1. Set _candidateDays_ to _candidateDays_ + _sign_.
-        let mut days = 0;
-        // There is no pressing need to optimize candidate_days here: the early-return RD arithmetic
-        // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
-        // arrive here with a candidate date that is at most 31 days off. We can run this loop 31 times.
-        let mut candidate_days = sign;
-        while !self.surpasses(
-            other,
-            DateDuration::from_signed_ymwd(years, months, weeks, candidate_days),
-            sign,
-            cal,
-        ) {
-            days = candidate_days;
-            candidate_days += sign;
-        }
+            )
+        });
         // 1. Return ! CreateDateDurationRecord(_years_, _months_, _weeks_, _days_).
         DateDuration::from_signed_ymwd(years, months, weeks, days)
     }
