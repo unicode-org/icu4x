@@ -8,6 +8,7 @@ import com.sun.jna.Structure
 internal interface TimeZoneInfoLib: Library {
     fun icu4x_TimeZoneInfo_destroy_mv1(handle: Pointer)
     fun icu4x_TimeZoneInfo_utc_mv1(): Pointer
+    fun icu4x_TimeZoneInfo_from_parts_mv1(id: Pointer, offset: Pointer?, variant: OptionInt): Pointer
     fun icu4x_TimeZoneInfo_id_mv1(handle: Pointer): Pointer
     fun icu4x_TimeZoneInfo_at_date_time_iso_mv1(handle: Pointer, date: Pointer, time: Pointer): Pointer
     fun icu4x_TimeZoneInfo_at_timestamp_mv1(handle: Pointer, timestamp: Long): Pointer
@@ -54,6 +55,20 @@ class TimeZoneInfo internal constructor (
         fun utc(): TimeZoneInfo {
             
             val returnVal = lib.icu4x_TimeZoneInfo_utc_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Creates a time zone info from parts.
+        *
+        *`variant` is ignored.
+        */
+        fun fromParts(id: TimeZone, offset: UtcOffset?, variant: TimeZoneVariant?): TimeZoneInfo {
+            
+            val returnVal = lib.icu4x_TimeZoneInfo_from_parts_mv1(id.handle, offset?.handle, variant?.let { OptionInt.some(it.toNative()) } ?: OptionInt.none());
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = TimeZoneInfo(handle, selfEdges, true)

@@ -898,6 +898,36 @@ class ResultPointerTimeZoneInvalidOffsetErrorNative: Structure(), Structure.ByVa
     }
 
 }
+internal class ResultUnitDateTimeMismatchedCalendarErrorNativeUnion: Union() {
+    @JvmField
+    internal var err: DateTimeMismatchedCalendarErrorNative = DateTimeMismatchedCalendarErrorNative()
+}
+
+class ResultUnitDateTimeMismatchedCalendarErrorNative: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultUnitDateTimeMismatchedCalendarErrorNativeUnion = ResultUnitDateTimeMismatchedCalendarErrorNativeUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): Unit? {
+        if (isOk == 1.toByte()) {
+            return Unit
+        }
+        return null
+    }
+    internal fun getNativeErr(): DateTimeMismatchedCalendarErrorNative? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(DateTimeMismatchedCalendarErrorNative::class.java) as DateTimeMismatchedCalendarErrorNative
+        }
+        return null
+    }
+
+}
 internal class ResultUnitIntUnion: Union() {
     @JvmField
     internal var err: Int = 0

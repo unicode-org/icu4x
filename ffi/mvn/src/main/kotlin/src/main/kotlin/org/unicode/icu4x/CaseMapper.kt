@@ -13,6 +13,8 @@ internal interface CaseMapperLib: Library {
     fun icu4x_CaseMapper_uppercase_mv1(handle: Pointer, s: Slice, locale: Pointer, write: Pointer): Unit
     fun icu4x_CaseMapper_lowercase_with_compiled_data_mv1(s: Slice, locale: Pointer, write: Pointer): Unit
     fun icu4x_CaseMapper_uppercase_with_compiled_data_mv1(s: Slice, locale: Pointer, write: Pointer): Unit
+    fun icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(handle: Pointer, s: Slice, locale: Pointer, options: TitlecaseOptionsNative, write: Pointer): Unit
+    fun icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1(s: Slice, locale: Pointer, options: TitlecaseOptionsNative, write: Pointer): Unit
     fun icu4x_CaseMapper_fold_mv1(handle: Pointer, s: Slice, write: Pointer): Unit
     fun icu4x_CaseMapper_fold_turkic_mv1(handle: Pointer, s: Slice, write: Pointer): Unit
     fun icu4x_CaseMapper_add_case_closure_to_mv1(handle: Pointer, c: Int, builder: Pointer): Unit
@@ -126,6 +128,29 @@ class CaseMapper internal constructor (
         }
         @JvmStatic
         
+        /** Returns the full titlecase mapping of the given string, performing head adjustment without
+        *loading additional data, using compiled data (avoids having to allocate a `CaseMapper` object).
+        *
+        *(if head adjustment is enabled in the options)
+        *
+        *The `v1` refers to the version of the options struct, which may change as we add more options
+        *
+        *See the [Rust documentation for `titlecase_segment_with_only_case_data_to_string`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.titlecase_segment_with_only_case_data_to_string) for more information.
+        */
+        fun titlecase_segment_with_only_case_compiled_data(s: String, locale: Locale, options: TitlecaseOptions): String {
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+            val write = DW.lib.diplomat_buffer_write_create(0)
+            val returnVal = lib.icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1(sSliceMemory.slice, locale.handle, options.toNative(), write);
+            try {
+                
+                val returnString = DW.writeToString(write)
+                return returnString
+            } finally {
+                sSliceMemory.close()
+            }
+        }
+        @JvmStatic
+        
         /** Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         *
         *See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
@@ -206,6 +231,27 @@ class CaseMapper internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_CaseMapper_uppercase_mv1(handle, sSliceMemory.slice, locale.handle, write);
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            sSliceMemory.close()
+        }
+    }
+    
+    /** Returns the full titlecase mapping of the given string, performing head adjustment without
+    *loading additional data.
+    *(if head adjustment is enabled in the options)
+    *
+    *The `v1` refers to the version of the options struct, which may change as we add more options
+    *
+    *See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.titlecase_segment_with_only_case_data) for more information.
+    */
+    fun titlecase_segment_with_only_case_data(s: String, locale: Locale, options: TitlecaseOptions): String {
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(handle, sSliceMemory.slice, locale.handle, options.toNative(), write);
         try {
             
             val returnString = DW.writeToString(write)

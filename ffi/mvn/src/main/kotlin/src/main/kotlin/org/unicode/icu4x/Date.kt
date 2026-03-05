@@ -8,6 +8,7 @@ import com.sun.jna.Structure
 internal interface DateLib: Library {
     fun icu4x_Date_destroy_mv1(handle: Pointer)
     fun icu4x_Date_from_iso_in_calendar_mv1(isoYear: Int, isoMonth: FFIUint8, isoDay: FFIUint8, calendar: Pointer): ResultPointerInt
+    fun icu4x_Date_from_fields_in_calendar_mv1(fields: DateFieldsNative, options: DateFromFieldsOptionsNative, calendar: Pointer): ResultPointerInt
     fun icu4x_Date_from_codes_in_calendar_mv1(eraCode: Slice, year: Int, monthCode: Slice, day: FFIUint8, calendar: Pointer): ResultPointerInt
     fun icu4x_Date_from_rata_die_mv1(rd: Long, calendar: Pointer): ResultPointerInt
     fun icu4x_Date_from_string_mv1(v: Slice, calendar: Pointer): ResultPointerInt
@@ -81,6 +82,28 @@ class Date internal constructor (
                 return returnOpaque.ok()
             } else {
                 return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Creates a new [Date] from the given fields, which are interpreted in the given calendar system.
+        *
+        *🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
+        */
+        fun fromFieldsInCalendar(fields: DateFields, options: DateFromFieldsOptions, calendar: Calendar): Result<Date> {
+            val temporaryEdgeArena: MutableList<Any> = mutableListOf()
+            
+            val returnVal = lib.icu4x_Date_from_fields_in_calendar_mv1(fields.toNative(aAppendArray = arrayOf(temporaryEdgeArena)), options.toNative(), calendar.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = Date(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return CalendarDateFromFieldsErrorError(CalendarDateFromFieldsError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic

@@ -183,7 +183,6 @@ pub mod ffi {
 
     #[cfg(feature = "datetime")]
     #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     #[diplomat::attr(auto, error)]
     pub struct DateTimeMismatchedCalendarError {
         pub this_kind: CalendarKind,

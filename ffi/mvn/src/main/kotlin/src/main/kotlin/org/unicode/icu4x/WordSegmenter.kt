@@ -19,6 +19,7 @@ internal interface WordSegmenterLib: Library {
     fun icu4x_WordSegmenter_create_for_non_complex_scripts_mv1(): Pointer
     fun icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1(locale: Pointer): ResultPointerInt
     fun icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(provider: Pointer, locale: Pointer): ResultPointerInt
+    fun icu4x_WordSegmenter_segment_utf16_mv1(handle: Pointer, input: Slice): Pointer
 }
 /** An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
 *
@@ -297,6 +298,25 @@ class WordSegmenter internal constructor (
                 return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
+    }
+    
+    /** Segments a string.
+    *
+    *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+    *to the WHATWG Encoding Standard.
+    *
+    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_utf16) for more information.
+    */
+    fun segment(input: String): WordBreakIteratorUtf16 {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
+        val inputSliceMemory = PrimitiveArrayTools.borrowUtf16(input).into(listOf(aEdges))
+        
+        val returnVal = lib.icu4x_WordSegmenter_segment_utf16_mv1(handle, inputSliceMemory.slice);
+        val selfEdges: List<Any> = listOf()
+        val handle = returnVal 
+        val returnOpaque = WordBreakIteratorUtf16(handle, selfEdges, aEdges, true)
+        return returnOpaque
     }
 
 }

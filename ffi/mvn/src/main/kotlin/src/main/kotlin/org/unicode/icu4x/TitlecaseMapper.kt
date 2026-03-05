@@ -9,6 +9,8 @@ internal interface TitlecaseMapperLib: Library {
     fun icu4x_TitlecaseMapper_destroy_mv1(handle: Pointer)
     fun icu4x_TitlecaseMapper_create_mv1(): ResultPointerInt
     fun icu4x_TitlecaseMapper_create_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(handle: Pointer, s: Slice, locale: Pointer, options: TitlecaseOptionsNative, write: Pointer): Unit
+    fun icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(s: Slice, locale: Pointer, options: TitlecaseOptionsNative, write: Pointer): Unit
 }
 /** See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/2.1.1/icu/casemap/struct.TitlecaseMapper.html) for more information.
 */
@@ -75,6 +77,45 @@ class TitlecaseMapper internal constructor (
             } else {
                 return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
+        }
+        @JvmStatic
+        
+        /** Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a `TitlecaseMapper` object)
+        *
+        *The `v1` refers to the version of the options struct, which may change as we add more options
+        *
+        *See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.1.1/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+        */
+        fun titlecase_segment_with_compiled_data(s: String, locale: Locale, options: TitlecaseOptions): String {
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+            val write = DW.lib.diplomat_buffer_write_create(0)
+            val returnVal = lib.icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(sSliceMemory.slice, locale.handle, options.toNative(), write);
+            try {
+                
+                val returnString = DW.writeToString(write)
+                return returnString
+            } finally {
+                sSliceMemory.close()
+            }
+        }
+    }
+    
+    /** Returns the full titlecase mapping of the given string
+    *
+    *The `v1` refers to the version of the options struct, which may change as we add more options
+    *
+    *See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.1.1/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+    */
+    fun titlecase_segment(s: String, locale: Locale, options: TitlecaseOptions): String {
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(handle, sSliceMemory.slice, locale.handle, options.toNative(), write);
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            sSliceMemory.close()
         }
     }
 

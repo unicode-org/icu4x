@@ -151,7 +151,6 @@ pub mod ffi {
         /// `variant` is ignored.
         #[diplomat::attr(auto, constructor)]
         #[allow(deprecated)]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         #[diplomat::attr(dart, disable)]
         pub fn from_parts(
             id: &TimeZone,

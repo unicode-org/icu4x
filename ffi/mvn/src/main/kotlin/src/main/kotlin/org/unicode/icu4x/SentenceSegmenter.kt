@@ -10,6 +10,7 @@ internal interface SentenceSegmenterLib: Library {
     fun icu4x_SentenceSegmenter_create_mv1(): Pointer
     fun icu4x_SentenceSegmenter_create_with_content_locale_mv1(locale: Pointer): ResultPointerInt
     fun icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(provider: Pointer, locale: Pointer): ResultPointerInt
+    fun icu4x_SentenceSegmenter_segment_utf16_mv1(handle: Pointer, input: Slice): Pointer
 }
 /** An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
 *
@@ -89,6 +90,25 @@ class SentenceSegmenter internal constructor (
                 return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
+    }
+    
+    /** Segments a string.
+    *
+    *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+    *to the WHATWG Encoding Standard.
+    *
+    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
+    */
+    fun segment(input: String): SentenceBreakIteratorUtf16 {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
+        val inputSliceMemory = PrimitiveArrayTools.borrowUtf16(input).into(listOf(aEdges))
+        
+        val returnVal = lib.icu4x_SentenceSegmenter_segment_utf16_mv1(handle, inputSliceMemory.slice);
+        val selfEdges: List<Any> = listOf()
+        val handle = returnVal 
+        val returnOpaque = SentenceBreakIteratorUtf16(handle, selfEdges, aEdges, true)
+        return returnOpaque
     }
 
 }
