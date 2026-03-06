@@ -136,7 +136,30 @@ impl DateFieldsResolver for Hebrew {
 
     #[inline]
     fn min_months_from_inner(_start: HebrewYear, years: i64) -> i64 {
-        // There are 7 leap years in every 19-year Metonic cycle.
+        // The Hebrew Metonic cycle is 7 leap years every 19 years,
+        // which comes out to 235 months per 19 years.
+        //
+        // We need to ensure that this is always *lower or equal to* the number of
+        // months in a given year span.
+        //
+        // Firstly, note that this math will produce exactly the number of months in any given cycle
+        // that is a multiple of 19 years. Note that we are only performing integer
+        // ops here, and our SAFE_YEAR_RANGE is well within the range of allowed values
+        // for multiplying by 235.
+        //
+        // So we only need to verify that this math produces the right results within a single cycle.
+        //
+        // The Hebrew Metonic cycle has leap years in year 3, 6, 8, 11, 14, 17, and 19,
+        // i.e., leap year gaps of +3, +3, +2, +3, +3, +3, +2.
+        //
+        // 235 / 19 is 12.368 months per year, which leads to one leap month every three years plus 0.1
+        // month left over. So this is "in bounds" as long as it does not predict a leap month in 2 years
+        // where the Hebrew calendar expects one in 3.
+        //
+        // The longest sequence of "three year leap months" in the Hebrew calendar
+        // is 4: year 9->11->14->17. In that time the error will accumulate to about 0.3, which is not
+        // enough to create a "two year leap month" in our calculation. So this calculation cannot go past
+        // the actual cycle of the Hebrew calendar.
         235 * years / 19
     }
 
