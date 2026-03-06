@@ -8,8 +8,8 @@ description = "ECMA-402 API functionality backed by the ICU4X library"
 version = "0.9.0"
 
 authors.workspace = true
-categories = ["internationalization", "localization", "external-ffi-bindings", "no-std", "embedded"]
-keywords = ["ffi", "bindings"]
+categories = ["internationalization", "localization", "no-std"]
+keywords = ["ffi", "bindings", "ecma"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

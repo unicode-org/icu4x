@@ -9,7 +9,7 @@ license = "Unicode-3.0"
 
 authors.workspace = true
 categories = ["internationalization", "localization", "development-tools"]
-keywords = ["data-generation", "build-tool", "data"]
+keywords = ["build-tool"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

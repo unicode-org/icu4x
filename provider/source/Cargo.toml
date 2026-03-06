@@ -21,7 +21,7 @@ version = "2.1.2"
 
 authors.workspace = true
 categories.workspace = true
-keywords = ["data-loading", "data"]
+keywords = []
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true

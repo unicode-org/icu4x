@@ -14,7 +14,7 @@ repository.workspace = true
 homepage.workspace = true
 license.workspace = true
 categories.workspace = true
-keywords = ["data-loading", "data"]
+keywords = []
 include.workspace = true
 
 [dependencies]

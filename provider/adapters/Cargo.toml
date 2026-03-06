@@ -8,7 +8,7 @@ description = "Adapters for composing and manipulating data providers."
 
 authors.workspace = true
 categories.workspace = true
-keywords = ["data-loading", "data"]
+keywords = []
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
