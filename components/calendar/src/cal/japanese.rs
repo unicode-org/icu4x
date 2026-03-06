@@ -180,14 +180,6 @@ impl GregorianYears for Japanese {
         ret
     }
 
-    type IdentityError = core::convert::Infallible;
-
-    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
-        // We always consider calendars equal, even if they differ by the last era.
-        let _ignored = other;
-        Ok(())
-    }
-
     fn debug_name(&self) -> &'static str {
         "Japanese"
     }

@@ -30,10 +30,6 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
         None
     }
 
-    type IdentityError: core::fmt::Debug;
-
-    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError>;
-
     fn debug_name(&self) -> &'static str;
 }
 
@@ -88,7 +84,7 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
     type Year = EraYear;
-    type IdentityError = Y::IdentityError;
+    type IdentityError = core::convert::Infallible;
 
     fn from_codes(
         &self,
@@ -170,7 +166,10 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
-        self.0.check_identity(&other.0)
+        // The GregorianYears generic only affects constructors and year_info,
+        // it does not affect date identity.
+        let _ignored = other;
+        Ok(())
     }
 
     fn eq_dates(

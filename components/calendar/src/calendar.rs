@@ -169,6 +169,8 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         options: DateDifferenceOptions,
     ) -> Result<types::DateDuration, Self::IdentityError>;
 
+    /// Returns whether two calendars are considered equal in the sense that the
+    /// inner date of one calendar represents the same day in the other calendar.
     fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError>;
 
     /// Compares two [`Self::DateInner`]s and their associated calendars under [`PartialEq`] semantics.
