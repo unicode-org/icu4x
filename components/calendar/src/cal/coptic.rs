@@ -68,6 +68,11 @@ impl DateFieldsResolver for Coptic {
     }
 
     #[inline]
+    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
+        13 * years
+    }
+
+    #[inline]
     fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],

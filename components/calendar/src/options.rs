@@ -202,7 +202,7 @@ mod unstable {
         /// let mut options_days = options_default;
         /// options_days.largest_unit = Some(DateDurationUnit::Days);
         /// assert_eq!(
-        ///     d1.try_until_with_options(&d2, options_default).unwrap(),
+        ///     d1.try_until_with_options(&d2, options_days).unwrap(),
         ///     DateDuration::for_days(410)
         /// );
         ///

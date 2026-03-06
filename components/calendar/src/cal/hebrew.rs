@@ -135,6 +135,12 @@ impl DateFieldsResolver for Hebrew {
     }
 
     #[inline]
+    fn min_months_from_inner(_start: HebrewYear, years: i64) -> i64 {
+        // There are 7 leap years in every 19-year Metonic cycle.
+        235 * years / 19
+    }
+
+    #[inline]
     fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],

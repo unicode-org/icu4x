@@ -24,6 +24,7 @@ Fully filled in up to 30c187f4b7
         - Deprecate `Date::new_from_iso`/`Date::to_iso` (unicode-org#7287)
         - Optimize Hebrew and Julian calendars (unicode-org#7213)
         - Optimize day/week diffing to use RDs (unicode-org#7308)
+        - Optimize `until` month and day calculation performance
     - `icu_casemap`
         - General changes only
     - `icu_collections`
