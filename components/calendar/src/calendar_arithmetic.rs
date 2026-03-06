@@ -781,7 +781,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         week_day_checker.surpasses_week_day(duration)
     }
 
-    /// Prepares a stateful checker for month iteration in surpasses().
+    /// Prepares a stateful checker for month iteration in `surpasses()`.
     fn surpasses_month_checker<'a>(
         &'a self,
         other: &'a Self,
@@ -826,7 +826,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         }
     }
 
-    /// Prepares a stateful checker for week and day iteration in surpasses().
+    /// Prepares a stateful checker for week and day iteration in `surpasses()`.
     fn surpasses_week_day_checker<'a>(
         &'a self,
         other: &'a Self,
@@ -846,7 +846,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         self.surpasses_week_day_checker_from_months_added(&month_checker, months_added)
     }
 
-    /// Prepares a checker for week and day iteration from an existing months_added date.
+    /// Prepares a checker for week and day iteration from an existing `months_added` date.
     fn surpasses_week_day_checker_from_months_added<'a>(
         &'a self,
         month_checker: &SurpassesMonthChecker<'a, C>,
@@ -1118,7 +1118,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 }
 
-/// Stateful checker for month iteration in surpasses().
+/// Stateful checker for month iteration in `surpasses()`.
 ///
 /// By saving intermediary computations based on a fixed year,
 /// only the computations relating to the month are done. The week
@@ -1154,7 +1154,7 @@ impl<'a, C: DateFieldsResolver> SurpassesMonthChecker<'a, C> {
     }
 }
 
-/// Stateful checker for week and day iteration in surpasses().
+/// Stateful checker for week and day iteration in `surpasses()`.
 ///
 /// By saving intermediary computations based on a fixed year and month,
 /// only the computations relating to the week and day are done.
