@@ -30,17 +30,14 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The internal type used to represent dates
     ///
     /// Using the [`Eq`] or [`PartialOrd`] implementations requires
-    /// the associated calendars to have passed [`Self::eq_calendars`].
+    /// the associated calendars to have passed [`Self::check_identity`].
     type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
     /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
-    /// In case of parameterized calendars, the error that is returned when two
-    /// [`Date`](crate::Date) objects with different calendars interact (`until`,
-    /// `eq_dates`, `cmp_dates`).
+    /// The error that is returned by [`Self::check_identity`].
     ///
     /// Set this to [`core::convert::Infallible`] if the type is a singleton or
-    /// the parameterization does not affect calendar semantics. This
-    /// will unlock [`Date`](crate::Date)'s [`PartialOrd`] implementation.
+    /// the parameterization does not affect calendar semantics.
     type IdentityError: fmt::Debug;
 
     /// Construct a date from era/month codes and fields
@@ -149,7 +146,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Calculate `date2 - date` as a duration.
     ///
-    /// This requires the associated calendars to have passed [`Self::eq_calendars`].
+    /// This requires the associated calendars to have passed [`Self::check_identity`].
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -167,9 +164,11 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         options: DateDifferenceOptions,
     ) -> types::DateDuration;
 
-    /// Returns whether two calendars are considered equal in the sense that the
-    /// inner date of one calendar represents the same day in the other calendar.
-    fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError>;
+    /// Returns whether [`Self::DateInner`] represents the same date in both calendars.
+    ///
+    /// This is checked by [`Date::try_until_with_options`](crate::Date::try_until_with_options),
+    /// `impl PartialEq for Date<C>`, `impl PartialOrd for Date<C>`, and `impl Ord for Date<C>`.
+    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

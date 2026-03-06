@@ -146,9 +146,7 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
-    /// In case of parameterized rules, the error that is returned when two
-    /// [`Date`] objects with different rules interact (`until`, `eq_dates`,
-    /// `cmp_dates`).
+    /// The error that is returned by [`Self::check_identity`].
     ///
     /// Set this to [`core::convert::Infallible`] if the type is a singleton or
     /// the parameterization does not affect calendar semantics.
@@ -988,7 +986,7 @@ impl<R: Rules> Calendar for Hijri<R> {
         date1.0.until(&date2.0, self, options)
     }
 
-    fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
+    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
         self.0.check_identity(&other.0)
     }
 

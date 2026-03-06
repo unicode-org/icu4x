@@ -211,7 +211,7 @@ impl Calendar for Ethiopian {
         Coptic.until(&date1.0, &date2.0, options)
     }
 
-    fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
+    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
         let _does_not_affect_semantics = other.era_style();
         Ok(())
     }

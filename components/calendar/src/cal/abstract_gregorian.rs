@@ -163,7 +163,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date1.until(date2, &AbstractGregorian(IsoEra), options)
     }
 
-    fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
+    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
         // The GregorianYears generic only affects constructors and year_info,
         // it does not affect date identity.
         let _ignored = other;
@@ -317,12 +317,12 @@ macro_rules! impl_with_abstract_gregorian {
                     .until(&date1.0, &date2.0, options)
             }
 
-            fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
+            fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
                 let $self_ident = self;
                 let c1 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
                 let $self_ident = other;
                 let c2 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
-                c1.eq_calendars(&c2)
+                c1.check_identity(&c2)
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {
