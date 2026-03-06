@@ -155,7 +155,7 @@ impl WindowsParserBorrowed<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::locale::subtags::subtag;
+    use icu_locale_core::subtags::subtag;
 
     #[test]
     fn basic_windows_tz_lookup() {
