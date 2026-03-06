@@ -841,7 +841,7 @@ impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
 }
 
 /// Information about a [`EastAsianTraditional`] year.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug)]
 // TODO(#3933): potentially make this smaller
 pub struct EastAsianTraditionalYear {
     /// Contains:
@@ -982,7 +982,8 @@ impl EastAsianTraditionalYear {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Copy, Clone)]
+#[cfg_attr(test, derive(PartialEq))]
 struct PackedEastAsianTraditionalYearData(u8, u8, u8);
 
 impl PackedEastAsianTraditionalYearData {
