@@ -16,14 +16,17 @@ namespace icu4x {
 namespace capi {
     enum CalendarDateFromFieldsError {
       CalendarDateFromFieldsError_Unknown = 0,
-      CalendarDateFromFieldsError_OutOfRange = 1,
-      CalendarDateFromFieldsError_UnknownEra = 2,
+      CalendarDateFromFieldsError_InvalidDay = 1,
+      CalendarDateFromFieldsError_InvalidOrdinalMonth = 9,
+      CalendarDateFromFieldsError_InvalidEra = 2,
       CalendarDateFromFieldsError_MonthCodeInvalidSyntax = 3,
-      CalendarDateFromFieldsError_MonthCodeNotInCalendar = 4,
-      CalendarDateFromFieldsError_MonthCodeNotInYear = 5,
+      CalendarDateFromFieldsError_MonthNotInCalendar = 4,
+      CalendarDateFromFieldsError_MonthNotInYear = 5,
       CalendarDateFromFieldsError_InconsistentYear = 6,
       CalendarDateFromFieldsError_InconsistentMonth = 7,
       CalendarDateFromFieldsError_NotEnoughFields = 8,
+      CalendarDateFromFieldsError_TooManyFields = 10,
+      CalendarDateFromFieldsError_Overflow = 11,
     };
 
     typedef struct CalendarDateFromFieldsError_option {union { CalendarDateFromFieldsError ok; }; bool is_ok; } CalendarDateFromFieldsError_option;
@@ -38,14 +41,17 @@ class CalendarDateFromFieldsError {
 public:
     enum Value {
         Unknown = 0,
-        OutOfRange = 1,
-        UnknownEra = 2,
+        InvalidDay = 1,
+        InvalidOrdinalMonth = 9,
+        InvalidEra = 2,
         MonthCodeInvalidSyntax = 3,
-        MonthCodeNotInCalendar = 4,
-        MonthCodeNotInYear = 5,
+        MonthNotInCalendar = 4,
+        MonthNotInYear = 5,
         InconsistentYear = 6,
         InconsistentMonth = 7,
         NotEnoughFields = 8,
+        TooManyFields = 10,
+        Overflow = 11,
     };
 
     CalendarDateFromFieldsError(): value(Value::Unknown) {}

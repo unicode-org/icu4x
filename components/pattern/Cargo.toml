@@ -20,6 +20,9 @@ independent = true
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-all-features]
+max_combination_size = 3
+
 [dependencies]
 either = { workspace = true }
 displaydoc = { workspace = true }
@@ -47,3 +50,6 @@ litemap = ["dep:litemap"]
 serde = ["alloc", "dep:serde"]
 yoke = ["dep:yoke"]
 zerovec = ["dep:zerovec", "alloc"]
+
+[lints]
+workspace = true

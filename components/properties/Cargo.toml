@@ -19,6 +19,9 @@ rust-version.workspace = true
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-all-features]
+max_combination_size = 3
+
 [dependencies]
 icu_collections = { workspace = true }
 icu_provider = { workspace = true }
@@ -46,4 +49,7 @@ compiled_data = ["dep:icu_properties_data", "icu_provider/baked"]
 alloc = ["zerovec/alloc", "icu_collections/alloc", "serde?/alloc"]
 
 [package.metadata.cargo-semver-checks.lints]
+workspace = true
+
+[lints]
 workspace = true

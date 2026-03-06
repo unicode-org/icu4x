@@ -27,14 +27,17 @@ inline icu4x::capi::CalendarDateFromFieldsError icu4x::CalendarDateFromFieldsErr
 inline icu4x::CalendarDateFromFieldsError icu4x::CalendarDateFromFieldsError::FromFFI(icu4x::capi::CalendarDateFromFieldsError c_enum) {
     switch (c_enum) {
         case icu4x::capi::CalendarDateFromFieldsError_Unknown:
-        case icu4x::capi::CalendarDateFromFieldsError_OutOfRange:
-        case icu4x::capi::CalendarDateFromFieldsError_UnknownEra:
+        case icu4x::capi::CalendarDateFromFieldsError_InvalidDay:
+        case icu4x::capi::CalendarDateFromFieldsError_InvalidOrdinalMonth:
+        case icu4x::capi::CalendarDateFromFieldsError_InvalidEra:
         case icu4x::capi::CalendarDateFromFieldsError_MonthCodeInvalidSyntax:
-        case icu4x::capi::CalendarDateFromFieldsError_MonthCodeNotInCalendar:
-        case icu4x::capi::CalendarDateFromFieldsError_MonthCodeNotInYear:
+        case icu4x::capi::CalendarDateFromFieldsError_MonthNotInCalendar:
+        case icu4x::capi::CalendarDateFromFieldsError_MonthNotInYear:
         case icu4x::capi::CalendarDateFromFieldsError_InconsistentYear:
         case icu4x::capi::CalendarDateFromFieldsError_InconsistentMonth:
         case icu4x::capi::CalendarDateFromFieldsError_NotEnoughFields:
+        case icu4x::capi::CalendarDateFromFieldsError_TooManyFields:
+        case icu4x::capi::CalendarDateFromFieldsError_Overflow:
             return static_cast<icu4x::CalendarDateFromFieldsError::Value>(c_enum);
         default:
             std::abort();

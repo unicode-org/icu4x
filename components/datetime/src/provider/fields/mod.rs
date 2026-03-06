@@ -14,7 +14,7 @@ pub use length::{FieldLength, FieldNumericOverrides, LengthError};
 pub use symbols::*;
 use writeable::Writeable;
 
-#[cfg(any(feature = "experimental", feature = "datagen"))]
+#[cfg(any(feature = "unstable", feature = "datagen"))]
 pub mod components;
 
 use core::{
@@ -96,7 +96,7 @@ writeable::impl_display_with_writeable!(Field);
 impl FieldULE {
     #[inline]
     pub(crate) fn validate_byte_pair(bytes: (u8, u8)) -> Result<(), zerovec::ule::UleError> {
-        symbols::FieldSymbolULE::validate_byte(bytes.0)?;
+        FieldSymbolULE::validate_byte(bytes.0)?;
         length::FieldLengthULE::validate_byte(bytes.1)?;
         Ok(())
     }

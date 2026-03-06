@@ -1,112 +1,81 @@
 {
-  "compact_patterns": [
-    [
-      [
-        3,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "0 mil ¤"
-    ],
-    [
-      [
-        4,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "00 mil ¤"
-    ],
-    [
-      [
-        5,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "000 mil ¤"
-    ],
-    [
-      [
-        6,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "0 M ¤"
-    ],
-    [
-      [
-        7,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "00 M ¤"
-    ],
-    [
-      [
-        8,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "000 M ¤"
-    ],
-    [
-      [
-        9,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "0000 M ¤"
-    ],
-    [
-      [
-        10,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "00 mil M ¤"
-    ],
-    [
-      [
-        11,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "000 mil M ¤"
-    ],
-    [
-      [
-        12,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "0 B ¤"
-    ],
-    [
-      [
-        13,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "00 B ¤"
-    ],
-    [
-      [
-        14,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "000 B ¤"
-    ]
-  ]
+  "standard": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " mil "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " M "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 10,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " mil M "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " B "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "alpha_next_to_number": []
 }

@@ -36,3 +36,6 @@ criterion = { workspace = true }
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true
+
+[lints]
+workspace = true

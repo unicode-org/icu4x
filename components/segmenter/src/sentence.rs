@@ -55,6 +55,10 @@ derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 /// Most segmentation methods live on [`SentenceSegmenterBorrowed`], which can be obtained via
 /// [`SentenceSegmenter::new()`] or [`SentenceSegmenter::as_borrowed()`].
 ///
+/// Sentence segmenter is currently compatible with [Unicode Standard Annex #29][UAX29] (Version 17.0.0).
+///
+/// [UAX29]: https://www.unicode.org/reports/tr29/tr29-47.html
+///
 /// # Content Locale
 ///
 /// You can optionally provide a _content locale_ to the [`SentenceSegmenter`] constructor. If you
@@ -144,7 +148,7 @@ impl SentenceSegmenter {
         _options: SentenceBreakInvariantOptions,
     ) -> SentenceSegmenterBorrowed<'static> {
         SentenceSegmenterBorrowed {
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V1,
             locale_override: None,
         }
     }

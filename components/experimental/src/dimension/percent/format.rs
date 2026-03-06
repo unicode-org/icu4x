@@ -16,7 +16,7 @@ use super::options::{Display, PercentFormatterOptions};
 struct Append<W1, W2>(W1, W2);
 // This allows us to combines two writeables together.
 impl<W1: Writeable, W2: Writeable> Writeable for Append<W1, W2> {
-    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to<W>(&self, sink: &mut W) -> Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {
@@ -25,6 +25,7 @@ impl<W1: Writeable, W2: Writeable> Writeable for Append<W1, W2> {
     }
 }
 
+#[derive(Debug)]
 pub struct FormattedPercent<'l> {
     pub(crate) value: &'l Decimal,
     pub(crate) essential: &'l PercentEssentials<'l>,
@@ -33,7 +34,7 @@ pub struct FormattedPercent<'l> {
 }
 
 impl Writeable for FormattedPercent<'_> {
-    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to<W>(&self, sink: &mut W) -> Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {

@@ -97,7 +97,7 @@ Practically, this means that new components or improvements to existing componen
 
 If working on a new component, start it in the `components/experimental` crate. We allow contributions to that crate even if they don't yet meet all of our code quality requirements. Once finished, the code can be moved into its own crate as a separate pull request.
 
-If working on an improvement to an existing component that you wish to split into multiple smaller pieces, consider hiding it under the `"experimental"` feature in the crate. Doing so gives a signal to users and tooling that the code is not yet production-ready. Once finished, the `"experimental"` feature can be removed from the crate.
+If working on an improvement to an existing component that you wish to split into multiple smaller pieces, consider hiding it under the `"unstable"` feature in the crate. Doing so gives a signal to users and tooling that the code is not yet production-ready. Once finished, the `"unstable"` feature can be removed from the crate.
 
 When adding non-experimental code to main, also update the "unreleased" section of the changelog. This simplifies releases and gives us a better overview of what unreleased features we have.
 
@@ -172,7 +172,7 @@ If the pull request is simple and short lived, it can be initialized with review
 If the pull request is more complex and is being developed over time, it may be beneficial to start it in a `Draft` state.
 This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
 
-If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `icu_experimental` crate, or (3) hiding the work behind the `"experimental"` feature flag. See the section above, "Release Readiness", for more details.
+If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `icu_experimental` crate, or (3) hiding the work behind the `"unstable"` feature flag. See the section above, "Release Readiness", for more details.
 
 By the end of this phase, and right before review is requested, it is helpful for the reviewers to have a clean list of commits in the pull request.
 

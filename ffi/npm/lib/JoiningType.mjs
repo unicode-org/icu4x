@@ -161,7 +161,7 @@ export class JoiningType {
     }
 
     /**
-     * Convert to an integer value usable with ICU4C and CodePointMapData
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#method.to_icu4c_value) for more information.
      */
@@ -179,7 +179,7 @@ export class JoiningType {
     }
 
     /**
-     * Convert from an integer value from ICU4C or CodePointMapData
+     * Convert from an integer value from ICU4C or `CodePointMapData`
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
      */

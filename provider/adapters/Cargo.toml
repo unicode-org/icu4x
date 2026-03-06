@@ -31,3 +31,6 @@ serde = []
 
 # added by accident
 databake = []
+
+[lints]
+workspace = true

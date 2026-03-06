@@ -17,7 +17,7 @@ use litemap::LiteMap;
 
 /// A data structure that compactly maps from byte sequences to integers.
 ///
-/// There are several variants of `ZeroTrie` which are very similar but are optimized
+/// There are several variants of [`ZeroTrie`] which are very similar but are optimized
 /// for different use cases:
 ///
 /// - [`ZeroTrieSimpleAscii`] is the most compact structure. Very fast for small data.
@@ -26,14 +26,14 @@ use litemap::LiteMap;
 ///   strings. It also scales better to large data. Cannot be const-constructed.
 /// - [`ZeroTrieExtendedCapacity`] can be used if more than 2^32 bytes are required.
 ///
-/// You can create a `ZeroTrie` directly, in which case the most appropriate
+/// You can create a [`ZeroTrie`] directly, in which case the most appropriate
 /// backing implementation will be chosen.
 ///
 /// # Backing Store
 ///
 /// The data structure has a flexible backing data store. The only requirement for most
 /// functionality is that it implement `AsRef<[u8]>`. All of the following are valid
-/// ZeroTrie types:
+/// [`ZeroTrie`] types:
 ///
 /// - `ZeroTrie<[u8]>` (dynamically sized type: must be stored in a reference or Box)
 /// - `ZeroTrie<&[u8]>` (borrows its data from a u8 buffer)
@@ -120,16 +120,17 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTrieSimpleAscii<Store> {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
-            core::mem::transmute(s)
+            &*(s as *const Store as *const Self)
         }
     }
 }
 
 impl<Store> ZeroTrieSimpleAscii<Store> {
-    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    /// Wrap this specific [`ZeroTrie`] variant into a [`ZeroTrie`].
     #[inline]
     pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
         ZeroTrie(ZeroTrieFlavor::SimpleAscii(self))
@@ -187,10 +188,11 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroAsciiIgnoreCaseTrie<Store> {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
-            core::mem::transmute(s)
+            &*(s as *const Store as *const Self)
         }
     }
 }
@@ -232,16 +234,17 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTriePerfectHash<Store> {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
-            core::mem::transmute(s)
+            &*(s as *const Store as *const Self)
         }
     }
 }
 
 impl<Store> ZeroTriePerfectHash<Store> {
-    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    /// Wrap this specific [`ZeroTrie`] variant into a [`ZeroTrie`].
     #[inline]
     pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
         ZeroTrie(ZeroTrieFlavor::PerfectHash(self))
@@ -262,16 +265,17 @@ pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTrieExtendedCapacity<Store> {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
-            core::mem::transmute(s)
+            &*(s as *const Store as *const Self)
         }
     }
 }
 
 impl<Store> ZeroTrieExtendedCapacity<Store> {
-    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    /// Wrap this specific [`ZeroTrie`] variant into a [`ZeroTrie`].
     #[inline]
     pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
         ZeroTrie(ZeroTrieFlavor::ExtendedCapacity(self))
@@ -454,7 +458,7 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "alloc")]
-        impl<'a, K> FromIterator<(K, usize)> for $name<Vec<u8>>
+        impl<K> FromIterator<(K, usize)> for $name<Vec<u8>>
         where
             K: AsRef<[u8]>
         {
@@ -491,7 +495,7 @@ macro_rules! impl_zerotrie_subtype {
         where
             Store: AsRef<[u8]> + ?Sized
         {
-            /// Exports the data from this ZeroTrie type into a BTreeMap.
+            /// Exports the data from this [`ZeroTrie`] type into a [`BTreeMap`].
             ///
             /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
@@ -550,7 +554,7 @@ macro_rules! impl_zerotrie_subtype {
         where
             Store: AsRef<[u8]> + ?Sized,
         {
-            /// Exports the data from this ZeroTrie type into a LiteMap.
+            /// Exports the data from this [`ZeroTrie`] type into a [`LiteMap`].
             ///
             /// ✨ *Enabled with the `litemap` Cargo feature.*
             ///
@@ -658,6 +662,7 @@ macro_rules! impl_zerotrie_subtype {
         //  6. `parse_bytes()` is left to its default impl
         //  7. byte equality is semantic equality
         #[cfg(feature = "zerovec")]
+        #[allow(unsafe_code)] // ULE impls are documented
         unsafe impl<Store> zerovec::ule::VarULE for $name<Store>
         where
             Store: zerovec::ule::VarULE,
@@ -724,6 +729,7 @@ impl_zerotrie_subtype!(
     Vec::into_boxed_slice
 );
 
+#[allow(unused_macro_rules)] // feature
 macro_rules! impl_dispatch {
     ($self:ident, $inner_fn:ident()) => {
         match $self.0 {
@@ -744,13 +750,6 @@ macro_rules! impl_dispatch {
             ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn(),
             ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn(),
             ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn(),
-        }
-    };
-    ($self:ident, $inner_fn:ident($arg:ident)) => {
-        match $self.0 {
-            ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn($arg),
-            ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn($arg),
-            ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn($arg),
         }
     };
     (&$self:ident, $inner_fn:ident($arg:ident)) => {
@@ -819,7 +818,7 @@ impl<Store> ZeroTrie<Store>
 where
     Store: AsRef<[u8]>,
 {
-    /// Exports the data from this ZeroTrie into a BTreeMap.
+    /// Exports the data from this [`ZeroTrie`] into a [`BTreeMap`].
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn to_btreemap(&self) -> BTreeMap<Box<[u8]>, usize> {
@@ -832,7 +831,7 @@ impl<Store> ZeroTrie<Store>
 where
     Store: AsRef<[u8]>,
 {
-    /// Exports the data from this ZeroTrie into a LiteMap.
+    /// Exports the data from this [`ZeroTrie`] into a `LiteMap`.
     pub fn to_litemap(&self) -> LiteMap<Box<[u8]>, usize> {
         impl_dispatch!(&self, to_litemap_bytes())
     }

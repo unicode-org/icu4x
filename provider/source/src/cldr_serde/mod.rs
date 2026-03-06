@@ -10,12 +10,12 @@
 pub(crate) mod aliases;
 pub(crate) mod ca;
 pub(crate) mod coverage_levels;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub(crate) mod currencies;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub(crate) mod date_fields;
 pub(crate) mod directionality;
-#[cfg_attr(not(feature = "experimental"), allow(dead_code))]
+#[cfg_attr(not(feature = "unstable"), allow(dead_code))]
 pub(crate) mod displaynames;
 pub(crate) mod eras;
 pub(crate) mod exemplar_chars;
@@ -25,13 +25,13 @@ pub(crate) mod locale_resource;
 pub(crate) mod numbering_systems;
 pub(crate) mod numbers;
 pub(crate) mod parent_locales;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub(crate) mod personnames;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub(crate) mod plural_ranges;
 pub(crate) mod plurals;
 pub(crate) mod time_zones;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub(crate) mod transforms;
 pub(crate) mod units;
 pub(crate) mod week_data;

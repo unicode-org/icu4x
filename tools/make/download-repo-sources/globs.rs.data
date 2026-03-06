@@ -86,6 +86,8 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "collation/implicithan/$LOCALES_unihan_data.toml",
     "collation/implicithan/$LOCALES_unihan_meta.toml",
     "collation/implicithan/$LOCALES_unihan_reord.toml",
+    "collation/implicithan/en_US_POSIX_standard_data.toml",
+    "collation/implicithan/en_US_POSIX_standard_meta.toml",
     "collation/implicithan/ko_search_data.toml",
     "collation/implicithan/ko_searchjl_data.toml",
     "collation/implicithan/ko_standard_data.toml",
@@ -98,6 +100,14 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "collation/implicithan/zh_stroke_data.toml",
     "collation/implicithan/zh_unihan_data.toml",
     "collation/implicithan/zh_zhuyin_data.toml",
+    "collation/implicithan/zh_pinyin_meta.toml",
+    "collation/implicithan/zh_stroke_meta.toml",
+    "collation/implicithan/zh_unihan_meta.toml",
+    "collation/implicithan/zh_zhuyin_meta.toml",
+    "collation/implicithan/zh_pinyin_reord.toml",
+    "collation/implicithan/zh_stroke_reord.toml",
+    "collation/implicithan/zh_unihan_reord.toml",
+    "collation/implicithan/zh_zhuyin_reord.toml",
     "norm/small/compositions.toml",
     "norm/small/decompositionex.toml",
     "norm/fast/nfd.toml",
@@ -210,6 +220,8 @@ const LSTM_GLOB: &[&str] = &[
     "Thai_codepoints_exclusive_model4_heavy/weights.json",
     "Thai_graphclust_model4_heavy/weights.json",
 ];
+
+const UNIHAN_GLOB: &[&str] = &["Unihan_IRGSources.txt"];
 
 const TZDB_GLOB: &[&str] = &[
     "africa",

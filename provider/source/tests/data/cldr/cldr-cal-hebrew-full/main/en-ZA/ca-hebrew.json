@@ -388,7 +388,7 @@
                 "Hms": "HH:mm:ss",
                 "hv": "h a v",
                 "hv-alt-ascii": "h a v",
-                "Hv": "HH'h' v",
+                "Hv": "HH v",
                 "M": "L",
                 "Md": "d MMM",
                 "MEd": "E, d MMM",

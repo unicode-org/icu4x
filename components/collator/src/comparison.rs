@@ -68,7 +68,7 @@ const MERGE_SEPARATOR: char = '\u{fffe}';
 const MERGE_SEPARATOR_BYTE: u8 = 2;
 const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000;
 
-/// Primary compression low terminator, must be greater than MERGE_SEPARATOR_BYTE.
+/// Primary compression low terminator, must be greater than [`MERGE_SEPARATOR_BYTE`].
 ///
 /// Reserved value in primary second byte if the lead byte is compressible.
 /// Otherwise usable in all CE weight bytes.
@@ -462,36 +462,34 @@ impl LocaleSpecificDataHolder {
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1> = provider
+        let metadata_payload: DataPayload<CollationMetadataV1> = provider
             .load(req)
             .or_else(|_| provider.load(fallback_req))?
             .payload;
 
         let metadata = metadata_payload.get();
 
-        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1>> =
-            if metadata.tailored() {
-                Some(
-                    provider
-                        .load(req)
-                        .or_else(|_| provider.load(fallback_req))?
-                        .payload,
-                )
-            } else {
-                None
-            };
+        let tailoring: Option<DataPayload<CollationTailoringV1>> = if metadata.tailored() {
+            Some(
+                provider
+                    .load(req)
+                    .or_else(|_| provider.load(fallback_req))?
+                    .payload,
+            )
+        } else {
+            None
+        };
 
-        let reordering: Option<DataPayload<crate::provider::CollationReorderingV1>> =
-            if metadata.reordering() {
-                Some(
-                    provider
-                        .load(req)
-                        .or_else(|_| provider.load(fallback_req))?
-                        .payload,
-                )
-            } else {
-                None
-            };
+        let reordering: Option<DataPayload<CollationReorderingV1>> = if metadata.reordering() {
+            Some(
+                provider
+                    .load(req)
+                    .or_else(|_| provider.load(fallback_req))?
+                    .payload,
+            )
+        } else {
+            None
+        };
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {
@@ -1569,18 +1567,18 @@ impl CollatorBorrowed<'_> {
         }
 
         if self.options.case_level() {
+            let mut left_non_primary;
+            let mut right_non_primary;
+            let mut left_case;
+            let mut right_case;
+            let mut left_iter = left_ces.iter();
+            let mut right_iter = right_ces.iter();
             if self.options.strength() == Strength::Primary {
                 // Primary+caseLevel: Ignore case level weights of primary ignorables.
                 // Otherwise we would get a-umlaut > a
                 // which is not desirable for accent-insensitive sorting.
                 // Check for (lower 32 bits) == 0 as well because variable CEs are stored
                 // with only primary weights.
-                let mut left_non_primary;
-                let mut right_non_primary;
-                let mut left_case;
-                let mut right_case;
-                let mut left_iter = left_ces.iter();
-                let mut right_iter = right_ces.iter();
                 loop {
                     loop {
                         let ce = left_iter.next().unwrap_or_default();
@@ -1632,12 +1630,6 @@ impl CollatorBorrowed<'_> {
                 // but it's simpler to always ignore case weights of secondary ignorables,
                 // turning 0.0.ut into 0.0.0.t.
                 // (See LDML Collation, Case Parameters.)
-                let mut left_non_primary;
-                let mut right_non_primary;
-                let mut left_case;
-                let mut right_case;
-                let mut left_iter = left_ces.iter();
-                let mut right_iter = right_ces.iter();
                 loop {
                     loop {
                         left_non_primary = left_iter.next().unwrap_or_default().non_primary();

@@ -13,20 +13,20 @@ use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterErr
 /// Override the formatting payload to use based on specification rules.
 ///
 /// if name locale and formatting locale are incompatible, name locale takes precedence
-/// it should dynamically load the name locale formatter using the data_provider given in constructor.
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#switch-the-formatting-locale-if-necessary
+/// it should dynamically load the name locale formatter using the `data_provider` given in constructor.
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#switch-the-formatting-locale-if-necessary>
 ///
 /// The formatter locale and name locale must be maximized first.
 pub fn effective_locale<'a>(
     formatter_locale: &'a Locale,
     person_name_locale: &'a Locale,
-) -> Result<&'a Locale, PersonNamesFormatterError> {
+) -> &'a Locale {
     let name_script = person_name_locale.id.script.unwrap();
     let formatter_script = formatter_locale.id.script.unwrap();
     if !compatible_scripts(name_script, formatter_script) {
-        return Ok(person_name_locale);
+        return person_name_locale;
     }
-    Ok(formatter_locale)
+    formatter_locale
 }
 
 // TODO: proper handling of compatible scripts.
@@ -41,7 +41,7 @@ fn compatible_scripts(sc1: subtags::Script, sc2: subtags::Script) -> bool {
     sc1 == sc2
 }
 
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-locale
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-locale>
 pub fn likely_person_name_locale<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
@@ -54,7 +54,7 @@ where
     if found_name_script.is_none() {
         found_name_script = find_script(person_name, swe, Given);
     }
-    let name_script = found_name_script.unwrap_or(icu_properties::props::Script::Unknown);
+    let name_script = found_name_script.unwrap_or(Script::Unknown);
 
     let locid_script = scripts.get_locale_script(name_script).unwrap();
     person_name.name_locale().map_or_else(
@@ -75,7 +75,7 @@ fn find_script<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
     kind: NameFieldKind,
-) -> Option<icu_properties::props::Script>
+) -> Option<Script>
 where
     N: PersonName,
 {
@@ -113,11 +113,11 @@ mod tests {
         lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("de-Latn-ch"), &locale),
-            Ok(&locale!("de-Latn-ch"))
+            &locale!("de-Latn-ch")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("de-Latn-ch")),
-            Ok(&locale!("fr-Latn-FR"))
+            &locale!("fr-Latn-FR")
         );
     }
 
@@ -128,11 +128,11 @@ mod tests {
         lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("de-Latn-ch"), &locale),
-            Ok(&locale!("ja-Jpan-JP"))
+            &locale!("ja-Jpan-JP")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("de-Latn-ch")),
-            Ok(&locale!("de-Latn-CH"))
+            &locale!("de-Latn-CH")
         );
     }
 
@@ -143,27 +143,27 @@ mod tests {
         lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("ja-Hani-JP"), &locale),
-            Ok(&locale!("ja-Hani-JP"))
+            &locale!("ja-Hani-JP")
         );
         assert_eq!(
             effective_locale(&locale!("ja-Kana-JP"), &locale),
-            Ok(&locale!("ja-Kana-JP"))
+            &locale!("ja-Kana-JP")
         );
         assert_eq!(
             effective_locale(&locale!("ja-Hira-JP"), &locale),
-            Ok(&locale!("ja-Hira-JP"))
+            &locale!("ja-Hira-JP")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("ja-Hani-JP")),
-            Ok(&locale!("ja-Jpan-JP"))
+            &locale!("ja-Jpan-JP")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("ja-Kana-JP")),
-            Ok(&locale!("ja-Jpan-JP"))
+            &locale!("ja-Jpan-JP")
         );
         assert_eq!(
             effective_locale(&locale, &locale!("ja-Hira-JP")),
-            Ok(&locale!("ja-Jpan-JP"))
+            &locale!("ja-Jpan-JP")
         );
     }
 

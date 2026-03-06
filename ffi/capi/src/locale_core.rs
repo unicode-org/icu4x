@@ -11,7 +11,7 @@ pub mod ffi {
 
     use writeable::Writeable;
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
     #[diplomat::rust_link(icu::locale::Locale, Struct)]
     #[diplomat::rust_link(icu::locale::DataLocale, Struct, hidden)]
@@ -45,6 +45,16 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn unknown() -> Box<Locale> {
             Box::new(Locale(icu_locale_core::Locale::UNKNOWN))
+        }
+
+        /// Returns a borrowed unknown ("und") [`Locale`], without allocating.
+        //
+        // (Can potentially be exposed to other backends if they gain static support)
+        #[diplomat::attr(not(cpp), disable)]
+        #[diplomat::rust_link(icu::locale::Locale::UNKNOWN, AssociatedConstantInStruct)]
+        pub fn unknown_ref() -> &'static Locale {
+            static UND: Locale = Locale(icu_locale_core::Locale::UNKNOWN);
+            &UND
         }
 
         /// Clones the [`Locale`].

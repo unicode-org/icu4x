@@ -18,6 +18,7 @@ namespace capi {
       YearStyle_Auto = 0,
       YearStyle_Full = 1,
       YearStyle_WithEra = 2,
+      YearStyle_NoEra = 3,
     };
 
     typedef struct YearStyle_option {union { YearStyle ok; }; bool is_ok; } YearStyle_option;
@@ -34,6 +35,7 @@ public:
         Auto = 0,
         Full = 1,
         WithEra = 2,
+        NoEra = 3,
     };
 
     YearStyle(): value(Value::Auto) {}

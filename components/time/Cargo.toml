@@ -19,6 +19,9 @@ version.workspace = true
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-all-features]
+max_combination_size = 3
+
 [dependencies]
 calendrical_calculations = { workspace = true }
 displaydoc = { workspace = true }
@@ -32,6 +35,11 @@ zerovec = { workspace = true, features = ["derive", "yoke"] }
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive"], optional = true }
 
+chrono = { workspace = true, optional = true }
+jiff = { workspace = true, optional = true }
+time = { workspace = true, optional = true }
+chrono-tz = { workspace = true, optional = true }
+
 icu_time_data = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -43,11 +51,18 @@ writeable = { workspace = true }
 
 [features]
 default = ["compiled_data", "ixdtf"]
+unstable = []
 ixdtf = ["dep:ixdtf", "icu_calendar/ixdtf"]
 serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "icu_provider/serde", "icu_locale_core/serde", "alloc"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "icu_provider/export", "icu_locale_core/databake", "alloc"]
 compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data", "icu_provider/baked"]
 alloc = ["zerotrie/alloc", "serde?/alloc", "zerovec/alloc"]
+jiff_0_2 = ["dep:jiff", "icu_calendar/jiff_0_2"]
+chrono_0_4 = ["dep:chrono", "dep:chrono-tz", "icu_calendar/chrono_0_4"]
+time_0_3 = ["dep:time", "icu_calendar/time_0_3"]
 
 [package.metadata.cargo-semver-checks.lints]
+workspace = true
+
+[lints]
 workspace = true

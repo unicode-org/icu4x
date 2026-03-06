@@ -31,12 +31,22 @@ class CodePointSetBuilder internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CodePointSetBuilderCleaner(val handle: Pointer, val lib: CodePointSetBuilderLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CodePointSetBuilderCleaner(val handle: Pointer, val lib: CodePointSetBuilderLib) : Runnable {
         override fun run() {
             lib.icu4x_CodePointSetBuilder_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CodePointSetBuilder.CodePointSetBuilderCleaner(handle, CodePointSetBuilder.lib));
     }
 
     companion object {
@@ -53,8 +63,7 @@ class CodePointSetBuilder internal constructor (
             val returnVal = lib.icu4x_CodePointSetBuilder_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetBuilder(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetBuilder.CodePointSetBuilderCleaner(handle, CodePointSetBuilder.lib));
+            val returnOpaque = CodePointSetBuilder(handle, selfEdges, true)
             return returnOpaque
         }
     }
@@ -70,8 +79,7 @@ class CodePointSetBuilder internal constructor (
         val returnVal = lib.icu4x_CodePointSetBuilder_build_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = CodePointSetData(handle, selfEdges)
-        CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+        val returnOpaque = CodePointSetData(handle, selfEdges, true)
         return returnOpaque
     }
     

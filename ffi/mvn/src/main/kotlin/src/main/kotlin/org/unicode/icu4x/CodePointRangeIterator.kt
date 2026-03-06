@@ -18,12 +18,22 @@ class CodePointRangeIterator internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CodePointRangeIteratorCleaner(val handle: Pointer, val lib: CodePointRangeIteratorLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CodePointRangeIteratorCleaner(val handle: Pointer, val lib: CodePointRangeIteratorLib) : Runnable {
         override fun run() {
             lib.icu4x_CodePointRangeIterator_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
     }
 
     companion object {
@@ -38,7 +48,6 @@ class CodePointRangeIterator internal constructor (
     fun next(): CodePointRangeIteratorResult {
         
         val returnVal = lib.icu4x_CodePointRangeIterator_next_mv1(handle);
-        
         val returnStruct = CodePointRangeIteratorResult.fromNative(returnVal)
         return returnStruct
     }

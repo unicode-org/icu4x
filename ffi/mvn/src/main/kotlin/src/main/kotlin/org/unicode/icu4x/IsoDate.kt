@@ -24,6 +24,8 @@ internal interface IsoDateLib: Library {
     fun icu4x_IsoDate_months_in_year_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_days_in_month_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_days_in_year_mv1(handle: Pointer): FFIUint16
+    fun icu4x_IsoDate_try_add_with_options_mv1(handle: Pointer, duration: DateDurationNative, options: DateAddOptionsNative): ResultPointerInt
+    fun icu4x_IsoDate_until_with_options_mv1(handle: Pointer, other: Pointer, options: DateDifferenceOptionsNative): DateDurationNative
 }
 /** An ICU4X Date object capable of containing a ISO-8601 date
 *
@@ -34,12 +36,22 @@ class IsoDate internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class IsoDateCleaner(val handle: Pointer, val lib: IsoDateLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class IsoDateCleaner(val handle: Pointer, val lib: IsoDateLib) : Runnable {
         override fun run() {
             lib.icu4x_IsoDate_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
     }
 
     companion object {
@@ -54,14 +66,14 @@ class IsoDate internal constructor (
         fun create(year: Int, month: UByte, day: UByte): Result<IsoDate> {
             
             val returnVal = lib.icu4x_IsoDate_create_mv1(year, FFIUint8(month), FFIUint8(day));
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = IsoDate(handle, selfEdges)
-                CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = IsoDate(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -75,8 +87,7 @@ class IsoDate internal constructor (
             val returnVal = lib.icu4x_IsoDate_from_rata_die_mv1(rd);
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = IsoDate(handle, selfEdges)
-            CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
+            val returnOpaque = IsoDate(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -86,18 +97,21 @@ class IsoDate internal constructor (
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<IsoDate> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_IsoDate_from_string_mv1(vSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = IsoDate(handle, selfEdges)
-                CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
-                if (vMem != null) vMem.close()
-                return returnOpaque.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_IsoDate_from_string_mv1(vSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = IsoDate(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }
@@ -111,8 +125,7 @@ class IsoDate internal constructor (
         val returnVal = lib.icu4x_IsoDate_to_calendar_mv1(handle, calendar.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Date(handle, selfEdges)
-        CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+        val returnOpaque = Date(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -123,8 +136,7 @@ class IsoDate internal constructor (
         val returnVal = lib.icu4x_IsoDate_to_any_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Date(handle, selfEdges)
-        CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+        val returnOpaque = Date(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -188,7 +200,6 @@ class IsoDate internal constructor (
     fun weekOfYear(): IsoWeekOfYear {
         
         val returnVal = lib.icu4x_IsoDate_week_of_year_mv1(handle);
-        
         val returnStruct = IsoWeekOfYear.fromNative(returnVal)
         return returnStruct
     }
@@ -209,7 +220,7 @@ class IsoDate internal constructor (
     *
     *For calendars without an era, returns the extended year
     *
-    *See the [Rust documentation for `year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.year) for more information.
+    *See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
     */
     fun year(): Int {
         
@@ -255,6 +266,39 @@ class IsoDate internal constructor (
         
         val returnVal = lib.icu4x_IsoDate_days_in_year_mv1(handle);
         return (returnVal.toUShort())
+    }
+    
+    /** Returns a new [IsoDate] with the given duration added to it.
+    *
+    *🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
+    */
+    fun tryAddWithOptions(duration: DateDuration, options: DateAddOptions): Result<IsoDate> {
+        
+        val returnVal = lib.icu4x_IsoDate_try_add_with_options_mv1(handle, duration.toNative(), options.toNative());
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
+            val selfEdges: List<Any> = listOf()
+            val handle = nativeOkVal 
+            val returnOpaque = IsoDate(handle, selfEdges, true)
+            return returnOpaque.ok()
+        } else {
+            return CalendarDateAddErrorError(CalendarDateAddError.fromNative(returnVal.getNativeErr()!!)).err()
+        }
+    }
+    
+    /** Calculating the duration between `other - self`
+    *
+    *🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+    */
+    fun untilWithOptions(other: IsoDate, options: DateDifferenceOptions): DateDuration {
+        
+        val returnVal = lib.icu4x_IsoDate_until_with_options_mv1(handle, other.handle, options.toNative());
+        val returnStruct = DateDuration.fromNative(returnVal)
+        return returnStruct
     }
 
 }

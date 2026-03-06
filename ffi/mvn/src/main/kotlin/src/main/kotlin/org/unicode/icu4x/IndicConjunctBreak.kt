@@ -48,7 +48,7 @@ enum class IndicConjunctBreak {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
         *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#method.from_icu4c_value) for more information.
         */
@@ -62,12 +62,16 @@ enum class IndicConjunctBreak {
         @JvmStatic
         
         fun tryFromStr(s: String): IndicConjunctBreak? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_IndicConjunctBreak_try_from_str_mv1(sSlice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return IndicConjunctBreak.fromNative(intermediateOption)
+            val returnVal = lib.icu4x_IndicConjunctBreak_try_from_str_mv1(sSliceMemory.slice);
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return IndicConjunctBreak.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     
@@ -97,7 +101,7 @@ enum class IndicConjunctBreak {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
     *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#method.to_icu4c_value) for more information.
     */

@@ -24,7 +24,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_ComposingNormalizer_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ComposingNormalizer_destroy_mv1));
 
-  /// Construct a new ComposingNormalizer instance for NFC using compiled data.
+  /// Construct a new `ComposingNormalizer` instance for NFC using compiled data.
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
   factory ComposingNormalizer.nfc() {
@@ -32,7 +32,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     return ComposingNormalizer._fromFfi(result, []);
   }
 
-  /// Construct a new ComposingNormalizer instance for NFC using a particular data source.
+  /// Construct a new `ComposingNormalizer` instance for NFC using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
   ///
@@ -45,7 +45,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new ComposingNormalizer instance for NFKC using compiled data.
+  /// Construct a new `ComposingNormalizer` instance for NFKC using compiled data.
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
   factory ComposingNormalizer.nfkc() {
@@ -53,7 +53,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     return ComposingNormalizer._fromFfi(result, []);
   }
 
-  /// Construct a new ComposingNormalizer instance for NFKC using a particular data source.
+  /// Construct a new `ComposingNormalizer` instance for NFKC using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
   ///

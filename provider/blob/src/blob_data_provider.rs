@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobSchema;
+#[cfg(feature = "alloc")]
+use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::Cart;
@@ -97,7 +99,7 @@ impl BlobDataProvider {
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
-    pub fn try_new_from_blob(blob: alloc::boxed::Box<[u8]>) -> Result<Self, DataError> {
+    pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
             data: Cart::try_make_yoke(blob, |bytes| {
                 BlobSchema::deserialize_and_check(&mut postcard::Deserializer::from_bytes(bytes))

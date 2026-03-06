@@ -235,12 +235,22 @@ class CodePointSetData internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CodePointSetDataCleaner(val handle: Pointer, val lib: CodePointSetDataLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CodePointSetDataCleaner(val handle: Pointer, val lib: CodePointSetDataLib) : Runnable {
         override fun run() {
             lib.icu4x_CodePointSetData_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
     }
 
     companion object {
@@ -260,8 +270,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_general_category_group_mv1(group.toNative());
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -276,14 +285,14 @@ class CodePointSetData internal constructor (
         fun createGeneralCategoryGroupWithProvider(provider: DataProvider, group: UInt): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(provider.handle, FFIUint32(group));
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -308,8 +317,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_ascii_hex_digit_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -321,14 +329,14 @@ class CodePointSetData internal constructor (
         fun createAsciiHexDigitWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_ascii_hex_digit_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -353,8 +361,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_alnum_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -366,14 +373,14 @@ class CodePointSetData internal constructor (
         fun createAlnumWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_alnum_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -398,8 +405,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_alphabetic_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -411,14 +417,14 @@ class CodePointSetData internal constructor (
         fun createAlphabeticWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_alphabetic_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -443,8 +449,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_bidi_control_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -456,14 +461,14 @@ class CodePointSetData internal constructor (
         fun createBidiControlWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_bidi_control_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -488,8 +493,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_bidi_mirrored_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -501,14 +505,14 @@ class CodePointSetData internal constructor (
         fun createBidiMirroredWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_bidi_mirrored_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -533,8 +537,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_blank_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -546,14 +549,14 @@ class CodePointSetData internal constructor (
         fun createBlankWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_blank_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -578,8 +581,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_cased_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -591,14 +593,14 @@ class CodePointSetData internal constructor (
         fun createCasedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_cased_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -623,8 +625,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_case_ignorable_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -636,14 +637,14 @@ class CodePointSetData internal constructor (
         fun createCaseIgnorableWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_case_ignorable_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -668,8 +669,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_full_composition_exclusion_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -681,14 +681,14 @@ class CodePointSetData internal constructor (
         fun createFullCompositionExclusionWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_full_composition_exclusion_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -713,8 +713,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_casefolded_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -726,14 +725,14 @@ class CodePointSetData internal constructor (
         fun createChangesWhenCasefoldedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_casefolded_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -758,8 +757,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_casemapped_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -771,14 +769,14 @@ class CodePointSetData internal constructor (
         fun createChangesWhenCasemappedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_casemapped_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -803,8 +801,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -816,14 +813,14 @@ class CodePointSetData internal constructor (
         fun createChangesWhenNfkcCasefoldedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -848,8 +845,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_lowercased_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -861,14 +857,14 @@ class CodePointSetData internal constructor (
         fun createChangesWhenLowercasedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_lowercased_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -893,8 +889,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_titlecased_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -906,14 +901,14 @@ class CodePointSetData internal constructor (
         fun createChangesWhenTitlecasedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_titlecased_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -938,8 +933,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_uppercased_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -951,14 +945,14 @@ class CodePointSetData internal constructor (
         fun createChangesWhenUppercasedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_changes_when_uppercased_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -983,8 +977,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_dash_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -996,14 +989,14 @@ class CodePointSetData internal constructor (
         fun createDashWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_dash_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1028,8 +1021,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_deprecated_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1041,14 +1033,14 @@ class CodePointSetData internal constructor (
         fun createDeprecatedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_deprecated_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1073,8 +1065,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_default_ignorable_code_point_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1086,14 +1077,14 @@ class CodePointSetData internal constructor (
         fun createDefaultIgnorableCodePointWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_default_ignorable_code_point_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1118,8 +1109,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_diacritic_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1131,14 +1121,14 @@ class CodePointSetData internal constructor (
         fun createDiacriticWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_diacritic_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1163,8 +1153,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_modifier_base_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1176,14 +1165,14 @@ class CodePointSetData internal constructor (
         fun createEmojiModifierBaseWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_modifier_base_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1208,8 +1197,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_component_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1221,14 +1209,14 @@ class CodePointSetData internal constructor (
         fun createEmojiComponentWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_component_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1253,8 +1241,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_modifier_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1266,14 +1253,14 @@ class CodePointSetData internal constructor (
         fun createEmojiModifierWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_modifier_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1298,8 +1285,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1311,14 +1297,14 @@ class CodePointSetData internal constructor (
         fun createEmojiWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1343,8 +1329,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_presentation_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1356,14 +1341,14 @@ class CodePointSetData internal constructor (
         fun createEmojiPresentationWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_emoji_presentation_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1388,8 +1373,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_extender_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1401,14 +1385,14 @@ class CodePointSetData internal constructor (
         fun createExtenderWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_extender_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1433,8 +1417,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_extended_pictographic_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1446,14 +1429,14 @@ class CodePointSetData internal constructor (
         fun createExtendedPictographicWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_extended_pictographic_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1478,8 +1461,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_graph_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1491,14 +1473,14 @@ class CodePointSetData internal constructor (
         fun createGraphWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_graph_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1523,8 +1505,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_grapheme_base_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1536,14 +1517,14 @@ class CodePointSetData internal constructor (
         fun createGraphemeBaseWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_grapheme_base_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1568,8 +1549,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_grapheme_extend_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1581,14 +1561,14 @@ class CodePointSetData internal constructor (
         fun createGraphemeExtendWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_grapheme_extend_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1613,8 +1593,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_grapheme_link_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1626,14 +1605,14 @@ class CodePointSetData internal constructor (
         fun createGraphemeLinkWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_grapheme_link_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1658,8 +1637,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_hex_digit_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1671,14 +1649,14 @@ class CodePointSetData internal constructor (
         fun createHexDigitWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_hex_digit_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1703,8 +1681,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_hyphen_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1716,14 +1693,14 @@ class CodePointSetData internal constructor (
         fun createHyphenWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_hyphen_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1748,8 +1725,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_id_compat_math_continue_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1761,14 +1737,14 @@ class CodePointSetData internal constructor (
         fun createIdCompatMathContinueWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1793,8 +1769,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_id_compat_math_start_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1806,14 +1781,14 @@ class CodePointSetData internal constructor (
         fun createIdCompatMathStartWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1838,8 +1813,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_id_continue_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1851,14 +1825,14 @@ class CodePointSetData internal constructor (
         fun createIdContinueWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_id_continue_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1883,8 +1857,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_ideographic_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1896,14 +1869,14 @@ class CodePointSetData internal constructor (
         fun createIdeographicWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_ideographic_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1928,8 +1901,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_id_start_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1941,14 +1913,14 @@ class CodePointSetData internal constructor (
         fun createIdStartWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_id_start_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -1973,8 +1945,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_ids_binary_operator_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -1986,14 +1957,14 @@ class CodePointSetData internal constructor (
         fun createIdsBinaryOperatorWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_ids_binary_operator_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2018,8 +1989,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_ids_trinary_operator_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2031,14 +2001,14 @@ class CodePointSetData internal constructor (
         fun createIdsTrinaryOperatorWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2063,8 +2033,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_ids_unary_operator_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2076,14 +2045,14 @@ class CodePointSetData internal constructor (
         fun createIdsUnaryOperatorWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2108,8 +2077,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_join_control_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2121,14 +2089,14 @@ class CodePointSetData internal constructor (
         fun createJoinControlWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_join_control_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2153,8 +2121,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_logical_order_exception_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2166,14 +2133,14 @@ class CodePointSetData internal constructor (
         fun createLogicalOrderExceptionWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_logical_order_exception_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2198,8 +2165,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_lowercase_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2211,14 +2177,14 @@ class CodePointSetData internal constructor (
         fun createLowercaseWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_lowercase_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2243,8 +2209,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_math_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2256,14 +2221,14 @@ class CodePointSetData internal constructor (
         fun createMathWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_math_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2288,8 +2253,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_modifier_combining_mark_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2301,14 +2265,14 @@ class CodePointSetData internal constructor (
         fun createModifierCombiningMarkWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2333,8 +2297,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_noncharacter_code_point_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2346,14 +2309,14 @@ class CodePointSetData internal constructor (
         fun createNoncharacterCodePointWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_noncharacter_code_point_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2378,8 +2341,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_nfc_inert_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2391,14 +2353,14 @@ class CodePointSetData internal constructor (
         fun createNfcInertWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_nfc_inert_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2423,8 +2385,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_nfd_inert_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2436,14 +2397,14 @@ class CodePointSetData internal constructor (
         fun createNfdInertWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_nfd_inert_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2468,8 +2429,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_nfkc_inert_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2481,14 +2441,14 @@ class CodePointSetData internal constructor (
         fun createNfkcInertWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_nfkc_inert_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2513,8 +2473,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_nfkd_inert_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2526,14 +2485,14 @@ class CodePointSetData internal constructor (
         fun createNfkdInertWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_nfkd_inert_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2558,8 +2517,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_pattern_syntax_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2571,14 +2529,14 @@ class CodePointSetData internal constructor (
         fun createPatternSyntaxWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_pattern_syntax_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2603,8 +2561,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_pattern_white_space_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2616,14 +2573,14 @@ class CodePointSetData internal constructor (
         fun createPatternWhiteSpaceWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_pattern_white_space_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2648,8 +2605,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_prepended_concatenation_mark_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2661,14 +2617,14 @@ class CodePointSetData internal constructor (
         fun createPrependedConcatenationMarkWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_prepended_concatenation_mark_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2693,8 +2649,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_print_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2706,14 +2661,14 @@ class CodePointSetData internal constructor (
         fun createPrintWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_print_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2738,8 +2693,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_quotation_mark_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2751,14 +2705,14 @@ class CodePointSetData internal constructor (
         fun createQuotationMarkWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_quotation_mark_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2783,8 +2737,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_radical_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2796,14 +2749,14 @@ class CodePointSetData internal constructor (
         fun createRadicalWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_radical_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2828,8 +2781,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_regional_indicator_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2841,14 +2793,14 @@ class CodePointSetData internal constructor (
         fun createRegionalIndicatorWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_regional_indicator_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2873,8 +2825,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_soft_dotted_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2886,14 +2837,14 @@ class CodePointSetData internal constructor (
         fun createSoftDottedWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_soft_dotted_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2918,8 +2869,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_segment_starter_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2931,14 +2881,14 @@ class CodePointSetData internal constructor (
         fun createSegmentStarterWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_segment_starter_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -2963,8 +2913,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_case_sensitive_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -2976,14 +2925,14 @@ class CodePointSetData internal constructor (
         fun createCaseSensitiveWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_case_sensitive_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3008,8 +2957,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_sentence_terminal_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3021,14 +2969,14 @@ class CodePointSetData internal constructor (
         fun createSentenceTerminalWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_sentence_terminal_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3053,8 +3001,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_terminal_punctuation_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3066,14 +3013,14 @@ class CodePointSetData internal constructor (
         fun createTerminalPunctuationWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_terminal_punctuation_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3098,8 +3045,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_unified_ideograph_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3111,14 +3057,14 @@ class CodePointSetData internal constructor (
         fun createUnifiedIdeographWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_unified_ideograph_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3143,8 +3089,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_uppercase_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3156,14 +3101,14 @@ class CodePointSetData internal constructor (
         fun createUppercaseWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_uppercase_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3188,8 +3133,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_variation_selector_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3201,14 +3145,14 @@ class CodePointSetData internal constructor (
         fun createVariationSelectorWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_variation_selector_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3233,8 +3177,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_white_space_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3246,14 +3189,14 @@ class CodePointSetData internal constructor (
         fun createWhiteSpaceWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_white_space_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3278,8 +3221,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_xdigit_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3291,14 +3233,14 @@ class CodePointSetData internal constructor (
         fun createXdigitWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_xdigit_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3323,8 +3265,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_xid_continue_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3336,14 +3277,14 @@ class CodePointSetData internal constructor (
         fun createXidContinueWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_xid_continue_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3368,8 +3309,7 @@ class CodePointSetData internal constructor (
             val returnVal = lib.icu4x_CodePointSetData_create_xid_start_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+            val returnOpaque = CodePointSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -3381,14 +3321,14 @@ class CodePointSetData internal constructor (
         fun createXidStartWithProvider(provider: DataProvider): Result<CodePointSetData> {
             
             val returnVal = lib.icu4x_CodePointSetData_create_xid_start_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -3398,18 +3338,21 @@ class CodePointSetData internal constructor (
         *See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
         */
         fun createForEcma262(propertyName: String): Result<CodePointSetData> {
-            val (propertyNameMem, propertyNameSlice) = PrimitiveArrayTools.borrowUtf8(propertyName)
+            val propertyNameSliceMemory = PrimitiveArrayTools.borrowUtf8(propertyName)
             
-            val returnVal = lib.icu4x_CodePointSetData_create_for_ecma262_mv1(propertyNameSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
-                if (propertyNameMem != null) propertyNameMem.close()
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_CodePointSetData_create_for_ecma262_mv1(propertyNameSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = CodePointSetData(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                propertyNameSliceMemory.close()
             }
         }
         @JvmStatic
@@ -3419,18 +3362,21 @@ class CodePointSetData internal constructor (
         *See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
         */
         fun createForEcma262WithProvider(provider: DataProvider, propertyName: String): Result<CodePointSetData> {
-            val (propertyNameMem, propertyNameSlice) = PrimitiveArrayTools.borrowUtf8(propertyName)
+            val propertyNameSliceMemory = PrimitiveArrayTools.borrowUtf8(propertyName)
             
-            val returnVal = lib.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(provider.handle, propertyNameSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
-                if (propertyNameMem != null) propertyNameMem.close()
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(provider.handle, propertyNameSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = CodePointSetData(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                propertyNameSliceMemory.close()
             }
         }
     }
@@ -3450,13 +3396,13 @@ class CodePointSetData internal constructor (
     *See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
     */
     fun iterRanges(): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointSetData_iter_ranges_mv1(handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
-        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
+        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
     
@@ -3465,13 +3411,13 @@ class CodePointSetData internal constructor (
     *See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
     */
     fun iterRangesComplemented(): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointSetData_iter_ranges_complemented_mv1(handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
-        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
+        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
 

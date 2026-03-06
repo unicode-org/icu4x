@@ -84,11 +84,12 @@ pub mod preferences {
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
+/// let mut options = RelativeTimeFormatterOptions::default();
+/// options.numeric = Numeric::Auto;
+///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
 ///     locale!("es").into(),
-///     RelativeTimeFormatterOptions {
-///         numeric: Numeric::Auto,
-///     },
+///     options,
 /// )
 /// .expect("locale should be present");
 ///
@@ -134,6 +135,7 @@ pub mod preferences {
 ///     "১৫ বছর পূর্বে"
 /// );
 /// ```
+#[derive(Debug)]
 pub struct RelativeTimeFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) rt: DataPayload<ErasedMarker<RelativeTimePatternData<'static>>>,

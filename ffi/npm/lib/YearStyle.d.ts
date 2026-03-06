@@ -19,6 +19,7 @@ export class YearStyle {
     static Auto : YearStyle;
     static Full : YearStyle;
     static WithEra : YearStyle;
+    static NoEra : YearStyle;
 
 
     constructor(value: YearStyle | string );

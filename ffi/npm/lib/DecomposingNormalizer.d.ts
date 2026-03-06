@@ -16,28 +16,28 @@ export class DecomposingNormalizer {
 
 
     /**
-     * Construct a new DecomposingNormalizer instance for NFD using compiled data.
+     * Construct a new `DecomposingNormalizer` instance for NFD using compiled data.
      *
      * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
      */
     static createNfd(): DecomposingNormalizer;
 
     /**
-     * Construct a new DecomposingNormalizer instance for NFD using a particular data source.
+     * Construct a new `DecomposingNormalizer` instance for NFD using a particular data source.
      *
      * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
      */
     static createNfdWithProvider(provider: DataProvider): DecomposingNormalizer;
 
     /**
-     * Construct a new DecomposingNormalizer instance for NFKD using compiled data.
+     * Construct a new `DecomposingNormalizer` instance for NFKD using compiled data.
      *
      * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
      */
     static createNfkd(): DecomposingNormalizer;
 
     /**
-     * Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
+     * Construct a new `DecomposingNormalizer` instance for NFKD using a particular data source.
      *
      * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
      */

@@ -384,7 +384,6 @@ pub(crate) mod legacy {
 
     #[test]
     fn test_metazone_timezone_compat() {
-        use icu_locale::subtags::subtag;
         use icu_time::ZonedDateTime;
 
         let converted = metazone_timezone_compat(
@@ -398,7 +397,7 @@ pub(crate) mod legacy {
         .unwrap()
         .payload;
 
-        let tz = TimeZone(subtag!("aqcas"));
+        let tz = TimeZone::from_iana_id("Antarctica/Casey");
         for timestamp in [
             "1970-01-01 00:00Z",
             "2009-10-17 18:00Z",

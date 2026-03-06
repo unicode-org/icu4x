@@ -22,12 +22,22 @@ class BidiInfo internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val textEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class BidiInfoCleaner(val handle: Pointer, val lib: BidiInfoLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class BidiInfoCleaner(val handle: Pointer, val lib: BidiInfoLib) : Runnable {
         override fun run() {
             lib.icu4x_BidiInfo_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, BidiInfo.BidiInfoCleaner(handle, BidiInfo.lib));
     }
 
     companion object {
@@ -46,13 +56,13 @@ class BidiInfo internal constructor (
     /** Get the nth paragraph, returning `None` if out of bounds
     */
     fun paragraphAt(n: ULong): BidiParagraph? {
+        // This lifetime edge depends on lifetimes: 'text
+        val textEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_BidiInfo_paragraph_at_mv1(handle, FFISizet(n));
         val selfEdges: List<Any> = listOf()
-        val textEdges: List<Any?> = listOf(this)
         val handle = returnVal ?: return null
-        val returnOpaque = BidiParagraph(handle, selfEdges, textEdges)
-        CLEANER.register(returnOpaque, BidiParagraph.BidiParagraphCleaner(handle, BidiParagraph.lib));
+        val returnOpaque = BidiParagraph(handle, selfEdges, textEdges, true)
         return returnOpaque
     }
     

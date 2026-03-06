@@ -9,7 +9,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 /**
  * The raw (non-recursive) canonical decomposition operation.
  *
- * Callers should generally use DecomposingNormalizer unless they specifically need raw composition operations
+ * Callers should generally use `DecomposingNormalizer` unless they specifically need raw composition operations
  *
  * See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
  */
@@ -19,7 +19,7 @@ export class CanonicalDecomposition {
 
 
     /**
-     * Construct a new CanonicalDecomposition instance for NFC using a particular data source.
+     * Construct a new `CanonicalDecomposition` instance for NFC using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
      */
@@ -33,7 +33,7 @@ export class CanonicalDecomposition {
     decompose(c: codepoint): Decomposed;
 
     /**
-     * Construct a new CanonicalDecomposition instance for NFC using compiled data.
+     * Construct a new `CanonicalDecomposition` instance for NFC using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
      */

@@ -72,7 +72,7 @@ final class Bidi implements ffi.Finalizable {
     return ReorderedIndexMap._fromFfi(result, []);
   }
 
-  /// Check if a Level returned by level_at is an RTL level.
+  /// Check if a Level returned by `level_at` is an RTL level.
   ///
   /// Invalid levels (numbers greater than 125) will be assumed LTR
   ///
@@ -82,7 +82,7 @@ final class Bidi implements ffi.Finalizable {
     return result;
   }
 
-  /// Check if a Level returned by level_at is an LTR level.
+  /// Check if a Level returned by `level_at` is an LTR level.
   ///
   /// Invalid levels (numbers greater than 125) will be assumed LTR
   ///

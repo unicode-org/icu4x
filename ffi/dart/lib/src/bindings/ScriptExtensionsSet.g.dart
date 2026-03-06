@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// An object that represents the Script_Extensions property for a single character
+/// An object that represents the `Script_Extensions` property for a single character
 ///
 /// See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
 final class ScriptExtensionsSet implements ffi.Finalizable {
@@ -28,7 +28,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_ScriptExtensionsSet_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptExtensionsSet_destroy_mv1));
 
-  /// Check if the Script_Extensions property of the given code point covers the given script
+  /// Check if the `Script_Extensions` property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
   bool contains(int script) {

@@ -4,6 +4,7 @@
 
 //! This module contains helpers for zero-copy deserialization of slices other than `&[u8]`.
 
+use alloc::vec::Vec;
 use potential_utf::PotentialUtf16;
 use serde_core::de::*;
 
@@ -23,13 +24,13 @@ pub fn option_utf_16<'de, D: Deserializer<'de>>(
 /// TODO
 pub fn vec_utf_16<'de, D: Deserializer<'de>>(
     deserializer: D,
-) -> Result<alloc::vec::Vec<&'de PotentialUtf16>, D::Error> {
+) -> Result<Vec<&'de PotentialUtf16>, D::Error> {
     struct Utf16Visitor;
 
     impl<'de> Visitor<'de> for Utf16Visitor {
-        type Value = alloc::vec::Vec<&'de PotentialUtf16>;
+        type Value = Vec<&'de PotentialUtf16>;
 
-        fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
+        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
             write!(formatter, "a sequence of UTF-16 slices")
         }
 
@@ -37,7 +38,7 @@ pub fn vec_utf_16<'de, D: Deserializer<'de>>(
         where
             A: SeqAccess<'de>,
         {
-            let mut vec = alloc::vec::Vec::with_capacity(seq.size_hint().unwrap_or_default());
+            let mut vec = Vec::with_capacity(seq.size_hint().unwrap_or_default());
             while let Some(bytes) = seq.next_element::<&[u8]>()? {
                 vec.push(PotentialUtf16::from_slice(
                     // Safety: all byte representations are valid u16s
@@ -98,18 +99,13 @@ pub fn option_i32_tuple<'de, D: Deserializer<'de>>(
 ///
 /// # Safety
 /// Alignment and length are checked, however the caller has to guarantee that the byte representation is valid for type T.
-pub unsafe fn cast_bytes_to_slice<T, E: serde_core::de::Error>(bytes: &[u8]) -> Result<&[T], E> {
-    if bytes.as_ptr().align_offset(core::mem::align_of::<T>()) != 0
-        && bytes.len() % core::mem::size_of::<T>() != 0
-    {
+pub unsafe fn cast_bytes_to_slice<T, E: Error>(bytes: &[u8]) -> Result<&[T], E> {
+    if bytes.as_ptr().align_offset(align_of::<T>()) != 0 && bytes.len() % size_of::<T>() != 0 {
         return Err(E::custom("Wrong length or align"));
     }
 
     // Safety: The check gurantees length and alignment
     Ok(unsafe {
-        core::slice::from_raw_parts(
-            bytes.as_ptr() as *const T,
-            bytes.len() / core::mem::size_of::<T>(),
-        )
+        core::slice::from_raw_parts(bytes.as_ptr() as *const T, bytes.len() / size_of::<T>())
     })
 }

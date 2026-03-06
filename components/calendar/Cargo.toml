@@ -19,6 +19,9 @@ rust-version.workspace = true
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-all-features]
+max_combination_size = 3
+
 [dependencies]
 calendrical_calculations = { workspace = true }
 displaydoc = { workspace = true }
@@ -34,6 +37,10 @@ serde = { workspace = true, features = ["derive"], optional = true }
 icu_calendar_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
+chrono = { workspace = true, optional = true }
+jiff = { workspace = true, optional = true }
+time = { workspace = true, optional = true }
+
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["logging"] }
 icu = { path = "../../components/icu", default-features = false }
@@ -43,6 +50,7 @@ serde_json = { workspace = true }
 simple_logger = { workspace = true }
 ureq = { workspace = true }
 insta = "1.38.0"
+time = { workspace = true, features = ["large-dates"]}
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
@@ -57,8 +65,15 @@ serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]
 compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 unstable = []
+jiff_0_2 = ["dep:jiff"]
+chrono_0_4 = ["dep:chrono"]
+time_0_3 = ["dep:time"]
 
 alloc = ["icu_locale_core/alloc", "tinystr/alloc", "serde?/alloc"]
+
+[[bench]]
+name = "until"
+harness = false
 
 [[bench]]
 name = "date"
@@ -73,4 +88,7 @@ name = "arithmetic"
 required-features = ["ixdtf"]
 
 [package.metadata.cargo-semver-checks.lints]
+workspace = true
+
+[lints]
 workspace = true

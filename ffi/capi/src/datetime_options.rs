@@ -32,6 +32,7 @@ pub mod ffi {
         Auto,
         Full,
         WithEra,
+        NoEra,
     }
 
     #[diplomat::rust_link(icu::datetime::options::TimePrecision, Enum)]

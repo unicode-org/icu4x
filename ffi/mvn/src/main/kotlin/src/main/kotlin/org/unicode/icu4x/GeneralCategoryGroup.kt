@@ -98,7 +98,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun all(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_all_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -109,7 +108,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun empty(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_empty_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -120,7 +118,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun casedLetter(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_cased_letter_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -131,7 +128,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun letter(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_letter_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -142,7 +138,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun mark(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_mark_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -153,7 +148,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun number(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_number_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -164,7 +158,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun separator(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_separator_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -175,7 +168,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun other(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_other_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -186,7 +178,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun punctuation(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_punctuation_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -197,7 +188,6 @@ class GeneralCategoryGroup (var mask: UInt) {
         fun symbol(): GeneralCategoryGroup {
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_symbol_mv1();
-            
             val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
@@ -222,7 +212,6 @@ class GeneralCategoryGroup (var mask: UInt) {
     fun complement(): GeneralCategoryGroup {
         
         val returnVal = lib.icu4x_GeneralCategoryGroup_complement_mv1(this.toNative());
-        
         val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }
@@ -232,7 +221,6 @@ class GeneralCategoryGroup (var mask: UInt) {
     fun union(other: GeneralCategoryGroup): GeneralCategoryGroup {
         
         val returnVal = lib.icu4x_GeneralCategoryGroup_union_mv1(this.toNative(), other.toNative());
-        
         val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }
@@ -242,7 +230,6 @@ class GeneralCategoryGroup (var mask: UInt) {
     fun intersection(other: GeneralCategoryGroup): GeneralCategoryGroup {
         
         val returnVal = lib.icu4x_GeneralCategoryGroup_intersection_mv1(this.toNative(), other.toNative());
-        
         val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }

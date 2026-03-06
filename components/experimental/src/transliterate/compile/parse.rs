@@ -6,9 +6,9 @@ use super::*;
 use crate::unicodeset_parse::{self as icu_unicodeset_parse, VariableMap, VariableValue};
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
-use alloc::fmt::{Display, Formatter};
 use alloc::string::ToString;
 use alloc::vec;
+use core::fmt::{Display, Formatter};
 use core::{iter::Peekable, str::CharIndices};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
@@ -28,7 +28,7 @@ pub(crate) enum ElementKind {
     Quantifier,
     /// A segment: `(abc)`.
     Segment,
-    /// A UnicodeSet: `[a-z]`.
+    /// A `UnicodeSet`: `[a-z]`.
     UnicodeSet,
     /// A function call: `&[a-z] Remove(...)`.
     FunctionCall,
@@ -516,9 +516,9 @@ where
         }
 
         // an empty forward rule, such as ":: (R) ;" is equivalent to ":: Any-Null (R) ;"
-        let forward_basic_id = forward_basic_id.unwrap_or(BasicId::default());
+        let forward_basic_id = forward_basic_id.unwrap_or_else(BasicId::default);
         // an empty reverse rule, such as ":: F () ;" is equivalent to ":: F (Any-Null) ;"
-        let reverse_basic_id = reverse_basic_id.unwrap_or(BasicId::default());
+        let reverse_basic_id = reverse_basic_id.unwrap_or_else(BasicId::default);
 
         let forward_single_id = SingleId {
             basic_id: forward_basic_id,
@@ -1225,7 +1225,9 @@ where
 
     // use this whenever an empty iterator would imply an Eof error
     fn must_next(&mut self) -> Result<(usize, char)> {
-        self.iter.next().ok_or(CompileErrorKind::Eof.into())
+        self.iter
+            .next()
+            .ok_or(CompileErrorKind::Eof.without_offset())
     }
 
     // see must_next
@@ -1238,7 +1240,7 @@ where
         self.iter
             .peek()
             .copied()
-            .ok_or(CompileErrorKind::Eof.into())
+            .ok_or(CompileErrorKind::Eof.without_offset())
     }
 
     // see must_peek

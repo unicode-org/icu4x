@@ -130,7 +130,7 @@ fn test_pattern_bincode_serialization_roundtrip() {
 }
 
 /// Test that pattern serialization produces sensible error messages given the Serde
-/// serde::de::Unexpected type and the use of fmt::Display traits on the Error objects.
+/// [`serde::de::Unexpected`] type and the use of [`core::fmt::Display`] traits on the Error objects.
 #[test]
 fn test_pattern_json_errors() {
     for InvalidPatternFixture { pattern, error } in &get_invalid_pattern_strings() {

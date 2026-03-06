@@ -21,12 +21,22 @@ class LocaleFallbackerWithConfig internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LocaleFallbackerWithConfigCleaner(val handle: Pointer, val lib: LocaleFallbackerWithConfigLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleFallbackerWithConfigCleaner(val handle: Pointer, val lib: LocaleFallbackerWithConfigLib) : Runnable {
         override fun run() {
             lib.icu4x_LocaleFallbackerWithConfig_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LocaleFallbackerWithConfig.LocaleFallbackerWithConfigCleaner(handle, LocaleFallbackerWithConfig.lib));
     }
 
     companion object {
@@ -39,13 +49,13 @@ class LocaleFallbackerWithConfig internal constructor (
     *See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.1.1/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
     */
     fun fallbackForLocale(locale: Locale): LocaleFallbackIterator {
+        // This lifetime edge depends on lifetimes: 'a, 'b
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(handle, locale.handle);
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
-        val returnOpaque = LocaleFallbackIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, LocaleFallbackIterator.LocaleFallbackIteratorCleaner(handle, LocaleFallbackIterator.lib));
+        val returnOpaque = LocaleFallbackIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
 

@@ -50,7 +50,7 @@ enum class HangulSyllableType {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
         *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
         */
@@ -64,12 +64,16 @@ enum class HangulSyllableType {
         @JvmStatic
         
         fun tryFromStr(s: String): HangulSyllableType? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_HangulSyllableType_try_from_str_mv1(sSlice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return HangulSyllableType.fromNative(intermediateOption)
+            val returnVal = lib.icu4x_HangulSyllableType_try_from_str_mv1(sSliceMemory.slice);
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return HangulSyllableType.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     
@@ -99,7 +103,7 @@ enum class HangulSyllableType {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
     *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
     */

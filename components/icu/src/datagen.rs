@@ -8,7 +8,7 @@ use alloc::collections::{BTreeMap, BTreeSet};
 use icu_provider::prelude::*;
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         /// Parses a compiled binary and returns a list of [`DataMarkerInfo`]s that it uses *at runtime*.
         ///
         /// This function is intended to be used for binaries that use `BufferProvider`,
@@ -35,15 +35,15 @@ macro_rules! cb {
         pub fn markers_for_bin(bytes: &[u8]) -> Result<BTreeSet<DataMarkerInfo>, DataError> {
             use crate as icu;
             let lookup =
-                [
+                alloc::vec![
                     (icu_provider::hello_world::HelloWorldV1::INFO.id.hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
                         (<$marker_ty>::INFO.id.hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
                     )+
                     $(
-                        #[cfg(feature = "experimental")]
+                        #[cfg(feature = "unstable")]
                         (<$emarker_ty>::INFO.id.hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
-                        #[cfg(not(feature = "experimental"))]
+                        #[cfg(not(feature = "unstable"))]
                         (icu_provider::marker::DataMarkerId::from_name(stringify!($emarker)).unwrap().hashed().to_bytes(), Err(stringify!($emarker))),
                     )+
 
@@ -59,7 +59,7 @@ macro_rules! cb {
                 .filter_map(|p| {
                     match lookup.get(p) {
                         Some(Ok(marker)) => Some(Ok(*marker)),
-                        Some(Err(p)) => Some(Err(DataError::custom("This marker requires the `experimental` Cargo feature").with_display_context(p))),
+                        Some(Err(p)) => Some(Err(DataError::custom("This marker requires the `unstable` Cargo feature").with_display_context(p))),
                         None => None,
                     }
                 })
@@ -74,12 +74,12 @@ fn test_markers_for_bin() {
     assert_eq!(
         markers_for_bin(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap(),
         [
-            crate::datetime::provider::neo::DayPeriodNamesV1::INFO,
-            crate::datetime::provider::neo::DatetimeNamesMonthGregorianV1::INFO,
-            crate::datetime::provider::neo::DatetimeNamesYearGregorianV1::INFO,
-            crate::datetime::provider::neo::DatetimePatternsGlueV1::INFO,
-            crate::datetime::provider::DatetimePatternsDateGregorianV1::INFO,
-            crate::datetime::provider::DatetimePatternsTimeV1::INFO,
+            crate::datetime::provider::names::DayPeriodNamesV1::INFO,
+            crate::datetime::provider::names::DatetimeNamesMonthGregorianV1::INFO,
+            crate::datetime::provider::names::DatetimeNamesYearGregorianV1::INFO,
+            crate::datetime::provider::semantic_skeletons::DatetimePatternsGlueV1::INFO,
+            crate::datetime::provider::semantic_skeletons::DatetimePatternsDateGregorianV1::INFO,
+            crate::datetime::provider::semantic_skeletons::DatetimePatternsTimeV1::INFO,
             crate::decimal::provider::DecimalSymbolsV1::INFO,
             crate::decimal::provider::DecimalDigitsV1::INFO,
         ]

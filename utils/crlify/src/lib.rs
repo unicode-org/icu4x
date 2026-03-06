@@ -2,12 +2,26 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! [`BufWriterWithLineEndingFix`].
 
 use std::io::{BufWriter, Result, Write};
 
 /// A small helper class to convert LF to CRLF on Windows.
 /// Workaround for <https://github.com/serde-rs/json/issues/535>
+#[derive(Debug)]
 pub struct BufWriterWithLineEndingFix<W: Write> {
     inner: BufWriter<W>,
     #[cfg(windows)]
@@ -15,6 +29,7 @@ pub struct BufWriterWithLineEndingFix<W: Write> {
 }
 
 impl<W: Write> BufWriterWithLineEndingFix<W> {
+    /// Wraps a [`Write`]
     pub fn new(inner: W) -> Self {
         Self {
             inner: BufWriter::with_capacity(4096, inner),

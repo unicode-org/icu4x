@@ -13,7 +13,8 @@ internal interface YearStyleLib: Library {
 enum class YearStyle {
     Auto,
     Full,
-    WithEra;
+    WithEra,
+    NoEra;
 
     fun toNative(): Int {
         return this.ordinal

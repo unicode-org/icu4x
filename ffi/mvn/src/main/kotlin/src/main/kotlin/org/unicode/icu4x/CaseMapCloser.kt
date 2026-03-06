@@ -19,12 +19,22 @@ class CaseMapCloser internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CaseMapCloserCleaner(val handle: Pointer, val lib: CaseMapCloserLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CaseMapCloserCleaner(val handle: Pointer, val lib: CaseMapCloserLib) : Runnable {
         override fun run() {
             lib.icu4x_CaseMapCloser_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CaseMapCloser.CaseMapCloserCleaner(handle, CaseMapCloser.lib));
     }
 
     companion object {
@@ -32,40 +42,40 @@ class CaseMapCloser internal constructor (
         internal val lib: CaseMapCloserLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new CaseMapCloser instance using compiled data.
+        /** Construct a new `CaseMapCloser` instance using compiled data.
         *
         *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
         */
         fun create(): Result<CaseMapCloser> {
             
             val returnVal = lib.icu4x_CaseMapCloser_create_mv1();
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CaseMapCloser(handle, selfEdges)
-                CLEANER.register(returnOpaque, CaseMapCloser.CaseMapCloserCleaner(handle, CaseMapCloser.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CaseMapCloser(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
-        /** Construct a new CaseMapCloser instance using a particular data source.
+        /** Construct a new `CaseMapCloser` instance using a particular data source.
         *
         *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<CaseMapCloser> {
             
             val returnVal = lib.icu4x_CaseMapCloser_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CaseMapCloser(handle, selfEdges)
-                CLEANER.register(returnOpaque, CaseMapCloser.CaseMapCloserCleaner(handle, CaseMapCloser.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CaseMapCloser(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -89,10 +99,14 @@ class CaseMapCloser internal constructor (
     *See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
     */
     fun addStringCaseClosureTo(s: String, builder: CodePointSetBuilder): Boolean {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(handle, sSlice, builder.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
-        return (returnVal > 0)
+        val returnVal = lib.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(handle, sSliceMemory.slice, builder.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
+        try {
+            return (returnVal > 0)
+        } finally {
+            sSliceMemory.close()
+        }
     }
 
 }

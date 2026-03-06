@@ -19,7 +19,7 @@ fn is_utf16(buffer: &[u16]) -> bool {
 
 fn slice_from_icu4c(string: &UChar) -> &[u16] {
     // Can't find this on `UChar` itself.
-    unsafe { core::slice::from_raw_parts(string.as_c_ptr(), string.len()) }
+    unsafe { slice::from_raw_parts(string.as_c_ptr(), string.len()) }
 }
 
 fn normalize_icu4x(buffer: &[u16]) -> Vec<u16> {

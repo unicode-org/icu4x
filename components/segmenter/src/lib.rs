@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! Segment strings by lines, graphemes, words, and sentences.
 //!
 //! This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
@@ -9,14 +22,14 @@
 //!
 //! This module contains segmenter implementation for the following rules.
 //!
-//! - Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14], _Unicode Line
+//! - Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0) _Unicode Line
 //!   Breaking Algorithm_, with options to tailor line-breaking behavior for CSS [`line-break`] and
 //!   [`word-break`] properties.
 //! - Grapheme cluster segmenter, word segmenter, and sentence segmenter that are compatible with
-//!   [Unicode Standard Annex #29][UAX29], _Unicode Text Segmentation_.
+//!   [Unicode Standard Annex #29][UAX29] (Version 17.0.0), _Unicode Text Segmentation_.
 //!
-//! [UAX14]: https://www.unicode.org/reports/tr14/
-//! [UAX29]: https://www.unicode.org/reports/tr29/
+//! [UAX14]: https://www.unicode.org/reports/tr14/tr14-51.html
+//! [UAX29]: https://www.unicode.org/reports/tr29/tr29-47.html
 //! [`line-break`]: https://drafts.csswg.org/css-text-3/#line-break-property
 //! [`word-break`]: https://drafts.csswg.org/css-text-3/#word-break-property
 //!
@@ -102,23 +115,6 @@
 //! ```
 //!
 //! See [`SentenceSegmenter`] for more examples.
-
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
 
 extern crate alloc;
 

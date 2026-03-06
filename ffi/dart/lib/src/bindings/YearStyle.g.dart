@@ -10,7 +10,9 @@ enum YearStyle {
   // ignore: public_member_api_docs
   full,
   // ignore: public_member_api_docs
-  withEra;
+  withEra,
+  // ignore: public_member_api_docs
+  noEra;
 
 }
 

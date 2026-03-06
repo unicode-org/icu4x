@@ -16,21 +16,21 @@ export class LocaleDirectionality {
 
 
     /**
-     * Construct a new LocaleDirectionality instance using a particular data source.
+     * Construct a new `LocaleDirectionality` instance using a particular data source.
      *
      * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
      */
     static createCommonWithProvider(provider: DataProvider): LocaleDirectionality;
 
     /**
-     * Construct a new LocaleDirectionality instance using compiled data.
+     * Construct a new `LocaleDirectionality` instance using compiled data.
      *
      * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
      */
     static createExtended(): LocaleDirectionality;
 
     /**
-     * Construct a new LocaleDirectionality instance using a particular data source.
+     * Construct a new `LocaleDirectionality` instance using a particular data source.
      *
      * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
      */
@@ -52,7 +52,7 @@ export class LocaleDirectionality {
     isRightToLeft(locale: Locale): boolean;
 
     /**
-     * Construct a new LocaleDirectionality instance using compiled data.
+     * Construct a new `LocaleDirectionality` instance using compiled data.
      *
      * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
      */

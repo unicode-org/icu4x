@@ -62,7 +62,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+  /// Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a `TitlecaseMapper` object)
   ///
   /// The `v1` refers to the version of the options struct, which may change as we add more options
   ///

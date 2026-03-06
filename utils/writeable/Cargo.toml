@@ -41,3 +41,6 @@ bench = false  # This option is required for Benchmark CI
 [[bench]]
 name = "writeable"
 harness = false
+
+[lints]
+workspace = true

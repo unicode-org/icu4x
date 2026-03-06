@@ -309,13 +309,11 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Optio
             return None;
         }
 
-        // Skip whitespace, underscore, hyphen in trie.
-        for skip in [b'\t', b'\n', b'\x0C', b'\r', b' ', 0x0B, b'_', b'-'] {
-            let mut skip_cursor = cursor.clone();
-            skip_cursor.step(skip);
-            if let Some(r) = recurse(skip_cursor, rest) {
-                return Some(r);
-            }
+        // Skip underscore in trie
+        let mut skip_cursor = cursor.clone();
+        skip_cursor.step(b'_');
+        if let Some(r) = recurse(skip_cursor, rest) {
+            return Some(r);
         }
 
         let ascii = loop {
@@ -333,17 +331,27 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Optio
             }
         };
 
-        let mut other_case_cursor = cursor.clone();
-        cursor.step(ascii);
-        other_case_cursor.step(if ascii.is_ascii_lowercase() {
+        // Try matching with the original case first
+        let mut cursor_clone = cursor.clone();
+        cursor_clone.step(ascii);
+        if let Some(r) = recurse(cursor_clone, rest) {
+            return Some(r);
+        }
+
+        // Try matching with the other case
+        let other_case = if ascii.is_ascii_lowercase() {
             ascii.to_ascii_uppercase()
         } else {
             ascii.to_ascii_lowercase()
-        });
-        // This uses the call stack as the DFS stack. The recursion will terminate as
-        // rest's length is strictly shrinking. The call stack's depth is limited by
-        // name.len().
-        recurse(cursor, rest).or_else(|| recurse(other_case_cursor, rest))
+        };
+
+        // If the other_case is different then recurse
+        if other_case != ascii {
+            cursor.step(other_case);
+            return recurse(cursor, rest);
+        }
+
+        None
     }
 
     recurse(payload.map.cursor(), name).and_then(|i| i.try_into().ok())

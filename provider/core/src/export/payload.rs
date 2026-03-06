@@ -42,7 +42,7 @@ where
     }
 
     fn bake_size(&self) -> usize {
-        core::mem::size_of::<<M::DataStruct as Yokeable>::Output>() + self.get().borrows_size()
+        size_of::<<M::DataStruct as Yokeable>::Output>() + self.get().borrows_size()
     }
 
     fn serialize_yoke(

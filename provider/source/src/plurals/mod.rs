@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
@@ -11,10 +11,10 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::plurals::provider::rules::runtime::ast::Rule;
 use icu::plurals::provider::*;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use zerovec::ZeroMap;
 
 impl SourceDataProvider {
@@ -42,7 +42,7 @@ impl SourceDataProvider {
         .ok_or(DataError::custom("Unknown marker for PluralRules"))
     }
 
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unstable")]
     fn get_plural_ranges(&self) -> Result<&cldr_serde::plural_ranges::PluralRanges, DataError> {
         Ok(&self
             .cldr()?
@@ -109,7 +109,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesData<'static> 
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl DataProvider<PluralsRangesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PluralsRangesV1>, DataError> {
         self.check_req::<PluralsRangesV1>(req)?;
@@ -138,7 +138,7 @@ impl DataProvider<PluralsRangesV1> for SourceDataProvider {
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl IterableDataProviderCached<PluralsRangesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
@@ -151,7 +151,7 @@ impl IterableDataProviderCached<PluralsRangesV1> for SourceDataProvider {
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRanges<'static> {
     fn from(other: &cldr_serde::plural_ranges::LocalePluralRanges) -> Self {
         fn convert(s: &str) -> RawPluralCategory {
@@ -218,7 +218,7 @@ fn test_basic() {
 }
 
 #[test]
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 fn test_ranges() {
     use icu::locale::langid;
 

@@ -20,7 +20,9 @@ icu_provider::data_marker!(MarkerV2, Empty);
 icu_provider::data_marker!(MarkerV3, Empty);
 icu_provider::data_marker!(MarkerV4, Empty);
 
+#[allow(clippy::exhaustive_structs)]
 #[derive(
+    Debug,
     serde::Serialize,
     serde::Deserialize,
     Clone,

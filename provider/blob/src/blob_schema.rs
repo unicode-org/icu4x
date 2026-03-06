@@ -80,7 +80,7 @@ impl<'data> BlobSchema<'data> {
 #[derive(Debug, Clone, yoke::Yokeable)]
 pub enum NeverSchema {}
 
-impl<'de> serde::Deserialize<'de> for NeverSchema {
+impl<'de> Deserialize<'de> for NeverSchema {
     fn deserialize<D>(_: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -105,7 +105,7 @@ pub(crate) struct BlobSchemaV1<'data, LocaleVecFormat: VarZeroVecFormat> {
     pub markers: &'data ZeroSlice<DataMarkerIdHash>,
     /// Map from locale to buffer index.
     /// Weak invariant: the `usize` values are valid indices into `self.buffers`
-    /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
+    /// Weak invariant: there is at least one value for every integer in `0..self.buffers.len()`
     /// Weak invariant: markers and locales are the same length
     // TODO: Make ZeroTrieSimpleAscii<[u8]> work when in this position.
     #[serde(borrow)]

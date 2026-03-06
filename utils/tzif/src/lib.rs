@@ -2,17 +2,30 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        // clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! A parser for [Time Zone Information Format (`TZif`)](https://tools.ietf.org/id/draft-murchison-tzdist-tzif-00.html) files.
 //!
 //! Also includes a parser for [POSIX time-zone strings](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html),
-//! which is used by the TZif parser, but also available separately.
+//! which is used by the `TZif` parser, but also available separately.
 //!
 //! Resources to generate `TZif` files are provided by the [IANA database](https://www.iana.org/time-zones).
 //! `TZif` files are also included in some operating systems.
 //!
 //! # Examples
 //!
-//! ### Parse TZif Files
+//! ### Parse `TZif` Files
 //! ```no_run
 //! # use std::path::Path;
 //! let data = tzif::parse_tzif_file(Path::new("path_to_file")).unwrap();
@@ -23,8 +36,6 @@
 //! let data =
 //!     tzif::parse_posix_tz_string(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").unwrap();
 //! ```
-
-#![warn(missing_docs)]
 
 use combine::{stream, Parser};
 use data::{posix::PosixTzString, tzif::TzifData};

@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! Localized formatting of dates, times, and time zones.
 //!
 //! This module is published as its own crate ([`icu_datetime`](https://docs.rs/icu_datetime/latest/icu_datetime/))
@@ -105,30 +118,17 @@
 //! Using [`FixedCalendarDateTimeFormatter`] also avoids linking code that converts inputs to the user's calendar.
 //! For field sets that don't contain dates, this can also be achieved using [`NoCalendarFormatter`].
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
-
 extern crate alloc;
 
+#[cfg(feature = "chrono_0_4")]
+mod chrono;
 mod combo;
 mod error;
 mod external_loaders;
 pub mod fieldsets;
 mod format;
+#[cfg(feature = "jiff_0_2")]
+mod jiff;
 mod neo;
 pub mod options;
 pub mod parts;
@@ -137,6 +137,8 @@ pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;
+#[cfg(feature = "time_0_3")]
+mod time_crate;
 pub mod unchecked;
 
 pub use error::{DateTimeFormatterLoadError, MismatchedCalendarError};

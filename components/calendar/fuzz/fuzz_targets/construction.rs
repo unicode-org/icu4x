@@ -25,7 +25,6 @@ fuzz_target!(|data: FuzzInput| {
         let _ = date.day_of_year();
         let _ = date.days_in_month();
         let _ = date.days_in_year();
-        let _ = date.extended_year();
         let _ = date.is_in_leap_year();
         let _ = date.month();
         let _ = date.months_in_year();

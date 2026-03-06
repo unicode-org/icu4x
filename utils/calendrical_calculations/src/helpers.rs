@@ -285,9 +285,9 @@ fn test_invert_angular() {
 #[derive(Copy, Clone, Debug, displaydoc::Display)]
 #[allow(clippy::exhaustive_enums)] // enum is specific to function and has a closed set of possible values
 pub enum I32CastError {
-    /// Less than i32::MIN
+    /// Less than [`i32::MIN`]
     BelowMin,
-    /// Greater than i32::MAX
+    /// Greater than [`i32::MAX`]
     AboveMax,
 }
 

@@ -17,15 +17,15 @@ export class BidiPairedBracketType {
     get ffiValue(): number;
 
     /**
-     * Represents Bidi_Paired_Bracket_Type=Open.
+     * Represents `Bidi_Paired_Bracket_Type=Open`.
      */
     static Open : BidiPairedBracketType;
     /**
-     * Represents Bidi_Paired_Bracket_Type=Close.
+     * Represents `Bidi_Paired_Bracket_Type=Close`.
      */
     static Close : BidiPairedBracketType;
     /**
-     * Represents Bidi_Paired_Bracket_Type=None.
+     * Represents `Bidi_Paired_Bracket_Type=None`.
      */
     static None : BidiPairedBracketType;
 

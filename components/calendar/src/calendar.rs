@@ -5,7 +5,7 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
-use crate::error::{DateError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Iso};
@@ -31,10 +31,10 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ///
     /// Equality and ordering should observe normal calendar semantics.
     type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
-    /// The type of YearInfo returned by the date
+    /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
     /// The type of error returned by `until`
-    type DifferenceError;
+    type DifferenceError: fmt::Debug;
 
     /// Construct a date from era/month codes and fields
     ///
@@ -88,7 +88,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Construct the date from a [`RataDie`]
     ///
-    /// Precondition: RataDie needs to be in the `VALID_RD_RANGE`
+    /// Precondition: `rd` needs to be in the `VALID_RD_RANGE`
     #[expect(clippy::wrong_self_convention)]
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner;
     /// Obtain a [`RataDie`] from this date
@@ -138,7 +138,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError>;
+    ) -> Result<Self::DateInner, DateAddError>;
 
     /// Calculate `date2 - date` as a duration
     ///

@@ -4,7 +4,9 @@
 
 use crate::cal::iso::{IsoDateInner, IsoEra};
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
-use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
+use crate::error::{
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::preferences::CalendarAlgorithm;
@@ -50,12 +52,12 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
-        Ok(self.0.extended_from_era_year(Some(era), era_year)? + Y::EXTENDED_YEAR_OFFSET)
+    ) -> Result<i32, UnknownEraError> {
+        self.0.extended_from_era_year(Some(era), era_year)
     }
 
     #[inline]
@@ -81,7 +83,7 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
-    type Year = types::EraYear;
+    type Year = EraYear;
     type DifferenceError = core::convert::Infallible;
 
     fn from_codes(
@@ -147,7 +149,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.added(duration, &AbstractGregorian(IsoEra), options)
     }
 
@@ -192,7 +194,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         self.0.debug_name()
     }
 
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         self.0.calendar_algorithm()
     }
 }
@@ -289,7 +291,7 @@ macro_rules! impl_with_abstract_gregorian {
                 date: &Self::DateInner,
                 duration: crate::types::DateDuration,
                 options: crate::options::DateAddOptions,
-            ) -> Result<Self::DateInner, DateError> {
+            ) -> Result<Self::DateInner, $crate::error::DateAddError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
                     .add(&date.0, duration, options)

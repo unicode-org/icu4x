@@ -159,7 +159,7 @@ enum GeneralCategory {
     return result.union.ok._toDart([], isStatic: true);
   }
 
-  /// Convert to an integer value usable with ICU4C and CodePointMapData
+  /// Convert to an integer value usable with ICU4C and `CodePointMapData`
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
@@ -167,7 +167,7 @@ enum GeneralCategory {
     return result;
   }
 
-  /// Convert from an integer value from ICU4C or CodePointMapData
+  /// Convert from an integer value from ICU4C or `CodePointMapData`
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
   static GeneralCategory? fromIntegerValue(int other) {
@@ -187,7 +187,7 @@ enum GeneralCategory {
     return GeneralCategory.values.firstWhere((v) => v._ffi == result.union.ok);
   }
 
-  /// Produces a GeneralCategoryGroup mask that can represent a group of general categories
+  /// Produces a `GeneralCategoryGroup` mask that can represent a group of general categories
   ///
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
   GeneralCategoryGroup toGroup() {

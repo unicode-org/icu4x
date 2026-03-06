@@ -5,7 +5,7 @@
 [package]
 name = "bies"
 description = "Helpers for dealing with BIES vectors with text segmentation applications"
-version = "0.2.5"
+version = "0.3.0-dev"
 
 authors.workspace = true
 edition.workspace = true
@@ -31,3 +31,6 @@ writeable = { workspace = true, features = ["alloc"] }
 rand = { workspace = true }
 rand_distr = { workspace = true }
 rand_pcg = { workspace = true }
+
+[lints]
+workspace = true

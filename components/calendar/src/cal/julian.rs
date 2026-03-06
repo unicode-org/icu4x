@@ -4,7 +4,9 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
+use crate::error::{
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -91,11 +93,11 @@ impl DateFieldsResolver for Julian {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         match era {
             b"ad" | b"ce" => Ok(era_year),
             b"bc" | b"bce" => Ok(1 - era_year),
@@ -115,7 +117,7 @@ impl DateFieldsResolver for Julian {
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         let (ordinal_month, false) = (month.number(), month.is_leap()) else {
-            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+            return Err(EcmaReferenceYearError::MonthNotInCalendar);
         };
         // December 31, 1972 occurs on 12th month, 18th day, 1972 Old Style
         // Note: 1972 is a leap year
@@ -193,7 +195,7 @@ impl Calendar for Julian {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.0.added(duration, self, options).map(JulianDateInner)
     }
 
@@ -274,7 +276,7 @@ impl Date<Julian> {
     /// Construct new Julian [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -486,7 +488,7 @@ mod test {
 
                 assert_eq!(
                     i.cmp(&j),
-                    julian_i.inner.0.cmp(&julian_j.inner.0),
+                    julian_i.inner().0.cmp(&julian_j.inner().0),
                     "Julian directionality inconsistent with directionality for i: {i}, j: {j}"
                 );
             }

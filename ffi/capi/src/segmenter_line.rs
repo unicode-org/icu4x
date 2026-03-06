@@ -46,27 +46,26 @@ pub mod ffi {
     #[diplomat::rust_link(icu::segmenter::options::LineBreakOptions, Struct)]
     #[diplomat::rust_link(icu::segmenter::options::LineBreakOptions::default, FnInStruct, hidden)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "LineBreakOptions")]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct LineBreakOptionsV2 {
         pub strictness: DiplomatOption<LineBreakStrictness>,
         pub word_option: DiplomatOption<LineBreakWordOption>,
     }
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorUtf8<'a>(
         icu_segmenter::iterators::LineBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorUtf16<'a>(
         icu_segmenter::iterators::LineBreakIterator<'a, 'a, Utf16>,
     );
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorLatin1<'a>(
@@ -129,7 +128,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "auto_with_options")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "auto_with_options_v2")]
         #[cfg(feature = "compiled_data")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn create_auto_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
@@ -147,7 +145,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_options_and_provider")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_options_v2_and_provider")]
         #[cfg(feature = "buffer_provider")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn create_auto_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: Option<&Locale>,
@@ -170,7 +167,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "lstm_with_options")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "lstm_with_options_v2")]
         #[cfg(feature = "compiled_data")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn create_lstm_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
@@ -189,7 +185,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_options_and_provider")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_options_v2_and_provider")]
         #[cfg(feature = "buffer_provider")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn create_lstm_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: Option<&Locale>,
@@ -212,7 +207,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "dictionary_with_options")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "dictionary_with_options_v2")]
         #[cfg(feature = "compiled_data")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn create_dictionary_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
@@ -231,7 +225,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_options_and_provider")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_options_v2_and_provider")]
         #[cfg(feature = "buffer_provider")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn create_dictionary_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: Option<&Locale>,
@@ -257,7 +250,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "for_non_complex_scripts_with_options")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "for_non_complex_scripts_with_options_v2")]
         #[cfg(feature = "compiled_data")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn create_for_non_complex_scripts_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
@@ -280,7 +272,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_non_complex_scripts_with_options_and_provider")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "for_non_complex_scripts_with_options_v2_and_provider")]
         #[cfg(feature = "buffer_provider")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn create_for_non_complex_scripts_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: Option<&Locale>,
@@ -296,6 +287,7 @@ pub mod ffi {
                 )?,
             )))
         }
+
         /// Segments a string.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -324,7 +316,6 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed::segment_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
-        #[diplomat::attr(kotlin, disable)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,

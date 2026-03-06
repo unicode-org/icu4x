@@ -165,7 +165,7 @@ pub struct RuleBreakData<'data> {
     pub property_count: u8,
 
     /// The index of the last simple state for [`Self::break_state_table`]. (A simple state has no
-    /// `left` nor `right` in SegmenterProperty).
+    /// `left` nor `right` in `SegmenterProperty`).
     pub last_codepoint_property: u8,
 
     /// The index of SOT (start of text) state for [`Self::break_state_table`].

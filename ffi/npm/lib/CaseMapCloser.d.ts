@@ -15,7 +15,7 @@ export class CaseMapCloser {
 
 
     /**
-     * Construct a new CaseMapCloser instance using a particular data source.
+     * Construct a new `CaseMapCloser` instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
      */
@@ -40,7 +40,7 @@ export class CaseMapCloser {
     addStringCaseClosureTo(s: string, builder: CodePointSetBuilder): boolean;
 
     /**
-     * Construct a new CaseMapCloser instance using compiled data.
+     * Construct a new `CaseMapCloser` instance using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
      */

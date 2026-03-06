@@ -5,7 +5,7 @@
 [package]
 name = "zoneinfo64"
 description = "Working with ICU zoneinfo64.res timezone data bundles"
-version = "0.2.1"
+version = "0.3.0-dev"
 
 rust-version = "1.82"
 authors.workspace = true
@@ -34,7 +34,10 @@ chrono = { version = "0.4", optional = true }
 [dev-dependencies]
 chrono-tz = "0.10.4"
 itertools.workspace = true
-jiff = { version = "0.2.15", default-features = false, features = ["tzdb-bundle-always", "std"] }
+jiff = { workspace = true, features = ["tzdb-bundle-always", "std"] }
 
 [features]
 chrono = ["dep:chrono"]
+
+[lints]
+workspace = true

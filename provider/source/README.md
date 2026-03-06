@@ -14,8 +14,8 @@ which can be used to transform the data into a more efficient format.
   * enables networking support to download CLDR and ICU source data from GitHub
 * `use_wasm` / `use_icu4c`
   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
-* `experimental`
-  * enables markers defined in the unstable `icu::experimental` module
+* `unstable`
+  * enables unstable data markers
 
 <!-- cargo-rdme end -->
 

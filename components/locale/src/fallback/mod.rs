@@ -111,7 +111,11 @@ impl LocaleFallbacker {
         // as invariant. However, they are covariant, and in non-const code this covariance can be safely triggered
         // using Yokeable::transform. In const code we must transmute. In the long run we should
         // be able to `transform()` in const code, and also we will have hopefully improved map polymorphism (#3128)
-        unsafe { core::mem::transmute(LocaleFallbackerBorrowed::<'static>::new()) }
+        unsafe {
+            core::mem::transmute::<LocaleFallbackerBorrowed<'static>, LocaleFallbackerBorrowed<'a>>(
+                LocaleFallbackerBorrowed::new(),
+            )
+        }
     }
 
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
@@ -191,8 +195,8 @@ impl LocaleFallbackerBorrowed<'static> {
     #[expect(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {
-            likely_subtags: crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
-            parents: crate::provider::Baked::SINGLETON_LOCALE_PARENTS_V1,
+            likely_subtags: Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
+            parents: Baked::SINGLETON_LOCALE_PARENTS_V1,
         }
     }
 

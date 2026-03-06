@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
+use core::fmt::Display;
 
 use fixed_decimal::Decimal;
 use icu_decimal::{
@@ -11,9 +11,9 @@ use icu_decimal::{
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 use super::super::provider::currency::essentials::CurrencyEssentialsV1;
-use super::format::FormattedCurrency;
 use super::options::CurrencyFormatterOptions;
 use super::CurrencyCode;
 
@@ -43,6 +43,7 @@ prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 ///   2. Locale-sensitive grouping separator positions.
 ///
 /// Read more about the options in the [`super::options`] module.
+#[derive(Debug)]
 pub struct CurrencyFormatter {
     /// Options bag for the currency formatter to determine the behavior of the formatter.
     /// for example: currency width.
@@ -57,7 +58,7 @@ pub struct CurrencyFormatter {
 
 impl CurrencyFormatter {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences, options: super::options::CurrencyFormatterOptions) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, options: CurrencyFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_buffer_provider,
@@ -74,7 +75,7 @@ impl CurrencyFormatter {
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         prefs: CurrencyFormatterPreferences,
-        options: super::options::CurrencyFormatterOptions,
+        options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_formatter =
@@ -97,11 +98,11 @@ impl CurrencyFormatter {
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,
-        options: super::options::CurrencyFormatterOptions,
+        options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::currency::essentials::CurrencyEssentialsV1>
+            + DataProvider<CurrencyEssentialsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
@@ -133,28 +134,31 @@ impl CurrencyFormatter {
     /// use icu::experimental::dimension::currency::CurrencyCode;
     /// use icu::locale::locale;
     /// use tinystr::*;
-    /// use writeable::Writeable;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let locale = locale!("en-US").into();
     /// let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
-    /// let mut sink = String::new();
-    /// formatted_currency.write_to(&mut sink).unwrap();
-    /// assert_eq!(sink.as_str(), "$12,345.67");
+    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value, &currency_code), "$12,345.67");
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
         value: &'l Decimal,
-        currency_code: CurrencyCode,
-    ) -> FormattedCurrency<'l> {
-        FormattedCurrency {
-            value,
-            currency_code,
-            options: &self.options,
-            essential: self.essential.get(),
-            decimal_formatter: &self.decimal_formatter,
-        }
+        currency_code: &'l CurrencyCode,
+    ) -> impl Writeable + Display + 'l {
+        let (currency_str, pattern, _pattern_selection) = self
+            .essential
+            .get()
+            .name_and_pattern(self.options.width, currency_code);
+
+        self.decimal_formatter.format_sign(
+            value.sign,
+            pattern.interpolate((
+                self.decimal_formatter
+                    .format_unsigned(icu_decimal::Cow::Borrowed(&value.absolute)),
+                currency_str,
+            )),
+        )
     }
 }

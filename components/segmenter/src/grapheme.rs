@@ -38,6 +38,10 @@ derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'data);
 /// Most segmentation methods live on [`GraphemeClusterSegmenterBorrowed`], which can be obtained via
 /// [`GraphemeClusterSegmenter::new()`] or [`GraphemeClusterSegmenter::as_borrowed()`].
 ///
+/// Grapheme cluster segmenter is currently compatible with [Unicode Standard Annex #29][UAX29] (Version 17.0.0).
+///
+/// [UAX29]: https://www.unicode.org/reports/tr29/tr29-47.html
+///
 /// # Examples
 ///
 /// Segment a string:
@@ -128,7 +132,7 @@ impl GraphemeClusterSegmenter {
     #[expect(clippy::new_ret_no_self)] // Deliberate choice, see #5554
     pub const fn new() -> GraphemeClusterSegmenterBorrowed<'static> {
         GraphemeClusterSegmenterBorrowed {
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
         }
     }
 

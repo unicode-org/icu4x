@@ -19,9 +19,11 @@ part 'BidiMirroringGlyph.g.dart';
 part 'BidiPairedBracketType.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
+part 'CalendarDateAddError.g.dart';
 part 'CalendarDateFromFieldsError.g.dart';
 part 'CalendarError.g.dart';
 part 'CalendarKind.g.dart';
+part 'CalendarMismatchedCalendarError.g.dart';
 part 'CanonicalCombiningClass.g.dart';
 part 'CanonicalCombiningClassMap.g.dart';
 part 'CanonicalComposition.g.dart';
@@ -47,6 +49,11 @@ part 'ComposingNormalizer.g.dart';
 part 'DataError.g.dart';
 part 'DataProvider.g.dart';
 part 'Date.g.dart';
+part 'DateAddOptions.g.dart';
+part 'DateDifferenceOptions.g.dart';
+part 'DateDuration.g.dart';
+part 'DateDurationParseError.g.dart';
+part 'DateDurationUnit.g.dart';
 part 'DateFields.g.dart';
 part 'DateFormatter.g.dart';
 part 'DateFormatterGregorian.g.dart';
@@ -126,6 +133,7 @@ part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
 part 'PluralOperands.g.dart';
 part 'PluralRules.g.dart';
+part 'PluralRulesWithRanges.g.dart';
 part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
@@ -175,6 +183,7 @@ part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 part 'ZonedDateTimeFormatterGregorian.g.dart';
 part 'ZonedIsoDateTime.g.dart';
+part 'ZonedTime.g.dart';
 part 'ZonedTimeFormatter.g.dart';
 
 // ignore: experimental_member_use
@@ -290,6 +299,61 @@ final class _ResultBoolInt32 extends ffi.Struct {
   // ignore: unused_element
   factory _ResultBoolInt32.err(int val) {
     final struct = ffi.Struct.create<_ResultBoolInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfiUnion extends ffi.Union {
+  external _DateDurationFfi ok;
+
+}
+
+final class _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi extends ffi.Struct {
+  external _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi.ok(_DateDurationFfi val) {
+    final struct = ffi.Struct.create<_ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi.err() {
+    final struct = ffi.Struct.create<_ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultDateDurationFfiInt32Union extends ffi.Union {
+  external _DateDurationFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultDateDurationFfiInt32 extends ffi.Struct {
+  external _ResultDateDurationFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultDateDurationFfiInt32.ok(_DateDurationFfi val) {
+    final struct = ffi.Struct.create<_ResultDateDurationFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultDateDurationFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultDateDurationFfiInt32>();
     struct.isOk = false;
     struct.union.err = val;
     return struct;
@@ -771,6 +835,35 @@ final class _ResultZonedIsoDateTimeFfiInt32 extends ffi.Struct {
   // ignore: unused_element
   factory _ResultZonedIsoDateTimeFfiInt32.err(int val) {
     final struct = ffi.Struct.create<_ResultZonedIsoDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultZonedTimeFfiInt32Union extends ffi.Union {
+  external _ZonedTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultZonedTimeFfiInt32 extends ffi.Struct {
+  external _ResultZonedTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultZonedTimeFfiInt32.ok(_ZonedTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultZonedTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultZonedTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultZonedTimeFfiInt32>();
     struct.isOk = false;
     struct.union.err = val;
     return struct;

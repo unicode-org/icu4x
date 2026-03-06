@@ -52,6 +52,9 @@ mod offset;
 pub mod windows;
 mod zone_name_timestamp;
 
+use icu_calendar::types::RataDie;
+#[cfg(feature = "compiled_data")]
+use icu_locale_core::subtags::Region;
 #[doc(inline)]
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
@@ -70,6 +73,7 @@ pub use zone_name_timestamp::ZoneNameTimestamp;
 
 use crate::scaffold::IntoOption;
 use crate::DateTime;
+use crate::Time;
 use core::fmt;
 use core::ops::Deref;
 use icu_calendar::Iso;
@@ -180,6 +184,42 @@ impl TimeZone {
     pub const fn is_unknown(self) -> bool {
         matches!(self, Self::UNKNOWN)
     }
+
+    /// Construct a [`TimeZone`] from an IANA time zone ID.
+    ///
+    /// See [`IanaParser`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn from_iana_id(iana_id: &str) -> Self {
+        IanaParser::new().parse(iana_id)
+    }
+
+    /// Construct a [`TimeZone`] from a Windows time zone ID and region.
+    ///
+    /// See [`WindowsParser`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn from_windows_id(windows_id: &str, region: Option<Region>) -> Self {
+        WindowsParser::new()
+            .parse(windows_id, region)
+            .unwrap_or(Self::UNKNOWN)
+    }
+
+    /// Construct a [`TimeZone`] from the platform-specific ID.
+    ///
+    /// On Windows systems, this resolves to [`TimeZone::from_windows_id`], on
+    /// all other systems to [`TimeZone::from_iana_id`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn from_system_id(id: &str, _region: Option<Region>) -> Self {
+        #[cfg(target_os = "windows")]
+        return Self::from_windows_id(id, _region);
+        #[cfg(not(target_os = "windows"))]
+        return Self::from_iana_id(id);
+    }
 }
 
 impl Deref for TimeZone {
@@ -223,20 +263,20 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// ```
 /// use icu::calendar::Date;
 /// use icu::locale::subtags::subtag;
-/// use icu::time::zone::IanaParser;
 /// use icu::time::zone::TimeZoneVariant;
 /// use icu::time::DateTime;
 /// use icu::time::Time;
 /// use icu::time::TimeZone;
+/// use icu::time::zone::UtcOffset;
 ///
 /// // Parse the IANA ID
-/// let id = IanaParser::new().parse("America/Chicago");
+/// let id = TimeZone::from_iana_id("America/Chicago");
 ///
 /// // Alternatively, use the BCP47 ID directly
 /// let id = TimeZone(subtag!("uschi"));
 ///
 /// // Create a TimeZoneInfo<Base> by associating the ID with an offset
-/// let time_zone = id.with_offset("-0600".parse().ok());
+/// let time_zone = id.with_offset(UtcOffset::try_from_seconds(-6 * 3600).ok());
 ///
 /// // Extend to a TimeZoneInfo<AtTime> by adding a local time
 /// let time_zone_at_time = time_zone.at_date_time_iso(DateTime {
@@ -412,17 +452,18 @@ impl TimeZoneInfo<models::Base> {
     ///
     /// Also see [`Self::with_zone_name_timestamp`].
     pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
-        Self::with_zone_name_timestamp(
-            self,
-            ZoneNameTimestamp::from_zoned_date_time_iso(crate::ZonedDateTime {
-                date: date_time.date,
-                time: date_time.time,
-                // If we don't have an offset, interpret as UTC. This is incorrect during O(a couple of
-                // hours) since the UNIX epoch (a handful of transitions times the few hours this is too
-                // early/late).
-                zone: self.offset.unwrap_or(UtcOffset::zero()),
-            }),
-        )
+        self.at_rd_time(date_time.date.to_rata_die(), date_time.time)
+    }
+
+    pub(crate) fn at_rd_time(self, rd: RataDie, time: Time) -> TimeZoneInfo<models::AtTime> {
+        self.with_zone_name_timestamp(ZoneNameTimestamp::from_rd_time_zone(
+            rd,
+            time,
+            // If we don't have an offset, interpret as UTC. This is incorrect during O(a couple of
+            // hours) since the UNIX epoch (a handful of transitions times the few hours this is too
+            // early/late).
+            self.offset.unwrap_or(UtcOffset::zero()),
+        ))
     }
 }
 
@@ -452,16 +493,16 @@ impl TimeZoneInfo<models::AtTime> {
     /// # Example
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::locale::subtags::subtag;
     /// use icu::time::zone::TimeZoneVariant;
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::DateTime;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
+    /// use icu::time::zone::UtcOffset;
     ///
     /// // Chicago at UTC-6
-    /// let info = TimeZone(subtag!("uschi"))
-    ///     .with_offset("-0600".parse().ok())
+    /// let info = TimeZone::from_iana_id("America/Chicago")
+    ///     .with_offset(UtcOffset::try_from_seconds(-6 * 3600).ok())
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -471,8 +512,8 @@ impl TimeZoneInfo<models::AtTime> {
     /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
     ///
     /// // Chicago at at UTC-5
-    /// let info = TimeZone(subtag!("uschi"))
-    ///     .with_offset("-0500".parse().ok())
+    /// let info = TimeZone::from_iana_id("America/Chicago")
+    ///     .with_offset(UtcOffset::try_from_seconds(-5 * 3600).ok())
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 6, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -482,8 +523,8 @@ impl TimeZoneInfo<models::AtTime> {
     /// assert_eq!(info.variant(), TimeZoneVariant::Daylight);
     ///
     /// // Chicago at UTC-7
-    /// let info = TimeZone(subtag!("uschi"))
-    ///     .with_offset("-0700".parse().ok())
+    /// let info = TimeZone::from_iana_id("America/Chicago")
+    ///     .with_offset(UtcOffset::try_from_seconds(-7 * 3600).ok())
     ///     .at_date_time_iso(DateTime {
     ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
     ///         time: Time::start_of_day(),
@@ -565,15 +606,15 @@ impl TimeZoneVariant {
 fn test_zone_info_equality() {
     // offset inferred
     assert_eq!(
-        IanaParser::new().parse("Etc/GMT-8").with_offset(None),
+        TimeZone::from_iana_id("Etc/GMT-8").with_offset(None),
         TimeZone::UNKNOWN.with_offset(Some(UtcOffset::from_seconds_unchecked(8 * 60 * 60)))
     );
     assert_eq!(
-        IanaParser::new().parse("Etc/UTC").with_offset(None),
+        TimeZone::from_iana_id("Etc/UTC").with_offset(None),
         TimeZoneInfo::utc()
     );
     assert_eq!(
-        IanaParser::new().parse("Etc/GMT").with_offset(None),
+        TimeZone::from_iana_id("Etc/GMT").with_offset(None),
         IanaParser::new()
             .parse("Etc/GMT")
             .with_offset(Some(UtcOffset::zero()))

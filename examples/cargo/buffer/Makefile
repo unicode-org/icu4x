@@ -6,17 +6,23 @@ export CARGO_TARGET_DIR ?= target
 
 PINNED_CI_NIGHTLY = "nightly-2025-09-27"
 
+ifeq ($(OS),Windows_NT)
+	BINARY_EXT = .exe
+else
+	BINARY_EXT =
+endif
+
 all: buffer_data.postcard bin/tutorial_buffer.wasm
 
-../bin/icu4x-datagen:
+../bin/icu4x-datagen$(BINARY_EXT):
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	cargo install --path ../../../provider/icu4x-datagen --root ..
 
-bin/tutorial_buffer:
+bin/tutorial_buffer$(BINARY_EXT):
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	cargo build --release
 	mkdir -p bin
-	cp -p "$(CARGO_TARGET_DIR)"/release/tutorial_buffer bin/tutorial_buffer
+	cp -p "$(CARGO_TARGET_DIR)/release/tutorial_buffer$(BINARY_EXT) bin/tutorial_buffer$(BINARY_EXT)"
 	ls -l bin/
 
 bin/tutorial_buffer.wasm:
@@ -28,10 +34,10 @@ bin/tutorial_buffer.wasm:
 	cp -p "$(CARGO_TARGET_DIR)"/wasm32-wasip1/release/tutorial_buffer.wasm bin/
 	ls -l bin/
 
-buffer_data.postcard: ../bin/icu4x-datagen bin/tutorial_buffer
-	../bin/icu4x-datagen \
+buffer_data.postcard: ../bin/icu4x-datagen$(BINARY_EXT) bin/tutorial_buffer$(BINARY_EXT)
+	../bin/icu4x-datagen$(BINARY_EXT) \
 		--format blob \
-		--markers-for-bin bin/tutorial_buffer \
+		--markers-for-bin "bin/tutorial_buffer$(BINARY_EXT)" \
 		--locales my en-ZA \
 		--cldr-tag latest \
 		--overwrite \

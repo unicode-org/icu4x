@@ -60,3 +60,6 @@ harness = false
 [[test]]
 name = "locale_canonicalizer"
 required-features = ["serde"]
+
+[lints]
+workspace = true

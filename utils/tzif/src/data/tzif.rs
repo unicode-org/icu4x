@@ -132,7 +132,7 @@ impl TzifData {
     pub fn version_number(&self) -> usize {
         self.header2
             .as_ref()
-            .map_or(self.header1.version(), TzifHeader::version)
+            .map_or(self.header1.version, TzifHeader::version)
     }
 
     /// Returns the number of bytes per time object based on the version number.
@@ -272,7 +272,7 @@ pub struct DataBlock {
     /// field in the header.  Each time value SHOULD be at least -2**59.
     ///
     /// (-2**59 is the greatest negated power of 2 that predates the Big
-    /// Bang, and avoiding earlier timestamps works around known TZif
+    /// Bang, and avoiding earlier timestamps works around known `TZif`
     /// reader bugs relating to outlandishly negative timestamps.)
     pub transition_times: Vec<Seconds>,
 

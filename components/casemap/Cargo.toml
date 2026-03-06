@@ -64,3 +64,6 @@ required-features = ["compiled_data", "datagen"] # datagen bound can be removed 
 name = "casemap"
 harness = false
 required-features = ["compiled_data"]
+
+[lints]
+workspace = true

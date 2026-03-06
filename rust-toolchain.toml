@@ -3,4 +3,4 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [toolchain]
-channel = "1.92"
+channel = "1.93"

@@ -16,7 +16,7 @@ pub mod ffi {
     use crate::unstable::timezone::ffi::TimeZoneInfo;
     use crate::unstable::variant_offset::ffi::UtcOffset;
 
-    /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
+    /// An ICU4X `ZonedDateTime` object capable of containing a ISO-8601 date, time, and zone.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
     #[diplomat::out]
     pub struct ZonedIsoDateTime {
@@ -82,7 +82,7 @@ pub mod ffi {
         }
     }
 
-    /// An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
+    /// An ICU4X `DateTime` object capable of containing a date, time, and zone for any calendar.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
     #[diplomat::out]
     pub struct ZonedDateTime {

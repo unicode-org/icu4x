@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! Types for dealing with dates and custom calendars.
 //!
 //! This module is published as its own crate ([`icu_calendar`](https://docs.rs/icu_calendar/latest/icu_calendar/))
@@ -72,22 +85,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
 // It's not worth it to try and maintain clean import lists for both
 // stable and unstable mode when the code is so entangled.
 #![cfg_attr(not(feature = "unstable"), allow(unused))]
@@ -108,10 +105,16 @@ pub mod week;
 
 mod calendar;
 mod calendar_arithmetic;
+#[cfg(feature = "chrono_0_4")]
+mod chrono;
 mod duration;
 pub mod error;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
+#[cfg(feature = "jiff_0_2")]
+mod jiff;
+#[cfg(feature = "time_0_3")]
+mod time_crate;
 
 // Top-level types
 pub use any_calendar::IntoAnyCalendar;
@@ -125,18 +128,7 @@ pub use ixdtf::ParseError;
 #[doc(no_inline)]
 pub use cal::{AnyCalendar, AnyCalendarKind, Gregorian, Iso};
 
-/// Locale preferences used by this crate
-pub mod preferences {
-    pub use crate::any_calendar::CalendarPreferences;
-    #[doc(inline)]
-    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
-    #[doc = "\n"] // prevent autoformatting
-    pub use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
-    #[doc(inline)]
-    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
-    #[doc = "\n"] // prevent autoformatting
-    pub use icu_locale_core::preferences::extensions::unicode::keywords::HijriCalendarAlgorithm;
-}
+pub mod preferences;
 
 #[cfg(test)]
 mod tests;

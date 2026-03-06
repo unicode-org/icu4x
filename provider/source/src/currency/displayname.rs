@@ -9,7 +9,7 @@ use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
 
-impl DataProvider<CurrencyDisplaynameV1> for crate::SourceDataProvider {
+impl DataProvider<CurrencyDisplaynameV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyDisplaynameV1>, DataError> {
         self.check_req::<CurrencyDisplaynameV1>(req)?;
 

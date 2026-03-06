@@ -31,3 +31,6 @@ synstructure = { workspace = true }
 [dev-dependencies]
 zerofrom = { path = "..", features = ["derive"]}
 zerovec = { path = "../../../utils/zerovec", features = ["yoke"] }
+
+[lints]
+workspace = true

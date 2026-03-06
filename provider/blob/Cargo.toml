@@ -63,3 +63,6 @@ required-features = ["export"]
 [[bench]]
 name = "blob_version_bench"
 harness = false
+
+[lints]
+workspace = true

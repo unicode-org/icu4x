@@ -61,7 +61,7 @@ impl TryFrom<&[u8]> for BinHeader {
     // is sufficiently large.
     #[expect(clippy::indexing_slicing)]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-        if value.len() < core::mem::size_of::<BinHeader>() {
+        if value.len() < size_of::<BinHeader>() {
             return Err(BinaryDeserializerError::invalid_data(
                 "input is too short to contain file header",
             ));
@@ -83,7 +83,7 @@ impl TryFrom<&[u8]> for BinHeader {
 
         let repr_info = BinReprInfo::try_from(value)?;
 
-        if (size as usize) < core::mem::size_of::<BinHeader>() {
+        if (size as usize) < size_of::<BinHeader>() {
             return Err(BinaryDeserializerError::invalid_data(
                 "header size specified in file is smaller than expected",
             ));
@@ -104,7 +104,7 @@ impl TryFrom<&[u8]> for BinReprInfo {
     // is sufficiently large.
     #[expect(clippy::indexing_slicing)]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-        if value.len() < core::mem::size_of::<BinReprInfo>() {
+        if value.len() < size_of::<BinReprInfo>() {
             return Err(BinaryDeserializerError::invalid_data(
                 "input is too short to contain representation info",
             ));
@@ -113,13 +113,10 @@ impl TryFrom<&[u8]> for BinReprInfo {
         let (size, value) = read_u16(value)?;
         let (reserved_word, value) = read_u16(value)?;
 
-        // While the consumer is responsible for verifying acceptability of most
-        // contents of the repr info, we explicitly depend on little endian data
-        // in order to ensure compatibility with `zerovec`.
         let (endianness, value) = (Endianness::try_from(value[0])?, &value[1..]);
-        if endianness != Endianness::Little {
+        if (endianness == Endianness::Little) != cfg!(target_endian = "little") {
             return Err(BinaryDeserializerError::unsupported_format(
-                "big-endian bundles are not supported",
+                "bundle endianness does not match platform endianness",
             ));
         }
 

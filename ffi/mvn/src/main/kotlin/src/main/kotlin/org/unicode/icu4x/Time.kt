@@ -25,12 +25,22 @@ class Time internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class TimeCleaner(val handle: Pointer, val lib: TimeLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class TimeCleaner(val handle: Pointer, val lib: TimeLib) : Runnable {
         override fun run() {
             lib.icu4x_Time_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Time.TimeCleaner(handle, Time.lib));
     }
 
     companion object {
@@ -45,14 +55,14 @@ class Time internal constructor (
         fun create(hour: UByte, minute: UByte, second: UByte, subsecond: UInt): Result<Time> {
             
             val returnVal = lib.icu4x_Time_create_mv1(FFIUint8(hour), FFIUint8(minute), FFIUint8(second), FFIUint32(subsecond));
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Time(handle, selfEdges)
-                CLEANER.register(returnOpaque, Time.TimeCleaner(handle, Time.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Time(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -62,18 +72,21 @@ class Time internal constructor (
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.Time.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<Time> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_Time_from_string_mv1(vSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Time(handle, selfEdges)
-                CLEANER.register(returnOpaque, Time.TimeCleaner(handle, Time.lib));
-                if (vMem != null) vMem.close()
-                return returnOpaque.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_Time_from_string_mv1(vSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = Time(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic
@@ -85,14 +98,14 @@ class Time internal constructor (
         fun startOfDay(): Result<Time> {
             
             val returnVal = lib.icu4x_Time_start_of_day_mv1();
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Time(handle, selfEdges)
-                CLEANER.register(returnOpaque, Time.TimeCleaner(handle, Time.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Time(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -104,14 +117,14 @@ class Time internal constructor (
         fun noon(): Result<Time> {
             
             val returnVal = lib.icu4x_Time_noon_mv1();
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Time(handle, selfEdges)
-                CLEANER.register(returnOpaque, Time.TimeCleaner(handle, Time.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Time(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

@@ -35,6 +35,7 @@ pub trait MeasureUnitCategory {
 /// A [`MeasureUnit`] that is related to a specific category.
 ///
 /// This is useful for type inference and for ensuring that the correct units are used.
+#[derive(Debug)]
 pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
     _category: PhantomData<T>,
     pub unit: MeasureUnit,
@@ -52,18 +53,28 @@ impl<T: MeasureUnitCategory> CategorizedMeasureUnit<T> {
 }
 
 /// A [`MeasureUnit`] that is related to the area category.
+#[derive(Debug)]
+#[non_exhaustive]
 pub struct Area;
 
 /// A [`MeasureUnit`] that is related to the duration category.
+#[derive(Debug)]
+#[non_exhaustive]
 pub struct Duration;
 
 /// A [`MeasureUnit`] that is related to the length category.
+#[derive(Debug)]
+#[non_exhaustive]
 pub struct Length;
 
 /// A [`MeasureUnit`] that is related to the mass category.
+#[derive(Debug)]
+#[non_exhaustive]
 pub struct Mass;
 
 /// A [`MeasureUnit`] that is related to the volume category.
+#[derive(Debug)]
+#[non_exhaustive]
 pub struct Volume;
 
 impl MeasureUnitCategory for Area {

@@ -5,6 +5,8 @@
 use crate::asciibyte::AsciiByte;
 use crate::int_ops::{Aligned4, Aligned8};
 use crate::ParseError;
+#[cfg(feature = "alloc")]
+use alloc::string::String;
 use core::borrow::Borrow;
 use core::fmt;
 use core::ops::Deref;
@@ -17,6 +19,11 @@ pub struct TinyAsciiStr<const N: usize> {
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
+    /// The empty string.
+    pub const EMPTY: Self = Self {
+        bytes: [AsciiByte::B0; N],
+    };
+
     #[inline]
     pub const fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
@@ -39,7 +46,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Creates a `TinyAsciiStr<N>` from a UTF-8 slice, replacing invalid code units.
     ///
     /// Invalid code units, as well as null or non-ASCII code points
-    /// (i.e. those outside the range U+0001..=U+007F`)
+    /// (i.e. those outside the range `U+0001..=U+007F`)
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
@@ -74,7 +81,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Creates a `TinyAsciiStr<N>` from a UTF-16 slice, replacing invalid code units.
     ///
     /// Invalid code units, as well as null or non-ASCII code points
-    /// (i.e. those outside the range U+0001..=U+007F`)
+    /// (i.e. those outside the range `U+0001..=U+007F`)
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
@@ -709,7 +716,7 @@ macro_rules! to {
     ($self:ident, $to:ident, $later_char_to:ident $(,$first_char_to:ident)?) => {{
         let mut i = 0;
         if N <= 4 {
-            let aligned = Aligned4::from_ascii_bytes(&$self.bytes).$to().to_ascii_bytes();
+            let aligned = Aligned4::from_ascii_bytes(&$self.bytes).$to();
             // Won't panic because self.bytes has length N and aligned has length >= N
             #[expect(clippy::indexing_slicing)]
             while i < N {
@@ -717,7 +724,7 @@ macro_rules! to {
                 i += 1;
             }
         } else if N <= 8 {
-            let aligned = Aligned8::from_ascii_bytes(&$self.bytes).$to().to_ascii_bytes();
+            let aligned = Aligned8::from_ascii_bytes(&$self.bytes).$to();
             // Won't panic because self.bytes has length N and aligned has length >= N
             #[expect(clippy::indexing_slicing)]
             while i < N {
@@ -726,19 +733,11 @@ macro_rules! to {
             }
         } else {
             while i < N && $self.bytes[i] as u8 != AsciiByte::B0 as u8 {
-                // SAFETY: AsciiByte is repr(u8) and has same size as u8
-                unsafe {
-                    $self.bytes[i] = core::mem::transmute::<u8, AsciiByte>(
-                        ($self.bytes[i] as u8).$later_char_to()
-                    );
-                }
+                $self.bytes[i] = $self.bytes[i].$later_char_to();
                 i += 1;
             }
-            // SAFETY: AsciiByte is repr(u8) and has same size as u8
             $(
-                $self.bytes[0] = unsafe {
-                    core::mem::transmute::<u8, AsciiByte>(($self.bytes[0] as u8).$first_char_to())
-                };
+                $self.bytes[0] = $self.bytes[0].$first_char_to();
             )?
         }
         $self
@@ -858,14 +857,14 @@ impl<const N: usize> PartialEq<&str> for TinyAsciiStr<N> {
 }
 
 #[cfg(feature = "alloc")]
-impl<const N: usize> PartialEq<alloc::string::String> for TinyAsciiStr<N> {
-    fn eq(&self, other: &alloc::string::String) -> bool {
+impl<const N: usize> PartialEq<String> for TinyAsciiStr<N> {
+    fn eq(&self, other: &String) -> bool {
         self.deref() == other.deref()
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
+impl<const N: usize> PartialEq<TinyAsciiStr<N>> for String {
     fn eq(&self, other: &TinyAsciiStr<N>) -> bool {
         self.deref() == other.deref()
     }
@@ -932,7 +931,7 @@ mod test {
     where
         F1: Fn(&str) -> T,
         F2: Fn(TinyAsciiStr<N>) -> T,
-        T: core::fmt::Debug + core::cmp::PartialEq,
+        T: fmt::Debug + PartialEq,
     {
         for s in STRINGS
             .into_iter()

@@ -34,7 +34,7 @@ where
 
 #[cfg(test)]
 #[macro_export]
-/// Helper macro to test that a parse should fail with Err().
+/// Helper macro to test that a parse should fail.
 macro_rules! assert_parse_err {
     ($parser:expr, bytes $src:expr $(,)?) => {
         assert!(
@@ -58,7 +58,7 @@ macro_rules! assert_parse_err {
 
 #[cfg(test)]
 #[macro_export]
-/// Helper macro to test that a parse should succeed with Ok().
+/// Helper macro to test that a parse should succeed.
 macro_rules! assert_parse_ok {
     ($parser:expr, bytes $src:expr $(,)?) => {
         assert!(

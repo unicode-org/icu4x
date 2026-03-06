@@ -11,7 +11,7 @@ internal interface CanonicalCombiningClassMapLib: Library {
     fun icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CanonicalCombiningClassMap_get_mv1(handle: Pointer, ch: Int): FFIUint8
 }
-/** Lookup of the Canonical_Combining_Class Unicode property
+/** Lookup of the `Canonical_Combining_Class` Unicode property
 *
 *See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
 */
@@ -20,12 +20,22 @@ class CanonicalCombiningClassMap internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CanonicalCombiningClassMapCleaner(val handle: Pointer, val lib: CanonicalCombiningClassMapLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CanonicalCombiningClassMapCleaner(val handle: Pointer, val lib: CanonicalCombiningClassMapLib) : Runnable {
         override fun run() {
             lib.icu4x_CanonicalCombiningClassMap_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CanonicalCombiningClassMap.CanonicalCombiningClassMapCleaner(handle, CanonicalCombiningClassMap.lib));
     }
 
     companion object {
@@ -33,7 +43,7 @@ class CanonicalCombiningClassMap internal constructor (
         internal val lib: CanonicalCombiningClassMapLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
+        /** Construct a new `CanonicalCombiningClassMap` instance for NFC using compiled data.
         *
         *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
         */
@@ -42,27 +52,26 @@ class CanonicalCombiningClassMap internal constructor (
             val returnVal = lib.icu4x_CanonicalCombiningClassMap_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CanonicalCombiningClassMap(handle, selfEdges)
-            CLEANER.register(returnOpaque, CanonicalCombiningClassMap.CanonicalCombiningClassMapCleaner(handle, CanonicalCombiningClassMap.lib));
+            val returnOpaque = CanonicalCombiningClassMap(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
         
-        /** Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
+        /** Construct a new `CanonicalCombiningClassMap` instance for NFC using a particular data source.
         *
         *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<CanonicalCombiningClassMap> {
             
             val returnVal = lib.icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CanonicalCombiningClassMap(handle, selfEdges)
-                CLEANER.register(returnOpaque, CanonicalCombiningClassMap.CanonicalCombiningClassMapCleaner(handle, CanonicalCombiningClassMap.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CanonicalCombiningClassMap(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

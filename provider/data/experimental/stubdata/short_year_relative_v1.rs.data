@@ -10,9 +10,9 @@
 #[macro_export]
 macro_rules! __impl_short_year_relative_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.86"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.86"]
         impl icu_provider::DataProvider<icu::experimental::relativetime::provider::ShortYearRelativeV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::relativetime::provider::ShortYearRelativeV1>, icu_provider::DataError> {
                 Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::relativetime::provider::ShortYearRelativeV1 as icu_provider::DataMarker>::INFO, req))
@@ -21,7 +21,7 @@ macro_rules! __impl_short_year_relative_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_short_year_relative_v1!($provider);
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.86"]
         impl icu_provider::IterableDataProvider<icu::experimental::relativetime::provider::ShortYearRelativeV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(Default::default())
@@ -30,7 +30,7 @@ macro_rules! __impl_short_year_relative_v1 {
     };
     ($ provider : ty , DRY) => {
         __impl_short_year_relative_v1!($provider);
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.86"]
         impl icu_provider::DryDataProvider<icu::experimental::relativetime::provider::ShortYearRelativeV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::relativetime::provider::ShortYearRelativeV1 as icu_provider::DataMarker>::INFO, req))
@@ -39,13 +39,13 @@ macro_rules! __impl_short_year_relative_v1 {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_short_year_relative_v1!($provider);
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.86"]
         impl icu_provider::DryDataProvider<icu::experimental::relativetime::provider::ShortYearRelativeV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::relativetime::provider::ShortYearRelativeV1 as icu_provider::DataMarker>::INFO, req))
             }
         }
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.86"]
         impl icu_provider::IterableDataProvider<icu::experimental::relativetime::provider::ShortYearRelativeV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(Default::default())

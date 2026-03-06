@@ -24,7 +24,7 @@ final class CaseMapCloser implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_CaseMapCloser_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CaseMapCloser_destroy_mv1));
 
-  /// Construct a new CaseMapCloser instance using compiled data.
+  /// Construct a new `CaseMapCloser` instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   ///
@@ -37,7 +37,7 @@ final class CaseMapCloser implements ffi.Finalizable {
     return CaseMapCloser._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new CaseMapCloser instance using a particular data source.
+  /// Construct a new `CaseMapCloser` instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   ///

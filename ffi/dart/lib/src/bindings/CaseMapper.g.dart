@@ -24,7 +24,7 @@ final class CaseMapper implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_CaseMapper_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CaseMapper_destroy_mv1));
 
-  /// Construct a new CaseMapper instance using compiled data.
+  /// Construct a new `CaseMapper` instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapper.html#method.new) for more information.
   factory CaseMapper() {
@@ -32,7 +32,7 @@ final class CaseMapper implements ffi.Finalizable {
     return CaseMapper._fromFfi(result, []);
   }
 
-  /// Construct a new CaseMapper instance using a particular data source.
+  /// Construct a new `CaseMapper` instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapper.html#method.new) for more information.
   ///
@@ -65,7 +65,7 @@ final class CaseMapper implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+  /// Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a `CaseMapper` object)
   ///
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
   static String lowercaseWithCompiledData(String s, Locale locale) {
@@ -75,7 +75,7 @@ final class CaseMapper implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+  /// Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a `CaseMapper` object)
   ///
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
   static String uppercaseWithCompiledData(String s, Locale locale) {
@@ -96,6 +96,21 @@ final class CaseMapper implements ffi.Finalizable {
     final temp = _FinalizedArena();
     final write = _Write();
     _icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(_ffi, s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
+    return write.finalize();
+  }
+
+  /// Returns the full titlecase mapping of the given string, performing head adjustment without
+  /// loading additional data, using compiled data (avoids having to allocate a `CaseMapper` object).
+  ///
+  /// (if head adjustment is enabled in the options)
+  ///
+  /// The `v1` refers to the version of the options struct, which may change as we add more options
+  ///
+  /// See the [Rust documentation for `titlecase_segment_with_only_case_data_to_string`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.titlecase_segment_with_only_case_data_to_string) for more information.
+  static String titlecaseSegmentWithOnlyCaseCompiledData(String s, Locale locale, TitlecaseOptions options) {
+    final temp = _FinalizedArena();
+    final write = _Write();
+    _icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1(s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
     return write.finalize();
   }
 
@@ -126,7 +141,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// In other words, this adds all characters that this casemaps to, as
   /// well as all characters that may casemap to this one.
   ///
-  /// Note that since CodePointSetBuilder does not contain strings, this will
+  /// Note that since `CodePointSetBuilder` does not contain strings, this will
   /// ignore string mappings.
   ///
   /// Identical to the similarly named method on `CaseMapCloser`, use that if you
@@ -149,7 +164,7 @@ final class CaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  /// Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+  /// Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
   ///
   /// See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
   static Rune simpleLowercaseWithCompiledData(Rune ch) {
@@ -169,7 +184,7 @@ final class CaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  /// Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+  /// Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
   ///
   /// See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
   static Rune simpleUppercaseWithCompiledData(Rune ch) {
@@ -189,7 +204,7 @@ final class CaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  /// Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+  /// Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
   ///
   /// See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
   static Rune simpleTitlecaseWithCompiledData(Rune ch) {
@@ -208,7 +223,7 @@ final class CaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  /// Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+  /// Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
   ///
   /// See the [Rust documentation for `simple_fold`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
   static Rune simpleFoldWithCompiledData(Rune ch) {
@@ -227,7 +242,7 @@ final class CaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  /// Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+  /// Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
   ///
   /// See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
   static Rune simpleFoldTurkicWithCompiledData(Rune ch) {
@@ -276,6 +291,11 @@ external void _icu4x_CaseMapper_uppercase_with_compiled_data_mv1(_SliceUtf8 s, f
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
+
+@_DiplomatFfiUse('icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1')
+@ffi.Native<ffi.Void Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_fold_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_fold_mv1')

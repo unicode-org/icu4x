@@ -66,6 +66,65 @@ interface DiplomatAllocateLib: Library {
 
 
 
+internal class GCSlice(val memory: Memory?, val slice: Slice) {
+    fun close() {
+        memory?.close()
+    }
+
+    // Stick the contained memory into a list of edges. Returns `this` for convenient chaining.
+    fun into(edges: List<MutableList<Any>>): GCSlice {
+        memory?.let {
+            for(edge in edges) {
+                edge.add(memory)
+            }
+        }
+        return this
+    }
+
+    // Stop managing this memory
+    fun leakStatic(): GCSlice {
+        GCSlice.persistedStaticSlices.add(this)
+        return this
+    }
+
+    companion object {
+        val persistedStaticSlices: MutableList<GCSlice> = mutableListOf()
+    }
+}
+
+internal class GCSlices(val memory: Memory?, val subMemory: List<Memory?>, val slice: Slice) {
+    fun close() {
+        memory?.close()
+        subMemory.forEach { it?.close() }
+    }
+
+    // Stick this object into a list of edges. Returns `this` for convenient chaining.
+    fun into(edges: List<MutableList<Any>>): GCSlices {
+        for(edge in edges) {
+            // Don't bother to split this into submemories, just use this object
+            // to tie GC things together
+            edge.add(this)
+        }
+        return this
+    }
+
+    // Stop managing this memory
+    fun leakStatic(): GCSlices {
+        GCSlices.persistedStaticSlices.add(this)
+        return this
+    }
+
+    companion object {
+        val persistedStaticSlices: MutableList<GCSlices> = mutableListOf()
+    }
+}
+
+
+internal class OwnedSlice(val pointer: Pointer?, val slice: Slice) {
+
+}
+
+
 internal object PrimitiveArrayTools {
 
     val libClass: Class<DiplomatAllocateLib> = DiplomatAllocateLib::class.java
@@ -114,58 +173,58 @@ internal object PrimitiveArrayTools {
         return slice
     }
 
-    fun borrow(boolArray: BooleanArray): Pair<Memory?, Slice> {
+    fun borrow(boolArray: BooleanArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(boolArray.size.toLong())
         val byteArray = boolArray.map {if (it) 1.toByte() else 0.toByte() }.toByteArray()
         val slice = copy(byteArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(boolArray: BooleanArray): Pair<Pointer?, Slice> {
+    fun move(boolArray: BooleanArray): OwnedSlice {
         val mem = allocateOwnedMemory(boolArray.size.toLong() * boolAlign, boolAlign)
         val byteArray = boolArray.map {if (it) 1.toByte() else 0.toByte() }.toByteArray()
         val slice = copy(byteArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
-    fun borrow(byteArray: ByteArray): Pair<Memory?, Slice> {
+    fun borrow(byteArray: ByteArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(byteArray.size.toLong())
         val slice = copy(byteArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(byteArray: ByteArray): Pair<Pointer?, Slice> {
+    fun move(byteArray: ByteArray): OwnedSlice {
         val mem = allocateOwnedMemory(byteArray.size.toLong() * Byte.SIZE_BYTES.toLong(), uByteAlign, )
         val slice = copy(byteArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
 
-    fun borrow(uByteArray: UByteArray): Pair<Memory?, Slice> {
+    fun borrow(uByteArray: UByteArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(uByteArray.size.toLong())
         val byteArray = uByteArray.asByteArray()
         val slice = copy(byteArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(uByteArray: UByteArray): Pair<Pointer?, Slice> {
+    fun move(uByteArray: UByteArray): OwnedSlice {
         val mem = allocateOwnedMemory(uByteArray.size.toLong() * Byte.SIZE_BYTES.toLong(), uByteAlign, )
         val byteArray = uByteArray.asByteArray()
         val slice = copy(byteArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
 
-    fun borrow(shortArray: ShortArray): Pair<Memory?, Slice> {
+    fun borrow(shortArray: ShortArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(Short.SIZE_BYTES * shortArray.size.toLong())
         val slice = copy(shortArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(shortArray: ShortArray): Pair<Pointer?, Slice> {
+    fun move(shortArray: ShortArray): OwnedSlice {
         val mem = allocateOwnedMemory(Short.SIZE_BYTES * shortArray.size.toLong(), Short.SIZE_BYTES.toLong())
         val slice = copy(shortArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
     fun copy(arr: ShortArray, ptr: Pointer?) : Slice {
@@ -180,18 +239,18 @@ internal object PrimitiveArrayTools {
         return slice
     }
 
-    fun borrow(uShortArray: UShortArray): Pair<Memory?, Slice> {
+    fun borrow(uShortArray: UShortArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(Short.SIZE_BYTES * uShortArray.size.toLong())
         val shortArray = uShortArray.asShortArray()
         val slice = copy(shortArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(uShortArray: UShortArray): Pair<Pointer?, Slice> {
+    fun move(uShortArray: UShortArray): OwnedSlice {
         val mem = allocateOwnedMemory(Short.SIZE_BYTES * uShortArray.size.toLong(), Short.SIZE_BYTES.toLong())
         val shortArray = uShortArray.asShortArray()
         val slice = copy(shortArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
     fun copy(arr: IntArray, ptr: Pointer?) : Slice {
@@ -206,42 +265,42 @@ internal object PrimitiveArrayTools {
         return slice
     }
 
-    fun borrow(intArray: IntArray): Pair<Memory?, Slice> {
+    fun borrow(intArray: IntArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(Int.SIZE_BYTES * intArray.size.toLong())
         val slice = copy(intArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(intArray: IntArray): Pair<Pointer?, Slice> {
+    fun move(intArray: IntArray): OwnedSlice {
         val mem = allocateOwnedMemory(Int.SIZE_BYTES * intArray.size.toLong(), Int.SIZE_BYTES.toLong())
         val slice = copy(intArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
-    fun borrow(uIntArray: UIntArray): Pair<Memory?, Slice> {
+    fun borrow(uIntArray: UIntArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(Int.SIZE_BYTES * uIntArray.size.toLong())
         val intArray = uIntArray.asIntArray()
         val slice = copy(intArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(uIntArray: UIntArray): Pair<Pointer?, Slice> {
+    fun move(uIntArray: UIntArray): OwnedSlice {
         val mem = allocateOwnedMemory(Int.SIZE_BYTES * uIntArray.size.toLong(), Int.SIZE_BYTES.toLong())
         val intArray = uIntArray.asIntArray()
         val slice = copy(intArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
-    fun borrow(longArray: LongArray): Pair<Memory?, Slice> {
+    fun borrow(longArray: LongArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(Long.SIZE_BYTES * longArray.size.toLong())
         val slice = copy(longArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(longArray: LongArray): Pair<Pointer?, Slice> {
+    fun move(longArray: LongArray): OwnedSlice {
         val mem = allocateOwnedMemory(Long.SIZE_BYTES * longArray.size.toLong(), Long.SIZE_BYTES.toLong())
         val slice = copy(longArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
     fun copy(arr: LongArray, ptr: Pointer?) : Slice {
@@ -256,18 +315,18 @@ internal object PrimitiveArrayTools {
         return slice
     }
 
-    fun borrow(uLongArray: ULongArray): Pair<Memory?, Slice> {
+    fun borrow(uLongArray: ULongArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(Long.SIZE_BYTES * uLongArray.size.toLong())
         val longArray = uLongArray.asLongArray()
         val slice = copy(longArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(uLongArray: ULongArray): Pair<Pointer?, Slice> {
+    fun move(uLongArray: ULongArray): OwnedSlice {
         val mem = allocateOwnedMemory(Long.SIZE_BYTES * uLongArray.size.toLong(), Long.SIZE_BYTES.toLong())
         val longArray = uLongArray.asLongArray()
         val slice = copy(longArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
     fun copy(arr: FloatArray, ptr: Pointer?) : Slice {
@@ -282,16 +341,16 @@ internal object PrimitiveArrayTools {
         return slice
     }
 
-    fun borrow(floatArray: FloatArray): Pair<Memory?, Slice> {
+    fun borrow(floatArray: FloatArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(Float.SIZE_BYTES * floatArray.size.toLong())
         val slice = copy(floatArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(floatArray: FloatArray): Pair<Pointer?, Slice> {
+    fun move(floatArray: FloatArray): OwnedSlice {
         val mem = allocateOwnedMemory(Float.SIZE_BYTES * floatArray.size.toLong(), Float.SIZE_BYTES.toLong())
         val slice = copy(floatArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
     fun copy(arr: DoubleArray, ptr: Pointer?) : Slice {
@@ -306,16 +365,16 @@ internal object PrimitiveArrayTools {
         return slice
     }
 
-    fun borrow(doubleArray: DoubleArray): Pair<Memory?, Slice> {
+    fun borrow(doubleArray: DoubleArray): GCSlice {
         val mem = allocateGarbageCollectedMemory(Double.SIZE_BYTES * doubleArray.size.toLong())
         val slice = copy(doubleArray, mem)
-        return Pair(mem, slice)
+        return GCSlice(mem, slice)
     }
 
-    fun move(doubleArray: DoubleArray): Pair<Pointer?, Slice> {
+    fun move(doubleArray: DoubleArray): OwnedSlice {
         val mem = allocateOwnedMemory(Double.SIZE_BYTES * doubleArray.size.toLong(), Double.SIZE_BYTES.toLong())
         val slice = copy(doubleArray, mem)
-        return Pair(mem, slice)
+        return OwnedSlice(mem, slice)
     }
 
 
@@ -363,19 +422,19 @@ internal object PrimitiveArrayTools {
         return slice.data.getDoubleArray(0, slice.len.toInt())
     }
 
-    fun borrowUtf8(str: String): Pair<Memory?, Slice> {
+    fun borrowUtf8(str: String): GCSlice {
         return borrow(str.toByteArray())
     }
 
-    fun moveUtf8(str: String): Pair<Pointer?, Slice> {
+    fun moveUtf8(str: String): OwnedSlice {
         return move(str.toByteArray())
     }
 
-    fun borrowUtf16(str: String): Pair<Memory?, Slice> {
+    fun borrowUtf16(str: String): GCSlice {
         return borrow(str.map {it.code.toShort()}.toShortArray())
     }
 
-    fun moveUtf16(str: String): Pair<Pointer?, Slice> {
+    fun moveUtf16(str: String): OwnedSlice {
         return move(str.map {it.code.toShort()}.toShortArray())
     }
 
@@ -392,7 +451,7 @@ internal object PrimitiveArrayTools {
         return charArray
     }
 
-    fun borrowUtf8s(array: Array<String>): Pair<List<Memory?>, Slice> {
+    fun borrowUtf8s(array: Array<String>): GCSlices {
         val sliceSize = Slice.SIZE
         val mem = allocateGarbageCollectedMemory(sliceSize * array.size.toLong())
         val ptr = if (mem != null) {
@@ -401,18 +460,18 @@ internal object PrimitiveArrayTools {
             Pointer(0)
         }
         val mems: List<Memory?> = array.zip(0..array.size.toLong()).map { (str, idx) ->
-            val (mem, slice) = borrowUtf8(str)
-            ptr.setPointer(idx * sliceSize, slice.data)
-            ptr.setLong(idx * sliceSize + Long.SIZE_BYTES, slice.len.toLong())
-            mem
+            val mem = borrowUtf8(str)
+            ptr.setPointer(idx * sliceSize, mem.slice.data)
+            ptr.setLong(idx * sliceSize + Long.SIZE_BYTES, mem.slice.len.toLong())
+            mem.memory
         }
         val slice = Slice()
         slice.data = ptr
         slice.len = FFISizet(array.size.toLong().toULong())
-        return Pair(mems + mem, slice)
+        return GCSlices(mem, mems, slice)
     }
 
-    fun borrowUtf16s(array: Array<String>): Pair<List<Memory?>, Slice> {
+    fun borrowUtf16s(array: Array<String>): GCSlices {
         val sliceSize = Slice.SIZE
         val mem = allocateGarbageCollectedMemory(sliceSize * array.size.toLong())
         val ptr = if (mem != null) {
@@ -421,15 +480,15 @@ internal object PrimitiveArrayTools {
             Pointer(0)
         }
         val mems: List<Memory?> = array.zip(0..array.size.toLong()).map { (str, idx) ->
-            val (mem, slice) = borrowUtf16(str)
-            ptr.setPointer(idx * sliceSize, slice.data)
-            ptr.setLong(idx * sliceSize + Long.SIZE_BYTES, slice.len.toLong())
-            mem
+            val mem = borrowUtf16(str)
+            ptr.setPointer(idx * sliceSize, mem.slice.data)
+            ptr.setLong(idx * sliceSize + Long.SIZE_BYTES, mem.slice.len.toLong())
+            mem.memory
         }
         val slice = Slice()
         slice.data = ptr
         slice.len = FFISizet(array.size.toLong().toULong())
-        return Pair(mems + mem, slice)
+        return GCSlices(mem, mems, slice)
     }
 
     fun getUtf16s(slice: Slice): List<String> {
@@ -639,6 +698,81 @@ class ResultByteInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Byte? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(Byte::class.java) as Byte
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
+}
+internal class ResultDateDurationNativeCalendarMismatchedCalendarErrorNativeUnion: Union() {
+    @JvmField
+    internal var ok: DateDurationNative = DateDurationNative()
+}
+
+class ResultDateDurationNativeCalendarMismatchedCalendarErrorNative: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultDateDurationNativeCalendarMismatchedCalendarErrorNativeUnion = ResultDateDurationNativeCalendarMismatchedCalendarErrorNativeUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): DateDurationNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(DateDurationNative::class.java) as DateDurationNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Unit? {
+        if (isOk == 0.toByte()) {
+            return Unit
+        }
+        return null
+    }
+
+}
+internal class ResultDateDurationNativeIntUnion: Union() {
+    @JvmField
+    internal var ok: DateDurationNative = DateDurationNative()
+    @JvmField
+    internal var err: Int = 0
+}
+
+class ResultDateDurationNativeInt: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultDateDurationNativeIntUnion = ResultDateDurationNativeIntUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): DateDurationNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(DateDurationNative::class.java) as DateDurationNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultDateTimeNativeIntUnion: Union() {
     @JvmField
@@ -658,6 +792,19 @@ class ResultDateTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): DateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(DateTimeNative::class.java) as DateTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultIsoDateTimeNativeIntUnion: Union() {
     @JvmField
@@ -677,6 +824,19 @@ class ResultIsoDateTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): IsoDateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(IsoDateTimeNative::class.java) as IsoDateTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultPointerDecimalLimitErrorNativeUnion: Union() {
     @JvmField
@@ -694,6 +854,19 @@ class ResultPointerDecimalLimitErrorNative: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Pointer? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(Pointer::class.java) as Pointer
+        }
+        return null
+    }
+    internal fun getNativeErr(): Unit? {
+        if (isOk == 0.toByte()) {
+            return Unit
+        }
+        return null
+    }
+
 }
 internal class ResultPointerIntUnion: Union() {
     @JvmField
@@ -713,6 +886,19 @@ class ResultPointerInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Pointer? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(Pointer::class.java) as Pointer
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultPointerTimeZoneInvalidOffsetErrorNativeUnion: Union() {
     @JvmField
@@ -730,6 +916,49 @@ class ResultPointerTimeZoneInvalidOffsetErrorNative: Structure(), Structure.ByVa
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Pointer? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(Pointer::class.java) as Pointer
+        }
+        return null
+    }
+    internal fun getNativeErr(): Unit? {
+        if (isOk == 0.toByte()) {
+            return Unit
+        }
+        return null
+    }
+
+}
+internal class ResultUnitDateTimeMismatchedCalendarErrorNativeUnion: Union() {
+    @JvmField
+    internal var err: DateTimeMismatchedCalendarErrorNative = DateTimeMismatchedCalendarErrorNative()
+}
+
+class ResultUnitDateTimeMismatchedCalendarErrorNative: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultUnitDateTimeMismatchedCalendarErrorNativeUnion = ResultUnitDateTimeMismatchedCalendarErrorNativeUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): Unit? {
+        if (isOk == 1.toByte()) {
+            return Unit
+        }
+        return null
+    }
+    internal fun getNativeErr(): DateTimeMismatchedCalendarErrorNative? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(DateTimeMismatchedCalendarErrorNative::class.java) as DateTimeMismatchedCalendarErrorNative
+        }
+        return null
+    }
+
 }
 internal class ResultUnitIntUnion: Union() {
     @JvmField
@@ -747,6 +976,19 @@ class ResultUnitInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Unit? {
+        if (isOk == 1.toByte()) {
+            return Unit
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultUnitUnitUnion: Union() {
 }
@@ -762,6 +1004,19 @@ class ResultUnitUnit: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Unit? {
+        if (isOk == 1.toByte()) {
+            return Unit
+        }
+        return null
+    }
+    internal fun getNativeErr(): Unit? {
+        if (isOk == 0.toByte()) {
+            return Unit
+        }
+        return null
+    }
+
 }
 internal class ResultZonedDateTimeNativeIntUnion: Union() {
     @JvmField
@@ -781,6 +1036,19 @@ class ResultZonedDateTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): ZonedDateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(ZonedDateTimeNative::class.java) as ZonedDateTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultZonedIsoDateTimeNativeIntUnion: Union() {
     @JvmField
@@ -800,6 +1068,51 @@ class ResultZonedIsoDateTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): ZonedIsoDateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(ZonedIsoDateTimeNative::class.java) as ZonedIsoDateTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
+}
+internal class ResultZonedTimeNativeIntUnion: Union() {
+    @JvmField
+    internal var ok: ZonedTimeNative = ZonedTimeNative()
+    @JvmField
+    internal var err: Int = 0
+}
+
+class ResultZonedTimeNativeInt: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultZonedTimeNativeIntUnion = ResultZonedTimeNativeIntUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): ZonedTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(ZonedTimeNative::class.java) as ZonedTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 
 

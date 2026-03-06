@@ -7,6 +7,7 @@
 /// A bag of options for defining how to format time using
 /// [`RelativeTimeFormatter`](crate::relativetime::RelativeTimeFormatter).
 #[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct RelativeTimeFormatterOptions {
     /// Whether to always use numeric formatting for time.
     pub numeric: Numeric,
@@ -14,6 +15,7 @@ pub struct RelativeTimeFormatterOptions {
 
 /// Configures whether to always use numeric formatting even when special formatting is available.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+#[non_exhaustive]
 pub enum Numeric {
     /// Always use numeric formatting.
     #[default]

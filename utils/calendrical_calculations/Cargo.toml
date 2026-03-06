@@ -38,3 +38,6 @@ log = { workspace = true, optional = true }
 
 [features]
 logging = ["dep:log"]
+
+[lints]
+workspace = true

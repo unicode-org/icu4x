@@ -2,13 +2,26 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+// #![cfg_attr(
+//     not(test),
+//     deny(
+//         clippy::indexing_slicing,
+//         clippy::unwrap_used,
+//         clippy::expect_used,
+//         clippy::panic,
+//     )
+// )]
+#![warn(missing_docs)]
+
 //! `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 //!
 //! This crate exposes functionality to build a [`CodePointTrie`] from values provided at runtime.
 //! Because it is normally expected for [`CodePointTrie`] data to be pre-compiled, this crate is not
 //! optimized for speed; it should be used during a build phase.
 //!
-//! Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`].
+//! Under the hood, this crate uses the [`CodePointTrie`] builder code from ICU4C, [`UMutableCPTrie`].
 //! For more context, see <https://github.com/unicode-org/icu4x/issues/1837>.
 //!
 //! Unlike most of ICU4X, due in large part to the native dependency, this crate is not guaranteed
@@ -20,7 +33,7 @@
 //! Cargo features. If both are enabled, the code will internally use the wasm codepath.
 //!
 //! The `"wasm"` mode uses a Wasm module packaged into this Rust crate that contains
-//! pre-compiled ICU4C CodePointTrie builder code. It evaluates the Wasm module using
+//! pre-compiled ICU4C [`CodePointTrie`] builder code. It evaluates the Wasm module using
 //! the Wasmer runtime, which "just works", but it requires a large number of
 //! Rust/Cargo dependencies.
 //!
@@ -42,22 +55,18 @@
 //! # Examples
 //!
 //! ```
-//! use icu::collections::codepointtrie::CodePointTrie;
 //! use icu::collections::codepointtrie::TrieType;
 //! use icu_codepointtrie_builder::CodePointTrieBuilder;
-//! use icu_codepointtrie_builder::CodePointTrieBuilderData;
 //!
-//! let default_value = 1;
+//! let default_value = 1u8;
 //! let error_value = 2;
-//! let values_by_code_point = &[3, 4, 5, 6];
 //!
-//! let cpt: CodePointTrie<u8> = CodePointTrieBuilder {
-//!     data: CodePointTrieBuilderData::ValuesByCodePoint(values_by_code_point),
-//!     default_value,
-//!     error_value,
-//!     trie_type: TrieType::Small,
-//! }
-//! .build();
+//! let mut builder = CodePointTrieBuilder::new(default_value, error_value, TrieType::Small);
+//! builder.set_value(0, 3);
+//! builder.set_value(1, 4);
+//! builder.set_value(2, 5);
+//! builder.set_value(3, 6);
+//! let cpt = builder.build();
 //!
 //! assert_eq!(cpt.get32(0), 3);
 //! assert_eq!(cpt.get32(1), 4);
@@ -71,25 +80,15 @@
 //! [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
-#![cfg_attr(
-    not(test),
-    deny(
-        // The crate is documented to allow panics.
-        // clippy::indexing_slicing,
-        // clippy::unwrap_used,
-        // clippy::expect_used,
-        // clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums, clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-
-use icu_collections::codepointtrie::TrieType;
-use icu_collections::codepointtrie::TrieValue;
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
+use core::ops::RangeInclusive;
 
 #[cfg(any(feature = "wasm", feature = "icu4c"))]
-mod common;
+use icu_collections::codepointtrie::CodePointTrie;
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
+use icu_collections::codepointtrie::TrieType;
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
+use icu_collections::codepointtrie::TrieValue;
 
 #[cfg(feature = "wasm")]
 mod wasm;
@@ -97,79 +96,87 @@ mod wasm;
 #[cfg(feature = "icu4c")]
 mod native;
 
-/// Wrapper over the data to be encoded into a [`CodePointTrie`].
-///
-/// There is currently only one variant, but more may be added in the future.
-///
-/// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-#[non_exhaustive]
-#[derive(Debug)]
-pub enum CodePointTrieBuilderData<'a, T> {
-    /// A list of values for each code point, starting from code point 0.
-    ///
-    /// For example, the value for U+0020 (space) should be at index 32 in the slice.
-    /// Index 0 sets the value for the U+0000 (NUL).
-    ValuesByCodePoint(&'a [T]),
-}
+#[cfg(feature = "wasm")]
+use wasm::Builder;
 
-/// Settings for building a [`CodePointTrie`].
+#[cfg(all(feature = "icu4c", not(feature = "wasm")))]
+use native::Builder;
+
+/// Builder for a [`CodePointTrie`].
 ///
-/// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
+/// Under the hood, this runs ICU4C code compiled into WASM,
+/// or links natively to ICU4C as specified by the `ICU4C_LIB_PATH` env var
+///
+/// ✨ *Enabled with either the `wasm` or the `icu4c` Cargo feature.*
 #[allow(clippy::exhaustive_structs)]
 #[derive(Debug)]
-pub struct CodePointTrieBuilder<'a, T> {
-    /// The data to be encoded.
-    pub data: CodePointTrieBuilderData<'a, T>,
-    /// The default value for code points not specified in the data.
-    pub default_value: T,
-    /// The error value for invalid code points.
-    pub error_value: T,
-    /// The [`TrieType`]: fast or small.
-    pub trie_type: TrieType,
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
+pub struct CodePointTrieBuilder<T: TrieValue> {
+    inner: Builder<T>,
+    trie_type: TrieType,
+    default_value: T,
 }
 
-impl<T> CodePointTrieBuilder<'_, T>
-where
-    T: TrieValue,
-{
-    /// Build the [`CodePointTrie`].
-    ///
-    /// Under the hood, this function runs ICU4C code compiled into WASM,
-    /// or links natively to ICU4C as specified by the `ICU4C_LIB_PATH` env var
-    ///
-    /// ✨ *Enabled with either the `wasm` or the `icu4c` Cargo feature.*
-    ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    #[cfg(any(feature = "wasm", feature = "icu4c"))]
-    pub fn build(self) -> icu_collections::codepointtrie::CodePointTrie<'static, T> {
-        #[cfg(feature = "wasm")]
-        {
-            wasm::run_wasmi_ucptrie_wrap(&self)
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
+impl<T: TrieValue> CodePointTrieBuilder<T> {
+    /// Creates a new [`CodePointTrieBuilder`] with the given defaults.
+    pub fn new(default_value: T, error_value: T, trie_type: TrieType) -> Self {
+        Self {
+            inner: Builder::create(default_value, error_value),
+            trie_type,
+            default_value,
         }
+    }
 
-        #[cfg(all(feature = "icu4c", not(feature = "wasm")))]
-        {
-            native::run_native(&self)
+    /// Sets a value for a codepoint.
+    #[cfg(any(feature = "wasm", feature = "icu4c"))]
+    pub fn set_value(&mut self, cp: u32, value: T) {
+        if value == self.default_value || cp > char::MAX as u32 {
+            return;
         }
+        self.inner.set_value(cp, value);
+    }
+
+    /// Adds a set of codepoints with the same value.
+    #[cfg(any(feature = "wasm", feature = "icu4c"))]
+    pub fn set_range_value(&mut self, cps: RangeInclusive<u32>, value: T) {
+        if value == self.default_value {
+            return;
+        }
+        self.inner.set_range_value(
+            (*cps.start()).min(char::MAX as u32)..=(*cps.end()).min(char::MAX as u32),
+            value,
+        );
+    }
+
+    /// Build the [`CodePointTrie`].
+    #[cfg(any(feature = "wasm", feature = "icu4c"))]
+    pub fn build(self) -> CodePointTrie<'static, T> {
+        let width = match size_of::<T::ULE>() {
+            1 => 2,     // UCPTRIE_VALUE_BITS_8
+            2 => 0,     // UCPTRIE_VALUE_BITS_16
+            3 | 4 => 1, // UCPTRIE_VALUE_BITS_32
+            other => panic!("Don't know how to make trie with width {other}"),
+        };
+
+        self.inner.build(self.trie_type, width)
     }
 }
 
 #[test]
 #[cfg(any(feature = "wasm", feature = "icu4c"))]
 fn test_cpt_builder() {
+    let mut builder = CodePointTrieBuilder::new(100, 0xFFF, TrieType::Fast);
+
     // Buckets of ten characters for 0 to 100, and then some default values, and then heterogenous "last hex digit" for 0x100 to 0x200
-    let values: Vec<u32> = (0..100)
+    for (cp, value) in (0..100)
         .map(|x| x / 10)
         .chain((100..0x100).map(|_| 100))
         .chain((0x100..0x200).map(|x| x % 16))
-        .collect();
-
-    let builder = CodePointTrieBuilder {
-        data: CodePointTrieBuilderData::ValuesByCodePoint(&values),
-        default_value: 100,
-        error_value: 0xFFFF,
-        trie_type: TrieType::Fast,
-    };
+        .enumerate()
+    {
+        builder.set_value(cp as u32, value);
+    }
 
     let cpt = builder.build();
 

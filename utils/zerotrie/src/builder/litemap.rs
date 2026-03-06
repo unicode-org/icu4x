@@ -9,8 +9,8 @@ use crate::builder::bytestr::ByteStr;
 use crate::error::ZeroTrieBuildError;
 use crate::zerotrie::ZeroTrieSimpleAscii;
 use crate::ZeroTrie;
-use alloc::borrow::Borrow;
 use alloc::vec::Vec;
+use core::borrow::Borrow;
 use litemap::LiteMap;
 
 impl ZeroTrieSimpleAscii<Vec<u8>> {
@@ -23,10 +23,14 @@ impl ZeroTrieSimpleAscii<Vec<u8>> {
     {
         let tuples = items.as_slice();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(tuples);
-        ZeroTrieBuilderConst::<10000>::from_sorted_const_tuple_slice::<100>(byte_str_slice.into())
-            .map(|s| Self {
-                store: s.as_bytes().to_vec(),
-            })
+
+        Ok(Self {
+            store: ZeroTrieBuilderConst::<10000>::from_sorted_const_tuple_slice::<100>(
+                byte_str_slice.into(),
+            )
+            .as_bytes()
+            .to_vec(),
+        })
     }
 }
 

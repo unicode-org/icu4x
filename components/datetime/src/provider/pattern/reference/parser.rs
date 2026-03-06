@@ -63,6 +63,7 @@ struct SegmentLiteral {
 }
 
 impl SegmentLiteral {
+    #[allow(clippy::unnecessary_wraps)] // consistency
     fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
         if !self.literal.is_empty() {
             result.extend(self.literal.chars().map(PatternItem::from));
@@ -70,6 +71,7 @@ impl SegmentLiteral {
         Ok(())
     }
 
+    #[allow(clippy::unnecessary_wraps)] // consistency
     fn finish_generic(self, result: &mut Vec<GenericPatternItem>) -> Result<(), PatternError> {
         if !self.literal.is_empty() {
             result.extend(self.literal.chars().map(GenericPatternItem::from));
@@ -211,7 +213,7 @@ impl<'p> Parser<'p> {
         &mut self,
         ch: char,
         chars: &mut core::iter::Peekable<core::str::Chars>,
-    ) -> Result<bool, PatternError> {
+    ) -> bool {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
                 (Segment::Literal(literal), true) => {
@@ -223,16 +225,16 @@ impl<'p> Parser<'p> {
                 }
                 _ => unreachable!("Generic pattern has no symbols."),
             }
-            Ok(true)
+            true
         } else if let Segment::Literal(SegmentLiteral {
             ref mut literal,
             quoted: true,
         }) = self.state
         {
             literal.push(ch);
-            Ok(true)
+            true
         } else {
-            Ok(false)
+            false
         }
     }
 
@@ -333,7 +335,7 @@ impl<'p> Parser<'p> {
         let mut result = vec![];
 
         while let Some(ch) = chars.next() {
-            if !self.handle_generic_quoted_literal(ch, &mut chars)? {
+            if !self.handle_generic_quoted_literal(ch, &mut chars) {
                 if ch == '{' {
                     mem::replace(
                         &mut self.state,
@@ -654,33 +656,21 @@ mod tests {
                     '.'.into(),
                     '.'.into(),
                     ' '.into(),
-                    (
-                        fields::TimeZone::SpecificNonLocation.into(),
-                        FieldLength::One,
-                    )
-                        .into(),
+                    (TimeZone::SpecificNonLocation.into(), FieldLength::One).into(),
                 ],
             ),
             (
                 "s.SSz",
                 vec![
                     (fields::DecimalSecond::Subsecond2.into(), FieldLength::One).into(),
-                    (
-                        fields::TimeZone::SpecificNonLocation.into(),
-                        FieldLength::One,
-                    )
-                        .into(),
+                    (TimeZone::SpecificNonLocation.into(), FieldLength::One).into(),
                 ],
             ),
             (
                 "sSSz",
                 vec![
                     (fields::DecimalSecond::Subsecond2.into(), FieldLength::One).into(),
-                    (
-                        fields::TimeZone::SpecificNonLocation.into(),
-                        FieldLength::One,
-                    )
-                        .into(),
+                    (TimeZone::SpecificNonLocation.into(), FieldLength::One).into(),
                 ],
             ),
             (
@@ -702,11 +692,7 @@ mod tests {
                 vec![
                     (fields::Second::Second.into(), FieldLength::One).into(),
                     '.'.into(),
-                    (
-                        fields::TimeZone::SpecificNonLocation.into(),
-                        FieldLength::One,
-                    )
-                        .into(),
+                    (TimeZone::SpecificNonLocation.into(), FieldLength::One).into(),
                 ],
             ),
             (
@@ -719,55 +705,38 @@ mod tests {
             ),
             (
                 "z",
-                vec![(
-                    fields::TimeZone::SpecificNonLocation.into(),
-                    FieldLength::One,
-                )
-                    .into()],
+                vec![(TimeZone::SpecificNonLocation.into(), FieldLength::One).into()],
             ),
-            (
-                "Z",
-                vec![(fields::TimeZone::Iso.into(), FieldLength::Four).into()],
-            ),
-            (
-                "ZZ",
-                vec![(fields::TimeZone::Iso.into(), FieldLength::Four).into()],
-            ),
+            ("Z", vec![(TimeZone::Iso.into(), FieldLength::Four).into()]),
+            ("ZZ", vec![(TimeZone::Iso.into(), FieldLength::Four).into()]),
             (
                 "ZZZ",
-                vec![(fields::TimeZone::Iso.into(), FieldLength::Four).into()],
+                vec![(TimeZone::Iso.into(), FieldLength::Four).into()],
             ),
             (
                 "ZZZZ",
-                vec![(fields::TimeZone::LocalizedOffset.into(), FieldLength::Four).into()],
+                vec![(TimeZone::LocalizedOffset.into(), FieldLength::Four).into()],
             ),
             (
                 "ZZZZZ",
-                vec![(fields::TimeZone::IsoWithZ.into(), FieldLength::Five).into()],
+                vec![(TimeZone::IsoWithZ.into(), FieldLength::Five).into()],
             ),
             (
                 "O",
-                vec![(fields::TimeZone::LocalizedOffset.into(), FieldLength::One).into()],
+                vec![(TimeZone::LocalizedOffset.into(), FieldLength::One).into()],
             ),
             (
                 "v",
-                vec![(
-                    fields::TimeZone::GenericNonLocation.into(),
-                    FieldLength::One,
-                )
-                    .into()],
+                vec![(TimeZone::GenericNonLocation.into(), FieldLength::One).into()],
             ),
             (
                 "V",
-                vec![(fields::TimeZone::Location.into(), FieldLength::One).into()],
+                vec![(TimeZone::Location.into(), FieldLength::One).into()],
             ),
-            (
-                "x",
-                vec![(fields::TimeZone::Iso.into(), FieldLength::One).into()],
-            ),
+            ("x", vec![(TimeZone::Iso.into(), FieldLength::One).into()]),
             (
                 "X",
-                vec![(fields::TimeZone::IsoWithZ.into(), FieldLength::One).into()],
+                vec![(TimeZone::IsoWithZ.into(), FieldLength::One).into()],
             ),
         ];
 

@@ -29,12 +29,22 @@ class EmojiSetData internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class EmojiSetDataCleaner(val handle: Pointer, val lib: EmojiSetDataLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class EmojiSetDataCleaner(val handle: Pointer, val lib: EmojiSetDataLib) : Runnable {
         override fun run() {
             lib.icu4x_EmojiSetData_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, EmojiSetData.EmojiSetDataCleaner(handle, EmojiSetData.lib));
     }
 
     companion object {
@@ -51,8 +61,7 @@ class EmojiSetData internal constructor (
             val returnVal = lib.icu4x_EmojiSetData_create_basic_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = EmojiSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, EmojiSetData.EmojiSetDataCleaner(handle, EmojiSetData.lib));
+            val returnOpaque = EmojiSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -64,14 +73,14 @@ class EmojiSetData internal constructor (
         fun createBasicWithProvider(provider: DataProvider): Result<EmojiSetData> {
             
             val returnVal = lib.icu4x_EmojiSetData_create_basic_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = EmojiSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, EmojiSetData.EmojiSetDataCleaner(handle, EmojiSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = EmojiSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -92,10 +101,14 @@ class EmojiSetData internal constructor (
         *See the [Rust documentation for `for_str`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
         */
         fun basicEmojiForStr(s: String): Boolean {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_EmojiSetData_basic_emoji_for_str_mv1(sSlice);
-            return (returnVal > 0)
+            val returnVal = lib.icu4x_EmojiSetData_basic_emoji_for_str_mv1(sSliceMemory.slice);
+            try {
+                return (returnVal > 0)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     
@@ -104,10 +117,14 @@ class EmojiSetData internal constructor (
     *See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.1.1/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
     */
     fun contains(s: String): Boolean {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_EmojiSetData_contains_str_mv1(handle, sSlice);
-        return (returnVal > 0)
+        val returnVal = lib.icu4x_EmojiSetData_contains_str_mv1(handle, sSliceMemory.slice);
+        try {
+            return (returnVal > 0)
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Checks whether the code point is in the set.

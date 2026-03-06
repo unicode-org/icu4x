@@ -11,7 +11,7 @@ install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-f
 install_crate_args = ["--version", "^1.11"]
 env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
-args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
+args = ["check-all-features", "--chunk-granularity", "feature", "--n-chunks", "4", "--chunk", "${@}"]
 
 [tasks.check-all-features]
 description = "Build all permutations of all features"
@@ -82,12 +82,19 @@ exit_on_error true
 project_dir = pwd
 set_env CARGO_TARGET_DIR ${project_dir}/target
 
+is_windows = is_windows
+if ${is_windows}
+    binary_ext = set ".exe"
+else
+    binary_ext = set ""
+end
+
 exec --fail-on-error cargo build -p icu4x-datagen
 
 cd examples/cargo
 
 mkdir bin
-cp ${project_dir}/target/debug/icu4x-datagen bin/icu4x-datagen
+cp ${project_dir}/target/debug/icu4x-datagen${binary_ext} bin/icu4x-datagen${binary_ext}
 
 exec --fail-on-error cargo run --manifest-path default/Cargo.toml
 exec --fail-on-error cargo run --manifest-path experimental/Cargo.toml
@@ -98,7 +105,7 @@ exec --fail-on-error cargo run --manifest-path harfbuzz/Cargo.toml
 # Copy our own tutorial_buffer to speed up the task
 exec --fail-on-error cargo build --manifest-path buffer/Cargo.toml
 mkdir buffer/bin
-cp ${project_dir}/target/debug/tutorial_buffer buffer/bin/tutorial_buffer
+cp ${project_dir}/target/debug/tutorial_buffer${binary_ext} buffer/bin/tutorial_buffer${binary_ext}
 exec --fail-on-error make -C buffer buffer_data.postcard
 exec --fail-on-error cargo run --manifest-path buffer/Cargo.toml
 

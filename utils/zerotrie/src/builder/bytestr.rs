@@ -4,7 +4,7 @@
 
 use core::borrow::Borrow;
 
-#[cfg(feature = "serde")]
+#[cfg(any(feature = "serde", feature = "alloc"))]
 use alloc::boxed::Box;
 
 /// A struct transparent over `[u8]` with convenient helper functions.
@@ -13,29 +13,33 @@ use alloc::boxed::Box;
 pub(crate) struct ByteStr([u8]);
 
 impl ByteStr {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     pub const fn from_byte_slice_with_value<'a, 'l>(
         input: &'l [(&'a [u8], usize)],
     ) -> &'l [(&'a ByteStr, usize)] {
         // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { core::mem::transmute(input) }
+        unsafe { &*(input as *const [(&'a [u8], usize)] as *const [(&'a Self, usize)]) }
     }
 
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     pub const fn from_str_slice_with_value<'a, 'l>(
         input: &'l [(&'a str, usize)],
     ) -> &'l [(&'a ByteStr, usize)] {
         // Safety: str and ByteStr have the same layout, and ByteStr is less restrictive
-        unsafe { core::mem::transmute(input) }
+        unsafe { &*(input as *const [(&'a str, usize)] as *const [(&'a Self, usize)]) }
     }
 
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     pub fn from_bytes(input: &[u8]) -> &Self {
         // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { core::mem::transmute(input) }
+        unsafe { &*(input as *const [u8] as *const Self) }
     }
 
     #[cfg(feature = "serde")]
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     pub fn from_boxed_bytes(input: Box<[u8]>) -> Box<Self> {
         // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { core::mem::transmute(input) }
+        unsafe { core::mem::transmute::<Box<[u8]>, Box<Self>>(input) }
     }
 
     #[allow(dead_code)] // may want this in the future
@@ -121,7 +125,7 @@ impl Borrow<[u8]> for ByteStr {
 }
 
 #[cfg(feature = "alloc")]
-impl Borrow<[u8]> for alloc::boxed::Box<ByteStr> {
+impl Borrow<[u8]> for Box<ByteStr> {
     fn borrow(&self) -> &[u8] {
         self.as_bytes()
     }

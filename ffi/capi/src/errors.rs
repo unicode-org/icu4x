@@ -65,6 +65,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::error::LunisolarRangeError, Enum, hidden)]
     #[diplomat::rust_link(icu::calendar::error::MonthCodeParseError, Enum, compact)]
     #[cfg(feature = "calendar")]
     #[non_exhaustive]
@@ -84,14 +85,53 @@ pub mod ffi {
     #[diplomat::attr(auto, error)]
     pub enum CalendarDateFromFieldsError {
         Unknown = 0x00,
-        OutOfRange = 0x01,
-        UnknownEra = 0x02,
+        InvalidDay = 0x01,
+        InvalidOrdinalMonth = 0x09,
+        InvalidEra = 0x02,
         MonthCodeInvalidSyntax = 0x03,
-        MonthCodeNotInCalendar = 0x04,
-        MonthCodeNotInYear = 0x05,
+        MonthNotInCalendar = 0x04,
+        MonthNotInYear = 0x05,
         InconsistentYear = 0x06,
         InconsistentMonth = 0x07,
         NotEnoughFields = 0x08,
+        TooManyFields = 0x0A,
+        Overflow = 0x0B,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::error::DateAddError, Enum, compact)]
+    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
+    pub enum CalendarDateAddError {
+        Unknown = 0x00,
+        InvalidDay = 0x01,
+        MonthNotInYear = 0x02,
+        Overflow = 0x03,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::error::MismatchedCalendarError, Struct, compact)]
+    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
+    pub struct CalendarMismatchedCalendarError;
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::error::DateDurationParseError, Enum, compact)]
+    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[non_exhaustive]
+    #[diplomat::attr(auto, error)]
+    pub enum DateDurationParseError {
+        InvalidStructure = 0x00,
+        TimeNotSupported = 0x01,
+        MissingValue = 0x02,
+        DuplicateUnit = 0x03,
+        NumberOverflow = 0x04,
+        PlusNotAllowed = 0x05,
     }
 
     #[derive(Debug, PartialEq, Eq)]
@@ -143,7 +183,6 @@ pub mod ffi {
 
     #[cfg(feature = "datetime")]
     #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     #[diplomat::attr(auto, error)]
     pub struct DateTimeMismatchedCalendarError {
         pub this_kind: CalendarKind,
@@ -224,21 +263,53 @@ impl From<icu_calendar::DateError> for CalendarError {
 impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsError {
     fn from(e: icu_calendar::error::DateFromFieldsError) -> Self {
         match e {
-            icu_calendar::error::DateFromFieldsError::Range(_) => Self::OutOfRange,
-            icu_calendar::error::DateFromFieldsError::UnknownEra => Self::UnknownEra,
+            icu_calendar::error::DateFromFieldsError::InvalidDay { .. } => Self::InvalidDay,
+            icu_calendar::error::DateFromFieldsError::InvalidOrdinalMonth { .. } => {
+                Self::InvalidOrdinalMonth
+            }
+            icu_calendar::error::DateFromFieldsError::InvalidEra => Self::InvalidEra,
             icu_calendar::error::DateFromFieldsError::MonthCodeInvalidSyntax => {
                 Self::MonthCodeInvalidSyntax
             }
-            icu_calendar::error::DateFromFieldsError::MonthCodeNotInCalendar => {
-                Self::MonthCodeNotInCalendar
+            icu_calendar::error::DateFromFieldsError::MonthNotInCalendar => {
+                Self::MonthNotInCalendar
             }
-            icu_calendar::error::DateFromFieldsError::MonthCodeNotInYear => {
-                Self::MonthCodeNotInYear
-            }
+            icu_calendar::error::DateFromFieldsError::MonthNotInYear => Self::MonthNotInYear,
             icu_calendar::error::DateFromFieldsError::InconsistentYear => Self::InconsistentYear,
             icu_calendar::error::DateFromFieldsError::InconsistentMonth => Self::InconsistentMonth,
             icu_calendar::error::DateFromFieldsError::NotEnoughFields => Self::NotEnoughFields,
+            icu_calendar::error::DateFromFieldsError::TooManyFields => Self::TooManyFields,
+            icu_calendar::error::DateFromFieldsError::Overflow => Self::Overflow,
             _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
+#[cfg(all(feature = "unstable", feature = "calendar"))]
+impl From<icu_calendar::error::DateAddError> for CalendarDateAddError {
+    fn from(e: icu_calendar::error::DateAddError) -> Self {
+        match e {
+            icu_calendar::error::DateAddError::InvalidDay { .. } => Self::InvalidDay,
+            icu_calendar::error::DateAddError::MonthNotInYear => Self::MonthNotInYear,
+            icu_calendar::error::DateAddError::Overflow => Self::Overflow,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
+#[cfg(all(feature = "unstable", feature = "calendar"))]
+impl From<icu_calendar::error::DateDurationParseError> for DateDurationParseError {
+    fn from(e: icu_calendar::error::DateDurationParseError) -> Self {
+        match e {
+            icu_calendar::error::DateDurationParseError::InvalidStructure => Self::InvalidStructure,
+            icu_calendar::error::DateDurationParseError::TimeNotSupported => Self::TimeNotSupported,
+            icu_calendar::error::DateDurationParseError::MissingValue => Self::MissingValue,
+            icu_calendar::error::DateDurationParseError::DuplicateUnit => Self::DuplicateUnit,
+            icu_calendar::error::DateDurationParseError::NumberOverflow => Self::NumberOverflow,
+            icu_calendar::error::DateDurationParseError::PlusNotAllowed => Self::PlusNotAllowed,
+            _ => unreachable!(),
         }
     }
 }

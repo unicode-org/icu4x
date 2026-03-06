@@ -11,10 +11,6 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -40,4 +36,13 @@ pub mod zone;
 pub use zone::{TimeZone, TimeZoneInfo};
 
 mod types;
+#[cfg(feature = "unstable")]
+pub use types::ZonedTime;
 pub use types::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
+
+#[cfg(feature = "chrono_0_4")]
+mod chrono;
+#[cfg(feature = "jiff_0_2")]
+mod jiff;
+#[cfg(feature = "time_0_3")]
+mod time_crate;

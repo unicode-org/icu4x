@@ -6,7 +6,7 @@ use crate::error::ErrorField;
 use crate::pattern::{
     DayPeriodNameLength, MonthNameLength, PatternLoadError, WeekdayNameLength, YearNameLength,
 };
-use crate::provider::neo::*;
+use crate::provider::names::*;
 use crate::provider::time_zones::tz;
 use core::fmt;
 use icu_provider::prelude::*;

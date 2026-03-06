@@ -63,7 +63,7 @@ internal class OptionIsoDateTimeNative constructor(): Structure(), Structure.ByV
 
 }
 
-/** An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+/** An ICU4X `DateTime` object capable of containing a ISO-8601 date and time.
 *
 *See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html) for more information.
 */
@@ -75,8 +75,8 @@ class IsoDateTime (var date: IsoDate, var time: Time) {
         val NATIVESIZE: Long = Native.getNativeSize(IsoDateTimeNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: IsoDateTimeNative): IsoDateTime {
-            val date: IsoDate = IsoDate(nativeStruct.date, listOf())
-            val time: Time = Time(nativeStruct.time, listOf())
+            val date: IsoDate = IsoDate(nativeStruct.date, listOf(), true)
+            val time: Time = Time(nativeStruct.time, listOf(), true)
 
             return IsoDateTime(date, time)
         }
@@ -88,16 +88,19 @@ class IsoDateTime (var date: IsoDate, var time: Time) {
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<IsoDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_IsoDateTime_from_string_mv1(vSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnStruct = IsoDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_IsoDateTime_from_string_mv1(vSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = IsoDateTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }

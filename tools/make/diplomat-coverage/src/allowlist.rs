@@ -132,13 +132,17 @@ lazy_static::lazy_static! {
         // since Diplomat can't do generics. We also support Gregorian *formatter*
         // but we don't need a separate Gregorian Date.
         "icu::calendar::cal",
+        "icu::calendar::error::LunisolarDateError",
         "icu::calendar::IntoAnyCalendar",
         "icu::calendar::Date::try_new_buddhist",
         "icu::calendar::Date::try_new_chinese_with_calendar",
+        "icu::calendar::Date::try_new_chinese_traditional",
+        "icu::calendar::Date::try_new_korean_traditional",
         "icu::calendar::Date::try_new_coptic",
         "icu::calendar::Date::try_new_ethiopian",
         "icu::calendar::Date::try_new_gregorian",
         "icu::calendar::Date::try_new_hebrew",
+        "icu::calendar::Date::try_new_hebrew_v2",
         "icu::calendar::Date::try_new_hijri_with_calendar",
         "icu::calendar::Date::try_new_indian",
         "icu::calendar::Date::try_new_japanese_with_calendar",
@@ -253,6 +257,16 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
 
+        // These are APIs for more advanced data loading patterns, which we typically
+        // have limited support for over FFI. They are tricky to implement in FFI without
+        // falling afoul of mutability-related soundness issues.
+        //
+        // See #7704 for adding them.
+        "icu::segmenter::LineSegmenterBorrowed::load_lstm",
+        "icu::segmenter::LineSegmenterBorrowed::load_dictionary",
+        "icu::segmenter::WordSegmenterBorrowed::load_lstm",
+        "icu::segmenter::WordSegmenterBorrowed::load_dictionary",
+
         // Not planned for 2.0
         // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
         "fixed_decimal::Signed",
@@ -276,10 +290,14 @@ lazy_static::lazy_static! {
         // Serde-specific
         "icu::datetime::fieldsets::serde",
 
-        // Stuff that is experimental
+        // Stuff that is unstable
         //
         // We should occasionally review these
         // =========================
+
+        "icu::decimal::CompactDecimalFormatter",
+        "icu::decimal::error::ExponentError",
+        "icu::decimal::options::CompactDecimalFormatterOptions",
 
         "icu::experimental",
 
@@ -441,9 +459,6 @@ lazy_static::lazy_static! {
         // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
         "icu_provider_adapters::fork::MultiForkByMarkerProvider",
-
-        // Specialized constructor for separately constructed instances
-        "icu::time::IanaParserExtended::try_new_with_mapper",
 
         // macros
         "icu::locale::langid",

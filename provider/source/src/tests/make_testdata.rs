@@ -61,8 +61,8 @@ fn make_testdata() {
             .iter()
             .cloned()
             .map(Into::into)
-            .map(DataLocaleFamily::with_descendants),
-        DeduplicationStrategy::None.into(),
+            .map(DataLocaleFamily::single),
+        DeduplicationStrategy::RetainBaseLanguages.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
     .with_segmenter_models([
@@ -78,6 +78,30 @@ fn make_testdata() {
     })
     .with_marker_attributes_filter("currency", |attrs| {
         matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
+    })
+    .with_marker_attributes_filter("locale_names_region", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "001" | "419" | "FR" | "JP" | "CG" | "HK" | "ZA"
+        )
+    })
+    .with_marker_attributes_filter("numbering_system", |attrs| {
+        matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")
+    })
+    .with_marker_attributes_filter("transliterator", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "de-t-de-d0-ascii"
+                | "el-latn-t-s0-ascii"
+                | "el-latn-t-el-m0-bgn"
+                | "und-arab-t-und-beng"
+                | "und-latn-t-s0-ascii"
+                | "und-t-d0-publish"
+                | "und-t-s0-publish"
+                | "und-t-und-latn-d0-ascii"
+                | "und-x-bengali-interind"
+                | "und-x-interind-arabic"
+        )
     })
     .export(&provider, exporter)
     .unwrap();
@@ -136,7 +160,7 @@ impl DataExporter for ZeroCopyCheckExporter {
         let payload_after;
 
         macro_rules! cb {
-            ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+            ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
                 ((allocated, deallocated), payload_after) = match marker {
                     k if k == icu_provider::hello_world::HelloWorldV1::INFO => {
                         let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();

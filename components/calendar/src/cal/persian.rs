@@ -4,7 +4,9 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
+use crate::error::{
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -63,11 +65,11 @@ impl DateFieldsResolver for Persian {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         match era {
             b"ap" => Ok(era_year),
             _ => Err(UnknownEraError),
@@ -86,7 +88,7 @@ impl DateFieldsResolver for Persian {
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         let (ordinal_month, false) = (month.number(), month.is_leap()) else {
-            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+            return Err(EcmaReferenceYearError::MonthNotInCalendar);
         };
         // December 31, 1972 occurs on 10th month, 10th day, 1351 AP
         let persian_year = if ordinal_month < 10 || (ordinal_month == 10 && day <= 10) {
@@ -168,7 +170,7 @@ impl Calendar for Persian {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.0.added(duration, self, options).map(PersianDateInner)
     }
 
@@ -232,7 +234,7 @@ impl Date<Persian> {
     /// Construct new Persian [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::Date;

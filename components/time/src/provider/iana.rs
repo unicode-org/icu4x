@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
 use zerovec::{VarZeroVec, ZeroVec};
 
-/// [`IanaToBcp47Map`]'s trie cannot handle differently-cased prefixes, like `Mexico/BajaSur`` and `MET`.
+/// [`IanaToBcp47Map`]'s trie cannot handle differently-cased prefixes, like `Mexico/BajaSur` and `MET`.
 ///
 /// Therefore, any ID that is not of the shape `{region}/{city}` gets prefixed with this character
 /// inside the trie.

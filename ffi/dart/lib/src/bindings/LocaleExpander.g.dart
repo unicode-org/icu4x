@@ -34,7 +34,7 @@ final class LocaleExpander implements ffi.Finalizable {
     return LocaleExpander._fromFfi(result, []);
   }
 
-  /// Create a new [LocaleExpander] using a new_common data source.
+  /// Create a new [LocaleExpander] using a `new_common` data source.
   ///
   /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
   ///

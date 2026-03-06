@@ -17,7 +17,11 @@ namespace capi { struct Date; }
 class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
+struct DateAddOptions;
+struct DateDifferenceOptions;
+struct DateDuration;
 struct IsoWeekOfYear;
+class CalendarDateAddError;
 class CalendarError;
 class Rfc9557ParseError;
 class Weekday;
@@ -135,7 +139,7 @@ public:
    *
    * For calendars without an era, returns the extended year
    *
-   * See the [Rust documentation for `year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.year) for more information.
+   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
    */
   inline int32_t year() const;
 
@@ -166,6 +170,24 @@ public:
    * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.days_in_year) for more information.
    */
   inline uint16_t days_in_year() const;
+
+  /**
+   * Returns a new {@link IsoDate} with the given duration added to it.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
+   * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
+   */
+  inline icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarDateAddError> try_add_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const;
+
+  /**
+   * Calculating the duration between `other - self`
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
+   * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+   */
+  inline icu4x::DateDuration until_with_options(const icu4x::IsoDate& other, icu4x::DateDifferenceOptions options) const;
 
     inline const icu4x::capi::IsoDate* AsFFI() const;
     inline icu4x::capi::IsoDate* AsFFI();

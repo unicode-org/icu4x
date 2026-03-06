@@ -3,10 +3,15 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 Lowry, Keith
+Lowry, Adam
 Long, Amelia
+Long, Bob
 Torrigiano, Pietro
+Torrigiano, Giovanni
 Glyde, Henry George
+Glyde, Anne
 Barnard, Rev. William Henry
+Barnard, John
 Béraud, Jean
 Pacher, Michael
 Waldo, Samuel Lovett
@@ -23,6 +28,7 @@ Nourse, Elizabeth
 Pietersz the Younger, Pieter
 Vorsterman the Elder, Lucas
 Cézanne, Paul
+Cézanne, Marie
 Tischbein, Johann Heinrich Wilhelm
 Bossche, Aert van den
 Dawson, David

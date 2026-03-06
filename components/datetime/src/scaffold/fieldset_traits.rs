@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::{neo::*, time_zones::tz, *},
+    provider::semantic_skeletons::GluePattern,
+    provider::{names::*, packed_pattern::*, time_zones::tz},
     scaffold::*,
 };
 use icu_calendar::{
@@ -579,9 +580,6 @@ macro_rules! datetime_marker_helper {
     (@dates/typed, yes) => {
         C::SkeletaV1
     };
-    (@dates/typed,) => {
-        NeverMarker<PackedPatterns<'static>>
-    };
     (@calmarkers, yes) => {
         FullDataCalMarkers
     };
@@ -597,23 +595,14 @@ macro_rules! datetime_marker_helper {
     (@dayperiods, yes) => {
         DayPeriodNamesV1
     };
-    (@dayperiods,) => {
-        NeverMarker<LinearNames<'static>>
-    };
     (@times, yes) => {
         DatetimePatternsTimeV1
-    };
-    (@times,) => {
-        NeverMarker<ErasedPackedPatterns>
     };
     (@glue, yes) => {
         DatetimePatternsGlueV1
     };
     (@glue,) => {
         NeverMarker<GluePattern<'static>>
-    };
-    (@option/length, yes) => {
-        Length
     };
     (@option/length, long) => {
         Length
@@ -632,9 +621,6 @@ macro_rules! datetime_marker_helper {
     };
     (@option/timeprecision, yes) => {
         Option<TimePrecision>
-    };
-    (@option/$any:ident,) => {
-        ()
     };
     (@input/year, yes) => {
         YearInfo
@@ -797,9 +783,6 @@ macro_rules! datetime_marker_helper {
     };
     (@names/zone/$any:ident,) => {
         ()
-    };
-    () => {
-        unreachable!() // prevent bugs
     };
 }
 pub(crate) use datetime_marker_helper;

@@ -33,7 +33,7 @@ Experimental modules are hidden behind a Cargo feature:
 
 ```toml
 [dependencies]
-icu = { version = "2.0.0", features = ["experimental"] }
+icu = { version = "2.0.0", features = ["unstable"] }
 ```
 
 In your `main.rs`, you can now use e.g. the `icu::experimental::displaynames` module.

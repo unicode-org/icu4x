@@ -12,7 +12,7 @@ use zerovec::ule::AsULE;
 
 // Export the duration types from here
 #[cfg(feature = "unstable")]
-pub use crate::duration::{DateDuration, DateDurationParseError, DateDurationUnit};
+pub use crate::duration::DateDuration;
 use crate::{calendar_arithmetic::ArithmeticDate, error::MonthCodeParseError};
 
 #[cfg(feature = "unstable")]
@@ -64,19 +64,22 @@ mod unstable {
         ///
         /// If set, [`Self::era`] must also be set.
         ///
-        /// [`Date::try_from_fields`](crate::Date::try_from_fields)  accepts years in
-        /// the range `-1,000,000..=1,000,000`, where the `extended_year` is also in
-        /// the range `-1,000,000..=1,000,000`.
+        /// # Examples
         ///
-        /// For an example, see [`Self::extended_year`].
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.era = Some(b"ce");
+        /// fields.era_year = Some(2025);
+        /// ```
+        ///
+        /// For a full example, see [`Self::extended_year`].
         pub era_year: Option<i32>,
-        /// See [`Date::extended_year()`](crate::Date::extended_year).
+        /// See [`YearInfo::extended_year()`](crate::types::YearInfo::extended_year).
         ///
         /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
         /// refer to the same year.
-        ///
-        /// [`Date::try_from_fields`](crate::Date::try_from_fields) accepts extended years
-        /// in the range `-1,000,000..=1,000,000`.
         ///
         /// # Examples
         ///
@@ -114,51 +117,61 @@ mod unstable {
         /// assert_eq!(year_info.extended_year, 2025);
         /// ```
         pub extended_year: Option<i32>,
+        /// The month representing a valid month in this calendar year.
+        ///
+        /// Only one of [`Self::month`] and [`Self::month_code`] may be set.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::{DateFields, Month};
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.month = Some(Month::new(1));
+        /// ```
+        ///
+        /// For a full example, see [`Self::ordinal_month`].
+        pub month: Option<crate::types::Month>,
         /// The month code representing a valid month in this calendar year,
         /// as a UTF-8 string.
         ///
         /// See [`MonthCode`](crate::types::MonthCode) for information on the syntax.
         ///
-        /// # Examples
+        /// Only one of [`Self::month`] and [`Self::month_code`] may be set.
         ///
-        /// To set the month code field, use a byte string:
+        /// # Examples
         ///
         /// ```
         /// use icu::calendar::types::DateFields;
         ///
         /// let mut fields = DateFields::default();
-        ///
-        /// // As a byte string literal:
-        /// fields.era = Some(b"M02L");
-        ///
-        /// // Using str::as_bytes:
-        /// fields.era = Some("M02L".as_bytes());
+        /// fields.month_code = Some(b"M01");
         /// ```
         ///
         /// For a full example, see [`Self::ordinal_month`].
         pub month_code: Option<&'a [u8]>,
         /// See [`MonthInfo::ordinal`](crate::types::MonthInfo::ordinal).
         ///
-        /// If both this and [`Self::month_code`] are set, they must refer to
+        /// If both this and [`Self::month`]/[`Self::month_code`] are set, they must refer to
         /// the same month.
         ///
-        /// Note: using [`Self::month_code`] is recommended, because the ordinal month numbers
-        /// can vary from year to year, as illustrated in the following example.
+        /// Note: using [`Self::month`]/[`Self::month_code`] is recommended, because the ordinal
+        /// month numbers can vary from year to year, as illustrated in the following example.
         ///
         /// # Examples
         ///
-        /// Either `month_code` or `ordinal_month` can be used in DateFields, but they
+        /// Either `month`/`month_code`, or `ordinal_month` can be used in [`DateFields`], but they
         /// might not resolve to the same month number:
         ///
         /// ```
         /// use icu::calendar::cal::ChineseTraditional;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         ///
         /// // The 2023 Year of the Rabbit had a leap month after the 2nd month.
         /// let mut fields1 = DateFields::default();
         /// fields1.extended_year = Some(2023);
-        /// fields1.month_code = Some(b"M02L");
+        /// fields1.month = Some(Month::leap(2));
         /// fields1.day = Some(1);
         ///
         /// let date1 = Date::try_from_fields(
@@ -184,10 +197,20 @@ mod unstable {
         ///
         /// let month_info = date1.month();
         /// assert_eq!(month_info.ordinal, 3);
-        /// assert_eq!(month_info.standard_code.0, "M02L");
+        /// assert_eq!(month_info.number(), 2);
+        /// assert_eq!(month_info.is_leap(), true);
         /// ```
         pub ordinal_month: Option<u8>,
         /// See [`DayOfMonth`](crate::types::DayOfMonth).
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.day = Some(1);
+        /// ```
         pub day: Option<u8>,
     }
 }
@@ -201,6 +224,7 @@ impl fmt::Debug for DateFields<'_> {
             era_year,
             extended_year,
             month_code,
+            month,
             ordinal_month,
             day,
         } = *self;
@@ -212,6 +236,7 @@ impl fmt::Debug for DateFields<'_> {
         }
         builder.field("era_year", &era_year);
         builder.field("extended_year", &extended_year);
+        builder.field("month", &month);
         if let Some(s) = month_code.and_then(|s| core::str::from_utf8(s).ok()) {
             builder.field("month_code", &Some(s));
         } else {
@@ -259,8 +284,16 @@ impl YearInfo {
         }
     }
 
-    /// Get the extended year (See [`Date::extended_year`](crate::Date::extended_year))
-    /// for more information
+    /// The "extended year".
+    ///
+    /// This year number can be used when you need a simple numeric representation
+    /// of the year, and can be meaningfully compared with extended years from other
+    /// eras or used in arithmetic.
+    ///
+    /// For calendars defined in Temporal, this will match the "arithmetic year"
+    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
+    /// This is typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar.
     pub fn extended_year(self) -> i32 {
         match self {
             YearInfo::Era(e) => e.extended_year,
@@ -368,7 +401,7 @@ impl MonthCode {
     pub fn new_normal(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| Month::new_unchecked(number, LeapStatus::Normal).code())
+            .then(|| Month::new_unchecked(number, false).code())
     }
 
     /// Deprecated, use `Month::leap(m).code()`
@@ -376,7 +409,7 @@ impl MonthCode {
     pub fn new_leap(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| Month::new_unchecked(number, LeapStatus::Leap).code())
+            .then(|| Month::new_unchecked(number, true).code())
     }
 }
 
@@ -441,19 +474,33 @@ impl fmt::Display for MonthCode {
 /// * `Month::new(7)` = `M07`
 /// * `Month::leap(2)` = `M02L`
 ///
+/// This means that the Hebrew months "Adar" and "Adar II"
+/// ("Adar, but during a leap year") are considered the same month, `Month::new(6)`.
+///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
-#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]
 pub struct Month {
     /// Month number between 0 and 99
     number: u8,
-    leap_status: LeapStatus,
+    is_leap: bool,
 }
 
+/// The leap status of a month.
+#[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
-pub(crate) enum LeapStatus {
+pub enum LeapStatus {
+    /// Not a leap month.
     Normal,
+    /// A leap month.
     Leap,
-    FormattingLeap,
+    /// A standard month that has a corresponding leap month
+    /// in the same year.
+    ///
+    /// "Corresponding" is used in a formatting sense here:
+    /// even though the Hebrew "Adar I" is `M05L`, the
+    /// `LeapBase` will be `M06` (not `M05`), so formatting
+    /// knows to produce "Adar II".
+    LeapBase,
 }
 
 impl Month {
@@ -463,7 +510,7 @@ impl Month {
     pub const fn new(number: u8) -> Self {
         Self {
             number: if number > 99 { 99 } else { number },
-            leap_status: LeapStatus::Normal,
+            is_leap: false,
         }
     }
 
@@ -473,7 +520,7 @@ impl Month {
     pub const fn leap(number: u8) -> Self {
         Self {
             number: if number > 99 { 99 } else { number },
-            leap_status: LeapStatus::Leap,
+            is_leap: true,
         }
     }
 
@@ -499,25 +546,22 @@ impl Month {
     /// See [`Self::try_from_str()`].
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
         match *bytes {
-            [b'M', tens, ones] => Ok(Self {
+            [b'M', tens @ b'0'..=b'9', ones @ b'0'..=b'9'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
-                leap_status: LeapStatus::Normal,
+                is_leap: false,
             }),
-            [b'M', tens, ones, b'L'] => Ok(Self {
+            [b'M', tens @ b'0'..=b'9', ones @ b'0'..=b'9', b'L'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
-                leap_status: LeapStatus::Leap,
+                is_leap: true,
             }),
             _ => Err(MonthCodeParseError::InvalidSyntax),
         }
     }
 
     // precondition: number <= 99
-    pub(crate) const fn new_unchecked(number: u8, leap_status: LeapStatus) -> Self {
+    pub(crate) const fn new_unchecked(number: u8, is_leap: bool) -> Self {
         debug_assert!(1 <= number && number <= 99);
-        Self {
-            number,
-            leap_status,
-        }
+        Self { number, is_leap }
     }
 
     /// Returns the month number.
@@ -551,15 +595,7 @@ impl Month {
     /// [`Hebrew`]: crate::cal::Hebrew
     /// [`EastAsianTraditional`]: crate::cal::east_asian_traditional::EastAsianTraditional
     pub fn is_leap(self) -> bool {
-        self.leap_status == LeapStatus::Leap
-    }
-
-    /// Returns whether the [`Month`] is a formatting-leap month
-    ///
-    /// This is true for months that format differently during leap years, even if they are not
-    /// considered leap months.
-    pub fn is_formatting_leap(self) -> bool {
-        self.leap_status == LeapStatus::Leap || self.leap_status == LeapStatus::FormattingLeap
+        self.is_leap
     }
 
     /// Returns the [`MonthCode`] for this month.
@@ -570,26 +606,31 @@ impl Month {
                 b'M',
                 b'0' + self.number / 10,
                 b'0' + self.number % 10,
-                if self.is_leap() { b'L' } else { 0 },
+                if self.is_leap { b'L' } else { 0 },
             ])
             .unwrap(),
         )
     }
+}
 
-    /// Returns the formatting [`MonthCode`] for this month.
-    ///
-    /// See [`Self::is_formatting_leap`].
-    pub fn formatting_code(self) -> MonthCode {
-        #[allow(clippy::unwrap_used)] // by construction
-        MonthCode(
-            TinyAsciiStr::try_from_raw([
-                b'M',
-                b'0' + self.number / 10,
-                b'0' + self.number % 10,
-                if self.is_formatting_leap() { b'L' } else { 0 },
-            ])
-            .unwrap(),
-        )
+#[test]
+fn test_month_cmp() {
+    let months_in_order = [
+        Month::new(1),
+        Month::new(2),
+        Month::leap(2),
+        Month::new(3),
+        Month::new(10),
+        Month::leap(10),
+    ];
+    for i in 0..months_in_order.len() - 1 {
+        for j in i + 1..months_in_order.len() {
+            let a = months_in_order[i];
+            let b = months_in_order[j];
+            assert!(a == a);
+            assert!(a < b);
+            assert!(b > a);
+        }
     }
 }
 
@@ -603,24 +644,16 @@ pub struct MonthInfo {
     /// In general, prefer using [`Month`]s in generic code.
     pub ordinal: u8,
 
-    /// The [`Month`], used to distinguish months during leap years.
-    ///
-    /// Round-trips through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
-    ///
-    /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
-    /// Months considered the "same" are equal: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
-    /// are considered the same month, `Month::new(6)`.
-    ///
-    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
-    /// [`Date::try_from_fields`]: crate::Date::try_from_fields
-    pub value: Month,
+    number: u8,
 
-    /// The [`Month::code()`] of [`Self::value`].
-    #[deprecated(since = "2.2.0", note = "use `value.code()")]
+    pub(crate) leap_status: LeapStatus,
+
+    /// The [`Month::code()`] of [`Self::as_input`].
+    #[deprecated(since = "2.2.0", note = "use `as_input().code()")]
     pub standard_code: MonthCode,
 
-    /// The [`Month::formatting_code()`] of [`Self::value`].
-    #[deprecated(since = "2.2.0", note = "use `value.formatting_code()")]
+    /// Deprecated
+    #[deprecated(since = "2.2.0")]
     pub formatting_code: MonthCode,
 }
 
@@ -634,7 +667,12 @@ impl MonthInfo {
         #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
         Self {
             ordinal,
-            value,
+            number: value.number,
+            leap_status: if value.is_leap {
+                LeapStatus::Leap
+            } else {
+                LeapStatus::Normal
+            },
             #[allow(deprecated)]
             standard_code: value.code(),
             #[allow(deprecated)]
@@ -663,25 +701,29 @@ impl MonthInfo {
     /// assert_eq!(month_info.number(), 9);
     /// ```
     pub fn number(self) -> u8 {
-        self.value.number()
+        self.number
     }
 
-    /// Returns whether the [`Month`] is a leap month.
+    /// Returns the [`LeapStatus`] of this month.
+    pub fn leap_status(self) -> LeapStatus {
+        self.leap_status
+    }
+
+    /// Returns the [`Month`], which round-trips through constructors like
+    /// [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
     ///
-    /// This is true for intercalary months in [`Hebrew`] and [`EastAsianTraditional`].
+    /// Returns a leap month iff [`Self::leap_status`] is [`LeapStatus::Leap`].
     ///
-    /// [`Hebrew`]: crate::cal::Hebrew
-    /// [`EastAsianTraditional`]: crate::cal::east_asian_traditional::EastAsianTraditional
+    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+    /// [`Date::try_from_fields`]: crate::Date::try_from_fields
+    pub fn as_input(&self) -> Month {
+        Month::new_unchecked(self.number, self.leap_status == LeapStatus::Leap)
+    }
+
+    /// Equivalent to `.as_input().is_leap()`
+    #[deprecated(since = "2.2.0", note = "use `.as_input().is_leap()`")]
     pub fn is_leap(self) -> bool {
-        self.value.is_leap()
-    }
-
-    /// Returns whether the [`Month`] is a formatting-leap month
-    ///
-    /// This is true for months that should format as leap months, even if they are not
-    /// considered leap months.
-    pub fn is_formatting_leap(self) -> bool {
-        self.value.is_formatting_leap()
+        self.as_input().is_leap()
     }
 
     /// Gets the month number. A month number N is not necessarily the Nth month in the year
@@ -689,7 +731,7 @@ impl MonthInfo {
     /// year. There may be multiple month Ns in a year
     #[deprecated(since = "2.2.0", note = "use `number`")]
     pub fn month_number(self) -> u8 {
-        self.value.number()
+        self.number
     }
 }
 

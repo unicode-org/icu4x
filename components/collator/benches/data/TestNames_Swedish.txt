@@ -1,0 +1,28 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+Söderholm, Carl
+Pettersson, Robert
+Håg, Petter
+Erikson, Daniel
+Ericsson, Marie
+Sjöman, Olle
+Åberg, Carita
+Ericson, Lars
+Ericsson, Mona
+Hägglund, Frida
+Eriksson, John
+Palmén, Thomas
+Johansson, Åke
+Hagelstam, Stina
+Sjöberg, Cecilia
+Johansson, Andreas
+Johansson, André
+Palme, Anders
+Erixon, Ida
+Ahlström, Olof
+Lind, Axel
+Johansson, Annika
+Sohlberg, Jonas
+Johansson, Anna

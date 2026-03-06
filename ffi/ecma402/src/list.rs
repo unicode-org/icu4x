@@ -48,7 +48,7 @@ impl ecma402_traits::listformat::Format for ListFormat {
         struct WriteableWrap<J: Display>(J);
 
         impl<J: Display> Writeable for WriteableWrap<J> {
-            fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+            fn write_to<W: Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
                 write!(sink, "{}", self.0)
             }
         }

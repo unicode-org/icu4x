@@ -183,7 +183,7 @@ impl SubdivisionId {
     }
 
     /// Convert to [`Subtag`]
-    pub fn into_subtag(self) -> Subtag {
+    pub const fn into_subtag(self) -> Subtag {
         let result = self
             .region
             .to_tinystr()

@@ -41,3 +41,6 @@ name = "resb"
 [[example]]
 name = "genrb"
 required-features = ["serialize", "text"]
+
+[lints]
+workspace = true

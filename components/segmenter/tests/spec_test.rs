@@ -30,7 +30,7 @@ impl TestContentIterator<core::str::Split<'static, char>> {
     }
 }
 
-impl<LineIterator: std::iter::Iterator> Iterator for TestContentIterator<LineIterator>
+impl<LineIterator: Iterator> Iterator for TestContentIterator<LineIterator>
 where
     LineIterator::Item: Into<String>,
 {

@@ -37,7 +37,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * An ICU4X DateTime object capable of containing a date and time for any calendar.
+ * An ICU4X `DateTime` object capable of containing a date and time for any calendar.
  *
  * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html) for more information.
  */

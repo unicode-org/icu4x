@@ -17,8 +17,13 @@ namespace capi { struct Date; }
 class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
+struct CalendarMismatchedCalendarError;
+struct DateAddOptions;
+struct DateDifferenceOptions;
+struct DateDuration;
 struct DateFields;
 struct DateFromFieldsOptions;
+class CalendarDateAddError;
 class CalendarDateFromFieldsError;
 class CalendarError;
 class Rfc9557ParseError;
@@ -53,7 +58,7 @@ public:
   /**
    * Creates a new {@link Date} from the given fields, which are interpreted in the given calendar system.
    *
-   * 🚧 This API is experimental and may experience breaking changes outside major releases.
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
    * See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
    */
@@ -143,7 +148,7 @@ public:
    * Returns 1-indexed number of the month of this date in its year
    *
    * Note that for lunar calendars this may not lead to the same month
-   * having the same ordinal month across years; use month_code if you care
+   * having the same ordinal month across years; use `month_code` if you care
    * about month identity.
    *
    * See the [Rust documentation for `month`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.month) for more information.
@@ -198,7 +203,7 @@ public:
    * of the year, and can be meaningfully compared with extended years from other
    * eras or used in arithmetic.
    *
-   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.extended_year) for more information.
+   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
    */
   inline int32_t extended_year() const;
 
@@ -235,11 +240,36 @@ public:
   inline uint16_t days_in_year() const;
 
   /**
+   * Returns if the year is a leap year for this date
+   *
+   * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+   */
+  inline bool is_in_leap_year() const;
+
+  /**
    * Returns the {@link Calendar} object backing this date
    *
    * See the [Rust documentation for `calendar`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.calendar) for more information.
    */
   inline std::unique_ptr<icu4x::Calendar> calendar() const;
+
+  /**
+   * Returns a new {@link Date} with the given duration added to it.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
+   * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
+   */
+  inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError> try_add_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const;
+
+  /**
+   * Calculating the duration between `other - self`
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
+   * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+   */
+  inline icu4x::diplomat::result<icu4x::DateDuration, icu4x::CalendarMismatchedCalendarError> try_until_with_options(const icu4x::Date& other, icu4x::DateDifferenceOptions options) const;
 
     inline const icu4x::capi::Date* AsFFI() const;
     inline icu4x::capi::Date* AsFFI();

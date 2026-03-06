@@ -4,7 +4,9 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
+use crate::error::{
+    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Calendar, Date, RangeError};
@@ -66,11 +68,11 @@ impl DateFieldsResolver for Coptic {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         match era {
             b"am" => Ok(era_year),
             _ => Err(UnknownEraError),
@@ -102,7 +104,7 @@ impl Coptic {
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
         let (ordinal_month, false) = (month.number(), month.is_leap()) else {
-            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+            return Err(EcmaReferenceYearError::MonthNotInCalendar);
         };
         // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM
         let anno_martyrum_year = if ordinal_month < 4 || (ordinal_month == 4 && day <= 22) {
@@ -184,7 +186,7 @@ impl Calendar for Coptic {
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.0.added(duration, self, options).map(CopticDateInner)
     }
 
@@ -238,7 +240,7 @@ impl Date<Coptic> {
     /// Construct new Coptic [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -274,9 +276,8 @@ mod tests {
     fn test_from_fields_monthday_constrain() {
         // M13-7 is not a real day, however this should resolve to M13-6
         // with Overflow::Constrain
-        let month = Month::new(13).code();
         let fields = DateFields {
-            month_code: Some(month.0.as_bytes()),
+            month: Some(Month::new(13)),
             day: Some(7),
             ..Default::default()
         };

@@ -47,3 +47,6 @@ test = true
 name = "make_var"
 harness = false
 test = true
+
+[lints]
+workspace = true

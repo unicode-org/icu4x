@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! High-level entrypoints for Neo DateTime Formatter
+//! High-level entrypoints for Neo [`DateTimeFormatter`]
 
 use crate::error::DateTimeFormatterLoadError;
 use crate::external_loaders::*;
@@ -163,7 +163,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 ///
 /// Mismatched calendars will not compile:
 ///
-/// ```compile_fail
+/// ```compile_fail,E0271
 /// use icu::calendar::cal::Buddhist;
 /// use icu::datetime::input::Date;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -391,7 +391,7 @@ where
 size_test!(
     DateTimeFormatter<crate::fieldsets::YMD>,
     neo_year_month_day_formatter_size,
-    368
+    336
 );
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting dates and/or times from
@@ -662,7 +662,7 @@ where
     pub fn format_same_calendar<I>(
         &self,
         datetime: &I,
-    ) -> Result<FormattedDateTime<'_>, crate::MismatchedCalendarError>
+    ) -> Result<FormattedDateTime<'_>, MismatchedCalendarError>
     where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {

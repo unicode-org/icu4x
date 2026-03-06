@@ -15,8 +15,12 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+max_combination_size = 3
 
 [dependencies]
 icu_collections = { workspace = true }
@@ -57,3 +61,6 @@ unstable = []
 [[bench]]
 name = "bench"
 harness = false
+
+[lints]
+workspace = true

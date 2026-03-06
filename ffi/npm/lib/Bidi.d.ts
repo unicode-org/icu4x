@@ -46,7 +46,7 @@ export class Bidi {
     reorderVisual(levels: Array<number>): ReorderedIndexMap;
 
     /**
-     * Check if a Level returned by level_at is an RTL level.
+     * Check if a Level returned by `level_at` is an RTL level.
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
      *
@@ -55,7 +55,7 @@ export class Bidi {
     static levelIsRtl(level: number): boolean;
 
     /**
-     * Check if a Level returned by level_at is an LTR level.
+     * Check if a Level returned by `level_at` is an LTR level.
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
      *

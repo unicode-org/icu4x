@@ -18,12 +18,22 @@ class TimeZoneAndCanonicalIterator internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 ): Iterator<TimeZoneAndCanonical> {
 
-    internal class TimeZoneAndCanonicalIteratorCleaner(val handle: Pointer, val lib: TimeZoneAndCanonicalIteratorLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class TimeZoneAndCanonicalIteratorCleaner(val handle: Pointer, val lib: TimeZoneAndCanonicalIteratorLib) : Runnable {
         override fun run() {
             lib.icu4x_TimeZoneAndCanonicalIterator_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, TimeZoneAndCanonicalIterator.TimeZoneAndCanonicalIteratorCleaner(handle, TimeZoneAndCanonicalIterator.lib));
     }
 
     companion object {
@@ -34,12 +44,12 @@ class TimeZoneAndCanonicalIterator internal constructor (
     /** See the [Rust documentation for `next`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
     */
     internal fun nextInternal(): TimeZoneAndCanonical? {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_TimeZoneAndCanonicalIterator_next_mv1(handle);
         
         val intermediateOption = returnVal.option() ?: return null
-
-        val aEdges: List<Any?> = listOf(this)
         val returnStruct = TimeZoneAndCanonical.fromNative(intermediateOption, aEdges)
         return returnStruct
                                 

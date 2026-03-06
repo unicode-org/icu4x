@@ -49,12 +49,22 @@ class Decimal internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class DecimalCleaner(val handle: Pointer, val lib: DecimalLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class DecimalCleaner(val handle: Pointer, val lib: DecimalLib) : Runnable {
         override fun run() {
             lib.icu4x_Decimal_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Decimal.DecimalCleaner(handle, Decimal.lib));
     }
 
     companion object {
@@ -71,8 +81,7 @@ class Decimal internal constructor (
             val returnVal = lib.icu4x_Decimal_from_int32_mv1(v);
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Decimal(handle, selfEdges)
-            CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
+            val returnOpaque = Decimal(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -86,8 +95,7 @@ class Decimal internal constructor (
             val returnVal = lib.icu4x_Decimal_from_uint32_mv1(FFIUint32(v));
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Decimal(handle, selfEdges)
-            CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
+            val returnOpaque = Decimal(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -101,8 +109,7 @@ class Decimal internal constructor (
             val returnVal = lib.icu4x_Decimal_from_int64_mv1(v);
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Decimal(handle, selfEdges)
-            CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
+            val returnOpaque = Decimal(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -116,8 +123,7 @@ class Decimal internal constructor (
             val returnVal = lib.icu4x_Decimal_from_uint64_mv1(FFIUint64(v));
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Decimal(handle, selfEdges)
-            CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
+            val returnOpaque = Decimal(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -131,11 +137,11 @@ class Decimal internal constructor (
         fun fromDoubleWithIntegerPrecision(f: Double): Result<Decimal> {
             
             val returnVal = lib.icu4x_Decimal_from_double_with_integer_precision_mv1(f);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Decimal(handle, selfEdges)
-                CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Decimal(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
                 return DecimalLimitError().err()
@@ -152,11 +158,11 @@ class Decimal internal constructor (
         fun fromDoubleWithLowerMagnitude(f: Double, magnitude: Short): Result<Decimal> {
             
             val returnVal = lib.icu4x_Decimal_from_double_with_lower_magnitude_mv1(f, magnitude);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Decimal(handle, selfEdges)
-                CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Decimal(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
                 return DecimalLimitError().err()
@@ -173,11 +179,11 @@ class Decimal internal constructor (
         fun fromDoubleWithSignificantDigits(f: Double, digits: UByte): Result<Decimal> {
             
             val returnVal = lib.icu4x_Decimal_from_double_with_significant_digits_mv1(f, FFIUint8(digits));
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Decimal(handle, selfEdges)
-                CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Decimal(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
                 return DecimalLimitError().err()
@@ -195,11 +201,11 @@ class Decimal internal constructor (
         fun fromDoubleWithRoundTripPrecision(f: Double): Result<Decimal> {
             
             val returnVal = lib.icu4x_Decimal_from_double_with_round_trip_precision_mv1(f);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Decimal(handle, selfEdges)
-                CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Decimal(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
                 return DecimalLimitError().err()
@@ -212,18 +218,21 @@ class Decimal internal constructor (
         *See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<Decimal> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_Decimal_from_string_mv1(vSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Decimal(handle, selfEdges)
-                CLEANER.register(returnOpaque, Decimal.DecimalCleaner(handle, Decimal.lib));
-                if (vMem != null) vMem.close()
-                return returnOpaque.ok()
-            } else {
-                return DecimalParseErrorError(DecimalParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_Decimal_from_string_mv1(vSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = Decimal(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DecimalParseErrorError(DecimalParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }
@@ -439,7 +448,8 @@ class Decimal internal constructor (
     fun concatenateEnd(other: Decimal): Result<Unit> {
         
         val returnVal = lib.icu4x_Decimal_concatenate_end_mv1(handle, other.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
-        if (returnVal.isOk == 1.toByte()) {
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
             return Unit.ok()
         } else {
             return UnitError().err()

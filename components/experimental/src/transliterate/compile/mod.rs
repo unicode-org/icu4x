@@ -108,7 +108,7 @@ impl RuleCollection {
     /// Add a new transliteration source to the collection.
     pub fn register_source<'a>(
         &mut self,
-        id: &icu_locale_core::Locale,
+        id: &Locale,
         source: String,
         aliases: impl IntoIterator<Item = &'a str>,
         reverse: bool,
@@ -124,7 +124,7 @@ impl RuleCollection {
     /// Add transliteration ID aliases without registering a source.
     pub fn register_aliases<'a>(
         &mut self,
-        id: &icu_locale_core::Locale,
+        id: &Locale,
         aliases: impl IntoIterator<Item = &'a str>,
     ) {
         for alias in aliases {
@@ -141,7 +141,7 @@ impl RuleCollection {
                         }
                     }
                 })
-                .or_insert(id.clone());
+                .or_insert_with(|| id.clone());
         }
     }
 
@@ -149,6 +149,7 @@ impl RuleCollection {
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
+    #[allow(unused_qualifications)]
     pub fn as_provider(
         &self,
     ) -> RuleCollectionProvider<
@@ -592,7 +593,7 @@ enum CompileErrorKind {
     InvalidNumber,
     /// Duplicate variable definition.
     DuplicateVariable,
-    /// Invalid UnicodeSet syntax. See `crate::unicodeset_parse`'s [`ParseError`](crate::unicodeset_parse::ParseError).
+    /// Invalid `UnicodeSet` syntax. See `crate::unicodeset_parse`'s [`ParseError`](crate::unicodeset_parse::ParseError).
     UnicodeSetError(crate::unicodeset_parse::ParseError),
 
     // errors originating from compilation step
@@ -610,7 +611,7 @@ enum CompileErrorKind {
     AnchorStartNotAtStart,
     /// The end anchor `$` was not placed at the end of a source.
     AnchorEndNotAtEnd,
-    /// A variable that contains source-only matchers (e.g., UnicodeSets) was used on the target side.
+    /// A variable that contains source-only matchers (e.g., `UnicodeSets`) was used on the target side.
     SourceOnlyVariable,
     /// No matching segment for this backreference was found.
     BackReferenceOutOfRange,
@@ -626,6 +627,13 @@ impl CompileErrorKind {
     fn with_offset(self, offset: usize) -> CompileError {
         CompileError {
             offset: Some(offset),
+            kind: self,
+        }
+    }
+
+    const fn without_offset(self) -> CompileError {
+        CompileError {
+            offset: None,
             kind: self,
         }
     }
@@ -647,13 +655,13 @@ mod tests {
     use std::collections::HashSet;
     use zerovec::{vecs::Index32, VarZeroVec};
 
-    fn parse_set(source: &str) -> super::parse::UnicodeSet {
+    fn parse_set(source: &str) -> parse::UnicodeSet {
         crate::unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
             .expect("Parsing failed")
             .0
     }
 
-    fn parse_set_cp(source: &str) -> super::parse::FilterSet {
+    fn parse_set_cp(source: &str) -> parse::FilterSet {
         crate::unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
             .expect("Parsing failed")
             .0

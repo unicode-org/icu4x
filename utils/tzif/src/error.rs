@@ -6,6 +6,7 @@ use std::fmt;
 
 /// An error enum for all error types.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// A [`std::io::Error`].
     Io(std::io::Error),

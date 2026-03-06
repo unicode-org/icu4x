@@ -401,8 +401,7 @@ pub trait PreferenceKey: Sized {
     fn try_from_key_value(
         _key: &crate::extensions::unicode::Key,
         _value: &crate::extensions::unicode::Value,
-    ) -> Result<Option<Self>, crate::preferences::extensions::unicode::errors::PreferencesParseError>
-    {
+    ) -> Result<Option<Self>, extensions::unicode::errors::PreferencesParseError> {
         Ok(None)
     }
 

@@ -69,7 +69,7 @@ internal class OptionZonedDateTimeNative constructor(): Structure(), Structure.B
 
 }
 
-/** An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
+/** An ICU4X `DateTime` object capable of containing a date, time, and zone for any calendar.
 *
 *See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html) for more information.
 */
@@ -81,9 +81,9 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         val NATIVESIZE: Long = Native.getNativeSize(ZonedDateTimeNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: ZonedDateTimeNative): ZonedDateTime {
-            val date: Date = Date(nativeStruct.date, listOf())
-            val time: Time = Time(nativeStruct.time, listOf())
-            val zone: TimeZoneInfo = TimeZoneInfo(nativeStruct.zone, listOf())
+            val date: Date = Date(nativeStruct.date, listOf(), true)
+            val time: Time = Time(nativeStruct.time, listOf(), true)
+            val zone: TimeZoneInfo = TimeZoneInfo(nativeStruct.zone, listOf(), true)
 
             return ZonedDateTime(date, time, zone)
         }
@@ -95,16 +95,19 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         *See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
         */
         fun strictFromString(v: String, calendar: Calendar, ianaParser: IanaParser): Result<ZonedDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_ZonedDateTime_strict_from_string_mv1(vSlice, calendar.handle, ianaParser.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_ZonedDateTime_strict_from_string_mv1(vSliceMemory.slice, calendar.handle, ianaParser.handle);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedDateTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic
@@ -114,16 +117,19 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         *See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
         */
         fun fullFromString(v: String, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): Result<ZonedDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_ZonedDateTime_full_from_string_mv1(vSlice, calendar.handle, ianaParser.handle, offsetCalculator.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_ZonedDateTime_full_from_string_mv1(vSliceMemory.slice, calendar.handle, ianaParser.handle, offsetCalculator.handle);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedDateTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic
@@ -133,16 +139,19 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         *See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
         */
         fun locationOnlyFromString(v: String, calendar: Calendar, ianaParser: IanaParser): Result<ZonedDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_ZonedDateTime_location_only_from_string_mv1(vSlice, calendar.handle, ianaParser.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_ZonedDateTime_location_only_from_string_mv1(vSliceMemory.slice, calendar.handle, ianaParser.handle);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedDateTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic
@@ -152,16 +161,19 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         *See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
         */
         fun offsetOnlyFromString(v: String, calendar: Calendar): Result<ZonedDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_ZonedDateTime_offset_only_from_string_mv1(vSlice, calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_ZonedDateTime_offset_only_from_string_mv1(vSliceMemory.slice, calendar.handle);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedDateTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic
@@ -171,16 +183,19 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         *See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
         */
         fun lenientFromString(v: String, calendar: Calendar, ianaParser: IanaParser): Result<ZonedDateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_ZonedDateTime_lenient_from_string_mv1(vSlice, calendar.handle, ianaParser.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_ZonedDateTime_lenient_from_string_mv1(vSliceMemory.slice, calendar.handle, ianaParser.handle);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedDateTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }

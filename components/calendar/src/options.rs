@@ -6,11 +6,13 @@
 
 #[cfg(feature = "unstable")]
 pub use unstable::{
-    DateAddOptions, DateDifferenceOptions, DateFromFieldsOptions, MissingFieldsStrategy, Overflow,
+    DateAddOptions, DateDifferenceOptions, DateDurationUnit, DateFromFieldsOptions,
+    MissingFieldsStrategy, Overflow,
 };
 #[cfg(not(feature = "unstable"))]
 pub(crate) use unstable::{
-    DateAddOptions, DateDifferenceOptions, DateFromFieldsOptions, MissingFieldsStrategy, Overflow,
+    DateAddOptions, DateDifferenceOptions, DateDurationUnit, DateFromFieldsOptions,
+    MissingFieldsStrategy, Overflow,
 };
 
 mod unstable {
@@ -71,13 +73,13 @@ mod unstable {
         /// ```
         /// use icu::calendar::options::DateFromFieldsOptions;
         /// use icu::calendar::options::MissingFieldsStrategy;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use icu::calendar::Iso;
         ///
         /// // These options are missing a year.
         /// let mut fields = DateFields::default();
-        /// fields.month_code = Some(b"M02");
+        /// fields.month = Some(Month::new(2));
         /// fields.day = Some(1);
         ///
         /// let options_default = DateFromFieldsOptions::default();
@@ -177,12 +179,15 @@ mod unstable {
         /// associative or commutative in subsequent arithmetic operations, and it might require
         /// [`Overflow::Constrain`] in addition.
         ///
+        /// The resultant duration will not have any `weeks` value unless [`DateDurationUnit::Weeks`]
+        /// is explicitly specified as `largest_unit`.
+        ///
         /// # Examples
         ///
         /// ```
         /// use icu::calendar::options::DateDifferenceOptions;
         /// use icu::calendar::types::DateDuration;
-        /// use icu::calendar::types::DateDurationUnit;
+        /// use icu::calendar::options::DateDurationUnit;
         /// use icu::calendar::Date;
         ///
         /// let d1 = Date::try_new_iso(2025, 3, 31).unwrap();
@@ -206,6 +211,7 @@ mod unstable {
         /// assert_eq!(
         ///     d1.try_until_with_options(&d2, options_weeks).unwrap(),
         ///     DateDuration {
+        ///         // This is the only time there is a `weeks` value.
         ///         weeks: 58,
         ///         days: 4,
         ///         ..Default::default()
@@ -236,10 +242,10 @@ mod unstable {
         /// );
         /// ```
         ///
-        /// [`Months`]: crate::types::DateDurationUnit::Months
-        /// [`Years`]: crate::types::DateDurationUnit::Years
+        /// [`Months`]: crate::options::DateDurationUnit::Months
+        /// [`Years`]: crate::options::DateDurationUnit::Years
         /// [`DateDuration`]: crate::types::DateDuration
-        pub largest_unit: Option<crate::duration::DateDurationUnit>,
+        pub largest_unit: Option<DateDurationUnit>,
     }
 
     /// Whether to constrain or reject out-of-bounds values when constructing a Date.
@@ -273,7 +279,7 @@ mod unstable {
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::options::DateFromFieldsOptions;
         /// use icu::calendar::options::Overflow;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use icu::calendar::DateError;
         ///
@@ -283,7 +289,7 @@ mod unstable {
         /// // 5784, a leap year, contains M05L, but the day is too big.
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5784);
-        /// fields.month_code = Some(b"M05L");
+        /// fields.month = Some(Month::leap(5));
         /// fields.day = Some(50);
         ///
         /// let date = Date::try_from_fields(fields, options, Hebrew).unwrap();
@@ -313,7 +319,7 @@ mod unstable {
         /// use icu::calendar::error::DateFromFieldsError;
         /// use icu::calendar::options::DateFromFieldsOptions;
         /// use icu::calendar::options::Overflow;
-        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::types::{DateFields, Month};
         /// use icu::calendar::Date;
         /// use tinystr::tinystr;
         ///
@@ -323,12 +329,12 @@ mod unstable {
         /// // 5784, a leap year, contains M05L, but the day is too big.
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5784);
-        /// fields.month_code = Some(b"M05L");
+        /// fields.month = Some(Month::leap(5));
         /// fields.day = Some(50);
         ///
         /// let err = Date::try_from_fields(fields, options, Hebrew)
         ///     .expect_err("Day is out of bounds");
-        /// assert!(matches!(err, DateFromFieldsError::Range { .. }));
+        /// assert!(matches!(err, DateFromFieldsError::InvalidDay { .. }));
         ///
         /// // Set the day to one that exists
         /// fields.day = Some(1);
@@ -340,7 +346,7 @@ mod unstable {
         ///
         /// let err = Date::try_from_fields(fields, options, Hebrew)
         ///     .expect_err("Month is out of bounds");
-        /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInYear));
+        /// assert!(matches!(err, DateFromFieldsError::MonthNotInYear));
         /// ```
         #[default]
         Reject,
@@ -364,7 +370,7 @@ mod unstable {
     ///
     /// The fields `month_code` and `ordinal_month` identify the month:
     ///
-    /// | Month Code? | Ordinal Month? | Outcome |
+    /// | Month( Code)? | Ordinal Month? | Outcome |
     /// |-------------|----------------|---------|
     /// | -           | -              | Error |
     /// | Some        | -              | OK |
@@ -410,10 +416,38 @@ mod unstable {
         /// the identity of an ordinal month changes from year to year.
         Ecma,
     }
+
+    /// A "duration unit" used to specify the minimum or maximum duration of time to
+    /// care about.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+    #[allow(clippy::exhaustive_enums)] // this type should be stable
+    pub enum DateDurationUnit {
+        /// Duration in years
+        Years,
+        /// Duration in months
+        Months,
+        /// Duration in weeks
+        Weeks,
+        /// Duration in days
+        Days,
+    }
 }
 #[cfg(test)]
 mod tests {
-    use crate::{error::DateFromFieldsError, types::DateFields, Date, Gregorian};
+    use crate::{
+        error::DateFromFieldsError,
+        types::{DateFields, Month},
+        Date, Gregorian,
+    };
     use itertools::Itertools;
     use std::collections::{BTreeMap, BTreeSet};
 
@@ -435,8 +469,10 @@ mod tests {
         // The sets of fields that identify a month, according to the table in the docs
         let valid_month_field_sets = [
             &["month_code"][..],
+            &["month"][..],
             &["ordinal_month"][..],
             &["month_code", "ordinal_month"][..],
+            &["month", "ordinal_month"][..],
         ]
         .into_iter()
         .map(|field_names| field_names.iter().copied().collect())
@@ -477,7 +513,7 @@ mod tests {
             .collect::<BTreeSet<BTreeSet<&str>>>();
 
         // Field sets with month and day but without year that ECMA accepts
-        let field_sets_without_year = [&["month_code", "day"][..]]
+        let field_sets_without_year = [&["month_code", "day"][..], &["month", "day"][..]]
             .into_iter()
             .map(|field_names| field_names.iter().copied().collect())
             .collect::<Vec<BTreeSet<&str>>>();
@@ -487,6 +523,7 @@ mod tests {
         field_fns.insert("era", &|fields| fields.era = Some(b"ad"));
         field_fns.insert("era_year", &|fields| fields.era_year = Some(2000));
         field_fns.insert("extended_year", &|fields| fields.extended_year = Some(2000));
+        field_fns.insert("month", &|fields| fields.month = Some(Month::new(4)));
         field_fns.insert("month_code", &|fields| fields.month_code = Some(b"M04"));
         field_fns.insert("ordinal_month", &|fields| fields.ordinal_month = Some(4));
         field_fns.insert("day", &|fields| fields.day = Some(20));
@@ -505,7 +542,7 @@ mod tests {
 
             // Populate the fields in the field set
             let mut fields = Default::default();
-            for field_name in field_set {
+            for field_name in &field_set {
                 field_fns.get(field_name).unwrap()(&mut fields);
             }
 
@@ -517,10 +554,12 @@ mod tests {
                     should_succeed_rejecting,
                     "Succeeded, but should have rejected: {fields:?}"
                 ),
-                Err(DateFromFieldsError::NotEnoughFields) => assert!(
-                    !should_succeed_rejecting,
-                    "Rejected, but should have succeeded: {fields:?}"
-                ),
+                Err(DateFromFieldsError::NotEnoughFields | DateFromFieldsError::TooManyFields) => {
+                    assert!(
+                        !should_succeed_rejecting,
+                        "Rejected, but should have succeeded: {fields:?}"
+                    )
+                }
                 Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
             }
 
@@ -532,10 +571,12 @@ mod tests {
                     should_succeed_ecma,
                     "Succeeded, but should have rejected (ECMA): {fields:?}"
                 ),
-                Err(DateFromFieldsError::NotEnoughFields) => assert!(
-                    !should_succeed_ecma,
-                    "Rejected, but should have succeeded (ECMA): {fields:?}"
-                ),
+                Err(DateFromFieldsError::NotEnoughFields | DateFromFieldsError::TooManyFields) => {
+                    assert!(
+                        !should_succeed_ecma,
+                        "Rejected, but should have succeeded (ECMA): {fields:?}"
+                    )
+                }
                 Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
             }
         }

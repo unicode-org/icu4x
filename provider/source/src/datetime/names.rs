@@ -8,9 +8,12 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::pattern;
 
-use icu::datetime::provider::neo::marker_attrs::GlueType;
-use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
-use icu::datetime::provider::neo::*;
+use icu::datetime::provider::names::*;
+use icu::datetime::provider::semantic_skeletons::marker_attrs::GlueType;
+use icu::datetime::provider::semantic_skeletons::marker_attrs::{
+    self, Context, Length, PatternLength,
+};
+use icu::datetime::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
@@ -30,7 +33,7 @@ const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::WIDE_STANDALONE,
 ];
 
-/// Lengths for month data (NORMAL_MARKER_LENGTHS + numeric)
+/// Lengths for month data (`NORMAL_MARKER_LENGTHS` + numeric)
 const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
@@ -162,6 +165,7 @@ impl SourceDataProvider {
     }
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn weekday_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
@@ -187,6 +191,7 @@ fn weekday_convert(
     })
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn dayperiods_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
@@ -227,10 +232,7 @@ fn eras_collect<'a>(
 
     for &(cldr, ref era) in all_eras {
         out.insert(
-            (
-                era.code.as_str(),
-                era.icu4x_era_index.unwrap_or(u8::MAX) as usize,
-            ),
+            (era.code.as_str(), era.icu4x_era_index.unwrap() as usize),
             &*eras.load(length)[&cldr.to_string()],
         );
     }
@@ -274,7 +276,9 @@ fn years_convert(
             .max()
             .unwrap_or_default();
 
-        if max_icu4x_era_index > 10 {
+        if calendar == DatagenCalendar::Japanese {
+            // The Japanese calendar didn't produce era indices until 2.2.0. To keep
+            // new-data-old-code working, we need to produce `YearNames::VariableEras`.
             let kv = eras
                 .iter()
                 .map(|(&(k, _), &v)| (PotentialUtf8::from_str(k), v))
@@ -324,6 +328,7 @@ fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
     }
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn months_convert(
     _datagen: &SourceDataProvider,
     locale: &DataLocale,
@@ -352,7 +357,64 @@ fn months_convert(
     let (month_count, has_leap) = calendar_months(calendar);
     let mut symbols = vec![Cow::Borrowed(""); month_count];
 
-    if calendar == DatagenCalendar::Hebrew {
+    if calendar == DatagenCalendar::Hebrew
+        && length == Length::Narrow
+        && months.0["10"].starts_with(&months.0["1"])
+        && months.0["11"].starts_with(&months.0["1"])
+        && months.0["12"].starts_with(&months.0["1"])
+        && months.0["13"].starts_with(&months.0["1"])
+    {
+        // CLDR currently has these locales that have data for Hebrew narrow months:
+        // * und: uses digits "6", "7", "7"
+        // * ast: uses digits, "6", "7", "7b"
+        // * bn: uses digits, "৬", "৭", "৭"
+        // * fa: uses words, "آ", "و", "و" (<- RTL)
+        // * ff-Adlm: uses digits, "𞥖", "𞥗", "𞥗" (<- RTL)
+        // * fi: uses letters, "A", "A", "A"
+        // * he: uses words, "א״א", "אד׳" ,"א״ב" (<- RTL)
+        // * ml: uses letters, "അ I", "അ.", "അ II",
+        // * mr: uses digits, "६", "७", "७",
+        // where the names are for Adar I, Adar, Adar II in that order.
+
+        // Unlike CLDR, ICU4X does not consider Adar/Adar II to have number 7 (and subsequent
+        // months to be shifted), so we have to special-case the locales that use digits.
+        // We detect this by checking whether the names for month["1n"] starts with the name
+        // for month["1"]. This branch will therefore be taken for und, ast, bn, ff-Adlm, and mr.
+
+        // The CLDR 48 data, for e.g. fa, can be inspected at
+        // https://github.com/unicode-org/cldr-json/blob/48.0.0/cldr-json/cldr-cal-hebrew-full/main/fa/ca-hebrew.json#L28-L43
+
+        Ok(MonthNames::LeapLinear(
+            (&[
+                months.0["1"].as_str(),
+                months.0["2"].as_str(),
+                months.0["3"].as_str(),
+                months.0["4"].as_str(),
+                months.0["5"].as_str(),
+                months.0["6"].as_str(),
+                months.0["7"].as_str(),
+                months.0["8"].as_str(),
+                months.0["9"].as_str(),
+                months.0["10"].as_str(),
+                months.0["11"].as_str(),
+                months.0["12"].as_str(),
+                "",
+                "",
+                "",
+                "",
+                // For lack of a better solution, we call Adar I and Adar II "a" and "b" instead.
+                &format!("{}a", &months.0["6"]),
+                &format!("{}b", &months.0["6"]),
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+            ])
+                .into(),
+        ))
+    } else if calendar == DatagenCalendar::Hebrew {
         for (k, v) in months.0.iter() {
             // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
             //
@@ -491,16 +553,13 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
     })
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
     glue_type: GlueType,
 ) -> Result<GluePattern<'static>, DataError> {
-    let append_tz = icu_pattern::DoublePlaceholderPattern::try_from_str(
-        &data.datetime_formats.append_items.timezone,
-        Default::default(),
-    )
-    .expect("failed to parse pattern");
+    let append_tz = &data.datetime_formats.append_items.timezone;
 
     // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
     let at_time = data

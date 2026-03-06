@@ -97,3 +97,6 @@ required-features = ["serde", "hashmap", "derive"]
 [[example]]
 name = "zv_serde"
 required-features = ["serde"]
+
+[lints]
+workspace = true

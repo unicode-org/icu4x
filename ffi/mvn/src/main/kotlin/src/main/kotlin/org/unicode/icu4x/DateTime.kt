@@ -63,7 +63,7 @@ internal class OptionDateTimeNative constructor(): Structure(), Structure.ByValu
 
 }
 
-/** An ICU4X DateTime object capable of containing a date and time for any calendar.
+/** An ICU4X `DateTime` object capable of containing a date and time for any calendar.
 *
 *See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html) for more information.
 */
@@ -75,8 +75,8 @@ class DateTime (var date: Date, var time: Time) {
         val NATIVESIZE: Long = Native.getNativeSize(DateTimeNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: DateTimeNative): DateTime {
-            val date: Date = Date(nativeStruct.date, listOf())
-            val time: Time = Time(nativeStruct.time, listOf())
+            val date: Date = Date(nativeStruct.date, listOf(), true)
+            val time: Time = Time(nativeStruct.time, listOf(), true)
 
             return DateTime(date, time)
         }
@@ -88,16 +88,19 @@ class DateTime (var date: Date, var time: Time) {
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html#method.try_from_str) for more information.
         */
         fun fromString(v: String, calendar: Calendar): Result<DateTime> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_DateTime_from_string_mv1(vSlice, calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnStruct = DateTime.fromNative(returnVal.union.ok)
-                if (vMem != null) vMem.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_DateTime_from_string_mv1(vSliceMemory.slice, calendar.handle);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = DateTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }
