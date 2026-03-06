@@ -64,7 +64,7 @@ impl Hebrew {
     }
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug)]
 pub(crate) struct HebrewYear {
     keviyah: Keviyah,
     value: i32,

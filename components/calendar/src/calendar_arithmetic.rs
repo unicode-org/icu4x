@@ -187,7 +187,7 @@ impl PackWithMD for i32 {
 pub(crate) trait DateFieldsResolver: Calendar {
     /// This stores the year as either an i32, or a type containing more
     /// useful computational information.
-    type YearInfo: Copy + Debug + PartialEq + ToExtendedYear + PackWithMD;
+    type YearInfo: Copy + Debug + ToExtendedYear + PackWithMD;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8;
 
@@ -420,7 +420,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                             _ => return Err(DateFromFieldsError::NotEnoughFields),
                         };
                         let ref_year = calendar.reference_year_from_month_day(m, d);
-                        if ref_year == Err(EcmaReferenceYearError::UseRegularIfConstrain)
+                        if ref_year.err() == Some(EcmaReferenceYearError::UseRegularIfConstrain)
                             && options.overflow == Some(Overflow::Constrain)
                         {
                             let new_valid_month = Month::new(m.number());
@@ -653,7 +653,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // (note: integer steps omitted)
         // 1. Else if _day_ ≠ _target_.[[Day]], then
         //   1. If _sign_ × (_day_ - _target_.[[Day]]) > 0, return *true*.
-        if year != target.year() {
+        if year.to_extended_year() != target.year().to_extended_year() {
             if sign
                 * (i64::from(year.to_extended_year()) - i64::from(target.year().to_extended_year()))
                 > 0
@@ -697,7 +697,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //   1. If _sign_ × (_month_ - _target_.[[Month]]) > 0, return *true*.
         // 1. Else if _day_ ≠ _target_.[[Day]], then
         //   1. If _sign_ × (_day_ - _target_.[[Day]]) > 0, return *true*.
-        if year != target.year() {
+        if year.to_extended_year() != target.year().to_extended_year() {
             if sign
                 * (i64::from(year.to_extended_year()) - i64::from(target.year().to_extended_year()))
                 > 0
