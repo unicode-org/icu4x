@@ -752,87 +752,131 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         sign: i64,
         cal: &C,
     ) -> bool {
-        // 1. Let _parts_ be CalendarISOToDate(_calendar_, _fromIsoDate_).
-        let parts = self;
-        // 1. Let _calDate2_ be CalendarISOToDate(_calendar_, _toIsoDate_).
-        let cal_date_2 = other;
-        // 1. Let _y0_ be _parts_.[[Year]] + _years_.
-        let y0 =
-            cal.year_info_from_extended(duration.add_years_to(parts.year().to_extended_year()));
-        // 1. If CompareSurpasses(_sign_, _y0_, _parts_.[[MonthCode]], _parts_.[[Day]], _calDate2_) is *true*, return *true*.
-        let base_month = cal.month_from_ordinal(parts.year(), parts.month());
-        if Self::compare_surpasses_lexicographic(sign, y0, base_month, parts.day(), cal_date_2, cal)
-        {
+        // NOTE: Numbered comments refer to the Temporal `NonISODateSurpasses` spec.
+        // Because this implementation refactors the algorithm into stateful components
+        // to reduce redundant calculations, references to numbered lines of the spec are
+        // distributed across multiple functions. This is intentional and meaningful.
+        let sign_mul = if duration.is_negative { -1i64 } else { 1i64 };
+        let years = i64::from(duration.years) * sign_mul;
+        let months = i64::from(duration.months) * sign_mul;
+
+        let month_checker = self.surpasses_month_checker(other, years, sign, cal);
+        if month_checker.surpasses_month(months) {
             return true;
         }
-        // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
+
+        // 8. If weeks = 0 and days = 0, return false.
+        if duration.weeks == 0 && duration.days == 0 {
+            return false;
+        }
+
+        let months_added = Self::new_balanced(
+            month_checker.y0,
+            months + i64::from(month_checker.m0),
+            1,
+            cal,
+        );
+        let week_day_checker =
+            self.surpasses_week_day_checker_from_months_added(&month_checker, months_added);
+        week_day_checker.surpasses_week_day(duration)
+    }
+
+    /// Prepares a stateful checker for month iteration in surpasses().
+    fn surpasses_month_checker<'a>(
+        &'a self,
+        other: &'a Self,
+        years: i64,
+        sign: i64,
+        cal: &'a C,
+    ) -> SurpassesMonthChecker<'a, C> {
+        // 1. Let parts be CalendarISOToDate(calendar, fromIsoDate).
+        let parts = self;
+        // 2. Let calDate2 be CalendarISOToDate(calendar, toIsoDate).
+        let cal_date_2 = other;
+        // 3. Let y0 be parts.[[Year]] + years.
+        let y0 = cal.year_info_from_extended(parts.year().to_extended_year() + years as i32);
+        let base_month = cal.month_from_ordinal(parts.year(), parts.month());
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
         };
-        let m0_result = cal.ordinal_from_month(y0, base_month, constrain);
-        let m0 = match m0_result {
-            Ok(m0) => m0,
-            Err(_) => {
-                debug_assert!(
-                    false,
-                    "valid month code for calendar, and constrained to the year"
-                );
-                1
-            }
-        };
-        // 1. Let _monthsAdded_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _months_, 1).
-        let months_added = Self::new_balanced(y0, duration.add_months_to(m0), 1, cal);
+        // 5. Let m0 be MonthCodeToOrdinal(calendar, y0, ! ConstrainMonthCode(calendar, y0, parts.[[MonthCode]], constrain)).
+        let m0 = cal
+            .ordinal_from_month(y0, base_month, constrain)
+            .unwrap_or(1);
 
-        // 1. If CompareSurpasses(_sign_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]], _parts_.[[Day]], _calDate2_) is *true*, return *true*.
-        if Self::compare_surpasses_ordinal(
+        // 7. If CompareSurpasses(sign, monthsAdded.[[Year]], monthsAdded.[[Month]], parts.[[Day]], calDate2) is true, return true.
+        let lexicographic_surpasses = Self::compare_surpasses_lexicographic(
             sign,
-            months_added.year,
-            months_added.ordinal_month,
+            y0,
+            base_month,
             parts.day(),
             cal_date_2,
-        ) {
-            return true;
+            cal,
+        );
+
+        SurpassesMonthChecker {
+            parts,
+            cal_date_2,
+            y0,
+            m0,
+            lexicographic_surpasses,
+            sign,
+            cal,
         }
-        // 1. If _weeks_ = 0 and _days_ = 0, return *false*.
-        if duration.weeks == 0 && duration.days == 0 {
-            return false;
-        }
-        // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _monthsAdded_.[[Year]], _monthsAdded_.[[Month]] + 1, 0).
+    }
+
+    /// Prepares a stateful checker for week and day iteration in surpasses().
+    fn surpasses_week_day_checker<'a>(
+        &'a self,
+        other: &'a Self,
+        years: i64,
+        months: i64,
+        sign: i64,
+        cal: &'a C,
+    ) -> SurpassesWeekDayChecker<'a, C> {
+        let month_checker = self.surpasses_month_checker(other, years, sign, cal);
+        // 6. Let monthsAdded be BalanceNonISODate(calendar, y0, m0 + months, 1).
+        let months_added = Self::new_balanced(
+            month_checker.y0,
+            months + i64::from(month_checker.m0),
+            1,
+            cal,
+        );
+        self.surpasses_week_day_checker_from_months_added(&month_checker, months_added)
+    }
+
+    /// Prepares a checker for week and day iteration from an existing months_added date.
+    fn surpasses_week_day_checker_from_months_added<'a>(
+        &'a self,
+        month_checker: &SurpassesMonthChecker<'a, C>,
+        months_added: UncheckedArithmeticDate<C>,
+    ) -> SurpassesWeekDayChecker<'a, C> {
+        // 9. Let endOfMonth be BalanceNonISODate(calendar, monthsAdded.[[Year]], monthsAdded.[[Month]] + 1, 0).
         let end_of_month = Self::new_balanced(
             months_added.year,
             i64::from(months_added.ordinal_month) + 1,
             0,
-            cal,
+            month_checker.cal,
         );
-        // 1. Let _baseDay_ be _parts_.[[Day]].
-        let base_day = parts.day();
-        // 1. If _baseDay_ &le; _endOfMonth_.[[Day]], then
-        //   1. Let _regulatedDay_ be _baseDay_.
-        // 1. Else,
-        //   1. Let _regulatedDay_ be _endOfMonth_.[[Day]].
+        // 10. Let baseDay be parts.[[Day]].
+        let base_day = self.day();
+        // 11. If baseDay ≤ endOfMonth.[[Day]], then
+        //     a. Let regulatedDay be baseDay.
+        // 12. Else,
+        //     a. Let regulatedDay be endOfMonth.[[Day]].
         let regulated_day = if base_day < end_of_month.day {
             base_day
         } else {
             end_of_month.day
         };
-        // 1. Let _daysInWeek_ be 7 (the number of days in a week for all supported calendars).
-        // 1. Let _balancedDate_ be BalanceNonISODate(_calendar_, _endOfMonth_.[[Year]], _endOfMonth_.[[Month]], _regulatedDay_ + _daysInWeek_ * _weeks_ + _days_).
-        // 1. Return CompareSurpasses(_sign_, _balancedDate_.[[Year]], _balancedDate_.[[Month]], _balancedDate_.[[Day]], _calDate2_).
-        let balanced_date = Self::new_balanced(
-            end_of_month.year,
-            i64::from(end_of_month.ordinal_month),
-            duration.add_weeks_and_days_to(regulated_day),
-            cal,
-        );
-
-        Self::compare_surpasses_ordinal(
-            sign,
-            balanced_date.year,
-            balanced_date.ordinal_month,
-            balanced_date.day,
-            cal_date_2,
-        )
+        SurpassesWeekDayChecker {
+            cal_date_2: month_checker.cal_date_2,
+            end_of_month,
+            regulated_day,
+            sign: month_checker.sign,
+            cal: month_checker.cal,
+        }
     }
 
     /// Implements the Temporal abstract operation `NonISODateAdd`.
@@ -950,8 +994,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             }
         }
 
-        // 1. Let _sign_ be -1 × CompareISODate(_one_, _two_).
-        // 1. If _sign_ = 0, return ZeroDateDuration().
+        // 1. Let sign be -1 × CompareISODate(one, two).
+        // 2. If sign = 0, return ZeroDateDuration().
         let sign = match other.cmp(self) {
             Ordering::Greater => 1i64,
             Ordering::Equal => return DateDuration::default(),
@@ -976,12 +1020,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             cal,
         ));
 
-        // 1. Let _years_ be 0.
-        // 1. If _largestUnit_ is ~year~, then
-        //   1. Let _candidateYears_ be _sign_.
-        //   1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _candidateYears_, 0, 0, 0) is *false*,
-        //     1. Set _years_ to _candidateYears_.
-        //     1. Set _candidateYears_ to _candidateYears_ + _sign_.
+        // 3. Let years be 0.
+        // 4. If largestUnit is year, then
+        //   a. Let candidateYears be sign.
+        //   b. Repeat, while NonISODateSurpasses(calendar, sign, one, two, candidateYears, 0, 0, 0) is false,
+        //     i. Set years to candidateYears.
+        //     ii. Set candidateYears to candidateYears + sign.
 
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
@@ -1004,12 +1048,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             }
         }
 
-        // 1. Let _months_ be 0.
-        // 1. If _largestUnit_ is ~year~ or _largestUnit_ is ~month~, then
-        //   1. Let _candidateMonths_ be _sign_.
-        //   1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _years_, _candidateMonths_, 0, 0) is *false*,
-        //     1. Set _months_ to _candidateMonths_.
-        //     1. Set _candidateMonths_ to _candidateMonths_ + _sign_.
+        // 5. Let months be 0.
+        // 6. If largestUnit is year or largestUnit is month, then
+        //   a. Let candidateMonths be sign.
+        //   b. Repeat, while NonISODateSurpasses(calendar, sign, one, two, years, candidateMonths, 0, 0) is false,
+        //     i. Set months to candidateMonths.
+        //     ii. Set candidateMonths to candidateMonths + sign.
         let mut months = 0;
         if matches!(
             options.largest_unit,
@@ -1032,58 +1076,128 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_months = min_months
             }
 
-            while !self.surpasses(
-                other,
-                DateDuration::from_signed_ymwd(years, candidate_months, 0, 0),
-                sign,
-                cal,
-            ) {
+            let checker = self.surpasses_month_checker(other, years, sign, cal);
+            while !checker.surpasses_month(candidate_months) {
                 months = candidate_months;
                 candidate_months += sign;
             }
         }
-        // 1. Let _weeks_ be 0.
-        // 1. If _largestUnit_ is ~week~, then
-        //   1. Let _candidateWeeks_ be _sign_.
-        //   1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _years_, _months_, _candidateWeeks_, 0) is *false*,
-        //     1. Set _weeks_ to _candidateWeeks_.
-        //     1. Set _candidateWeeks_ to _candidateWeeks_ + sign.
+        // 7. Let weeks be 0.
+        // 8. If largestUnit is week, then
+        //   a. Let candidateWeeks be sign.
+        //   b. Repeat, while NonISODateSurpasses(calendar, sign, one, two, years, months, candidateWeeks, 0) is false,
+        //     i. Set weeks to candidateWeeks.
+        //     ii. Set candidateWeeks to candidateWeeks + sign.
         let mut weeks = 0;
+        let checker = self.surpasses_week_day_checker(other, years, months, sign, cal);
         if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
             let mut candidate_weeks = sign;
-            while !self.surpasses(
-                other,
-                DateDuration::from_signed_ymwd(years, months, candidate_weeks, 0),
-                sign,
-                cal,
-            ) {
+            while !checker.surpasses_week(candidate_weeks) {
                 weeks = candidate_weeks;
                 candidate_weeks += sign;
             }
         }
 
-        // 1. Let _days_ be 0.
-        // 1. Let _candidateDays_ be _sign_.
-        // 1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _years_, _months_, _weeks_, _candidateDays_) is *false*,
-        //   1. Set _days_ to _candidateDays_.
-        //   1. Set _candidateDays_ to _candidateDays_ + _sign_.
+        // 9. Let days be 0.
+        // 10. Let candidateDays be sign.
+        // 11. Repeat, while NonISODateSurpasses(calendar, sign, one, two, years, months, weeks, candidateDays) is false,
+        //   a. Set days to candidateDays.
+        //   b. Set candidateDays to candidateDays + sign.
         let mut days = 0;
         // There is no pressing need to optimize candidate_days here: the early-return RD arithmetic
         // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
         // arrive here with a candidate date that is at most 31 days off. We can run this loop 31 times.
         let mut candidate_days = sign;
-        while !self.surpasses(
-            other,
-            DateDuration::from_signed_ymwd(years, months, weeks, candidate_days),
-            sign,
-            cal,
-        ) {
+        while !checker.surpasses_day(weeks, candidate_days) {
             days = candidate_days;
             candidate_days += sign;
         }
 
-        // 1. Return ! CreateDateDurationRecord(_years_, _months_, _weeks_, _days_).
+        // 12. Return ! CreateDateDurationRecord(years, months, weeks, days).
         DateDuration::from_signed_ymwd(years, months, weeks, days)
+    }
+}
+
+/// Stateful checker for month iteration in surpasses().
+///
+/// By saving intermediary computations based on a fixed year,
+/// only the computations relating to the month are done. The week
+/// and day are expected to be zero.
+struct SurpassesMonthChecker<'a, C: DateFieldsResolver> {
+    parts: &'a ArithmeticDate<C>,
+    cal_date_2: &'a ArithmeticDate<C>,
+    y0: C::YearInfo,
+    m0: u8,
+    lexicographic_surpasses: bool,
+    sign: i64,
+    cal: &'a C,
+}
+
+impl<'a, C: DateFieldsResolver> SurpassesMonthChecker<'a, C> {
+    fn surpasses_month(&self, months: i64) -> bool {
+        // 4. If CompareSurpasses(sign, y0, parts.[[MonthCode]], parts.[[Day]], calDate2) is true, return true.
+        if self.lexicographic_surpasses {
+            return true;
+        }
+        // 6. Let monthsAdded be BalanceNonISODate(calendar, y0, m0 + months, 1).
+        let months_added =
+            ArithmeticDate::<C>::new_balanced(self.y0, months + i64::from(self.m0), 1, self.cal);
+
+        // 7. If CompareSurpasses(sign, monthsAdded.[[Year]], monthsAdded.[[Month]], parts.[[Day]], calDate2) is true, return true.
+        ArithmeticDate::<C>::compare_surpasses_ordinal(
+            self.sign,
+            months_added.year,
+            months_added.ordinal_month,
+            self.parts.day(),
+            self.cal_date_2,
+        )
+    }
+}
+
+/// Stateful checker for week and day iteration in surpasses().
+///
+/// By saving intermediary computations based on a fixed year and month,
+/// only the computations relating to the week and day are done.
+struct SurpassesWeekDayChecker<'a, C: DateFieldsResolver> {
+    cal_date_2: &'a ArithmeticDate<C>,
+    end_of_month: UncheckedArithmeticDate<C>,
+    regulated_day: u8,
+    sign: i64,
+    cal: &'a C,
+}
+
+impl<'a, C: DateFieldsResolver> SurpassesWeekDayChecker<'a, C> {
+    fn surpasses_balanced_day(&self, balanced_day: i64) -> bool {
+        // 14. Let balancedDate be BalanceNonISODate(calendar, endOfMonth.[[Year]], endOfMonth.[[Month]], regulatedDay + daysInWeek * weeks + days).
+        let balanced_date = ArithmeticDate::<C>::new_balanced(
+            self.end_of_month.year,
+            i64::from(self.end_of_month.ordinal_month),
+            balanced_day,
+            self.cal,
+        );
+
+        // 15. Return CompareSurpasses(sign, balancedDate.[[Year]], balancedDate.[[Month]], balancedDate.[[Day]], calDate2).
+        ArithmeticDate::<C>::compare_surpasses_ordinal(
+            self.sign,
+            balanced_date.year,
+            balanced_date.ordinal_month,
+            balanced_date.day,
+            self.cal_date_2,
+        )
+    }
+
+    fn surpasses_week(&self, weeks: i64) -> bool {
+        // 13. Let daysInWeek be 7 (the number of days in a week for all supported calendars).
+        self.surpasses_balanced_day(7 * weeks + i64::from(self.regulated_day))
+    }
+
+    fn surpasses_day(&self, weeks: i64, days: i64) -> bool {
+        // 13. Let daysInWeek be 7 (the number of days in a week for all supported calendars).
+        self.surpasses_balanced_day(7 * weeks + days + i64::from(self.regulated_day))
+    }
+
+    fn surpasses_week_day(&self, duration: DateDuration) -> bool {
+        self.surpasses_balanced_day(duration.add_weeks_and_days_to(self.regulated_day))
     }
 }
 
