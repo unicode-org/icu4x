@@ -330,26 +330,24 @@ macro_rules! make_any_calendar {
             #[$unstable_cfg]
             fn until(
                 &self,
-                other: &Self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
                 options: $crate::options::DateDifferenceOptions,
-            ) -> Result<$crate::types::DateDuration, Self::IdentityError> {
-                match (self, other, date1, date2) {
+            ) -> $crate::types::DateDuration {
+                match (self, date1, date2) {
                     $(
-                        (Self::$variant(ref c1), Self::$variant(ref c2), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
-                            c1.until(c2, d1, d2, options).map_err(|_| $crate::error::MismatchedCalendarError)
+                        (Self::$variant(ref c), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c) == *q1 && q1 == q2 => {
+                            c.until(d1, d2, options)
                         }
                     )+
                     $(
                         #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2  => {
-                            c1.until(c2, d1, d2, options).map_err(|_| $crate::error::MismatchedCalendarError)
+                        (Self::$deprecated_variant(ref c), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c) == *q1 && q1 == q2  => {
+                            c.until(d1, d2, options)
                         }
                     )*
-                    _ => {
-                        return Err($crate::error::MismatchedCalendarError);
-                    }
+                    // This is only reached from misuse of from_raw, a semi-internal api
+                    _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
             }
 
@@ -367,40 +365,6 @@ macro_rules! make_any_calendar {
                         }
                     )*
                     _ => Err($crate::error::MismatchedCalendarError),
-                }
-            }
-
-            fn eq_dates(&self, other: &Self, date1: &Self::DateInner, date2: &Self::DateInner) -> Result<bool, Self::IdentityError> {
-                match (self, other, date1, date2) {
-                    $(
-                        (Self::$variant(ref c1), Self::$variant(ref c2), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
-                            c1.eq_dates(c2, d1, d2).map_err(|_| $crate::error::MismatchedCalendarError)
-                        }
-                    )+
-                    $(
-                        #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2  => {
-                            c1.eq_dates(c2, d1, d2).map_err(|_| $crate::error::MismatchedCalendarError)
-                        }
-                    )*
-                    _ => return Err($crate::error::MismatchedCalendarError),
-                }
-            }
-
-            fn cmp_dates(&self, other: &Self, date1: &Self::DateInner, date2: &Self::DateInner) -> Result<core::cmp::Ordering, Self::IdentityError> {
-                match (self, other, date1, date2) {
-                    $(
-                        (Self::$variant(ref c1), Self::$variant(ref c2), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
-                            c1.cmp_dates(c2, d1, d2).map_err(|_| $crate::error::MismatchedCalendarError)
-                        }
-                    )+
-                    $(
-                        #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2  => {
-                            c1.cmp_dates(c2, d1, d2).map_err(|_| $crate::error::MismatchedCalendarError)
-                        }
-                    )*
-                    _ => return Err($crate::error::MismatchedCalendarError),
                 }
             }
 

@@ -9,7 +9,6 @@ use crate::error::{DateAddError, DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Iso};
-use core::cmp::Ordering;
 use core::fmt;
 
 /// A calendar implementation
@@ -30,7 +29,8 @@ use core::fmt;
 pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The internal type used to represent dates
     ///
-    /// The `Copy` and `PartialOrd` bounds are not used anymore.
+    /// Using the [`Eq`] or [`PartialOrd`] implementations requires
+    /// the associated calendars to have passed [`Self::eq_calendars`].
     type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
     /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
@@ -147,10 +147,9 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         options: DateAddOptions,
     ) -> Result<Self::DateInner, DateAddError>;
 
-    /// Calculate `date2 - date` as a duration
+    /// Calculate `date2 - date` as a duration.
     ///
-    /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
-    /// differ on data, the data for the first calendar is used, and `date2` may be converted if necessary.
+    /// This requires the associated calendars to have passed [`Self::eq_calendars`].
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -163,31 +162,14 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
-        other: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::IdentityError>;
+    ) -> types::DateDuration;
 
     /// Returns whether two calendars are considered equal in the sense that the
     /// inner date of one calendar represents the same day in the other calendar.
     fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError>;
-
-    /// Compares two [`Self::DateInner`]s and their associated calendars under [`PartialEq`] semantics.
-    fn eq_dates(
-        &self,
-        other: &Self,
-        a: &Self::DateInner,
-        b: &Self::DateInner,
-    ) -> Result<bool, Self::IdentityError>;
-
-    /// Compares two [`Self::DateInner`]s and their associated calendars under [`PartialOrd`]/[`Ord`] semantics.
-    fn cmp_dates(
-        &self,
-        other: &Self,
-        a: &Self::DateInner,
-        b: &Self::DateInner,
-    ) -> Result<Ordering, Self::IdentityError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

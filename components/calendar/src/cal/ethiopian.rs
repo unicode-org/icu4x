@@ -204,38 +204,16 @@ impl Calendar for Ethiopian {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
-        other: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::IdentityError> {
-        self.eq_calendars(other)?;
-        Coptic.until(&Coptic, &date1.0, &date2.0, options)
+    ) -> types::DateDuration {
+        Coptic.until(&date1.0, &date2.0, options)
     }
 
     fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
         let _does_not_affect_semantics = other.era_style();
         Ok(())
-    }
-
-    fn eq_dates(
-        &self,
-        other: &Self,
-        a: &Self::DateInner,
-        b: &Self::DateInner,
-    ) -> Result<bool, Self::IdentityError> {
-        self.eq_calendars(other)?;
-        Ok(a == b)
-    }
-
-    fn cmp_dates(
-        &self,
-        other: &Self,
-        a: &Self::DateInner,
-        b: &Self::DateInner,
-    ) -> Result<core::cmp::Ordering, Self::IdentityError> {
-        self.eq_calendars(other)?;
-        Ok(a.cmp(b))
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {

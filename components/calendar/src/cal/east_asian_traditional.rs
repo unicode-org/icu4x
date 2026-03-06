@@ -754,37 +754,15 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     #[cfg(feature = "unstable")]
     fn until(
         &self,
-        other: &Self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::IdentityError> {
-        self.eq_calendars(other)?;
-        Ok(date1.0.until(&date2.0, self, options))
+    ) -> types::DateDuration {
+        date1.0.until(&date2.0, self, options)
     }
 
     fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
         self.0.check_identity(&other.0)
-    }
-
-    fn eq_dates(
-        &self,
-        other: &Self,
-        a: &Self::DateInner,
-        b: &Self::DateInner,
-    ) -> Result<bool, Self::IdentityError> {
-        self.eq_calendars(other)?;
-        Ok(a == b)
-    }
-
-    fn cmp_dates(
-        &self,
-        other: &Self,
-        a: &Self::DateInner,
-        b: &Self::DateInner,
-    ) -> Result<core::cmp::Ordering, Self::IdentityError> {
-        self.eq_calendars(other)?;
-        Ok(a.cmp(b))
     }
 
     /// Obtain a name for the calendar for debug printing

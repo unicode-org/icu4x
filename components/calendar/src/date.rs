@@ -441,9 +441,11 @@ impl<A: AsCalendar> Date<A> {
         other: &Date<B>,
         options: DateDifferenceOptions,
     ) -> Result<types::DateDuration, <A::Calendar as Calendar>::IdentityError> {
-        self.calendar
+        self.calendar().eq_calendars(other.calendar())?;
+        Ok(self
+            .calendar
             .as_calendar()
-            .until(other.calendar(), self.inner(), other.inner(), options)
+            .until(self.inner(), other.inner(), options))
     }
 
     /// Construct a date from raw values for a given calendar. This does not check any
@@ -584,9 +586,10 @@ where
     B: AsCalendar<Calendar = C>,
 {
     fn eq(&self, other: &Date<B>) -> bool {
-        self.calendar()
-            .eq_dates(other.calendar(), &self.inner, &other.inner)
-            .unwrap_or(false)
+        match self.calendar().eq_calendars(other.calendar()) {
+            Ok(_) => self.inner.eq(&other.inner),
+            Err(_) => false,
+        }
     }
 }
 
@@ -599,9 +602,10 @@ where
     B: AsCalendar<Calendar = C>,
 {
     fn partial_cmp(&self, other: &Date<B>) -> Option<core::cmp::Ordering> {
-        self.calendar()
-            .cmp_dates(other.calendar(), &self.inner, &other.inner)
-            .ok()
+        match self.calendar().eq_calendars(other.calendar()) {
+            Ok(_) => self.inner.partial_cmp(&other.inner),
+            Err(_) => None,
+        }
     }
 }
 
@@ -612,13 +616,10 @@ where
     A: AsCalendar<Calendar = C>,
 {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        match self
-            .calendar()
-            .cmp_dates(other.calendar(), &self.inner, &other.inner)
-        {
-            Ok(o) => o,
+        match self.calendar().eq_calendars(other.calendar()) {
+            Ok(_) => self.inner().cmp(other.inner()),
             Err(_) => {
-                debug_assert!(false, "buggy Ord");
+                // TODO: this is incorrect
                 self.inner().cmp(other.inner())
             }
         }
