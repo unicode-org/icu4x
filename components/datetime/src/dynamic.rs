@@ -110,6 +110,8 @@ pub enum DateFieldSet {
     /// The weekday alone, as in
     /// “Saturday”.
     E(fieldsets::E),
+    /// Weekday and hour, as in “Saturday 3 PM”.
+    Eh(fieldsets::Eh),
 }
 
 /// An enumeration over all possible calendar period field sets.
@@ -142,6 +144,8 @@ pub enum CalendarPeriodFieldSet {
 pub enum TimeFieldSet {
     /// A time of day.
     T(fieldsets::T),
+    /// A time of day with generic non-location timezone.
+    Tv(fieldsets::Tv),
 }
 
 /// An enumeration over all possible zone field sets.
@@ -211,6 +215,9 @@ pub enum DateAndTimeFieldSet {
     /// The weekday alone with time of day, as in
     /// “Saturday at 10:31 AM”.
     ET(fieldsets::ET),
+    /// The weekday and hour, as in
+    /// “Saturday 3 PM”.
+    EH(fieldsets::EH),
 }
 
 /// An enum supporting date, calendar period, time, and date+time field sets
@@ -343,7 +350,7 @@ macro_rules! impl_attrs {
             /// ```
             pub const ALL_DATA_MARKER_ATTRIBUTES: &'static [&'static DataMarkerAttributes] = &[
                 $(
-                    Self::$attr_var,
+                    &Self::$attr_var,
                 )+
             ];
         }
@@ -399,7 +406,14 @@ macro_rules! impl_attrs {
     };
     (@time, $type:path, [$(($attr_var:ident, $str_var:ident, $value:literal)),+,]) => {
         impl_attrs! { @attrs, $type, [$(($attr_var, $str_var, $value)),+,] }
-        impl_attrs! { @to_raw_options, $type, [T,] }
+        impl $type {
+            pub(crate) fn to_raw_options(self) -> RawOptions {
+                match self {
+                    Self::T(variant) => variant.to_raw_options(),
+                    Self::Tv(variant) => variant.to_raw_options(),
+                }
+            }
+        }
         impl_attrs! { @composite, $type, Time }
     };
     (@zone, $type:path, [$($variant:ident),+,]) => {
@@ -459,6 +473,7 @@ impl_attrs! {
         (MDE, ATTR_MDE, STR_MDE, "m0de"),
         (YMDE, ATTR_YMDE, STR_YMDE, "ym0de"),
         (E, ATTR_E, STR_E, "e"),
+        (Eh, ATTR_EH, STR_EH, "eh"),
     ]
 }
 
@@ -479,6 +494,9 @@ impl_attrs! {
         (ATTR_T, STR_T, "j"),
         (ATTR_T12, STR_T12, "h"),
         (ATTR_T24, STR_T24, "h0"),
+        (ATTR_TV, STR_TV, "jv"),
+        (ATTR_TV12, STR_TV12, "hv"),
+        (ATTR_TV24, STR_TV24, "h0v"),
     ]
 }
 
@@ -488,10 +506,13 @@ impl TimeFieldSet {
         hour_cycle: Option<provider::fields::Hour>,
     ) -> &'static DataMarkerAttributes {
         use provider::fields::Hour::*;
-        match hour_cycle {
-            None => Self::ATTR_T,
-            Some(H11 | H12) => Self::ATTR_T12,
-            Some(H23) => Self::ATTR_T24,
+        match (self, hour_cycle) {
+            (Self::T(_), None) => Self::ATTR_T,
+            (Self::T(_), Some(H11 | H12)) => Self::ATTR_T12,
+            (Self::T(_), Some(H23)) => Self::ATTR_T24,
+            (Self::Tv(_), None) => Self::ATTR_TV,
+            (Self::Tv(_), Some(H11 | H12)) => Self::ATTR_TV12,
+            (Self::Tv(_), Some(H23)) => Self::ATTR_TV24,
         }
     }
 }
@@ -516,6 +537,7 @@ impl_attrs! {
     DateAndTimeFieldSet,
     [
         (ATTR_ET, STR_ET, "ej"),
+        (ATTR_EH, STR_EH, "eh"),
     ]
 }
 
@@ -530,6 +552,7 @@ impl_attrs! {
         (MDE, MDET),
         (YMDE, YMDET),
         (E, ET),
+        (Eh, EH),
     ]
 }
 
@@ -537,6 +560,7 @@ impl DateAndTimeFieldSet {
     pub(crate) const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
         match self {
             DateAndTimeFieldSet::ET(_) => Some(Self::ATTR_ET),
+            DateAndTimeFieldSet::EH(_) => Some(Self::ATTR_EH),
             _ => None,
         }
     }

@@ -171,6 +171,86 @@ fn test_en_overlap_patterns() {
     );
 }
 
+#[test]
+fn test_en_tv_patterns() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing();
+    let payload: DataPayload<DatetimePatternsTimeV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("jv"),
+                &locale!("en").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "variant_pattern_indices": [
+    2,
+    2,
+    2,
+    3,
+    3,
+    3
+  ],
+  "elements": [
+    "h a v",
+    "h:m a",
+    "h:m:s a"
+  ]
+}"#
+    );
+}
+
+#[test]
+fn test_en_eh_patterns() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing();
+    let payload: DataPayload<DatetimePatternsDateGregorianV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("eh"),
+                &locale!("en").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    3,
+    4,
+    4,
+    5,
+    6,
+    6
+  ],
+  "elements": [
+    "EEEE h a",
+    "E h a",
+    "EEEE h:m a",
+    "E h:mm a",
+    "EEEE h:m:s a",
+    "E h:mm:ss a"
+  ]
+}"#
+    );
+}
+
 /// This is a test that should eventually be moved to CLDR.
 ///
 /// See: <https://unicode-org.atlassian.net/browse/CLDR-14993>
