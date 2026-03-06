@@ -226,6 +226,22 @@ impl From<PluralCategory> for PluralCategoryExtended {
     }
 }
 
+impl From<u8> for PluralCategoryExtended {
+    fn from(val: u8) -> Self {
+        match val {
+            0 => Self::Zero,
+            1 => Self::One,
+            2 => Self::Two,
+            3 => Self::Few,
+            4 => Self::Many,
+            5 => Self::Other,
+            6 => Self::Explicit0,
+            7 => Self::Explicit1,
+            _ => unreachable!("Invalid PluralCategoryExtended value: {}", val),
+        }
+    }
+}
+
 impl PluralCategory {
     /// Returns an ordered iterator over variants of [`Plural Categories`].
     ///
@@ -1134,6 +1150,22 @@ impl<T: PartialEq> PluralElements<T> {
         })
     }
 
+    /// Sets the value for `Explicit0`.
+    pub fn with_explicit_zero_value(self, explicit_zero: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            explicit_zero: explicit_zero.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
+    /// Sets the value for `Explicit1`.
+    pub fn with_explicit_one_value(self, explicit_one: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            explicit_one: explicit_one.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
     /// Sets the value for [`PluralCategory::One`].
     pub fn with_one_value(self, one: Option<T>) -> Self {
         Self(PluralElementsInner {
@@ -1162,22 +1194,6 @@ impl<T: PartialEq> PluralElements<T> {
     pub fn with_many_value(self, many: Option<T>) -> Self {
         Self(PluralElementsInner {
             many: many.filter(|t| *t != self.0.other),
-            ..self.0
-        })
-    }
-
-    /// Sets the value for explicit 0.
-    pub fn with_explicit_zero_value(self, explicit_zero: Option<T>) -> Self {
-        Self(PluralElementsInner {
-            explicit_zero,
-            ..self.0
-        })
-    }
-
-    /// Sets the value for explicit 1.
-    pub fn with_explicit_one_value(self, explicit_one: Option<T>) -> Self {
-        Self(PluralElementsInner {
-            explicit_one,
             ..self.0
         })
     }

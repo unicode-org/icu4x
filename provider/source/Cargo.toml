@@ -35,6 +35,7 @@ all-features = true
 icu = { workspace = true, features = ["datagen"] }
 
 icu_time = { workspace = true, features = ["ixdtf"] }
+icu_plurals = { workspace = true }
 
 # ICU infrastructure
 icu_codepointtrie_builder = { workspace = true }
@@ -93,9 +94,6 @@ unstable = [
     "icu/unstable",
     "dep:num-traits",
 ]
-
-# added by accident
-icu_experimental = []
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check

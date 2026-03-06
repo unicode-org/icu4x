@@ -16,7 +16,10 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::provider::rules::runtime::ast::Rule;
-use crate::{PluralCategory, PluralElements, PluralElementsInner, PluralOperands, PluralRules};
+use crate::{
+    PluralCategory, PluralCategoryExtended, PluralElements, PluralElementsInner, PluralOperands,
+    PluralRules,
+};
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
@@ -532,33 +535,44 @@ where
     pub fn get<'a>(&'a self, op: PluralOperands, rules: &PluralRules) -> (FourBitMetadata, &'a V) {
         let parts = self.as_parts();
 
-        let category = rules.category_for(op);
-
-        match parts.specials {
-            Some(specials) => {
-                if op.is_exactly_zero() {
+        if let Some(specials) = parts.specials {
+            let extended_category = rules.extended_category_for(op);
+            let category = match extended_category {
+                PluralCategoryExtended::Explicit0 => {
                     if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitZero) {
                         return value;
                     }
+                    rules.category_for(op)
                 }
-                if op.is_exactly_one() {
+                PluralCategoryExtended::Explicit1 => {
                     if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitOne) {
                         return value;
                     }
+                    rules.category_for(op)
                 }
-                match category {
-                    PluralCategory::Zero => Some(PluralElementsKeys::Zero),
-                    PluralCategory::One => Some(PluralElementsKeys::One),
-                    PluralCategory::Two => Some(PluralElementsKeys::Two),
-                    PluralCategory::Few => Some(PluralElementsKeys::Few),
-                    PluralCategory::Many => Some(PluralElementsKeys::Many),
-                    PluralCategory::Other => None,
+                PluralCategoryExtended::Zero => PluralCategory::Zero,
+                PluralCategoryExtended::One => PluralCategory::One,
+                PluralCategoryExtended::Two => PluralCategory::Two,
+                PluralCategoryExtended::Few => PluralCategory::Few,
+                PluralCategoryExtended::Many => PluralCategory::Many,
+                PluralCategoryExtended::Other => PluralCategory::Other,
+            };
+
+            let key = match category {
+                PluralCategory::Zero => Some(PluralElementsKeys::Zero),
+                PluralCategory::One => Some(PluralElementsKeys::One),
+                PluralCategory::Two => Some(PluralElementsKeys::Two),
+                PluralCategory::Few => Some(PluralElementsKeys::Few),
+                PluralCategory::Many => Some(PluralElementsKeys::Many),
+                PluralCategory::Other => None,
+            };
+            if let Some(key) = key {
+                if let Some(value) = get_special(specials, key) {
+                    return value;
                 }
-                .and_then(|key| get_special(specials, key))
             }
-            None => None,
         }
-        .unwrap_or(parts.default)
+        parts.default
     }
 
     /// Recovers the [`PluralElements`] corresponding to this packed structure.

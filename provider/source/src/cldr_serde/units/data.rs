@@ -50,10 +50,10 @@ pub(crate) struct Patterns {
     #[serde(rename = "compoundUnitPattern1")]
     pub(crate) compound_unit_pattern1: Option<String>,
 
-    #[serde(rename = "compountUnitPattern1-count-0")]
+    #[serde(rename = "compoundUnitPattern1-count-0")]
     pub(crate) explicit_zero_compound_unit_pattern1: Option<String>,
 
-    #[serde(rename = "compountUnitPattern1-count-1")]
+    #[serde(rename = "compoundUnitPattern1-count-1")]
     pub(crate) explicit_one_compound_unit_pattern1: Option<String>,
 
     #[serde(rename = "compoundUnitPattern1-count-zero")]

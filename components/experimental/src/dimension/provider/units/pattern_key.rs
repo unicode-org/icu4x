@@ -7,7 +7,7 @@ use zerovec::{
     ule::{AsULE, UleError, ULE},
 };
 
-use crate::dimension::provider::units::essentials::CompoundCount;
+use icu_plurals::PluralCategoryExtended;
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -26,7 +26,7 @@ pub enum PatternKey {
     Decimal(i8),
     Power {
         power: PowerValue,
-        count: CompoundCount,
+        count: PluralCategoryExtended,
     },
 }
 
@@ -55,7 +55,9 @@ pub enum PatternKey {
 ///         - `0011`: Few
 ///         - `0100`: Many
 ///         - `0101`: Other
-///     - Note: In the `Power` case, b3 is always 0, and when b2 is 1, b1 must be 0.
+///         - `0110`: Explicit0
+///         - `0111`: Explicit1
+///     - Note: In the `Power` case, b3 is always 0.
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 pub struct PatternKeyULE(u8);
 
@@ -79,7 +81,6 @@ unsafe impl ULE for PatternKeyULE {
             // For the `Power` variant:
             //      b5 & b4 must be 10 or 11. (this means that b5 must be 1)
             //      b3 must be 0.
-            //      When b2 is 1, b1 must be 0.
             if (byte & 0b1100_0000) == 0b1000_0000 {
                 // b5 must be 1
                 if (byte & 0b0010_0000) == 0 {
@@ -88,11 +89,6 @@ unsafe impl ULE for PatternKeyULE {
 
                 // b3 must be 0
                 if (byte & 0b0000_1000) != 0 {
-                    return Err(UleError::parse::<Self>());
-                }
-
-                // If b2 is 1, b1 must be 0
-                if (byte & 0b0000_0100) != 0 && (byte & 0b0000_0010) != 0 {
                     return Err(UleError::parse::<Self>());
                 }
             }
@@ -181,7 +177,7 @@ fn test_pattern_key_ule() {
 
     let power2 = PatternKey::Power {
         power: Two,
-        count: CompoundCount::Two,
+        count: PluralCategoryExtended::Two,
     };
     let power2_ule = power2.to_unaligned();
     PatternKeyULE::validate_bytes(&[power2_ule.0]).unwrap();
@@ -189,7 +185,7 @@ fn test_pattern_key_ule() {
 
     let power3 = PatternKey::Power {
         power: Three,
-        count: CompoundCount::Two,
+        count: PluralCategoryExtended::Two,
     };
     let power3_ule = power3.to_unaligned();
     PatternKeyULE::validate_bytes(&[power3_ule.0]).unwrap();
@@ -206,7 +202,7 @@ fn test_pattern_key_ule() {
         power2,
         PatternKey::Power {
             power: Two,
-            count: CompoundCount::Two,
+            count: PluralCategoryExtended::Two,
         }
     );
 
@@ -215,9 +211,25 @@ fn test_pattern_key_ule() {
         power3,
         PatternKey::Power {
             power: Three,
-            count: CompoundCount::Two,
+            count: PluralCategoryExtended::Two,
         }
     );
+
+    let explicit0 = PatternKey::Power {
+        power: Two,
+        count: PluralCategoryExtended::Explicit0,
+    };
+    let explicit0_ule = explicit0.to_unaligned();
+    PatternKeyULE::validate_bytes(&[explicit0_ule.0]).unwrap();
+    assert_eq!(explicit0_ule.0, 0b1010_0110);
+
+    let explicit1 = PatternKey::Power {
+        power: Three,
+        count: PluralCategoryExtended::Explicit1,
+    };
+    let explicit1_ule = explicit1.to_unaligned();
+    PatternKeyULE::validate_bytes(&[explicit1_ule.0]).unwrap();
+    assert_eq!(explicit1_ule.0, 0b1011_0111);
 
     let decimal_neg_1 = PatternKey::Decimal(-1);
     let decimal_neg_1_ule = decimal_neg_1.to_unaligned();

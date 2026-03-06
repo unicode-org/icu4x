@@ -7,10 +7,10 @@ use std::collections::{BTreeMap, HashSet};
 use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
-use icu::experimental::dimension::provider::units::essentials::CompoundCount;
 use icu::experimental::dimension::provider::units::essentials::UnitsEssentials;
 use icu::experimental::dimension::provider::units::essentials::UnitsEssentialsV1;
 use icu::experimental::dimension::provider::units::pattern_key::{PatternKey, PowerValue};
+use icu_plurals::PluralCategoryExtended;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use zerovec::ZeroMap;
@@ -55,44 +55,51 @@ impl DataProvider<UnitsEssentialsV1> for SourceDataProvider {
             let powers = powers
                 .as_ref()
                 .ok_or_else(|| DataError::custom("Failed to get powers"))?;
-            [
+            let patterns = [
+                (
+                    powers.explicit_zero_compound_unit_pattern1.as_ref(),
+                    PluralCategoryExtended::Explicit0,
+                ),
+                (
+                    powers.explicit_one_compound_unit_pattern1.as_ref(),
+                    PluralCategoryExtended::Explicit1,
+                ),
                 (
                     powers.zero_compound_unit_pattern1.as_ref(),
-                    CompoundCount::Zero,
+                    PluralCategoryExtended::Zero,
                 ),
                 (
                     powers.one_compound_unit_pattern1.as_ref(),
-                    CompoundCount::One,
+                    PluralCategoryExtended::One,
                 ),
                 (
                     powers.two_compound_unit_pattern1.as_ref(),
-                    CompoundCount::Two,
+                    PluralCategoryExtended::Two,
                 ),
                 (
                     powers.few_compound_unit_pattern1.as_ref(),
-                    CompoundCount::Few,
+                    PluralCategoryExtended::Few,
                 ),
                 (
                     powers.many_compound_unit_pattern1.as_ref(),
-                    CompoundCount::Many,
+                    PluralCategoryExtended::Many,
                 ),
                 (
                     powers.other_compound_unit_pattern1.as_ref(),
-                    CompoundCount::Other,
+                    PluralCategoryExtended::Other,
                 ),
-            ]
-            .iter()
-            .filter(|(pattern, _)| pattern.is_some())
-            .map(|(pattern, count)| (pattern.unwrap(), count))
-            .for_each(|(pattern, count)| {
-                prefixes.insert(
-                    PatternKey::Power {
-                        power: power_value,
-                        count: *count,
-                    },
-                    pattern.to_string(),
-                );
-            });
+            ];
+            for (pattern, count) in patterns {
+                if let Some(pattern) = pattern {
+                    prefixes.insert(
+                        PatternKey::Power {
+                            power: power_value,
+                            count,
+                        },
+                        pattern.to_string(),
+                    );
+                }
+            }
         }
 
         for (power, patterns) in &length_data.binary {
