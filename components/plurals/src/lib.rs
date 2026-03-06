@@ -183,6 +183,49 @@ pub enum PluralCategory {
     Other = 5,
 }
 
+/// A plural category that also includes explicit 0 and 1 rules.
+///
+/// See [TR35](https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules) for more information.
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[repr(u8)]
+#[zerovec::make_ule(PluralCategoryExtendedULE)]
+#[allow(clippy::exhaustive_enums)]
+#[non_exhaustive]
+pub enum PluralCategoryExtended {
+    /// CLDR "zero" plural category.
+    Zero = 0,
+    /// CLDR "one" plural category.
+    One = 1,
+    /// CLDR "two" plural category.
+    Two = 2,
+    /// CLDR "few" plural category.
+    Few = 3,
+    /// CLDR "many" plural category.
+    Many = 4,
+    /// CLDR "other" plural category.
+    Other = 5,
+    /// Explicit 0 rule.
+    Explicit0 = 6,
+    /// Explicit 1 rule.
+    Explicit1 = 7,
+}
+
+impl From<PluralCategory> for PluralCategoryExtended {
+    fn from(category: PluralCategory) -> Self {
+        match category {
+            PluralCategory::Zero => Self::Zero,
+            PluralCategory::One => Self::One,
+            PluralCategory::Two => Self::Two,
+            PluralCategory::Few => Self::Few,
+            PluralCategory::Many => Self::Many,
+            PluralCategory::Other => Self::Other,
+        }
+    }
+}
+
 impl PluralCategory {
     /// Returns an ordered iterator over variants of [`Plural Categories`].
     ///
@@ -471,6 +514,42 @@ impl PluralRules {
             .or_else(|| test_rule!(few, Few))
             .or_else(|| test_rule!(many, Many))
             .unwrap_or(PluralCategory::Other)
+    }
+
+    /// Returns the [`PluralCategoryExtended`] corresponding to the given number.
+    ///
+    /// This differs from [`PluralRules::category_for`] by returning [`PluralCategoryExtended::Explicit0`]
+    /// or [`PluralCategoryExtended::Explicit1`] for exact integer 0 or 1 respectively.
+    ///
+    /// See [TR35](https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules) for more information.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::locale;
+    /// use icu::plurals::{PluralCategoryExtended, PluralRules};
+    ///
+    /// let pr = PluralRules::try_new(locale!("en").into(), Default::default())
+    ///     .expect("locale should be present");
+    ///
+    /// assert_eq!(pr.extended_category_for(0_usize), PluralCategoryExtended::Explicit0);
+    /// assert_eq!(pr.extended_category_for(1_usize), PluralCategoryExtended::Explicit1);
+    /// assert_eq!(pr.extended_category_for(2_usize), PluralCategoryExtended::Other);
+    /// ```
+    pub fn extended_category_for<I: Into<PluralOperands>>(
+        &self,
+        input: I,
+    ) -> PluralCategoryExtended {
+        let input = input.into();
+        if input.v == 0 && input.c == 0 {
+            if input.i == 0 {
+                return PluralCategoryExtended::Explicit0;
+            }
+            if input.i == 1 {
+                return PluralCategoryExtended::Explicit1;
+            }
+        }
+        self.category_for(input).into()
     }
 
     /// Returns all [`Plural Categories`] appropriate for a [`PluralRules`] object
