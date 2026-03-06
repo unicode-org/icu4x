@@ -27,12 +27,22 @@ class DataProvider internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class DataProviderCleaner(val handle: Pointer, val lib: DataProviderLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class DataProviderCleaner(val handle: Pointer, val lib: DataProviderLib) : Runnable {
         override fun run() {
             lib.icu4x_DataProvider_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, DataProvider.DataProviderCleaner(handle, DataProvider.lib));
     }
 
     companion object {
@@ -50,15 +60,18 @@ class DataProvider internal constructor (
             val pathSliceMemory = PrimitiveArrayTools.borrowUtf8(path)
             
             val returnVal = lib.icu4x_DataProvider_from_fs_mv1(pathSliceMemory.slice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = DataProvider(handle, selfEdges)
-                CLEANER.register(returnOpaque, DataProvider.DataProviderCleaner(handle, DataProvider.lib));
-                pathSliceMemory?.close()
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = DataProvider(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                pathSliceMemory.close()
             }
         }
         @JvmStatic
@@ -68,18 +81,17 @@ class DataProvider internal constructor (
         *See the [Rust documentation for `try_new_from_static_blob`](https://docs.rs/icu_provider_blob/2.1.1/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_static_blob) for more information.
         */
         fun fromByteSlice(blob: ByteArray): Result<DataProvider> {
-            val blobSliceMemory = PrimitiveArrayTools.borrow(blob)
+            val blobSliceMemory = PrimitiveArrayTools.borrow(blob).leakStatic()
             
             val returnVal = lib.icu4x_DataProvider_from_byte_slice_mv1(blobSliceMemory.slice);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = DataProvider(handle, selfEdges)
-                CLEANER.register(returnOpaque, DataProvider.DataProviderCleaner(handle, DataProvider.lib));
-                blobSliceMemory?.close()
+                val handle = nativeOkVal 
+                val returnOpaque = DataProvider(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -94,10 +106,11 @@ class DataProvider internal constructor (
     fun forkByMarker(other: DataProvider): Result<Unit> {
         
         val returnVal = lib.icu4x_DataProvider_fork_by_marker_mv1(handle, other.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
-        if (returnVal.isOk == 1.toByte()) {
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
             return Unit.ok()
         } else {
-            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
         }
     }
     
@@ -108,10 +121,11 @@ class DataProvider internal constructor (
     fun forkByLocale(other: DataProvider): Result<Unit> {
         
         val returnVal = lib.icu4x_DataProvider_fork_by_locale_mv1(handle, other.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
-        if (returnVal.isOk == 1.toByte()) {
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
             return Unit.ok()
         } else {
-            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
         }
     }
     
@@ -122,10 +136,11 @@ class DataProvider internal constructor (
     fun enableLocaleFallbackWith(fallbacker: LocaleFallbacker): Result<Unit> {
         
         val returnVal = lib.icu4x_DataProvider_enable_locale_fallback_with_mv1(handle, fallbacker.handle);
-        if (returnVal.isOk == 1.toByte()) {
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
             return Unit.ok()
         } else {
-            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
         }
     }
 

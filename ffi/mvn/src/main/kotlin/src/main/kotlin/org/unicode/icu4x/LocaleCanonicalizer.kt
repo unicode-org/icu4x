@@ -22,12 +22,22 @@ class LocaleCanonicalizer internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LocaleCanonicalizerCleaner(val handle: Pointer, val lib: LocaleCanonicalizerLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleCanonicalizerCleaner(val handle: Pointer, val lib: LocaleCanonicalizerLib) : Runnable {
         override fun run() {
             lib.icu4x_LocaleCanonicalizer_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LocaleCanonicalizer.LocaleCanonicalizerCleaner(handle, LocaleCanonicalizer.lib));
     }
 
     companion object {
@@ -44,8 +54,7 @@ class LocaleCanonicalizer internal constructor (
             val returnVal = lib.icu4x_LocaleCanonicalizer_create_common_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LocaleCanonicalizer(handle, selfEdges)
-            CLEANER.register(returnOpaque, LocaleCanonicalizer.LocaleCanonicalizerCleaner(handle, LocaleCanonicalizer.lib));
+            val returnOpaque = LocaleCanonicalizer(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -57,14 +66,14 @@ class LocaleCanonicalizer internal constructor (
         fun createCommonWithProvider(provider: DataProvider): Result<LocaleCanonicalizer> {
             
             val returnVal = lib.icu4x_LocaleCanonicalizer_create_common_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = LocaleCanonicalizer(handle, selfEdges)
-                CLEANER.register(returnOpaque, LocaleCanonicalizer.LocaleCanonicalizerCleaner(handle, LocaleCanonicalizer.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = LocaleCanonicalizer(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -78,8 +87,7 @@ class LocaleCanonicalizer internal constructor (
             val returnVal = lib.icu4x_LocaleCanonicalizer_create_extended_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LocaleCanonicalizer(handle, selfEdges)
-            CLEANER.register(returnOpaque, LocaleCanonicalizer.LocaleCanonicalizerCleaner(handle, LocaleCanonicalizer.lib));
+            val returnOpaque = LocaleCanonicalizer(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -91,14 +99,14 @@ class LocaleCanonicalizer internal constructor (
         fun createExtendedWithProvider(provider: DataProvider): Result<LocaleCanonicalizer> {
             
             val returnVal = lib.icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = LocaleCanonicalizer(handle, selfEdges)
-                CLEANER.register(returnOpaque, LocaleCanonicalizer.LocaleCanonicalizerCleaner(handle, LocaleCanonicalizer.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = LocaleCanonicalizer(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

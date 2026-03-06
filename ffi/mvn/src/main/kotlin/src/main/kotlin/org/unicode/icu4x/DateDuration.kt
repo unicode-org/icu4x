@@ -104,12 +104,16 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
             val returnVal = lib.icu4x_DateDuration_from_string_mv1(vSliceMemory.slice);
-            if (returnVal.isOk == 1.toByte()) {
-                val returnStruct = DateDuration.fromNative(returnVal.union.ok)
-                vSliceMemory?.close()
-                return returnStruct.ok()
-            } else {
-                return DateDurationParseErrorError(DateDurationParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = DateDuration.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return DateDurationParseErrorError(DateDurationParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic

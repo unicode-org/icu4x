@@ -34,12 +34,22 @@ class Locale internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LocaleCleaner(val handle: Pointer, val lib: LocaleLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleCleaner(val handle: Pointer, val lib: LocaleLib) : Runnable {
         override fun run() {
             lib.icu4x_Locale_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Locale.LocaleCleaner(handle, Locale.lib));
     }
 
     companion object {
@@ -59,15 +69,18 @@ class Locale internal constructor (
             val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
             
             val returnVal = lib.icu4x_Locale_from_string_mv1(nameSliceMemory.slice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Locale(handle, selfEdges)
-                CLEANER.register(returnOpaque, Locale.LocaleCleaner(handle, Locale.lib));
-                nameSliceMemory?.close()
-                return returnOpaque.ok()
-            } else {
-                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = Locale(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                nameSliceMemory.close()
             }
         }
         @JvmStatic
@@ -81,8 +94,7 @@ class Locale internal constructor (
             val returnVal = lib.icu4x_Locale_unknown_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Locale(handle, selfEdges)
-            CLEANER.register(returnOpaque, Locale.LocaleCleaner(handle, Locale.lib));
+            val returnOpaque = Locale(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -95,12 +107,17 @@ class Locale internal constructor (
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_Locale_normalize_mv1(sSliceMemory.slice, write);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnString = DW.writeToString(write)
-                return returnString.ok()
-            } else {
-                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    
+                    val returnString = DW.writeToString(write)
+                    return returnString.ok()
+                } else {
+                    return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                sSliceMemory.close()
             }
         }
     }
@@ -114,8 +131,7 @@ class Locale internal constructor (
         val returnVal = lib.icu4x_Locale_clone_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Locale(handle, selfEdges)
-        CLEANER.register(returnOpaque, Locale.LocaleCleaner(handle, Locale.lib));
+        val returnOpaque = Locale(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -140,12 +156,16 @@ class Locale internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_Locale_get_unicode_extension_mv1(handle, sSliceMemory.slice, write);
-        
-        returnVal.option() ?: return null
+        try {
+            
+            returnVal.option() ?: return null
 
-        val returnString = DW.writeToString(write)
-        return returnString
-                                
+            val returnString = DW.writeToString(write)
+            return returnString
+                                    
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Set a Unicode extension.
@@ -157,7 +177,12 @@ class Locale internal constructor (
         val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
         
         val returnVal = lib.icu4x_Locale_set_unicode_extension_mv1(handle, kSliceMemory.slice, vSliceMemory.slice);
-        return returnVal.option()
+        try {
+            return returnVal.option()
+        } finally {
+            kSliceMemory.close()
+            vSliceMemory.close()
+        }
     }
     
     /** Returns a string representation of [Locale] language.
@@ -180,10 +205,15 @@ class Locale internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
         val returnVal = lib.icu4x_Locale_set_language_mv1(handle, sSliceMemory.slice);
-        if (returnVal.isOk == 1.toByte()) {
-            return Unit.ok()
-        } else {
-            return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+        try {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                return Unit.ok()
+            } else {
+                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        } finally {
+            sSliceMemory.close()
         }
     }
     
@@ -210,10 +240,15 @@ class Locale internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
         val returnVal = lib.icu4x_Locale_set_region_mv1(handle, sSliceMemory.slice);
-        if (returnVal.isOk == 1.toByte()) {
-            return Unit.ok()
-        } else {
-            return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+        try {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                return Unit.ok()
+            } else {
+                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        } finally {
+            sSliceMemory.close()
         }
     }
     
@@ -240,10 +275,15 @@ class Locale internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
         val returnVal = lib.icu4x_Locale_set_script_mv1(handle, sSliceMemory.slice);
-        if (returnVal.isOk == 1.toByte()) {
-            return Unit.ok()
-        } else {
-            return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+        try {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                return Unit.ok()
+            } else {
+                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        } finally {
+            sSliceMemory.close()
         }
     }
     
@@ -265,7 +305,11 @@ class Locale internal constructor (
         val otherSliceMemory = PrimitiveArrayTools.borrowUtf8(other)
         
         val returnVal = lib.icu4x_Locale_normalizing_eq_mv1(handle, otherSliceMemory.slice);
-        return (returnVal > 0)
+        try {
+            return (returnVal > 0)
+        } finally {
+            otherSliceMemory.close()
+        }
     }
     
     /** See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
@@ -274,7 +318,11 @@ class Locale internal constructor (
         val otherSliceMemory = PrimitiveArrayTools.borrowUtf8(other)
         
         val returnVal = lib.icu4x_Locale_compare_to_string_mv1(handle, otherSliceMemory.slice);
-        return (returnVal)
+        try {
+            return (returnVal)
+        } finally {
+            otherSliceMemory.close()
+        }
     }
     
     /** See the [Rust documentation for `total_cmp`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.total_cmp) for more information.

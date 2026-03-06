@@ -24,12 +24,22 @@ class LocaleExpander internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LocaleExpanderCleaner(val handle: Pointer, val lib: LocaleExpanderLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleExpanderCleaner(val handle: Pointer, val lib: LocaleExpanderLib) : Runnable {
         override fun run() {
             lib.icu4x_LocaleExpander_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LocaleExpander.LocaleExpanderCleaner(handle, LocaleExpander.lib));
     }
 
     companion object {
@@ -46,8 +56,7 @@ class LocaleExpander internal constructor (
             val returnVal = lib.icu4x_LocaleExpander_create_common_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LocaleExpander(handle, selfEdges)
-            CLEANER.register(returnOpaque, LocaleExpander.LocaleExpanderCleaner(handle, LocaleExpander.lib));
+            val returnOpaque = LocaleExpander(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -59,14 +68,14 @@ class LocaleExpander internal constructor (
         fun createCommonWithProvider(provider: DataProvider): Result<LocaleExpander> {
             
             val returnVal = lib.icu4x_LocaleExpander_create_common_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = LocaleExpander(handle, selfEdges)
-                CLEANER.register(returnOpaque, LocaleExpander.LocaleExpanderCleaner(handle, LocaleExpander.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = LocaleExpander(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -80,8 +89,7 @@ class LocaleExpander internal constructor (
             val returnVal = lib.icu4x_LocaleExpander_create_extended_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LocaleExpander(handle, selfEdges)
-            CLEANER.register(returnOpaque, LocaleExpander.LocaleExpanderCleaner(handle, LocaleExpander.lib));
+            val returnOpaque = LocaleExpander(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -93,14 +101,14 @@ class LocaleExpander internal constructor (
         fun createExtendedWithProvider(provider: DataProvider): Result<LocaleExpander> {
             
             val returnVal = lib.icu4x_LocaleExpander_create_extended_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = LocaleExpander(handle, selfEdges)
-                CLEANER.register(returnOpaque, LocaleExpander.LocaleExpanderCleaner(handle, LocaleExpander.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = LocaleExpander(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

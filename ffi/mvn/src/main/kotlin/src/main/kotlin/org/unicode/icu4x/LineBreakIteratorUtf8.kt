@@ -17,12 +17,22 @@ class LineBreakIteratorUtf8 internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LineBreakIteratorUtf8Cleaner(val handle: Pointer, val lib: LineBreakIteratorUtf8Lib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LineBreakIteratorUtf8Cleaner(val handle: Pointer, val lib: LineBreakIteratorUtf8Lib) : Runnable {
         override fun run() {
             lib.icu4x_LineBreakIteratorUtf8_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LineBreakIteratorUtf8.LineBreakIteratorUtf8Cleaner(handle, LineBreakIteratorUtf8.lib));
     }
 
     companion object {
