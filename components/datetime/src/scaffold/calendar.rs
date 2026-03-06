@@ -352,6 +352,13 @@ impl FormattableAnyCalendarKind {
 
 #[test]
 fn test_calendar_fallback() {
+    #[allow(non_local_definitions)] // only used in this test
+    impl PartialEq for FormattableAnyCalendar {
+        fn eq(&self, other: &Self) -> bool {
+            self.any_calendar.kind() == other.any_calendar.kind()
+        }
+    }
+
     use icu_locale_core::{locale, Locale};
     assert_eq!(
         FormattableAnyCalendar::try_new(locale!("en-TH-u-ca-iso8601").into()),
@@ -380,7 +387,7 @@ fn test_calendar_fallback() {
 }
 
 /// A version of [`AnyCalendar`] for the calendars supported in the any-calendar formatter.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub(crate) struct FormattableAnyCalendar {
     any_calendar: AnyCalendar,
 }
