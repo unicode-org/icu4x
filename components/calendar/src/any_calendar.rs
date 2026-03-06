@@ -47,6 +47,23 @@ macro_rules! make_any_calendar {
             )*
         }
 
+        impl PartialEq for $any_calendar_ident {
+            #[rustfmt::skip]
+            fn eq(&self, other: &Self) -> bool {
+                use $any_calendar_ident::*;
+                match (self, other) {
+                    $(
+                        ($variant(c1), $variant(c2)) => AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2),
+                    )+
+                    $(
+                        #[allow(deprecated)]
+                        ($deprecated_variant(c1), $deprecated_variant(c2)) => AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2),
+                    )*
+                    _ => false,
+                }
+            }
+        }
+
         $(#[$any_date_meta])*
         #[doc = concat!("The inner date type for [`", stringify!($any_calendar_ident), "`]")]
         #[derive(Clone, PartialEq, Eq, Debug, Copy)]
@@ -354,13 +371,13 @@ macro_rules! make_any_calendar {
             fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
                 match (self, other) {
                     $(
-                        (Self::$variant(ref c1), Self::$variant(ref c2)) if c2.eq_calendars(c2).is_ok() => {
+                        (Self::$variant(ref c1), Self::$variant(ref c2)) if c1.eq_calendars(c2).is_ok() => {
                             Ok(())
                         }
                     )+
                     $(
                         #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2)) if c2.eq_calendars(c2).is_ok() => {
+                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2)) if c1.eq_calendars(c2).is_ok() => {
                             Ok(())
                         }
                     )*

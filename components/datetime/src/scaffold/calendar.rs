@@ -380,7 +380,7 @@ fn test_calendar_fallback() {
 }
 
 /// A version of [`AnyCalendar`] for the calendars supported in the any-calendar formatter.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) struct FormattableAnyCalendar {
     any_calendar: AnyCalendar,
 }
