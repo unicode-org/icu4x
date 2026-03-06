@@ -986,8 +986,12 @@ impl<R: Rules> Calendar for Hijri<R> {
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
     ) -> Result<types::DateDuration, Self::IdentityError> {
-        self.0.check_identity(&other.0)?;
+        self.eq_calendars(other)?;
         Ok(date1.0.until(&date2.0, self, options))
+    }
+
+    fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
+        self.0.check_identity(&other.0)
     }
 
     fn eq_dates(
@@ -996,7 +1000,7 @@ impl<R: Rules> Calendar for Hijri<R> {
         a: &Self::DateInner,
         b: &Self::DateInner,
     ) -> Result<bool, Self::IdentityError> {
-        self.0.check_identity(&other.0)?;
+        self.eq_calendars(other)?;
         Ok(a == b)
     }
 
@@ -1006,7 +1010,7 @@ impl<R: Rules> Calendar for Hijri<R> {
         a: &Self::DateInner,
         b: &Self::DateInner,
     ) -> Result<core::cmp::Ordering, Self::IdentityError> {
-        self.0.check_identity(&other.0)?;
+        self.eq_calendars(other)?;
         Ok(a.cmp(b))
     }
 

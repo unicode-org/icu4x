@@ -165,8 +165,12 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
     ) -> Result<types::DateDuration, Self::IdentityError> {
-        self.0.check_identity(&other.0)?;
+        self.eq_calendars(other)?;
         Ok(date1.until(date2, &AbstractGregorian(IsoEra), options))
+    }
+
+    fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
+        self.0.check_identity(&other.0)
     }
 
     fn eq_dates(
@@ -175,7 +179,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         a: &Self::DateInner,
         b: &Self::DateInner,
     ) -> Result<bool, Self::IdentityError> {
-        self.0.check_identity(&other.0)?;
+        self.eq_calendars(other)?;
         Ok(a == b)
     }
 
@@ -185,7 +189,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         a: &Self::DateInner,
         b: &Self::DateInner,
     ) -> Result<core::cmp::Ordering, Self::IdentityError> {
-        self.0.check_identity(&other.0)?;
+        self.eq_calendars(other)?;
         Ok(a.cmp(b))
     }
 
@@ -337,6 +341,14 @@ macro_rules! impl_with_abstract_gregorian {
                 let $self_ident = other;
                 let c2 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
                 c1.until(&c2, &date1.0, &date2.0, options)
+            }
+
+            fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError> {
+                let $self_ident = self;
+                let c1 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                let $self_ident = other;
+                let c2 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                c1.eq_calendars(&c2)
             }
 
             fn eq_dates(

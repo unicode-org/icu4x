@@ -201,6 +201,10 @@ impl Calendar for Coptic {
         Ok(date1.0.until(&date2.0, self, options))
     }
 
+    fn eq_calendars(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+        Ok(())
+    }
+
     fn eq_dates(
         &self,
         &Self: &Self,

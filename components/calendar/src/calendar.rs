@@ -169,6 +169,8 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         options: DateDifferenceOptions,
     ) -> Result<types::DateDuration, Self::IdentityError>;
 
+    fn eq_calendars(&self, other: &Self) -> Result<(), Self::IdentityError>;
+
     /// Compares two [`Self::DateInner`]s and their associated calendars under [`PartialEq`] semantics.
     fn eq_dates(
         &self,
