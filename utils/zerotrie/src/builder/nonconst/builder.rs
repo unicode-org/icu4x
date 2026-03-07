@@ -140,12 +140,13 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             let ab1 = items.get(i + 1);
             debug_assert!(cmp_keys_values(
                 options,
-                (ab0.0.as_bytes(), ab0.1),
-                (ab1.0.as_bytes(), ab1.1)
+                (ab0.0, ab0.1),
+                (ab1.0, ab1.1)
             )
             .is_lt());
             i += 1;
         }
+
         let mut result = Self {
             data: S::atbs_new_empty(),
             phf_cache: PerfectByteHashMapCacheOwned::new_empty(),
@@ -173,7 +174,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         loop {
             let item_i = all_items.get(i);
             let item_j = all_items.get(j - 1);
-            debug_assert!(item_i.0.prefix_eq(item_j.0, prefix_len));
+            debug_assert!(crate::builder::bytestr::prefix_eq(item_i.0, item_j.0, prefix_len));
             // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
                 let len = self.prepend_value(item_i.1);
@@ -187,8 +188,8 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             prefix_len -= 1;
             let mut new_i = i;
             let mut new_j = j;
-            let mut ascii_i = item_i.0.byte_at_or_panic(prefix_len);
-            let mut ascii_j = item_j.0.byte_at_or_panic(prefix_len);
+            let mut ascii_i = item_i.0[prefix_len];
+            let mut ascii_j = item_j.0[prefix_len];
             debug_assert_eq!(ascii_i, ascii_j);
             let key_ascii = ascii_i;
             loop {
@@ -200,7 +201,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     // Too short
                     break;
                 }
-                if item_i.0.prefix_eq(candidate, prefix_len) {
+                if crate::builder::bytestr::prefix_eq(item_i.0, candidate, prefix_len) {
                     new_i -= 1;
                 } else {
                     break;
@@ -209,7 +210,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     // A string that equals the prefix does not take part in the branch node.
                     break;
                 }
-                let candidate = candidate.byte_at_or_panic(prefix_len);
+                let candidate = candidate[prefix_len];
                 if candidate != ascii_i {
                     ascii_i = candidate;
                 }
@@ -223,7 +224,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     // Too short
                     break;
                 }
-                if item_j.0.prefix_eq(candidate, prefix_len) {
+                if crate::builder::bytestr::prefix_eq(item_j.0, candidate, prefix_len) {
                     new_j += 1;
                 } else {
                     break;
@@ -231,7 +232,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 if candidate.len() == prefix_len {
                     unreachable!("A shorter string should be earlier in the sequence");
                 }
-                let candidate = candidate.byte_at_or_panic(prefix_len);
+                let candidate = candidate[prefix_len];
                 if candidate != ascii_j {
                     ascii_j = candidate;
                 }

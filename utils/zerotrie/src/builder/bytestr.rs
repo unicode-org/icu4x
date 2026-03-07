@@ -2,119 +2,55 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::borrow::Borrow;
-
-#[cfg(any(feature = "serde", feature = "alloc"))]
-use alloc::boxed::Box;
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
-/// A struct transparent over `[u8]` with convenient helper functions.
-#[repr(transparent)]
-#[derive(PartialEq, Eq, PartialOrd, Ord)]
-pub(crate) struct ByteStr([u8]);
-
-impl ByteStr {
-    #[allow(unsafe_code)] // transparent newtype casts are documented
-    pub const fn from_bytes(input: &[u8]) -> &Self {
-        // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { &*(input as *const [u8] as *const Self) }
-    }
-
-    #[cfg(feature = "serde")]
-    #[allow(unsafe_code)] // transparent newtype casts are documented
-    pub fn from_boxed_bytes(input: Box<[u8]>) -> Box<Self> {
-        // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { core::mem::transmute::<Box<[u8]>, Box<Self>>(input) }
-    }
-
-    #[allow(dead_code)] // may want this in the future
-    pub fn from_str(input: &str) -> &Self {
-        Self::from_bytes(input.as_bytes())
-    }
-
-    #[allow(dead_code)] // may want this in the future
-    pub fn empty() -> &'static Self {
-        Self::from_bytes(&[])
-    }
-
-    #[allow(dead_code)] // not used in all features
-    pub const fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-
-    pub const fn len(&self) -> usize {
-        self.0.len()
-    }
-
-    #[allow(dead_code)] // not used in all features
-    pub fn is_all_ascii(&self) -> bool {
-        for byte in self.0.iter() {
-            if !byte.is_ascii() {
-                return false;
-            }
+/// Const function to evaluate `a < b` lexicographically.
+#[allow(clippy::indexing_slicing)] // in-range loop conditions
+pub(crate) const fn is_less_than(a: &[u8], b: &[u8]) -> bool {
+    let mut i = 0;
+    while i < a.len() && i < b.len() {
+        if a[i] < b[i] {
+            return true;
         }
-        true
-    }
-
-    #[allow(dead_code)] // may want this in the future
-    pub(crate) fn byte_at(&self, index: usize) -> Option<u8> {
-        self.0.get(index).copied()
-    }
-
-    /// Returns the byte at the given index, panicking if out of bounds.
-    #[allow(clippy::indexing_slicing)] // "panic" is in method name
-    pub(crate) const fn byte_at_or_panic(&self, index: usize) -> u8 {
-        self.0[index]
-    }
-
-    /// Const function to evaluate `self < other`.
-    #[allow(clippy::indexing_slicing)] // in-range loop conditions
-    pub(crate) const fn is_less_then(&self, other: &Self) -> bool {
-        let mut i = 0;
-        while i < self.len() && i < other.len() {
-            if self.0[i] < other.0[i] {
-                return true;
-            }
-            if self.0[i] > other.0[i] {
-                return false;
-            }
-            i += 1;
+        if a[i] > b[i] {
+            return false;
         }
-        self.len() < other.len()
+        i += 1;
     }
-
-    /// Const function to evaluate `self[..prefix_len] == other[..prefix_len]`
-    ///
-    /// # Panics
-    ///
-    /// Panics if `prefix_len` is longer than either this string or the other string
-    #[allow(clippy::indexing_slicing)] // in-range loop conditions
-    pub(crate) const fn prefix_eq(&self, other: &ByteStr, prefix_len: usize) -> bool {
-        assert!(prefix_len <= self.len());
-        assert!(prefix_len <= other.len());
-        let mut i = 0;
-        while i < prefix_len {
-            if self.0[i] != other.0[i] {
-                return false;
-            }
-            i += 1;
-        }
-        true
-    }
+    a.len() < b.len()
 }
 
-impl Borrow<[u8]> for ByteStr {
-    fn borrow(&self) -> &[u8] {
-        self.as_bytes()
+/// Const function to evaluate `a[..prefix_len] == b[..prefix_len]`
+///
+/// # Panics
+///
+/// Panics if `prefix_len` is longer than either `a` or `b`.
+#[allow(clippy::indexing_slicing)] // in-range loop conditions
+pub(crate) const fn prefix_eq(a: &[u8], b: &[u8], prefix_len: usize) -> bool {
+    assert!(prefix_len <= a.len());
+    assert!(prefix_len <= b.len());
+    let mut i = 0;
+    while i < prefix_len {
+        if a[i] != b[i] {
+            return false;
+        }
+        i += 1;
     }
+    true
 }
 
-#[cfg(feature = "alloc")]
-impl Borrow<[u8]> for Box<ByteStr> {
-    fn borrow(&self) -> &[u8] {
-        self.as_bytes()
+/// Const function to evaluate if all bytes in `s` are ASCII.
+#[allow(clippy::indexing_slicing)] // in-range loop conditions
+pub(crate) const fn is_all_ascii(s: &[u8]) -> bool {
+    let mut i = 0;
+    while i < s.len() {
+        if !s[i].is_ascii() {
+            return false;
+        }
+        i += 1;
     }
+    true
 }
 
 /// An abstraction over a slice of key-value pairs that can have either `&[u8]`
@@ -142,20 +78,17 @@ impl<'a> SliceWithIndices<'a> {
     }
 
     #[allow(clippy::indexing_slicing)]
-    pub const fn get(&self, index: usize) -> (&'a ByteStr, usize) {
+    pub const fn get(&self, index: usize) -> (&'a [u8], usize) {
         match self {
-            Self::Bytes(s) => {
-                let (key, value) = s[index];
-                (ByteStr::from_bytes(key), value)
-            }
+            Self::Bytes(s) => s[index],
             Self::Str(s) => {
                 let (key, value) = s[index];
-                (ByteStr::from_bytes(key.as_bytes()), value)
+                (key.as_bytes(), value)
             }
         }
     }
 
-    pub const fn last(&self) -> Option<(&'a ByteStr, usize)> {
+    pub const fn last(&self) -> Option<(&'a [u8], usize)> {
         if self.len() == 0 {
             None
         } else {

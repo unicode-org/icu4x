@@ -48,6 +48,18 @@ where
     }
 }
 
+#[cfg(feature = "serde")]
+impl TryFrom<&LiteMap<crate::serde::SerdeByteStrOwned, usize>> for ZeroTrie<Vec<u8>> {
+    type Error = ZeroTrieBuildError;
+    fn try_from(
+        items: &LiteMap<crate::serde::SerdeByteStrOwned, usize>,
+    ) -> Result<Self, ZeroTrieBuildError> {
+        let tuples: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_bytes(), *v)).collect();
+        let slice = SliceWithIndices::from_byte_slice(&tuples);
+        Self::try_from_tuple_slice(slice)
+    }
+}
+
 // TODO(#7084): Make this more infallible by calculating the required length,
 // heap-allocating the required capacity, and pointing ConstAsciiTrieBuilderStore
 // to the heap buffer.

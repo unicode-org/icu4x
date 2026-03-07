@@ -8,8 +8,7 @@ use core::borrow::Borrow;
 
 #[cfg(feature = "alloc")]
 use crate::{
-    builder::bytestr::{ByteStr, SliceWithIndices},
-    builder::nonconst::ZeroTrieBuilder,
+    builder::bytestr::SliceWithIndices, builder::nonconst::ZeroTrieBuilder,
     error::ZeroTrieBuildError,
 };
 #[cfg(feature = "alloc")]
@@ -584,6 +583,10 @@ macro_rules! impl_zerotrie_subtype {
             pub(crate) fn to_litemap_bytes(&self) -> LiteMap<Box<[u8]>, usize> {
                 self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
             }
+            #[cfg(feature = "serde")]
+            pub(crate) fn to_litemap_serde(&self) -> LiteMap<crate::serde::SerdeByteStrOwned, usize> {
+                self.iter().map(|(k, v)| (crate::serde::SerdeByteStrOwned($cnv_fn(k)), v)).collect()
+            }
         }
         #[cfg(feature = "litemap")]
         impl<Store> From<&$name<Store>> for LiteMap<$iter_element, usize>
@@ -599,8 +602,8 @@ macro_rules! impl_zerotrie_subtype {
         impl $name<Vec<u8>>
         {
             #[cfg(feature = "serde")]
-            pub(crate) fn try_from_serde_litemap(items: &LiteMap<Box<ByteStr>, usize>) -> Result<Self, ZeroTrieBuildError> {
-                let tuples: Vec<(&[u8], usize)> = items.iter().map(|(k, v): (&Box<ByteStr>, &usize)| (k.as_bytes(), *v)).collect();
+            pub(crate) fn try_from_serde_litemap(items: &LiteMap<crate::serde::SerdeByteStrOwned, usize>) -> Result<Self, ZeroTrieBuildError> {
+                let tuples: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_bytes(), *v)).collect();
                 let slice = SliceWithIndices::from_byte_slice(&tuples);
                 Self::try_from_tuple_slice(slice)
             }
@@ -834,12 +837,12 @@ impl<Store> ZeroTrie<Store>
 where
     Store: AsRef<[u8]>,
 {
-    /// Exports the data from this [`ZeroTrie`] into a `LiteMap`.
-    pub fn to_litemap(&self) -> LiteMap<Box<[u8]>, usize> {
-        impl_dispatch!(&self, to_litemap_bytes())
+    /// Exports the data from this [`ZeroTrie`] into a `LiteMap` for Serde.
+    #[cfg(feature = "serde")]
+    pub(crate) fn to_litemap_serde(&self) -> LiteMap<crate::serde::SerdeByteStrOwned, usize> {
+        impl_dispatch!(&self, to_litemap_serde())
     }
 }
-
 #[cfg(feature = "alloc")]
 impl ZeroTrie<Vec<u8>> {
     pub(crate) fn try_from_tuple_slice(
@@ -849,7 +852,7 @@ impl ZeroTrie<Vec<u8>> {
             let mut all_ascii = true;
             let mut i = 0;
             while i < items.len() {
-                if !items.get(i).0.is_all_ascii() {
+                if !crate::builder::bytestr::is_all_ascii(items.get(i).0) {
                     all_ascii = false;
                     break;
                 }
