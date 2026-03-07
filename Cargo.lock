@@ -4345,6 +4345,7 @@ dependencies = [
  "criterion",
  "databake",
  "displaydoc",
+ "either",
  "icu_benchmark_macros",
  "icu_locale_core",
  "itertools 0.14.0",

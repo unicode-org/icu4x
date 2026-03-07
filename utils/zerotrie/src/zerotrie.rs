@@ -8,7 +8,7 @@ use core::borrow::Borrow;
 
 #[cfg(feature = "alloc")]
 use crate::{
-    builder::bytestr::SliceWithIndices, builder::nonconst::ZeroTrieBuilder,
+    builder::bytestr::{SliceWithIndices, is_all_ascii}, builder::nonconst::ZeroTrieBuilder,
     error::ZeroTrieBuildError,
 };
 #[cfg(feature = "alloc")]
@@ -848,18 +848,7 @@ impl ZeroTrie<Vec<u8>> {
     pub(crate) fn try_from_tuple_slice(
         items: SliceWithIndices,
     ) -> Result<Self, ZeroTrieBuildError> {
-        let is_all_ascii = {
-            let mut all_ascii = true;
-            let mut i = 0;
-            while i < items.len() {
-                if !crate::builder::bytestr::is_all_ascii(items.get(i).0) {
-                    all_ascii = false;
-                    break;
-                }
-                i += 1;
-            }
-            all_ascii
-        };
+        let is_all_ascii = items.iter().all(|(s, _)| is_all_ascii(s));
         if is_all_ascii && items.len() < 512 {
             ZeroTrieSimpleAscii::try_from_tuple_slice(items).map(|x| x.into_zerotrie())
         } else {

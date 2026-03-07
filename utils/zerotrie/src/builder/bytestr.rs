@@ -103,4 +103,11 @@ impl<'a> SliceWithIndices<'a> {
             Self::Str(s) => s.iter().map(|(k, v)| (k.as_bytes(), *v)).collect(),
         }
     }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&'a [u8], usize)> + 'a {
+        match self {
+            Self::Bytes(s) => either::Either::Left(s.iter().copied()),
+            Self::Str(s) => either::Either::Right(s.iter().map(|(k, v)| (k.as_bytes(), *v))),
+        }
+    }
 }
