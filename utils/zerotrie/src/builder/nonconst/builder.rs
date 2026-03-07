@@ -7,12 +7,11 @@ use core::cmp::Ordering;
 use super::super::branch_meta::BranchMeta;
 use super::store::NonConstLengthsStack;
 use super::store::TrieBuilderStore;
-use crate::builder::bytestr::ByteStr;
+use crate::builder::bytestr::SliceWithIndices;
 use crate::byte_phf::PerfectByteHashMapCacheOwned;
 use crate::error::ZeroTrieBuildError;
 use crate::options::*;
 use crate::varint;
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 
 /// A low-level builder for [`ZeroTrie`](crate::ZeroTrie). Supports all options.
@@ -105,8 +104,8 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             .collect::<Vec<(&[u8], usize)>>();
         items.sort_by(|a, b| cmp_keys_values(options, *a, *b));
         let ascii_str_slice = items.as_slice();
-        let byte_str_slice = ByteStr::from_byte_slice_with_value(ascii_str_slice);
-        Self::from_sorted_tuple_slice_impl(byte_str_slice, options)
+        let slice = SliceWithIndices::from_byte_slice(ascii_str_slice);
+        Self::from_sorted_tuple_slice_impl(slice, options)
     }
 
     /// Builds a [`ZeroTrie`](crate::ZeroTrie) with the given items and options. Assumes that the items are sorted,
@@ -116,32 +115,36 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     ///
     /// May panic if the items are not sorted.
     pub fn from_sorted_tuple_slice(
-        items: &[(&ByteStr, usize)],
+        items: SliceWithIndices,
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, ZeroTrieBuildError> {
-        let mut items = Cow::Borrowed(items);
         if matches!(options.case_sensitivity, CaseSensitivity::IgnoreCase) {
             // We need to re-sort the items with our custom comparator.
-            items.to_mut().sort_by(|a, b| {
-                cmp_keys_values(options, (a.0.as_bytes(), a.1), (b.0.as_bytes(), b.1))
-            });
+            let mut items_vec = items.to_vec_u8();
+            items_vec.sort_by(|a, b| cmp_keys_values(options, *a, *b));
+            Self::from_sorted_tuple_slice_impl(SliceWithIndices::from_byte_slice(&items_vec), options)
+        } else {
+            Self::from_sorted_tuple_slice_impl(items, options)
         }
-        Self::from_sorted_tuple_slice_impl(&items, options)
     }
 
     /// Internal constructor that does not re-sort the items.
     fn from_sorted_tuple_slice_impl(
-        items: &[(&ByteStr, usize)],
+        items: SliceWithIndices,
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, ZeroTrieBuildError> {
         #[allow(clippy::indexing_slicing)] // a debug assertion only
-        for ab in items.windows(2) {
+        let mut i = 0;
+        while i + 1 < items.len() {
+            let ab0 = items.get(i);
+            let ab1 = items.get(i + 1);
             debug_assert!(cmp_keys_values(
                 options,
-                (ab[0].0.as_bytes(), ab[0].1),
-                (ab[1].0.as_bytes(), ab[1].1)
+                (ab0.0.as_bytes(), ab0.1),
+                (ab1.0.as_bytes(), ab1.1)
             )
             .is_lt());
+            i += 1;
         }
         let mut result = Self {
             data: S::atbs_new_empty(),
@@ -155,7 +158,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
     #[expect(clippy::unwrap_used)] // lots of indexing, but all indexes should be in range
-    fn create(&mut self, all_items: &[(&ByteStr, usize)]) -> Result<usize, ZeroTrieBuildError> {
+    fn create(&mut self, all_items: SliceWithIndices) -> Result<usize, ZeroTrieBuildError> {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
             // Empty slice:
@@ -168,8 +171,8 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         let mut current_len = 0;
         // Start the main loop.
         loop {
-            let item_i = all_items.get(i).unwrap();
-            let item_j = all_items.get(j - 1).unwrap();
+            let item_i = all_items.get(i);
+            let item_j = all_items.get(j - 1);
             debug_assert!(item_i.0.prefix_eq(item_j.0, prefix_len));
             // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
@@ -192,7 +195,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 if new_i == 0 {
                     break;
                 }
-                let candidate = all_items.get(new_i - 1).unwrap().0;
+                let candidate = all_items.get(new_i - 1).0;
                 if candidate.len() < prefix_len {
                     // Too short
                     break;
@@ -215,7 +218,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 if new_j == all_items.len() {
                     break;
                 }
-                let candidate = all_items.get(new_j).unwrap().0;
+                let candidate = all_items.get(new_j).0;
                 if candidate.len() < prefix_len {
                     // Too short
                     break;
@@ -280,7 +283,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 // Set the cursor to the previous string and continue the loop.
                 j = i;
                 i -= 1;
-                prefix_len = all_items.get(i).unwrap().0.len();
+                prefix_len = all_items.get(i).0.len();
                 current_len = 0;
                 continue;
             }

@@ -8,7 +8,9 @@ use core::borrow::Borrow;
 
 #[cfg(feature = "alloc")]
 use crate::{
-    builder::bytestr::ByteStr, builder::nonconst::ZeroTrieBuilder, error::ZeroTrieBuildError,
+    builder::bytestr::{ByteStr, SliceWithIndices},
+    builder::nonconst::ZeroTrieBuilder,
+    error::ZeroTrieBuildError,
 };
 #[cfg(feature = "alloc")]
 use alloc::{boxed::Box, collections::BTreeMap, collections::VecDeque, string::String, vec::Vec};
@@ -432,7 +434,7 @@ macro_rules! impl_zerotrie_subtype {
         }
         #[cfg(feature = "alloc")]
         impl $name<Vec<u8>> {
-            pub(crate) fn try_from_tuple_slice(items: &[(&ByteStr, usize)]) -> Result<Self, ZeroTrieBuildError> {
+            pub(crate) fn try_from_tuple_slice(items: SliceWithIndices) -> Result<Self, ZeroTrieBuildError> {
                 use crate::options::ZeroTrieWithOptions;
                 ZeroTrieBuilder::<VecDeque<u8>>::from_sorted_tuple_slice(
                     items,
@@ -453,8 +455,8 @@ macro_rules! impl_zerotrie_subtype {
                     .iter()
                     .map(|(k, v)| (k.borrow().as_bytes(), *v))
                     .collect();
-                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
-                Self::try_from_tuple_slice(byte_str_slice)
+                let slice = SliceWithIndices::from_byte_slice(&tuples);
+                Self::try_from_tuple_slice(slice)
             }
         }
         #[cfg(feature = "alloc")]
@@ -486,8 +488,8 @@ macro_rules! impl_zerotrie_subtype {
                     .iter()
                     .map(|(k, v)| (k.borrow(), *v))
                     .collect();
-                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
-                Self::try_from_tuple_slice(byte_str_slice)
+                let slice = SliceWithIndices::from_byte_slice(&tuples);
+                Self::try_from_tuple_slice(slice)
             }
         }
         #[cfg(feature = "alloc")]
@@ -545,8 +547,8 @@ macro_rules! impl_zerotrie_subtype {
                     .iter()
                     .map(|(k, v)| (k.borrow(), *v))
                     .collect();
-                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
-                Self::try_from_tuple_slice(byte_str_slice)
+                let slice = SliceWithIndices::from_byte_slice(&tuples);
+                Self::try_from_tuple_slice(slice)
             }
         }
         #[cfg(feature = "litemap")]
@@ -598,8 +600,9 @@ macro_rules! impl_zerotrie_subtype {
         {
             #[cfg(feature = "serde")]
             pub(crate) fn try_from_serde_litemap(items: &LiteMap<Box<ByteStr>, usize>) -> Result<Self, ZeroTrieBuildError> {
-                let lm_borrowed: LiteMap<&ByteStr, usize> = items.to_borrowed_keys();
-                Self::try_from_tuple_slice(lm_borrowed.as_slice())
+                let tuples: Vec<(&[u8], usize)> = items.iter().map(|(k, v): (&Box<ByteStr>, &usize)| (k.as_bytes(), *v)).collect();
+                let slice = SliceWithIndices::from_byte_slice(&tuples);
+                Self::try_from_tuple_slice(slice)
             }
         }
         // Note: Can't generalize this impl due to the `core::borrow::Borrow` blanket impl.
@@ -840,9 +843,20 @@ where
 #[cfg(feature = "alloc")]
 impl ZeroTrie<Vec<u8>> {
     pub(crate) fn try_from_tuple_slice(
-        items: &[(&ByteStr, usize)],
+        items: SliceWithIndices,
     ) -> Result<Self, ZeroTrieBuildError> {
-        let is_all_ascii = items.iter().all(|(s, _)| s.is_all_ascii());
+        let is_all_ascii = {
+            let mut all_ascii = true;
+            let mut i = 0;
+            while i < items.len() {
+                if !items.get(i).0.is_all_ascii() {
+                    all_ascii = false;
+                    break;
+                }
+                i += 1;
+            }
+            all_ascii
+        };
         if is_all_ascii && items.len() < 512 {
             ZeroTrieSimpleAscii::try_from_tuple_slice(items).map(|x| x.into_zerotrie())
         } else {
@@ -861,9 +875,9 @@ where
         let items = Vec::from_iter(iter);
         let mut items: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_ref(), *v)).collect();
         items.sort();
-        let byte_str_slice = ByteStr::from_byte_slice_with_value(&items);
+        let slice = SliceWithIndices::from_byte_slice(&items);
         #[expect(clippy::unwrap_used)] // FromIterator is panicky
-        Self::try_from_tuple_slice(byte_str_slice).unwrap()
+        Self::try_from_tuple_slice(slice).unwrap()
     }
 }
 

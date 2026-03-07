@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::super::branch_meta::BranchMeta;
-use super::super::bytestr::ByteStr;
-use super::store::const_for_each;
+use super::super::bytestr::{ByteStr, SliceWithIndices};
 use super::store::ConstArrayBuilder;
 use super::store::ConstLengthsStack;
 use super::store::ConstSlice;
@@ -105,10 +104,11 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     /// # Panics
     ///
     /// Panics if the items are not sorted
-    pub const fn from_tuple_slice<'a, const K: usize>(items: &[(&'a ByteStr, usize)]) -> Self {
-        let items = ConstSlice::from_slice(items);
+    pub const fn from_tuple_slice<'a, const K: usize>(items: SliceWithIndices<'a>) -> Self {
         let mut prev: Option<&'a ByteStr> = None;
-        const_for_each!(items, (ascii_str, _), {
+        let mut i = 0;
+        while i < items.len() {
+            let (ascii_str, _) = items.get(i);
             match prev {
                 None => (),
                 Some(prev) => {
@@ -117,8 +117,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     }
                 }
             };
-            prev = Some(ascii_str)
-        });
+            prev = Some(ascii_str);
+            i += 1;
+        }
         Self::from_sorted_const_tuple_slice::<K>(items)
     }
 
@@ -128,9 +129,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     ///
     /// `K` is the stack size of the lengths stack. If you get an error such as
     /// `AsciiTrie Builder: Need more stack`, try increasing `K`.
-    pub const fn from_sorted_const_tuple_slice<const K: usize>(
-        items: ConstSlice<(&ByteStr, usize)>,
-    ) -> Self {
+    pub const fn from_sorted_const_tuple_slice<const K: usize>(items: SliceWithIndices) -> Self {
         let mut result = Self::new();
         let total_size = result.create_or_panic::<K>(items);
         debug_assert!(total_size == result.data.len());
@@ -139,10 +138,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
     #[must_use]
-    const fn create_or_panic<const K: usize>(
-        &mut self,
-        all_items: ConstSlice<(&ByteStr, usize)>,
-    ) -> usize {
+    const fn create_or_panic<const K: usize>(&mut self, all_items: SliceWithIndices) -> usize {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
             // Empty slice:
@@ -155,8 +151,8 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         let mut current_len = 0;
         // Start the main loop.
         loop {
-            let item_i = all_items.get_or_panic(i);
-            let item_j = all_items.get_or_panic(j - 1);
+            let item_i = all_items.get(i);
+            let item_j = all_items.get(j - 1);
             debug_assert!(item_i.0.prefix_eq(item_j.0, prefix_len));
             // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
@@ -178,7 +174,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 if new_i == 0 {
                     break;
                 }
-                let candidate = all_items.get_or_panic(new_i - 1).0;
+                let candidate = all_items.get(new_i - 1).0;
                 if candidate.len() < prefix_len {
                     // Too short
                     break;
@@ -201,7 +197,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 if new_j == all_items.len() {
                     break;
                 }
-                let candidate = all_items.get_or_panic(new_j).0;
+                let candidate = all_items.get(new_j).0;
                 if candidate.len() < prefix_len {
                     // Too short
                     break;
@@ -256,7 +252,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 // Set the cursor to the previous string and continue the loop.
                 j = i;
                 i -= 1;
-                prefix_len = all_items.get_or_panic(i).0.len();
+                prefix_len = all_items.get(i).0.len();
                 current_len = 0;
                 continue;
             }

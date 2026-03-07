@@ -6,6 +6,8 @@ use core::borrow::Borrow;
 
 #[cfg(any(feature = "serde", feature = "alloc"))]
 use alloc::boxed::Box;
+#[cfg(feature = "alloc")]
+use alloc::vec::Vec;
 
 /// A struct transparent over `[u8]` with convenient helper functions.
 #[repr(transparent)]
@@ -14,23 +16,7 @@ pub(crate) struct ByteStr([u8]);
 
 impl ByteStr {
     #[allow(unsafe_code)] // transparent newtype casts are documented
-    pub const fn from_byte_slice_with_value<'a, 'l>(
-        input: &'l [(&'a [u8], usize)],
-    ) -> &'l [(&'a ByteStr, usize)] {
-        // Safety: [u8] and ByteStr have the same layout and invariants
-        unsafe { &*(input as *const [(&'a [u8], usize)] as *const [(&'a Self, usize)]) }
-    }
-
-    #[allow(unsafe_code)] // transparent newtype casts are documented
-    pub const fn from_str_slice_with_value<'a, 'l>(
-        input: &'l [(&'a str, usize)],
-    ) -> &'l [(&'a ByteStr, usize)] {
-        // Safety: str and ByteStr have the same layout, and ByteStr is less restrictive
-        unsafe { &*(input as *const [(&'a str, usize)] as *const [(&'a Self, usize)]) }
-    }
-
-    #[allow(unsafe_code)] // transparent newtype casts are documented
-    pub fn from_bytes(input: &[u8]) -> &Self {
+    pub const fn from_bytes(input: &[u8]) -> &Self {
         // Safety: [u8] and ByteStr have the same layout and invariants
         unsafe { &*(input as *const [u8] as *const Self) }
     }
@@ -128,5 +114,60 @@ impl Borrow<[u8]> for ByteStr {
 impl Borrow<[u8]> for Box<ByteStr> {
     fn borrow(&self) -> &[u8] {
         self.as_bytes()
+    }
+}
+
+/// An abstraction over a slice of key-value pairs that can have either `&[u8]`
+/// or `&str` keys. This is used in the builder to avoid unsound casts.
+#[derive(Copy, Clone)]
+pub(crate) enum SliceWithIndices<'a> {
+    Bytes(&'a [(&'a [u8], usize)]),
+    Str(&'a [(&'a str, usize)]),
+}
+
+impl<'a> SliceWithIndices<'a> {
+    pub const fn from_byte_slice(s: &'a [(&'a [u8], usize)]) -> Self {
+        Self::Bytes(s)
+    }
+
+    pub const fn from_str_slice(s: &'a [(&'a str, usize)]) -> Self {
+        Self::Str(s)
+    }
+
+    pub const fn len(&self) -> usize {
+        match self {
+            Self::Bytes(s) => s.len(),
+            Self::Str(s) => s.len(),
+        }
+    }
+
+    #[allow(clippy::indexing_slicing)]
+    pub const fn get(&self, index: usize) -> (&'a ByteStr, usize) {
+        match self {
+            Self::Bytes(s) => {
+                let (key, value) = s[index];
+                (ByteStr::from_bytes(key), value)
+            }
+            Self::Str(s) => {
+                let (key, value) = s[index];
+                (ByteStr::from_bytes(key.as_bytes()), value)
+            }
+        }
+    }
+
+    pub const fn last(&self) -> Option<(&'a ByteStr, usize)> {
+        if self.len() == 0 {
+            None
+        } else {
+            Some(self.get(self.len() - 1))
+        }
+    }
+
+    #[cfg(feature = "alloc")]
+    pub fn to_vec_u8(&self) -> Vec<(&'a [u8], usize)> {
+        match self {
+            Self::Bytes(s) => s.to_vec(),
+            Self::Str(s) => s.iter().map(|(k, v)| (k.as_bytes(), *v)).collect(),
+        }
     }
 }

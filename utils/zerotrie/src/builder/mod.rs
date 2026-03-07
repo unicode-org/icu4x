@@ -161,7 +161,7 @@ mod litemap;
 #[cfg(feature = "alloc")]
 pub(crate) mod nonconst;
 
-use bytestr::ByteStr;
+use bytestr::SliceWithIndices;
 
 use super::ZeroTrieSimpleAscii;
 
@@ -237,8 +237,8 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// ```
     pub const fn from_sorted_u8_tuples(tuples: &[(&[u8], usize)]) -> Self {
         use konst::*;
-        let byte_str_slice = ByteStr::from_byte_slice_with_value(tuples);
-        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
+        let slice = SliceWithIndices::from_byte_slice(tuples);
+        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(slice);
         Self::from_store(s.build_or_panic())
     }
 
@@ -292,10 +292,10 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// ```
     pub const fn from_sorted_str_tuples(tuples: &[(&str, usize)]) -> Self {
         use konst::*;
-        let byte_str_slice = ByteStr::from_str_slice_with_value(tuples);
+        let slice = SliceWithIndices::from_str_slice(tuples);
         // 100 is the value of `K`, the size of the lengths stack. If compile errors are
         // encountered, this number may need to be increased.
-        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
+        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(slice);
         Self::from_store(s.build_or_panic())
     }
 }
