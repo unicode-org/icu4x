@@ -837,6 +837,12 @@ impl<Store> ZeroTrie<Store>
 where
     Store: AsRef<[u8]>,
 {
+    /// Exports the data from this [`ZeroTrie`] into a `LiteMap`.
+    #[cfg(feature = "serde")]
+    pub fn to_litemap(&self) -> LiteMap<Box<[u8]>, usize> {
+        impl_dispatch!(&self, to_litemap_bytes())
+    }
+
     /// Exports the data from this [`ZeroTrie`] into a `LiteMap` for Serde.
     #[cfg(feature = "serde")]
     pub(crate) fn to_litemap_serde(&self) -> LiteMap<crate::serde::SerdeByteStrOwned, usize> {
