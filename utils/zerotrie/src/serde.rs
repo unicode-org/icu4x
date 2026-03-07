@@ -164,7 +164,6 @@ where
                 .map_err(D::Error::custom)
                 .map(|trie| trie.convert_store())
         } else {
-
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
             if Self::OPTIONS.to_u8_flags() != flags {
@@ -187,11 +186,7 @@ where
             let lm = self.to_litemap_serde();
             lm.serialize(serializer)
         } else {
-            (
-                Self::OPTIONS.to_u8_flags(),
-                SerdeByteStr(self.as_bytes()),
-            )
-                .serialize(serializer)
+            (Self::OPTIONS.to_u8_flags(), SerdeByteStr(self.as_bytes())).serialize(serializer)
         }
     }
 }
@@ -211,7 +206,6 @@ where
                 .map_err(D::Error::custom)
                 .map(|trie| trie.convert_store())
         } else {
-
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
             if Self::OPTIONS.to_u8_flags() != flags {
@@ -234,11 +228,7 @@ where
             let lm = self.to_litemap_serde();
             lm.serialize(serializer)
         } else {
-            (
-                Self::OPTIONS.to_u8_flags(),
-                SerdeByteStr(self.as_bytes()),
-            )
-                .serialize(serializer)
+            (Self::OPTIONS.to_u8_flags(), SerdeByteStr(self.as_bytes())).serialize(serializer)
         }
     }
 }
@@ -258,7 +248,6 @@ where
                 .map_err(D::Error::custom)
                 .map(|trie| trie.convert_store())
         } else {
-
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
             if Self::OPTIONS.to_u8_flags() != flags {
@@ -283,11 +272,7 @@ where
             let lm = self.to_litemap_serde();
             lm.serialize(serializer)
         } else {
-            (
-                Self::OPTIONS.to_u8_flags(),
-                SerdeByteStr(self.as_bytes()),
-            )
-                .serialize(serializer)
+            (Self::OPTIONS.to_u8_flags(), SerdeByteStr(self.as_bytes())).serialize(serializer)
         }
     }
 }
@@ -307,7 +292,6 @@ where
                 .map_err(D::Error::custom)
                 .map(|trie| trie.convert_store())
         } else {
-
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let bytes = <&[u8]>::deserialize(deserializer)?;
             let (tag, trie_bytes) = bytes

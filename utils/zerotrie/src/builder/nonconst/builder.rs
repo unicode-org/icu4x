@@ -122,7 +122,10 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             // We need to re-sort the items with our custom comparator.
             let mut items_vec = items.to_vec_u8();
             items_vec.sort_by(|a, b| cmp_keys_values(options, *a, *b));
-            Self::from_sorted_tuple_slice_impl(SliceWithIndices::from_byte_slice(&items_vec), options)
+            Self::from_sorted_tuple_slice_impl(
+                SliceWithIndices::from_byte_slice(&items_vec),
+                options,
+            )
         } else {
             Self::from_sorted_tuple_slice_impl(items, options)
         }
@@ -138,12 +141,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         while i + 1 < items.len() {
             let ab0 = items.get(i);
             let ab1 = items.get(i + 1);
-            debug_assert!(cmp_keys_values(
-                options,
-                (ab0.0, ab0.1),
-                (ab1.0, ab1.1)
-            )
-            .is_lt());
+            debug_assert!(cmp_keys_values(options, (ab0.0, ab0.1), (ab1.0, ab1.1)).is_lt());
             i += 1;
         }
 
@@ -158,7 +156,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     }
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
-    #[expect(clippy::unwrap_used)] // lots of indexing, but all indexes should be in range
+    #[expect(clippy::unwrap_used, clippy::indexing_slicing)] // lots of indexing, but all indexes should be in range
     fn create(&mut self, all_items: SliceWithIndices) -> Result<usize, ZeroTrieBuildError> {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
@@ -174,7 +172,9 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         loop {
             let item_i = all_items.get(i);
             let item_j = all_items.get(j - 1);
-            debug_assert!(crate::builder::bytestr::prefix_eq(item_i.0, item_j.0, prefix_len));
+            debug_assert!(crate::builder::bytestr::prefix_eq(
+                item_i.0, item_j.0, prefix_len
+            ));
             // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
                 let len = self.prepend_value(item_i.1);

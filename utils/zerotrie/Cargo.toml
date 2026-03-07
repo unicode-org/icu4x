@@ -25,7 +25,6 @@ max_combination_size = 3
 [dependencies]
 databake = { workspace = true, features = ["derive"], optional = true }
 displaydoc = { workspace = true }
-either = { workspace = true }
 litemap = { workspace = true, features = ["alloc"], optional = true }
 serde_core = { workspace = true, optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }

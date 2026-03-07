@@ -40,19 +40,6 @@ pub(crate) const fn prefix_eq(a: &[u8], b: &[u8], prefix_len: usize) -> bool {
     true
 }
 
-/// Const function to evaluate if all bytes in `s` are ASCII.
-#[allow(clippy::indexing_slicing)] // in-range loop conditions
-pub(crate) const fn is_all_ascii(s: &[u8]) -> bool {
-    let mut i = 0;
-    while i < s.len() {
-        if !s[i].is_ascii() {
-            return false;
-        }
-        i += 1;
-    }
-    true
-}
-
 /// An abstraction over a slice of key-value pairs that can have either `&[u8]`
 /// or `&str` keys. This is used in the builder to avoid unsound casts.
 #[derive(Copy, Clone)]
@@ -97,17 +84,31 @@ impl<'a> SliceWithIndices<'a> {
     }
 
     #[cfg(feature = "alloc")]
-    pub fn to_vec_u8(&self) -> Vec<(&'a [u8], usize)> {
+    pub fn to_vec_u8(self) -> Vec<(&'a [u8], usize)> {
         match self {
             Self::Bytes(s) => s.to_vec(),
             Self::Str(s) => s.iter().map(|(k, v)| (k.as_bytes(), *v)).collect(),
         }
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (&'a [u8], usize)> + 'a {
+    #[cfg(feature = "alloc")]
+    pub fn is_all_ascii(&self) -> bool {
+        /// Const function to evaluate if all bytes in `s` are ASCII.
+        #[allow(clippy::indexing_slicing)] // in-range loop conditions
+        #[cfg(feature = "alloc")]
+        const fn is_all_ascii(s: &[u8]) -> bool {
+            let mut i = 0;
+            while i < s.len() {
+                if !s[i].is_ascii() {
+                    return false;
+                }
+                i += 1;
+            }
+            true
+        }
         match self {
-            Self::Bytes(s) => either::Either::Left(s.iter().copied()),
-            Self::Str(s) => either::Either::Right(s.iter().map(|(k, v)| (k.as_bytes(), *v))),
+            Self::Bytes(s) => s.iter().all(|(slice, _)| is_all_ascii(slice)),
+            Self::Str(s) => s.iter().all(|(slice, _)| is_all_ascii(slice.as_bytes())),
         }
     }
 }

@@ -138,6 +138,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
     #[must_use]
+    #[expect(clippy::indexing_slicing)] // lots of indexing, should be in range
     const fn create_or_panic<const K: usize>(&mut self, all_items: SliceWithIndices) -> usize {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
