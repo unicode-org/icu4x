@@ -297,30 +297,6 @@ impl PluralOperands {
             c: usize::from(exp),
         }
     }
-
-    /// Whether these [`PluralOperands`] are exactly the number 0, which might be a special case.
-    pub(crate) fn is_exactly_zero(self) -> bool {
-        self == Self {
-            i: 0,
-            v: 0,
-            w: 0,
-            f: 0,
-            t: 0,
-            c: 0,
-        }
-    }
-
-    /// Whether these [`PluralOperands`] are exactly the number 1, which might be a special case.
-    pub(crate) fn is_exactly_one(self) -> bool {
-        self == Self {
-            i: 1,
-            v: 0,
-            w: 0,
-            f: 0,
-            t: 0,
-            c: 0,
-        }
-    }
 }
 
 impl From<&Decimal> for PluralOperands {

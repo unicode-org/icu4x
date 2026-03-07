@@ -1150,22 +1150,6 @@ impl<T: PartialEq> PluralElements<T> {
         })
     }
 
-    /// Sets the value for `Explicit0`.
-    pub fn with_explicit_zero_value(self, explicit_zero: Option<T>) -> Self {
-        Self(PluralElementsInner {
-            explicit_zero: explicit_zero.filter(|t| *t != self.0.other),
-            ..self.0
-        })
-    }
-
-    /// Sets the value for `Explicit1`.
-    pub fn with_explicit_one_value(self, explicit_one: Option<T>) -> Self {
-        Self(PluralElementsInner {
-            explicit_one: explicit_one.filter(|t| *t != self.0.other),
-            ..self.0
-        })
-    }
-
     /// Sets the value for [`PluralCategory::One`].
     pub fn with_one_value(self, one: Option<T>) -> Self {
         Self(PluralElementsInner {
@@ -1194,6 +1178,22 @@ impl<T: PartialEq> PluralElements<T> {
     pub fn with_many_value(self, many: Option<T>) -> Self {
         Self(PluralElementsInner {
             many: many.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
+    /// Sets the value for `Explicit0`.
+    pub fn with_explicit_zero_value(self, explicit_zero: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            explicit_zero: explicit_zero.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
+    /// Sets the value for `Explicit1`.
+    pub fn with_explicit_one_value(self, explicit_one: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            explicit_one: explicit_one.filter(|t| *t != self.0.other),
             ..self.0
         })
     }

@@ -95,6 +95,9 @@ unstable = [
     "dep:num-traits",
 ]
 
+# added by accident
+icu_experimental = []
+
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
