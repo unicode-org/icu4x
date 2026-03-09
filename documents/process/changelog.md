@@ -15,7 +15,7 @@ The PR template includes a mandatory `## Changelog` section at the end of the de
 
 **Reviewers** are expected to review the changelog entry for accuracy and clarity. You may edit the PR description to improve the entry or write one on behalf of a new contributor. While the author is primarily the responsible for the changelog; reviewers should also consider it their responsibility: if fixes need to be made, just make them.
 
-If a PR is not changelog-relevant (e.g., internal refactoring, CI changes, typo fixes in internal comments), use `# Changelog (N/A)`. You may optionally provide a brief justification for the benefit of reviewers.
+If a PR is not changelog-relevant (e.g., internal refactoring, CI changes, typo fixes in internal comments), use `## Changelog (N/A)`. You may optionally provide a brief justification for the benefit of reviewers.
 
 **Deferring:** If you are making a partial change or expect the API to change in a follow-up PR, you can say so in the changelog entry by writing something like `TBD in future PR, see issue #xxx` (or just `Changelog: TBD`). This allows you to defer the work while maintaining accountability.
 
@@ -31,7 +31,7 @@ For API changes, you MUST list all newly added or modified public items. This in
 * New methods (excluding those on new types).
 * New traits.
 * New trait items (excluding those on new traits).
-* New trait implementations (excluding those on new types, or ones with new traits; also excluding common ones like `Debug`, `Clone`, and `PartialEq`).
+* New trait implementations (excluding those on new types).
 * New re-exports and type aliases.
 * New type parameters on existing items.
 * New struct fields or enum variants.
@@ -65,7 +65,7 @@ The collation process occurs during the release process and is typically driven 
 
 ### Gathering Entries
 
-The release driver gathers all changelog entries from the `# Changelog` sections of all PRs merged since the last release. This can be done by scraping PR descriptions via the GitHub API.
+The release driver gathers all changelog entries from the `## Changelog` sections of all PRs merged since the last release. This can be done by scraping PR descriptions via the GitHub API.
 
 `./tools/scripts/extract_changelog.py <revset>` will extract changelog entries from a list of ICU4X commits.
 
@@ -87,7 +87,7 @@ The changelog entry for these crates should mention a version diff, e.g. `icu_pa
 
 ### Handling Deferrals
 
-For any PRs with `TBD` in the `# Changelog` entry, the collator is responsible for:
+For any PRs with `TBD` in the `## Changelog` entry, the collator is responsible for:
 
 * Checking if a followup PR has been merged with a complete changelog.
 * If so, verifying that the changelog entry in the followup PR completely covers the written API.
