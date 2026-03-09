@@ -152,12 +152,12 @@ impl DateFieldsResolver for Hebrew {
         // The Hebrew Metonic cycle has leap years in year 3, 6, 8, 11, 14, 17, and 19 (starting counting at year 1),
         // i.e., leap year gaps of +3, +3, +2, +3, +3, +3, +2.
         //
-        // 235 / 19 is ≈12.368 months per year, which leads to one leap month every three years plus ≈0.1
-        // month left over. So this is correct as long as it does not predict a leap month in 2 years
+        // 235 / 19 is ≈12 7/19 months per year, which leads to one leap month every three years plus 2/19
+        // months left over. So this is correct as long as it does not predict a leap month in 2 years
         // where the Hebrew calendar expects one in 3.
         //
         // The longest sequence of "three year leap months" in the Hebrew calendar
-        // is 4: year 8->11->14->17. In that time the error will accumulate to ≈0.3, which is not
+        // is 4: year 8->11->14->17. In that time the error will accumulate to 6/19, which is not
         // enough to create a "two year leap month" in our calculation. So this calculation cannot go past
         // the actual cycle of the Hebrew calendar.
         235 * years / 19
