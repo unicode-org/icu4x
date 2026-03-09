@@ -673,10 +673,10 @@ mod tests {
 
     #[test]
     fn julian_day() {
-        let locale = icu::locale::locale!("en");
+        let locale = icu_locale::locale!("en");
         let parsed_pattern = DateTimePattern::try_from_pattern_str("g").unwrap();
         let mut names = FixedCalendarDateTimeNames::<
-            icu::calendar::cal::Gregorian,
+            icu_calendar::cal::Gregorian,
             crate::fieldsets::enums::DateFieldSet,
         >::try_new(locale.into())
         .unwrap();
@@ -689,16 +689,16 @@ mod tests {
 
     #[test]
     fn extended_year() {
-        let locale = icu::locale::locale!("en");
+        let locale = icu_locale::locale!("en");
         let parsed_pattern = DateTimePattern::try_from_pattern_str("u").unwrap();
         let mut names = FixedCalendarDateTimeNames::<
-            icu::calendar::cal::Ethiopian,
+            icu_calendar::cal::Ethiopian,
             crate::fieldsets::enums::DateFieldSet,
         >::try_new(locale.into())
         .unwrap();
         let formatted_datetime = names.include_for_pattern(&parsed_pattern).unwrap().format(
             &crate::input::Date::try_new_ethiopian(
-                icu::calendar::cal::EthiopianEraStyle::AmeteMihret,
+                icu_calendar::cal::EthiopianEraStyle::AmeteMihret,
                 10,
                 9,
                 2,

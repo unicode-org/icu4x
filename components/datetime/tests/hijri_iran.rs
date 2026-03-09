@@ -5,8 +5,8 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-use icu::calendar::cal::{hijri, Hijri};
-use icu::calendar::Date;
+use icu_calendar::cal::{hijri, Hijri};
+use icu_calendar::Date;
 
 #[derive(Clone, Copy, Debug)]
 struct IranSighting;
@@ -95,13 +95,13 @@ static QAMARI: LazyLock<HashMap<i32, hijri::HijriYear>> = LazyLock::new(|| {
 
 // Use the same display names as for TabularAlgorithm
 impl icu_datetime::scaffold::UnstableSealed for IranSighting {}
-impl icu::datetime::scaffold::FormattableHijriRules for IranSighting {
+impl icu_datetime::scaffold::FormattableHijriRules for IranSighting {
     type MonthNamesV1 =
-        <hijri::TabularAlgorithm as icu::datetime::scaffold::FormattableHijriRules>::MonthNamesV1;
+        <hijri::TabularAlgorithm as icu_datetime::scaffold::FormattableHijriRules>::MonthNamesV1;
     type YearNamesV1 =
-        <hijri::TabularAlgorithm as icu::datetime::scaffold::FormattableHijriRules>::YearNamesV1;
+        <hijri::TabularAlgorithm as icu_datetime::scaffold::FormattableHijriRules>::YearNamesV1;
     type SkeletaV1 =
-        <hijri::TabularAlgorithm as icu::datetime::scaffold::FormattableHijriRules>::SkeletaV1;
+        <hijri::TabularAlgorithm as icu_datetime::scaffold::FormattableHijriRules>::SkeletaV1;
 }
 
 #[test]
@@ -128,8 +128,8 @@ fn test_conversion() {
 #[test]
 #[ignore]
 fn test_format() {
-    use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
-    use icu::locale::locale;
+    use icu_datetime::{fieldsets, FixedCalendarDateTimeFormatter};
+    use icu_locale::locale;
 
     let formatter =
         FixedCalendarDateTimeFormatter::try_new(locale!("fa").into(), fieldsets::YMD::long())

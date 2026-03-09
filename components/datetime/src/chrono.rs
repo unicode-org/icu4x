@@ -394,8 +394,8 @@ impl InSameCalendar for chrono::FixedOffset {
 
 #[test]
 fn chrono() {
-    use icu::datetime::{fieldsets, DateTimeFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, DateTimeFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)
@@ -448,8 +448,8 @@ fn chrono() {
 
 #[test]
 fn chrono_fixed_calendar() {
-    use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, FixedCalendarDateTimeFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)
@@ -516,8 +516,8 @@ fn chrono_fixed_calendar() {
 
 #[test]
 fn chrono_no_calendar() {
-    use icu::datetime::{fieldsets, NoCalendarFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, NoCalendarFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)

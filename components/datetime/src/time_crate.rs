@@ -378,8 +378,8 @@ impl InSameCalendar for time::UtcOffset {
 
 #[test]
 fn time() {
-    use icu::datetime::{fieldsets, DateTimeFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, DateTimeFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let time = time::OffsetDateTime::from_unix_timestamp_nanos(1726011440123456789)
@@ -426,8 +426,8 @@ fn time() {
 
 #[test]
 fn time_fixed_calendar() {
-    use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, FixedCalendarDateTimeFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let time = time::OffsetDateTime::from_unix_timestamp_nanos(1726011440123456789)
@@ -482,8 +482,8 @@ fn time_fixed_calendar() {
 
 #[test]
 fn time_no_calendar() {
-    use icu::datetime::{fieldsets, NoCalendarFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, NoCalendarFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let time = time::OffsetDateTime::from_unix_timestamp_nanos(1726011440123456789)
