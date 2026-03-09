@@ -157,7 +157,7 @@ impl DateFieldsResolver for Hebrew {
         // where the Hebrew calendar expects one in 3.
         //
         // The longest sequence of "three year leap months" in the Hebrew calendar
-        // is 4: year 9->11->14->17. In that time the error will accumulate to about 0.3, which is not
+        // is 4: year 8->11->14->17. In that time the error will accumulate to about 0.3, which is not
         // enough to create a "two year leap month" in our calculation. So this calculation cannot go past
         // the actual cycle of the Hebrew calendar.
         235 * years / 19
