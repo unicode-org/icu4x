@@ -152,7 +152,7 @@
 #![allow(clippy::panic)]
 
 mod branch_meta;
-pub(crate) mod bytestr;
+pub(crate) mod slice_indices;
 #[cfg(all(feature = "alloc", feature = "dense"))]
 pub(crate) mod dense;
 pub(crate) mod konst;
@@ -161,7 +161,7 @@ mod litemap;
 #[cfg(feature = "alloc")]
 pub(crate) mod nonconst;
 
-use bytestr::ByteSliceWithIndices;
+use slice_indices::ByteSliceWithIndices;
 
 use super::ZeroTrieSimpleAscii;
 

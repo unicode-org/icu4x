@@ -8,7 +8,7 @@ use core::borrow::Borrow;
 
 #[cfg(feature = "alloc")]
 use crate::{
-    builder::bytestr::ByteSliceWithIndices, builder::nonconst::ZeroTrieBuilder,
+    builder::slice_indices::ByteSliceWithIndices, builder::nonconst::ZeroTrieBuilder,
     error::ZeroTrieBuildError,
 };
 #[cfg(feature = "alloc")]

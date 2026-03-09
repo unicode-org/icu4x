@@ -5,7 +5,7 @@
 //! Impls for functions gated on the "litemap" feature.
 
 use super::konst::*;
-use crate::builder::bytestr::ByteSliceWithIndices;
+use crate::builder::slice_indices::ByteSliceWithIndices;
 use crate::error::ZeroTrieBuildError;
 use crate::zerotrie::ZeroTrieSimpleAscii;
 use crate::ZeroTrie;

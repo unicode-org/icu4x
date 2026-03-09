@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::super::branch_meta::BranchMeta;
-use super::super::bytestr::{self, ByteSliceWithIndices};
+use super::super::slice_indices::{self, ByteSliceWithIndices};
 use super::store::ConstArrayBuilder;
 use super::store::ConstLengthsStack;
 use super::store::ConstSlice;
@@ -146,7 +146,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         loop {
             let item_i = all_items.get(i);
             let item_j = all_items.get(j - 1);
-            debug_assert!(bytestr::prefix_eq(item_i.0, item_j.0, prefix_len));
+            debug_assert!(slice_indices::prefix_eq(item_i.0, item_j.0, prefix_len));
             // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
                 current_len += self.prepend_value(item_i.1);
@@ -172,7 +172,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     // Too short
                     break;
                 }
-                if bytestr::prefix_eq(item_i.0, candidate, prefix_len) {
+                if slice_indices::prefix_eq(item_i.0, candidate, prefix_len) {
                     new_i -= 1;
                 } else {
                     break;
@@ -195,7 +195,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     // Too short
                     break;
                 }
-                if bytestr::prefix_eq(item_j.0, candidate, prefix_len) {
+                if slice_indices::prefix_eq(item_j.0, candidate, prefix_len) {
                     new_j += 1;
                 } else {
                     break;

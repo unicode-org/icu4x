@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use super::super::branch_meta::BranchMeta;
 use super::store::NonConstLengthsStack;
 use super::store::TrieBuilderStore;
-use crate::builder::bytestr::ByteSliceWithIndices;
+use crate::builder::slice_indices::ByteSliceWithIndices;
 use crate::byte_phf::PerfectByteHashMapCacheOwned;
 use crate::error::ZeroTrieBuildError;
 use crate::options::*;
@@ -172,7 +172,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         loop {
             let item_i = all_items.get(i);
             let item_j = all_items.get(j - 1);
-            debug_assert!(crate::builder::bytestr::prefix_eq(
+            debug_assert!(crate::builder::slice_indices::prefix_eq(
                 item_i.0, item_j.0, prefix_len
             ));
             // Check if we need to add a value node here.
@@ -201,7 +201,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     // Too short
                     break;
                 }
-                if crate::builder::bytestr::prefix_eq(item_i.0, candidate, prefix_len) {
+                if crate::builder::slice_indices::prefix_eq(item_i.0, candidate, prefix_len) {
                     new_i -= 1;
                 } else {
                     break;
@@ -224,7 +224,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     // Too short
                     break;
                 }
-                if crate::builder::bytestr::prefix_eq(item_j.0, candidate, prefix_len) {
+                if crate::builder::slice_indices::prefix_eq(item_j.0, candidate, prefix_len) {
                     new_j += 1;
                 } else {
                     break;
