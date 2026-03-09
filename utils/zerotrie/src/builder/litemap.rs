@@ -25,7 +25,7 @@ impl ZeroTrieSimpleAscii<Vec<u8>> {
         let byte_str_slice = ByteSliceWithIndices::from_byte_slice(tuples);
 
         Ok(Self {
-            store: ZeroTrieBuilderConst::<10000>::from_slice_with_indices::<100>(slice)
+            store: ZeroTrieBuilderConst::<10000>::from_slice_with_indices::<100>(byte_str_slice)
                 .as_bytes()
                 .to_vec(),
         })
@@ -44,7 +44,7 @@ where
         let byte_litemap = items.to_borrowed_keys::<[u8], Vec<_>>();
         let byte_slice = byte_litemap.as_slice();
         let byte_str_slice = ByteSliceWithIndices::from_byte_slice(byte_slice);
-        Self::try_from_tuple_slice(slice)
+        Self::try_from_tuple_slice(byte_str_slice)
     }
 }
 
@@ -56,7 +56,7 @@ impl TryFrom<&LiteMap<crate::serde::SerdeByteStrOwned, usize>> for ZeroTrie<Vec<
     ) -> Result<Self, ZeroTrieBuildError> {
         let tuples: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_bytes(), *v)).collect();
         let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&tuples);
-        Self::try_from_tuple_slice(slice)
+        Self::try_from_tuple_slice(byte_str_slice)
     }
 }
 

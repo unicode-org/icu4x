@@ -105,7 +105,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         items.sort_by(|a, b| cmp_keys_values(options, *a, *b));
         let ascii_str_slice = items.as_slice();
         let byte_str_slice = ByteSliceWithIndices::from_byte_slice(ascii_str_slice);
-        Self::from_sorted_tuple_slice_impl(slice, options)
+        Self::from_sorted_tuple_slice_impl(byte_str_slice, options)
     }
 
     /// Builds a [`ZeroTrie`](crate::ZeroTrie) with the given items and options. Assumes that the items are sorted,

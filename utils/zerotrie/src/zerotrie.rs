@@ -488,7 +488,7 @@ macro_rules! impl_zerotrie_subtype {
                     .map(|(k, v)| (k.borrow(), *v))
                     .collect();
                 let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&tuples);
-                Self::try_from_tuple_slice(slice)
+                Self::try_from_tuple_slice(byte_str_slice)
             }
         }
         #[cfg(feature = "alloc")]
@@ -547,7 +547,7 @@ macro_rules! impl_zerotrie_subtype {
                     .map(|(k, v)| (k.borrow(), *v))
                     .collect();
                 let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&tuples);
-                Self::try_from_tuple_slice(slice)
+                Self::try_from_tuple_slice(byte_str_slice)
             }
         }
         #[cfg(feature = "litemap")]
@@ -605,7 +605,7 @@ macro_rules! impl_zerotrie_subtype {
             pub(crate) fn try_from_serde_litemap(items: &LiteMap<crate::serde::SerdeByteStrOwned, usize>) -> Result<Self, ZeroTrieBuildError> {
                 let tuples: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_bytes(), *v)).collect();
                 let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&tuples);
-                Self::try_from_tuple_slice(slice)
+                Self::try_from_tuple_slice(byte_str_slice)
             }
         }
         // Note: Can't generalize this impl due to the `core::borrow::Borrow` blanket impl.
@@ -875,7 +875,7 @@ where
         items.sort();
         let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&items);
         #[expect(clippy::unwrap_used)] // FromIterator is panicky
-        Self::try_from_tuple_slice(slice).unwrap()
+        Self::try_from_tuple_slice(byte_str_slice).unwrap()
     }
 }
 
