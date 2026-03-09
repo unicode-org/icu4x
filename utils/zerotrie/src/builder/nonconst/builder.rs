@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use super::super::branch_meta::BranchMeta;
 use super::store::NonConstLengthsStack;
 use super::store::TrieBuilderStore;
-use crate::builder::bytestr::SliceWithIndices;
+use crate::builder::bytestr::ByteSliceWithIndices;
 use crate::byte_phf::PerfectByteHashMapCacheOwned;
 use crate::error::ZeroTrieBuildError;
 use crate::options::*;
@@ -104,7 +104,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             .collect::<Vec<(&[u8], usize)>>();
         items.sort_by(|a, b| cmp_keys_values(options, *a, *b));
         let ascii_str_slice = items.as_slice();
-        let slice = SliceWithIndices::from_byte_slice(ascii_str_slice);
+        let slice = ByteSliceWithIndices::from_byte_slice(ascii_str_slice);
         Self::from_sorted_tuple_slice_impl(slice, options)
     }
 
@@ -115,7 +115,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     ///
     /// May panic if the items are not sorted.
     pub fn from_sorted_tuple_slice(
-        items: SliceWithIndices,
+        items: ByteSliceWithIndices,
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, ZeroTrieBuildError> {
         if matches!(options.case_sensitivity, CaseSensitivity::IgnoreCase) {
@@ -123,7 +123,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             let mut items_vec = items.to_vec_u8();
             items_vec.sort_by(|a, b| cmp_keys_values(options, *a, *b));
             Self::from_sorted_tuple_slice_impl(
-                SliceWithIndices::from_byte_slice(&items_vec),
+                ByteSliceWithIndices::from_byte_slice(&items_vec),
                 options,
             )
         } else {
@@ -133,7 +133,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 
     /// Internal constructor that does not re-sort the items.
     fn from_sorted_tuple_slice_impl(
-        items: SliceWithIndices,
+        items: ByteSliceWithIndices,
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, ZeroTrieBuildError> {
         #[allow(clippy::indexing_slicing)] // a debug assertion only
@@ -157,7 +157,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
     #[expect(clippy::unwrap_used, clippy::indexing_slicing)] // lots of indexing, but all indexes should be in range
-    fn create(&mut self, all_items: SliceWithIndices) -> Result<usize, ZeroTrieBuildError> {
+    fn create(&mut self, all_items: ByteSliceWithIndices) -> Result<usize, ZeroTrieBuildError> {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
             // Empty slice:

@@ -5,7 +5,7 @@
 //! Impls for functions gated on the "litemap" feature.
 
 use super::konst::*;
-use crate::builder::bytestr::SliceWithIndices;
+use crate::builder::bytestr::ByteSliceWithIndices;
 use crate::error::ZeroTrieBuildError;
 use crate::zerotrie::ZeroTrieSimpleAscii;
 use crate::ZeroTrie;
@@ -22,10 +22,10 @@ impl ZeroTrieSimpleAscii<Vec<u8>> {
         S: litemap::store::StoreSlice<&'a [u8], usize, Slice = [(&'a [u8], usize)]>,
     {
         let tuples = items.as_slice();
-        let slice = SliceWithIndices::from_byte_slice(tuples);
+        let slice = ByteSliceWithIndices::from_byte_slice(tuples);
 
         Ok(Self {
-            store: ZeroTrieBuilderConst::<10000>::from_sorted_const_tuple_slice::<100>(slice)
+            store: ZeroTrieBuilderConst::<10000>::from_slice_with_indices::<100>(slice)
                 .as_bytes()
                 .to_vec(),
         })
@@ -43,7 +43,7 @@ where
     fn try_from(items: &LiteMap<K, usize, S>) -> Result<Self, ZeroTrieBuildError> {
         let byte_litemap = items.to_borrowed_keys::<[u8], Vec<_>>();
         let byte_slice = byte_litemap.as_slice();
-        let slice = SliceWithIndices::from_byte_slice(byte_slice);
+        let slice = ByteSliceWithIndices::from_byte_slice(byte_slice);
         Self::try_from_tuple_slice(slice)
     }
 }
@@ -55,7 +55,7 @@ impl TryFrom<&LiteMap<crate::serde::SerdeByteStrOwned, usize>> for ZeroTrie<Vec<
         items: &LiteMap<crate::serde::SerdeByteStrOwned, usize>,
     ) -> Result<Self, ZeroTrieBuildError> {
         let tuples: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_bytes(), *v)).collect();
-        let slice = SliceWithIndices::from_byte_slice(&tuples);
+        let slice = ByteSliceWithIndices::from_byte_slice(&tuples);
         Self::try_from_tuple_slice(slice)
     }
 }

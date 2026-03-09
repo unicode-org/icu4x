@@ -6,9 +6,9 @@
 use alloc::vec::Vec;
 
 /// Const function to evaluate `a < b` lexicographically.
-#[allow(clippy::indexing_slicing)] // in-range loop conditions
-pub(crate) const fn is_less_than(a: &[u8], b: &[u8]) -> bool {
+const fn is_less_than(a: &[u8], b: &[u8]) -> bool {
     let mut i = 0;
+    #[allow(clippy::indexing_slicing, reason = "bounds checked in while loop")]
     while i < a.len() && i < b.len() {
         if a[i] < b[i] {
             return true;
@@ -26,11 +26,9 @@ pub(crate) const fn is_less_than(a: &[u8], b: &[u8]) -> bool {
 /// # Panics
 ///
 /// Panics if `prefix_len` is longer than either `a` or `b`.
-#[allow(clippy::indexing_slicing)] // in-range loop conditions
 pub(crate) const fn prefix_eq(a: &[u8], b: &[u8], prefix_len: usize) -> bool {
-    assert!(prefix_len <= a.len());
-    assert!(prefix_len <= b.len());
     let mut i = 0;
+    #[allow(clippy::indexing_slicing, reason = "documented panic")]
     while i < prefix_len {
         if a[i] != b[i] {
             return false;
@@ -43,12 +41,12 @@ pub(crate) const fn prefix_eq(a: &[u8], b: &[u8], prefix_len: usize) -> bool {
 /// An abstraction over a slice of key-value pairs that can have either `&[u8]`
 /// or `&str` keys. This is used in the builder to avoid unsound casts.
 #[derive(Copy, Clone)]
-pub(crate) enum SliceWithIndices<'a> {
+pub(crate) enum ByteSliceWithIndices<'a> {
     Bytes(&'a [(&'a [u8], usize)]),
     Str(&'a [(&'a str, usize)]),
 }
 
-impl<'a> SliceWithIndices<'a> {
+impl<'a> ByteSliceWithIndices<'a> {
     pub const fn from_byte_slice(s: &'a [(&'a [u8], usize)]) -> Self {
         Self::Bytes(s)
     }
@@ -64,7 +62,12 @@ impl<'a> SliceWithIndices<'a> {
         }
     }
 
-    #[allow(clippy::indexing_slicing)]
+    /// Gets the bytes and index at `index`
+    ///
+    /// # Panics
+    ///
+    /// Panics when `index >= self.len()`
+    #[allow(clippy::indexing_slicing, reason = "documented")]
     pub const fn get(&self, index: usize) -> (&'a [u8], usize) {
         match self {
             Self::Bytes(s) => s[index],
@@ -91,11 +94,29 @@ impl<'a> SliceWithIndices<'a> {
         }
     }
 
+    pub const fn is_sorted(self) -> bool {
+        let mut i = 0;
+        let mut prev: Option<&'a [u8]> = None;
+
+        while i < self.len() {
+            let (ascii_str, _) = self.get(i);
+            match prev {
+                None => (),
+                Some(prev) => {
+                    if !is_less_than(prev, ascii_str) {
+                        return false;
+                    }
+                }
+            };
+            prev = Some(ascii_str);
+            i += 1;
+        }
+        true
+    }
+
     #[cfg(feature = "alloc")]
     pub fn is_all_ascii(&self) -> bool {
         /// Const function to evaluate if all bytes in `s` are ASCII.
-        #[allow(clippy::indexing_slicing)] // in-range loop conditions
-        #[cfg(feature = "alloc")]
         const fn is_all_ascii(s: &[u8]) -> bool {
             let mut i = 0;
             while i < s.len() {
