@@ -142,8 +142,8 @@ impl DateFieldsResolver for Hebrew {
         // We need to ensure that this is always *lower or equal to* the number of
         // months in a given year span.
         //
-        // Firstly, note that this math will produce exactly the number of months in any given cycle
-        // that is a multiple of 19 years. Note that we are only performing integer
+        // Firstly, note that this math will produce exactly the number of months in any given period
+        // that spans a whole number of cycles. Note that we are only performing integer
         // ops here, and our SAFE_YEAR_RANGE is well within the range of allowed values
         // for multiplying by 235.
         //
