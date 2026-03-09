@@ -118,6 +118,10 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     ///
     /// `K` is the stack size of the lengths stack. If you get an error such as
     /// `AsciiTrie Builder: Need more stack`, try increasing `K`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `items` is not sorted.
     pub const fn from_slice_with_indices<const K: usize>(items: ByteSliceWithIndices) -> Self {
         let mut result = Self::new();
         let total_size = result.create_or_panic::<K>(items);
@@ -126,11 +130,12 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     }
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
+    ///
+    /// # Panics
+    ///
+    /// Panics if `all_items` is not sorted.
     #[must_use]
-    #[expect(
-        clippy::indexing_slicing,
-        reason = "panic documented on from_tuple_slice"
-    )]
+    #[expect(clippy::indexing_slicing, reason = "documented panic")]
     const fn create_or_panic<const K: usize>(&mut self, all_items: ByteSliceWithIndices) -> usize {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),

@@ -152,7 +152,6 @@
 #![allow(clippy::panic)]
 
 mod branch_meta;
-pub(crate) mod slice_indices;
 #[cfg(all(feature = "alloc", feature = "dense"))]
 pub(crate) mod dense;
 pub(crate) mod konst;
@@ -160,6 +159,7 @@ pub(crate) mod konst;
 mod litemap;
 #[cfg(feature = "alloc")]
 pub(crate) mod nonconst;
+pub(crate) mod slice_indices;
 
 use slice_indices::ByteSliceWithIndices;
 
@@ -237,8 +237,8 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// ```
     pub const fn from_sorted_u8_tuples(tuples: &[(&[u8], usize)]) -> Self {
         use konst::*;
-        let slice = ByteSliceWithIndices::from_byte_slice(tuples);
-        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(slice);
+        let byte_str_slice = ByteSliceWithIndices::from_byte_slice(tuples);
+        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
         Self::from_store(s.build_or_panic())
     }
 
@@ -292,10 +292,10 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// ```
     pub const fn from_sorted_str_tuples(tuples: &[(&str, usize)]) -> Self {
         use konst::*;
-        let slice = ByteSliceWithIndices::from_str_slice(tuples);
+        let byte_str_slice = ByteSliceWithIndices::from_str_slice(tuples);
         // 100 is the value of `K`, the size of the lengths stack. If compile errors are
         // encountered, this number may need to be increased.
-        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(slice);
+        let s = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
         Self::from_store(s.build_or_panic())
     }
 }

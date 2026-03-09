@@ -104,7 +104,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             .collect::<Vec<(&[u8], usize)>>();
         items.sort_by(|a, b| cmp_keys_values(options, *a, *b));
         let ascii_str_slice = items.as_slice();
-        let slice = ByteSliceWithIndices::from_byte_slice(ascii_str_slice);
+        let byte_str_slice = ByteSliceWithIndices::from_byte_slice(ascii_str_slice);
         Self::from_sorted_tuple_slice_impl(slice, options)
     }
 

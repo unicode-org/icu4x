@@ -8,7 +8,7 @@ use core::borrow::Borrow;
 
 #[cfg(feature = "alloc")]
 use crate::{
-    builder::slice_indices::ByteSliceWithIndices, builder::nonconst::ZeroTrieBuilder,
+    builder::nonconst::ZeroTrieBuilder, builder::slice_indices::ByteSliceWithIndices,
     error::ZeroTrieBuildError,
 };
 #[cfg(feature = "alloc")]
@@ -487,7 +487,7 @@ macro_rules! impl_zerotrie_subtype {
                     .iter()
                     .map(|(k, v)| (k.borrow(), *v))
                     .collect();
-                let slice = ByteSliceWithIndices::from_byte_slice(&tuples);
+                let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&tuples);
                 Self::try_from_tuple_slice(slice)
             }
         }
@@ -546,7 +546,7 @@ macro_rules! impl_zerotrie_subtype {
                     .iter()
                     .map(|(k, v)| (k.borrow(), *v))
                     .collect();
-                let slice = ByteSliceWithIndices::from_byte_slice(&tuples);
+                let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&tuples);
                 Self::try_from_tuple_slice(slice)
             }
         }
@@ -604,7 +604,7 @@ macro_rules! impl_zerotrie_subtype {
             #[cfg(feature = "serde")]
             pub(crate) fn try_from_serde_litemap(items: &LiteMap<crate::serde::SerdeByteStrOwned, usize>) -> Result<Self, ZeroTrieBuildError> {
                 let tuples: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_bytes(), *v)).collect();
-                let slice = ByteSliceWithIndices::from_byte_slice(&tuples);
+                let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&tuples);
                 Self::try_from_tuple_slice(slice)
             }
         }
@@ -873,7 +873,7 @@ where
         let items = Vec::from_iter(iter);
         let mut items: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_ref(), *v)).collect();
         items.sort();
-        let slice = ByteSliceWithIndices::from_byte_slice(&items);
+        let byte_str_slice = ByteSliceWithIndices::from_byte_slice(&items);
         #[expect(clippy::unwrap_used)] // FromIterator is panicky
         Self::try_from_tuple_slice(slice).unwrap()
     }

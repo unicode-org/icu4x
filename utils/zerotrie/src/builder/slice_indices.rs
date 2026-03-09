@@ -116,20 +116,13 @@ impl<'a> ByteSliceWithIndices<'a> {
 
     #[cfg(feature = "alloc")]
     pub fn is_all_ascii(&self) -> bool {
-        /// Const function to evaluate if all bytes in `s` are ASCII.
-        const fn is_all_ascii(s: &[u8]) -> bool {
-            let mut i = 0;
-            while i < s.len() {
-                if !s[i].is_ascii() {
-                    return false;
-                }
-                i += 1;
-            }
-            true
-        }
         match self {
-            Self::Bytes(s) => s.iter().all(|(slice, _)| is_all_ascii(slice)),
-            Self::Str(s) => s.iter().all(|(slice, _)| is_all_ascii(slice.as_bytes())),
+            Self::Bytes(s) => s
+                .iter()
+                .all(|(slice, _)| slice.iter().all(|c| c.is_ascii())),
+            Self::Str(s) => s
+                .iter()
+                .all(|(slice, _)| slice.as_bytes().iter().all(|c| c.is_ascii())),
         }
     }
 }
