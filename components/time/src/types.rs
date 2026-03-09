@@ -373,6 +373,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
     /// # Examples
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::cal::Iso;
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::ZonedDateTime;
@@ -395,6 +396,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
     /// Negative timestamps are supported:
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::cal::Iso;
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::ZonedDateTime;
@@ -418,6 +420,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
     /// saturates to the maximum or minimum representable date in the ISO calendar
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::cal::Iso;
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::ZonedDateTime;
@@ -480,6 +483,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
 ///
 /// ```
 /// # #[cfg(feature = "ixdtf")] {
+#[doc = crate::setup_metacrate!(time)]
 /// use icu::time::zone::iana::IanaParser;
 /// use icu::time::ZonedTime;
 ///

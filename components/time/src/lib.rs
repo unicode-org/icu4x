@@ -46,3 +46,17 @@ mod chrono;
 mod jiff;
 #[cfg(feature = "time_0_3")]
 mod time_crate;
+
+macro_rules! setup_metacrate {
+    ($($component:ident),+) => {
+        concat!(
+            "# mod icu {",
+            "pub extern crate icu_locale_core as locale;",
+            $(
+                "pub extern crate icu_", stringify!($component), " as ", stringify!($component), ";",
+            )+
+            "}",
+        )
+    }
+}
+use setup_metacrate;

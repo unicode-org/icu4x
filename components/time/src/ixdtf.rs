@@ -56,6 +56,7 @@ pub enum ParseError {
     ///
     /// # Example
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Iso;
     /// use icu::time::{ZonedDateTime, ParseError, zone::IanaParser};
     ///
@@ -420,6 +421,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Basic usage:
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::cal::Hebrew;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
@@ -464,6 +466,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// `DateTime` string.
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Iso;
     /// use icu::time::{zone::UtcOffset, TimeZoneInfo, ZonedDateTime};
     ///
@@ -484,6 +487,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Below is an example of a time zone being provided by a time zone annotation.
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Iso;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
@@ -525,6 +529,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// These annotations must always be consistent as they should be either the same value or are inconsistent.
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Iso;
     /// use icu::time::{
     ///     zone::UtcOffset, ParseError, TimeZone, TimeZoneInfo, ZonedDateTime,
@@ -702,6 +707,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// Basic usage:
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::cal::Hebrew;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
@@ -738,6 +744,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// `DateTime` string.
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Iso;
     /// use icu::time::{zone::UtcOffset, TimeZoneInfo, ZonedTime};
     ///
@@ -757,6 +764,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// Below is an example of a time zone being provided by a time zone annotation.
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Iso;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
@@ -796,6 +804,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// These annotations must always be consistent as they should be either the same value or are inconsistent.
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Iso;
     /// use icu::time::{
     ///     zone::UtcOffset, ParseError, TimeZone, TimeZoneInfo, ZonedTime,
@@ -863,6 +872,7 @@ impl<A: AsCalendar> DateTime<A> {
     /// # Examples
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::cal::Hebrew;
     /// use icu::time::DateTime;
     ///
@@ -909,6 +919,7 @@ impl Time {
     /// # Examples
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time)]
     /// use icu::time::Time;
     ///
     /// let time = Time::try_from_str("16:01:17.045").unwrap();

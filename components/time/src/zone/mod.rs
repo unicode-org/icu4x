@@ -156,6 +156,7 @@ pub mod models {
 /// See the docs on [`zone`](crate::zone) for more information.
 ///
 /// ```
+#[doc = crate::setup_metacrate!(time)]
 /// use icu::locale::subtags::subtag;
 /// use icu::time::zone::{IanaParser, TimeZone};
 ///
@@ -261,6 +262,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// # Examples
 ///
 /// ```
+#[doc = crate::setup_metacrate!(time, calendar)]
 /// use icu::calendar::Date;
 /// use icu::locale::subtags::subtag;
 /// use icu::time::zone::TimeZoneVariant;
@@ -492,6 +494,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// # Example
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Date;
     /// use icu::time::zone::TimeZoneVariant;
     /// use icu::time::zone::VariantOffsetsCalculator;

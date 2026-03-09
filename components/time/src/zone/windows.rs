@@ -116,6 +116,7 @@ impl WindowsParserBorrowed<'_> {
     /// then the territory will default to the M.49 World Code, `001`.
     ///
     /// ```rust
+    #[doc = crate::setup_metacrate!(time)]
     /// use icu::locale::subtags::{region, subtag};
     /// use icu::time::{zone::WindowsParser, TimeZone};
     ///

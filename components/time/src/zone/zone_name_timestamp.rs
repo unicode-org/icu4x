@@ -30,6 +30,7 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 /// Alaska Time multiple times between 2010 and 2025.
 ///
 /// ```
+#[doc = crate::setup_metacrate!(time, calendar, datetime)]
 /// use icu::calendar::Iso;
 /// use icu::datetime::fieldsets::zone::GenericLong;
 /// use icu::datetime::NoCalendarFormatter;
@@ -102,6 +103,7 @@ impl ZoneNameTimestamp {
     /// [`ZonedDateTime`] does _not_ necessarily roundtrip:
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Date;
     /// use icu::time::zone::ZoneNameTimestamp;
     /// use icu::time::{ZonedDateTime, Time, zone::UtcOffset};

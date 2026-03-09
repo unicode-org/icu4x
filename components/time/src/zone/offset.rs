@@ -57,6 +57,7 @@ impl UtcOffset {
     /// # Examples
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time)]
     /// use icu::time::zone::UtcOffset;
     ///
     /// let offset0: UtcOffset = UtcOffset::try_from_str("Z").unwrap();
@@ -331,6 +332,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// # Examples
     ///
     /// ```
+    #[doc = crate::setup_metacrate!(time, calendar)]
     /// use icu::calendar::Date;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::zone::UtcOffset;

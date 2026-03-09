@@ -2028,7 +2028,6 @@ dependencies = [
  "chrono-tz",
  "databake",
  "displaydoc",
- "icu",
  "icu_calendar",
  "icu_datetime",
  "icu_locale_core",
