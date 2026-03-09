@@ -8,6 +8,7 @@ description = "ICU4X data provider that reads from structured data files"
 
 authors.workspace = true
 categories.workspace = true
+keywords = []
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

@@ -8,7 +8,7 @@ description = "Custom derive for the zerofrom crate"
 version = "0.1.6"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["data-structures", "memory-management", "caching", "no-std"]
-keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
+keywords = ["macros", "derive", "zero-copy", "serialization"]
 
 edition.workspace = true
 license.workspace = true

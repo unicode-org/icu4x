@@ -9,6 +9,7 @@ version = "2.1.2"
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["character-properties", "unicode"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

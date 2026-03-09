@@ -8,6 +8,7 @@ description = "Unicode Plural Rules categorizer for numeric input"
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["unicode", "plurals", "grammar"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

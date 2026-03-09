@@ -9,6 +9,7 @@ version = "0.7.1"
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["decimals", "numbers"]
 edition.workspace = true
 include.workspace = true
 license.workspace = true

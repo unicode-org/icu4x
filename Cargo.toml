@@ -113,7 +113,8 @@ edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
 license = "Unicode-3.0"
-categories = ["internationalization"]
+categories = ["internationalization", "localization", "no-std", "embedded"]
+keywords = ["unicode"]
 include = [
     "data/**/*",
     "src/**/*",

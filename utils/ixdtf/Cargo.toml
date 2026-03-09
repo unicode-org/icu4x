@@ -9,6 +9,7 @@ version = "0.6.4"
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["iso8601", "date-time"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

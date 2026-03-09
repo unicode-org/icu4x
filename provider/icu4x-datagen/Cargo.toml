@@ -8,7 +8,8 @@ description = "Generate data for ICU4X DataProvider"
 license = "Unicode-3.0"
 
 authors.workspace = true
-categories.workspace = true
+categories = ["internationalization", "localization", "development-tools"]
+keywords = ["build-tool"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

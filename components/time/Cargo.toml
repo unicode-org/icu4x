@@ -8,6 +8,7 @@ description = "Processing of dates, times, and time zones with a focus on i18n a
 
 authors.workspace = true
 categories.workspace = true
+keywords = ["unicode", "formatting", "date"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
