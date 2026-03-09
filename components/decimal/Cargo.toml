@@ -5,10 +5,10 @@
 [package]
 name = "icu_decimal"
 description = "API for formatting basic decimal numbers in a locale-sensitive way"
-
-authors.workspace = true
 categories.workspace = true
 keywords = ["unicode", "formatting", "numbers"]
+
+authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

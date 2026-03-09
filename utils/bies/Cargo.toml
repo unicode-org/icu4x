@@ -6,6 +6,7 @@
 name = "bies"
 description = "Helpers for dealing with BIES vectors with text segmentation applications"
 version = "0.3.0-dev"
+keywords = ["compression", "binary"]
 
 authors.workspace = true
 edition.workspace = true
@@ -15,7 +16,6 @@ license.workspace = true
 repository.workspace = true
 rust-version = "1.82"
 
-keywords = ["compression", "binary"]
 
 [package.metadata.workspaces]
 independent = true

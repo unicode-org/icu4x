@@ -5,6 +5,8 @@
 [package]
 name = "icu_capi"
 description = "C interface to ICU4X"
+categories = ["internationalization", "localization", "external-ffi-bindings", "no-std", "embedded"]
+keywords = ["ffi", "bindings", "c-api"]
 license = "Unicode-3.0"
 include = [
     "bindings/c/**/*",
@@ -19,8 +21,6 @@ include = [
 version = "2.1.2"
 
 authors.workspace = true
-categories = ["internationalization", "localization", "external-ffi-bindings", "no-std", "embedded"]
-keywords = ["ffi", "bindings", "c-api"]
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true

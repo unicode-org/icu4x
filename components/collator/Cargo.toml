@@ -6,10 +6,10 @@
 name = "icu_collator"
 description = "API for comparing strings according to language-dependent conventions"
 version.workspace = true
-
-authors.workspace = true
 categories.workspace = true
 keywords = ["unicode", "sorting", "alphabetical"]
+
+authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
