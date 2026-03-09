@@ -237,7 +237,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     /// A lower bound for the number of months in `years` years, starting from the beginning of this year.
     ///
-    /// This may be equal to the number of months, but should never be over. Ideally,
+    /// This may be equal to the number of months, but should never be larger. Ideally,
     /// implementations should be close enough to the actual answer such that the error
     /// is bounded by a constant.
     ///
