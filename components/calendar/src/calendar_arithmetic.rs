@@ -11,7 +11,6 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::preferences::CalendarAlgorithm;
 use crate::types::{DateFields, Month};
 use crate::{types, Calendar, DateError, RangeError};
 use core::cmp::Ordering;
@@ -184,6 +183,17 @@ impl PackWithMD for i32 {
     }
 }
 
+/// A lower bound for the number of months in `years` years, for use in `until`.
+pub(crate) enum MinMonths {
+    /// This number is guaranteed to be correct based on documented checking of invariants
+    ///
+    /// It is ok for ICU4X to debug_assert on things deriving from the correctness of this calculation
+    Guaranteed(i64),
+    /// This number is not guaranteed. ICU4X should check that it is actually in range, and if not,
+    /// fall back to the `guarantee` value (which *is* guaranteed).
+    Guessed { guess: i64, guarantee: i64 },
+}
+
 /// Trait for converting from era codes, month codes, and other fields to year/month/day ordinals.
 pub(crate) trait DateFieldsResolver: Calendar {
     /// This stores the year as either an i32, or a type containing more
@@ -245,11 +255,11 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// The default impl is for non-lunisolar calendars with 12 months!
     ///
     /// `until()` will debug assert if this ever returns a value greater than the
-    /// month diff betweeen two dates, except for Chinese/Dangi, which currently
-    /// have a best-effort guess.
+    /// month diff betweeen two dates as a Guarantee. If such a value is returned as a Guess,
+    /// it will simply be slow
     #[inline]
-    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
-        12 * years
+    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> MinMonths {
+        MinMonths::Guaranteed(12 * years)
     }
 
     /// Calculates the ordinal month for the given year and month code.
@@ -1010,22 +1020,31 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
             if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
                 // If largest_unit = Months, then compute the calendar-specific minimum number of
-                // months corresponding to min_years. For solar calendars, this is 12 * min_years.
-                // For the Hebrew calendar, a leap month is added for 7 out of 19 years. East Asian
-                // Calendars do not provide a specialized implementation of `min_months_from()`
-                // because it would be too expensive to calculate; they default to 12 * min_years.
-                let mut min_months = self.min_months_from(min_years);
-                if self.surpasses(
+                // months corresponding to min_years.
+                let min_months = match self.min_months_from(min_years) {
+                    MinMonths::Guaranteed(m) => m,
+                    // In case it's a guess, check that the guess is in range,
+                    // and if it's not, return the guarantee
+                    MinMonths::Guessed { guess, guarantee } => {
+                        if self.surpasses(
+                            other,
+                            DateDuration::from_signed_ymwd(years, guess, 0, 0),
+                            sign,
+                            cal,
+                        ) {
+                            // surpasses, so it's not in range
+                            guarantee
+                        } else {
+                            guess
+                        }
+                    }
+                };
+                debug_assert!(!self.surpasses(
                     other,
                     DateDuration::from_signed_ymwd(years, min_months, 0, 0),
                     sign,
                     cal,
-                ) {
-                    // TODO(#7077) We should try to have a hard invariant here for everyone.
-                    debug_assert!(matches!(cal.calendar_algorithm(), Some(CalendarAlgorithm::Chinese | CalendarAlgorithm::Dangi)),
-                                 "Built in calendars except for Chinese/Dangi should follow min_months invariant.");
-                    min_months = sign;
-                }
+                ));
                 candidate_months = min_months
             }
 
@@ -1084,7 +1103,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 
     /// The minimum number of months over `years` years, starting from `self.year()`.
-    pub(crate) fn min_months_from(self, years: i64) -> i64 {
+    pub(crate) fn min_months_from(self, years: i64) -> MinMonths {
         C::min_months_from_inner(self.year(), years)
     }
 }
