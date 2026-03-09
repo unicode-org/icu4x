@@ -11,6 +11,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
+use crate::preferences::CalendarAlgorithm;
 use crate::types::{DateFields, Month};
 use crate::{types, Calendar, DateError, RangeError};
 use core::cmp::Ordering;
@@ -242,6 +243,10 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// is bounded by a constant with respect to `years`.
     ///
     /// The default impl is for non-lunisolar calendars with 12 months!
+    ///
+    /// `until()` will debug assert if this ever returns a value greater than the
+    /// month diff betweeen two dates, except for Chinese/Dangi, which currently
+    /// have a best-effort guess.
     #[inline]
     fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
         12 * years
@@ -1009,13 +1014,18 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 // For the Hebrew calendar, a leap month is added for 7 out of 19 years. East Asian
                 // Calendars do not provide a specialized implementation of `min_months_from()`
                 // because it would be too expensive to calculate; they default to 12 * min_years.
-                let min_months = self.min_months_from(min_years);
-                debug_assert!(!self.surpasses(
+                let mut min_months = self.min_months_from(min_years);
+                if !self.surpasses(
                     other,
                     DateDuration::from_signed_ymwd(years, min_months, 0, 0),
                     sign,
                     cal,
-                ));
+                ) {
+                    // TODO(#7077) We should try to have a hard invariant here for everyone.
+                    debug_assert!(matches!(cal.calendar_algorithm(), Some(CalendarAlgorithm::Chinese | CalendarAlgorithm::Dangi)),
+                                 "Built in calendars except for Chinese/Dangi should follow min_months invariant.");
+                    min_months = sign;
+                }
                 candidate_months = min_months
             }
 
