@@ -589,8 +589,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
     #[inline]
     fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
-        // A lunisolar leap month is inserted at least every 3 years. Reingold denies
-        // that the Chinese calendar determines leap years using the 19-year Metonic cycle.
+        // TODO(#7077) This is not verified, and the error is not constant bounded
         12 * years + (years / 3)
     }
 

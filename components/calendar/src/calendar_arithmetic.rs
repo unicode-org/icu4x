@@ -235,7 +235,11 @@ pub(crate) trait DateFieldsResolver: Calendar {
         12
     }
 
-    /// The minimum number of months over `years` years, starting from the given year.
+    /// A lower bound for the number of months in `years` years, starting from the beginning of this year.
+    ///
+    /// This may be equal to the number of months, but should never be larger. Ideally,
+    /// implementations should be close enough to the actual answer such that the error
+    /// is bounded by a constant with respect to `years`.
     ///
     /// The default impl is for non-lunisolar calendars with 12 months!
     #[inline]
