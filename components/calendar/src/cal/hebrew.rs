@@ -153,7 +153,7 @@ impl DateFieldsResolver for Hebrew {
         // i.e., leap year gaps of +3, +3, +2, +3, +3, +3, +2.
         //
         // 235 / 19 is 12.368 months per year, which leads to one leap month every three years plus 0.1
-        // month left over. So this is "in bounds" as long as it does not predict a leap month in 2 years
+        // month left over. So this is correct as long as it does not predict a leap month in 2 years
         // where the Hebrew calendar expects one in 3.
         //
         // The longest sequence of "three year leap months" in the Hebrew calendar
