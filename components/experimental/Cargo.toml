@@ -9,7 +9,7 @@ version = "0.5.0-dev"
 
 authors.workspace = true
 categories.workspace = true
-keywords = ["unicode", "internationalization", "localization"]
+keywords = ["unicode", "internationalization", "localization", "i18n"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

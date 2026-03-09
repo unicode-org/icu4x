@@ -10,11 +10,11 @@ version = "0.6.2"
 authors.workspace = true
 edition.workspace = true
 include.workspace = true
+keywords = ["formatting", "write", "string", "no-std"]
 license.workspace = true
 repository.workspace = true
 rust-version = "1.82"
 
-keywords = ["formatting", "write", "string", "no-std"]
 
 [package.metadata.workspaces]
 independent = true

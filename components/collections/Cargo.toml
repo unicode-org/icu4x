@@ -8,7 +8,7 @@ description = "Collection of API for use in ICU libraries."
 
 authors.workspace = true
 categories.workspace = true
-keywords = ["unicode", "data-structures", "internationalization"]
+keywords = ["unicode", "data-structures"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
