@@ -641,6 +641,11 @@ pub mod ffi {
             duration: DateDuration,
             options: DateAddOptions,
         ) -> Result<Box<Date>, CalendarDateAddError> {
+            // This is a cheap clone: DateInner is Copy, and AnyCalendar
+            // while not Copy does not contain any types with destructors.
+            //
+            // It *may* add calendars with non-cheap clones in the future, but that will
+            // be weighted against the performance of this FFI code.
             Ok(Box::new(Date(self.0.clone().try_added_with_options(
                 duration.into(),
                 options.into(),
