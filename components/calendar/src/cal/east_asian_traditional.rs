@@ -205,7 +205,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 
     /// The debug name for the calendar defined by these [`Rules`].
     fn debug_name(&self) -> &'static str {
-        "Chinese (custom)"
+        "EastAsianTraditional (custom)"
     }
 
     /// The BCP-47 [`CalendarAlgorithm`] for the calendar defined by these [`Rules`], if defined.
@@ -588,6 +588,13 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     }
 
     #[inline]
+    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
+        // A lunisolar leap month is inserted at least every 3 years. Reingold denies
+        // that the Chinese calendar determines leap years using the 19-year Metonic cycle.
+        12 * years + (years / 3)
+    }
+
+    #[inline]
     fn extended_year_from_era_year_unchecked(
         &self,
         _era: &[u8],
@@ -620,19 +627,19 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         month: types::Month,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthError> {
+        let (number @ 1..=12, leap) = (month.number(), month.is_leap()) else {
+            return Err(MonthError::NotInCalendar);
+        };
+
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
-        let leap_month = year.packed.leap_month().unwrap_or(14);
+        let leap_month_sentinel = year.packed.leap_month().unwrap_or(14);
 
         // leap_month identifies the ordinal month number of the leap month,
         // so its month number will be leap_month - 1
-        if month == types::Month::leap(leap_month - 1) {
-            return Ok(leap_month);
+        if month == types::Month::leap(leap_month_sentinel - 1) {
+            return Ok(leap_month_sentinel);
         }
-
-        let (number @ 1..13, leap) = (month.number(), month.is_leap()) else {
-            return Err(MonthError::NotInCalendar);
-        };
 
         if leap && options.overflow != Some(Overflow::Constrain) {
             // wrong leap month and not constraining
@@ -640,7 +647,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         }
 
         // add one if there was a leap month before
-        Ok(number + (number >= leap_month) as u8)
+        Ok(number + (number >= leap_month_sentinel) as u8)
     }
 
     fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> types::Month {
@@ -760,7 +767,11 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::new(self, date.0)
+        let mut m = types::MonthInfo::new(self, date.0);
+        if date.0.year().packed.leap_month() == Some(m.ordinal + 1) {
+            m.leap_status = types::LeapStatus::LeapBase;
+        }
+        m
     }
 
     /// The calendar-specific day-of-month represented by `date`
@@ -837,7 +848,7 @@ impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
 }
 
 /// Information about a [`EastAsianTraditional`] year.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug)]
 // TODO(#3933): potentially make this smaller
 pub struct EastAsianTraditionalYear {
     /// Contains:
@@ -978,7 +989,8 @@ impl EastAsianTraditionalYear {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Copy, Clone)]
+#[cfg_attr(test, derive(PartialEq))]
 struct PackedEastAsianTraditionalYearData(u8, u8, u8);
 
 impl PackedEastAsianTraditionalYearData {
@@ -1088,33 +1100,52 @@ impl PackedEastAsianTraditionalYearData {
 // Precalculates Chinese years, significant performance improvement for big tests
 #[cfg(test)]
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct EastAsianTraditionalYears(&'static [EastAsianTraditionalYear], &'static str);
+pub(crate) struct EastAsianTraditionalYears<R: Rules>(&'static [EastAsianTraditionalYear], R);
 
 #[cfg(test)]
-impl EastAsianTraditionalYears {
+impl EastAsianTraditionalYears<China> {
     pub fn china() -> Self {
         static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
             std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| China.year(i)).collect());
-        Self(&R, "Chinese (China)")
-    }
-
-    pub fn korea() -> Self {
-        static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
-            std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| Korea.year(i)).collect());
-        Self(&R, "Chinese (Korea)")
+        Self(&R, China)
     }
 }
 
 #[cfg(test)]
-impl crate::cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
+impl EastAsianTraditionalYears<Korea> {
+    pub fn korea() -> Self {
+        static R: std::sync::LazyLock<Vec<EastAsianTraditionalYear>> =
+            std::sync::LazyLock::new(|| (-1100000..=1100000).map(|i| Korea.year(i)).collect());
+        Self(&R, Korea)
+    }
+}
+
 #[cfg(test)]
-impl Rules for EastAsianTraditionalYears {
+impl<R: Rules> crate::cal::scaffold::UnstableSealed for EastAsianTraditionalYears<R> {}
+#[cfg(test)]
+impl<R: Rules> Rules for EastAsianTraditionalYears<R> {
     fn year(&self, related_iso: i32) -> EastAsianTraditionalYear {
         self.0[(related_iso + 1100000) as usize]
     }
 
     fn debug_name(&self) -> &'static str {
-        self.1
+        self.1.debug_name()
+    }
+
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        self.1.calendar_algorithm()
+    }
+
+    fn ecma_reference_year(
+        &self,
+        month: types::Month,
+        day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
+        self.1.ecma_reference_year(month, day)
+    }
+
+    fn year_containing_rd(&self, rd: RataDie) -> EastAsianTraditionalYear {
+        self.1.year_containing_rd(rd)
     }
 }
 

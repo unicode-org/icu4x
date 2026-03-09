@@ -41,6 +41,7 @@ smallvec = { workspace = true, optional = true }
 
 jiff = { workspace = true, optional = true }
 chrono = { workspace = true, optional = true }
+time = { workspace = true, optional = true }
 
 icu_datetime_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
@@ -55,6 +56,7 @@ icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
 ureq = { workspace = true }
 chrono-tz = { workspace = true }
+jiff = { workspace = true, features = ["std", "tzdb-bundle-always"] }
 
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
@@ -97,13 +99,13 @@ compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_dec
 ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
 jiff_0_2 = ["dep:jiff", "icu_time/jiff_0_2", "icu_calendar/jiff_0_2"]
 chrono_0_4 = ["dep:chrono", "icu_time/chrono_0_4", "icu_calendar/chrono_0_4"]
+time_0_3 = ["dep:time", "icu_time/time_0_3", "icu_calendar/time_0_3"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
-# This has a lot of features, run a reduced test that is likely to catch 99% of bugs
 max_combination_size = 3
 
 [[bench]]

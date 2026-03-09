@@ -6,8 +6,8 @@ use std::convert::Infallible;
 
 use icu_calendar::{
     cal::Hebrew,
-    options::{DateAddOptions, DateDifferenceOptions, Overflow},
-    types::{DateDuration, DateDurationUnit, Month},
+    options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit, Overflow},
+    types::{DateDuration, Month},
     AsCalendar, Calendar, Date, Iso,
 };
 

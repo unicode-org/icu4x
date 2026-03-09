@@ -12,7 +12,7 @@ use zerovec::ule::AsULE;
 
 // Export the duration types from here
 #[cfg(feature = "unstable")]
-pub use crate::duration::{DateDuration, DateDurationUnit};
+pub use crate::duration::DateDuration;
 use crate::{calendar_arithmetic::ArithmeticDate, error::MonthCodeParseError};
 
 #[cfg(feature = "unstable")]
@@ -493,12 +493,14 @@ pub enum LeapStatus {
     Normal,
     /// A leap month.
     Leap,
-    /// A month that is not itself considered a leap month, but might
-    /// have special formatting because it occurs after a leap month.
+    /// A standard month that has a corresponding leap month
+    /// in the same year.
     ///
-    /// An example of this is the Hebrew month "Adar", which is called
-    /// "Adar II" when it follows the leap month "Adar I".
-    StandardAfterLeap,
+    /// "Corresponding" is used in a formatting sense here:
+    /// even though the Hebrew "Adar I" is `M05L`, the
+    /// `LeapBase` will be `M06` (not `M05`), so formatting
+    /// knows to produce "Adar II".
+    LeapBase,
 }
 
 impl Month {
@@ -544,11 +546,11 @@ impl Month {
     /// See [`Self::try_from_str()`].
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
         match *bytes {
-            [b'M', tens, ones] => Ok(Self {
+            [b'M', tens @ b'0'..=b'9', ones @ b'0'..=b'9'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
                 is_leap: false,
             }),
-            [b'M', tens, ones, b'L'] => Ok(Self {
+            [b'M', tens @ b'0'..=b'9', ones @ b'0'..=b'9', b'L'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
                 is_leap: true,
             }),

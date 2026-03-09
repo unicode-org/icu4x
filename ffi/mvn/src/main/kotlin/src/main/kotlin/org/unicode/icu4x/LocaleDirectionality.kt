@@ -22,12 +22,22 @@ class LocaleDirectionality internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LocaleDirectionalityCleaner(val handle: Pointer, val lib: LocaleDirectionalityLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleDirectionalityCleaner(val handle: Pointer, val lib: LocaleDirectionalityLib) : Runnable {
         override fun run() {
             lib.icu4x_LocaleDirectionality_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LocaleDirectionality.LocaleDirectionalityCleaner(handle, LocaleDirectionality.lib));
     }
 
     companion object {
@@ -44,8 +54,7 @@ class LocaleDirectionality internal constructor (
             val returnVal = lib.icu4x_LocaleDirectionality_create_common_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LocaleDirectionality(handle, selfEdges)
-            CLEANER.register(returnOpaque, LocaleDirectionality.LocaleDirectionalityCleaner(handle, LocaleDirectionality.lib));
+            val returnOpaque = LocaleDirectionality(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -57,14 +66,14 @@ class LocaleDirectionality internal constructor (
         fun createCommonWithProvider(provider: DataProvider): Result<LocaleDirectionality> {
             
             val returnVal = lib.icu4x_LocaleDirectionality_create_common_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = LocaleDirectionality(handle, selfEdges)
-                CLEANER.register(returnOpaque, LocaleDirectionality.LocaleDirectionalityCleaner(handle, LocaleDirectionality.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = LocaleDirectionality(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -78,8 +87,7 @@ class LocaleDirectionality internal constructor (
             val returnVal = lib.icu4x_LocaleDirectionality_create_extended_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LocaleDirectionality(handle, selfEdges)
-            CLEANER.register(returnOpaque, LocaleDirectionality.LocaleDirectionalityCleaner(handle, LocaleDirectionality.lib));
+            val returnOpaque = LocaleDirectionality(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -91,14 +99,14 @@ class LocaleDirectionality internal constructor (
         fun createExtendedWithProvider(provider: DataProvider): Result<LocaleDirectionality> {
             
             val returnVal = lib.icu4x_LocaleDirectionality_create_extended_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = LocaleDirectionality(handle, selfEdges)
-                CLEANER.register(returnOpaque, LocaleDirectionality.LocaleDirectionalityCleaner(handle, LocaleDirectionality.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = LocaleDirectionality(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

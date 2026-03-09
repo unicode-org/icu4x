@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, UnstableSealed};
+use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, InSameCalendar, UnstableSealed};
+use crate::MismatchedCalendarError;
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
-use icu_calendar::{AnyCalendar, Date, Gregorian};
+use icu_calendar::{AnyCalendar, AnyCalendarKind, Date, Gregorian};
 #[cfg(feature = "compiled_data")]
 use icu_time::zone::models::AtTime;
 use icu_time::zone::{UtcOffset, ZoneNameTimestamp};
@@ -13,7 +14,7 @@ use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
 use icu_time::{TimeZone, TimeZoneInfo};
 
 impl UnstableSealed for jiff::civil::Time {}
-impl InFixedCalendar<()> for jiff::civil::Time {}
+impl<C> InFixedCalendar<C> for jiff::civil::Time {}
 impl GetField<()> for jiff::civil::Time {
     fn get_field(&self) {}
 }
@@ -72,15 +73,7 @@ impl GetField<DayOfMonth> for jiff::civil::Date {
 impl GetField<Weekday> for jiff::civil::Date {
     #[inline]
     fn get_field(&self) -> Weekday {
-        match self.weekday() {
-            jiff::civil::Weekday::Monday => Weekday::Monday,
-            jiff::civil::Weekday::Tuesday => Weekday::Tuesday,
-            jiff::civil::Weekday::Wednesday => Weekday::Wednesday,
-            jiff::civil::Weekday::Thursday => Weekday::Thursday,
-            jiff::civil::Weekday::Friday => Weekday::Friday,
-            jiff::civil::Weekday::Saturday => Weekday::Saturday,
-            jiff::civil::Weekday::Sunday => Weekday::Sunday,
-        }
+        self.weekday().get_field()
     }
 }
 
@@ -99,7 +92,7 @@ impl GetField<RataDie> for jiff::civil::Date {
 }
 
 impl UnstableSealed for jiff::tz::Offset {}
-impl InFixedCalendar<()> for jiff::tz::Offset {}
+impl<C> InFixedCalendar<C> for jiff::tz::Offset {}
 impl GetField<()> for jiff::tz::Offset {
     fn get_field(&self) {}
 }
@@ -180,6 +173,18 @@ impl GetField<RataDie> for jiff::civil::DateTime {
     #[inline]
     fn get_field(&self) -> RataDie {
         self.date().get_field()
+    }
+}
+
+impl UnstableSealed for jiff::civil::Weekday {}
+impl<C> InFixedCalendar<C> for jiff::civil::Weekday {}
+impl GetField<()> for jiff::civil::Weekday {
+    fn get_field(&self) {}
+}
+
+impl GetField<Weekday> for jiff::civil::Weekday {
+    fn get_field(&self) -> Weekday {
+        (*self).into()
     }
 }
 
@@ -306,6 +311,14 @@ impl ConvertCalendar for jiff::civil::DateTime {
     }
 }
 
+impl ConvertCalendar for jiff::civil::Weekday {
+    type Converted<'a> = Self;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
 #[cfg(feature = "compiled_data")]
 impl ConvertCalendar for jiff::Zoned {
     type Converted<'a> =
@@ -324,9 +337,61 @@ impl ConvertCalendar for jiff::tz::Offset {
     }
 }
 
+impl InSameCalendar for jiff::civil::Time {
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
+    }
+}
+
+impl InSameCalendar for jiff::civil::Date {
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        if any_calendar_kind == AnyCalendarKind::Gregorian {
+            Ok(())
+        } else {
+            Err(MismatchedCalendarError {
+                this_kind: any_calendar_kind,
+                date_kind: Some(AnyCalendarKind::Gregorian),
+            })
+        }
+    }
+}
+
+impl InSameCalendar for jiff::civil::DateTime {
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        self.date().check_any_calendar_kind(any_calendar_kind)
+    }
+}
+
+impl InSameCalendar for jiff::civil::Weekday {
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
+    }
+}
+
+impl InSameCalendar for jiff::Zoned {
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        self.date().check_any_calendar_kind(any_calendar_kind)
+    }
+}
+
+impl InSameCalendar for jiff::tz::Offset {
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
+    }
+}
+
 #[test]
 fn jiff() {
-    use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
+    use icu::datetime::{fieldsets, DateTimeFormatter};
     use icu::locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -334,27 +399,126 @@ fn jiff() {
         .unwrap()
         .to_zoned(jiff::tz::TimeZone::get("Asia/Tokyo").unwrap());
 
-    let ymdt = DateTimeFormatter::try_new(
+    let ymdto = DateTimeFormatter::try_new(
+        locale!("ja-u-ca-japanese").into(),
+        fieldsets::YMDT::medium().with_zone(fieldsets::zone::LocalizedOffsetShort),
+    )
+    .unwrap();
+    assert_writeable_eq!(ymdto.format(&jiff), "令和6年9月11日 8:37:20 GMT+9");
+
+    let ymdtz = DateTimeFormatter::try_new(
         locale!("ja-u-ca-japanese").into(),
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
     .unwrap();
-    assert_writeable_eq!(ymdt.format(&jiff), "令和6年9月11日 8:37:20 日本標準時");
+    assert_writeable_eq!(ymdtz.format(&jiff), "令和6年9月11日 8:37:20 日本標準時");
+
+    let ymdt = DateTimeFormatter::try_new(
+        locale!("ja-u-ca-japanese").into(),
+        fieldsets::YMDT::medium(),
+    )
+    .unwrap();
+    assert_writeable_eq!(ymdt.format(&jiff.datetime()), "令和6年9月11日 8:37:20");
 
     let ymd =
         DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::YMD::medium())
             .unwrap();
     assert_writeable_eq!(ymd.format(&jiff.date()), "令和6年9月11日");
 
-    let t =
-        NoCalendarFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::T::medium())
-            .unwrap();
+    let t = DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::T::medium())
+        .unwrap();
     assert_writeable_eq!(t.format(&jiff.time()), "8:37:20");
 
-    let offset = NoCalendarFormatter::try_new(
+    let e = DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::E::long())
+        .unwrap();
+    assert_writeable_eq!(e.format(&jiff.weekday()), "水曜日");
+
+    let offset = DateTimeFormatter::try_new(
         locale!("ja-u-ca-japanese").into(),
         fieldsets::zone::LocalizedOffsetLong,
     )
     .unwrap();
     assert_writeable_eq!(offset.format(&jiff.offset()), "GMT+09:00");
+}
+
+#[test]
+fn jiff_fixed_calendar() {
+    use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
+    use icu::locale::locale;
+    use writeable::assert_writeable_eq;
+
+    let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)
+        .unwrap()
+        .to_zoned(jiff::tz::TimeZone::get("Europe/Paris").unwrap());
+
+    let ymdto = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::YMDT::medium().with_zone(fieldsets::zone::LocalizedOffsetShort),
+    )
+    .unwrap();
+    assert_writeable_eq!(ymdto.format(&jiff), "11 sept. 2024, 01:37:20 UTC+2");
+
+    let ymdtz = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        ymdtz.format(&jiff),
+        "11 sept. 2024, 01:37:20 heure d’été d’Europe centrale"
+    );
+
+    let ymdt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::YMDT::medium(),
+    )
+    .unwrap();
+    assert_writeable_eq!(ymdt.format(&jiff.datetime()), "11 sept. 2024, 01:37:20");
+
+    let ymd = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::YMD::medium(),
+    )
+    .unwrap();
+    assert_writeable_eq!(ymd.format(&jiff.date()), "11 sept. 2024");
+
+    let t = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::T::medium(),
+    )
+    .unwrap();
+    assert_writeable_eq!(t.format(&jiff.time()), "01:37:20");
+
+    let e = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::E::long(),
+    )
+    .unwrap();
+    assert_writeable_eq!(e.format(&jiff.weekday()), "mercredi");
+
+    let offset = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::zone::LocalizedOffsetLong,
+    )
+    .unwrap();
+    assert_writeable_eq!(offset.format(&jiff.offset()), "UTC+02:00");
+}
+
+#[test]
+fn jiff_no_calendar() {
+    use icu::datetime::{fieldsets, NoCalendarFormatter};
+    use icu::locale::locale;
+    use writeable::assert_writeable_eq;
+
+    let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)
+        .unwrap()
+        .to_zoned(jiff::tz::TimeZone::get("Europe/Zurich").unwrap());
+
+    let t = NoCalendarFormatter::try_new(locale!("de-CH").into(), fieldsets::T::medium()).unwrap();
+    assert_writeable_eq!(t.format(&jiff.time()), "01:37:20");
+
+    let offset =
+        NoCalendarFormatter::try_new(locale!("de").into(), fieldsets::zone::LocalizedOffsetLong)
+            .unwrap();
+    assert_writeable_eq!(offset.format(&jiff.offset()), "GMT+02:00");
 }

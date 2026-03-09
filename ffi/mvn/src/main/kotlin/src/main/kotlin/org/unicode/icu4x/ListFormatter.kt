@@ -22,12 +22,22 @@ class ListFormatter internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class ListFormatterCleaner(val handle: Pointer, val lib: ListFormatterLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class ListFormatterCleaner(val handle: Pointer, val lib: ListFormatterLib) : Runnable {
         override fun run() {
             lib.icu4x_ListFormatter_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, ListFormatter.ListFormatterCleaner(handle, ListFormatter.lib));
     }
 
     companion object {
@@ -42,14 +52,14 @@ class ListFormatter internal constructor (
         fun createAndWithLength(locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_and_with_length_mv1(locale.handle, length.toNative());
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ListFormatter(handle, selfEdges)
-                CLEANER.register(returnOpaque, ListFormatter.ListFormatterCleaner(handle, ListFormatter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ListFormatter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -61,14 +71,14 @@ class ListFormatter internal constructor (
         fun createAndWithLengthAndProvider(provider: DataProvider, locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_and_with_length_and_provider_mv1(provider.handle, locale.handle, length.toNative());
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ListFormatter(handle, selfEdges)
-                CLEANER.register(returnOpaque, ListFormatter.ListFormatterCleaner(handle, ListFormatter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ListFormatter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -80,14 +90,14 @@ class ListFormatter internal constructor (
         fun createOrWithLength(locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_or_with_length_mv1(locale.handle, length.toNative());
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ListFormatter(handle, selfEdges)
-                CLEANER.register(returnOpaque, ListFormatter.ListFormatterCleaner(handle, ListFormatter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ListFormatter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -99,14 +109,14 @@ class ListFormatter internal constructor (
         fun createOrWithLengthAndProvider(provider: DataProvider, locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_or_with_length_and_provider_mv1(provider.handle, locale.handle, length.toNative());
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ListFormatter(handle, selfEdges)
-                CLEANER.register(returnOpaque, ListFormatter.ListFormatterCleaner(handle, ListFormatter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ListFormatter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -118,14 +128,14 @@ class ListFormatter internal constructor (
         fun createUnitWithLength(locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_unit_with_length_mv1(locale.handle, length.toNative());
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ListFormatter(handle, selfEdges)
-                CLEANER.register(returnOpaque, ListFormatter.ListFormatterCleaner(handle, ListFormatter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ListFormatter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -137,14 +147,14 @@ class ListFormatter internal constructor (
         fun createUnitWithLengthAndProvider(provider: DataProvider, locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_unit_with_length_and_provider_mv1(provider.handle, locale.handle, length.toNative());
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ListFormatter(handle, selfEdges)
-                CLEANER.register(returnOpaque, ListFormatter.ListFormatterCleaner(handle, ListFormatter.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ListFormatter(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -155,9 +165,13 @@ class ListFormatter internal constructor (
         val listSliceMemory = PrimitiveArrayTools.borrowUtf16s(list)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_ListFormatter_format_utf16_mv1(handle, listSliceMemory.slice, write);
-        
-        val returnString = DW.writeToString(write)
-        return returnString
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            listSliceMemory.close()
+        }
     }
 
 }

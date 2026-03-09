@@ -40,3 +40,17 @@ fn assert_range() {
         ))
     ));
 }
+
+impl From<jiff::civil::Weekday> for crate::types::Weekday {
+    fn from(value: jiff::civil::Weekday) -> Self {
+        match value {
+            jiff::civil::Weekday::Monday => Self::Monday,
+            jiff::civil::Weekday::Tuesday => Self::Tuesday,
+            jiff::civil::Weekday::Wednesday => Self::Wednesday,
+            jiff::civil::Weekday::Thursday => Self::Thursday,
+            jiff::civil::Weekday::Friday => Self::Friday,
+            jiff::civil::Weekday::Saturday => Self::Saturday,
+            jiff::civil::Weekday::Sunday => Self::Sunday,
+        }
+    }
+}

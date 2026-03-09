@@ -1022,6 +1022,26 @@ impl_date_marker!(
 );
 
 impl_date_marker!(
+    /// Format a weekday using [`Weekday`]:
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::types::Weekday;
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+    ///     locale!("fr").into(),
+    ///     fieldsets::E::long(),
+    /// ).unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Weekday::Monday),
+    ///     "lundi"
+    /// );
+    /// ```
     E,
     ET,
     description = "weekday (standalone)",

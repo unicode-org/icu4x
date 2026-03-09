@@ -33,7 +33,6 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::NoCalendarFormatter, Typedef)]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct TimeZoneFormatter(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             (),
@@ -467,31 +466,6 @@ pub mod ffi {
             )))
         }
         
-        fn format_raw(
-            &self,
-            mut input: icu_datetime::unchecked::DateTimeInputUnchecked,
-            zone: &TimeZoneInfo,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeWriteError> {
-            input.set_time_zone_id(zone.id);
-            if let Some(offset) = zone.offset {
-                input.set_time_zone_utc_offset(offset);
-            }
-            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
-                input.set_time_zone_name_timestamp(zone_name_timestamp);
-            }
-            else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
-            }
-            self
-                .0
-                .format_unchecked(input)
-                .try_write_to(write)
-                .ok()
-                .transpose()?;
-            Ok(())
-        }
-
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
@@ -500,8 +474,16 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
-            self.format_raw(input,  zone, write)
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(None::<icu_calendar::Date<icu_calendar::AnyCalendar>>, None));
+
+            self
+                .0
+                .format_unchecked(input)
+                .try_write_to(write)
+                .ok()
+                .transpose()?;
+            Ok(())
         }
         
     }

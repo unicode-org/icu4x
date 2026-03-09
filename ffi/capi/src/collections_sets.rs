@@ -9,7 +9,7 @@ pub mod ffi {
 
     use crate::unstable::properties_sets::ffi::CodePointSetData;
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(
         icu::collections::codepointinvlist::CodePointInversionListBuilder,
         Struct

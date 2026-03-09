@@ -8,6 +8,7 @@ import com.sun.jna.Structure
 internal interface DateLib: Library {
     fun icu4x_Date_destroy_mv1(handle: Pointer)
     fun icu4x_Date_from_iso_in_calendar_mv1(isoYear: Int, isoMonth: FFIUint8, isoDay: FFIUint8, calendar: Pointer): ResultPointerInt
+    fun icu4x_Date_from_fields_in_calendar_mv1(fields: DateFieldsNative, options: DateFromFieldsOptionsNative, calendar: Pointer): ResultPointerInt
     fun icu4x_Date_from_codes_in_calendar_mv1(eraCode: Slice, year: Int, monthCode: Slice, day: FFIUint8, calendar: Pointer): ResultPointerInt
     fun icu4x_Date_from_rata_die_mv1(rd: Long, calendar: Pointer): ResultPointerInt
     fun icu4x_Date_from_string_mv1(v: Slice, calendar: Pointer): ResultPointerInt
@@ -30,6 +31,8 @@ internal interface DateLib: Library {
     fun icu4x_Date_days_in_year_mv1(handle: Pointer): FFIUint16
     fun icu4x_Date_is_in_leap_year_mv1(handle: Pointer): Byte
     fun icu4x_Date_calendar_mv1(handle: Pointer): Pointer
+    fun icu4x_Date_try_add_with_options_mv1(handle: Pointer, duration: DateDurationNative, options: DateAddOptionsNative): ResultPointerInt
+    fun icu4x_Date_try_until_with_options_mv1(handle: Pointer, other: Pointer, options: DateDifferenceOptionsNative): ResultDateDurationNativeCalendarMismatchedCalendarErrorNative
 }
 /** An ICU4X Date object capable of containing a date for any calendar.
 *
@@ -40,12 +43,22 @@ class Date internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class DateCleaner(val handle: Pointer, val lib: DateLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class DateCleaner(val handle: Pointer, val lib: DateLib) : Runnable {
         override fun run() {
             lib.icu4x_Date_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Date.DateCleaner(handle, Date.lib));
     }
 
     companion object {
@@ -61,14 +74,36 @@ class Date internal constructor (
         fun fromIsoInCalendar(isoYear: Int, isoMonth: UByte, isoDay: UByte, calendar: Calendar): Result<Date> {
             
             val returnVal = lib.icu4x_Date_from_iso_in_calendar_mv1(isoYear, FFIUint8(isoMonth), FFIUint8(isoDay), calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Date(handle, selfEdges)
-                CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Date(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Creates a new [Date] from the given fields, which are interpreted in the given calendar system.
+        *
+        *🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
+        */
+        fun fromFieldsInCalendar(fields: DateFields, options: DateFromFieldsOptions, calendar: Calendar): Result<Date> {
+            val temporaryEdgeArena: MutableList<Any> = mutableListOf()
+            
+            val returnVal = lib.icu4x_Date_from_fields_in_calendar_mv1(fields.toNative(aAppendArray = arrayOf(temporaryEdgeArena)), options.toNative(), calendar.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = Date(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return CalendarDateFromFieldsErrorError(CalendarDateFromFieldsError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -86,16 +121,19 @@ class Date internal constructor (
             val monthCodeSliceMemory = PrimitiveArrayTools.borrowUtf8(monthCode)
             
             val returnVal = lib.icu4x_Date_from_codes_in_calendar_mv1(eraCodeSliceMemory.slice, year, monthCodeSliceMemory.slice, FFIUint8(day), calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Date(handle, selfEdges)
-                CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
-                eraCodeSliceMemory?.close()
-                monthCodeSliceMemory?.close()
-                return returnOpaque.ok()
-            } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = Date(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                eraCodeSliceMemory.close()
+                monthCodeSliceMemory.close()
             }
         }
         @JvmStatic
@@ -107,14 +145,14 @@ class Date internal constructor (
         fun fromRataDie(rd: Long, calendar: Calendar): Result<Date> {
             
             val returnVal = lib.icu4x_Date_from_rata_die_mv1(rd, calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Date(handle, selfEdges)
-                CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Date(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -127,15 +165,18 @@ class Date internal constructor (
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
             val returnVal = lib.icu4x_Date_from_string_mv1(vSliceMemory.slice, calendar.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Date(handle, selfEdges)
-                CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
-                vSliceMemory?.close()
-                return returnOpaque.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = Date(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }
@@ -149,8 +190,7 @@ class Date internal constructor (
         val returnVal = lib.icu4x_Date_to_calendar_mv1(handle, calendar.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Date(handle, selfEdges)
-        CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+        val returnOpaque = Date(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -163,8 +203,7 @@ class Date internal constructor (
         val returnVal = lib.icu4x_Date_to_iso_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = IsoDate(handle, selfEdges)
-        CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
+        val returnOpaque = IsoDate(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -365,9 +404,46 @@ class Date internal constructor (
         val returnVal = lib.icu4x_Date_calendar_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Calendar(handle, selfEdges)
-        CLEANER.register(returnOpaque, Calendar.CalendarCleaner(handle, Calendar.lib));
+        val returnOpaque = Calendar(handle, selfEdges, true)
         return returnOpaque
+    }
+    
+    /** Returns a new [Date] with the given duration added to it.
+    *
+    *🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
+    */
+    fun tryAddWithOptions(duration: DateDuration, options: DateAddOptions): Result<Date> {
+        
+        val returnVal = lib.icu4x_Date_try_add_with_options_mv1(handle, duration.toNative(), options.toNative());
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
+            val selfEdges: List<Any> = listOf()
+            val handle = nativeOkVal 
+            val returnOpaque = Date(handle, selfEdges, true)
+            return returnOpaque.ok()
+        } else {
+            return CalendarDateAddErrorError(CalendarDateAddError.fromNative(returnVal.getNativeErr()!!)).err()
+        }
+    }
+    
+    /** Calculating the duration between `other - self`
+    *
+    *🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+    */
+    fun tryUntilWithOptions(other: Date, options: DateDifferenceOptions): Result<DateDuration> {
+        
+        val returnVal = lib.icu4x_Date_try_until_with_options_mv1(handle, other.handle, options.toNative());
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
+            val returnStruct = DateDuration.fromNative(nativeOkVal)
+            return returnStruct.ok()
+        } else {
+            return CalendarMismatchedCalendarError().err()
+        }
     }
 
 }

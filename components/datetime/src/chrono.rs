@@ -2,17 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, UnstableSealed};
+use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, InSameCalendar, UnstableSealed};
+use crate::MismatchedCalendarError;
 use chrono::{Datelike, Offset};
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
-use icu_calendar::{AnyCalendar, Date, Gregorian};
+use icu_calendar::{AnyCalendar, AnyCalendarKind, Date, Gregorian};
 use icu_time::zone::models::AtTime;
 use icu_time::zone::{UtcOffset, ZoneNameTimestamp};
 use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
 use icu_time::{TimeZone, TimeZoneInfo};
 
 impl UnstableSealed for chrono::NaiveTime {}
-impl InFixedCalendar<()> for chrono::NaiveTime {}
+impl<C> InFixedCalendar<C> for chrono::NaiveTime {}
 impl GetField<()> for chrono::NaiveTime {
     fn get_field(&self) {}
 }
@@ -71,15 +72,7 @@ impl GetField<DayOfMonth> for chrono::NaiveDate {
 impl GetField<Weekday> for chrono::NaiveDate {
     #[inline]
     fn get_field(&self) -> Weekday {
-        match self.weekday() {
-            chrono::Weekday::Mon => Weekday::Monday,
-            chrono::Weekday::Tue => Weekday::Tuesday,
-            chrono::Weekday::Wed => Weekday::Wednesday,
-            chrono::Weekday::Thu => Weekday::Thursday,
-            chrono::Weekday::Fri => Weekday::Friday,
-            chrono::Weekday::Sat => Weekday::Saturday,
-            chrono::Weekday::Sun => Weekday::Sunday,
-        }
+        self.weekday().get_field()
     }
 }
 
@@ -98,7 +91,7 @@ impl GetField<RataDie> for chrono::NaiveDate {
 }
 
 impl UnstableSealed for chrono::FixedOffset {}
-impl InFixedCalendar<()> for chrono::FixedOffset {}
+impl<C> InFixedCalendar<C> for chrono::FixedOffset {}
 impl GetField<()> for chrono::FixedOffset {
     fn get_field(&self) {}
 }
@@ -179,6 +172,18 @@ impl GetField<RataDie> for chrono::NaiveDateTime {
     #[inline]
     fn get_field(&self) -> RataDie {
         self.date().get_field()
+    }
+}
+
+impl UnstableSealed for chrono::Weekday {}
+impl<C> InFixedCalendar<C> for chrono::Weekday {}
+impl GetField<()> for chrono::Weekday {
+    fn get_field(&self) {}
+}
+
+impl GetField<Weekday> for chrono::Weekday {
+    fn get_field(&self) -> Weekday {
+        (*self).into()
     }
 }
 
@@ -307,6 +312,14 @@ impl ConvertCalendar for chrono::NaiveDateTime {
     }
 }
 
+impl ConvertCalendar for chrono::Weekday {
+    type Converted<'a> = Self;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
 impl<Tz: chrono::TimeZone> ConvertCalendar for chrono::DateTime<Tz>
 where
     for<'a> ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>>: From<&'a chrono::DateTime<Tz>>,
@@ -327,36 +340,194 @@ impl ConvertCalendar for chrono::FixedOffset {
     }
 }
 
+impl InSameCalendar for chrono::NaiveTime {
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
+    }
+}
+
+impl InSameCalendar for chrono::Weekday {
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
+    }
+}
+
+impl InSameCalendar for chrono::NaiveDate {
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        if any_calendar_kind == AnyCalendarKind::Gregorian {
+            Ok(())
+        } else {
+            Err(MismatchedCalendarError {
+                this_kind: any_calendar_kind,
+                date_kind: Some(AnyCalendarKind::Gregorian),
+            })
+        }
+    }
+}
+
+impl InSameCalendar for chrono::NaiveDateTime {
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        self.date().check_any_calendar_kind(any_calendar_kind)
+    }
+}
+
+impl<Tz: chrono::TimeZone> InSameCalendar for chrono::DateTime<Tz> {
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        self.date_naive().check_any_calendar_kind(any_calendar_kind)
+    }
+}
+
+impl InSameCalendar for chrono::FixedOffset {
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
+    }
+}
+
 #[test]
 fn chrono() {
-    use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
+    use icu::datetime::{fieldsets, DateTimeFormatter};
     use icu::locale::locale;
     use writeable::assert_writeable_eq;
 
     let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)
         .with_timezone(&"Asia/Tokyo".parse::<chrono_tz::Tz>().unwrap());
 
-    let ymdt = DateTimeFormatter::try_new(
+    let ymdto = DateTimeFormatter::try_new(
+        locale!("ja-u-ca-japanese").into(),
+        fieldsets::YMDT::medium().with_zone(fieldsets::zone::LocalizedOffsetShort),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        ymdto.format(&chrono.with_timezone(&chrono.offset().fix())),
+        "令和6年9月11日 8:37:20 GMT+9"
+    );
+
+    let ymdtz = DateTimeFormatter::try_new(
         locale!("ja-u-ca-japanese").into(),
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
     .unwrap();
-    assert_writeable_eq!(ymdt.format(&chrono), "令和6年9月11日 8:37:20 日本標準時");
+    assert_writeable_eq!(ymdtz.format(&chrono), "令和6年9月11日 8:37:20 日本標準時");
+
+    let ymdt = DateTimeFormatter::try_new(
+        locale!("ja-u-ca-japanese").into(),
+        fieldsets::YMDT::medium(),
+    )
+    .unwrap();
+    assert_writeable_eq!(ymdt.format(&chrono.naive_local()), "令和6年9月11日 8:37:20");
 
     let ymd =
         DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::YMD::medium())
             .unwrap();
     assert_writeable_eq!(ymd.format(&chrono.date_naive()), "令和6年9月11日");
 
-    let t =
-        NoCalendarFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::T::medium())
-            .unwrap();
+    let t = DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::T::medium())
+        .unwrap();
     assert_writeable_eq!(t.format(&chrono.time()), "8:37:20");
 
-    let offset = NoCalendarFormatter::try_new(
+    let e = DateTimeFormatter::try_new(locale!("ja-u-ca-japanese").into(), fieldsets::E::long())
+        .unwrap();
+    assert_writeable_eq!(e.format(&chrono.weekday()), "水曜日");
+
+    let offset = DateTimeFormatter::try_new(
         locale!("ja-u-ca-japanese").into(),
         fieldsets::zone::LocalizedOffsetLong,
     )
     .unwrap();
     assert_writeable_eq!(offset.format(&chrono.offset().fix()), "GMT+09:00");
+}
+
+#[test]
+fn chrono_fixed_calendar() {
+    use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
+    use icu::locale::locale;
+    use writeable::assert_writeable_eq;
+
+    let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)
+        .with_timezone(&"Europe/Paris".parse::<chrono_tz::Tz>().unwrap());
+
+    let ymdto = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::YMDT::medium().with_zone(fieldsets::zone::LocalizedOffsetShort),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        ymdto.format(&chrono.with_timezone(&chrono.offset().fix())),
+        "11 sept. 2024, 01:37:20 UTC+2"
+    );
+
+    let ymdtz = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        ymdtz.format(&chrono),
+        "11 sept. 2024, 01:37:20 heure d’été d’Europe centrale"
+    );
+
+    let ymdt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::YMDT::medium(),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        ymdt.format(&chrono.naive_local()),
+        "11 sept. 2024, 01:37:20"
+    );
+
+    let ymd = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::YMD::medium(),
+    )
+    .unwrap();
+    assert_writeable_eq!(ymd.format(&chrono.date_naive()), "11 sept. 2024");
+
+    let t = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::T::medium(),
+    )
+    .unwrap();
+    assert_writeable_eq!(t.format(&chrono.time()), "01:37:20");
+
+    let e = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::E::long(),
+    )
+    .unwrap();
+    assert_writeable_eq!(e.format(&chrono.weekday()), "mercredi");
+
+    let offset = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        locale!("fr").into(),
+        fieldsets::zone::LocalizedOffsetLong,
+    )
+    .unwrap();
+    assert_writeable_eq!(offset.format(&chrono.offset().fix()), "UTC+02:00");
+}
+
+#[test]
+fn chrono_no_calendar() {
+    use icu::datetime::{fieldsets, NoCalendarFormatter};
+    use icu::locale::locale;
+    use writeable::assert_writeable_eq;
+
+    let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)
+        .with_timezone(&"Europe/Zurich".parse::<chrono_tz::Tz>().unwrap());
+
+    let t = NoCalendarFormatter::try_new(locale!("de-CH").into(), fieldsets::T::medium()).unwrap();
+    assert_writeable_eq!(t.format(&chrono.time()), "01:37:20");
+
+    let offset =
+        NoCalendarFormatter::try_new(locale!("de").into(), fieldsets::zone::LocalizedOffsetLong)
+            .unwrap();
+    assert_writeable_eq!(offset.format(&chrono.offset().fix()), "GMT+02:00");
 }

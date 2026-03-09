@@ -143,9 +143,9 @@ pub enum LunisolarDateError {
 impl core::error::Error for LunisolarDateError {}
 
 #[cfg(feature = "unstable")]
-pub use unstable::{DateAddError, DateFromFieldsError};
+pub use unstable::{DateAddError, DateFromFieldsError, MismatchedCalendarError};
 #[cfg(not(feature = "unstable"))]
-pub(crate) use unstable::{DateAddError, DateFromFieldsError};
+pub(crate) use unstable::{DateAddError, DateFromFieldsError, MismatchedCalendarError};
 
 mod unstable {
     pub use super::*;
@@ -433,7 +433,8 @@ mod unstable {
         /// ```
         #[displaydoc("Not enough fields")]
         NotEnoughFields,
-        /// The date is out of range.
+        /// The date is out of range (see docs on [`Date`](crate::Date)
+        /// for more information about `Date`'s fundamental range invariant).
         ///
         /// # Examples
         ///
@@ -536,7 +537,8 @@ mod unstable {
         /// ```
         #[displaydoc("The specified month exists in this calendar, but not for this year")]
         MonthNotInYear,
-        /// The date is out of range.
+        /// The date is out of range (see docs on [`Date`](crate::Date)
+        /// for more information about `Date`'s fundamental range invariant).
         ///
         /// # Examples
         ///
@@ -559,6 +561,54 @@ mod unstable {
     }
 
     impl core::error::Error for DateAddError {}
+
+    /// Error returned when subtracting two [`Date`](crate::Date)s with [`AnyCalendar`](crate::AnyCalendar).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::error::MismatchedCalendarError;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::options::DateDifferenceOptions;
+    /// use icu::calendar::options::DateDurationUnit;
+    ///
+    /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
+    /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
+    ///
+    /// assert_eq!(
+    ///     d1.try_until_with_options(&d2, Default::default())
+    ///         .unwrap_err(),
+    ///     MismatchedCalendarError,
+    /// );
+    ///
+    /// // To compare the dates, convert them to the same calendar.
+    /// // Note that the result may differ based on the calendar used,
+    /// // e.g if comparing in months and days.
+    ///
+    /// let mut options = DateDifferenceOptions::default();
+    /// options.largest_unit = Some(DateDurationUnit::Months);
+    ///
+    /// let diff1 = d1.to_calendar(d2.calendar().clone())
+    ///     .try_until_with_options(&d2, options)
+    ///     .unwrap();
+    /// let diff2 = d1
+    ///     .try_until_with_options(&d2.to_calendar(d1.calendar().clone()),
+    ///                             options)
+    ///     .unwrap();
+    ///
+    /// assert_ne!(diff1, diff2);
+    /// ```
+    ///
+    /// N
+    #[derive(Clone, Copy, PartialEq, Debug, Display)]
+    #[displaydoc("Attempted to diff two `Date<AnyCalendar>`s with different calendars")]
+    #[allow(
+        clippy::exhaustive_structs,
+        reason = "This is the only possible error with paired AnyCalendar operations"
+    )]
+    pub struct MismatchedCalendarError;
+
+    impl core::error::Error for MismatchedCalendarError {}
 }
 
 /// Internal narrow error type for functions that only fail on unknown eras
@@ -579,7 +629,7 @@ impl From<UnknownEraError> for DateFromFieldsError {
 }
 
 /// Error for [`Month`](crate::types::Month) parsing
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum MonthCodeParseError {
     /// Invalid syntax

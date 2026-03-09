@@ -182,3 +182,18 @@ impl MaybeEncodeAsVarULE for u16 {
         None
     }
 }
+
+impl<'a, V: VarULE + ?Sized> MaybeAsVarULE for zerovec::VarZeroCow<'a, V> {
+    type EncodedStruct = V;
+}
+
+#[cfg(feature = "export")]
+impl<'a, V: VarULE + ?Sized> MaybeEncodeAsVarULE for zerovec::VarZeroCow<'a, V> {
+    type EncodeableStruct<'b>
+        = &'b V
+    where
+        Self: 'b;
+    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
+        Some(&**self)
+    }
+}

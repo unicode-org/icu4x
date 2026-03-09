@@ -6,6 +6,21 @@
 //!
 //! Items in this module are mostly for trait bounds. Most users should not need to reference
 //! these items in userland code.
+//!
+//! # Implementing a custom input type
+//!
+//! One reason you might find yourself in this module is because you have a custom datetime
+//! type, and you want to plug it into ICU4X for formatting.
+//!
+//! To properly equip your type for ICU4X, implement the following traits:
+//!
+//! - [`UnstableSealed`] must always be implemented to acknowledge that these traits are
+//!   subject to change, even across minor releases.
+//! - [`GetField<()>`] must almost always be implemented. It is used as a placeholder for input fields that a particular fieldset does not require.
+//! - Additional [`GetField`] impls based on what fields your type contains. For a list of all possible fields, see [`AllInputMarkers`].
+//! - [`ConvertCalendar`], for [`DateTimeFormatter::format`](crate::DateTimeFormatter::format)
+//! - [`InSameCalendar`], for [`DateTimeFormatter::format_same_calendar`](crate::DateTimeFormatter::format_same_calendar)
+//! - [`InFixedCalendar`], for [`FixedCalendarDateTimeFormatter::format`](crate::FixedCalendarDateTimeFormatter::format)
 
 mod calendar;
 mod dynamic_impls;

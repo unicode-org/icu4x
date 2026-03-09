@@ -120,6 +120,7 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTrieSimpleAscii<Store> {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
@@ -187,6 +188,7 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroAsciiIgnoreCaseTrie<Store> {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
@@ -232,6 +234,7 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTriePerfectHash<Store> {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
@@ -262,6 +265,7 @@ pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
 }
 
 impl<Store: ?Sized> ZeroTrieExtendedCapacity<Store> {
+    #[allow(unsafe_code)] // transparent newtype casts are documented
     fn transparent_ref_from_store(s: &Store) -> &Self {
         unsafe {
             // Safety: Self is transparent over Store
@@ -658,6 +662,7 @@ macro_rules! impl_zerotrie_subtype {
         //  6. `parse_bytes()` is left to its default impl
         //  7. byte equality is semantic equality
         #[cfg(feature = "zerovec")]
+        #[allow(unsafe_code)] // ULE impls are documented
         unsafe impl<Store> zerovec::ule::VarULE for $name<Store>
         where
             Store: zerovec::ule::VarULE,

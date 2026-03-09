@@ -19,12 +19,22 @@ class WordBreakIteratorUtf16 internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class WordBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: WordBreakIteratorUtf16Lib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class WordBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: WordBreakIteratorUtf16Lib) : Runnable {
         override fun run() {
             lib.icu4x_WordBreakIteratorUtf16_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, WordBreakIteratorUtf16.WordBreakIteratorUtf16Cleaner(handle, WordBreakIteratorUtf16.lib));
     }
 
     companion object {

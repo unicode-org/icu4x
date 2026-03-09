@@ -15,6 +15,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
+    use icu_locale_core::locale;
 
     use writeable::Writeable;
 
@@ -39,7 +40,6 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::casemap::options::TitlecaseOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "TitlecaseOptions")]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct TitlecaseOptionsV1 {
         pub leading_adjustment: DiplomatOption<LeadingAdjustment>,
         pub trailing_case: DiplomatOption<TrailingCase>,
@@ -156,7 +156,6 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_only_case_data")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &str,
@@ -189,7 +188,6 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_only_case_compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn titlecase_segment_with_only_case_compiled_data_v1(
             s: &str,
             locale: &Locale,
@@ -456,7 +454,6 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment")]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn titlecase_segment_v1(
             &self,
             s: &str,
@@ -482,7 +479,6 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_compiled_data")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn titlecase_segment_with_compiled_data_v1(
             s: &str,
             locale: &Locale,
@@ -492,6 +488,53 @@ pub mod ffi {
             let _infallible = icu_casemap::TitlecaseMapper::new()
                 .titlecase_segment(s, &locale.0.id, options.into())
                 .write_to(write);
+        }
+    }
+
+    /// A type that provides access to preconstructred Locales, to avoid
+    /// needing to parse user locales when the code knows what locale it wants.
+    ///
+    /// In most cases, you should be taking a locale from the user, but in some
+    /// limited cases you may be parsing from a limited set of locales and not
+    /// wish to pull in full-fledged parsing code.
+    ///
+    /// This type is for locales that have special meaning to `CaseMapper`,
+    /// since it only cares about a small set of locales and locale parsing takes
+    /// up a relatively large amount of binary size in the context of casemapping.
+    #[diplomat::attr(not(cpp), disable)]
+    #[diplomat::opaque]
+    pub struct CaseMapLocales;
+
+    impl CaseMapLocales {
+        /// Returns a borrowed "az" [`Locale`], without allocating.
+        pub fn az() -> &'static Locale {
+            static AZ: Locale = Locale(locale!("az"));
+            &AZ
+        }
+        /// Returns a borrowed "el" [`Locale`], without allocating.
+        pub fn el() -> &'static Locale {
+            static EL: Locale = Locale(locale!("el"));
+            &EL
+        }
+        /// Returns a borrowed "hy" [`Locale`], without allocating.
+        pub fn hy() -> &'static Locale {
+            static HY: Locale = Locale(locale!("hy"));
+            &HY
+        }
+        /// Returns a borrowed "lt" [`Locale`], without allocating.
+        pub fn lt() -> &'static Locale {
+            static LT: Locale = Locale(locale!("lt"));
+            &LT
+        }
+        /// Returns a borrowed "nl" [`Locale`], without allocating.
+        pub fn nl() -> &'static Locale {
+            static NL: Locale = Locale(locale!("nl"));
+            &NL
+        }
+        /// Returns a borrowed "tr" [`Locale`], without allocating.
+        pub fn tr() -> &'static Locale {
+            static TR: Locale = Locale(locale!("tr"));
+            &TR
         }
     }
 }

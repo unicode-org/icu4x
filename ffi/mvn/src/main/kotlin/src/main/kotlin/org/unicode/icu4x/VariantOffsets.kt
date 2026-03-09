@@ -72,12 +72,8 @@ class VariantOffsets (var standard: UtcOffset, var daylight: UtcOffset?) {
         val NATIVESIZE: Long = Native.getNativeSize(VariantOffsetsNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: VariantOffsetsNative): VariantOffsets {
-            val standard: UtcOffset = UtcOffset(nativeStruct.standard, listOf())
-            val daylight: UtcOffset? = if (nativeStruct.daylight == null) {
-        null
-    } else {
-        UtcOffset(nativeStruct.daylight!!, listOf())
-    }
+            val standard: UtcOffset = UtcOffset(nativeStruct.standard, listOf(), true)
+            val daylight: UtcOffset? = nativeStruct.daylight?.let { UtcOffset(it, listOf(), true) }
 
             return VariantOffsets(standard, daylight)
         }
