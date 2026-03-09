@@ -156,11 +156,6 @@ pub struct EastAsianTraditional<R>(pub R);
 ///
 /// This crate currently provides [`Rules`] for [`China`] and [`Korea`].
 ///
-/// Currently, implementations of this trait must produce calendars that
-/// have a leap month at least once every three years. This is used in optimizing
-/// `until()`, and may cause errors and debug assertions there if violated. We may
-/// change this to not be needed in the future.
-///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
@@ -594,7 +589,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
     #[inline]
     fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
-        // By `Rules` invariant
+        // TODO(#7077) This is not verified, and the error is not constant bounded
         12 * years + (years / 3)
     }
 
