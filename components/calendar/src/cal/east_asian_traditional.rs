@@ -594,7 +594,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
     #[inline]
     fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
-// By `Rules` invariant
+        // By `Rules` invariant
         12 * years + (years / 3)
     }
 
