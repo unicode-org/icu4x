@@ -1015,7 +1015,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 // Calendars do not provide a specialized implementation of `min_months_from()`
                 // because it would be too expensive to calculate; they default to 12 * min_years.
                 let mut min_months = self.min_months_from(min_years);
-                if !self.surpasses(
+                if self.surpasses(
                     other,
                     DateDuration::from_signed_ymwd(years, min_months, 0, 0),
                     sign,
