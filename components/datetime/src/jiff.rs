@@ -391,8 +391,8 @@ impl InSameCalendar for jiff::tz::Offset {
 
 #[test]
 fn jiff() {
-    use icu::datetime::{fieldsets, DateTimeFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, DateTimeFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)
@@ -443,8 +443,8 @@ fn jiff() {
 
 #[test]
 fn jiff_fixed_calendar() {
-    use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, FixedCalendarDateTimeFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)
@@ -506,8 +506,8 @@ fn jiff_fixed_calendar() {
 
 #[test]
 fn jiff_no_calendar() {
-    use icu::datetime::{fieldsets, NoCalendarFormatter};
-    use icu::locale::locale;
+    use crate::{fieldsets, NoCalendarFormatter};
+    use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
     let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)
