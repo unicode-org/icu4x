@@ -460,22 +460,20 @@ impl fmt::Display for MonthCode {
 ///
 /// A month has a "number" and "leap flag". In calendars without leap months (non-lunisolar
 /// calendars), the month with number n is always the nth month of the year (_ordinal month_),
-/// for example the Gregorian September is `Month:new(9)` and the 9th month of the year.
+/// for example the Gregorian September is `Month::new(9)` and the 9th month of the year.
 /// However, in calendars with leap months (lunisolar calendars), such as the Hebrew calendar,
 /// a month might repeat (leap) without affecting the number of each subsequent month (but
 /// obviously affecting their _ordinal number_). For example, the Hebrew month Nisan
 /// (`Month::new(7)`) might be the 7th or 8th month of the year, depending if the month
 /// Adar was repeated or not.
 ///
-/// Check the docs for a particular calendar for details on what its months are.
+/// Check the docs for a particular calendar (e.g. [`Hebrew`](crate::cal::Hebrew)) for details on
+/// what its months are.
 ///
 /// This concept of months matches the "month code" in [Temporal], and borrows its string
 /// representation:
 /// * `Month::new(7)` = `M07`
 /// * `Month::leap(2)` = `M02L`
-///
-/// This means that the Hebrew months "Adar" and "Adar II"
-/// ("Adar, but during a leap year") are considered the same month, `Month::new(6)`.
 ///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]

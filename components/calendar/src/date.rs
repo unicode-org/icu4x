@@ -110,13 +110,13 @@ impl<C> Deref for Ref<'_, C> {
 /// by changing the era/calendar. Furthermore, this is not the case for [`Date::try_from_fields`] and
 /// date arithmetic APIs: these APIs let you construct dates outside of that range.
 ///
-/// `Date` types have a fundamental range invariant as well, and ICU4X will refuse to construct
+/// The `Date` type has a fundamental range invariant as well, and it's not possible to construct
 /// dates outside of that range, regardless of the calendar.
-/// ICU4X APIs will return an `Overflow` error (e.g. `DateAddError::Overflow`) in these cases, or clamp
+/// APIs will return an `Overflow` error (e.g. `DateAddError::Overflow`) in these cases, or clamp
 /// in the case of `Date::from_rata_die()`.
 ///
 /// This range is currently dates with an ISO year between `-999_999..=999_999`, but
-/// ICU4X reserves the right to change these bounds in the future.
+/// we reserve the right to change these bounds in the future.
 ///
 /// Since `icu_calendar` is intended to be usable by implementors of the ECMA Temporal specification,
 /// this range will never be smaller than Temporal's validity range, which roughly maps to ISO years
@@ -338,7 +338,7 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().months_in_year(self.inner())
     }
 
-    /// Add a `duration` to this date, mutating it
+    /// Add a `duration` to this [`Date`], mutating it.
     ///
     /// This API will not construct dates outside of the fundamental range described on the [`Date`] type,
     /// instead returning [`DateAddError::Overflow`].
@@ -366,14 +366,10 @@ impl<A: AsCalendar> Date<A> {
         Ok(())
     }
 
-    /// Add a `duration` to this date, returning the new one.
+    /// Add a `duration` to this [`Date`].
     ///
     /// This API will not construct dates outside of the fundamental range described on the [`Date`] type,
     /// instead returning [`DateAddError::Overflow`].
-    ///
-    /// This clones the calendar: the calendars in this crate are cheap to clone (and usually `Copy`), but
-    /// the `A` wrapper you are using may not be. Consider using a wrapper like [`Ref`] for `A` if the cloning
-    /// will be a problem.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
