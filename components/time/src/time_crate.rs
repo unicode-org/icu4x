@@ -30,7 +30,7 @@ impl From<time::PrimitiveDateTime> for DateTime<Gregorian> {
 
 impl From<time::UtcOffset> for UtcOffset {
     fn from(other: time::UtcOffset) -> Self {
-        UtcOffset::from_seconds_unchecked(other.whole_seconds())
+        UtcOffset::from_seconds(other.whole_seconds())
     }
 }
 
