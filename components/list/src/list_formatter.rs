@@ -365,7 +365,7 @@ mod tests {
     macro_rules! test {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let f = ListFormatter::$type(
-                icu::locale::locale!($locale).into(),
+                icu_locale::locale!($locale).into(),
                 Default::default(),
             ).unwrap();
             $(

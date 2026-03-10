@@ -9,8 +9,9 @@ use crate::scaffold::*;
 use icu_calendar::types::{DayOfYear, RataDie};
 use icu_calendar::{AsCalendar, Calendar};
 use icu_time::scaffold::IntoOption;
+use icu_time::zone::models::{AtTime, Base};
 use icu_time::zone::ZoneNameTimestamp;
-use icu_time::{Hour, Minute, Nanosecond, Second};
+use icu_time::{Hour, Minute, Nanosecond, Second, TimeZoneInfo};
 
 use icu_calendar::Date;
 use icu_time::{zone::UtcOffset, Time, TimeZone};
@@ -86,6 +87,19 @@ impl DateTimeInputUnchecked {
     /// Sets the time zone UTC offset.
     pub fn set_time_zone_utc_offset(&mut self, utc_offset: UtcOffset) {
         self.zone_offset = Some(utc_offset);
+    }
+
+    /// Sets all fields from a [`TimeZoneInfo<Base>`] input.
+    pub fn set_time_zone_info_base_fields(&mut self, info: TimeZoneInfo<Base>) {
+        self.zone_id = Some(info.id());
+        self.zone_offset = self.zone_offset.or_else(|| info.offset());
+    }
+
+    /// Sets all fields from a [`TimeZoneInfo<AtTime>`] input.
+    pub fn set_time_zone_info_at_time_fields(&mut self, info: TimeZoneInfo<AtTime>) {
+        self.zone_id = Some(info.id());
+        self.zone_offset = self.zone_offset.or_else(|| info.offset());
+        self.zone_name_timestamp = Some(info.zone_name_timestamp());
     }
 
     /// Sets the time zone ID.

@@ -19,12 +19,22 @@ class VariantOffsetsCalculator internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class VariantOffsetsCalculatorCleaner(val handle: Pointer, val lib: VariantOffsetsCalculatorLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class VariantOffsetsCalculatorCleaner(val handle: Pointer, val lib: VariantOffsetsCalculatorLib) : Runnable {
         override fun run() {
             lib.icu4x_VariantOffsetsCalculator_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, VariantOffsetsCalculator.VariantOffsetsCalculatorCleaner(handle, VariantOffsetsCalculator.lib));
     }
 
     companion object {
@@ -41,8 +51,7 @@ class VariantOffsetsCalculator internal constructor (
             val returnVal = lib.icu4x_VariantOffsetsCalculator_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = VariantOffsetsCalculator(handle, selfEdges)
-            CLEANER.register(returnOpaque, VariantOffsetsCalculator.VariantOffsetsCalculatorCleaner(handle, VariantOffsetsCalculator.lib));
+            val returnOpaque = VariantOffsetsCalculator(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -54,14 +63,14 @@ class VariantOffsetsCalculator internal constructor (
         fun createWithProvider(provider: DataProvider): Result<VariantOffsetsCalculator> {
             
             val returnVal = lib.icu4x_VariantOffsetsCalculator_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = VariantOffsetsCalculator(handle, selfEdges)
-                CLEANER.register(returnOpaque, VariantOffsetsCalculator.VariantOffsetsCalculatorCleaner(handle, VariantOffsetsCalculator.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = VariantOffsetsCalculator(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

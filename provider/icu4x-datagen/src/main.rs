@@ -173,7 +173,9 @@ struct Cli {
     icuexport_root: Option<PathBuf>,
 
     #[arg(long, value_name = "TAG", default_value = "17.0.0")]
-    #[arg(help = "Download versioned UCD from unicode.org.")]
+    #[arg(help = "Download versioned UCD from unicode.org. \
+                  Use 'latest' for the latest version verified to work with this version of the binary, \
+                  and 'latest-tag' for the literal tag 'latest' on unicode.org.")]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
     #[cfg(feature = "provider")]
     ucd_tag: String,
@@ -524,6 +526,8 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 (_, "latest") => {
                     p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG)
                 }
+                #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_unihan_for_tag("latest"),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_unihan_for_tag(tag),
                 #[cfg(not(feature = "networking"))]

@@ -56,6 +56,35 @@
     },
     {
         "input": {
+            "value": "2023-03-10T14:15:07.123",
+            "options": {
+                "components": {
+                    "weekday": "long",
+                    "month": "long",
+                    "day": "two-digit-day-of-month",
+                    "era": "long",
+                    "year": "numeric",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric"
+                },
+                "semantic": {
+                    "dateFields": "YMDE",
+                    "length": "long",
+                    "timePrecision": "second",
+                    "yearStyle": "withEra"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en-u-ca-chinese-hc-h23": "Friday, Second Month 19, 2023(gui-mao) at 14:15:07",
+                "zh-u-ca-chinese-hc-h23": "2023癸卯年二月19星期五 14:15:07"
+            }
+        }
+    },
+    {
+        "input": {
             "value": "2023-03-23T14:15:07.123",
             "options": {
                 "components": {

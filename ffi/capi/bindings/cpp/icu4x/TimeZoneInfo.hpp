@@ -43,7 +43,7 @@ namespace capi {
     icu4x::capi::UtcOffset* icu4x_TimeZoneInfo_offset_mv1(const icu4x::capi::TimeZoneInfo* self);
 
     typedef struct icu4x_TimeZoneInfo_infer_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_infer_variant_mv1_result;
-    icu4x_TimeZoneInfo_infer_variant_mv1_result icu4x_TimeZoneInfo_infer_variant_mv1(icu4x::capi::TimeZoneInfo* self, const icu4x::capi::VariantOffsetsCalculator* _offset_calculator);
+    icu4x_TimeZoneInfo_infer_variant_mv1_result icu4x_TimeZoneInfo_infer_variant_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::VariantOffsetsCalculator* _offset_calculator);
 
     typedef struct icu4x_TimeZoneInfo_variant_mv1_result {union {icu4x::capi::TimeZoneVariant ok; }; bool is_ok;} icu4x_TimeZoneInfo_variant_mv1_result;
     icu4x_TimeZoneInfo_variant_mv1_result icu4x_TimeZoneInfo_variant_mv1(const icu4x::capi::TimeZoneInfo* self);
@@ -100,7 +100,7 @@ inline std::unique_ptr<icu4x::UtcOffset> icu4x::TimeZoneInfo::offset() const {
     return std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(result));
 }
 
-inline std::optional<std::monostate> icu4x::TimeZoneInfo::infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator) {
+inline std::optional<std::monostate> icu4x::TimeZoneInfo::infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator) const {
     auto result = icu4x::capi::icu4x_TimeZoneInfo_infer_variant_mv1(this->AsFFI(),
         _offset_calculator.AsFFI());
     return result.is_ok ? std::optional<std::monostate>() : std::nullopt;

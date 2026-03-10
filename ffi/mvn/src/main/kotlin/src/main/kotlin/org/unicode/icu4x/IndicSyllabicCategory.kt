@@ -98,9 +98,13 @@ enum class IndicSyllabicCategory {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
             val returnVal = lib.icu4x_IndicSyllabicCategory_try_from_str_mv1(sSliceMemory.slice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return IndicSyllabicCategory.fromNative(intermediateOption)
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return IndicSyllabicCategory.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     

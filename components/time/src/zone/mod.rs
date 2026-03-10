@@ -268,6 +268,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// use icu::time::Time;
 /// use icu::time::TimeZone;
 /// use icu::time::zone::UtcOffset;
+/// use icu::time::zone::ZoneNameTimestamp;
 ///
 /// // Parse the IANA ID
 /// let id = TimeZone::from_iana_id("America/Chicago");
@@ -278,7 +279,12 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// // Create a TimeZoneInfo<Base> by associating the ID with an offset
 /// let time_zone = id.with_offset(Some(UtcOffset::from_seconds(-6 * 3600)));
 ///
-/// // Extend to a TimeZoneInfo<AtTime> by adding a local time
+/// // Extend to a `TimeZoneInfo<AtTime>` by adding a timestamp ...
+/// let time_zone_at_time = time_zone.with_zone_name_timestamp(
+///     ZoneNameTimestamp::from_epoch_seconds(1701493200)
+/// );
+///
+/// // ... or by adding a local time
 /// let time_zone_at_time = time_zone.at_date_time_iso(DateTime {
 ///     date: Date::try_new_iso(2023, 12, 2).unwrap(),
 ///     time: Time::start_of_day(),
@@ -494,6 +500,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::time::zone::TimeZoneVariant;
+    /// use icu::time::zone::ZoneNameTimestamp;
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::DateTime;
     /// use icu::time::Time;
@@ -503,10 +510,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at UTC-6
     /// let info = TimeZone::from_iana_id("America/Chicago")
     ///     .with_offset(Some(UtcOffset::from_seconds(-6 * 3600)))
-    ///     .at_date_time_iso(DateTime {
-    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
-    ///         time: Time::start_of_day(),
-    ///     })
+    ///     .with_zone_name_timestamp(ZoneNameTimestamp::from_epoch_seconds(1701493200))
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
@@ -514,10 +518,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at at UTC-5
     /// let info = TimeZone::from_iana_id("America/Chicago")
     ///     .with_offset(Some(UtcOffset::from_seconds(-5 * 3600)))
-    ///     .at_date_time_iso(DateTime {
-    ///         date: Date::try_new_iso(2023, 6, 2).unwrap(),
-    ///         time: Time::start_of_day(),
-    ///     })
+    ///     .with_zone_name_timestamp(ZoneNameTimestamp::from_epoch_seconds(1685678400))
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// assert_eq!(info.variant(), TimeZoneVariant::Daylight);
@@ -525,10 +526,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at UTC-7
     /// let info = TimeZone::from_iana_id("America/Chicago")
     ///     .with_offset(Some(UtcOffset::from_seconds(-7 * 3600)))
-    ///     .at_date_time_iso(DateTime {
-    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
-    ///         time: Time::start_of_day(),
-    ///     })
+    ///     .with_zone_name_timestamp(ZoneNameTimestamp::from_epoch_seconds(1701493200))
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// // Whatever it is, it's not Chicago

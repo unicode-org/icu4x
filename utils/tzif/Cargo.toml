@@ -6,7 +6,7 @@
 name = "tzif"
 description = "A parser for TZif files"
 version = "0.5.0-dev"
-keywords = ["time-zone", "posix", "iana", "parse", "data"]
+keywords = ["timezone", "time-zone", "posix", "iana"]
 categories = ["date-and-time", "parser-implementations"]
 
 authors.workspace = true

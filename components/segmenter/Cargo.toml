@@ -6,9 +6,10 @@
 name = "icu_segmenter"
 description = "Unicode line breaking and text segmentation algorithms for text boundaries analysis"
 version = "2.1.2"
+categories.workspace = true
+keywords = ["unicode", "segmentation", "text-processing"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
@@ -18,6 +19,9 @@ rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+max_combination_size = 3
 
 [dependencies]
 icu_collections = { workspace = true }

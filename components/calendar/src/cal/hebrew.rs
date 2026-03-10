@@ -64,7 +64,7 @@ impl Hebrew {
     }
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug)]
 pub(crate) struct HebrewYear {
     keviyah: Keviyah,
     value: i32,
@@ -132,6 +132,35 @@ impl DateFieldsResolver for Hebrew {
 
     fn months_in_provided_year(year: HebrewYear) -> u8 {
         12 + year.keviyah.is_leap() as u8
+    }
+
+    #[inline]
+    fn min_months_from_inner(_start: HebrewYear, years: i64) -> i64 {
+        // The Hebrew Metonic cycle is 7 leap years every 19 years,
+        // which comes out to 235 months per 19 years.
+        //
+        // We need to ensure that this is always *lower or equal to* the number of
+        // months in a given year span.
+        //
+        // Firstly, note that this math will produce exactly the number of months in any given period
+        // that spans a whole number of cycles. Note that we are only performing integer
+        // ops here, and our SAFE_YEAR_RANGE is well within the range of allowed values
+        // for multiplying by 235.
+        //
+        // So we only need to verify that this math produces the right results within a single cycle.
+        //
+        // The Hebrew Metonic cycle has leap years in year 3, 6, 8, 11, 14, 17, and 19 (starting counting at year 1),
+        // i.e., leap year gaps of +3, +3, +2, +3, +3, +3, +2.
+        //
+        // 235 / 19 is ≈12 7/19 months per year, which leads to one leap month every three years plus 2/19
+        // months left over. So this is correct as long as it does not predict a leap month in 2 years
+        // where the Hebrew calendar expects one in 3.
+        //
+        // The longest sequence of "three year leap months" in the Hebrew calendar
+        // is 4: year 8->11->14->17. In that time the error will accumulate to 6/19, which is not
+        // enough to create a "two year leap month" in our calculation. So this calculation cannot go past
+        // the actual cycle of the Hebrew calendar.
+        235 * years / 19
     }
 
     #[inline]
@@ -325,10 +354,17 @@ impl Calendar for Hebrew {
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
         let mut m = MonthInfo::new(self, date.0);
-        #[allow(deprecated)]
+        // Even though the leap month is modeled as M05L,
+        // the actual leap base is M06.
         if m.number() == 6 && m.ordinal == 7 {
-            m.leap_status = LeapStatus::StandardAfterLeap;
-            m.formatting_code = Month::leap(6).code();
+            m.leap_status = LeapStatus::LeapBase;
+            #[allow(deprecated)]
+            {
+                // This is an ICU4X invention, it's not needed by
+                // formatting anymore, but we keep producing it
+                // for now.
+                m.formatting_code = Month::leap(6).code();
+            }
         }
         m
     }
@@ -493,7 +529,7 @@ mod tests {
                 Date::try_new_from_codes(
                     Some(&date.era_year().era),
                     date.era_year().year,
-                    date.month().as_input().code(),
+                    date.month().to_input().code(),
                     date.day_of_month().0,
                     Hebrew
                 ),
@@ -503,7 +539,7 @@ mod tests {
             assert_eq!(
                 Date::try_new_hebrew_v2(
                     date.era_year().year,
-                    date.month().as_input(),
+                    date.month().to_input(),
                     date.day_of_month().0,
                 ),
                 Ok(date)

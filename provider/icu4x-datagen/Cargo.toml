@@ -5,10 +5,11 @@
 [package]
 name = "icu4x-datagen"
 description = "Generate data for ICU4X DataProvider"
+categories = ["internationalization", "localization", "development-tools"]
+keywords = ["build-tool"]
 license = "Unicode-3.0"
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
@@ -55,7 +56,7 @@ rayon = ["icu_provider_export/rayon"]
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # We have a *lot* of features here
-max_combination_size = 2
+max_combination_size = 3
 
 [lints]
 workspace = true

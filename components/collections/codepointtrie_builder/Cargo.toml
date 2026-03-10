@@ -6,6 +6,8 @@
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
 version = "0.6.0-dev"
+categories.workspace = true
+keywords = ["unicode", "collections", "internationalization"]
 license = "Unicode-3.0"
 include = [
     "src/**/*",
@@ -19,7 +21,6 @@ include = [
 ]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true

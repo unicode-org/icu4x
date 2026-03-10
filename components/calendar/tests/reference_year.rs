@@ -25,9 +25,9 @@ where
     let mut rd = Date::try_new_iso(1972, 12, 31).unwrap().to_rata_die();
     for _ in 1..2000 {
         let date = Date::from_rata_die(rd, cal);
-        let month_day = (date.month().as_input(), date.day_of_month().0);
+        let month_day = (date.month().to_input(), date.day_of_month().0);
         let mut fields = DateFields::default();
-        fields.month = Some(date.month().as_input());
+        fields.month = Some(date.month().to_input());
         fields.day = Some(month_day.1);
         let mut options = DateFromFieldsOptions::default();
         options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
@@ -84,7 +84,7 @@ where
                 // Test round-trip (to valid day number)
                 if md_validity == ValidityState::ChineseConstrain {
                     let input_month = fields.month.unwrap();
-                    let output_month = reference_date.month().as_input();
+                    let output_month = reference_date.month().to_input();
                     // When constraining in the Chinese calendar the month
                     // stays the same but loses leapiness.
                     assert_eq!(
@@ -100,7 +100,7 @@ where
                 } else {
                     assert_eq!(
                         fields.month.unwrap(),
-                        reference_date.month().as_input(),
+                        reference_date.month().to_input(),
                         "{fields:?} {cal:?}"
                     );
                     assert_eq!(

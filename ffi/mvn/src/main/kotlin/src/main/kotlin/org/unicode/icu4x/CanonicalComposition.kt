@@ -22,12 +22,22 @@ class CanonicalComposition internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CanonicalCompositionCleaner(val handle: Pointer, val lib: CanonicalCompositionLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CanonicalCompositionCleaner(val handle: Pointer, val lib: CanonicalCompositionLib) : Runnable {
         override fun run() {
             lib.icu4x_CanonicalComposition_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CanonicalComposition.CanonicalCompositionCleaner(handle, CanonicalComposition.lib));
     }
 
     companion object {
@@ -44,8 +54,7 @@ class CanonicalComposition internal constructor (
             val returnVal = lib.icu4x_CanonicalComposition_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CanonicalComposition(handle, selfEdges)
-            CLEANER.register(returnOpaque, CanonicalComposition.CanonicalCompositionCleaner(handle, CanonicalComposition.lib));
+            val returnOpaque = CanonicalComposition(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -57,14 +66,14 @@ class CanonicalComposition internal constructor (
         fun createWithProvider(provider: DataProvider): Result<CanonicalComposition> {
             
             val returnVal = lib.icu4x_CanonicalComposition_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CanonicalComposition(handle, selfEdges)
-                CLEANER.register(returnOpaque, CanonicalComposition.CanonicalCompositionCleaner(handle, CanonicalComposition.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CanonicalComposition(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

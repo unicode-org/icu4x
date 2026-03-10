@@ -22,12 +22,22 @@ class ScriptWithExtensionsBorrowed internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class ScriptWithExtensionsBorrowedCleaner(val handle: Pointer, val lib: ScriptWithExtensionsBorrowedLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class ScriptWithExtensionsBorrowedCleaner(val handle: Pointer, val lib: ScriptWithExtensionsBorrowedLib) : Runnable {
         override fun run() {
             lib.icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, ScriptWithExtensionsBorrowed.ScriptWithExtensionsBorrowedCleaner(handle, ScriptWithExtensionsBorrowed.lib));
     }
 
     companion object {
@@ -57,8 +67,7 @@ class ScriptWithExtensionsBorrowed internal constructor (
         val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(handle, ch);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = ScriptExtensionsSet(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, ScriptExtensionsSet.ScriptExtensionsSetCleaner(handle, ScriptExtensionsSet.lib));
+        val returnOpaque = ScriptExtensionsSet(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
     
@@ -82,8 +91,7 @@ class ScriptWithExtensionsBorrowed internal constructor (
         val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(handle, FFIUint16(script));
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = CodePointSetData(handle, selfEdges)
-        CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+        val returnOpaque = CodePointSetData(handle, selfEdges, true)
         return returnOpaque
     }
 

@@ -4,12 +4,12 @@
 
 use calendrical_calculations::rata_die::RataDie;
 
-use crate::duration::{DateDuration, DateDurationUnit};
+use crate::duration::DateDuration;
 use crate::error::{
     range_check, DateAddError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
-    MonthCodeParseError, MonthError, UnknownEraError, YearOverflowError,
+    MonthCodeParseError, MonthError, UnknownEraError,
 };
-use crate::options::{DateAddOptions, DateDifferenceOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateFields, Month};
 use crate::{types, Calendar, DateError, RangeError};
@@ -121,13 +121,13 @@ struct UncheckedArithmeticDate<C: DateFieldsResolver> {
 }
 
 impl<C: DateFieldsResolver> UncheckedArithmeticDate<C> {
-    fn into_checked(self) -> Result<ArithmeticDate<C>, YearOverflowError> {
+    fn into_checked(self) -> Option<ArithmeticDate<C>> {
         let rd = C::to_rata_die_inner(self.year, self.ordinal_month, self.day);
         if !VALID_RD_RANGE.contains(&rd) {
-            return Err(YearOverflowError);
+            return None;
         }
         // Invariant checked above
-        Ok(ArithmeticDate::new_unchecked(
+        Some(ArithmeticDate::new_unchecked(
             self.year,
             self.ordinal_month,
             self.day,
@@ -187,7 +187,7 @@ impl PackWithMD for i32 {
 pub(crate) trait DateFieldsResolver: Calendar {
     /// This stores the year as either an i32, or a type containing more
     /// useful computational information.
-    type YearInfo: Copy + Debug + PartialEq + ToExtendedYear + PackWithMD;
+    type YearInfo: Copy + Debug + ToExtendedYear + PackWithMD;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8;
 
@@ -216,23 +216,6 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// constructor checks [`VALID_RD_RANGE`], please use `year_info_from_extended_checked`.
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
 
-    /// `year_info_from_extended` has a precondition of the year being within
-    /// [`GENEROUS_YEAR_RANGE`].
-    ///
-    /// Most constructors range check for much smaller ranges and don't need to
-    /// bother explicitly checking that, but operations that only enforce the
-    /// [`VALID_RD_RANGE`] should be careful what they feed to it. They can use
-    /// this checked version instead.
-    fn year_info_from_extended_checked(
-        &self,
-        extended_year: i32,
-    ) -> Result<Self::YearInfo, YearOverflowError> {
-        if !GENEROUS_YEAR_RANGE.contains(&extended_year) {
-            return Err(YearOverflowError);
-        }
-        Ok(self.year_info_from_extended(extended_year))
-    }
-
     /// Calculates the ECMA reference year (represented as an extended year)
     /// for the month code and day, or an error if the month code and day are invalid.
     ///
@@ -250,6 +233,18 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// The default impl is for non-lunisolar calendars with 12 months!
     fn months_in_provided_year(_year: Self::YearInfo) -> u8 {
         12
+    }
+
+    /// A lower bound for the number of months in `years` years, starting from the beginning of this year.
+    ///
+    /// This may be equal to the number of months, but should never be larger. Ideally,
+    /// implementations should be close enough to the actual answer such that the error
+    /// is bounded by a constant with respect to `years`.
+    ///
+    /// The default impl is for non-lunisolar calendars with 12 months!
+    #[inline]
+    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
+        12 * years
     }
 
     /// Calculates the ordinal month for the given year and month code.
@@ -324,16 +319,14 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateError> {
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
         let extended_year = if let Some(era) = era {
-            calendar.extended_year_from_era_year_unchecked(
-                era.as_bytes(),
-                range_check(year, "era_year", CONSTRUCTOR_YEAR_RANGE)?,
-            )?
+            calendar.extended_year_from_era_year_unchecked(era.as_bytes(), year)?
         } else {
             year
         };
-        let extended_year = range_check(extended_year, "extended_year", CONSTRUCTOR_YEAR_RANGE)?;
         let year = calendar.year_info_from_extended(extended_year);
+
         let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
             MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
         })?;
@@ -345,7 +338,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 }
             })?;
 
-        let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
 
         // date is in the valid year range, and therefore in the valid RD range
         Ok(ArithmeticDate::new_unchecked(year, month, day))
@@ -363,7 +356,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         }
         let year = calendar.year_info_from_extended(year);
 
-        let month = calendar.ordinal_from_month(year, month, Default::default())?;
+        let month = match calendar.ordinal_from_month(year, month, Default::default()) {
+            Ok(month) => month,
+            Err(MonthError::NotInCalendar) => return Err(LunisolarDateError::MonthNotInCalendar),
+            Err(MonthError::NotInYear) => return Err(LunisolarDateError::MonthNotInYear),
+        };
 
         let max_day = C::days_in_provided_month(year, month);
         if !(1..=max_day).contains(&day) {
@@ -414,7 +411,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // so we make an attempt.
         let year = match (fields.era, fields.era_year) {
             (None, None) => match fields.extended_year {
-                Some(extended_year) => calendar.year_info_from_extended_checked(extended_year)?,
+                Some(extended_year) => {
+                    if !GENEROUS_YEAR_RANGE.contains(&extended_year) {
+                        return Err(DateFromFieldsError::Overflow);
+                    }
+                    calendar.year_info_from_extended(extended_year)
+                }
                 None => match missing_fields_strategy {
                     MissingFieldsStrategy::Reject => {
                         return Err(DateFromFieldsError::NotEnoughFields)
@@ -430,7 +432,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                             _ => return Err(DateFromFieldsError::NotEnoughFields),
                         };
                         let ref_year = calendar.reference_year_from_month_day(m, d);
-                        if ref_year == Err(EcmaReferenceYearError::UseRegularIfConstrain)
+                        if ref_year.err() == Some(EcmaReferenceYearError::UseRegularIfConstrain)
                             && options.overflow == Some(Overflow::Constrain)
                         {
                             let new_valid_month = Month::new(m.number());
@@ -448,7 +450,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 }
                 let extended_year =
                     calendar.extended_year_from_era_year_unchecked(era, era_year)?;
-                let year = calendar.year_info_from_extended_checked(extended_year)?;
+                let year = calendar.year_info_from_extended(extended_year);
                 if let Some(extended_year) = fields.extended_year {
                     if year.to_extended_year() != extended_year {
                         return Err(DateFromFieldsError::InconsistentYear);
@@ -527,15 +529,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         cal: &C,
     ) -> Result<Self, RangeError> {
-        let year_info =
-            cal.year_info_from_extended(range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?);
-        // check the extended year in terms of the year
-        let offset = year - year_info.to_extended_year();
-        range_check(
-            year, // == year_info.to_extended_year() + offset
-            "year",
-            (CONSTRUCTOR_YEAR_RANGE.start() + offset)..=(CONSTRUCTOR_YEAR_RANGE.end() + offset),
-        )?;
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
+        let year_info = cal.year_info_from_extended(year);
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
         // date is in the valid year range, and therefore in the valid RD range
@@ -550,12 +545,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         cal: &C,
     ) -> Result<Self, DateError> {
-        let extended_year = cal.extended_year_from_era_year_unchecked(
-            era.as_bytes(),
-            range_check(year, "era_year", CONSTRUCTOR_YEAR_RANGE)?,
-        )?;
-        // check the extended year in terms of the year
-        range_check(extended_year, "extended_year", CONSTRUCTOR_YEAR_RANGE)?;
+        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
+        let extended_year = cal.extended_year_from_era_year_unchecked(era.as_bytes(), year)?;
         let year_info = cal.year_info_from_extended(extended_year);
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
@@ -674,7 +665,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // (note: integer steps omitted)
         // 1. Else if _day_ ≠ _target_.[[Day]], then
         //   1. If _sign_ × (_day_ - _target_.[[Day]]) > 0, return *true*.
-        if year != target.year() {
+        if year.to_extended_year() != target.year().to_extended_year() {
             if sign
                 * (i64::from(year.to_extended_year()) - i64::from(target.year().to_extended_year()))
                 > 0
@@ -718,7 +709,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         //   1. If _sign_ × (_month_ - _target_.[[Month]]) > 0, return *true*.
         // 1. Else if _day_ ≠ _target_.[[Day]], then
         //   1. If _sign_ × (_day_ - _target_.[[Day]]) > 0, return *true*.
-        if year != target.year() {
+        if year.to_extended_year() != target.year().to_extended_year() {
             if sign
                 * (i64::from(year.to_extended_year()) - i64::from(target.year().to_extended_year()))
                 > 0
@@ -865,9 +856,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _isoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
-        let y0 = cal.year_info_from_extended_checked(
-            duration.add_years_to(self.year().to_extended_year()),
-        )?;
+        let extended_year = duration.add_years_to(self.year().to_extended_year());
+        if !GENEROUS_YEAR_RANGE.contains(&extended_year) {
+            return Err(DateAddError::Overflow);
+        }
+        let y0 = cal.year_info_from_extended(extended_year);
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
         let base_month = cal.month_from_ordinal(self.year(), self.month());
         let m0_result = cal.ordinal_from_month(
@@ -916,12 +909,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             cal,
         );
 
-        Ok(balanced.into_checked()?)
+        balanced.into_checked().ok_or(DateAddError::Overflow)
     }
 
     /// Implements the Temporal abstract operation `NonISODateUntil`.
     ///
-    /// This takes a duration (`self`) and a date (`other`), then returns a duration that, when
+    /// This takes two dates (`self` and `other`), then returns a duration that, when
     /// added to `self`, results in `other`, with largest unit according to `options`.
     pub(crate) fn until(
         &self,
@@ -953,15 +946,39 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Ordering::Less => -1i64,
         };
 
+        // We don't want to spend time incrementally bumping it up one year
+        // at a time, so let's pre-guess a year delta that is guaranteed to not
+        // surpass.
+        let year_diff = other.year().to_extended_year() - self.year().to_extended_year();
+        let min_years = if year_diff == 0 {
+            0
+        } else {
+            i64::from(year_diff) - sign
+        };
+
+        debug_assert!(!self.surpasses(
+            other,
+            DateDuration::from_signed_ymwd(min_years, 0, 0, 0),
+            sign,
+            cal,
+        ));
+
         // 1. Let _years_ be 0.
         // 1. If _largestUnit_ is ~year~, then
         //   1. Let _candidateYears_ be _sign_.
         //   1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _candidateYears_, 0, 0, 0) is *false*,
         //     1. Set _years_ to _candidateYears_.
         //     1. Set _candidateYears_ to _candidateYears_ + _sign_.
+
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
             let mut candidate_years = sign;
+            if min_years != 0 {
+                // Optimization: we start with min_years since it is guaranteed to not
+                // surpass.
+                candidate_years = min_years
+            };
+
             while !self.surpasses(
                 other,
                 DateDuration::from_signed_ymwd(candidate_years, 0, 0, 0),
@@ -972,6 +989,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_years += sign;
             }
         }
+
         // 1. Let _months_ be 0.
         // 1. If _largestUnit_ is ~year~ or _largestUnit_ is ~month~, then
         //   1. Let _candidateMonths_ be _sign_.
@@ -984,6 +1002,23 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Some(DateDurationUnit::Years) | Some(DateDurationUnit::Months)
         ) {
             let mut candidate_months = sign;
+
+            if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
+                // If largest_unit = Months, then compute the calendar-specific minimum number of
+                // months corresponding to min_years. For solar calendars, this is 12 * min_years.
+                // For the Hebrew calendar, a leap month is added for 7 out of 19 years. East Asian
+                // Calendars do not provide a specialized implementation of `min_months_from()`
+                // because it would be too expensive to calculate; they default to 12 * min_years.
+                let min_months = self.min_months_from(min_years);
+                debug_assert!(!self.surpasses(
+                    other,
+                    DateDuration::from_signed_ymwd(years, min_months, 0, 0),
+                    sign,
+                    cal,
+                ));
+                candidate_months = min_months
+            }
+
             while !self.surpasses(
                 other,
                 DateDuration::from_signed_ymwd(years, candidate_months, 0, 0),
@@ -1013,12 +1048,16 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_weeks += sign;
             }
         }
+
         // 1. Let _days_ be 0.
         // 1. Let _candidateDays_ be _sign_.
         // 1. Repeat, while NonISODateSurpasses(_calendar_, _sign_, _one_, _two_, _years_, _months_, _weeks_, _candidateDays_) is *false*,
         //   1. Set _days_ to _candidateDays_.
         //   1. Set _candidateDays_ to _candidateDays_ + _sign_.
         let mut days = 0;
+        // There is no pressing need to optimize candidate_days here: the early-return RD arithmetic
+        // optimization will be hit if the largest_unit is weeks/days, and if it is months or years we will
+        // arrive here with a candidate date that is at most 31 days off. We can run this loop 31 times.
         let mut candidate_days = sign;
         while !self.surpasses(
             other,
@@ -1029,8 +1068,14 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             days = candidate_days;
             candidate_days += sign;
         }
+
         // 1. Return ! CreateDateDurationRecord(_years_, _months_, _weeks_, _days_).
         DateDuration::from_signed_ymwd(years, months, weeks, days)
+    }
+
+    /// The minimum number of months over `years` years, starting from `self.year()`.
+    pub(crate) fn min_months_from(self, years: i64) -> i64 {
+        C::min_months_from_inner(self.year(), years)
     }
 }
 

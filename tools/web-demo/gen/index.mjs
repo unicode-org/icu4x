@@ -1421,6 +1421,83 @@ let termini = Object.assign({
         ]
     },
 
+    "Locale.variants": {
+        func: (selfName) => icu.Locale.fromString(selfName).variants(),
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.variants",
+        expr: (selfName) => "icu.Locale.fromString(selfName).variants()".replace(/([\( ])selfName([,\) \n])/, '$1' + selfName + '$2'),
+        parameters: [
+            
+            {
+                name: "self_name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.variantCount": {
+        func: (selfName) => icu.Locale.fromString(selfName).variantCount,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.variantCount",
+        expr: (selfName) => "icu.Locale.fromString(selfName).variantCount".replace(/([\( ])selfName([,\) \n])/, '$1' + selfName + '$2'),
+        parameters: [
+            
+            {
+                name: "self_name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.variantAt": {
+        func: (selfName, index) => icu.Locale.fromString(selfName).variantAt(index),
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.variantAt",
+        expr: (selfName, index) => "icu.Locale.fromString(selfName).variantAt(index)".replace(/([\( ])selfName([,\) \n])/, '$1' + selfName + '$2').replace(/([\( ])index([,\) \n])/, '$1' + index + '$2'),
+        parameters: [
+            
+            {
+                name: "self_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "index",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "Locale.hasVariant": {
+        func: (selfName, s) => icu.Locale.fromString(selfName).hasVariant(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.hasVariant",
+        expr: (selfName, s) => "icu.Locale.fromString(selfName).hasVariant(s)".replace(/([\( ])selfName([,\) \n])/, '$1' + selfName + '$2').replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "self_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "Locale.normalize": {
         func: (s) => icu.Locale.normalize(s),
         // For avoiding webpacking minifying issues:

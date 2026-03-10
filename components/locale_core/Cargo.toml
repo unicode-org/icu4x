@@ -5,9 +5,10 @@
 [package]
 name = "icu_locale_core"
 description = "API for managing Unicode Language and Locale Identifiers"
+categories.workspace = true
+keywords = ["unicode", "language-tags", "bcp47"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

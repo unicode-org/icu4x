@@ -6,9 +6,10 @@
 name = "icu_properties"
 description = "Definitions for Unicode properties"
 version = "2.1.2"
+categories.workspace = true
+keywords = ["character-properties", "unicode"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
@@ -18,6 +19,9 @@ rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+max_combination_size = 3
 
 [dependencies]
 icu_collections = { workspace = true }

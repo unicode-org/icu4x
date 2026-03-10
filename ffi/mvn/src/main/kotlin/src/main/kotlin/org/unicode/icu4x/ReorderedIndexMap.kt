@@ -23,12 +23,22 @@ class ReorderedIndexMap internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class ReorderedIndexMapCleaner(val handle: Pointer, val lib: ReorderedIndexMapLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class ReorderedIndexMapCleaner(val handle: Pointer, val lib: ReorderedIndexMapLib) : Runnable {
         override fun run() {
             lib.icu4x_ReorderedIndexMap_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, ReorderedIndexMap.ReorderedIndexMapCleaner(handle, ReorderedIndexMap.lib));
     }
 
     companion object {

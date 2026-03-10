@@ -6,9 +6,10 @@
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
 version = "0.2.3"
+categories.workspace = true
+keywords = ["zero-copy", "serialization", "memory-efficiency", "trie"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
@@ -18,6 +19,9 @@ rust-version = "1.82"
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+max_combination_size = 3
 
 [dependencies]
 databake = { workspace = true, features = ["derive"], optional = true }

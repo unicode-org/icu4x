@@ -105,5 +105,60 @@ int main() {
     return 1;
   }
 
+  // --- Variant Tests ---
+  locale = Locale::from_string("en-US-valencia").ok().value();
+  if (locale->variant_count() != 1) {
+    std::cout << "Expected 1 variant, got " << locale->variant_count() << std::endl;
+    return 1;
+  }
+  if (!locale->has_variant("valencia")) {
+    std::cout << "Expected locale to have 'valencia' variant" << std::endl;
+    return 1;
+  }
+
+  // Add a variant (returns Result<bool, Error>)
+  auto added = locale->add_variant("posix").ok().value();
+  if (!added) {
+    std::cout << "Expected add_variant to return true for new variant" << std::endl;
+    return 1;
+  }
+  if (locale->variant_count() != 2) {
+    std::cout << "After add, expected 2 variants, got " << locale->variant_count() << std::endl;
+    return 1;
+  }
+
+  // Add duplicate (should return false)
+  auto addedDup = locale->add_variant("posix").ok().value();
+  if (addedDup) {
+    std::cout << "Expected add_variant to return false for duplicate" << std::endl;
+    return 1;
+  }
+
+  // Remove a variant (returns bool)
+  auto removed = locale->remove_variant("posix");
+  if (!removed) {
+    std::cout << "Expected remove_variant to return true" << std::endl;
+    return 1;
+  }
+  if (locale->variant_count() != 1) {
+    std::cout << "After remove, expected 1 variant" << std::endl;
+    return 1;
+  }
+
+  // Remove non-existent (returns false)
+  auto removedNone = locale->remove_variant("posix");
+  if (removedNone) {
+    std::cout << "Expected remove_variant to return false for non-existent" << std::endl;
+    return 1;
+  }
+
+  // Clear variants
+  locale->clear_variants();
+  if (locale->variant_count() != 0) {
+    std::cout << "After clear, expected 0 variants" << std::endl;
+    return 1;
+  }
+  std::cout << "Variant tests passed!" << std::endl;
+
   return 0;
 }

@@ -22,12 +22,22 @@ class CanonicalDecomposition internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CanonicalDecompositionCleaner(val handle: Pointer, val lib: CanonicalDecompositionLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CanonicalDecompositionCleaner(val handle: Pointer, val lib: CanonicalDecompositionLib) : Runnable {
         override fun run() {
             lib.icu4x_CanonicalDecomposition_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CanonicalDecomposition.CanonicalDecompositionCleaner(handle, CanonicalDecomposition.lib));
     }
 
     companion object {
@@ -44,8 +54,7 @@ class CanonicalDecomposition internal constructor (
             val returnVal = lib.icu4x_CanonicalDecomposition_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CanonicalDecomposition(handle, selfEdges)
-            CLEANER.register(returnOpaque, CanonicalDecomposition.CanonicalDecompositionCleaner(handle, CanonicalDecomposition.lib));
+            val returnOpaque = CanonicalDecomposition(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -57,14 +66,14 @@ class CanonicalDecomposition internal constructor (
         fun createWithProvider(provider: DataProvider): Result<CanonicalDecomposition> {
             
             val returnVal = lib.icu4x_CanonicalDecomposition_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CanonicalDecomposition(handle, selfEdges)
-                CLEANER.register(returnOpaque, CanonicalDecomposition.CanonicalDecompositionCleaner(handle, CanonicalDecomposition.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CanonicalDecomposition(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

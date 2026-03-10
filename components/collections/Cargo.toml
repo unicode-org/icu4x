@@ -5,9 +5,10 @@
 [package]
 name = "icu_collections"
 description = "Collection of API for use in ICU libraries."
+categories.workspace = true
+keywords = ["unicode", "data-structures"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
@@ -18,6 +19,9 @@ version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+max_combination_size = 3
 
 [dependencies]
 displaydoc = { workspace = true }

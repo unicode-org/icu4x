@@ -23,12 +23,22 @@ class UtcOffset internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class UtcOffsetCleaner(val handle: Pointer, val lib: UtcOffsetLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class UtcOffsetCleaner(val handle: Pointer, val lib: UtcOffsetLib) : Runnable {
         override fun run() {
             lib.icu4x_UtcOffset_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, UtcOffset.UtcOffsetCleaner(handle, UtcOffset.lib));
     }
 
     companion object {
@@ -45,11 +55,11 @@ class UtcOffset internal constructor (
         fun fromSeconds(seconds: Int): Result<UtcOffset> {
             
             val returnVal = lib.icu4x_UtcOffset_from_seconds_mv1(seconds);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = UtcOffset(handle, selfEdges)
-                CLEANER.register(returnOpaque, UtcOffset.UtcOffsetCleaner(handle, UtcOffset.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = UtcOffset(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
                 return TimeZoneInvalidOffsetError().err()
@@ -67,15 +77,18 @@ class UtcOffset internal constructor (
             val offsetSliceMemory = PrimitiveArrayTools.borrowUtf8(offset)
             
             val returnVal = lib.icu4x_UtcOffset_from_string_mv1(offsetSliceMemory.slice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = UtcOffset(handle, selfEdges)
-                CLEANER.register(returnOpaque, UtcOffset.UtcOffsetCleaner(handle, UtcOffset.lib));
-                offsetSliceMemory?.close()
-                return returnOpaque.ok()
-            } else {
-                return TimeZoneInvalidOffsetError().err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = UtcOffset(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return TimeZoneInvalidOffsetError().err()
+                }
+            } finally {
+                offsetSliceMemory.close()
             }
         }
     }

@@ -5,6 +5,8 @@
 [package]
 name = "icu_host_info"
 version = "0.1.0"
+categories = ["internationalization"]
+keywords = ["system", "locale", "internationalization", "localization"]
 publish = false
 
 rust-version = "1.83"
@@ -13,7 +15,6 @@ edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
 license = "Unicode-3.0"
-categories = ["internationalization"]
 include = [
     "data/**/*",
     "src/**/*",

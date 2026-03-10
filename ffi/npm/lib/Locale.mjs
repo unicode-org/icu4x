@@ -332,6 +332,162 @@ export class Locale {
     }
 
     /**
+     * Returns a string representation of the {@link Locale} variants.
+     *
+     * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+     */
+    variants() {
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+
+    wasm.icu4x_Locale_variants_mv1(this.ffiValue, write.buffer);
+
+        try {
+            return write.readString8();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            write.free();
+        }
+    }
+
+    /**
+     * Returns the number of variants in this {@link Locale}.
+     *
+     * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+     */
+    get variantCount() {
+
+        const result = wasm.icu4x_Locale_variant_count_mv1(this.ffiValue);
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Returns the variant at the given index, or nothing if the index is out of bounds.
+     *
+     * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+     */
+    variantAt(index) {
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+
+
+        const result = wasm.icu4x_Locale_variant_at_mv1(this.ffiValue, index, write.buffer);
+
+        try {
+            return result === 0 ? null : write.readString8();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            write.free();
+        }
+    }
+
+    /**
+     * Returns whether the {@link Locale} has a specific variant.
+     *
+     * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+     */
+    hasVariant(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+
+        const result = wasm.icu4x_Locale_has_variant_mv1(this.ffiValue, sSlice.ptr);
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+        }
+    }
+
+    /**
+     * Adds a variant to the {@link Locale}.
+     *
+     * Returns an error if the variant string is invalid.
+     * Returns `true` if the variant was added, `false` if already present.
+     *
+     * See the [Rust documentation for `push`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.push) for more information.
+     */
+    addVariant(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 1, true);
+
+
+        const result = wasm.icu4x_Locale_add_variant_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
+            }
+            return (new Uint8Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0] === 1;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Removes a variant from the {@link Locale}.
+     *
+     * Returns `true` if the variant was removed, `false` if not present.
+     * Returns `false` for invalid variant strings (they cannot exist in the locale).
+     *
+     * See the [Rust documentation for `remove`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.remove) for more information.
+     */
+    removeVariant(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+
+        const result = wasm.icu4x_Locale_remove_variant_mv1(this.ffiValue, sSlice.ptr);
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+        }
+    }
+
+    /**
+     * Clears all variants from the {@link Locale}.
+     *
+     * See the [Rust documentation for `clear`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.clear) for more information.
+     */
+    clearVariants() {
+    wasm.icu4x_Locale_clear_variants_mv1(this.ffiValue);
+
+        try {}
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
      * Normalizes a locale string.
      *
      * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.

@@ -5,6 +5,8 @@
 [package]
 name = "icu_provider_source"
 description = "A data provider based on CLDR and ICU data."
+categories.workspace = true
+keywords = []
 license = "Unicode-3.0"
 include = [
     "data/**/*",
@@ -20,7 +22,6 @@ include = [
 version = "2.1.2"
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
@@ -100,6 +101,7 @@ icu_experimental = []
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
+max_combination_size = 3
 
 [lints]
 workspace = true

@@ -151,7 +151,6 @@ pub mod ffi {
         /// `variant` is ignored.
         #[diplomat::attr(auto, constructor)]
         #[allow(deprecated)]
-        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         #[diplomat::attr(dart, disable)]
         pub fn from_parts(
             id: &TimeZone,
@@ -194,6 +193,11 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::rust_link(
+            icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
             icu::time::zone::ZoneNameTimestamp::far_in_future,
             FnInStruct,
             hidden
@@ -202,13 +206,13 @@ pub mod ffi {
         pub fn at_date_time_iso(&self, date: &IsoDate, time: &Time) -> Box<Self> {
             Box::new(Self {
                 zone_name_timestamp: Some(
-                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
-                        icu_time::ZonedDateTime {
+                    self.id
+                        .with_offset(self.offset)
+                        .at_date_time_iso(icu_time::DateTime {
                             date: date.0,
                             time: time.0,
-                            zone: self.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
-                        },
-                    ),
+                        })
+                        .zone_name_timestamp(),
                 ),
                 ..*self
             })
@@ -223,21 +227,15 @@ pub mod ffi {
         /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_zone_name_timestamp, FnInStruct)]
         #[diplomat::rust_link(
-            icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso,
+            icu::time::zone::ZoneNameTimestamp::from_epoch_seconds,
             FnInStruct,
             compact
         )]
-        #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp, Struct, compact)]
         pub fn at_timestamp(&self, timestamp: i64) -> Box<Self> {
             Box::new(Self {
-                zone_name_timestamp: Some(
-                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
-                        icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-                            timestamp,
-                            icu_time::zone::UtcOffset::zero(),
-                        ),
-                    ),
-                ),
+                zone_name_timestamp: Some(icu_time::zone::ZoneNameTimestamp::from_epoch_seconds(
+                    timestamp / 1000,
+                )),
                 ..*self
             })
         }
@@ -283,7 +281,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
         #[allow(deprecated)]
         pub fn infer_variant(
-            &mut self,
+            &self,
             _offset_calculator: &crate::unstable::variant_offset::ffi::VariantOffsetsCalculator,
         ) -> Option<()> {
             Some(())
@@ -296,6 +294,26 @@ pub mod ffi {
         #[allow(deprecated)]
         pub fn variant(&self) -> Option<TimeZoneVariant> {
             None
+        }
+    }
+}
+
+impl ffi::TimeZoneInfo {
+    pub(crate) fn as_rust_at_time<C: icu_calendar::Calendar>(
+        &self,
+        date: Option<icu_calendar::Date<C>>,
+        time: Option<icu_time::Time>,
+    ) -> icu_time::TimeZoneInfo<icu_time::zone::models::AtTime> {
+        let base = self.id.with_offset(self.offset);
+        if let Some(zone_name_timestamp) = self.zone_name_timestamp {
+            base.with_zone_name_timestamp(zone_name_timestamp)
+        } else if let Some(date) = date {
+            base.at_date_time_iso(icu_time::DateTime {
+                date: date.to_calendar(icu_calendar::Iso),
+                time: time.unwrap_or(icu_time::Time::noon()),
+            })
+        } else {
+            base.with_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
         }
     }
 }

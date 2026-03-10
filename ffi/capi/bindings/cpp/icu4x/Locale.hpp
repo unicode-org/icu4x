@@ -24,6 +24,8 @@ namespace capi {
 
     icu4x::capi::Locale* icu4x_Locale_unknown_mv1(void);
 
+    const icu4x::capi::Locale* icu4x_Locale_unknown_ref_mv1(void);
+
     icu4x::capi::Locale* icu4x_Locale_clone_mv1(const icu4x::capi::Locale* self);
 
     void icu4x_Locale_basename_mv1(const icu4x::capi::Locale* self, icu4x::diplomat::capi::DiplomatWrite* write);
@@ -51,6 +53,22 @@ namespace capi {
     typedef struct icu4x_Locale_set_script_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_script_mv1_result;
     icu4x_Locale_set_script_mv1_result icu4x_Locale_set_script_mv1(icu4x::capi::Locale* self, icu4x::diplomat::capi::DiplomatStringView s);
 
+    void icu4x_Locale_variants_mv1(const icu4x::capi::Locale* self, icu4x::diplomat::capi::DiplomatWrite* write);
+
+    size_t icu4x_Locale_variant_count_mv1(const icu4x::capi::Locale* self);
+
+    typedef struct icu4x_Locale_variant_at_mv1_result { bool is_ok;} icu4x_Locale_variant_at_mv1_result;
+    icu4x_Locale_variant_at_mv1_result icu4x_Locale_variant_at_mv1(const icu4x::capi::Locale* self, size_t index, icu4x::diplomat::capi::DiplomatWrite* write);
+
+    bool icu4x_Locale_has_variant_mv1(const icu4x::capi::Locale* self, icu4x::diplomat::capi::DiplomatStringView s);
+
+    typedef struct icu4x_Locale_add_variant_mv1_result {union {bool ok; icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_add_variant_mv1_result;
+    icu4x_Locale_add_variant_mv1_result icu4x_Locale_add_variant_mv1(icu4x::capi::Locale* self, icu4x::diplomat::capi::DiplomatStringView s);
+
+    bool icu4x_Locale_remove_variant_mv1(icu4x::capi::Locale* self, icu4x::diplomat::capi::DiplomatStringView s);
+
+    void icu4x_Locale_clear_variants_mv1(icu4x::capi::Locale* self);
+
     typedef struct icu4x_Locale_normalize_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_normalize_mv1_result;
     icu4x_Locale_normalize_mv1_result icu4x_Locale_normalize_mv1(icu4x::diplomat::capi::DiplomatStringView s, icu4x::diplomat::capi::DiplomatWrite* write);
 
@@ -76,6 +94,11 @@ inline icu4x::diplomat::result<std::unique_ptr<icu4x::Locale>, icu4x::LocalePars
 inline std::unique_ptr<icu4x::Locale> icu4x::Locale::unknown() {
     auto result = icu4x::capi::icu4x_Locale_unknown_mv1();
     return std::unique_ptr<icu4x::Locale>(icu4x::Locale::FromFFI(result));
+}
+
+inline const icu4x::Locale& icu4x::Locale::unknown_ref() {
+    auto result = icu4x::capi::icu4x_Locale_unknown_ref_mv1();
+    return *icu4x::Locale::FromFFI(result);
 }
 
 inline std::unique_ptr<icu4x::Locale> icu4x::Locale::clone() const {
@@ -181,6 +204,64 @@ inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> icu4x::L
     auto result = icu4x::capi::icu4x_Locale_set_script_mv1(this->AsFFI(),
         {s.data(), s.size()});
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError>(icu4x::diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
+}
+
+inline std::string icu4x::Locale::variants() const {
+    std::string output;
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
+    icu4x::capi::icu4x_Locale_variants_mv1(this->AsFFI(),
+        &write);
+    return output;
+}
+template<typename W>
+inline void icu4x::Locale::variants_write(W& writeable) const {
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
+    icu4x::capi::icu4x_Locale_variants_mv1(this->AsFFI(),
+        &write);
+}
+
+inline size_t icu4x::Locale::variant_count() const {
+    auto result = icu4x::capi::icu4x_Locale_variant_count_mv1(this->AsFFI());
+    return result;
+}
+
+inline std::optional<std::string> icu4x::Locale::variant_at(size_t index) const {
+    std::string output;
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
+    auto result = icu4x::capi::icu4x_Locale_variant_at_mv1(this->AsFFI(),
+        index,
+        &write);
+    return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
+}
+template<typename W>
+inline std::optional<std::monostate> icu4x::Locale::variant_at_write(size_t index, W& writeable) const {
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
+    auto result = icu4x::capi::icu4x_Locale_variant_at_mv1(this->AsFFI(),
+        index,
+        &write);
+    return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
+}
+
+inline bool icu4x::Locale::has_variant(std::string_view s) const {
+    auto result = icu4x::capi::icu4x_Locale_has_variant_mv1(this->AsFFI(),
+        {s.data(), s.size()});
+    return result;
+}
+
+inline icu4x::diplomat::result<bool, icu4x::LocaleParseError> icu4x::Locale::add_variant(std::string_view s) {
+    auto result = icu4x::capi::icu4x_Locale_add_variant_mv1(this->AsFFI(),
+        {s.data(), s.size()});
+    return result.is_ok ? icu4x::diplomat::result<bool, icu4x::LocaleParseError>(icu4x::diplomat::Ok<bool>(result.ok)) : icu4x::diplomat::result<bool, icu4x::LocaleParseError>(icu4x::diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
+}
+
+inline bool icu4x::Locale::remove_variant(std::string_view s) {
+    auto result = icu4x::capi::icu4x_Locale_remove_variant_mv1(this->AsFFI(),
+        {s.data(), s.size()});
+    return result;
+}
+
+inline void icu4x::Locale::clear_variants() {
+    icu4x::capi::icu4x_Locale_clear_variants_mv1(this->AsFFI());
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::LocaleParseError> icu4x::Locale::normalize(std::string_view s) {

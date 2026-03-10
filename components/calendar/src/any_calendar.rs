@@ -102,7 +102,7 @@ macro_rules! make_any_calendar {
         impl $crate::Calendar for $any_calendar_ident {
             type DateInner = $any_date_ident;
             type Year = $crate::types::YearInfo;
-            type DifferenceError = $crate::cal::AnyCalendarDifferenceError;
+            type DifferenceError = $crate::error::MismatchedCalendarError;
 
             fn from_codes(
                 &self,
@@ -365,7 +365,7 @@ macro_rules! make_any_calendar {
                         }
                     )*
                     _ => {
-                        return Err($crate::cal::AnyCalendarDifferenceError::MismatchedCalendars);
+                        return Err($crate::error::MismatchedCalendarError);
                     }
                 };
                 Ok(r)
@@ -506,40 +506,6 @@ make_any_calendar!(
     #[deprecated(since = "2.2.0", note = "see `Japanese`")]
     JapaneseExtended(Japanese),
 );
-
-/// Error returned when comparing two [`Date`]s with [`AnyCalendar`].
-#[derive(Clone, Copy, PartialEq, Debug)]
-#[non_exhaustive]
-#[doc(hidden)] // unstable, not yet graduated
-pub enum AnyCalendarDifferenceError {
-    /// The calendars of the two dates being compared are not equal.
-    ///
-    /// To compare dates in different calendars, convert them to the same calendar first.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::cal::AnyCalendarDifferenceError;
-    /// use icu::calendar::Date;
-    ///
-    /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
-    /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
-    ///
-    /// assert_eq!(
-    ///     d1.try_until_with_options(&d2, Default::default())
-    ///         .unwrap_err(),
-    ///     AnyCalendarDifferenceError::MismatchedCalendars,
-    /// );
-    ///
-    /// // To compare the dates, convert them to the same calendar,
-    /// // such as ISO.
-    ///
-    /// d1.to_iso()
-    ///     .try_until_with_options(&d2.to_iso(), Default::default())
-    ///     .unwrap();
-    /// ```
-    MismatchedCalendars,
-}
 
 impl AnyCalendar {
     /// Constructs an [`AnyCalendar`] for a given calendar kind from compiled data.
@@ -1440,7 +1406,7 @@ mod tests {
 
         assert_eq!(
             (month, day),
-            (date.month().as_input(), date.day_of_month().0),
+            (date.month().to_input(), date.day_of_month().0),
             "Failed to roundtrip for calendar {}",
             calendar.debug_name()
         );

@@ -257,6 +257,16 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
 
+        // These are APIs for more advanced data loading patterns, which we typically
+        // have limited support for over FFI. They are tricky to implement in FFI without
+        // falling afoul of mutability-related soundness issues.
+        //
+        // See #7704 for adding them.
+        "icu::segmenter::LineSegmenterBorrowed::load_lstm",
+        "icu::segmenter::LineSegmenterBorrowed::load_dictionary",
+        "icu::segmenter::WordSegmenterBorrowed::load_lstm",
+        "icu::segmenter::WordSegmenterBorrowed::load_dictionary",
+
         // Not planned for 2.0
         // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
         "fixed_decimal::Signed",

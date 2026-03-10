@@ -5,11 +5,12 @@
 [package]
 name = "icu_datetime_data"
 description = "Data for the icu_datetime crate"
+categories.workspace = true
+keywords = ["data", "unicode"]
 license = "Unicode-3.0"
 version = "2.1.2"
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

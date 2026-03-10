@@ -481,7 +481,7 @@ impl Hijri<TabularAlgorithm> {
 ///
 /// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
-#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Hash)]
 pub struct HijriYear {
     packed: PackedHijriYearData,
     extended_year: i32,
@@ -589,7 +589,8 @@ impl HijriYear {
 ///
 /// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
-#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[derive(Copy, Clone, Hash, Debug)]
+#[cfg_attr(test, derive(PartialEq))]
 struct PackedHijriYearData(u16);
 
 impl PackedHijriYearData {

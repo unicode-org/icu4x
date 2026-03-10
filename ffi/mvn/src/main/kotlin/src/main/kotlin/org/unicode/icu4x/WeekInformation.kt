@@ -22,12 +22,22 @@ class WeekInformation internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class WeekInformationCleaner(val handle: Pointer, val lib: WeekInformationLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class WeekInformationCleaner(val handle: Pointer, val lib: WeekInformationLib) : Runnable {
         override fun run() {
             lib.icu4x_WeekInformation_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, WeekInformation.WeekInformationCleaner(handle, WeekInformation.lib));
     }
 
     companion object {
@@ -42,14 +52,14 @@ class WeekInformation internal constructor (
         fun create(locale: Locale): Result<WeekInformation> {
             
             val returnVal = lib.icu4x_WeekInformation_create_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WeekInformation(handle, selfEdges)
-                CLEANER.register(returnOpaque, WeekInformation.WeekInformationCleaner(handle, WeekInformation.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WeekInformation(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -61,14 +71,14 @@ class WeekInformation internal constructor (
         fun createWithProvider(provider: DataProvider, locale: Locale): Result<WeekInformation> {
             
             val returnVal = lib.icu4x_WeekInformation_create_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WeekInformation(handle, selfEdges)
-                CLEANER.register(returnOpaque, WeekInformation.WeekInformationCleaner(handle, WeekInformation.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WeekInformation(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -100,8 +110,7 @@ class WeekInformation internal constructor (
         val returnVal = lib.icu4x_WeekInformation_weekend_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = WeekdaySetIterator(handle, selfEdges)
-        CLEANER.register(returnOpaque, WeekdaySetIterator.WeekdaySetIteratorCleaner(handle, WeekdaySetIterator.lib));
+        val returnOpaque = WeekdaySetIterator(handle, selfEdges, true)
         return returnOpaque
     }
 

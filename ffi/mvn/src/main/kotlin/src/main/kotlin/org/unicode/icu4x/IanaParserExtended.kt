@@ -25,12 +25,22 @@ class IanaParserExtended internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class IanaParserExtendedCleaner(val handle: Pointer, val lib: IanaParserExtendedLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class IanaParserExtendedCleaner(val handle: Pointer, val lib: IanaParserExtendedLib) : Runnable {
         override fun run() {
             lib.icu4x_IanaParserExtended_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, IanaParserExtended.IanaParserExtendedCleaner(handle, IanaParserExtended.lib));
     }
 
     companion object {
@@ -47,8 +57,7 @@ class IanaParserExtended internal constructor (
             val returnVal = lib.icu4x_IanaParserExtended_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = IanaParserExtended(handle, selfEdges)
-            CLEANER.register(returnOpaque, IanaParserExtended.IanaParserExtendedCleaner(handle, IanaParserExtended.lib));
+            val returnOpaque = IanaParserExtended(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -60,14 +69,14 @@ class IanaParserExtended internal constructor (
         fun createWithProvider(provider: DataProvider): Result<IanaParserExtended> {
             
             val returnVal = lib.icu4x_IanaParserExtended_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = IanaParserExtended(handle, selfEdges)
-                CLEANER.register(returnOpaque, IanaParserExtended.IanaParserExtendedCleaner(handle, IanaParserExtended.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = IanaParserExtended(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -75,14 +84,17 @@ class IanaParserExtended internal constructor (
     /** See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
     */
     fun parse(value: String): TimeZoneAndCanonicalAndNormalized {
-        val valueSliceMemory = PrimitiveArrayTools.borrowUtf8(value)
         // This lifetime edge depends on lifetimes: 'a
         val aEdges: MutableList<Any> = mutableListOf(this);
+        val valueSliceMemory = PrimitiveArrayTools.borrowUtf8(value)
         
         val returnVal = lib.icu4x_IanaParserExtended_parse_mv1(handle, valueSliceMemory.slice);
-        val returnStruct = TimeZoneAndCanonicalAndNormalized.fromNative(returnVal, aEdges)
-        valueSliceMemory?.close()
-        return returnStruct
+        try {
+            val returnStruct = TimeZoneAndCanonicalAndNormalized.fromNative(returnVal, aEdges)
+            return returnStruct
+        } finally {
+            valueSliceMemory.close()
+        }
     }
     
     /** See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
@@ -94,8 +106,7 @@ class IanaParserExtended internal constructor (
         val returnVal = lib.icu4x_IanaParserExtended_iter_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneAndCanonicalIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, TimeZoneAndCanonicalIterator.TimeZoneAndCanonicalIteratorCleaner(handle, TimeZoneAndCanonicalIterator.lib));
+        val returnOpaque = TimeZoneAndCanonicalIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
     
@@ -108,8 +119,7 @@ class IanaParserExtended internal constructor (
         val returnVal = lib.icu4x_IanaParserExtended_iter_all_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneAndCanonicalAndNormalizedIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, TimeZoneAndCanonicalAndNormalizedIterator.TimeZoneAndCanonicalAndNormalizedIteratorCleaner(handle, TimeZoneAndCanonicalAndNormalizedIterator.lib));
+        val returnOpaque = TimeZoneAndCanonicalAndNormalizedIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
 

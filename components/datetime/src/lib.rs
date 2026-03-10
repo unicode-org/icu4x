@@ -137,6 +137,8 @@ pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;
+#[cfg(feature = "time_0_3")]
+mod time_crate;
 pub mod unchecked;
 
 pub use error::{DateTimeFormatterLoadError, MismatchedCalendarError};

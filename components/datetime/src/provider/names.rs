@@ -277,7 +277,7 @@ size_test!(MonthNames, month_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -286,12 +286,16 @@ pub enum MonthNames<'data> {
     ///
     /// Found for solar and pure lunar calendars
     Linear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+
+    #[cfg(feature = "serde")]
     /// Month codes M01, M02, M03, .. M01L, M02L, ...
     ///
     /// Empty entries for non-present month codes. Will have an equal number of leap and non-leap
     /// entries.
     ///
     /// Found for lunisolar and lunisidereal calendars
+    ///
+    /// Not used anymore, but kept around for serde stabililty.
     LeapLinear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 
     /// This represents the formatting to apply to numeric values to produce the corresponding
@@ -308,6 +312,88 @@ pub enum MonthNames<'data> {
         )]
         Cow<'data, SinglePlaceholderPattern>,
     ),
+
+    /// This represents the formatting to apply to calendars with leap months.
+    /// The last two elements are patterns:
+    /// * N-2: `SinglePlaceholderPattern` for leap months
+    /// * N-1: `SinglePlaceholderPattern` for leap base months
+    LeapPattern(VarZeroVec<'data, str>),
+}
+
+// Stability, don't want to serialize ::LeapPattern
+#[cfg(feature = "serde")]
+impl serde::Serialize for MonthNames<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        #[derive(serde::Serialize)]
+        enum Raw<'a> {
+            Linear(&'a VarZeroVec<'a, str>),
+            LeapLinear(&'a VarZeroVec<'a, str>),
+            LeapNumeric(&'a Cow<'a, SinglePlaceholderPattern>),
+        }
+
+        let z;
+
+        match self {
+            Self::Linear(l) => Raw::Linear(l),
+            Self::LeapLinear(l) => Raw::LeapLinear(l),
+            Self::LeapNumeric(l) => Raw::LeapNumeric(l),
+            Self::LeapPattern(l) => {
+                use alloc::string::String;
+                use alloc::vec::Vec;
+                use zerovec::vecs::VarZeroVecOwned;
+
+                let leap_pattern = l.get(l.len() - 2).unwrap_or_default();
+                let leap_base_pattern = l.get(l.len() - 1).unwrap_or_default();
+
+                let normal_names = l.iter().take(l.len() - 2);
+
+                let r = if leap_pattern.starts_with('\0') {
+                    // The leap pattern is not actually a pattern (no placeholder) - this means it's Hebrew
+                    normal_names
+                        .map(String::from)
+                        .chain([
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            SinglePlaceholderPattern::from_ref_store(leap_pattern)
+                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                                .interpolate_to_string([l.get(5).unwrap_or_default()]),
+                            SinglePlaceholderPattern::from_ref_store(leap_base_pattern)
+                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                                .interpolate_to_string([l.get(5).unwrap_or_default()]),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                        ])
+                        .collect()
+                } else {
+                    normal_names
+                        .clone()
+                        .map(String::from)
+                        .chain(normal_names.map(|m| {
+                            SinglePlaceholderPattern::from_ref_store(leap_pattern)
+                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                                .interpolate_to_string([m])
+                        }))
+                        .collect::<Vec<_>>()
+                };
+
+                #[allow(clippy::unwrap_used)] // small enough
+                {
+                    z = VarZeroVecOwned::try_from_elements(&r).unwrap().into();
+                }
+                Raw::LeapLinear(&z)
+            }
+        }
+        .serialize(serializer)
+    }
 }
 
 icu_provider::data_struct!(

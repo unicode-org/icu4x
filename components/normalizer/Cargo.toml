@@ -5,9 +5,10 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
+categories.workspace = true
+keywords = ["unicode", "normalization", "text-processing"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
@@ -18,6 +19,9 @@ license.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+max_combination_size = 3
 
 [dependencies]
 harfbuzz-traits = { workspace = true, optional = true }

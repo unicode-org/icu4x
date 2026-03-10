@@ -136,7 +136,7 @@ impl SourceDataProvider {
     pub const TESTED_UCD_TAG: &'static str = "17.0.0";
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2025c";
+    pub const TESTED_TZDB_TAG: &'static str = "2026a";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///

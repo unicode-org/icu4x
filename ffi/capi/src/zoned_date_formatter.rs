@@ -34,7 +34,6 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct ZonedDateFormatter(
         pub  icu_datetime::DateTimeFormatter<
             icu_datetime::fieldsets::enums::ZonedDateFieldSet
@@ -571,38 +570,6 @@ pub mod ffi {
             )
         }
         
-        fn format_raw(
-            &self,
-            mut input: icu_datetime::unchecked::DateTimeInputUnchecked,
-            iso_date_obj: impl FnOnce() -> icu_calendar::Date<icu_calendar::Iso>,
-            zone: &TimeZoneInfo,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeWriteError> {
-            input.set_time_zone_id(zone.id);
-            if let Some(offset) = zone.offset {
-                input.set_time_zone_utc_offset(offset);
-            }
-            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
-                input.set_time_zone_name_timestamp(zone_name_timestamp);
-            }
-            else {
-                #[allow(deprecated)] // clean up in 3.0
-                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
-                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: iso_date_obj(),
-                        time: icu_time::Time::noon(),
-                    })
-                ).zone_name_timestamp());
-            }
-            self
-                .0
-                .format_unchecked(input)
-                .try_write_to(write)
-                .ok()
-                .transpose()?;
-            Ok(())
-        }
-
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
@@ -615,7 +582,15 @@ pub mod ffi {
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             let date_in_calendar = iso_date.0.to_calendar(self.0.calendar());
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
-            self.format_raw(input, || iso_date.0,  zone, write)
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(Some(iso_date.0), None));
+
+            self
+                .0
+                .format_unchecked(input)
+                .try_write_to(write)
+                .ok()
+                .transpose()?;
+            Ok(())
         }
         
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
@@ -634,8 +609,13 @@ pub mod ffi {
             date_borrowed.check_any_calendar_kind(self.0.calendar().kind()).map_err(crate::unstable::errors::ffi::DateTimeMismatchedCalendarError::from)?;
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(Some(date.0.clone()), None));
+
             let _ = self
-                .format_raw(input, || date.0.to_calendar(icu_calendar::Iso),  zone, write).ok();
+                .0
+                .format_unchecked(input)
+                .try_write_to(write);
+
             Ok(())
         }
     }
@@ -643,7 +623,6 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct ZonedDateFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
@@ -1165,38 +1144,6 @@ pub mod ffi {
             )
         }
         
-        fn format_raw(
-            &self,
-            mut input: icu_datetime::unchecked::DateTimeInputUnchecked,
-            iso_date_obj: impl FnOnce() -> icu_calendar::Date<icu_calendar::Iso>,
-            zone: &TimeZoneInfo,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeWriteError> {
-            input.set_time_zone_id(zone.id);
-            if let Some(offset) = zone.offset {
-                input.set_time_zone_utc_offset(offset);
-            }
-            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
-                input.set_time_zone_name_timestamp(zone_name_timestamp);
-            }
-            else {
-                #[allow(deprecated)] // clean up in 3.0
-                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
-                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: iso_date_obj(),
-                        time: icu_time::Time::noon(),
-                    })
-                ).zone_name_timestamp());
-            }
-            self
-                .0
-                .format_unchecked(input)
-                .try_write_to(write)
-                .ok()
-                .transpose()?;
-            Ok(())
-        }
-
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
@@ -1209,7 +1156,15 @@ pub mod ffi {
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             let date_in_calendar = iso_date.0.to_calendar(Gregorian);
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
-            self.format_raw(input, || iso_date.0,  zone, write)
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(Some(iso_date.0), None));
+
+            self
+                .0
+                .format_unchecked(input)
+                .try_write_to(write)
+                .ok()
+                .transpose()?;
+            Ok(())
         }
         
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format_same_calendar, FnInStruct)]
@@ -1228,8 +1183,13 @@ pub mod ffi {
             date_borrowed.check_any_calendar_kind(icu_calendar::AnyCalendarKind::Gregorian).map_err(crate::unstable::errors::ffi::DateTimeMismatchedCalendarError::from)?;
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(Some(date.0.clone()), None));
+
             let _ = self
-                .format_raw(input, || date.0.to_calendar(icu_calendar::Iso),  zone, write).ok();
+                .0
+                .format_unchecked(input)
+                .try_write_to(write);
+
             Ok(())
         }
     }

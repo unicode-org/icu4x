@@ -746,7 +746,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f71e1b6c562237f9e6059dbf54bfce626936dd35#f71e1b6c562237f9e6059dbf54bfce626936dd35"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=676016e7765fe20323301b381d5245b8e90ae028#676016e7765fe20323301b381d5245b8e90ae028"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -777,7 +777,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f71e1b6c562237f9e6059dbf54bfce626936dd35#f71e1b6c562237f9e6059dbf54bfce626936dd35"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=676016e7765fe20323301b381d5245b8e90ae028#676016e7765fe20323301b381d5245b8e90ae028"
 dependencies = [
  "log",
 ]
@@ -785,7 +785,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.14.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f71e1b6c562237f9e6059dbf54bfce626936dd35#f71e1b6c562237f9e6059dbf54bfce626936dd35"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=676016e7765fe20323301b381d5245b8e90ae028#676016e7765fe20323301b381d5245b8e90ae028"
 dependencies = [
  "askama",
  "clap",
@@ -806,7 +806,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f71e1b6c562237f9e6059dbf54bfce626936dd35#f71e1b6c562237f9e6059dbf54bfce626936dd35"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=676016e7765fe20323301b381d5245b8e90ae028#676016e7765fe20323301b381d5245b8e90ae028"
 dependencies = [
  "displaydoc",
  "either",
@@ -1414,6 +1414,7 @@ dependencies = [
  "serde",
  "serde_json",
  "simple_logger",
+ "time",
  "tinystr",
  "ureq",
  "zerovec",
@@ -1571,6 +1572,7 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
+ "time",
  "tinystr",
  "ureq",
  "writeable",
@@ -2036,6 +2038,7 @@ dependencies = [
  "ixdtf",
  "jiff",
  "serde",
+ "time",
  "tinystr",
  "writeable",
  "zerotrie",

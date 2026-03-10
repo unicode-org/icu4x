@@ -5,11 +5,12 @@
 [package]
 name = "icu__component__data"
 description = "Data for the icu__component_ crate"
+categories.workspace = true
+keywords = ["data", "unicode"]
 license = "Unicode-3.0"
 _version_
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
