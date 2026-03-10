@@ -187,7 +187,7 @@ impl PackWithMD for i32 {
 pub(crate) enum MinMonths {
     /// This number is guaranteed to be correct based on documented checking of invariants
     ///
-    /// It is ok for ICU4X to debug_assert on things deriving from the correctness of this calculation
+    /// It is ok for ICU4X to `debug_assert` on things deriving from the correctness of this calculation
     Guaranteed(i64),
     /// This number is not guaranteed. ICU4X should check that it is actually in range, and if not,
     /// fall back to the `guarantee` value (which *is* guaranteed).
