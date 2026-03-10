@@ -20,16 +20,6 @@ use serde_core::Deserializer;
 use serde_core::Serialize;
 use serde_core::Serializer;
 
-#[derive(PartialEq, Eq, PartialOrd, Ord)]
-#[repr(transparent)]
-pub(crate) struct SerdeByteStrOwned(pub(crate) Box<[u8]>);
-
-impl SerdeByteStrOwned {
-    pub fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
-
 struct ByteStrVisitor;
 impl<'de> Visitor<'de> for ByteStrVisitor {
     type Value = Box<[u8]>;
@@ -51,6 +41,32 @@ impl<'de> Visitor<'de> for ByteStrVisitor {
             result.push(x);
         }
         Ok(Box::from(result))
+    }
+}
+
+struct SerdeByteStr<'a>(&'a [u8]);
+
+impl Serialize for SerdeByteStr<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        if serializer.is_human_readable() {
+            if let Ok(s) = core::str::from_utf8(self.0) {
+                return serializer.serialize_str(s);
+            }
+        }
+        serializer.serialize_bytes(self.0)
+    }
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub(crate) struct SerdeByteStrOwned(pub(crate) Box<[u8]>);
+
+impl SerdeByteStrOwned {
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.0
     }
 }
 
@@ -81,22 +97,6 @@ impl Serialize for SerdeByteStrOwned {
             }
         }
         serializer.serialize_bytes(bytes)
-    }
-}
-
-struct SerdeByteStr<'a>(&'a [u8]);
-
-impl Serialize for SerdeByteStr<'_> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        if serializer.is_human_readable() {
-            if let Ok(s) = core::str::from_utf8(self.0) {
-                return serializer.serialize_str(s);
-            }
-        }
-        serializer.serialize_bytes(self.0)
     }
 }
 
