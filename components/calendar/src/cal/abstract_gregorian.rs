@@ -317,7 +317,10 @@ macro_rules! impl_with_abstract_gregorian {
                     .until(&date1.0, &date2.0, options)
             }
 
-            fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+            fn check_date_compatibility(
+                &self,
+                other: &Self,
+            ) -> Result<(), Self::DateCompatibilityError> {
                 let $self_ident = self;
                 let c1 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
                 let $self_ident = other;
