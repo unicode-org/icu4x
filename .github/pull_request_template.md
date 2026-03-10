@@ -6,3 +6,7 @@ Reminder: try to use [Conventional Comments](https://conventionalcomments.org/) 
 Please see https://github.com/unicode-org/icu4x/blob/main/CONTRIBUTING.md for general
 information on contributing to ICU4X.
 -->
+
+## Changelog
+
+<!-- Please fill in according to documents/process/changelog.md -->
