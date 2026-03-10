@@ -155,14 +155,11 @@ impl<A: AsCalendar> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Self, DateError> {
-        let year = match era {
-            Some(e) => types::InputYear::EraYear(e, year),
-            None => types::InputYear::ExtendedYear(year),
-        };
+        #[allow(deprecated, reason = "internal usage")]
         let inner = calendar
             .as_calendar()
-            .from_codes2(year, month_code, day)
-            .map_err(DateError::from)?;
+            .from_codes(era, year, month_code, day)?;
+
         Ok(Date::from_raw(inner, calendar))
     }
 

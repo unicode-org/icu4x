@@ -197,29 +197,6 @@ mod unstable {
         }
     }
 
-    impl From<DateFromCodesError> for DateError {
-        fn from(e: DateFromCodesError) -> Self {
-            match e {
-                DateFromCodesError::InvalidDay { max } => DateError::Range {
-                    field: "day",
-                    value: 0, // value is unknown here
-                    min: 1,
-                    max: max as i32,
-                },
-                DateFromCodesError::MonthNotInCalendar | DateFromCodesError::MonthNotInYear => {
-                    DateError::UnknownMonthCode(todo!())
-                }
-                DateFromCodesError::InvalidEra => DateError::UnknownEra,
-                DateFromCodesError::Overflow => DateError::Range {
-                    field: "year",
-                    value: 0, // value is unknown here
-                    min: -9999,
-                    max: 9999,
-                },
-            }
-        }
-    }
-
     /// Error type for date creation via [`Date::try_from_fields`].
     ///
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields

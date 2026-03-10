@@ -52,12 +52,33 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
+        let input_year = match era {
             Some(e) => types::InputYear::EraYear(e, year),
             None => types::InputYear::ExtendedYear(year),
         };
-        self.from_codes2(year, month_code, day)
-            .map_err(DateError::from)
+        let result = self.from_codes2(input_year, month_code, day);
+
+        match result {
+            Ok(date) => Ok(date),
+            Err(codes_error) => Err(match codes_error {
+                DateFromCodesError::InvalidDay { max } => DateError::Range {
+                    field: "day",
+                    value: day as i32,
+                    min: 1,
+                    max: max as i32,
+                },
+                DateFromCodesError::MonthNotInCalendar | DateFromCodesError::MonthNotInYear => {
+                    DateError::UnknownMonthCode(month_code)
+                }
+                DateFromCodesError::InvalidEra => DateError::UnknownEra,
+                DateFromCodesError::Overflow => DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: -9999,
+                    max: 9999,
+                },
+            }),
+        }
     }
 
     /// Construct a date from month codes and [`InputYear`].
