@@ -337,15 +337,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let year = calendar.year_info_from_extended(extended_year);
 
         let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
-            MonthCodeParseError::InvalidSyntax => {
-                DateFromCodesError::MonthNotInCalendar(month_code)
-            }
+            MonthCodeParseError::InvalidSyntax => DateFromCodesError::MonthNotInCalendar,
         })?;
         let month = calendar
             .ordinal_from_month(year, validated, Default::default())
             .map_err(|e| match e {
-                MonthError::NotInCalendar => DateFromCodesError::MonthNotInCalendar(month_code),
-                MonthError::NotInYear => DateFromCodesError::MonthNotInYear(month_code),
+                MonthError::NotInCalendar => DateFromCodesError::MonthNotInCalendar,
+                MonthError::NotInYear => DateFromCodesError::MonthNotInYear,
             })?;
 
         let max_day = C::days_in_provided_month(year, month);

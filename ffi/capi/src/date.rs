@@ -406,15 +406,19 @@ pub mod ffi {
             day: u8,
             calendar: &Calendar,
         ) -> Result<Box<Date>, CalendarError> {
-            let era = if !era_code.is_empty() {
-                Some(core::str::from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?)
+            use icu_calendar::types::InputYear;
+            let input_year = if !era_code.is_empty() {
+                InputYear::EraYear(
+                    core::str::from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?,
+                    year,
+                )
             } else {
-                None
+                InputYear::ExtendedYear(year)
             };
-            let month = icu_calendar::types::Month::try_from_utf8(month_code)?.code();
+            let month = icu_calendar::types::Month::try_from_utf8(month_code)?;
             let cal = calendar.0.clone();
-            Ok(Box::new(Date(icu_calendar::Date::try_new_from_codes(
-                era, year, month, day, cal,
+            Ok(Box::new(Date(icu_calendar::Date::try_from_codes(
+                input_year, month, day, cal,
             )?)))
         }
 

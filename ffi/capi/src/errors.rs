@@ -286,6 +286,20 @@ impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsEr
 }
 
 #[cfg(feature = "calendar")]
+impl From<icu_calendar::error::DateFromCodesError> for CalendarError {
+    fn from(e: icu_calendar::error::DateFromCodesError) -> Self {
+        match e {
+            icu_calendar::error::DateFromCodesError::InvalidDay { .. } => Self::OutOfRange,
+            icu_calendar::error::DateFromCodesError::InvalidEra => Self::UnknownEra,
+            icu_calendar::error::DateFromCodesError::MonthNotInCalendar => Self::UnknownMonthCode,
+            icu_calendar::error::DateFromCodesError::MonthNotInYear => Self::UnknownMonthCode,
+            icu_calendar::error::DateFromCodesError::Overflow => Self::OutOfRange,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
 #[cfg(all(feature = "unstable", feature = "calendar"))]
 impl From<icu_calendar::error::DateAddError> for CalendarDateAddError {
     fn from(e: icu_calendar::error::DateAddError) -> Self {

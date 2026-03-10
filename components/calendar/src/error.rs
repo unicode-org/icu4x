@@ -176,11 +176,11 @@ mod unstable {
             max: u8,
         },
         /// The specified month does not exist in this calendar.
-        #[displaydoc("The specified month {0:?} does not exist in this calendar")]
-        MonthNotInCalendar(MonthCode),
+        #[displaydoc("The specified month does not exist in this calendar")]
+        MonthNotInCalendar,
         /// The specified month exists in this calendar, but not in the specified year.
-        #[displaydoc("The specified month {0:?} exists in this calendar, but not for this year")]
-        MonthNotInYear(MonthCode),
+        #[displaydoc("The specified month exists in this calendar, but not for this year")]
+        MonthNotInYear,
         /// The era code is invalid for the calendar.
         #[displaydoc("Unknown era or invalid syntax")]
         InvalidEra,
@@ -206,8 +206,9 @@ mod unstable {
                     min: 1,
                     max: max as i32,
                 },
-                DateFromCodesError::MonthNotInCalendar(code)
-                | DateFromCodesError::MonthNotInYear(code) => DateError::UnknownMonthCode(code),
+                DateFromCodesError::MonthNotInCalendar | DateFromCodesError::MonthNotInYear => {
+                    DateError::UnknownMonthCode(todo!())
+                }
                 DateFromCodesError::InvalidEra => DateError::UnknownEra,
                 DateFromCodesError::Overflow => DateError::Range {
                     field: "year",
