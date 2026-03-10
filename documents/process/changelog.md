@@ -31,7 +31,7 @@ For API changes, you MUST list all newly added or modified public items. This in
 * New methods (excluding those on new types).
 * New traits.
 * New trait items (excluding those on new traits).
-* New trait implementations (excluding those on new types).
+* New trait implementations (excluding those on new types), including standard library traits such as `PartialOrd` and `Copy`.
 * New re-exports and type aliases.
 * New type parameters on existing items.
 * New struct fields or enum variants.
