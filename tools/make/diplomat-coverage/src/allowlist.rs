@@ -296,7 +296,7 @@ lazy_static::lazy_static! {
         // =========================
 
         "icu::decimal::CompactDecimalFormatter",
-        "icu::decimal::error::ExponentError",
+        "icu::decimal::error::CompactExponentError",
         "icu::decimal::options::CompactDecimalFormatterOptions",
 
         "icu::experimental",

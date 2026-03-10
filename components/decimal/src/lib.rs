@@ -98,6 +98,7 @@ pub use alloc::borrow::Cow;
 #[doc(hidden)] // TODO(#3647): should be private
 pub enum Cow<'a, T> {
     Borrowed(&'a T),
+    Owned(T),
 }
 
 #[cfg(not(feature = "alloc"))]
@@ -105,8 +106,10 @@ impl<'a, T> core::ops::Deref for Cow<'a, T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
-        let Self::Borrowed(r) = self;
-        r
+        match self {
+            Self::Borrowed(r) => r,
+            Self::Owned(ref r) => r,
+        }
     }
 }
 

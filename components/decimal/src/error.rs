@@ -6,9 +6,8 @@
 
 use displaydoc::Display;
 
-/// An error due to a [`CompactDecimal`](fixed_decimal::CompactDecimal) with an
-/// exponent inconsistent with the compact decimal data for the locale, e.g.,
-/// when formatting 1c5 in English (US).
+/// An error due to incorrect arguments to
+/// [`CompactDecimalFormatter::format_with_exponent`](crate::CompactDecimalFormatter::format_with_exponent).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -19,14 +18,14 @@ use displaydoc::Display;
 ///
 /// ✨ *Enabled with the `unstable` Cargo feature.*
 #[derive(Display, Copy, Clone, Debug)]
-#[displaydoc("Expected compact exponent {expected} for 10^{log10_type}, got {actual}")]
-pub struct ExponentError {
+#[displaydoc("Expected compact exponent {expected} for 10^{magnitude}, got {actual}")]
+pub struct CompactExponentError {
     /// The compact decimal exponent passed to the formatter.
     pub(crate) actual: u8,
-    /// The appropriate compact decimal exponent for a number of the given magnitude.
+    /// The appropriate exponent for a number of the given magnitude.
     pub(crate) expected: u8,
     /// The magnitude of the number being formatted.
-    pub(crate) log10_type: i16,
+    pub(crate) magnitude: i16,
 }
 
-impl core::error::Error for ExponentError {}
+impl core::error::Error for CompactExponentError {}

@@ -82,16 +82,16 @@ pub enum GroupingStrategy {
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[non_exhaustive]
 pub struct CompactDecimalFormatterOptions {
-    /// Options to configure the inner [`crate::DecimalFormatter`].
-    pub decimal_formatter_options: DecimalFormatterOptions,
+    /// When to render grouping separators.
+    ///
+    /// Default is [`GroupingStrategy::Min2`]
+    pub grouping_strategy: Option<GroupingStrategy>,
 }
 
 #[cfg(feature = "unstable")]
 impl Default for CompactDecimalFormatterOptions {
     fn default() -> Self {
-        Self {
-            decimal_formatter_options: GroupingStrategy::Min2.into(),
-        }
+        GroupingStrategy::Min2.into()
     }
 }
 
@@ -99,7 +99,16 @@ impl Default for CompactDecimalFormatterOptions {
 impl From<DecimalFormatterOptions> for CompactDecimalFormatterOptions {
     fn from(decimal_formatter_options: DecimalFormatterOptions) -> Self {
         Self {
-            decimal_formatter_options,
+            grouping_strategy: decimal_formatter_options.grouping_strategy,
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl From<CompactDecimalFormatterOptions> for DecimalFormatterOptions {
+    fn from(decimal_formatter_options: CompactDecimalFormatterOptions) -> Self {
+        Self {
+            grouping_strategy: decimal_formatter_options.grouping_strategy,
         }
     }
 }
@@ -108,7 +117,7 @@ impl From<DecimalFormatterOptions> for CompactDecimalFormatterOptions {
 impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
     fn from(grouping_strategy: GroupingStrategy) -> Self {
         Self {
-            decimal_formatter_options: grouping_strategy.into(),
+            grouping_strategy: Some(grouping_strategy),
         }
     }
 }
