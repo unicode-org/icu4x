@@ -20,6 +20,9 @@ pub use unstable::DateFields;
 #[cfg(not(feature = "unstable"))]
 pub(crate) use unstable::DateFields;
 
+#[cfg(doc)]
+use crate::Date;
+
 mod unstable {
     /// A bag of various ways of expressing the year, month, and/or day.
     ///

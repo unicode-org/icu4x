@@ -395,9 +395,11 @@ pub mod ffi {
         /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
         ///
         /// An empty era code will treat the year as an extended year
-        #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::Month::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::Month::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::InputYear, Enum, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,

@@ -67,6 +67,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
     #[diplomat::rust_link(icu::calendar::error::LunisolarRangeError, Enum, hidden)]
     #[diplomat::rust_link(icu::calendar::error::MonthCodeParseError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::error::DateFromCodesError, Enum, compact)]
     #[cfg(feature = "calendar")]
     #[non_exhaustive]
     #[diplomat::attr(auto, error)]

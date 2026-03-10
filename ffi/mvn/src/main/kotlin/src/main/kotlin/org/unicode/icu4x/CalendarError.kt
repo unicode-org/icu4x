@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface CalendarErrorLib: Library {
 }
-/** Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.1.1/icu/calendar/enum.DateError.html), [3](https://docs.rs/icu/2.1.1/icu/calendar/error/enum.MonthCodeParseError.html)
+/** Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.1.1/icu/calendar/enum.DateError.html), [3](https://docs.rs/icu/2.1.1/icu/calendar/error/enum.MonthCodeParseError.html), [4](https://docs.rs/icu/2.1.1/icu/calendar/error/enum.DateFromCodesError.html)
 */
 enum class CalendarError {
     Unknown,

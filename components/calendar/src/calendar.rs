@@ -8,8 +8,12 @@ use crate::cal::iso::IsoDateInner;
 use crate::error::{DateAddError, DateError, DateFromCodesError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
-use crate::{types, Iso};
+use crate::types::{self, InputYear};
+use crate::Iso;
 use core::fmt;
+
+#[cfg(doc)]
+use crate::Date;
 
 /// A calendar implementation
 ///
@@ -43,6 +47,9 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// Construct a date from era/month codes and fields
     ///
     /// The year is the [extended year](crate::Date::extended_year) if no era is provided
+    ///
+    /// This is used by the deprecated [`Date::try_new_from_codes()`]. Implementors
+    /// should rely on the default impl which adapts this to using [`Self::from_codes2()`].
     #[expect(clippy::wrong_self_convention)]
     #[deprecated(since = "2.2.0", note = "use `from_codes2`")]
     fn from_codes(
@@ -53,8 +60,8 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let input_year = match era {
-            Some(e) => types::InputYear::EraYear(e, year),
-            None => types::InputYear::ExtendedYear(year),
+            Some(e) => InputYear::EraYear(e, year),
+            None => InputYear::ExtendedYear(year),
         };
         let result = self.from_codes2(input_year, month_code, day);
 
@@ -82,10 +89,12 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     }
 
     /// Construct a date from month codes and [`InputYear`].
+    ///
+    /// This is used by [`Date::try_from_codes()`].
     #[expect(clippy::wrong_self_convention)]
     fn from_codes2(
         &self,
-        year: types::InputYear,
+        year: InputYear,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError>;
