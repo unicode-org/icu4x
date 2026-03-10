@@ -149,8 +149,8 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         let mut current_len = 0;
         // Start the main loop.
         loop {
-            let item_i = all_items.get(i);
-            let item_j = all_items.get(j - 1);
+            let item_i = all_items.get_or_panic(i);
+            let item_j = all_items.get_or_panic(j - 1);
             debug_assert!(slice_indices::prefix_eq(item_i.0, item_j.0, prefix_len));
             // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
@@ -172,7 +172,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 if new_i == 0 {
                     break;
                 }
-                let candidate = all_items.get(new_i - 1).0;
+                let candidate = all_items.get_or_panic(new_i - 1).0;
                 if candidate.len() < prefix_len {
                     // Too short
                     break;
@@ -195,7 +195,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 if new_j == all_items.len() {
                     break;
                 }
-                let candidate = all_items.get(new_j).0;
+                let candidate = all_items.get_or_panic(new_j).0;
                 if candidate.len() < prefix_len {
                     // Too short
                     break;
@@ -250,7 +250,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 // Set the cursor to the previous string and continue the loop.
                 j = i;
                 i -= 1;
-                prefix_len = all_items.get(i).0.len();
+                prefix_len = all_items.get_or_panic(i).0.len();
                 current_len = 0;
                 continue;
             }

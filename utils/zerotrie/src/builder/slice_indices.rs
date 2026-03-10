@@ -68,7 +68,7 @@ impl<'a> ByteSliceWithIndices<'a> {
     ///
     /// Panics when `index >= self.len()`
     #[allow(clippy::indexing_slicing, reason = "documented")]
-    pub const fn get(&self, index: usize) -> (&'a [u8], usize) {
+    pub const fn get_or_panic(&self, index: usize) -> (&'a [u8], usize) {
         match self {
             Self::Bytes(s) => s[index],
             Self::Str(s) => {
@@ -82,7 +82,7 @@ impl<'a> ByteSliceWithIndices<'a> {
         if self.len() == 0 {
             None
         } else {
-            Some(self.get(self.len() - 1))
+            Some(self.get_or_panic(self.len() - 1))
         }
     }
 
@@ -99,7 +99,7 @@ impl<'a> ByteSliceWithIndices<'a> {
         let mut prev: Option<&'a [u8]> = None;
 
         while i < self.len() {
-            let (ascii_str, _) = self.get(i);
+            let (ascii_str, _) = self.get_or_panic(i);
             match prev {
                 None => (),
                 Some(prev) => {
