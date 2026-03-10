@@ -180,4 +180,5 @@ pub mod input {
     pub use icu_time::TimeZone;
     pub use icu_time::TimeZoneInfo;
     pub use icu_time::ZonedDateTime;
+    pub use icu_time::ZonedTime;
 }
