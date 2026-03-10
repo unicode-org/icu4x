@@ -312,18 +312,21 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 
     // Used by `from_codes`, checks `CONSTRUCTOR_YEAR_RANGE`
-    pub(crate) fn from_era_year_month_code_day(
-        era: Option<&str>,
-        year: i32,
+    pub(crate) fn from_input_year_month_code_day(
+        year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateError> {
-        range_check(year, "year", CONSTRUCTOR_YEAR_RANGE)?;
-        let extended_year = if let Some(era) = era {
-            calendar.extended_year_from_era_year_unchecked(era.as_bytes(), year)?
-        } else {
-            year
+        let extended_year = match year {
+            types::InputYear::ExtendedYear(y) => {
+                range_check(y, "year", CONSTRUCTOR_YEAR_RANGE)?;
+                y
+            }
+            types::InputYear::EraYear(era, y) => {
+                range_check(y, "year", CONSTRUCTOR_YEAR_RANGE)?;
+                calendar.extended_year_from_era_year_unchecked(era.as_bytes(), y)?
+            }
         };
         let year = calendar.year_info_from_extended(extended_year);
 

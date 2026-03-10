@@ -155,9 +155,11 @@ impl<A: AsCalendar> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Self, DateError> {
-        let inner = calendar
-            .as_calendar()
-            .from_codes(era, year, month_code, day)?;
+        let year = match era {
+            Some(e) => types::InputYear::EraYear(e, year),
+            None => types::InputYear::ExtendedYear(year),
+        };
+        let inner = calendar.as_calendar().from_codes2(year, month_code, day)?;
         Ok(Date::from_raw(inner, calendar))
     }
 
@@ -187,13 +189,7 @@ impl<A: AsCalendar> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Self, DateError> {
-        let (era, year) = match year {
-            types::InputYear::ExtendedYear(y) => (None, y),
-            types::InputYear::EraYear(e, y) => (Some(e), y),
-        };
-        let inner = calendar
-            .as_calendar()
-            .from_codes(era, year, month.code(), day)?;
+        let inner = calendar.as_calendar().from_codes2(year, month.code(), day)?;
         Ok(Date::from_raw(inner, calendar))
     }
 

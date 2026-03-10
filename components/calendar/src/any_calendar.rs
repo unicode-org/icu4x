@@ -103,20 +103,19 @@ macro_rules! make_any_calendar {
             type Year = $crate::types::YearInfo;
             type DateCompatibilityError = $crate::error::MismatchedCalendarError;
 
-            fn from_codes(
+            fn from_codes2(
                 &self,
-                era: Option<&str>,
-                year: i32,
+                year: $crate::types::InputYear,
                 month_code: $crate::types::MonthCode,
                 day: u8,
             ) -> Result<Self::DateInner, $crate::DateError> {
                 Ok(match self {
                     $(
-                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes(era, year, month_code, day)?, AnyCalendarable::identity(c)),
+                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes2(year, month_code, day)?, AnyCalendarable::identity(c)),
                     )+
                     $(
                         #[allow(deprecated)]
-                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_codes(era, year, month_code, day)?, AnyCalendarable::identity(c)),
+                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_codes2(year, month_code, day)?, AnyCalendarable::identity(c)),
                     )*
                 })
             }

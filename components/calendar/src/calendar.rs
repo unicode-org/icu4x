@@ -44,10 +44,26 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ///
     /// The year is the [extended year](crate::Date::extended_year) if no era is provided
     #[expect(clippy::wrong_self_convention)]
+    #[deprecated(since = "2.2.0", note = "use `from_codes2`")]
     fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        let year = match era {
+            Some(e) => types::InputYear::EraYear(e, year),
+            None => types::InputYear::ExtendedYear(year),
+        };
+        self.from_codes2(year, month_code, day)
+    }
+
+    /// Construct a date from month codes and [`InputYear`].
+    #[expect(clippy::wrong_self_convention)]
+    fn from_codes2(
+        &self,
+        year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError>;

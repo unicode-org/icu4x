@@ -111,14 +111,13 @@ impl Calendar for Persian {
     type Year = types::EraYear;
     type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes(
+    fn from_codes2(
         &self,
-        era: Option<&str>,
-        year: i32,
+        year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
             .map(PersianDateInner)
     }
 

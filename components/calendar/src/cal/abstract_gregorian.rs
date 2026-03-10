@@ -86,14 +86,13 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type Year = EraYear;
     type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes(
+    fn from_codes2(
         &self,
-        era: Option<&str>,
-        year: i32,
+        year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
             .map(ArithmeticDate::cast)
     }
 
@@ -220,19 +219,19 @@ macro_rules! impl_with_abstract_gregorian {
             type DateInner = $inner_date_ty;
             type Year = types::EraYear;
             type DateCompatibilityError = core::convert::Infallible;
-
-            fn from_codes(
+            fn from_codes2(
                 &self,
-                era: Option<&str>,
-                year: i32,
+                year: types::InputYear,
                 month_code: types::MonthCode,
                 day: u8,
-            ) -> Result<Self::DateInner, crate::error::DateError> {
+            ) -> Result<Self::DateInner, crate::DateError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .from_codes(era, year, month_code, day)
+                    .from_codes2(year, month_code, day)
                     .map($inner_date_ty)
             }
+
+
 
             #[cfg(feature = "unstable")]
             fn from_fields(
