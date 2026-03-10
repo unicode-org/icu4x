@@ -100,10 +100,6 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     ///
     /// `K` is the stack size of the lengths stack. If you get an error such as
     /// `AsciiTrie Builder: Need more stack`, try increasing `K`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the items are not sorted
     pub const fn from_tuple_slice<'a, const K: usize>(items: ByteSliceWithIndices<'a>) -> Self {
         assert!(
             items.is_sorted(),
@@ -118,10 +114,6 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     ///
     /// `K` is the stack size of the lengths stack. If you get an error such as
     /// `AsciiTrie Builder: Need more stack`, try increasing `K`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `items` is not sorted.
     pub const fn from_slice_with_indices<const K: usize>(items: ByteSliceWithIndices) -> Self {
         let mut result = Self::new();
         let total_size = result.create_or_panic::<K>(items);
@@ -130,12 +122,11 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     }
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
-    ///
-    /// # Panics
-    ///
-    /// Panics if `all_items` is not sorted.
     #[must_use]
-    #[expect(clippy::indexing_slicing, reason = "documented panic")]
+    #[expect(
+        clippy::indexing_slicing,
+        reason = "all call sites are well-commented and will not panic"
+    )]
     const fn create_or_panic<const K: usize>(&mut self, all_items: ByteSliceWithIndices) -> usize {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
@@ -164,6 +155,10 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
             prefix_len -= 1;
             let mut new_i = i;
             let mut new_j = j;
+            // `prefix_len` is guaranteed to be in bounds for `item_i` since it is
+            // instantiated and updated based on the length of `item_i`, and then only decremented.
+            // This is a bit harder to prove for `item_j`, but it is a loop invariant
+            // TODO(sffc): Consider proving this or perhaps using a checked get.
             let mut ascii_i = item_i.0[prefix_len];
             let mut ascii_j = item_j.0[prefix_len];
             debug_assert!(ascii_i == ascii_j);
@@ -182,6 +177,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 } else {
                     break;
                 }
+
                 if candidate.len() == prefix_len {
                     // A string that equals the prefix does not take part in the branch node.
                     break;
