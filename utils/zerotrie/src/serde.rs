@@ -44,22 +44,6 @@ impl<'de> Visitor<'de> for ByteStrVisitor {
     }
 }
 
-struct SerdeByteStr<'a>(&'a [u8]);
-
-impl Serialize for SerdeByteStr<'_> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        if serializer.is_human_readable() {
-            if let Ok(s) = core::str::from_utf8(self.0) {
-                return serializer.serialize_str(s);
-            }
-        }
-        serializer.serialize_bytes(self.0)
-    }
-}
-
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub(crate) struct SerdeByteStrOwned(pub(crate) Box<[u8]>);
@@ -97,6 +81,22 @@ impl Serialize for SerdeByteStrOwned {
             }
         }
         serializer.serialize_bytes(bytes)
+    }
+}
+
+struct SerdeByteStr<'a>(&'a [u8]);
+
+impl Serialize for SerdeByteStr<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        if serializer.is_human_readable() {
+            if let Ok(s) = core::str::from_utf8(self.0) {
+                return serializer.serialize_str(s);
+            }
+        }
+        serializer.serialize_bytes(self.0)
     }
 }
 
