@@ -292,11 +292,11 @@ where
                 }
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| w.write_str(&month.as_input().code().0))
+                        w.with_part(Part::ERROR, |w| w.write_str(&month.to_input().code().0))
                     })?;
                     Err(match e {
                         GetNameForMonthError::InvalidMonthCode => {
-                            FormattedDateTimePatternError::InvalidMonthCode(month.as_input().code())
+                            FormattedDateTimePatternError::InvalidMonthCode(month.to_input().code())
                         }
                         GetNameForMonthError::InvalidFieldLength => {
                             FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))

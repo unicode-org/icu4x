@@ -20,7 +20,7 @@ where
     fn from(value: Date<C>) -> Self {
         Self {
             year: value.year().extended_year(),
-            month: value.month().as_input(),
+            month: value.month().to_input(),
             day: value.day_of_month().0,
         }
     }

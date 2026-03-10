@@ -524,10 +524,10 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(icu::calendar::types::Month, Struct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::MonthInfo::as_input, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::to_input, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            let code = self.0.month().as_input().code();
+            let code = self.0.month().to_input().code();
             let _infallible = write.write_str(&code.0);
         }
 
@@ -551,7 +551,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, getter)]
         pub fn month_is_leap(&self) -> bool {
-            self.0.month().as_input().is_leap()
+            self.0.month().to_input().is_leap()
         }
 
         /// Returns the year number in the current era for this date

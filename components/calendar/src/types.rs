@@ -648,8 +648,8 @@ pub struct MonthInfo {
 
     pub(crate) leap_status: LeapStatus,
 
-    /// The [`Month::code()`] of [`Self::as_input`].
-    #[deprecated(since = "2.2.0", note = "use `as_input().code()")]
+    /// The [`Month::code()`] of [`Self::to_input`].
+    #[deprecated(since = "2.2.0", note = "use `to_input().code()")]
     pub standard_code: MonthCode,
 
     /// Deprecated
@@ -716,14 +716,14 @@ impl MonthInfo {
     ///
     /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
-    pub fn as_input(&self) -> Month {
+    pub fn to_input(&self) -> Month {
         Month::new_unchecked(self.number, self.leap_status == LeapStatus::Leap)
     }
 
-    /// Equivalent to `.as_input().is_leap()`
-    #[deprecated(since = "2.2.0", note = "use `.as_input().is_leap()`")]
+    /// Equivalent to `.to_input().is_leap()`
+    #[deprecated(since = "2.2.0", note = "use `.to_input().is_leap()`")]
     pub fn is_leap(self) -> bool {
-        self.as_input().is_leap()
+        self.to_input().is_leap()
     }
 
     /// Gets the month number. A month number N is not necessarily the Nth month in the year
