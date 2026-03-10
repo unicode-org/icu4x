@@ -23,9 +23,9 @@ impl hijri::Rules for IranSighting {
         })
     }
 
-    type IdentityError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
-    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
         Ok(())
     }
 }

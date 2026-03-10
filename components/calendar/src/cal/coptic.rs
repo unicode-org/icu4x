@@ -125,7 +125,7 @@ impl crate::cal::scaffold::UnstableSealed for Coptic {}
 impl Calendar for Coptic {
     type DateInner = CopticDateInner;
     type Year = types::EraYear;
-    type IdentityError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
     fn from_codes(
         &self,
@@ -200,7 +200,7 @@ impl Calendar for Coptic {
         date1.0.until(&date2.0, self, options)
     }
 
-    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
         Ok(())
     }
 

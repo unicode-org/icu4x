@@ -146,14 +146,14 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
-    /// The error that is returned by [`Self::check_identity`].
+    /// The error that is returned by [`Self::check_date_compatibility`].
     ///
     /// Set this to [`core::convert::Infallible`] if the type is a singleton or
     /// the parameterization does not affect calendar semantics.
-    type IdentityError: Debug;
+    type DateCompatibilityError: Debug;
 
     /// Checks whether two [`Rules`] values are equal for the purpose of [`Date`] interaction.
-    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError>;
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError>;
 
     /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using these rules, if defined.
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -210,9 +210,9 @@ impl Rules for AstronomicalSimulation {
         UmmAlQura.year_containing_rd(rd)
     }
 
-    type IdentityError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
-    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
         Ok(())
     }
 }
@@ -292,9 +292,9 @@ impl Rules for UmmAlQura {
         }
     }
 
-    type IdentityError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
-    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
         Ok(())
     }
 }
@@ -393,9 +393,9 @@ impl Rules for TabularAlgorithm {
         }
     }
 
-    type IdentityError = crate::error::MismatchedCalendarError;
+    type DateCompatibilityError = crate::error::MismatchedCalendarError;
 
-    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
         if self != other {
             return Err(crate::error::MismatchedCalendarError);
         }
@@ -915,7 +915,7 @@ impl<R: Rules> crate::cal::scaffold::UnstableSealed for Hijri<R> {}
 impl<R: Rules> Calendar for Hijri<R> {
     type DateInner = HijriDateInner<R>;
     type Year = types::EraYear;
-    type IdentityError = R::IdentityError;
+    type DateCompatibilityError = R::DateCompatibilityError;
 
     fn from_codes(
         &self,
@@ -986,8 +986,8 @@ impl<R: Rules> Calendar for Hijri<R> {
         date1.0.until(&date2.0, self, options)
     }
 
-    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
-        self.0.check_identity(&other.0)
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+        self.0.check_date_compatibility(&other.0)
     }
 
     fn debug_name(&self) -> &'static str {

@@ -138,7 +138,7 @@ impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
 impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
     type Year = <Coptic as Calendar>::Year;
-    type IdentityError = <Coptic as Calendar>::IdentityError;
+    type DateCompatibilityError = <Coptic as Calendar>::DateCompatibilityError;
 
     fn from_codes(
         &self,
@@ -211,7 +211,7 @@ impl Calendar for Ethiopian {
         Coptic.until(&date1.0, &date2.0, options)
     }
 
-    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
         let _does_not_affect_semantics = other.era_style();
         Ok(())
     }

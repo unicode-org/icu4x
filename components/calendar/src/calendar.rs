@@ -30,15 +30,15 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The internal type used to represent dates
     ///
     /// Using the [`Eq`] or [`PartialOrd`] implementations requires
-    /// the associated calendars to have passed [`Self::check_identity`].
+    /// the associated calendars to have passed [`Self::check_date_compatibility`].
     type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
     /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
-    /// The error that is returned by [`Self::check_identity`].
+    /// The error that is returned by [`Self::check_date_compatibility`].
     ///
     /// Set this to [`core::convert::Infallible`] if the type is a singleton or
-    /// the parameterization does not affect calendar semantics.
-    type IdentityError: fmt::Debug;
+    /// the parameterization does not affect date semantics.
+    type DateCompatibilityError: fmt::Debug;
 
     /// Construct a date from era/month codes and fields
     ///
@@ -146,7 +146,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Calculate `date2 - date` as a duration.
     ///
-    /// This requires the associated calendars to have passed [`Self::check_identity`].
+    /// This requires the associated calendars to have passed [`Self::check_date_compatibility`].
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -168,7 +168,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ///
     /// This is checked by [`Date::try_until_with_options`](crate::Date::try_until_with_options),
     /// `impl PartialEq for Date<C>`, `impl PartialOrd for Date<C>`, and `impl Ord for Date<C>`.
-    fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError>;
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

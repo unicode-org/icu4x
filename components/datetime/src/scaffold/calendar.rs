@@ -117,8 +117,8 @@ impl CldrCalendar for cal::Indian {
 /// #    fn year(&self, _year: i32) -> hijri::HijriYear {
 /// #        todo!()
 /// #    }
-/// #    type IdentityError = core::convert::Infallible;
-/// #    fn check_identity(&self, _: &Self) -> Result<(), Self::IdentityError> { Ok(()) }
+/// #    type DateCompatibilityError = core::convert::Infallible;
+/// #    fn check_date_compatibility(&self, _: &Self) -> Result<(), Self::DateCompatibilityError> { Ok(()) }
 /// }
 ///
 /// impl FormattableHijriRules for MyRules {

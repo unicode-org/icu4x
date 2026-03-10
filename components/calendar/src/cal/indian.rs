@@ -130,7 +130,7 @@ impl crate::cal::scaffold::UnstableSealed for Indian {}
 impl Calendar for Indian {
     type DateInner = IndianDateInner;
     type Year = types::EraYear;
-    type IdentityError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
     fn from_codes(
         &self,
@@ -239,7 +239,7 @@ impl Calendar for Indian {
         date1.0.until(&date2.0, self, options)
     }
 
-    fn check_identity(&self, &Self: &Self) -> Result<(), Self::IdentityError> {
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
         Ok(())
     }
 

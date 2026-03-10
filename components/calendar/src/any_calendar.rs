@@ -101,7 +101,7 @@ macro_rules! make_any_calendar {
         impl $crate::Calendar for $any_calendar_ident {
             type DateInner = $any_date_ident;
             type Year = $crate::types::YearInfo;
-            type IdentityError = $crate::error::MismatchedCalendarError;
+            type DateCompatibilityError = $crate::error::MismatchedCalendarError;
 
             fn from_codes(
                 &self,
@@ -368,16 +368,16 @@ macro_rules! make_any_calendar {
                 }
             }
 
-            fn check_identity(&self, other: &Self) -> Result<(), Self::IdentityError> {
+            fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
                 match (self, other) {
                     $(
-                        (Self::$variant(ref c1), Self::$variant(ref c2)) if c1.check_identity(c2).is_ok() => {
+                        (Self::$variant(ref c1), Self::$variant(ref c2)) if c1.check_date_compatibility(c2).is_ok() => {
                             Ok(())
                         }
                     )+
                     $(
                         #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2)) if c1.check_identity(c2).is_ok() => {
+                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2)) if c1.check_date_compatibility(c2).is_ok() => {
                             Ok(())
                         }
                     )*
@@ -746,7 +746,7 @@ impl AnyCalendar {
 impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
     /// Convert this `Date<AnyCalendar>` to another [`AnyCalendar`], if conversion is needed
     pub fn convert_any<'a>(&self, calendar: &'a AnyCalendar) -> Date<Ref<'a, AnyCalendar>> {
-        if calendar.check_identity(self.calendar()).is_ok() {
+        if calendar.check_date_compatibility(self.calendar()).is_ok() {
             Date::from_raw(*self.inner(), Ref(calendar))
         } else {
             self.to_calendar(Ref(calendar))

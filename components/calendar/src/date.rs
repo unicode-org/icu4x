@@ -440,8 +440,8 @@ impl<A: AsCalendar> Date<A> {
         &self,
         other: &Date<B>,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, <A::Calendar as Calendar>::IdentityError> {
-        self.calendar().check_identity(other.calendar())?;
+    ) -> Result<types::DateDuration, <A::Calendar as Calendar>::DateCompatibilityError> {
+        self.calendar().check_date_compatibility(other.calendar())?;
         Ok(self
             .calendar
             .as_calendar()
@@ -586,7 +586,7 @@ where
     B: AsCalendar<Calendar = C>,
 {
     fn eq(&self, other: &Date<B>) -> bool {
-        match self.calendar().check_identity(other.calendar()) {
+        match self.calendar().check_date_compatibility(other.calendar()) {
             Ok(_) => self.inner.eq(&other.inner),
             Err(_) => false,
         }
@@ -602,7 +602,7 @@ where
     B: AsCalendar<Calendar = C>,
 {
     fn partial_cmp(&self, other: &Date<B>) -> Option<core::cmp::Ordering> {
-        match self.calendar().check_identity(other.calendar()) {
+        match self.calendar().check_date_compatibility(other.calendar()) {
             Ok(_) => self.inner.partial_cmp(&other.inner),
             Err(_) => None,
         }
@@ -616,7 +616,7 @@ where
     A: AsCalendar<Calendar = C>,
 {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        match self.calendar().check_identity(other.calendar()) {
+        match self.calendar().check_date_compatibility(other.calendar()) {
             Ok(_) => self.inner().cmp(other.inner()),
             Err(_) => {
                 // TODO: this is incorrect
