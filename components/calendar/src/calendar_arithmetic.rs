@@ -189,7 +189,7 @@ pub(crate) enum MinMonths {
     ///
     /// It is ok for ICU4X to `debug_assert` on things deriving from the correctness of this calculation
     Guaranteed(i64),
-    /// This number is not guaranteed. ICU4X should check that it is actually in range, and if not,
+    /// This number is not guaranteed. Code should check that it is not too large, and if not,
     /// fall back to the `guarantee` value (which *is* guaranteed).
     Guessed { guess: i64, guarantee: i64 },
 }
