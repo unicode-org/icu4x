@@ -937,7 +937,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         cal: &C,
         options: DateDifferenceOptions,
     ) -> DateDuration {
-        // Fast path for day/week diffs
+        // Non-spec optimization: fast path for day/week diffs
         // Avoids quadratic behavior in surpasses() for days/weeks
         if matches!(
             options.largest_unit,
@@ -961,6 +961,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Ordering::Less => -1i64,
         };
 
+        // Preparation for non-specced optimization:
         // We don't want to spend time incrementally bumping it up one year
         // at a time, so let's pre-guess a year delta that is guaranteed to not
         // surpass.
@@ -988,9 +989,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
             let mut candidate_years = sign;
+
+            // Non-spec optimization: try to fast-forward candidate_years to
+            // a year value that does not surpass
             if min_years != 0 {
-                // Optimization: we start with min_years since it is guaranteed to not
-                // surpass.
                 candidate_years = min_years
             };
 
@@ -1018,6 +1020,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ) {
             let mut candidate_months = sign;
 
+            // Non-spec optimization: try to fast-forward candidate_months to
+            // a month value that does not surpass
             if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
                 // If largest_unit = Months, then compute the calendar-specific minimum number of
                 // months corresponding to min_years.
