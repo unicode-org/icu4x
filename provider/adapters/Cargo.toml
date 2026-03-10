@@ -5,10 +5,10 @@
 [package]
 name = "icu_provider_adapters"
 description = "Adapters for composing and manipulating data providers."
-
-authors.workspace = true
 categories.workspace = true
 keywords = []
+
+authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

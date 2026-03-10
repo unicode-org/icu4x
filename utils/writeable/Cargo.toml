@@ -6,6 +6,7 @@
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
 version = "0.6.2"
+keywords = ["formatting", "write", "string", "no-std"]
 
 authors.workspace = true
 edition.workspace = true
@@ -14,7 +15,6 @@ license.workspace = true
 repository.workspace = true
 rust-version = "1.82"
 
-keywords = ["formatting", "write", "string", "no-std"]
 
 [package.metadata.workspaces]
 independent = true

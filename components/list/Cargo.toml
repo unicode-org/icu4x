@@ -5,11 +5,11 @@
 [package]
 name = "icu_list"
 description = "ECMA-402 ListFormatter"
+categories.workspace = true
+keywords = ["unicode", "formatting", "internationalization", "sequence"]
 
 license.workspace = true
 authors.workspace = true
-categories.workspace = true
-keywords = ["unicode", "formatting", "internationalization"]
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true

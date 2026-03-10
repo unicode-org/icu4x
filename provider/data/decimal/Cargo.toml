@@ -5,12 +5,12 @@
 [package]
 name = "icu_decimal_data"
 description = "Data for the icu_decimal crate"
+categories.workspace = true
+keywords = ["data", "unicode"]
 license = "Unicode-3.0"
 version.workspace = true
 
 authors.workspace = true
-categories.workspace = true
-keywords = ["data", "unicode"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

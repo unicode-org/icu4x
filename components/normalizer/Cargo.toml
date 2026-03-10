@@ -5,10 +5,10 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
-
-authors.workspace = true
 categories.workspace = true
 keywords = ["unicode", "normalization", "text-processing"]
+
+authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

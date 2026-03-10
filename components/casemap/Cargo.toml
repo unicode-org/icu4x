@@ -5,10 +5,10 @@
 [package]
 name = "icu_casemap"
 description = "Unicode case mapping and folding algorithms"
-
-authors.workspace = true
 categories.workspace = true
 keywords = ["unicode", "casing", "case-folding", "text-processing"]
+
+authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

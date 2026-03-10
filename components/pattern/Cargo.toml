@@ -6,6 +6,7 @@
 name = "icu_pattern"
 description = "ICU pattern utilities"
 version = "0.4.1"
+keywords = ["unicode", "patterns", "formatting"]
 
 authors.workspace = true
 edition.workspace = true
@@ -14,7 +15,6 @@ license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
-keywords = ["unicode", "patterns", "formatting"]
 
 [package.metadata.workspaces]
 independent = true

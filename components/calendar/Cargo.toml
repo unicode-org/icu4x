@@ -6,10 +6,10 @@
 name = "icu_calendar"
 description = "Date APIs for Gregorian and non-Gregorian calendars"
 version.workspace = true
-
-authors.workspace = true
 categories.workspace = true
 keywords = ["unicode", "formatting", "date"]
+
+authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

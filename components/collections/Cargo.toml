@@ -5,10 +5,10 @@
 [package]
 name = "icu_collections"
 description = "Collection of API for use in ICU libraries."
+categories.workspace = true
+keywords = ["unicode", "data-structures"]
 
 authors.workspace = true
-categories.workspace = true
-keywords = ["unicode", "data-structures", "internationalization"]
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

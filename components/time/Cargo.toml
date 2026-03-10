@@ -5,10 +5,10 @@
 [package]
 name = "icu_time"
 description = "Processing of dates, times, and time zones with a focus on i18n and interop"
-
-authors.workspace = true
 categories.workspace = true
 keywords = ["unicode", "formatting", "date"]
+
+authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
