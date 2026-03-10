@@ -174,8 +174,8 @@ mod unstable {
     #[non_exhaustive]
     pub struct DateDifferenceOptions {
         /// Which date field to allow as the largest in a duration when taking the difference.
-        /// 
-        /// This defaults to [`Days`].
+        ///
+        /// This defaults to [`DateDurationUnit::Days`].
         ///
         /// When choosing [`Months`] or [`Years`], the resulting [`DateDuration`] might not be
         /// associative or commutative in subsequent arithmetic operations, and it might require

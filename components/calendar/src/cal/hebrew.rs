@@ -45,8 +45,8 @@ use calendrical_calculations::rata_die::RataDie;
 /// Due to Rosh Hashanah postponement rules, Ḥešvan and Kislev vary in length.
 ///
 /// In leap years (years 3, 6, 8, 11, 17, 19 in a 19-year cycle), the leap month Adar I (`M05L`, 30 days)
-/// is inserted before Adar (`M06`), which is then called Adar II ([`MonthInfo::leap_status`] will be 
-/// [`LeapStatus::Base`] to mark this).
+/// is inserted before Adar (`M06`), which is then called Adar II ([`MonthInfo::leap_status`] will be
+/// [`LeapStatus::LeapBase`] to mark this).
 ///
 /// Standard years thus have 353-355 days, and leap years 383-385.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
