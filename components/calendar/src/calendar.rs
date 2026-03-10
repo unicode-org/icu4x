@@ -5,7 +5,7 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
-use crate::error::{DateAddError, DateError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromCodesError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Iso};
@@ -57,6 +57,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             None => types::InputYear::ExtendedYear(year),
         };
         self.from_codes2(year, month_code, day)
+            .map_err(DateError::from)
     }
 
     /// Construct a date from month codes and [`InputYear`].
@@ -66,7 +67,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateError>;
+    ) -> Result<Self::DateInner, DateFromCodesError>;
 
     /// Construct a date from a bag of date fields.
     ///

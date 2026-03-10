@@ -6,8 +6,8 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::duration::DateDuration;
 use crate::error::{
-    range_check, DateAddError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
-    MonthCodeParseError, MonthError, UnknownEraError,
+    range_check, DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError,
+    LunisolarDateError, MonthCodeParseError, MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
@@ -317,31 +317,41 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         month_code: types::MonthCode,
         day: u8,
         calendar: &C,
-    ) -> Result<Self, DateError> {
+    ) -> Result<Self, DateFromCodesError> {
         let extended_year = match year {
             types::InputYear::ExtendedYear(y) => {
-                range_check(y, "year", CONSTRUCTOR_YEAR_RANGE)?;
+                if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
+                    return Err(DateFromCodesError::Overflow);
+                }
                 y
             }
             types::InputYear::EraYear(era, y) => {
-                range_check(y, "year", CONSTRUCTOR_YEAR_RANGE)?;
-                calendar.extended_year_from_era_year_unchecked(era.as_bytes(), y)?
+                if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
+                    return Err(DateFromCodesError::Overflow);
+                }
+                calendar
+                    .extended_year_from_era_year_unchecked(era.as_bytes(), y)
+                    .map_err(|_| DateFromCodesError::InvalidEra)?
             }
         };
         let year = calendar.year_info_from_extended(extended_year);
 
         let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
-            MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
+            MonthCodeParseError::InvalidSyntax => {
+                DateFromCodesError::MonthNotInCalendar(month_code)
+            }
         })?;
         let month = calendar
             .ordinal_from_month(year, validated, Default::default())
             .map_err(|e| match e {
-                MonthError::NotInCalendar | MonthError::NotInYear => {
-                    DateError::UnknownMonthCode(month_code)
-                }
+                MonthError::NotInCalendar => DateFromCodesError::MonthNotInCalendar(month_code),
+                MonthError::NotInYear => DateFromCodesError::MonthNotInYear(month_code),
             })?;
 
-        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+        let max_day = C::days_in_provided_month(year, month);
+        if day < 1 || day > max_day {
+            return Err(DateFromCodesError::InvalidDay { max: max_day });
+        }
 
         // date is in the valid year range, and therefore in the valid RD range
         Ok(ArithmeticDate::new_unchecked(year, month, day))

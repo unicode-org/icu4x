@@ -4,8 +4,8 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
-    MonthError, UnknownEraError,
+    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError,
+    LunisolarDateError, MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -261,8 +261,9 @@ impl Calendar for Hebrew {
         year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self).map(HebrewDateInner)
+    ) -> Result<Self::DateInner, DateFromCodesError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
+            .map(HebrewDateInner)
     }
 
     #[cfg(feature = "unstable")]

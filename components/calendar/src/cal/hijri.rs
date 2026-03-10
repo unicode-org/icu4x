@@ -7,7 +7,7 @@ use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::PackWithMD;
 use crate::calendar_arithmetic::ToExtendedYear;
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -923,8 +923,9 @@ impl<R: Rules> Calendar for Hijri<R> {
         year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self).map(HijriDateInner)
+    ) -> Result<Self::DateInner, DateFromCodesError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
+            .map(HijriDateInner)
     }
 
     #[cfg(feature = "unstable")]

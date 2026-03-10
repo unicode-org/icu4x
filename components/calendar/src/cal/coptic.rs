@@ -5,7 +5,7 @@
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -137,8 +137,9 @@ impl Calendar for Coptic {
         year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self).map(CopticDateInner)
+    ) -> Result<Self::DateInner, DateFromCodesError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
+            .map(CopticDateInner)
     }
 
     #[cfg(feature = "unstable")]

@@ -5,7 +5,7 @@
 use crate::cal::iso::{IsoDateInner, IsoEra};
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -91,7 +91,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         year: types::InputYear,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromCodesError> {
         ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
             .map(ArithmeticDate::cast)
     }
@@ -224,14 +224,12 @@ macro_rules! impl_with_abstract_gregorian {
                 year: types::InputYear,
                 month_code: types::MonthCode,
                 day: u8,
-            ) -> Result<Self::DateInner, crate::DateError> {
+            ) -> Result<Self::DateInner, crate::error::DateFromCodesError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
                     .from_codes2(year, month_code, day)
                     .map($inner_date_ty)
             }
-
-
 
             #[cfg(feature = "unstable")]
             fn from_fields(

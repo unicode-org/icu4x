@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::VALID_RD_RANGE;
-use crate::error::{DateAddError, DateError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromCodesError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
@@ -159,7 +159,10 @@ impl<A: AsCalendar> Date<A> {
             Some(e) => types::InputYear::EraYear(e, year),
             None => types::InputYear::ExtendedYear(year),
         };
-        let inner = calendar.as_calendar().from_codes2(year, month_code, day)?;
+        let inner = calendar
+            .as_calendar()
+            .from_codes2(year, month_code, day)
+            .map_err(DateError::from)?;
         Ok(Date::from_raw(inner, calendar))
     }
 
@@ -188,8 +191,10 @@ impl<A: AsCalendar> Date<A> {
         month: types::Month,
         day: u8,
         calendar: A,
-    ) -> Result<Self, DateError> {
-        let inner = calendar.as_calendar().from_codes2(year, month.code(), day)?;
+    ) -> Result<Self, DateFromCodesError> {
+        let inner = calendar
+            .as_calendar()
+            .from_codes2(year, month.code(), day)?;
         Ok(Date::from_raw(inner, calendar))
     }
 
@@ -756,13 +761,20 @@ mod tests {
 
     #[test]
     fn test_try_from_codes() {
-        use crate::types::{InputYear, Month};
         use crate::cal::Japanese;
+        use crate::types::{InputYear, Month};
         let date = Date::try_from_codes(2025.into(), Month::new(1), 1, Gregorian).unwrap();
         assert_eq!(date, Date::try_new_gregorian(2025, 1, 1).unwrap());
 
-        let date2 = Date::try_from_codes(InputYear::EraYear("reiwa", 7), Month::new(1), 1, Japanese::new()).unwrap();
-        let date2_expected = Date::try_new_japanese_with_calendar("reiwa", 7, 1, 1, Japanese::new()).unwrap();
+        let date2 = Date::try_from_codes(
+            InputYear::EraYear("reiwa", 7),
+            Month::new(1),
+            1,
+            Japanese::new(),
+        )
+        .unwrap();
+        let date2_expected =
+            Date::try_new_japanese_with_calendar("reiwa", 7, 1, 1, Japanese::new()).unwrap();
         assert_eq!(date2, date2_expected);
     }
 }

@@ -108,7 +108,7 @@ macro_rules! make_any_calendar {
                 year: $crate::types::InputYear,
                 month_code: $crate::types::MonthCode,
                 day: u8,
-            ) -> Result<Self::DateInner, $crate::DateError> {
+            ) -> Result<Self::DateInner, $crate::error::DateFromCodesError> {
                 Ok(match self {
                     $(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes2(year, month_code, day)?, AnyCalendarable::identity(c)),
