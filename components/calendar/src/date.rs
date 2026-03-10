@@ -386,18 +386,12 @@ impl<A: AsCalendar> Date<A> {
     #[cfg(feature = "unstable")]
     #[inline]
     pub fn try_added_with_options(
-        &self,
+        mut self,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self, DateAddError>
-    where
-        A: Clone,
-    {
-        let inner = self
-            .calendar
-            .as_calendar()
-            .add(&self.inner, duration, options)?;
-        Ok(Self::from_raw(inner, self.calendar.clone()))
+    ) -> Result<Self, DateAddError> {
+        self.try_add_with_options(duration, options)?;
+        Ok(self)
     }
 
     /// Calculating the duration between `other - self`
