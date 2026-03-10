@@ -248,6 +248,28 @@ impl fmt::Debug for DateFields<'_> {
     }
 }
 
+/// Year information to be used as input to [`Date::try_from_codes()`].
+///
+/// Note: The input variants represent different ways of specifying a year;
+/// see [`YearInfo`] for the output formats.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum InputYear<'a> {
+    /// An "extended year", which is a single number representing the year.
+    ///
+    /// For many calendars this matches the year number, but for some it is a year
+    /// relative to some specific epoch.
+    ExtendedYear(i32),
+    /// A year specified by an era code and the year in that era.
+    EraYear(&'a str, i32),
+}
+
+impl From<i32> for InputYear<'_> {
+    fn from(year: i32) -> Self {
+        Self::ExtendedYear(year)
+    }
+}
+
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]

@@ -147,6 +147,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// This function accepts years in the range `-9999..=9999`.
     #[inline]
+    #[deprecated(since = "2.2.0", note = "use `Date::try_from_codes`")]
     pub fn try_new_from_codes(
         era: Option<&str>,
         year: i32,
@@ -157,6 +158,42 @@ impl<A: AsCalendar> Date<A> {
         let inner = calendar
             .as_calendar()
             .from_codes(era, year, month_code, day)?;
+        Ok(Date::from_raw(inner, calendar))
+    }
+
+    /// Construct a [`Date`] from era, year, month, and day fields, and a calendar.
+    ///
+    /// This function accepts years in the range `-9999..=9999`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::{InputYear, Month};
+    /// use icu::calendar::Iso;
+    ///
+    /// // Example: creation of ISO date from integers.
+    /// let date_iso = Date::try_from_codes(1970.into(), Month::new(1), 2, Iso)
+    ///     .expect("Failed to initialize ISO Date instance.");
+    ///
+    /// assert_eq!(date_iso.era_year().year, 1970);
+    /// assert_eq!(date_iso.month().ordinal, 1);
+    /// assert_eq!(date_iso.day_of_month().0, 2);
+    /// ```
+    #[inline]
+    pub fn try_from_codes(
+        year: types::InputYear,
+        month: types::Month,
+        day: u8,
+        calendar: A,
+    ) -> Result<Self, DateError> {
+        let (era, year) = match year {
+            types::InputYear::ExtendedYear(y) => (None, y),
+            types::InputYear::EraYear(e, y) => (Some(e), y),
+        };
+        let inner = calendar
+            .as_calendar()
+            .from_codes(era, year, month.code(), day)?;
         Ok(Date::from_raw(inner, calendar))
     }
 
@@ -719,5 +756,17 @@ mod tests {
         let date3 = date.to_calendar(Hebrew).to_calendar(Gregorian);
         assert_eq!(date, date2);
         assert_eq!(date2, date3);
+    }
+
+    #[test]
+    fn test_try_from_codes() {
+        use crate::types::{InputYear, Month};
+        use crate::cal::Japanese;
+        let date = Date::try_from_codes(2025.into(), Month::new(1), 1, Gregorian).unwrap();
+        assert_eq!(date, Date::try_new_gregorian(2025, 1, 1).unwrap());
+
+        let date2 = Date::try_from_codes(InputYear::EraYear("reiwa", 7), Month::new(1), 1, Japanese::new()).unwrap();
+        let date2_expected = Date::try_new_japanese_with_calendar("reiwa", 7, 1, 1, Japanese::new()).unwrap();
+        assert_eq!(date2, date2_expected);
     }
 }
