@@ -142,7 +142,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         loop {
             let item_i = all_items.get_or_panic(i);
             let item_j = all_items.get_or_panic(j - 1);
-            debug_assert!(slice_indices::prefix_eq(item_i.0, item_j.0, prefix_len));
+            debug_assert!(slice_indices::prefix_eq_or_panic(
+                item_i.0, item_j.0, prefix_len
+            ));
             // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
                 current_len += self.prepend_value(item_i.1);
@@ -172,7 +174,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     // Too short
                     break;
                 }
-                if slice_indices::prefix_eq(item_i.0, candidate, prefix_len) {
+                if slice_indices::prefix_eq_or_panic(item_i.0, candidate, prefix_len) {
                     new_i -= 1;
                 } else {
                     break;
@@ -196,7 +198,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     // Too short
                     break;
                 }
-                if slice_indices::prefix_eq(item_j.0, candidate, prefix_len) {
+                if slice_indices::prefix_eq_or_panic(item_j.0, candidate, prefix_len) {
                     new_j += 1;
                 } else {
                     break;

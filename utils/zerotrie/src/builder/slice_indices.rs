@@ -26,7 +26,7 @@ const fn is_less_than(a: &[u8], b: &[u8]) -> bool {
 /// # Panics
 ///
 /// Panics if `prefix_len` is longer than either `a` or `b`.
-pub(crate) const fn prefix_eq(a: &[u8], b: &[u8], prefix_len: usize) -> bool {
+pub(crate) const fn prefix_eq_or_panic(a: &[u8], b: &[u8], prefix_len: usize) -> bool {
     let mut i = 0;
     #[allow(clippy::indexing_slicing, reason = "documented panic")]
     while i < prefix_len {

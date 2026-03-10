@@ -172,7 +172,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         loop {
             let item_i = all_items.get_or_panic(i);
             let item_j = all_items.get_or_panic(j - 1);
-            debug_assert!(crate::builder::slice_indices::prefix_eq(
+            debug_assert!(crate::builder::slice_indices::prefix_eq_or_panic(
                 item_i.0, item_j.0, prefix_len
             ));
             // Check if we need to add a value node here.
@@ -201,7 +201,9 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     // Too short
                     break;
                 }
-                if crate::builder::slice_indices::prefix_eq(item_i.0, candidate, prefix_len) {
+                if crate::builder::slice_indices::prefix_eq_or_panic(
+                    item_i.0, candidate, prefix_len,
+                ) {
                     new_i -= 1;
                 } else {
                     break;
@@ -224,7 +226,9 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     // Too short
                     break;
                 }
-                if crate::builder::slice_indices::prefix_eq(item_j.0, candidate, prefix_len) {
+                if crate::builder::slice_indices::prefix_eq_or_panic(
+                    item_j.0, candidate, prefix_len,
+                ) {
                     new_j += 1;
                 } else {
                     break;
