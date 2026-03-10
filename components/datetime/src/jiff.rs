@@ -9,9 +9,9 @@ use icu_calendar::{AnyCalendar, AnyCalendarKind, Date, Gregorian};
 #[cfg(feature = "compiled_data")]
 use icu_time::zone::models::AtTime;
 use icu_time::zone::{UtcOffset, ZoneNameTimestamp};
-use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
+use icu_time::{DateTime, Hour, Minute, Nanosecond, Second, Time};
 #[cfg(feature = "compiled_data")]
-use icu_time::{TimeZone, TimeZoneInfo};
+use icu_time::{TimeZone, TimeZoneInfo, ZonedDateTime};
 
 impl UnstableSealed for jiff::civil::Time {}
 impl<C> InFixedCalendar<C> for jiff::civil::Time {}
@@ -278,12 +278,7 @@ impl GetField<Option<UtcOffset>> for jiff::Zoned {
 impl GetField<ZoneNameTimestamp> for jiff::Zoned {
     #[inline]
     fn get_field(&self) -> ZoneNameTimestamp {
-        ZoneNameTimestamp::from_zoned_date_time_iso(
-            ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-                self.timestamp().as_millisecond(),
-                UtcOffset::zero(),
-            ),
-        )
+        ZoneNameTimestamp::from_epoch_seconds(self.timestamp().as_second())
     }
 }
 

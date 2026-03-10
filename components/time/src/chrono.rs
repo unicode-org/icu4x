@@ -5,7 +5,7 @@
 use icu_calendar::Gregorian;
 
 use crate::zone::models::{AtTime, Base};
-use crate::zone::UtcOffset;
+use crate::zone::{UtcOffset, ZoneNameTimestamp};
 use crate::{DateTime, Hour, Minute, Nanosecond, Second, Time};
 use crate::{TimeZone, TimeZoneInfo, ZonedDateTime};
 
@@ -64,10 +64,9 @@ where
         ZonedDateTime {
             date,
             time,
-            zone: zone.at_date_time_iso(DateTime {
-                date: date.to_calendar(icu_calendar::Iso),
-                time,
-            }),
+            zone: zone.with_zone_name_timestamp(ZoneNameTimestamp::from_epoch_seconds(
+                chrono.timestamp(),
+            )),
         }
     }
 }
