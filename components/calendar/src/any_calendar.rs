@@ -1406,7 +1406,7 @@ mod tests {
 
         assert_eq!(
             (month, day),
-            (date.month().as_input(), date.day_of_month().0),
+            (date.month().to_input(), date.day_of_month().0),
             "Failed to roundtrip for calendar {}",
             calendar.debug_name()
         );

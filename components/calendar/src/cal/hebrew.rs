@@ -529,7 +529,7 @@ mod tests {
                 Date::try_new_from_codes(
                     Some(&date.era_year().era),
                     date.era_year().year,
-                    date.month().as_input().code(),
+                    date.month().to_input().code(),
                     date.day_of_month().0,
                     Hebrew
                 ),
@@ -539,7 +539,7 @@ mod tests {
             assert_eq!(
                 Date::try_new_hebrew_v2(
                     date.era_year().year,
-                    date.month().as_input(),
+                    date.month().to_input(),
                     date.day_of_month().0,
                 ),
                 Ok(date)
