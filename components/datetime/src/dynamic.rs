@@ -22,13 +22,13 @@
 //!
 //! | Type | Supported Field Sets | Supported Input Types |
 //! |---|---|---|
-//! | [`DateFieldSet`] | Date | Date, DateTime, ZonedDateTime |
-//! | [`CalendarPeriodFieldSet`] | Calendar Period | Date, DateTime, ZonedDateTime |
-//! | [`TimeFieldSet`] | Time | Time, DateTime, ZonedTime, ZonedDateTime |
-//! | [`ZoneFieldSet`] | Zone | TimeZoneInfo, ZonedTime, ZonedDateTime |
-//! | [`DateAndTimeFieldSet`] | Date + Time | DateTime, ZonedDateTime |
-//! | [`CompositeDateTimeFieldSet`] | Date, Calendar Period, Time, Date + Time | DateTime, ZonedDateTime |
-//! | [`CompositeFieldSet`] | All | ZonedDateTime |
+//! | [`DateFieldSet`] | Date | [`Date`], [`DateTime`], [`ZonedDateTime`] |
+//! | [`CalendarPeriodFieldSet`] | Calendar Period | [`Date`], [`DateTime`], [`ZonedDateTime`] |
+//! | [`TimeFieldSet`] | Time | [`Time`], [`DateTime`], [`ZonedTime`], [`ZonedDateTime`] |
+//! | [`ZoneFieldSet`] | Zone | [`TimeZoneInfo`], [`ZonedTime`], [`ZonedDateTime`] |
+//! | [`DateAndTimeFieldSet`] | Date + Time | [`DateTime`], [`ZonedDateTime`] |
+//! | [`CompositeDateTimeFieldSet`] | Date, Calendar Period, Time, Date + Time | [`DateTime`], [`ZonedDateTime`] |
+//! | [`CompositeFieldSet`] | All | [`ZonedDateTime`] |
 //!
 //! # Examples
 //!
@@ -86,6 +86,9 @@ use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
 use crate::{fieldsets, provider};
 use icu_provider::prelude::*;
+
+#[cfg(doc)]
+use crate::input::*;
 
 /// An enumeration over all possible date field sets.
 ///
