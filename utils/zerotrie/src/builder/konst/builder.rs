@@ -100,6 +100,10 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     ///
     /// `K` is the stack size of the lengths stack. If you get an error such as
     /// `AsciiTrie Builder: Need more stack`, try increasing `K`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the items are not sorted
     pub const fn from_tuple_slice<'a, const K: usize>(items: ByteSliceWithIndices<'a>) -> Self {
         assert!(
             items.is_sorted(),
