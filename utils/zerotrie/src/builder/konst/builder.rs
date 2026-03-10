@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::super::branch_meta::BranchMeta;
-use super::super::bytestr::ByteStr;
-use super::store::const_for_each;
+use super::super::slice_indices::{self, ByteSliceWithIndices};
 use super::store::ConstArrayBuilder;
 use super::store::ConstLengthsStack;
 use super::store::ConstSlice;
@@ -105,21 +104,12 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     /// # Panics
     ///
     /// Panics if the items are not sorted
-    pub const fn from_tuple_slice<'a, const K: usize>(items: &[(&'a ByteStr, usize)]) -> Self {
-        let items = ConstSlice::from_slice(items);
-        let mut prev: Option<&'a ByteStr> = None;
-        const_for_each!(items, (ascii_str, _), {
-            match prev {
-                None => (),
-                Some(prev) => {
-                    if !prev.is_less_then(ascii_str) {
-                        panic!("Strings in ByteStr constructor are not sorted");
-                    }
-                }
-            };
-            prev = Some(ascii_str)
-        });
-        Self::from_sorted_const_tuple_slice::<K>(items)
+    pub const fn from_tuple_slice<'a, const K: usize>(items: ByteSliceWithIndices<'a>) -> Self {
+        assert!(
+            items.is_sorted(),
+            "Strings in ZeroTrie constructor are not sorted"
+        );
+        Self::from_slice_with_indices::<K>(items)
     }
 
     /// Creates a new builder containing the elements in the given slice of key/value pairs.
@@ -128,9 +118,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     ///
     /// `K` is the stack size of the lengths stack. If you get an error such as
     /// `AsciiTrie Builder: Need more stack`, try increasing `K`.
-    pub const fn from_sorted_const_tuple_slice<const K: usize>(
-        items: ConstSlice<(&ByteStr, usize)>,
-    ) -> Self {
+    pub const fn from_slice_with_indices<const K: usize>(items: ByteSliceWithIndices) -> Self {
         let mut result = Self::new();
         let total_size = result.create_or_panic::<K>(items);
         debug_assert!(total_size == result.data.len());
@@ -139,10 +127,11 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
     #[must_use]
-    const fn create_or_panic<const K: usize>(
-        &mut self,
-        all_items: ConstSlice<(&ByteStr, usize)>,
-    ) -> usize {
+    #[expect(
+        clippy::indexing_slicing,
+        reason = "all call sites are well-commented and will not panic"
+    )]
+    const fn create_or_panic<const K: usize>(&mut self, all_items: ByteSliceWithIndices) -> usize {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
             // Empty slice:
@@ -157,7 +146,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         loop {
             let item_i = all_items.get_or_panic(i);
             let item_j = all_items.get_or_panic(j - 1);
-            debug_assert!(item_i.0.prefix_eq(item_j.0, prefix_len));
+            debug_assert!(slice_indices::prefix_eq_or_panic(
+                item_i.0, item_j.0, prefix_len
+            ));
             // Check if we need to add a value node here.
             if item_i.0.len() == prefix_len {
                 current_len += self.prepend_value(item_i.1);
@@ -170,8 +161,12 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
             prefix_len -= 1;
             let mut new_i = i;
             let mut new_j = j;
-            let mut ascii_i = item_i.0.byte_at_or_panic(prefix_len);
-            let mut ascii_j = item_j.0.byte_at_or_panic(prefix_len);
+            // `prefix_len` is guaranteed to be in bounds for `item_i` since it is
+            // instantiated and updated based on the length of `item_i`, and then only decremented.
+            // This is a bit harder to prove for `item_j`, but it is a loop invariant
+            // TODO(sffc): Consider proving this or perhaps using a checked get.
+            let mut ascii_i = item_i.0[prefix_len];
+            let mut ascii_j = item_j.0[prefix_len];
             debug_assert!(ascii_i == ascii_j);
             let key_ascii = ascii_i;
             loop {
@@ -183,16 +178,17 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     // Too short
                     break;
                 }
-                if item_i.0.prefix_eq(candidate, prefix_len) {
+                if slice_indices::prefix_eq_or_panic(item_i.0, candidate, prefix_len) {
                     new_i -= 1;
                 } else {
                     break;
                 }
+
                 if candidate.len() == prefix_len {
                     // A string that equals the prefix does not take part in the branch node.
                     break;
                 }
-                let candidate = candidate.byte_at_or_panic(prefix_len);
+                let candidate = candidate[prefix_len];
                 if candidate != ascii_i {
                     ascii_i = candidate;
                 }
@@ -206,7 +202,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                     // Too short
                     break;
                 }
-                if item_j.0.prefix_eq(candidate, prefix_len) {
+                if slice_indices::prefix_eq_or_panic(item_j.0, candidate, prefix_len) {
                     new_j += 1;
                 } else {
                     break;
@@ -214,7 +210,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                 if candidate.len() == prefix_len {
                     panic!("A shorter string should be earlier in the sequence");
                 }
-                let candidate = candidate.byte_at_or_panic(prefix_len);
+                let candidate = candidate[prefix_len];
                 if candidate != ascii_j {
                     ascii_j = candidate;
                 }
