@@ -102,10 +102,7 @@ impl CompactDecimalFormatter {
     ) -> Result<Self, DataError> {
         let locale = DecimalCompactShortV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            decimal_formatter: DecimalFormatter::try_new(
-                (&prefs).into(),
-                options.decimal_formatter_options,
-            )?,
+            decimal_formatter: DecimalFormatter::try_new((&prefs).into(), options.into())?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
             compact_data: load_with_fallback::<DecimalCompactShortV1>(
                 &Baked,
@@ -147,7 +144,7 @@ impl CompactDecimalFormatter {
             decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
-                options.decimal_formatter_options,
+                options.into(),
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
             compact_data: load_with_fallback::<DecimalCompactShortV1>(
@@ -189,10 +186,7 @@ impl CompactDecimalFormatter {
     ) -> Result<Self, DataError> {
         let locale = DecimalCompactLongV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            decimal_formatter: DecimalFormatter::try_new(
-                (&prefs).into(),
-                options.decimal_formatter_options,
-            )?,
+            decimal_formatter: DecimalFormatter::try_new((&prefs).into(), options.into())?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
             compact_data: load_with_fallback::<DecimalCompactLongV1>(
                 &Baked,
@@ -234,7 +228,7 @@ impl CompactDecimalFormatter {
             decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
-                options.decimal_formatter_options,
+                options.into(),
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
             compact_data: load_with_fallback::<DecimalCompactLongV1>(
