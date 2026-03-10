@@ -146,6 +146,15 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
+    /// The error that is returned by [`Self::check_date_compatibility`].
+    ///
+    /// Set this to [`core::convert::Infallible`] if the type is a singleton or
+    /// the parameterization does not affect calendar semantics.
+    type DateCompatibilityError: Debug;
+
+    /// Checks whether two [`Rules`] values are equal for the purpose of [`Date`] interaction.
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError>;
+
     /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using these rules, if defined.
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         None
@@ -199,6 +208,12 @@ impl Rules for AstronomicalSimulation {
 
     fn year_containing_rd(&self, rd: RataDie) -> HijriYear {
         UmmAlQura.year_containing_rd(rd)
+    }
+
+    type DateCompatibilityError = core::convert::Infallible;
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
     }
 }
 
@@ -275,6 +290,12 @@ impl Rules for UmmAlQura {
             }
             .year(extended_year)
         }
+    }
+
+    type DateCompatibilityError = core::convert::Infallible;
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
     }
 }
 
@@ -370,6 +391,15 @@ impl Rules for TabularAlgorithm {
             packed: PackedHijriYearData::new_unchecked(extended_year, month_lengths, start_day),
             extended_year,
         }
+    }
+
+    type DateCompatibilityError = crate::error::MismatchedCalendarError;
+
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+        if self != other {
+            return Err(crate::error::MismatchedCalendarError);
+        }
+        Ok(())
     }
 }
 
@@ -886,7 +916,7 @@ impl<R: Rules> crate::cal::scaffold::UnstableSealed for Hijri<R> {}
 impl<R: Rules> Calendar for Hijri<R> {
     type DateInner = HijriDateInner<R>;
     type Year = types::EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type DateCompatibilityError = R::DateCompatibilityError;
 
     fn from_codes(
         &self,
@@ -953,8 +983,12 @@ impl<R: Rules> Calendar for Hijri<R> {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
-        Ok(date1.0.until(&date2.0, self, options))
+    ) -> types::DateDuration {
+        date1.0.until(&date2.0, self, options)
+    }
+
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+        self.0.check_date_compatibility(&other.0)
     }
 
     fn debug_name(&self) -> &'static str {

@@ -44,6 +44,12 @@ impl Rules for ReingoldSimulation {
         .unwrap()
     }
 
+    type DateCompatibilityError = core::convert::Infallible;
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
+    }
+
     fn debug_name(&self) -> &'static str {
         "Hijri (Reingold, Mecca)"
     }

@@ -562,7 +562,7 @@ mod unstable {
 
     impl core::error::Error for DateAddError {}
 
-    /// Error returned when subtracting two [`Date`](crate::Date)s with [`AnyCalendar`](crate::AnyCalendar).
+    /// Error returned when interacting two [`Date`](crate::Date)s with non-singleton calendars.
     ///
     /// # Examples
     ///
@@ -601,10 +601,10 @@ mod unstable {
     ///
     /// N
     #[derive(Clone, Copy, PartialEq, Debug, Display)]
-    #[displaydoc("Attempted to diff two `Date<AnyCalendar>`s with different calendars")]
+    #[displaydoc("Attempted to interact two `Date`s with different calendars")]
     #[allow(
         clippy::exhaustive_structs,
-        reason = "This is the only possible error with paired AnyCalendar operations"
+        reason = "This is the only possible error with multi-calendar operations"
     )]
     pub struct MismatchedCalendarError;
 

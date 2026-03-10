@@ -131,7 +131,7 @@ impl Japanese {
     }
 }
 
-impl GregorianYears for &'_ Japanese {
+impl GregorianYears for Japanese {
     fn extended_from_era_year(
         &self,
         era: Option<&[u8]>,
@@ -189,7 +189,7 @@ impl GregorianYears for &'_ Japanese {
     }
 }
 
-impl_with_abstract_gregorian!(Japanese, JapaneseDateInner, Japanese, this, this);
+impl_with_abstract_gregorian!(Japanese, JapaneseDateInner, Japanese, this, *this);
 
 impl Date<Japanese> {
     /// Construct a new Japanese [`Date`].
@@ -242,7 +242,7 @@ impl Date<Japanese> {
             year,
             month,
             day,
-            &AbstractGregorian(japanese_calendar.as_calendar()),
+            &AbstractGregorian(*japanese_calendar.as_calendar()),
         )
         .map(ArithmeticDate::cast)
         .map(JapaneseDateInner)

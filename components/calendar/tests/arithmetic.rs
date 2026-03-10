@@ -41,7 +41,7 @@ fn check<A>(
     exp3: &(u32, u32, u64),
 ) where
     A: AsCalendar + Copy,
-    <A as AsCalendar>::Calendar: Calendar<DifferenceError = Infallible>,
+    <A as AsCalendar>::Calendar: Calendar<DateCompatibilityError = Infallible>,
     <<A as AsCalendar>::Calendar as Calendar>::DateInner: PartialOrd,
 {
     let is_negative = d0 > d1;

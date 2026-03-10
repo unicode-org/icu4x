@@ -22,6 +22,12 @@ impl hijri::Rules for IranSighting {
             .year(extended_year)
         })
     }
+
+    type DateCompatibilityError = core::convert::Infallible;
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
+    }
 }
 
 static QAMARI: LazyLock<HashMap<i32, hijri::HijriYear>> = LazyLock::new(|| {

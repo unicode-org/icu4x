@@ -34,7 +34,6 @@ macro_rules! make_any_calendar {
     ) => {
         $(#[$any_calendar_meta])*
         #[derive(Debug, Clone)]
-        // TODO(#3469): Decide on the best way to implement Ord.
         pub enum $any_calendar_ident {
             $(
                 #[doc = concat!("A [`", stringify!($ty), "`] calendar")]
@@ -102,7 +101,7 @@ macro_rules! make_any_calendar {
         impl $crate::Calendar for $any_calendar_ident {
             type DateInner = $any_date_ident;
             type Year = $crate::types::YearInfo;
-            type DifferenceError = $crate::error::MismatchedCalendarError;
+            type DateCompatibilityError = $crate::error::MismatchedCalendarError;
 
             fn from_codes(
                 &self,
@@ -351,24 +350,39 @@ macro_rules! make_any_calendar {
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
                 options: $crate::options::DateDifferenceOptions,
-            ) -> Result<$crate::types::DateDuration, Self::DifferenceError> {
-                let Ok(r) = match (self, date1, date2) {
+            ) -> $crate::types::DateDuration {
+                match (self, date1, date2) {
                     $(
-                        (Self::$variant(ref c1), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
-                            c1.until(d1, d2, options)
+                        (Self::$variant(ref c), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c) == *q1 && q1 == q2 => {
+                            c.until(d1, d2, options)
                         }
                     )+
                     $(
                         #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c1), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
-                            c1.until(d1, d2, options)
+                        (Self::$deprecated_variant(ref c), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c) == *q1 && q1 == q2  => {
+                            c.until(d1, d2, options)
                         }
                     )*
-                    _ => {
-                        return Err($crate::error::MismatchedCalendarError);
-                    }
-                };
-                Ok(r)
+                    // This is only reached from misuse of from_raw, a semi-internal api
+                    _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
+                }
+            }
+
+            fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+                match (self, other) {
+                    $(
+                        (Self::$variant(ref c1), Self::$variant(ref c2)) if c1.check_date_compatibility(c2).is_ok() => {
+                            Ok(())
+                        }
+                    )+
+                    $(
+                        #[allow(deprecated)]
+                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2)) if c1.check_date_compatibility(c2).is_ok() => {
+                            Ok(())
+                        }
+                    )*
+                    _ => Err($crate::error::MismatchedCalendarError),
+                }
             }
 
             fn debug_name(&self) -> &'static str {
@@ -732,7 +746,7 @@ impl AnyCalendar {
 impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
     /// Convert this `Date<AnyCalendar>` to another [`AnyCalendar`], if conversion is needed
     pub fn convert_any<'a>(&self, calendar: &'a AnyCalendar) -> Date<Ref<'a, AnyCalendar>> {
-        if calendar == self.calendar() {
+        if calendar.check_date_compatibility(self.calendar()).is_ok() {
             Date::from_raw(*self.inner(), Ref(calendar))
         } else {
             self.to_calendar(Ref(calendar))
