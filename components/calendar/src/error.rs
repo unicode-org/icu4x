@@ -451,7 +451,7 @@ mod unstable {
         /// fields.day = Some(31);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Iso)
-        ///     .expect_err("no day 31 in November");
+        ///     .expect_err("date out of range");
         ///
         /// assert!(matches!(
         ///     err,
