@@ -106,16 +106,16 @@ macro_rules! make_any_calendar {
             fn from_codes2(
                 &self,
                 year: $crate::types::InputYear,
-                month_code: $crate::types::MonthCode,
+                month: $crate::types::Month,
                 day: u8,
             ) -> Result<Self::DateInner, $crate::error::DateFromCodesError> {
                 Ok(match self {
                     $(
-                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes2(year, month_code, day)?, AnyCalendarable::identity(c)),
+                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes2(year, month, day)?, AnyCalendarable::identity(c)),
                     )+
                     $(
                         #[allow(deprecated)]
-                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_codes2(year, month_code, day)?, AnyCalendarable::identity(c)),
+                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_codes2(year, month, day)?, AnyCalendarable::identity(c)),
                     )*
                 })
             }

@@ -695,11 +695,10 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     fn from_codes2(
         &self,
         year: types::InputYear,
-        month_code: types::MonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {
-        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
-            .map(ChineseDateInner)
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(ChineseDateInner)
     }
 
     #[cfg(feature = "unstable")]

@@ -921,11 +921,10 @@ impl<R: Rules> Calendar for Hijri<R> {
     fn from_codes2(
         &self,
         year: types::InputYear,
-        month_code: types::MonthCode,
+        month: Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {
-        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
-            .map(HijriDateInner)
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(HijriDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -1728,7 +1727,7 @@ mod test {
         let dt = Hijri::new_umm_al_qura()
             .from_codes2(
                 types::InputYear::EraYear("bh", 6824),
-                Month::new(1).code(),
+                Month::new(1),
                 1,
             )
             .unwrap();

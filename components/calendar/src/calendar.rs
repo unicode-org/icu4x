@@ -63,7 +63,11 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             Some(e) => InputYear::EraYear(e, year),
             None => InputYear::ExtendedYear(year),
         };
-        let result = self.from_codes2(input_year, month_code, day);
+        let month = match types::Month::try_from_utf8(month_code.0.as_bytes()) {
+            Ok(m) => m,
+            Err(_) => return Err(DateError::UnknownMonthCode(month_code)),
+        };
+        let result = self.from_codes2(input_year, month, day);
 
         match result {
             Ok(date) => Ok(date),
@@ -88,14 +92,14 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         }
     }
 
-    /// Construct a date from month codes and [`InputYear`].
+    /// Construct a date from a [`Month`] and [`InputYear`].
     ///
     /// This is used by [`Date::try_from_codes()`].
     #[expect(clippy::wrong_self_convention)]
     fn from_codes2(
         &self,
         year: InputYear,
-        month_code: types::MonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError>;
 

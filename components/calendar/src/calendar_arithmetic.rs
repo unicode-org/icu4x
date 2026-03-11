@@ -7,7 +7,7 @@ use calendrical_calculations::rata_die::RataDie;
 use crate::duration::DateDuration;
 use crate::error::{
     range_check, DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError,
-    LunisolarDateError, MonthCodeParseError, MonthError, UnknownEraError,
+    LunisolarDateError, MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
@@ -314,7 +314,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     // Used by `from_codes`, checks `CONSTRUCTOR_YEAR_RANGE`
     pub(crate) fn from_input_year_month_code_day(
         year: types::InputYear,
-        month_code: types::MonthCode,
+        month: Month,
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateFromCodesError> {
@@ -336,11 +336,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         };
         let year = calendar.year_info_from_extended(extended_year);
 
-        let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
-            MonthCodeParseError::InvalidSyntax => DateFromCodesError::MonthNotInCalendar,
-        })?;
         let month = calendar
-            .ordinal_from_month(year, validated, Default::default())
+            .ordinal_from_month(year, month, Default::default())
             .map_err(|e| match e {
                 MonthError::NotInCalendar => DateFromCodesError::MonthNotInCalendar,
                 MonthError::NotInYear => DateFromCodesError::MonthNotInYear,

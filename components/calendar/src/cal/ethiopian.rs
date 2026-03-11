@@ -148,10 +148,10 @@ impl Calendar for Ethiopian {
     fn from_codes2(
         &self,
         year: types::InputYear,
-        month_code: types::MonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {
-        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self)
             .map(ArithmeticDate::cast)
             .map(CopticDateInner)
             .map(EthiopianDateInner)

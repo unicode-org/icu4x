@@ -89,10 +89,10 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     fn from_codes2(
         &self,
         year: types::InputYear,
-        month_code: types::MonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {
-        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self)
             .map(ArithmeticDate::cast)
     }
 
@@ -222,12 +222,12 @@ macro_rules! impl_with_abstract_gregorian {
             fn from_codes2(
                 &self,
                 year: types::InputYear,
-                month_code: types::MonthCode,
+                month: types::Month,
                 day: u8,
             ) -> Result<Self::DateInner, crate::error::DateFromCodesError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .from_codes2(year, month_code, day)
+                    .from_codes2(year, month, day)
                     .map($inner_date_ty)
             }
 

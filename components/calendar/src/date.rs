@@ -189,9 +189,7 @@ impl<A: AsCalendar> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Self, DateFromCodesError> {
-        let inner = calendar
-            .as_calendar()
-            .from_codes2(year, month.code(), day)?;
+        let inner = calendar.as_calendar().from_codes2(year, month, day)?;
         Ok(Date::from_raw(inner, calendar))
     }
 

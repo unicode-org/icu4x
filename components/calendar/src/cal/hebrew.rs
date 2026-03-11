@@ -259,11 +259,10 @@ impl Calendar for Hebrew {
     fn from_codes2(
         &self,
         year: types::InputYear,
-        month_code: types::MonthCode,
+        month: Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {
-        ArithmeticDate::from_input_year_month_code_day(year, month_code, day, self)
-            .map(HebrewDateInner)
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(HebrewDateInner)
     }
 
     #[cfg(feature = "unstable")]
