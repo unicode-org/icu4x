@@ -744,6 +744,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     /// This takes two dates (`self` and `other`), `duration`, and `sign` (either -1 or 1), then
     /// returns whether adding the duration to `self` results in a year/month/day that exceeds
     /// `other` in the direction indicated by `sign`, constraining the month but not the day.
+    #[allow(dead_code)] // TODO: remove surpasses() method when no longer needed
     pub(crate) fn surpasses(
         &self,
         other: &Self,
