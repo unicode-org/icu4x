@@ -8,7 +8,7 @@ use crate::cal::iso::IsoDateInner;
 use crate::error::{DateAddError, DateError, DateFromCodesError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
-use crate::types::{self, YearInput};
+use crate::types::{self, Month, YearInput};
 use crate::Iso;
 use core::fmt;
 
@@ -63,7 +63,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             Some(e) => YearInput::EraYear(e, year),
             None => YearInput::Extended(year),
         };
-        let month = match types::Month::try_from_utf8(month_code.0.as_bytes()) {
+        let month = match Month::try_from_utf8(month_code.0.as_bytes()) {
             Ok(m) => m,
             Err(_) => return Err(DateError::UnknownMonthCode(month_code)),
         };
@@ -99,7 +99,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     fn from_codes2(
         &self,
         year: YearInput,
-        month: types::Month,
+        month: Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError>;
 
