@@ -415,7 +415,7 @@ pub mod ffi {
                     year,
                 )
             } else {
-                YearInput::ExtendedYear(year)
+                YearInput::Extended(year)
             };
             let month = icu_calendar::types::Month::try_from_utf8(month_code)?;
             let cal = calendar.0.clone();

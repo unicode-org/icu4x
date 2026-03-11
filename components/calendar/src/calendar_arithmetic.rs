@@ -319,7 +319,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         calendar: &C,
     ) -> Result<Self, DateFromCodesError> {
         let extended_year = match year {
-            types::YearInput::ExtendedYear(y) => {
+            types::YearInput::Extended(y) => {
                 if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
                     return Err(DateFromCodesError::InvalidYear);
                 }

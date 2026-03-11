@@ -61,7 +61,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ) -> Result<Self::DateInner, DateError> {
         let input_year = match era {
             Some(e) => YearInput::EraYear(e, year),
-            None => YearInput::ExtendedYear(year),
+            None => YearInput::Extended(year),
         };
         let month = match types::Month::try_from_utf8(month_code.0.as_bytes()) {
             Ok(m) => m,

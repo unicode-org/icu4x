@@ -1414,7 +1414,7 @@ mod tests {
         let input = if let Some((era, _)) = era {
             YearInput::EraYear(era, year)
         } else {
-            YearInput::ExtendedYear(year)
+            YearInput::Extended(year)
         };
         let date = Date::try_from_codes(input, month, day, calendar).unwrap_or_else(|e| {
             panic!(
@@ -1471,7 +1471,7 @@ mod tests {
         let input = if let Some((era, _)) = era {
             YearInput::EraYear(era, year)
         } else {
-            YearInput::ExtendedYear(year)
+            YearInput::Extended(year)
         };
         let date = Date::try_from_codes(input, month, day, calendar);
         assert_eq!(

@@ -263,14 +263,14 @@ pub enum YearInput<'a> {
     /// For many calendars this matches the year number.
     ///
     /// See [`YearInfo::extended_year()`] for more information.
-    ExtendedYear(i32),
+    Extended(i32),
     /// A year specified by an era code and the year in that era.
     EraYear(&'a str, i32),
 }
 
 impl From<i32> for YearInput<'_> {
     fn from(year: i32) -> Self {
-        Self::ExtendedYear(year)
+        Self::Extended(year)
     }
 }
 
