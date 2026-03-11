@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{
-    ArithmeticDate, DateFieldsResolver, MinMonths, PackWithMD, ToExtendedYear,
-};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
     DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
     MonthError, UnknownEraError,
@@ -137,7 +135,7 @@ impl DateFieldsResolver for Hebrew {
     }
 
     #[inline]
-    fn min_months_from_inner(_start: HebrewYear, years: i64) -> MinMonths {
+    fn min_months_from(_start: HebrewYear, years: i64) -> i64 {
         // The Hebrew Metonic cycle is 7 leap years every 19 years,
         // which comes out to 235 months per 19 years.
         //
@@ -162,7 +160,7 @@ impl DateFieldsResolver for Hebrew {
         // is 4: year 8->11->14->17. In that time the error will accumulate to 6/19, which is not
         // enough to create a "two year leap month" in our calculation. So this calculation cannot go past
         // the actual cycle of the Hebrew calendar.
-        MinMonths::Guaranteed(235 * years / 19)
+        235 * years / 19
     }
 
     #[inline]

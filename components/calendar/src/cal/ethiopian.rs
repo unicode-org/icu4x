@@ -4,7 +4,7 @@
 
 use crate::cal::coptic::CopticDateInner;
 use crate::cal::Coptic;
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, MinMonths};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{
     DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
 };
@@ -95,8 +95,8 @@ impl DateFieldsResolver for Ethiopian {
     }
 
     #[inline]
-    fn min_months_from_inner(start: Self::YearInfo, years: i64) -> MinMonths {
-        Coptic::min_months_from_inner(start, years)
+    fn min_months_from(start: Self::YearInfo, years: i64) -> i64 {
+        Coptic::min_months_from(start, years)
     }
 
     #[inline]

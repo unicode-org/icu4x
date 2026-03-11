@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{
-    ArithmeticDate, DateFieldsResolver, MinMonths, PackWithMD, ToExtendedYear,
-};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
     DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
     MonthError, UnknownEraError,
@@ -154,6 +152,9 @@ pub struct EastAsianTraditional<R>(pub R);
 /// The calendar depends on both astronomical calculations and local time.
 /// The rules for how to perform these calculations, as well as how local
 /// time is determined differ between countries and have changed over time.
+///
+/// Implementations of this trait must produce calendars that have a leap month
+/// at least once every three years.
 ///
 /// This crate currently provides [`Rules`] for [`China`] and [`Korea`].
 ///
@@ -610,17 +611,9 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     }
 
     #[inline]
-    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> MinMonths {
-        // TODO(#7077) Try to turn this into a guarantee
-        MinMonths::Guessed {
-            // This is a somewhat conservative guess that leads to an unbounded
-            // error for larger and larger year spans.
-            guess: 12 * years + (years / 3),
-            // We can guarantee 12 months per year, this is a fundamental property
-            // of East Asian Traditional calendars and assumed in the behavior of
-            // EastAsianTraditionalYear
-            guarantee: 12 * years,
-        }
+    fn min_months_from(_start: Self::YearInfo, years: i64) -> i64 {
+        // By Rules invariant
+        12 * years + (years / 3)
     }
 
     #[inline]
@@ -1197,6 +1190,46 @@ mod test {
     use std::collections::BTreeMap;
     use types::DateFields;
     use types::Month;
+
+    #[test]
+    fn test_min_months_invariant() {
+        fn inner<R: Rules>(cal: R) {
+            let mut num_leap = 0;
+            let mut gap = 0;
+
+            let smallest =
+                cal.year_containing_rd(*crate::calendar_arithmetic::VALID_RD_RANGE.start());
+            let largest = cal.year_containing_rd(*crate::calendar_arithmetic::VALID_RD_RANGE.end());
+
+            for y in smallest.to_extended_year()..=largest.to_extended_year() {
+                if cal.year(y).packed.leap_month().is_none() {
+                    gap += 1;
+                } else {
+                    num_leap += 1;
+                    gap = 0;
+                }
+                if gap == 3 {
+                    panic!("{y}");
+                }
+            }
+
+            let total =
+                (largest.to_extended_year() - smallest.to_extended_year() + 1) * 12 + num_leap;
+            let approximated = EastAsianTraditional::<R>::min_months_from(
+                smallest,
+                (largest.to_extended_year() - smallest.to_extended_year()) as i64 + 1,
+            ) as i32;
+
+            println!(
+                "absolute error {}: {}",
+                cal.debug_name(),
+                total - approximated
+            );
+        }
+
+        inner(EastAsianTraditionalYears::china());
+        inner(EastAsianTraditionalYears::korea());
+    }
 
     #[test]
     fn test_chinese_from_rd() {
