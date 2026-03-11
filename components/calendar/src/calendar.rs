@@ -92,7 +92,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         }
     }
 
-    /// Construct a date from a [`Month`] and [`YearInput`].
+    /// Construct a date from a [`YearInput`], [`Month`], and a day.
     ///
     /// This is used by [`Date::try_from_codes()`].
     #[expect(clippy::wrong_self_convention)]
