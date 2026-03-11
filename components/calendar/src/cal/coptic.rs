@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, MinMonths};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{
     DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
 };
@@ -67,9 +67,8 @@ impl DateFieldsResolver for Coptic {
     }
 
     #[inline]
-    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> MinMonths {
-        // This calendar is defined as having 13 months per year, this never changes.
-        MinMonths::Guaranteed(13 * years)
+    fn min_months_from(_start: Self::YearInfo, years: i64) -> i64 {
+        13 * years
     }
 
     #[inline]
