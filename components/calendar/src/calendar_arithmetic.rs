@@ -183,6 +183,17 @@ impl PackWithMD for i32 {
     }
 }
 
+/// A lower bound for the number of months in `years` years, for use in `until`.
+pub(crate) enum MinMonths {
+    /// This number is guaranteed to be correct based on documented checking of invariants
+    ///
+    /// It is ok for ICU4X to `debug_assert` on things deriving from the correctness of this calculation
+    Guaranteed(i64),
+    /// This number is not guaranteed. Code should check that it is not too large, and if not,
+    /// fall back to the `guarantee` value (which *is* guaranteed).
+    Guessed { guess: i64, guarantee: i64 },
+}
+
 /// Trait for converting from era codes, month codes, and other fields to year/month/day ordinals.
 pub(crate) trait DateFieldsResolver: Calendar {
     /// This stores the year as either an i32, or a type containing more
@@ -242,9 +253,13 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// is bounded by a constant with respect to `years`.
     ///
     /// The default impl is for non-lunisolar calendars with 12 months!
+    ///
+    /// `until()` will debug assert if this ever returns a value greater than the
+    /// month diff betweeen two dates as a Guarantee. If such a value is returned as a Guess,
+    /// it will simply be slow
     #[inline]
-    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> i64 {
-        12 * years
+    fn min_months_from_inner(_start: Self::YearInfo, years: i64) -> MinMonths {
+        MinMonths::Guaranteed(12 * years)
     }
 
     /// Calculates the ordinal month for the given year and month code.
@@ -922,7 +937,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         cal: &C,
         options: DateDifferenceOptions,
     ) -> DateDuration {
-        // Fast path for day/week diffs
+        // Non-spec optimization: fast path for day/week diffs
         // Avoids quadratic behavior in surpasses() for days/weeks
         if matches!(
             options.largest_unit,
@@ -946,6 +961,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Ordering::Less => -1i64,
         };
 
+        // Preparation for non-specced optimization:
         // We don't want to spend time incrementally bumping it up one year
         // at a time, so let's pre-guess a year delta that is guaranteed to not
         // surpass.
@@ -973,9 +989,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let mut years = 0;
         if matches!(options.largest_unit, Some(DateDurationUnit::Years)) {
             let mut candidate_years = sign;
+
+            // Non-spec optimization: try to fast-forward candidate_years to
+            // a year value that does not surpass
             if min_years != 0 {
-                // Optimization: we start with min_years since it is guaranteed to not
-                // surpass.
                 candidate_years = min_years
             };
 
@@ -1003,13 +1020,29 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ) {
             let mut candidate_months = sign;
 
+            // Non-spec optimization: try to fast-forward candidate_months to
+            // a month value that does not surpass
             if options.largest_unit == Some(DateDurationUnit::Months) && min_years != 0 {
                 // If largest_unit = Months, then compute the calendar-specific minimum number of
-                // months corresponding to min_years. For solar calendars, this is 12 * min_years.
-                // For the Hebrew calendar, a leap month is added for 7 out of 19 years. East Asian
-                // Calendars do not provide a specialized implementation of `min_months_from()`
-                // because it would be too expensive to calculate; they default to 12 * min_years.
-                let min_months = self.min_months_from(min_years);
+                // months corresponding to min_years.
+                let min_months = match self.min_months_from(min_years) {
+                    MinMonths::Guaranteed(m) => m,
+                    // In case it's a guess, check that the guess is in range,
+                    // and if it's not, return the guarantee
+                    MinMonths::Guessed { guess, guarantee } => {
+                        if self.surpasses(
+                            other,
+                            DateDuration::from_signed_ymwd(years, guess, 0, 0),
+                            sign,
+                            cal,
+                        ) {
+                            // surpasses, so it's not in range
+                            guarantee
+                        } else {
+                            guess
+                        }
+                    }
+                };
                 debug_assert!(!self.surpasses(
                     other,
                     DateDuration::from_signed_ymwd(years, min_months, 0, 0),
@@ -1074,7 +1107,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 
     /// The minimum number of months over `years` years, starting from `self.year()`.
-    pub(crate) fn min_months_from(self, years: i64) -> i64 {
+    pub(crate) fn min_months_from(self, years: i64) -> MinMonths {
         C::min_months_from_inner(self.year(), years)
     }
 }
