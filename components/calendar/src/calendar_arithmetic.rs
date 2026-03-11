@@ -321,13 +321,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let extended_year = match year {
             types::YearInput::ExtendedYear(y) => {
                 if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
-                    return Err(DateFromCodesError::Overflow);
+                    return Err(DateFromCodesError::InvalidYear);
                 }
                 y
             }
             types::YearInput::EraYear(era, y) => {
                 if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
-                    return Err(DateFromCodesError::Overflow);
+                    return Err(DateFromCodesError::InvalidYear);
                 }
                 calendar
                     .extended_year_from_era_year_unchecked(era.as_bytes(), y)

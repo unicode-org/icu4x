@@ -294,7 +294,7 @@ impl From<icu_calendar::error::DateFromCodesError> for CalendarError {
             icu_calendar::error::DateFromCodesError::InvalidEra => Self::UnknownEra,
             icu_calendar::error::DateFromCodesError::MonthNotInCalendar => Self::UnknownMonthCode,
             icu_calendar::error::DateFromCodesError::MonthNotInYear => Self::UnknownMonthCode,
-            icu_calendar::error::DateFromCodesError::Overflow => Self::OutOfRange,
+            icu_calendar::error::DateFromCodesError::InvalidYear => Self::OutOfRange,
             _ => Self::Unknown,
         }
     }

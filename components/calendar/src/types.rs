@@ -260,8 +260,9 @@ impl fmt::Debug for DateFields<'_> {
 pub enum YearInput<'a> {
     /// An "extended year", which is a single number representing the year.
     ///
-    /// For many calendars this matches the year number, but for some it is a year
-    /// relative to some specific epoch.
+    /// For many calendars this matches the year number.
+    ///
+    /// See [`YearInfo::extended_year()`] for more information.
     ExtendedYear(i32),
     /// A year specified by an era code and the year in that era.
     EraYear(&'a str, i32),

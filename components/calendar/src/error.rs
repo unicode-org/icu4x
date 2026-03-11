@@ -643,12 +643,11 @@ pub enum DateFromCodesError {
     /// The era code is invalid for the calendar.
     #[displaydoc("Unknown era or invalid syntax")]
     InvalidEra,
-    /// The date is out of range.
-    #[displaydoc("Result out of range")]
-    Overflow,
+
+    /// The year was out of range
+    #[displaydoc("Invalid year for `Date::try_from_codes()`, must be within -9999..=9999")]
+    InvalidYear,
 }
-
-
 
 impl core::error::Error for DateFromCodesError {}
 

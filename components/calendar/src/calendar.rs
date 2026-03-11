@@ -82,7 +82,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
                     DateError::UnknownMonthCode(month_code)
                 }
                 DateFromCodesError::InvalidEra => DateError::UnknownEra,
-                DateFromCodesError::Overflow => DateError::Range {
+                DateFromCodesError::InvalidYear => DateError::Range {
                     field: "year",
                     value: year,
                     min: -9999,
