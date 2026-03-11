@@ -645,7 +645,7 @@ pub enum DateFromCodesError {
     InvalidEra,
 
     /// The year was out of range
-    #[displaydoc("Invalid year for `Date::try_from_codes()`, must be within -9999..=9999")]
+    #[displaydoc("Invalid year, must be within -9999..=9999")]
     InvalidYear,
 }
 
