@@ -467,8 +467,7 @@ impl fmt::Display for MonthCode {
 /// (`Month::new(7)`) might be the 7th or 8th month of the year, depending if the month
 /// Adar was repeated or not.
 ///
-/// In this model, "leap month 2" means the month that occurs after the
-/// non-leap month numbered 2, even if the calendar considers the month to be a variant of
+/// In this model, `Month::leap(2)` is the month that occurs after `Month::new(2)`, even if the calendar considers the month to be a variant of
 /// the subsequent month.
 ///
 /// Check the docs for a particular calendar (e.g. [`Hebrew`](crate::cal::Hebrew)) for details on
