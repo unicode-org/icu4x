@@ -237,10 +237,9 @@ super::test_all_cals!(
                     month_diff -= earlier.month().ordinal as i32;
                     month_diff += later.month().ordinal as i32;
                     for y in earlier.year().extended_year()..later.year().extended_year() {
-                        month_diff +=
-                            Date::try_new_from_codes(None, y, Month::new(1).code(), 1, cal)
-                                .unwrap()
-                                .months_in_year() as i32;
+                        month_diff += Date::try_from_codes(y.into(), Month::new(1), 1, cal)
+                            .unwrap()
+                            .months_in_year() as i32;
                     }
                     assert_eq!(duration.months, month_diff.unsigned_abs(), "{output}");
                     // Days could constrain; add the ones that do to the snapshot.

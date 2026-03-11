@@ -529,10 +529,9 @@ mod tests {
             assert_eq!(date.day_of_month().0, d, "{date:?}");
 
             assert_eq!(
-                Date::try_new_from_codes(
-                    Some(&date.era_year().era),
-                    date.era_year().year,
-                    date.month().to_input().code(),
+                Date::try_from_codes(
+                    types::InputYear::EraYear(&date.era_year().era, date.era_year().year),
+                    date.month().to_input(),
                     date.day_of_month().0,
                     Hebrew
                 ),

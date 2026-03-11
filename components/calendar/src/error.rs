@@ -7,9 +7,9 @@
 use crate::types::MonthCode;
 use displaydoc::Display;
 
-/// Error type for date creation via [`Date::try_new_from_codes`].
+/// Error type for date creation via [`Date::try_from_codes`].
 ///
-/// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+/// [`Date::try_from_codes`]: crate::Date::try_from_codes
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum DateError {
@@ -38,25 +38,23 @@ pub enum DateError {
     /// use icu::calendar::Date;
     /// use icu::calendar::DateError;
     ///
-    /// Date::try_new_from_codes(
-    ///     None,
-    ///     5784,
-    ///     Month::leap(5).code(),
+    /// Date::try_from_codes(
+    ///     5784.into(),
+    ///     Month::leap(5),
     ///     1,
     ///     Hebrew,
     /// )
     /// .expect("5784 is a leap year");
     ///
-    /// let err = Date::try_new_from_codes(
-    ///     None,
-    ///     5785,
-    ///     Month::leap(5).code(),
+    /// let err = Date::try_from_codes(
+    ///     5785.into(),
+    ///     Month::leap(5),
     ///     1,
     ///     Hebrew,
     /// )
     /// .expect_err("5785 is a common year");
     ///
-    /// assert!(matches!(err, DateError::UnknownMonthCode(_)));
+    /// assert!(matches!(err, DateFromCodesError::MonthNotInYear));
     /// ```
     #[displaydoc("Unknown month code {0:?}")]
     UnknownMonthCode(MonthCode),

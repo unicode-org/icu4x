@@ -735,11 +735,11 @@ impl MonthInfo {
     }
 
     /// Returns the [`Month`], which round-trips through constructors like
-    /// [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
+    /// [`Date::try_from_codes`] and [`Date::try_from_fields`].
     ///
     /// Returns a leap month iff [`Self::leap_status`] is [`LeapStatus::Leap`].
     ///
-    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+    /// [`Date::try_from_codes`]: crate::Date::try_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub fn to_input(&self) -> Month {
         Month::new_unchecked(self.number, self.leap_status == LeapStatus::Leap)

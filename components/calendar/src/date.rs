@@ -98,7 +98,7 @@ impl<C> Deref for Ref<'_, C> {
 ///
 /// Options to create one of these:
 ///
-/// 1. Generically from fields via [`Self::try_from_fields()`] or [`Self::try_new_from_codes()`]
+/// 1. Generically from fields via [`Self::try_from_fields()`] or [`Self::try_from_codes()`]
 /// 2. With calendar-specific constructors, e.g. [`Self::try_new_chinese_traditional()`]
 /// 3. From a RFC 9557 string via [`Self::try_from_str()`]
 /// 4. From a [`RataDie`] via [`Self::from_rata_die()`]
