@@ -168,7 +168,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/hebrew",
         &fxs,
         icu::calendar::cal::Hebrew,
-        |y, m, d, c| Date::try_new_from_codes(None, y, types::Month::new(m).code(), d, c).unwrap(),
+        |y, m, d, c| Date::try_from_codes(y.into(), types::Month::new(m), d, c).unwrap(),
     );
 
     bench_calendar(
