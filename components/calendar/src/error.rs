@@ -33,28 +33,31 @@ pub enum DateError {
     /// # Examples
     ///
     /// ```
+    /// # #![allow(deprecated)]
     /// use icu::calendar::cal::Hebrew;
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
     /// use icu::calendar::DateError;
     ///
-    /// Date::try_from_codes(
-    ///     5784.into(),
-    ///     Month::leap(5),
+    /// Date::try_new_from_codes(
+    ///     None,
+    ///     5784,
+    ///     Month::leap(5).code(),
     ///     1,
     ///     Hebrew,
     /// )
     /// .expect("5784 is a leap year");
     ///
-    /// let err = Date::try_from_codes(
-    ///     5785.into(),
-    ///     Month::leap(5),
+    /// let err = Date::try_new_from_codes(
+    ///     None,
+    ///     5785,
+    ///     Month::leap(5).code(),
     ///     1,
     ///     Hebrew,
     /// )
     /// .expect_err("5785 is a common year");
     ///
-    /// assert!(matches!(err, DateFromCodesError::MonthNotInYear));
+    /// assert!(matches!(err, DateError::UnknownMonthCode(_)));
     /// ```
     #[displaydoc("Unknown month code {0:?}")]
     UnknownMonthCode(MonthCode),
