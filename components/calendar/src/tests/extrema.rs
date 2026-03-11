@@ -9,7 +9,7 @@ use crate::error::DateFromFieldsError;
 use crate::options::{
     DateAddOptions, DateDifferenceOptions, DateDurationUnit, DateFromFieldsOptions, Overflow,
 };
-use crate::types::{DateFields, InputYear, Month};
+use crate::types::{DateFields, Month, YearInput};
 use crate::Date;
 use calendrical_calculations::gregorian::fixed_from_gregorian;
 use calendrical_calculations::rata_die::RataDie;
@@ -367,14 +367,14 @@ super::test_all_cals!(
         .year()
         {
             Date::try_from_codes(
-                InputYear::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
+                YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
                 Month::new(1),
                 1,
                 cal,
             )
             .unwrap_err();
             Date::try_from_codes(
-                InputYear::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.end() + 1),
+                YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.end() + 1),
                 Month::new(1),
                 1,
                 cal,
@@ -392,14 +392,14 @@ super::test_all_cals!(
         .year()
         {
             Date::try_from_codes(
-                InputYear::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
+                YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
                 Month::new(1),
                 1,
                 cal,
             )
             .unwrap_err();
             Date::try_from_codes(
-                InputYear::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.end() + 1),
+                YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.end() + 1),
                 Month::new(1),
                 1,
                 cal,

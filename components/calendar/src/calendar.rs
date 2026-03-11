@@ -8,7 +8,7 @@ use crate::cal::iso::IsoDateInner;
 use crate::error::{DateAddError, DateError, DateFromCodesError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
-use crate::types::{self, InputYear};
+use crate::types::{self, YearInput};
 use crate::Iso;
 use core::fmt;
 
@@ -60,8 +60,8 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let input_year = match era {
-            Some(e) => InputYear::EraYear(e, year),
-            None => InputYear::ExtendedYear(year),
+            Some(e) => YearInput::EraYear(e, year),
+            None => YearInput::ExtendedYear(year),
         };
         let month = match types::Month::try_from_utf8(month_code.0.as_bytes()) {
             Ok(m) => m,
@@ -92,13 +92,13 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         }
     }
 
-    /// Construct a date from a [`Month`] and [`InputYear`].
+    /// Construct a date from a [`Month`] and [`YearInput`].
     ///
     /// This is used by [`Date::try_from_codes()`].
     #[expect(clippy::wrong_self_convention)]
     fn from_codes2(
         &self,
-        year: InputYear,
+        year: YearInput,
         month: types::Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError>;

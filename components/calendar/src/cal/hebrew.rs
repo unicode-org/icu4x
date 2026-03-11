@@ -258,7 +258,7 @@ impl Calendar for Hebrew {
 
     fn from_codes2(
         &self,
-        year: types::InputYear,
+        year: types::YearInput,
         month: Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {
@@ -529,7 +529,7 @@ mod tests {
 
             assert_eq!(
                 Date::try_from_codes(
-                    types::InputYear::EraYear(&date.era_year().era, date.era_year().year),
+                    types::YearInput::EraYear(&date.era_year().era, date.era_year().year),
                     date.month().to_input(),
                     date.day_of_month().0,
                     Hebrew

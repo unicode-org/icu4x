@@ -105,7 +105,7 @@ macro_rules! make_any_calendar {
 
             fn from_codes2(
                 &self,
-                year: $crate::types::InputYear,
+                year: $crate::types::YearInput,
                 month: $crate::types::Month,
                 day: u8,
             ) -> Result<Self::DateInner, $crate::error::DateFromCodesError> {
@@ -1400,7 +1400,7 @@ impl<C: IntoAnyCalendar> Date<C> {
 mod tests {
     use super::*;
     use crate::error::DateFromCodesError;
-    use crate::types::{InputYear, Month};
+    use crate::types::{Month, YearInput};
     use crate::Ref;
 
     #[track_caller]
@@ -1412,9 +1412,9 @@ mod tests {
         day: u8,
     ) {
         let input = if let Some((era, _)) = era {
-            InputYear::EraYear(era, year)
+            YearInput::EraYear(era, year)
         } else {
-            InputYear::ExtendedYear(year)
+            YearInput::ExtendedYear(year)
         };
         let date = Date::try_from_codes(input, month, day, calendar).unwrap_or_else(|e| {
             panic!(
@@ -1469,9 +1469,9 @@ mod tests {
         error: DateFromCodesError,
     ) {
         let input = if let Some((era, _)) = era {
-            InputYear::EraYear(era, year)
+            YearInput::EraYear(era, year)
         } else {
-            InputYear::ExtendedYear(year)
+            YearInput::ExtendedYear(year)
         };
         let date = Date::try_from_codes(input, month, day, calendar);
         assert_eq!(

@@ -134,7 +134,7 @@ impl Calendar for Coptic {
 
     fn from_codes2(
         &self,
-        year: types::InputYear,
+        year: types::YearInput,
         month: types::Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {

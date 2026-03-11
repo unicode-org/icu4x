@@ -313,19 +313,19 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
     // Used by `from_codes`, checks `CONSTRUCTOR_YEAR_RANGE`
     pub(crate) fn from_input_year_month_code_day(
-        year: types::InputYear,
+        year: types::YearInput,
         month: Month,
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateFromCodesError> {
         let extended_year = match year {
-            types::InputYear::ExtendedYear(y) => {
+            types::YearInput::ExtendedYear(y) => {
                 if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
                     return Err(DateFromCodesError::Overflow);
                 }
                 y
             }
-            types::InputYear::EraYear(era, y) => {
+            types::YearInput::EraYear(era, y) => {
                 if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
                     return Err(DateFromCodesError::Overflow);
                 }

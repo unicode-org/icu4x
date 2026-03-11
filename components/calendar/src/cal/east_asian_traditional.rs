@@ -694,7 +694,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
 
     fn from_codes2(
         &self,
-        year: types::InputYear,
+        year: types::YearInput,
         month: types::Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {

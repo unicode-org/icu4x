@@ -88,7 +88,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
 
     fn from_codes2(
         &self,
-        year: types::InputYear,
+        year: types::YearInput,
         month: types::Month,
         day: u8,
     ) -> Result<Self::DateInner, DateFromCodesError> {
@@ -221,7 +221,7 @@ macro_rules! impl_with_abstract_gregorian {
             type DateCompatibilityError = core::convert::Infallible;
             fn from_codes2(
                 &self,
-                year: types::InputYear,
+                year: types::YearInput,
                 month: types::Month,
                 day: u8,
             ) -> Result<Self::DateInner, crate::error::DateFromCodesError> {

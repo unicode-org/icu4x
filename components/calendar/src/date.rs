@@ -171,7 +171,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// ```rust
     /// use icu::calendar::Date;
-    /// use icu::calendar::types::{InputYear, Month};
+    /// use icu::calendar::types::{YearInput, Month};
     /// use icu::calendar::Iso;
     ///
     /// // Example: creation of ISO date from integers.
@@ -184,7 +184,7 @@ impl<A: AsCalendar> Date<A> {
     /// ```
     #[inline]
     pub fn try_from_codes(
-        year: types::InputYear,
+        year: types::YearInput,
         month: types::Month,
         day: u8,
         calendar: A,
@@ -757,12 +757,12 @@ mod tests {
     #[test]
     fn test_try_from_codes() {
         use crate::cal::Japanese;
-        use crate::types::{InputYear, Month};
+        use crate::types::{Month, YearInput};
         let date = Date::try_from_codes(2025.into(), Month::new(1), 1, Gregorian).unwrap();
         assert_eq!(date, Date::try_new_gregorian(2025, 1, 1).unwrap());
 
         let date2 = Date::try_from_codes(
-            InputYear::EraYear("reiwa", 7),
+            YearInput::EraYear("reiwa", 7),
             Month::new(1),
             1,
             Japanese::new(),

@@ -257,7 +257,7 @@ impl fmt::Debug for DateFields<'_> {
 /// see [`YearInfo`] for the output formats.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
-pub enum InputYear<'a> {
+pub enum YearInput<'a> {
     /// An "extended year", which is a single number representing the year.
     ///
     /// For many calendars this matches the year number, but for some it is a year
@@ -267,7 +267,7 @@ pub enum InputYear<'a> {
     EraYear(&'a str, i32),
 }
 
-impl From<i32> for InputYear<'_> {
+impl From<i32> for YearInput<'_> {
     fn from(year: i32) -> Self {
         Self::ExtendedYear(year)
     }
