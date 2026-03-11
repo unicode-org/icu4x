@@ -151,14 +151,6 @@ pub(crate) use unstable::{DateAddError, DateFromFieldsError, MismatchedCalendarE
 mod unstable {
     pub use super::*;
 
-    impl core::error::Error for DateFromCodesError {}
-
-    impl From<UnknownEraError> for DateFromCodesError {
-        fn from(_: UnknownEraError) -> Self {
-            Self::InvalidEra
-        }
-    }
-
     /// Error type for date creation via [`Date::try_from_fields`].
     ///
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
@@ -654,6 +646,16 @@ pub enum DateFromCodesError {
     /// The date is out of range.
     #[displaydoc("Result out of range")]
     Overflow,
+}
+
+
+
+impl core::error::Error for DateFromCodesError {}
+
+impl From<UnknownEraError> for DateFromCodesError {
+    fn from(_: UnknownEraError) -> Self {
+        Self::InvalidEra
+    }
 }
 
 /// Internal narrow error type for functions that only fail on unknown eras
