@@ -676,7 +676,7 @@ pub struct MonthInfo {
     pub(crate) leap_status: LeapStatus,
 
     /// The [`Month::code()`] of [`Self::to_input`].
-    #[deprecated(since = "2.2.0", note = "use `to_input().code()")]
+    #[deprecated(since = "2.2.0", note = "use `to_input().code()`")]
     pub standard_code: MonthCode,
 
     /// Deprecated
