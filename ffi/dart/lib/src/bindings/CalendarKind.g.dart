@@ -40,6 +40,8 @@ enum CalendarKind {
   hijriTabularTypeIiThursday,
   /// The kind of a Hijri Umm al-Qura calendar
   hijriUmmAlQura,
+  /// The kind of a Julian calendar,
+  julian,
   /// The kind of a Persian calendar
   persian,
   /// The kind of a Roc calendar
@@ -79,6 +81,8 @@ enum CalendarKind {
         return 14;
       case hijriUmmAlQura:
         return 15;
+      case julian:
+        return 19;
       case persian:
         return 16;
       case roc:
