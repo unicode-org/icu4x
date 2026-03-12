@@ -508,7 +508,7 @@ impl fmt::Display for MonthCode {
 /// * `Month::new(7)` = `M07`
 /// * `Month::leap(2)` = `M02L`
 ///
-/// This type implements `From<u32>` producing an non-leap month, so you can simply
+/// This type implements `From<u8>` producing an non-leap month, so you can simply
 /// call `5.into()` to produce a `Month::new(5)`.
 ///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/

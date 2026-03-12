@@ -34,7 +34,7 @@ super::test_all_cals!(
     #[ignore] // takes about 90 seconds in release-with-assertions
     fn check_from_fields<C: Calendar + Copy>(cal: C) {
         let months = (1..19)
-            .flat_map(|i| [i.into(), types::Month::leap(i)].into_iter())
+            .flat_map(|i| [types::Month::new(i), types::Month::leap(i)].into_iter())
             .collect::<Vec<_>>();
         for year in CONSTRUCTOR_YEAR_RANGE {
             if year % 50000 == 0 {
