@@ -251,7 +251,7 @@ impl fmt::Debug for DateFields<'_> {
     }
 }
 
-/// Year information to be used as input to [`Date::try_from_codes()`].
+/// Year information to be used as input to [`Date::try_new()`].
 ///
 /// Note: The input variants represent different ways of specifying a year;
 /// see [`YearInfo`] for the output formats.
@@ -751,11 +751,11 @@ impl MonthInfo {
     }
 
     /// Returns the [`Month`], which round-trips through constructors like
-    /// [`Date::try_from_codes`] and [`Date::try_from_fields`].
+    /// [`Date::try_new`] and [`Date::try_from_fields`].
     ///
     /// Returns a leap month iff [`Self::leap_status`] is [`LeapStatus::Leap`].
     ///
-    /// [`Date::try_from_codes`]: crate::Date::try_from_codes
+    /// [`Date::try_new`]: crate::Date::try_new
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub fn to_input(&self) -> Month {
         Month::new_unchecked(self.number, self.leap_status == LeapStatus::Leap)

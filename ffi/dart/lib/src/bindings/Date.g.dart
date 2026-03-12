@@ -60,7 +60,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// An empty era code will treat the year as an extended year
   ///
-  /// See the [Rust documentation for `try_from_codes`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_codes) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.try_from_str) for more information.
   ///

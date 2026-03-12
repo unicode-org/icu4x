@@ -37,7 +37,7 @@ super::test_all_cals!(
 
         // Create the first date in the epoch year (extended_year = 0)
         let date_in_epoch_year =
-            Date::try_from_codes(YearInput::Extended(0), Month::new(1), 1, cal).unwrap();
+            Date::try_new(YearInput::Extended(0), Month::new(1), 1, cal).unwrap();
         let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(crate::cal::Iso);
         assert_eq!(
             iso_date_in_epoch_year.year().extended_year(),

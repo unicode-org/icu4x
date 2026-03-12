@@ -69,15 +69,15 @@ macro_rules! make_any_calendar {
             type Year = $crate::types::YearInfo;
             type DateCompatibilityError = $crate::error::MismatchedCalendarError;
 
-            fn from_codes2(
+            fn new_date(
                 &self,
                 year: $crate::types::YearInput,
                 month: $crate::types::Month,
                 day: u8,
-            ) -> Result<Self::DateInner, $crate::error::DateFromCodesError> {
+            ) -> Result<Self::DateInner, $crate::error::DateNewError> {
                 Ok(match self {
                     $(
-                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes2(year, month, day)?),
+                        &Self::$variant(ref c) => $any_date_ident::$variant(c.new_date(year, month, day)?),
                     )+
                 })
             }
@@ -856,7 +856,7 @@ impl<C: IntoAnyCalendar> Date<C> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::error::DateFromCodesError;
+    use crate::error::DateNewError;
     use crate::types::{Month, YearInput};
     use crate::Ref;
 
@@ -873,7 +873,7 @@ mod tests {
         } else {
             YearInput::Extended(year)
         };
-        let date = Date::try_from_codes(input, month, day, calendar).unwrap_or_else(|e| {
+        let date = Date::try_new(input, month, day, calendar).unwrap_or_else(|e| {
             panic!(
                 "Failed to construct date for {} with {era:?}, {year}, {month:?}, {day}: {e:?}",
                 calendar.debug_name(),
@@ -923,14 +923,14 @@ mod tests {
         year: i32,
         month: Month,
         day: u8,
-        error: DateFromCodesError,
+        error: DateNewError,
     ) {
         let input = if let Some((era, _)) = era {
             YearInput::EraYear(era, year)
         } else {
             YearInput::Extended(year)
         };
-        let date = Date::try_from_codes(input, month, day, calendar);
+        let date = Date::try_new(input, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
@@ -952,7 +952,7 @@ mod tests {
             100,
             Month::new(13),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -971,7 +971,7 @@ mod tests {
             100,
             Month::new(14),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -984,7 +984,7 @@ mod tests {
         single_test_roundtrip(ethiopian, None, -100, Month::new(3), 1);
         single_test_roundtrip(ethiopian, Some(("am", Some(1))), 2000, Month::new(13), 1);
         single_test_roundtrip(ethiopian, Some(("aa", Some(0))), 5400, Month::new(3), 1);
-        // Since #6910, the era range is not enforced in try_from_codes
+        // Since #6910, the era range is not enforced in try_new
         /*
         single_test_error(
             ethiopian,
@@ -1019,7 +1019,7 @@ mod tests {
             100,
             Month::new(14),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1049,7 +1049,7 @@ mod tests {
             100,
             Month::new(14),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1061,7 +1061,7 @@ mod tests {
         single_test_roundtrip(gregorian, None, 2000, Month::new(3), 1);
         single_test_roundtrip(gregorian, None, -100, Month::new(3), 1);
         single_test_roundtrip(gregorian, Some(("bce", Some(0))), 100, Month::new(3), 1);
-        // Since #6910, the era range is not enforced in try_from_codes
+        // Since #6910, the era range is not enforced in try_new
         /*
         single_test_error(
             gregorian,
@@ -1096,7 +1096,7 @@ mod tests {
             100,
             Month::new(13),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1114,7 +1114,7 @@ mod tests {
             100,
             Month::new(13),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1131,7 +1131,7 @@ mod tests {
             4658,
             Month::new(13),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1148,7 +1148,7 @@ mod tests {
             9393,
             Month::leap(0),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1164,7 +1164,7 @@ mod tests {
         single_test_roundtrip(japanese, None, -100, Month::new(3), 1);
         single_test_roundtrip(japanese, None, 2024, Month::new(3), 1);
         single_test_roundtrip(japanese, Some(("bce", Some(0))), 10, Month::new(3), 1);
-        // Since #6910, the era range is not enforced in try_from_codes
+        // Since #6910, the era range is not enforced in try_new
         /*
         single_test_error(
             japanese,
@@ -1199,7 +1199,7 @@ mod tests {
             2,
             Month::new(13),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1217,7 +1217,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1235,7 +1235,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1276,7 +1276,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1306,7 +1306,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1337,7 +1337,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 
@@ -1355,7 +1355,7 @@ mod tests {
             100,
             Month::new(13),
             1,
-            DateFromCodesError::MonthNotInCalendar,
+            DateNewError::MonthNotInCalendar,
         );
     }
 }

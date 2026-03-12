@@ -326,14 +326,14 @@ super::test_all_cals!(
 super::test_all_cals!(
     fn check_from_codes_extrema<C: Calendar + Copy>(cal: C) {
         // Success
-        Date::try_from_codes(
+        Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start()),
             Month::new(1),
             1,
             cal,
         )
         .unwrap();
-        Date::try_from_codes(
+        Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end()),
             Month::new(1),
             1,
@@ -342,14 +342,14 @@ super::test_all_cals!(
         .unwrap();
 
         // Error
-        Date::try_from_codes(
+        Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start() - 1),
             Month::new(1),
             1,
             cal,
         )
         .unwrap_err();
-        Date::try_from_codes(
+        Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end() + 1),
             Month::new(1),
             1,
@@ -357,7 +357,7 @@ super::test_all_cals!(
         )
         .unwrap_err();
 
-        if let crate::types::YearInfo::Era(y) = Date::try_from_codes(
+        if let crate::types::YearInfo::Era(y) = Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start()),
             Month::new(1),
             1,
@@ -366,14 +366,14 @@ super::test_all_cals!(
         .unwrap()
         .year()
         {
-            Date::try_from_codes(
+            Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
                 Month::new(1),
                 1,
                 cal,
             )
             .unwrap_err();
-            Date::try_from_codes(
+            Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.end() + 1),
                 Month::new(1),
                 1,
@@ -382,7 +382,7 @@ super::test_all_cals!(
             .unwrap_err();
         }
 
-        if let crate::types::YearInfo::Era(y) = Date::try_from_codes(
+        if let crate::types::YearInfo::Era(y) = Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end()),
             Month::new(1),
             1,
@@ -391,14 +391,14 @@ super::test_all_cals!(
         .unwrap()
         .year()
         {
-            Date::try_from_codes(
+            Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
                 Month::new(1),
                 1,
                 cal,
             )
             .unwrap_err();
-            Date::try_from_codes(
+            Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.end() + 1),
                 Month::new(1),
                 1,
