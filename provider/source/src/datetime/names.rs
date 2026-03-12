@@ -530,7 +530,9 @@ fn datetimepattern_convert(
         GlueType::DateTime => at_time.parse(),
         GlueType::DateZone => append_tz.interpolate_to_string(["{1}", "{2}"]).parse(),
         GlueType::TimeZone => append_tz.interpolate_to_string(["{0}", "{2}"]).parse(),
-        GlueType::DateTimeZone => append_tz.interpolate_to_string([at_time, "{2}"]).parse(),
+        GlueType::DateTimeZone => at_time
+            .replace("{0}", &append_tz.interpolate_to_string(["{0}", "{2}"]))
+            .parse(),
     }
     .expect("failed to parse pattern");
     Ok(GluePattern { pattern })
