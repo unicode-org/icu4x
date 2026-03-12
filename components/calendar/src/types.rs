@@ -493,6 +493,9 @@ impl fmt::Display for MonthCode {
 /// (`Month::new(7)`) might be the 7th or 8th month of the year, depending if the month
 /// Adar was repeated or not.
 ///
+/// In this model, `Month::leap(2)` is the month that occurs after `Month::new(2)`, even if the calendar considers the month to be a variant of
+/// the subsequent month.
+///
 /// Check the docs for a particular calendar (e.g. [`Hebrew`](crate::cal::Hebrew)) for details on
 /// what its months are.
 ///
@@ -500,10 +503,6 @@ impl fmt::Display for MonthCode {
 /// representation:
 /// * `Month::new(7)` = `M07`
 /// * `Month::leap(2)` = `M02L`
-///
-/// Note that in Temporal's model, "leap month 2" (M02L) means the month that occurs after the
-/// non-leap month numbered 2 (M02), even if the calendar considers the month to be a variant of
-/// the subsequent month.
 ///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]
