@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::preferences::CalendarAlgorithm;
-use crate::types::{Month, YearInput};
 use crate::Calendar;
 use crate::Date;
 
@@ -36,7 +35,7 @@ super::test_all_cals!(
         };
 
         // Create the first date in the epoch year (extended_year = 0)
-        let date_in_epoch_year = Date::try_new(YearInput::Extended(0), 1.into(), 1, cal).unwrap();
+        let date_in_epoch_year = Date::try_new(0.into(), 1.into(), 1, cal).unwrap();
         let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(crate::cal::Iso);
         assert_eq!(
             iso_date_in_epoch_year.year().extended_year(),

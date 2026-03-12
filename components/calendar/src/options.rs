@@ -445,11 +445,7 @@ mod unstable {
 }
 #[cfg(test)]
 mod tests {
-    use crate::{
-        error::DateFromFieldsError,
-        types::{DateFields, Month},
-        Date, Gregorian,
-    };
+    use crate::{error::DateFromFieldsError, types::DateFields, Date, Gregorian};
     use itertools::Itertools;
     use std::collections::{BTreeMap, BTreeSet};
 

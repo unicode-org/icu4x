@@ -269,7 +269,7 @@ impl Date<Coptic> {
 mod tests {
     use super::*;
     use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-    use crate::types::{DateFields, Month};
+    use crate::types::DateFields;
 
     #[test]
     fn test_coptic_regression() {
