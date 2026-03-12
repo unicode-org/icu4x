@@ -20,6 +20,9 @@ pub use unstable::DateFields;
 #[cfg(not(feature = "unstable"))]
 pub(crate) use unstable::DateFields;
 
+#[cfg(doc)]
+use crate::Date;
+
 mod unstable {
     /// A bag of various ways of expressing the year, month, and/or day.
     ///
@@ -245,6 +248,29 @@ impl fmt::Debug for DateFields<'_> {
         builder.field("ordinal_month", &ordinal_month);
         builder.field("day", &day);
         builder.finish()
+    }
+}
+
+/// Year information to be used as input to [`Date::try_from_codes()`].
+///
+/// Note: The input variants represent different ways of specifying a year;
+/// see [`YearInfo`] for the output formats.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum YearInput<'a> {
+    /// An "extended year", which is a single number representing the year.
+    ///
+    /// For many calendars this matches the year number.
+    ///
+    /// See [`YearInfo::extended_year()`] for more information.
+    Extended(i32),
+    /// A year specified by an era code and the year in that era.
+    EraYear(&'a str, i32),
+}
+
+impl From<i32> for YearInput<'_> {
+    fn from(year: i32) -> Self {
+        Self::Extended(year)
     }
 }
 
@@ -712,11 +738,11 @@ impl MonthInfo {
     }
 
     /// Returns the [`Month`], which round-trips through constructors like
-    /// [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
+    /// [`Date::try_from_codes`] and [`Date::try_from_fields`].
     ///
     /// Returns a leap month iff [`Self::leap_status`] is [`LeapStatus::Leap`].
     ///
-    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+    /// [`Date::try_from_codes`]: crate::Date::try_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub fn to_input(&self) -> Month {
         Month::new_unchecked(self.number, self.leap_status == LeapStatus::Leap)

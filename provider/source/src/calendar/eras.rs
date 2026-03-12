@@ -124,22 +124,20 @@ impl crate::IterableDataProviderCached<CalendarJapaneseModernV1> for SourceDataP
 #[test]
 pub fn ethiopic_and_ethioaa_are_compatible() {
     use icu::calendar::cal::{Ethiopian, EthiopianEraStyle};
-    use icu::calendar::types::Month;
+    use icu::calendar::types::{Month, YearInput};
     assert_eq!(
-        Date::try_new_from_codes(
-            Some("aa"),
-            1,
-            Month::new(1).code(),
+        Date::try_from_codes(
+            YearInput::EraYear("aa", 1),
+            Month::new(1),
             1,
             Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)
         )
         .unwrap()
         .era_year()
         .era_index,
-        Date::try_new_from_codes(
-            Some("aa"),
-            1,
-            Month::new(1).code(),
+        Date::try_from_codes(
+            YearInput::EraYear("aa", 1),
+            Month::new(1),
             1,
             Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)
         )
@@ -151,6 +149,7 @@ pub fn ethiopic_and_ethioaa_are_compatible() {
 
 #[test]
 fn test_calendar_eras() {
+    use icu::calendar::types::YearInput;
     use icu::calendar::Iso;
     use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
     use icu::datetime::preferences::CalendarAlgorithm;
@@ -212,10 +211,9 @@ fn test_calendar_eras() {
                 .filter(|s| !s.is_empty())
             {
                 assert_eq!(
-                    Date::try_new_from_codes(
-                        Some(era),
-                        in_era.year().era().unwrap().year,
-                        in_era.month().to_input().code(),
+                    Date::try_from_codes(
+                        YearInput::EraYear(era, in_era.year().era().unwrap().year),
+                        in_era.month().to_input(),
                         in_era.day_of_month().0,
                         cal,
                     ),

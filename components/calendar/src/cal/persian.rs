@@ -5,7 +5,7 @@
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -111,15 +111,13 @@ impl Calendar for Persian {
     type Year = types::EraYear;
     type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes(
+    fn from_codes2(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
+        year: types::YearInput,
+        month: types::Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
-            .map(PersianDateInner)
+    ) -> Result<Self::DateInner, DateFromCodesError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(PersianDateInner)
     }
 
     #[cfg(feature = "unstable")]

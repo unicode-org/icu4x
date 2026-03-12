@@ -7,9 +7,9 @@
 use crate::types::MonthCode;
 use displaydoc::Display;
 
-/// Error type for date creation via [`Date::try_new_from_codes`].
+/// Error type for date creation via [`Date::try_from_codes`].
 ///
-/// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+/// [`Date::try_from_codes`]: crate::Date::try_from_codes
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum DateError {
@@ -33,6 +33,7 @@ pub enum DateError {
     /// # Examples
     ///
     /// ```
+    /// # #![allow(deprecated)]
     /// use icu::calendar::cal::Hebrew;
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
@@ -149,6 +150,7 @@ pub(crate) use unstable::{DateAddError, DateFromFieldsError, MismatchedCalendarE
 
 mod unstable {
     pub use super::*;
+
     /// Error type for date creation via [`Date::try_from_fields`].
     ///
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
@@ -609,6 +611,50 @@ mod unstable {
     pub struct MismatchedCalendarError;
 
     impl core::error::Error for MismatchedCalendarError {}
+}
+
+/// Error type for date creation via [`Date::try_from_codes`].
+///
+/// [`Date::try_from_codes`]: crate::Date::try_from_codes
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #7512](https://github.com/unicode-org/icu4x/issues/7512).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+#[derive(Debug, Copy, Clone, PartialEq, Display)]
+#[non_exhaustive]
+pub enum DateFromCodesError {
+    /// The day is invalid for the given month.
+    #[displaydoc("Invalid day for month, max is {max}")]
+    InvalidDay {
+        /// The maximum allowed value (the minimum is 1).
+        max: u8,
+    },
+    /// The specified month does not exist in this calendar.
+    #[displaydoc("The specified month does not exist in this calendar")]
+    MonthNotInCalendar,
+    /// The specified month exists in this calendar, but not in the specified year.
+    #[displaydoc("The specified month exists in this calendar, but not for this year")]
+    MonthNotInYear,
+    /// The era code is invalid for the calendar.
+    #[displaydoc("Unknown era or invalid syntax")]
+    InvalidEra,
+
+    /// The year was out of range
+    #[displaydoc("Invalid year, must be within -9999..=9999")]
+    InvalidYear,
+}
+
+impl core::error::Error for DateFromCodesError {}
+
+impl From<UnknownEraError> for DateFromCodesError {
+    fn from(_: UnknownEraError) -> Self {
+        Self::InvalidEra
+    }
 }
 
 /// Internal narrow error type for functions that only fail on unknown eras

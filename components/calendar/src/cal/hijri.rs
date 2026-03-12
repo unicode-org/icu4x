@@ -7,7 +7,7 @@ use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::PackWithMD;
 use crate::calendar_arithmetic::ToExtendedYear;
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -918,15 +918,13 @@ impl<R: Rules> Calendar for Hijri<R> {
     type Year = types::EraYear;
     type DateCompatibilityError = R::DateCompatibilityError;
 
-    fn from_codes(
+    fn from_codes2(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
+        year: types::YearInput,
+        month: Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
-            .map(HijriDateInner)
+    ) -> Result<Self::DateInner, DateFromCodesError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(HijriDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -1727,7 +1725,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let dt = Hijri::new_umm_al_qura()
-            .from_codes(Some("bh"), 6824, Month::new(1).code(), 1)
+            .from_codes2(types::YearInput::EraYear("bh", 6824), Month::new(1), 1)
             .unwrap();
         assert_eq!(dt.0.day(), 1);
         assert_eq!(dt.0.month(), 1);

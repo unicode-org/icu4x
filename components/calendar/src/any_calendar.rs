@@ -103,20 +103,19 @@ macro_rules! make_any_calendar {
             type Year = $crate::types::YearInfo;
             type DateCompatibilityError = $crate::error::MismatchedCalendarError;
 
-            fn from_codes(
+            fn from_codes2(
                 &self,
-                era: Option<&str>,
-                year: i32,
-                month_code: $crate::types::MonthCode,
+                year: $crate::types::YearInput,
+                month: $crate::types::Month,
                 day: u8,
-            ) -> Result<Self::DateInner, $crate::DateError> {
+            ) -> Result<Self::DateInner, $crate::error::DateFromCodesError> {
                 Ok(match self {
                     $(
-                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes(era, year, month_code, day)?, AnyCalendarable::identity(c)),
+                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes2(year, month, day)?, AnyCalendarable::identity(c)),
                     )+
                     $(
                         #[allow(deprecated)]
-                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_codes(era, year, month_code, day)?, AnyCalendarable::identity(c)),
+                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_codes2(year, month, day)?, AnyCalendarable::identity(c)),
                     )*
                 })
             }
@@ -1400,7 +1399,9 @@ impl<C: IntoAnyCalendar> Date<C> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{types::Month, DateError, Ref};
+    use crate::error::DateFromCodesError;
+    use crate::types::{Month, YearInput};
+    use crate::Ref;
 
     #[track_caller]
     fn single_test_roundtrip(
@@ -1410,13 +1411,17 @@ mod tests {
         month: Month,
         day: u8,
     ) {
-        let date = Date::try_new_from_codes(era.map(|x| x.0), year, month.code(), day, calendar)
-            .unwrap_or_else(|e| {
-                panic!(
-                    "Failed to construct date for {} with {era:?}, {year}, {month:?}, {day}: {e:?}",
-                    calendar.debug_name(),
-                )
-            });
+        let input = if let Some((era, _)) = era {
+            YearInput::EraYear(era, year)
+        } else {
+            YearInput::Extended(year)
+        };
+        let date = Date::try_from_codes(input, month, day, calendar).unwrap_or_else(|e| {
+            panic!(
+                "Failed to construct date for {} with {era:?}, {year}, {month:?}, {day}: {e:?}",
+                calendar.debug_name(),
+            )
+        });
 
         assert_eq!(
             (month, day),
@@ -1461,9 +1466,14 @@ mod tests {
         year: i32,
         month: Month,
         day: u8,
-        error: DateError,
+        error: DateFromCodesError,
     ) {
-        let date = Date::try_new_from_codes(era.map(|x| x.0), year, month.code(), day, calendar);
+        let input = if let Some((era, _)) = era {
+            YearInput::EraYear(era, year)
+        } else {
+            YearInput::Extended(year)
+        };
+        let date = Date::try_from_codes(input, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
@@ -1485,7 +1495,7 @@ mod tests {
             100,
             Month::new(13),
             1,
-            DateError::UnknownMonthCode(Month::new(13).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1504,7 +1514,7 @@ mod tests {
             100,
             Month::new(14),
             1,
-            DateError::UnknownMonthCode(Month::new(14).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1552,7 +1562,7 @@ mod tests {
             100,
             Month::new(14),
             1,
-            DateError::UnknownMonthCode(Month::new(14).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1582,7 +1592,7 @@ mod tests {
             100,
             Month::new(14),
             1,
-            DateError::UnknownMonthCode(Month::new(14).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1629,7 +1639,7 @@ mod tests {
             100,
             Month::new(13),
             1,
-            DateError::UnknownMonthCode(Month::new(13).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1647,7 +1657,7 @@ mod tests {
             100,
             Month::new(13),
             1,
-            DateError::UnknownMonthCode(Month::new(13).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1664,7 +1674,7 @@ mod tests {
             4658,
             Month::new(13),
             1,
-            DateError::UnknownMonthCode(Month::new(13).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1681,7 +1691,7 @@ mod tests {
             9393,
             Month::leap(0),
             1,
-            DateError::UnknownMonthCode(Month::leap(0).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1732,7 +1742,7 @@ mod tests {
             2,
             Month::new(13),
             1,
-            DateError::UnknownMonthCode(Month::new(13).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1750,7 +1760,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(50).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1768,7 +1778,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(50).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1809,7 +1819,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(50).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1839,7 +1849,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(50).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1870,7 +1880,7 @@ mod tests {
             100,
             Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(50).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 
@@ -1888,7 +1898,7 @@ mod tests {
             100,
             Month::new(13),
             1,
-            DateError::UnknownMonthCode(Month::new(13).code()),
+            DateFromCodesError::MonthNotInCalendar,
         );
     }
 }

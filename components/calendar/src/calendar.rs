@@ -5,11 +5,15 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
-use crate::error::{DateAddError, DateError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromCodesError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
-use crate::{types, Iso};
+use crate::types::{self, Month, YearInput};
+use crate::Iso;
 use core::fmt;
+
+#[cfg(doc)]
+use crate::Date;
 
 /// A calendar implementation
 ///
@@ -43,14 +47,61 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// Construct a date from era/month codes and fields
     ///
     /// The year is the [extended year](crate::Date::extended_year) if no era is provided
+    ///
+    /// This is used by the deprecated [`Date::try_new_from_codes()`]. Implementors
+    /// should rely on the default impl which adapts this to using [`Self::from_codes2()`].
     #[expect(clippy::wrong_self_convention)]
+    #[deprecated(since = "2.2.0", note = "use `from_codes2`")]
     fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateError>;
+    ) -> Result<Self::DateInner, DateError> {
+        let input_year = match era {
+            Some(e) => YearInput::EraYear(e, year),
+            None => YearInput::Extended(year),
+        };
+        let month = match Month::try_from_utf8(month_code.0.as_bytes()) {
+            Ok(m) => m,
+            Err(_) => return Err(DateError::UnknownMonthCode(month_code)),
+        };
+        let result = self.from_codes2(input_year, month, day);
+
+        match result {
+            Ok(date) => Ok(date),
+            Err(codes_error) => Err(match codes_error {
+                DateFromCodesError::InvalidDay { max } => DateError::Range {
+                    field: "day",
+                    value: day as i32,
+                    min: 1,
+                    max: max as i32,
+                },
+                DateFromCodesError::MonthNotInCalendar | DateFromCodesError::MonthNotInYear => {
+                    DateError::UnknownMonthCode(month_code)
+                }
+                DateFromCodesError::InvalidEra => DateError::UnknownEra,
+                DateFromCodesError::InvalidYear => DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: -9999,
+                    max: 9999,
+                },
+            }),
+        }
+    }
+
+    /// Construct a date from a [`YearInput`], [`Month`], and a day.
+    ///
+    /// This is used by [`Date::try_from_codes()`].
+    #[expect(clippy::wrong_self_convention)]
+    fn from_codes2(
+        &self,
+        year: YearInput,
+        month: Month,
+        day: u8,
+    ) -> Result<Self::DateInner, DateFromCodesError>;
 
     /// Construct a date from a bag of date fields.
     ///

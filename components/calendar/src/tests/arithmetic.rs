@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit, Overflow};
-use crate::types::{DateDuration, Month};
+use crate::types::{DateDuration, Month, YearInput};
 use crate::{AsCalendar, Calendar, Date};
 use core::fmt;
 
@@ -238,7 +238,7 @@ super::test_all_cals!(
                     month_diff += later.month().ordinal as i32;
                     for y in earlier.year().extended_year()..later.year().extended_year() {
                         month_diff +=
-                            Date::try_new_from_codes(None, y, Month::new(1).code(), 1, cal)
+                            Date::try_from_codes(YearInput::Extended(y), Month::new(1), 1, cal)
                                 .unwrap()
                                 .months_in_year() as i32;
                     }

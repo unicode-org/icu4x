@@ -4,8 +4,8 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
-    MonthError, UnknownEraError,
+    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError,
+    LunisolarDateError, MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -256,15 +256,13 @@ impl Calendar for Hebrew {
     type Year = types::EraYear;
     type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes(
+    fn from_codes2(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
+        year: types::YearInput,
+        month: Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
-            .map(HebrewDateInner)
+    ) -> Result<Self::DateInner, DateFromCodesError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(HebrewDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -530,10 +528,9 @@ mod tests {
             assert_eq!(date.day_of_month().0, d, "{date:?}");
 
             assert_eq!(
-                Date::try_new_from_codes(
-                    Some(&date.era_year().era),
-                    date.era_year().year,
-                    date.month().to_input().code(),
+                Date::try_from_codes(
+                    types::YearInput::EraYear(&date.era_year().era, date.era_year().year),
+                    date.month().to_input(),
                     date.day_of_month().0,
                     Hebrew
                 ),

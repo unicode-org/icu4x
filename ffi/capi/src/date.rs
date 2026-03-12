@@ -395,9 +395,11 @@ pub mod ffi {
         /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
         ///
         /// An empty era code will treat the year as an extended year
-        #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::Month::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::Month::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInput, Enum, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,
@@ -406,15 +408,19 @@ pub mod ffi {
             day: u8,
             calendar: &Calendar,
         ) -> Result<Box<Date>, CalendarError> {
-            let era = if !era_code.is_empty() {
-                Some(core::str::from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?)
+            use icu_calendar::types::YearInput;
+            let input_year = if !era_code.is_empty() {
+                YearInput::EraYear(
+                    core::str::from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?,
+                    year,
+                )
             } else {
-                None
+                YearInput::Extended(year)
             };
-            let month = icu_calendar::types::Month::try_from_utf8(month_code)?.code();
+            let month = icu_calendar::types::Month::try_from_utf8(month_code)?;
             let cal = calendar.0.clone();
-            Ok(Box::new(Date(icu_calendar::Date::try_new_from_codes(
-                era, year, month, day, cal,
+            Ok(Box::new(Date(icu_calendar::Date::try_from_codes(
+                input_year, month, day, cal,
             )?)))
         }
 
