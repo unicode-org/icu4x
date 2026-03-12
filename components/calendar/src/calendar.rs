@@ -95,7 +95,6 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// Construct a date from a [`YearInput`], [`Month`], and a day.
     ///
     /// This is used by [`Date::try_new()`].
-    #[expect(clippy::wrong_self_convention)]
     fn new_date(
         &self,
         year: YearInput,
