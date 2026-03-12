@@ -201,7 +201,7 @@ super::test_all_cals!(
             ] {
                 let mut fields = DateFields {
                     day: Some(1),
-                    month: Some(Month::new(1)),
+                    month: Some(1.into()),
                     ..Default::default()
                 };
 
@@ -328,14 +328,14 @@ super::test_all_cals!(
         // Success
         Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start()),
-            Month::new(1),
+            1.into(),
             1,
             cal,
         )
         .unwrap();
         Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end()),
-            Month::new(1),
+            1.into(),
             1,
             cal,
         )
@@ -344,14 +344,14 @@ super::test_all_cals!(
         // Error
         Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start() - 1),
-            Month::new(1),
+            1.into(),
             1,
             cal,
         )
         .unwrap_err();
         Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end() + 1),
-            Month::new(1),
+            1.into(),
             1,
             cal,
         )
@@ -359,7 +359,7 @@ super::test_all_cals!(
 
         if let crate::types::YearInfo::Era(y) = Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start()),
-            Month::new(1),
+            1.into(),
             1,
             cal,
         )
@@ -368,14 +368,14 @@ super::test_all_cals!(
         {
             Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
-                Month::new(1),
+                1.into(),
                 1,
                 cal,
             )
             .unwrap_err();
             Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.end() + 1),
-                Month::new(1),
+                1.into(),
                 1,
                 cal,
             )
@@ -384,7 +384,7 @@ super::test_all_cals!(
 
         if let crate::types::YearInfo::Era(y) = Date::try_new(
             YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end()),
-            Month::new(1),
+            1.into(),
             1,
             cal,
         )
@@ -393,14 +393,14 @@ super::test_all_cals!(
         {
             Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
-                Month::new(1),
+                1.into(),
                 1,
                 cal,
             )
             .unwrap_err();
             Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.end() + 1),
-                Month::new(1),
+                1.into(),
                 1,
                 cal,
             )
@@ -424,9 +424,9 @@ mod check_convenience_constructors {
     #[test]
     #[allow(deprecated)]
     fn chinese_traditional() {
-        Date::try_new_chinese_traditional(*CONSTRUCTOR_YEAR_RANGE.start() - 1, Month::new(1), 1)
+        Date::try_new_chinese_traditional(*CONSTRUCTOR_YEAR_RANGE.start() - 1, 1.into(), 1)
             .unwrap_err();
-        Date::try_new_chinese_traditional(*CONSTRUCTOR_YEAR_RANGE.end() + 1, Month::new(1), 1)
+        Date::try_new_chinese_traditional(*CONSTRUCTOR_YEAR_RANGE.end() + 1, 1.into(), 1)
             .unwrap_err();
         #[allow(deprecated)]
         {
@@ -444,9 +444,9 @@ mod check_convenience_constructors {
     }
     #[test]
     fn korean_traditional() {
-        Date::try_new_korean_traditional(*CONSTRUCTOR_YEAR_RANGE.start() - 1, Month::new(1), 1)
+        Date::try_new_korean_traditional(*CONSTRUCTOR_YEAR_RANGE.start() - 1, 1.into(), 1)
             .unwrap_err();
-        Date::try_new_korean_traditional(*CONSTRUCTOR_YEAR_RANGE.end() + 1, Month::new(1), 1)
+        Date::try_new_korean_traditional(*CONSTRUCTOR_YEAR_RANGE.end() + 1, 1.into(), 1)
             .unwrap_err();
         #[allow(deprecated)]
         {
@@ -498,8 +498,8 @@ mod check_convenience_constructors {
     }
     #[test]
     fn hebrew() {
-        Date::try_new_hebrew_v2(*CONSTRUCTOR_YEAR_RANGE.start() - 1, Month::new(1), 1).unwrap_err();
-        Date::try_new_hebrew_v2(*CONSTRUCTOR_YEAR_RANGE.end() + 1, Month::new(1), 1).unwrap_err();
+        Date::try_new_hebrew_v2(*CONSTRUCTOR_YEAR_RANGE.start() - 1, 1.into(), 1).unwrap_err();
+        Date::try_new_hebrew_v2(*CONSTRUCTOR_YEAR_RANGE.end() + 1, 1.into(), 1).unwrap_err();
         #[allow(deprecated)]
         {
             Date::try_new_hebrew(*CONSTRUCTOR_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();

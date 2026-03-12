@@ -237,7 +237,7 @@ super::test_all_cals!(
                     month_diff -= earlier.month().ordinal as i32;
                     month_diff += later.month().ordinal as i32;
                     for y in earlier.year().extended_year()..later.year().extended_year() {
-                        month_diff += Date::try_new(YearInput::Extended(y), Month::new(1), 1, cal)
+                        month_diff += Date::try_new(YearInput::Extended(y), 1.into(), 1, cal)
                             .unwrap()
                             .months_in_year() as i32;
                     }

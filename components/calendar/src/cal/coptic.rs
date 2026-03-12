@@ -283,7 +283,7 @@ mod tests {
         // M13-7 is not a real day, however this should resolve to M13-6
         // with Overflow::Constrain
         let fields = DateFields {
-            month: Some(Month::new(13)),
+            month: Some(13.into()),
             day: Some(7),
             ..Default::default()
         };

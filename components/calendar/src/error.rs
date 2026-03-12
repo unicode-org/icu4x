@@ -78,7 +78,7 @@ pub enum LunisolarDateError {
     /// use icu::calendar::Date;
     /// use icu::calendar::error::LunisolarDateError;
     ///
-    /// let err = Date::try_new_hebrew_v2(5785, Month::new(5), 50)
+    /// let err = Date::try_new_hebrew_v2(5785, 5.into(), 50)
     ///     .expect_err("no month has 50 days");
     ///
     /// assert!(matches!(err, LunisolarDateError::InvalidDay { max: 30 }));
@@ -258,7 +258,7 @@ mod unstable {
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month = Some(Month::new(13));
+        /// fields.month = Some(13.into());
         /// fields.day = Some(1);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Hebrew)
@@ -353,7 +353,7 @@ mod unstable {
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
-        /// fields.month = Some(Month::new(6));
+        /// fields.month = Some(6.into());
         /// fields.ordinal_month = Some(6);
         /// fields.day = Some(1);
         ///
@@ -381,7 +381,7 @@ mod unstable {
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(2000);
-        /// fields.month = Some(Month::new(1));
+        /// fields.month = Some(1.into());
         /// fields.month_code = Some(b"M01");
         /// fields.day = Some(1);
         ///

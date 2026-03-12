@@ -447,7 +447,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                         if ref_year.err() == Some(EcmaReferenceYearError::UseRegularIfConstrain)
                             && options.overflow == Some(Overflow::Constrain)
                         {
-                            let new_valid_month = Month::new(m.number());
+                            let new_valid_month = m.number().into();
                             valid_month = Some(new_valid_month);
                             calendar.reference_year_from_month_day(new_valid_month, d)?
                         } else {

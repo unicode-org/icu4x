@@ -478,11 +478,11 @@ impl Date<KoreanTraditional> {
     /// use icu::calendar::Date;
     /// use icu::calendar::types::Month;
     ///
-    /// let date = Date::try_new_korean_traditional(2025, Month::new(5), 25)
+    /// let date = Date::try_new_korean_traditional(2025, 5.into(), 25)
     ///     .expect("Failed to initialize Date instance.");
     ///
     /// assert_eq!(date.cyclic_year().related_iso, 2025);
-    /// assert_eq!(date.month().to_input(), Month::new(5));
+    /// assert_eq!(date.month().to_input(), 5.into());
     /// assert_eq!(date.day_of_month().0, 25);
     /// ```
     pub fn try_new_korean_traditional(
@@ -829,11 +829,11 @@ impl Date<ChineseTraditional> {
     /// use icu::calendar::Date;
     /// use icu::calendar::types::Month;
     ///
-    /// let date = Date::try_new_chinese_traditional(2025, Month::new(5), 25)
+    /// let date = Date::try_new_chinese_traditional(2025, 5.into(), 25)
     ///     .expect("Failed to initialize Date instance.");
     ///
     /// assert_eq!(date.cyclic_year().related_iso, 2025);
-    /// assert_eq!(date.month().to_input(), Month::new(5));
+    /// assert_eq!(date.month().to_input(), 5.into());
     /// assert_eq!(date.day_of_month().0, 25);
     /// ```
     pub fn try_new_chinese_traditional(
@@ -1387,7 +1387,7 @@ mod test {
             TestCase {
                 year: 2023,
                 ordinal_month: 6,
-                month: Month::new(5),
+                month: 5.into(),
                 day: 6,
                 // June 23 2023
                 expected: 738694,
@@ -1395,7 +1395,7 @@ mod test {
             TestCase {
                 year: -2636,
                 ordinal_month: 1,
-                month: Month::new(1),
+                month: 1.into(),
                 day: 1,
                 expected: -963099,
             },
@@ -1447,7 +1447,7 @@ mod test {
 
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
         assert_eq!(chinese.month().ordinal, 1);
-        assert_eq!(chinese.month().to_input(), Month::new(1));
+        assert_eq!(chinese.month().to_input(), 1.into());
         assert_eq!(chinese.day_of_month().0, 1);
         assert_eq!(chinese.cyclic_year().year, 1);
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
@@ -1548,19 +1548,19 @@ mod test {
                 iso_year: 2023,
                 iso_month: 1,
                 iso_day: 9,
-                month: Month::new(12),
+                month: 12.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 2,
                 iso_day: 9,
-                month: Month::new(1),
+                month: 1.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 3,
                 iso_day: 9,
-                month: Month::new(2),
+                month: 2.into(),
             },
             TestCase {
                 iso_year: 2023,
@@ -1572,67 +1572,67 @@ mod test {
                 iso_year: 2023,
                 iso_month: 5,
                 iso_day: 9,
-                month: Month::new(3),
+                month: 3.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 6,
                 iso_day: 9,
-                month: Month::new(4),
+                month: 4.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 7,
                 iso_day: 9,
-                month: Month::new(5),
+                month: 5.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 8,
                 iso_day: 9,
-                month: Month::new(6),
+                month: 6.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 9,
                 iso_day: 9,
-                month: Month::new(7),
+                month: 7.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 10,
                 iso_day: 9,
-                month: Month::new(8),
+                month: 8.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 11,
                 iso_day: 9,
-                month: Month::new(9),
+                month: 9.into(),
             },
             TestCase {
                 iso_year: 2023,
                 iso_month: 12,
                 iso_day: 9,
-                month: Month::new(10),
+                month: 10.into(),
             },
             TestCase {
                 iso_year: 2024,
                 iso_month: 1,
                 iso_day: 9,
-                month: Month::new(11),
+                month: 11.into(),
             },
             TestCase {
                 iso_year: 2024,
                 iso_month: 2,
                 iso_day: 9,
-                month: Month::new(12),
+                month: 12.into(),
             },
             TestCase {
                 iso_year: 2024,
                 iso_month: 2,
                 iso_day: 10,
-                month: Month::new(1),
+                month: 1.into(),
             },
         ];
 
@@ -1656,19 +1656,19 @@ mod test {
         };
         let year = cal.year_info_from_extended(2023);
         for (ordinal, month) in [
-            Month::new(1),
-            Month::new(2),
+            1.into(),
+            2.into(),
             Month::leap(2),
-            Month::new(3),
-            Month::new(4),
-            Month::new(5),
-            Month::new(6),
-            Month::new(7),
-            Month::new(8),
-            Month::new(9),
-            Month::new(10),
-            Month::new(11),
-            Month::new(12),
+            3.into(),
+            4.into(),
+            5.into(),
+            6.into(),
+            7.into(),
+            8.into(),
+            9.into(),
+            10.into(),
+            11.into(),
+            12.into(),
         ]
         .into_iter()
         .enumerate()
@@ -1694,7 +1694,7 @@ mod test {
             let year = cal.year_info_from_extended(year);
             for (month, error) in [
                 (Month::leap(4), MonthError::NotInYear),
-                (Month::new(13), MonthError::NotInCalendar),
+                (13.into(), MonthError::NotInCalendar),
             ] {
                 assert_eq!(
                     cal.ordinal_from_month(year, month, reject),
@@ -1777,7 +1777,7 @@ mod test {
     fn test_from_fields_constrain() {
         let fields = DateFields {
             day: Some(31),
-            month: Some(Month::new(1)),
+            month: Some(1.into()),
             extended_year: Some(1972),
             ..Default::default()
         };
@@ -1804,7 +1804,7 @@ mod test {
         let date = Date::try_from_fields(fields, options, cal).unwrap();
         assert_eq!(
             date.month().to_input(),
-            Month::new(1),
+            1.into(),
             "Month was successfully constrained"
         );
     }
@@ -1880,7 +1880,7 @@ mod test {
                     lunar_month = if new_lunar_month == lunar_month.number() {
                         Month::leap(new_lunar_month)
                     } else {
-                        Month::new(new_lunar_month)
+                        new_lunar_month.into()
                     };
                     if new_lunar_month == 1 {
                         related_iso += 1;

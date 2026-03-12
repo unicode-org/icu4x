@@ -65,17 +65,17 @@ fn test_buddhist_continuity() {
 
 #[test]
 fn test_chinese_continuity() {
-    let date = Date::try_new_chinese_traditional(-10, Month::new(1), 1);
+    let date = Date::try_new_chinese_traditional(-10, 1.into(), 1);
     check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_chinese_traditional(-300, Month::new(1), 1);
+    let date = Date::try_new_chinese_traditional(-300, 1.into(), 1);
     check_every_250_days(date.unwrap(), 2000);
-    let date = Date::try_new_chinese_traditional(-9999, Month::new(1), 1);
+    let date = Date::try_new_chinese_traditional(-9999, 1.into(), 1);
     check_every_250_days(date.unwrap(), 2000);
 
-    let date = Date::try_new_chinese_traditional(1899, Month::new(1), 1);
+    let date = Date::try_new_chinese_traditional(1899, 1.into(), 1);
     check_continuity(date.unwrap(), 20);
 
-    let date = Date::try_new_chinese_traditional(2099, Month::new(1), 1);
+    let date = Date::try_new_chinese_traditional(2099, 1.into(), 1);
     check_continuity(date.unwrap(), 20);
 }
 
@@ -89,15 +89,15 @@ fn test_coptic_continuity() {
 
 #[test]
 fn test_korean_continuity() {
-    let date = Date::try_new_korean_traditional(-10, Month::new(1), 1);
+    let date = Date::try_new_korean_traditional(-10, 1.into(), 1);
     check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_korean_traditional(-300, Month::new(1), 1);
+    let date = Date::try_new_korean_traditional(-300, 1.into(), 1);
     check_every_250_days(date.unwrap(), 2000);
 
-    let date = Date::try_new_korean_traditional(1900, Month::new(1), 1);
+    let date = Date::try_new_korean_traditional(1900, 1.into(), 1);
     check_continuity(date.unwrap(), 20);
 
-    let date = Date::try_new_korean_traditional(2100, Month::new(1), 1);
+    let date = Date::try_new_korean_traditional(2100, 1.into(), 1);
     check_continuity(date.unwrap(), 20);
 }
 
@@ -129,9 +129,9 @@ fn test_gregorian_continuity() {
 
 #[test]
 fn test_hebrew_continuity() {
-    let date = Date::try_new_hebrew_v2(-10, Month::new(1), 1);
+    let date = Date::try_new_hebrew_v2(-10, 1.into(), 1);
     check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_hebrew_v2(-300, Month::new(1), 1);
+    let date = Date::try_new_hebrew_v2(-300, 1.into(), 1);
     check_every_250_days(date.unwrap(), 2000);
 }
 

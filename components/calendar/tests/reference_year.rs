@@ -54,7 +54,7 @@ where
                 }
                 let mut fields = DateFields::default();
                 fields.month = Some(match is_leap {
-                    false => Month::new(month_number),
+                    false => month_number.into(),
                     true => Month::leap(month_number),
                 });
                 fields.day = Some(day_number);

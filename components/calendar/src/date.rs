@@ -175,7 +175,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::Iso;
     ///
     /// // Example: creation of ISO date from integers.
-    /// let date_iso = Date::try_new(YearInput::Extended(1970), Month::new(1), 2, Iso)
+    /// let date_iso = Date::try_new(YearInput::Extended(1970), 1.into(), 2, Iso)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.era_year().year, 1970);
@@ -779,16 +779,11 @@ mod tests {
     fn test_try_new() {
         use crate::cal::Japanese;
         use crate::types::{Month, YearInput};
-        let date = Date::try_new(YearInput::Extended(2025), Month::new(1), 1, Gregorian).unwrap();
+        let date = Date::try_new(YearInput::Extended(2025), 1.into(), 1, Gregorian).unwrap();
         assert_eq!(date, Date::try_new_gregorian(2025, 1, 1).unwrap());
 
-        let date2 = Date::try_new(
-            YearInput::EraYear("reiwa", 7),
-            Month::new(1),
-            1,
-            Japanese::new(),
-        )
-        .unwrap();
+        let date2 =
+            Date::try_new(YearInput::EraYear("reiwa", 7), 1.into(), 1, Japanese::new()).unwrap();
         let date2_expected =
             Date::try_new_japanese_with_calendar("reiwa", 7, 1, 1, Japanese::new()).unwrap();
         assert_eq!(date2, date2_expected);

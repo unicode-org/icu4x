@@ -1725,7 +1725,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let dt = Hijri::new_umm_al_qura()
-            .new_date(types::YearInput::EraYear("bh", 6824), Month::new(1), 1)
+            .new_date(types::YearInput::EraYear("bh", 6824), 1.into(), 1)
             .unwrap();
         assert_eq!(dt.0.day(), 1);
         assert_eq!(dt.0.month(), 1);

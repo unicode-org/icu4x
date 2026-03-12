@@ -79,7 +79,7 @@ mod unstable {
         ///
         /// // These options are missing a year.
         /// let mut fields = DateFields::default();
-        /// fields.month = Some(Month::new(2));
+        /// fields.month = Some(2.into());
         /// fields.day = Some(1);
         ///
         /// let options_default = DateFromFieldsOptions::default();
@@ -525,7 +525,7 @@ mod tests {
         field_fns.insert("era", &|fields| fields.era = Some(b"ad"));
         field_fns.insert("era_year", &|fields| fields.era_year = Some(2000));
         field_fns.insert("extended_year", &|fields| fields.extended_year = Some(2000));
-        field_fns.insert("month", &|fields| fields.month = Some(Month::new(4)));
+        field_fns.insert("month", &|fields| fields.month = Some(4.into()));
         field_fns.insert("month_code", &|fields| fields.month_code = Some(b"M04"));
         field_fns.insert("ordinal_month", &|fields| fields.ordinal_month = Some(4));
         field_fns.insert("day", &|fields| fields.day = Some(20));
