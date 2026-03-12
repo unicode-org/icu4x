@@ -255,6 +255,9 @@ impl fmt::Debug for DateFields<'_> {
 ///
 /// Note: The input variants represent different ways of specifying a year;
 /// see [`YearInfo`] for the output formats.
+///
+/// This type implements `From<i32>` producing an extended year, so you can simply
+/// call `2026.into()` to produce a `YearInput::Extended(2026)`.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum YearInput<'a> {
@@ -269,6 +272,7 @@ pub enum YearInput<'a> {
 }
 
 impl From<i32> for YearInput<'_> {
+    /// Produces an extended year.
     fn from(year: i32) -> Self {
         Self::Extended(year)
     }
@@ -504,6 +508,9 @@ impl fmt::Display for MonthCode {
 /// * `Month::new(7)` = `M07`
 /// * `Month::leap(2)` = `M02L`
 ///
+/// This type implements `From<u32>` producing an non-leap month, so you can simply
+/// call `5.into()` to produce a `Month::new(5)`.
+///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]
 pub struct Month {
@@ -637,6 +644,13 @@ impl Month {
             ])
             .unwrap(),
         )
+    }
+}
+
+impl From<u8> for Month {
+    /// Same behavior as [`Month::new()`]
+    fn from(other: u8) -> Self {
+        Self::new(other)
     }
 }
 
