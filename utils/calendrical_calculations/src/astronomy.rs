@@ -79,8 +79,7 @@ pub const NEW_MOON_ZERO: Moment = Moment::new(11.458922815770109);
 impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
     /// attempting to create a location outside of these bounds will result in a [`LocationOutOfBoundsError`].
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
-    pub(crate) fn try_new(
+    pub fn try_new(
         latitude: f64,
         longitude: f64,
         elevation: f64,
