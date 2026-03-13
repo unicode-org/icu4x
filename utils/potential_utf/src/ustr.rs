@@ -92,6 +92,7 @@ impl PotentialUtf8 {
     /// Get the bytes from a [`PotentialUtf8`].
     #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         &self.0
     }
 
@@ -177,6 +178,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data (returns the argument directly)
 //  6. All other methods are defaulted
 //  7. `[T]` byte equality is semantic equality (transparent over a ULE)
+//  8. Concrete methods with the same name as VarULE trait methods have the same behavior as the trait methods.
 /// This impl requires enabling the optional `zerovec` Cargo feature
 #[cfg(feature = "zerovec")]
 unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
