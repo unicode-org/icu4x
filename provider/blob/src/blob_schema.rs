@@ -3,10 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::fmt::Write;
-use icu_provider::{marker::DataMarkerIdHash, prelude::*};
+use icu_provider::marker::DataMarkerIdHash;
+use icu_provider::prelude::*;
+use icu_provider::unstable::DataAttributesRequest;
 use serde::Deserialize;
 use writeable::Writeable;
-use zerotrie::ZeroTrieSimpleAscii;
+use zerotrie::{cursor::ZeroTrieSimpleAsciiCursor, ZeroTrieSimpleAscii};
 use zerovec::vecs::{Index16, Index32, VarZeroSlice, VarZeroVecFormat, ZeroSlice};
 
 /// A versioned Serde schema for ICU4X data blobs.
@@ -49,6 +51,20 @@ impl<'data> BlobSchema<'data> {
             }
             BlobSchema::V003(s) => s.load(marker, req),
             BlobSchema::V003Bigger(s) => s.load(marker, req),
+        }
+    }
+
+    pub(crate) fn bind_locale(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<(BlobBoundLocaleSchema<'data>, Option<u64>), DataError> {
+        match self {
+            BlobSchema::V001(..) | BlobSchema::V002(..) | BlobSchema::V002Bigger(..) => {
+                unreachable!("Unreachable blob schema")
+            }
+            BlobSchema::V003(s) => s.bind_locale(marker, req),
+            BlobSchema::V003Bigger(s) => s.bind_locale(marker, req),
         }
     }
 
@@ -125,15 +141,28 @@ impl<LocaleVecFormat: VarZeroVecFormat> Default for BlobSchemaV1<'_, LocaleVecFo
     }
 }
 
+fn load_attributes(
+    mut cursor: ZeroTrieSimpleAsciiCursor,
+    marker_attributes: &DataMarkerAttributes,
+    metadata: DataRequestMetadata,
+) -> Option<usize> {
+    let _infallible_ascii = marker_attributes.write_to(&mut cursor);
+    loop {
+        let index = cursor.take_value();
+        if index.is_some() || !metadata.attributes_prefix_match {
+            break index;
+        }
+        // Match the shortest attribute sharing a prefix.
+        cursor.probe(0);
+    }
+}
+
 impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecFormat> {
-    pub fn load(
+    pub(crate) fn get_trie(
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<(&'data [u8], Option<u64>), DataError> {
-        if marker.is_singleton && !req.id.locale.is_unknown() {
-            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
-        }
+    ) -> Result<ZeroTrieSimpleAscii<&'data [u8]>, DataError> {
         let marker_index = self
             .markers
             .binary_search(&marker.id.hashed())
@@ -143,22 +172,23 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecForm
             .locales
             .get(marker_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
-        let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
+        Ok(ZeroTrieSimpleAscii::from_store(zerotrie))
+    }
+
+    pub(crate) fn load(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<(&'data [u8], Option<u64>), DataError> {
+        if marker.is_singleton && !req.id.locale.is_unknown() {
+            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
+        }
+        let zerotrie = self.get_trie(marker, req)?;
+        let mut cursor = zerotrie.into_cursor();
         let _infallible_ascii = req.id.locale.write_to(&mut cursor);
         let blob_index = if !req.id.marker_attributes.is_empty() {
             let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
-            req.id
-                .marker_attributes
-                .write_to(&mut cursor)
-                .map_err(|_| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
-            loop {
-                if let Some(v) = cursor.take_value() {
-                    break Some(v);
-                }
-                if !req.metadata.attributes_prefix_match || cursor.probe(0).is_none() {
-                    break None;
-                }
-            }
+            load_attributes(cursor, req.id.marker_attributes, req.metadata)
         } else {
             cursor.take_value()
         }
@@ -176,8 +206,36 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecForm
         ))
     }
 
-    fn get_checksum(&self, zerotrie: &[u8]) -> Option<u64> {
-        ZeroTrieSimpleAscii::from_store(zerotrie)
+    pub(crate) fn bind_locale(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<(BlobBoundLocaleSchema<'data>, Option<u64>), DataError> {
+        // Note: singleton markers do not make sense with this function
+        if marker.is_singleton || req.id.locale.is_unknown() {
+            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
+        }
+        let zerotrie = self.get_trie(marker, req)?;
+        let mut cursor = zerotrie.into_cursor();
+        let _infallible_ascii = req.id.locale.write_to(&mut cursor);
+        let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
+        if cursor.is_empty() {
+            return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
+        }
+        Ok((
+            BlobBoundLocaleSchema {
+                attributes_trie: cursor.into_suffix_trie(),
+                buffers: self.buffers,
+            },
+            marker
+                .has_checksum
+                .then(|| self.get_checksum(zerotrie))
+                .flatten(),
+        ))
+    }
+
+    fn get_checksum(&self, zerotrie: ZeroTrieSimpleAscii<&'data [u8]>) -> Option<u64> {
+        zerotrie
             .get(CHECKSUM_KEY)
             .and_then(|cs| Some(u64::from_le_bytes(self.buffers.get(cs)?.try_into().ok()?)))
     }
@@ -239,5 +297,30 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecForm
         }
         debug_assert!(seen_min);
         debug_assert!(seen_max);
+    }
+}
+
+#[derive(Clone, Copy, Debug, yoke::Yokeable)]
+pub(crate) struct BlobBoundLocaleSchema<'data> {
+    attributes_trie: ZeroTrieSimpleAscii<&'data [u8]>,
+    buffers: &'data VarZeroSlice<[u8], Index32>,
+}
+
+impl<'data> BlobBoundLocaleSchema<'data> {
+    pub(crate) fn load(&self, req: DataAttributesRequest) -> Result<&'data [u8], DataError> {
+        let blob_index = load_attributes(
+            self.attributes_trie.cursor(),
+            req.marker_attributes,
+            req.metadata,
+        )
+        .ok_or_else(|| {
+            DataErrorKind::IdentifierNotFound
+                .into_error()
+                .with_debug_context(req.marker_attributes)
+        })?;
+        let buffer = self.buffers.get(blob_index).ok_or_else(|| {
+            DataError::custom("Invalid blob bytes").with_debug_context(req.marker_attributes)
+        })?;
+        Ok(buffer)
     }
 }

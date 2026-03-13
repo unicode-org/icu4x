@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt::Debug;
 use core::marker::PhantomData;
 use yoke::Yokeable;
 
@@ -9,6 +10,7 @@ use yoke::Yokeable;
 use alloc::boxed::Box;
 
 use crate::prelude::*;
+use crate::request::DataAttributesRequest;
 
 /// A data provider that loads data for a specific [`DataMarkerInfo`].
 pub trait DataProvider<M>
@@ -457,6 +459,91 @@ where
     #[inline]
     fn bound_marker(&self) -> DataMarkerInfo {
         M::INFO
+    }
+}
+
+/// The result of [`BindLocaleDataProvider::bind_locale`].
+#[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // exported in an unstable module
+pub struct BindLocaleResponse<T> {
+    /// Metadata from the data bind operation.
+    pub metadata: DataResponseMetadata,
+    /// The provider on which attributes can be loaded.
+    pub bound_provider: T,
+}
+
+/// A data provider that can be bound to a particular marker and locale.
+/// 
+/// See [`BoundLocaleDataProvider`].
+pub trait BindLocaleDataProvider<M>
+where
+    M: DynamicDataMarker,
+{
+    /// Type of the [`BoundLocaleDataProvider`].
+    type BoundLocaleDataProvider<'data>: BoundLocaleDataProvider<M> + 'data where Self: 'data;
+    /// Bind this provider to the given marker and locale.
+    /// 
+    /// This performs a data load for the marker and locale, but not attributes.
+    fn bind_locale<'data>(
+        &'data self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider<'data>>, DataError>;
+}
+
+/// Like [`DataResponse`] but for [`BoundLocaleDataProvider`].
+#[allow(clippy::exhaustive_structs)] // exported in an unstable module
+pub struct BoundLocaleDataResponse<'data, M>
+where
+    M: DynamicDataMarker,
+{
+    /// Metadata about the returned object.
+    pub metadata: DataResponseMetadata,
+    /// The object itself
+    pub payload: <M::DataStruct as Yokeable<'data>>::Output,
+}
+
+impl<'data, M> Debug for BoundLocaleDataResponse<'data, M>
+where
+    M: DynamicDataMarker,
+    <M::DataStruct as Yokeable<'data>>::Output: Debug,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "DataResponse {{ metadata: {:?}, payload: {:?} }}",
+            self.metadata, self.payload
+        )
+    }
+}
+
+/// A data provider that is bound to a particular marker locale. Can be queried for
+/// different marker attributes within that marker and locale.
+pub trait BoundLocaleDataProvider<M>
+where
+    M: DynamicDataMarker,
+{
+    /// Query the provider for data, returning the result.
+    ///
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_bound(
+        &self,
+        req: DataAttributesRequest,
+    ) -> Result<BoundLocaleDataResponse<'_, M>, DataError>;
+}
+
+impl<M, P> BoundLocaleDataProvider<M> for &P
+where
+    M: DynamicDataMarker,
+    P: BoundLocaleDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_bound(
+        &self,
+        req: DataAttributesRequest,
+    ) -> Result<BoundLocaleDataResponse<'_, M>, DataError> {
+        (**self).load_bound(req)
     }
 }
 
