@@ -226,9 +226,10 @@ impl DataExporter for ZeroCopyCheckExporter {
     fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         let rountrip_errors = self.rountrip_errors.get_mut().expect("poison");
         // These serialize to a different variant for stability
-        rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesMonthDangiV1::INFO);
         rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesMonthChineseV1::INFO);
+        rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesMonthDangiV1::INFO);
         rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesMonthHebrewV1::INFO);
+        rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesYearJapaneseV1::INFO);
         assert_eq!(rountrip_errors, &mut BTreeMap::default());
 
         let violations = self
