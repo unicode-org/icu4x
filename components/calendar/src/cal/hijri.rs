@@ -1070,7 +1070,7 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
 
 impl Date<Hijri<UmmAlQura>> {
     /// Deprecated
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
     pub fn try_new_ummalqura(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
         Date::try_new_hijri_with_calendar(year, month, day, Hijri::new_umm_al_qura())
     }
@@ -1078,7 +1078,7 @@ impl Date<Hijri<UmmAlQura>> {
 
 impl<A: AsCalendar<Calendar = Hijri<TabularAlgorithm>>> Date<A> {
     /// Deprecated
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
     pub fn try_new_hijri_tabular_with_calendar(
         year: i32,
         month: u8,

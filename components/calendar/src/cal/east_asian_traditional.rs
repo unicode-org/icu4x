@@ -403,7 +403,7 @@ impl KoreanTraditional {
     /// Use [`Self::new`].
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn try_new_with_buffer_provider(
         _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -412,13 +412,13 @@ impl KoreanTraditional {
 
     /// Use [`Self::new`].
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn try_new_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
         Ok(Self::new())
     }
 
     /// Use [`Self::new`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn new_always_calculating() -> Self {
         Self::new()
     }
@@ -550,7 +550,7 @@ impl ChineseTraditional {
 
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn try_new_with_buffer_provider(
         _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -558,13 +558,13 @@ impl ChineseTraditional {
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn try_new_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
         Ok(Self::new())
     }
 
     /// Use [`Self::new()`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn new_always_calculating() -> Self {
         Self::new()
     }
