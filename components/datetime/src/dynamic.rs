@@ -14,17 +14,21 @@
 //! sets in a single enumeration. [`CompositeDateTimeFieldSet`] is a good
 //! choice when you don't need to format time zones.
 //!
+//! The bigger the dynamic field set type, the bigger the required input type. For example,
+//! `CompositeFieldSet` requires a `ZonedDateTime` input, since the dynamic field set could
+//! include time zone fields.
+//!
 //! Summary of all the types:
 //!
-//! | Type | Supported Field Sets |
-//! |---|---|
-//! | [`DateFieldSet`] | Date |
-//! | [`CalendarPeriodFieldSet`] | Calendar Period |
-//! | [`TimeFieldSet`] | Time |
-//! | [`ZoneFieldSet`] | Zone |
-//! | [`DateAndTimeFieldSet`] | Date + Time |
-//! | [`CompositeDateTimeFieldSet`] | Date, Calendar Period, Time, Date + Time |
-//! | [`CompositeFieldSet`] | All |
+//! | Type | Supported Field Sets | Supported Input Types |
+//! |---|---|---|
+//! | [`DateFieldSet`] | Date | [`Date`], [`DateTime`], [`ZonedDateTime`] |
+//! | [`CalendarPeriodFieldSet`] | Calendar Period | [`Date`], [`DateTime`], [`ZonedDateTime`] |
+//! | [`TimeFieldSet`] | Time | [`Time`], [`DateTime`], [`ZonedTime`], [`ZonedDateTime`] |
+//! | [`ZoneFieldSet`] | Zone | [`TimeZoneInfo`], [`ZonedTime`], [`ZonedDateTime`] |
+//! | [`DateAndTimeFieldSet`] | Date + Time | [`DateTime`], [`ZonedDateTime`] |
+//! | [`CompositeDateTimeFieldSet`] | Date, Calendar Period, Time, Date + Time | [`DateTime`], [`ZonedDateTime`] |
+//! | [`CompositeFieldSet`] | All | [`ZonedDateTime`] |
 //!
 //! # Examples
 //!
@@ -82,6 +86,9 @@ use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
 use crate::{fieldsets, provider};
 use icu_provider::prelude::*;
+
+#[cfg(doc)]
+use crate::input::*;
 
 /// An enumeration over all possible date field sets.
 ///
