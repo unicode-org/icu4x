@@ -287,7 +287,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 ///
 /// // ... or by adding a local time
 /// let time_zone_at_time = time_zone.at_date_time(DateTime {
-///     date: Date::try_new_gregorian(2023, 12, 2).unwrap(),
+///     date: Date::try_new_coptic(1996, 12, 2).unwrap(),
 ///     time: Time::start_of_day(),
 /// });
 /// ```
