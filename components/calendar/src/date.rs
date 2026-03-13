@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::VALID_RD_RANGE;
-use crate::error::{DateAddError, DateError, DateFromCodesError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromFieldsError, DateNewError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
@@ -98,7 +98,7 @@ impl<C> Deref for Ref<'_, C> {
 ///
 /// Options to create one of these:
 ///
-/// 1. Generically from fields via [`Self::try_from_fields()`] or [`Self::try_from_codes()`]
+/// 1. Generically from fields via [`Self::try_from_fields()`] or [`Self::try_new()`]
 /// 2. With calendar-specific constructors, e.g. [`Self::try_new_chinese_traditional()`]
 /// 3. From a RFC 9557 string via [`Self::try_from_str()`]
 /// 4. From a [`RataDie`] via [`Self::from_rata_die()`]
@@ -147,7 +147,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// This function accepts years in the range `-9999..=9999`.
     #[inline]
-    #[deprecated(since = "2.2.0", note = "use `Date::try_from_codes`")]
+    #[deprecated(since = "2.2.0", note = "use `Date::try_new`")]
     pub fn try_new_from_codes(
         era: Option<&str>,
         year: i32,
@@ -175,7 +175,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::Iso;
     ///
     /// // Example: creation of ISO date from integers.
-    /// let date_iso = Date::try_from_codes(YearInput::Extended(1970), Month::new(1), 2, Iso)
+    /// let date_iso = Date::try_new(1970.into(), Month::new(1), 2, Iso)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.era_year().year, 1970);
@@ -183,13 +183,13 @@ impl<A: AsCalendar> Date<A> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     #[inline]
-    pub fn try_from_codes(
+    pub fn try_new(
         year: types::YearInput,
         month: types::Month,
         day: u8,
         calendar: A,
-    ) -> Result<Self, DateFromCodesError> {
-        let inner = calendar.as_calendar().from_codes2(year, month, day)?;
+    ) -> Result<Self, DateNewError> {
+        let inner = calendar.as_calendar().new_date(year, month, day)?;
         Ok(Date::from_raw(inner, calendar))
     }
 
@@ -271,14 +271,14 @@ impl<A: AsCalendar> Date<A> {
 
     /// Construct a [`Date`] from an ISO date and a calendar.
     #[inline]
-    #[deprecated(since = "2.2.0", note = "use `iso.to_calendar(calendar)")]
+    #[deprecated(since = "2.2.0", note = "use `iso.to_calendar(calendar)`")]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
         iso.to_calendar(calendar)
     }
 
     /// Convert the [`Date`] to an ISO Date
     #[inline]
-    #[deprecated(since = "2.2.0", note = "use `date.to_calendar(Iso)")]
+    #[deprecated(since = "2.2.0", note = "use `date.to_calendar(Iso)`")]
     pub fn to_iso(&self) -> Date<Iso> {
         self.to_calendar(Iso)
     }
@@ -320,7 +320,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// This is *not* the day of the week, an ordinal number that is locale
     /// dependent.
-    #[deprecated(since = "2.2.0", note = "use `Date::weekday")]
+    #[deprecated(since = "2.2.0", note = "use `Date::weekday`")]
     pub fn day_of_week(&self) -> types::Weekday {
         self.to_rata_die().into()
     }
@@ -423,12 +423,18 @@ impl<A: AsCalendar> Date<A> {
         Ok(self)
     }
 
-    /// Calculating the duration between `other - self`
+    /// Calculating the duration between `other - self`, counting from `self`
     ///
     /// Although this returns a [`Result`], with most fixed calendars, this operation can't fail.
     /// In such cases, the error type is [`Infallible`], and the inner value can be safely
     /// unwrapped using [`Result::into_ok()`], which is available in nightly Rust as of this
     /// writing. In stable Rust, the value can be unwrapped using [pattern matching].
+    ///
+    /// Note that `a.try_until_with_options(b, ..)` is not necessarily the same as
+    /// `-b.try_until_with_options(a, ..)`. `a.try_until_with_options(b, ..)`
+    /// computes a duration starting at `a` by adding years, months, sometimes weeks, and days in order
+    /// (based on the options) until it reaches `b`. So, `(Sep 30).until(Oct 31)` with `largest_unit = DateDurationUnit::Months`
+    /// will be a duration of 1 month and 1 day, but `(Oct 31).until(Sep 30)` will be a duration of -1 months.
     ///
     /// # Examples
     ///
@@ -444,6 +450,25 @@ impl<A: AsCalendar> Date<A> {
     /// let Ok(duration) = d1.try_until_with_options(&d2, options);
     ///
     /// assert_eq!(duration, DateDuration::for_days(2101));
+    /// ```
+    ///
+    /// Reversing the order of parameters does not necessarily produce the inverse result:
+    ///
+    /// ```
+    /// use icu::calendar::types::DateDuration;
+    /// use icu::calendar::options::{DateDifferenceOptions, DateDurationUnit};
+    /// use icu::calendar::Date;
+    ///
+    /// let d1 = Date::try_new_iso(2025, 9, 30).unwrap();
+    /// let d2 = Date::try_new_iso(2025, 10, 31).unwrap();
+    /// let mut options = DateDifferenceOptions::default();
+    /// options.largest_unit = Some(DateDurationUnit::Months);
+    ///
+    /// let Ok(duration_forward) = d1.try_until_with_options(&d2, options);
+    /// let Ok(duration_backward) = d2.try_until_with_options(&d1, options);
+    ///
+    /// assert_eq!(duration_forward, DateDuration {months: 1, days: 1, ..Default::default()});
+    /// assert_eq!(duration_backward, DateDuration::for_months(-1));
     /// ```
     ///
     /// [`Infallible`]: core::convert::Infallible
@@ -687,7 +712,7 @@ mod tests {
     use super::*;
     use crate::{
         cal::{Buddhist, Hebrew},
-        types::Weekday,
+        types::{Month, Weekday},
         Gregorian,
     };
 
@@ -751,14 +776,13 @@ mod tests {
     }
 
     #[test]
-    fn test_try_from_codes() {
+    fn test_try_new() {
         use crate::cal::Japanese;
-        use crate::types::{Month, YearInput};
-        let date =
-            Date::try_from_codes(YearInput::Extended(2025), Month::new(1), 1, Gregorian).unwrap();
+        use crate::types::YearInput;
+        let date = Date::try_new(2025.into(), Month::new(1), 1, Gregorian).unwrap();
         assert_eq!(date, Date::try_new_gregorian(2025, 1, 1).unwrap());
 
-        let date2 = Date::try_from_codes(
+        let date2 = Date::try_new(
             YearInput::EraYear("reiwa", 7),
             Month::new(1),
             1,

@@ -251,10 +251,13 @@ impl fmt::Debug for DateFields<'_> {
     }
 }
 
-/// Year information to be used as input to [`Date::try_from_codes()`].
+/// Year information to be used as input to [`Date::try_new()`].
 ///
 /// Note: The input variants represent different ways of specifying a year;
 /// see [`YearInfo`] for the output formats.
+///
+/// This type implements `From<i32>` producing an extended year, so you can simply
+/// call `2026.into()` to produce a `YearInput::Extended(2026)`.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum YearInput<'a> {
@@ -269,6 +272,7 @@ pub enum YearInput<'a> {
 }
 
 impl From<i32> for YearInput<'_> {
+    /// Produces an extended year.
     fn from(year: i32) -> Self {
         Self::Extended(year)
     }
@@ -504,6 +508,9 @@ impl fmt::Display for MonthCode {
 /// * `Month::new(7)` = `M07`
 /// * `Month::leap(2)` = `M02L`
 ///
+/// This type implements `From<u8>` producing an non-leap month, so you can simply
+/// call `5.into()` to produce a `Month::new(5)`.
+///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]
 pub struct Month {
@@ -640,6 +647,13 @@ impl Month {
     }
 }
 
+impl From<u8> for Month {
+    /// Same behavior as [`Month::new()`]
+    fn from(other: u8) -> Self {
+        Self::new(other)
+    }
+}
+
 #[test]
 fn test_month_cmp() {
     let months_in_order = [
@@ -676,7 +690,7 @@ pub struct MonthInfo {
     pub(crate) leap_status: LeapStatus,
 
     /// The [`Month::code()`] of [`Self::to_input`].
-    #[deprecated(since = "2.2.0", note = "use `to_input().code()")]
+    #[deprecated(since = "2.2.0", note = "use `to_input().code()`")]
     pub standard_code: MonthCode,
 
     /// Deprecated
@@ -737,11 +751,11 @@ impl MonthInfo {
     }
 
     /// Returns the [`Month`], which round-trips through constructors like
-    /// [`Date::try_from_codes`] and [`Date::try_from_fields`].
+    /// [`Date::try_new`] and [`Date::try_from_fields`].
     ///
     /// Returns a leap month iff [`Self::leap_status`] is [`LeapStatus::Leap`].
     ///
-    /// [`Date::try_from_codes`]: crate::Date::try_from_codes
+    /// [`Date::try_new`]: crate::Date::try_new
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub fn to_input(&self) -> Month {
         Month::new_unchecked(self.number, self.leap_status == LeapStatus::Leap)

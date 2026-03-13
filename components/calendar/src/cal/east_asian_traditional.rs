@@ -4,7 +4,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateAddError, DateError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError,
+    DateAddError, DateError, DateFromFieldsError, DateNewError, EcmaReferenceYearError,
     LunisolarDateError, MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -403,7 +403,7 @@ impl KoreanTraditional {
     /// Use [`Self::new`].
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn try_new_with_buffer_provider(
         _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -412,13 +412,13 @@ impl KoreanTraditional {
 
     /// Use [`Self::new`].
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn try_new_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
         Ok(Self::new())
     }
 
     /// Use [`Self::new`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn new_always_calculating() -> Self {
         Self::new()
     }
@@ -550,7 +550,7 @@ impl ChineseTraditional {
 
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn try_new_with_buffer_provider(
         _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -558,13 +558,13 @@ impl ChineseTraditional {
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn try_new_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
         Ok(Self::new())
     }
 
     /// Use [`Self::new()`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()`")]
     pub fn new_always_calculating() -> Self {
         Self::new()
     }
@@ -694,12 +694,12 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     type Year = types::CyclicYear;
     type DateCompatibilityError = R::DateCompatibilityError;
 
-    fn from_codes2(
+    fn new_date(
         &self,
         year: types::YearInput,
         month: types::Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateFromCodesError> {
+    ) -> Result<Self::DateInner, DateNewError> {
         ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(ChineseDateInner)
     }
 

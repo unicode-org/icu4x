@@ -59,12 +59,16 @@ impl SourceDataProvider {
                         .map(|(key, data)| {
                             let mut data = data.clone();
                             let date = data.start.or(data.end).unwrap();
-                            let era_year = Date::try_new_gregorian(date.year, date.month, date.day)
-                                .unwrap()
-                                .to_calendar(icu::calendar::Ref(&any_cal))
-                                .year()
-                                .era()
-                                .unwrap();
+                            let era_year = Date::try_new_gregorian(
+                                date.year + data.offset,
+                                date.month,
+                                date.day,
+                            )
+                            .unwrap()
+                            .to_calendar(icu::calendar::Ref(&any_cal))
+                            .year()
+                            .era()
+                            .unwrap();
                             if era_year.era != data.code {
                                 log::warn!("mismatched era code {era_year:?} - {data:?}");
                             }
@@ -90,6 +94,13 @@ fn process_era_dates_map(
         .unwrap()
         .eras
         .retain(|_, era| !era.code.is_empty());
+    // Meiji needs an offset of 5
+    data.get_mut(DatagenCalendar::Japanese.cldr_name())
+        .unwrap()
+        .eras
+        .get_mut("232")
+        .unwrap()
+        .offset = 5;
     data
 }
 
@@ -126,7 +137,7 @@ pub fn ethiopic_and_ethioaa_are_compatible() {
     use icu::calendar::cal::{Ethiopian, EthiopianEraStyle};
     use icu::calendar::types::{Month, YearInput};
     assert_eq!(
-        Date::try_from_codes(
+        Date::try_new(
             YearInput::EraYear("aa", 1),
             Month::new(1),
             1,
@@ -135,7 +146,7 @@ pub fn ethiopic_and_ethioaa_are_compatible() {
         .unwrap()
         .era_year()
         .era_index,
-        Date::try_from_codes(
+        Date::try_new(
             YearInput::EraYear("aa", 1),
             Month::new(1),
             1,
@@ -184,13 +195,8 @@ fn test_calendar_eras() {
         for (idx, (_, era)) in data.eras.iter().enumerate() {
             let (in_era_iso, not_in_era_iso) = match (era.start, era.end) {
                 (Some(start), None) => {
-                    let year = if era.code == "meiji" {
-                        // Meiji starts roundtripping only after Meiji 6
-                        start.year + 5
-                    } else {
-                        start.year
-                    };
-                    let start = Date::try_new_iso(year, start.month, start.day).unwrap();
+                    let start =
+                        Date::try_new_iso(start.year + era.offset, start.month, start.day).unwrap();
                     (start, Date::from_rata_die(start.to_rata_die() - 1, Iso))
                 }
                 (None, Some(end)) => {
@@ -211,7 +217,7 @@ fn test_calendar_eras() {
                 .filter(|s| !s.is_empty())
             {
                 assert_eq!(
-                    Date::try_from_codes(
+                    Date::try_new(
                         YearInput::EraYear(era, in_era.year().era().unwrap().year),
                         in_era.month().to_input(),
                         in_era.day_of_month().0,
@@ -236,15 +242,10 @@ fn test_calendar_eras() {
                 assert_eq!(era_year.era, era.code);
             }
 
-            // Check that the start/end date uses year 1, and minimal/maximal month/day
-            let expected_year = if era.code == "meiji" {
-                // We started at Meiji 6 for Meiji only, above
-                6
-            } else {
-                1
-            };
+            // Check that the start/end date uses year 1 + offset, and minimal/maximal month/day
             assert_eq!(
-                era_year.year, expected_year,
+                era_year.year,
+                1 + era.offset,
                 "Didn't get correct year for {in_era:?}"
             );
 

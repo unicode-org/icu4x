@@ -7,9 +7,9 @@
 use crate::types::MonthCode;
 use displaydoc::Display;
 
-/// Error type for date creation via [`Date::try_from_codes`].
+/// Error type for date creation via [`Date::try_new`].
 ///
-/// [`Date::try_from_codes`]: crate::Date::try_from_codes
+/// [`Date::try_new`]: crate::Date::try_new
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum DateError {
@@ -613,9 +613,9 @@ mod unstable {
     impl core::error::Error for MismatchedCalendarError {}
 }
 
-/// Error type for date creation via [`Date::try_from_codes`].
+/// Error type for date creation via [`Date::try_new`].
 ///
-/// [`Date::try_from_codes`]: crate::Date::try_from_codes
+/// [`Date::try_new`]: crate::Date::try_new
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -627,7 +627,7 @@ mod unstable {
 /// ✨ *Enabled with the `unstable` Cargo feature.*
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
-pub enum DateFromCodesError {
+pub enum DateNewError {
     /// The day is invalid for the given month.
     #[displaydoc("Invalid day for month, max is {max}")]
     InvalidDay {
@@ -649,9 +649,9 @@ pub enum DateFromCodesError {
     InvalidYear,
 }
 
-impl core::error::Error for DateFromCodesError {}
+impl core::error::Error for DateNewError {}
 
-impl From<UnknownEraError> for DateFromCodesError {
+impl From<UnknownEraError> for DateNewError {
     fn from(_: UnknownEraError) -> Self {
         Self::InvalidEra
     }

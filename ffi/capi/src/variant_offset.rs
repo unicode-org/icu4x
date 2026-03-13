@@ -181,16 +181,6 @@ pub mod ffi {
             icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_from_time_zone_and_name_timestamp,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso,
-            FnInStruct,
-            hidden
-        )]
-        #[diplomat::rust_link(
-            icu::time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset,
-            FnInStruct,
-            hidden
-        )]
         pub fn compute_offsets_from_time_zone_and_timestamp(
             &self,
             time_zone: &TimeZone,
