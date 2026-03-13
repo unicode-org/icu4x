@@ -6,7 +6,7 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::duration::DateDuration;
 use crate::error::{
-    range_check, DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError,
+    range_check, DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError,
     LunisolarDateError, MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit};
@@ -320,21 +320,21 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         month: Month,
         day: u8,
         calendar: &C,
-    ) -> Result<Self, DateFromCodesError> {
+    ) -> Result<Self, DateNewError> {
         let extended_year = match year {
             types::YearInput::Extended(y) => {
                 if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
-                    return Err(DateFromCodesError::InvalidYear);
+                    return Err(DateNewError::InvalidYear);
                 }
                 y
             }
             types::YearInput::EraYear(era, y) => {
                 if !CONSTRUCTOR_YEAR_RANGE.contains(&y) {
-                    return Err(DateFromCodesError::InvalidYear);
+                    return Err(DateNewError::InvalidYear);
                 }
                 calendar
                     .extended_year_from_era_year_unchecked(era.as_bytes(), y)
-                    .map_err(|_| DateFromCodesError::InvalidEra)?
+                    .map_err(|_| DateNewError::InvalidEra)?
             }
         };
         let year = calendar.year_info_from_extended(extended_year);
@@ -342,13 +342,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let month = calendar
             .ordinal_from_month(year, month, Default::default())
             .map_err(|e| match e {
-                MonthError::NotInCalendar => DateFromCodesError::MonthNotInCalendar,
-                MonthError::NotInYear => DateFromCodesError::MonthNotInYear,
+                MonthError::NotInCalendar => DateNewError::MonthNotInCalendar,
+                MonthError::NotInYear => DateNewError::MonthNotInYear,
             })?;
 
         let max_day = C::days_in_provided_month(year, month);
         if day < 1 || day > max_day {
-            return Err(DateFromCodesError::InvalidDay { max: max_day });
+            return Err(DateNewError::InvalidDay { max: max_day });
         }
 
         // date is in the valid year range, and therefore in the valid RD range

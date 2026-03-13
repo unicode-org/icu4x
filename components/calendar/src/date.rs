@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::VALID_RD_RANGE;
-use crate::error::{DateAddError, DateError, DateFromCodesError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromFieldsError, DateNewError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
@@ -98,7 +98,7 @@ impl<C> Deref for Ref<'_, C> {
 ///
 /// Options to create one of these:
 ///
-/// 1. Generically from fields via [`Self::try_from_fields()`] or [`Self::try_from_codes()`]
+/// 1. Generically from fields via [`Self::try_from_fields()`] or [`Self::try_new()`]
 /// 2. With calendar-specific constructors, e.g. [`Self::try_new_chinese_traditional()`]
 /// 3. From a RFC 9557 string via [`Self::try_from_str()`]
 /// 4. From a [`RataDie`] via [`Self::from_rata_die()`]
@@ -147,7 +147,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// This function accepts years in the range `-9999..=9999`.
     #[inline]
-    #[deprecated(since = "2.2.0", note = "use `Date::try_from_codes`")]
+    #[deprecated(since = "2.2.0", note = "use `Date::try_new`")]
     pub fn try_new_from_codes(
         era: Option<&str>,
         year: i32,
@@ -175,7 +175,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::Iso;
     ///
     /// // Example: creation of ISO date from integers.
-    /// let date_iso = Date::try_from_codes(YearInput::Extended(1970), Month::new(1), 2, Iso)
+    /// let date_iso = Date::try_new(1970.into(), Month::new(1), 2, Iso)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.era_year().year, 1970);
@@ -183,13 +183,13 @@ impl<A: AsCalendar> Date<A> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     #[inline]
-    pub fn try_from_codes(
+    pub fn try_new(
         year: types::YearInput,
         month: types::Month,
         day: u8,
         calendar: A,
-    ) -> Result<Self, DateFromCodesError> {
-        let inner = calendar.as_calendar().from_codes2(year, month, day)?;
+    ) -> Result<Self, DateNewError> {
+        let inner = calendar.as_calendar().new_date(year, month, day)?;
         Ok(Date::from_raw(inner, calendar))
     }
 
@@ -712,7 +712,7 @@ mod tests {
     use super::*;
     use crate::{
         cal::{Buddhist, Hebrew},
-        types::Weekday,
+        types::{Month, Weekday},
         Gregorian,
     };
 
@@ -776,14 +776,13 @@ mod tests {
     }
 
     #[test]
-    fn test_try_from_codes() {
+    fn test_try_new() {
         use crate::cal::Japanese;
-        use crate::types::{Month, YearInput};
-        let date =
-            Date::try_from_codes(YearInput::Extended(2025), Month::new(1), 1, Gregorian).unwrap();
+        use crate::types::YearInput;
+        let date = Date::try_new(2025.into(), Month::new(1), 1, Gregorian).unwrap();
         assert_eq!(date, Date::try_new_gregorian(2025, 1, 1).unwrap());
 
-        let date2 = Date::try_from_codes(
+        let date2 = Date::try_new(
             YearInput::EraYear("reiwa", 7),
             Month::new(1),
             1,
