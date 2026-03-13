@@ -523,18 +523,18 @@ pub struct Month {
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
 pub enum LeapStatus {
-    /// Not a leap month.
+    /// Not a leap month, aka a "normal", "common", or "standard" month.
     Normal,
     /// A leap month.
     Leap,
-    /// A standard month that has a corresponding leap month
+    /// A normal month that has a corresponding leap month
     /// in the same year.
     ///
     /// "Corresponding" is used in a formatting sense here:
     /// even though the Hebrew "Adar I" is `M05L`, the
     /// `LeapBase` will be `M06` (not `M05`), so formatting
     /// knows to produce "Adar II".
-    LeapBase,
+    Base,
 }
 
 impl Month {
