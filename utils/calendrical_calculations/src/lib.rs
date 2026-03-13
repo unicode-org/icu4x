@@ -37,7 +37,7 @@ pub mod chinese_based;
 /// The Coptic calendar
 pub mod coptic;
 /// Error handling
-mod error;
+pub mod error;
 /// The Ethiopian calendar
 pub mod ethiopian;
 /// The Gregorian calendar
