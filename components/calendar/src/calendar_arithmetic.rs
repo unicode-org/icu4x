@@ -967,7 +967,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // values, we use a stateful implementation. It caches intermediate
         // produced by NonISODateSurpasses and reuses them in subsequent calls,
         // to avoid unnecessary recalculations.
-        let mut surpasses_checker: SurpassesChecker<'_, C> = SurpassesChecker::new(self, other, sign, cal);
+        let mut surpasses_checker: SurpassesChecker<'_, C> =
+            SurpassesChecker::new(self, other, sign, cal);
 
         // Preparation for non-specced optimization:
         // We don't want to spend time incrementally bumping it up one year
