@@ -36,7 +36,7 @@ impl Ymd {
                 fields.ordinal_month = Some(self.month);
             }
             MonthInterpretation::CodeNormal => {
-                fields.month = Some(self.month.into());
+                fields.month = Some(Month::new(self.month));
             }
             MonthInterpretation::CodeLeap => {
                 fields.month = Some(Month::leap(self.month));

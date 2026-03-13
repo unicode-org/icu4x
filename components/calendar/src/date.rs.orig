@@ -175,7 +175,13 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::Iso;
     ///
     /// // Example: creation of ISO date from integers.
-    /// let date_iso = Date::try_new(1970.into(), Month::new(1), 2, Iso)
+<<<<<<< HEAD
+    /// let date_iso = Date::try_new(1970.into(), 1.into(), 2, Iso)
+||||||| 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
+    /// let date_iso = Date::try_new(YearInput::Extended(1970), 1.into(), 2, Iso)
+=======
+    /// let date_iso = Date::try_new(YearInput::Extended(1970), Month::new(1), 2, Iso)
+>>>>>>> parent of 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.era_year().year, 1970);
@@ -712,7 +718,7 @@ mod tests {
     use super::*;
     use crate::{
         cal::{Buddhist, Hebrew},
-        types::{Month, Weekday},
+        types::Weekday,
         Gregorian,
     };
 
@@ -778,8 +784,16 @@ mod tests {
     #[test]
     fn test_try_new() {
         use crate::cal::Japanese;
+<<<<<<< HEAD
         use crate::types::YearInput;
-        let date = Date::try_new(2025.into(), Month::new(1), 1, Gregorian).unwrap();
+        let date = Date::try_new(2025.into(), 1.into(), 1, Gregorian).unwrap();
+||||||| 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
+        use crate::types::{Month, YearInput};
+        let date = Date::try_new(YearInput::Extended(2025), 1.into(), 1, Gregorian).unwrap();
+=======
+        use crate::types::{Month, YearInput};
+        let date = Date::try_new(YearInput::Extended(2025), Month::new(1), 1, Gregorian).unwrap();
+>>>>>>> parent of 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
         assert_eq!(date, Date::try_new_gregorian(2025, 1, 1).unwrap());
 
         let date2 = Date::try_new(

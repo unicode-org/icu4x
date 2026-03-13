@@ -9,7 +9,7 @@ use crate::error::DateFromFieldsError;
 use crate::options::{
     DateAddOptions, DateDifferenceOptions, DateDurationUnit, DateFromFieldsOptions, Overflow,
 };
-use crate::types::{DateFields, Month, YearInput};
+use crate::types::{DateFields, YearInput};
 use crate::Date;
 use calendrical_calculations::gregorian::fixed_from_gregorian;
 use calendrical_calculations::rata_die::RataDie;
@@ -326,45 +326,97 @@ super::test_all_cals!(
 super::test_all_cals!(
     fn check_from_codes_extrema<C: Calendar + Copy>(cal: C) {
         // Success
+<<<<<<< HEAD
+        Date::try_new((*CONSTRUCTOR_YEAR_RANGE.start()).into(), 1.into(), 1, cal).unwrap();
+        Date::try_new((*CONSTRUCTOR_YEAR_RANGE.end()).into(), 1.into(), 1, cal).unwrap();
+||||||| 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
         Date::try_new(
-            (*CONSTRUCTOR_YEAR_RANGE.start()).into(),
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start()),
+            1.into(),
+            1,
+            cal,
+        )
+        .unwrap();
+        Date::try_new(
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end()),
+            1.into(),
+            1,
+            cal,
+        )
+        .unwrap();
+=======
+        Date::try_new(
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start()),
             Month::new(1),
             1,
             cal,
         )
         .unwrap();
         Date::try_new(
-            (*CONSTRUCTOR_YEAR_RANGE.end()).into(),
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end()),
             Month::new(1),
             1,
             cal,
         )
         .unwrap();
+>>>>>>> parent of 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
 
         // Error
         Date::try_new(
+<<<<<<< HEAD
             (*CONSTRUCTOR_YEAR_RANGE.start() - 1).into(),
+            1.into(),
+||||||| 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start() - 1),
+            1.into(),
+            1,
+            cal,
+        )
+        .unwrap_err();
+        Date::try_new(
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end() + 1),
+            1.into(),
+=======
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start() - 1),
             Month::new(1),
             1,
             cal,
         )
         .unwrap_err();
         Date::try_new(
-            (*CONSTRUCTOR_YEAR_RANGE.end() + 1).into(),
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end() + 1),
             Month::new(1),
+>>>>>>> parent of 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
             1,
             cal,
         )
         .unwrap_err();
+        Date::try_new((*CONSTRUCTOR_YEAR_RANGE.end() + 1).into(), 1.into(), 1, cal).unwrap_err();
 
+<<<<<<< HEAD
+        if let crate::types::YearInfo::Era(y) =
+            Date::try_new((*CONSTRUCTOR_YEAR_RANGE.start()).into(), 1.into(), 1, cal)
+                .unwrap()
+                .year()
+||||||| 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
         if let crate::types::YearInfo::Era(y) = Date::try_new(
-            (*CONSTRUCTOR_YEAR_RANGE.start()).into(),
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start()),
+            1.into(),
+            1,
+            cal,
+        )
+        .unwrap()
+        .year()
+=======
+        if let crate::types::YearInfo::Era(y) = Date::try_new(
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.start()),
             Month::new(1),
             1,
             cal,
         )
         .unwrap()
         .year()
+>>>>>>> parent of 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
         {
             Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
@@ -382,14 +434,30 @@ super::test_all_cals!(
             .unwrap_err();
         }
 
+<<<<<<< HEAD
+        if let crate::types::YearInfo::Era(y) =
+            Date::try_new((*CONSTRUCTOR_YEAR_RANGE.end()).into(), 1.into(), 1, cal)
+                .unwrap()
+                .year()
+||||||| 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
         if let crate::types::YearInfo::Era(y) = Date::try_new(
-            (*CONSTRUCTOR_YEAR_RANGE.end()).into(),
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end()),
+            1.into(),
+            1,
+            cal,
+        )
+        .unwrap()
+        .year()
+=======
+        if let crate::types::YearInfo::Era(y) = Date::try_new(
+            YearInput::Extended(*CONSTRUCTOR_YEAR_RANGE.end()),
             Month::new(1),
             1,
             cal,
         )
         .unwrap()
         .year()
+>>>>>>> parent of 8433fc5a55 (agent-driven: Use month.into() instead of Month::new())
         {
             Date::try_new(
                 YearInput::EraYear(&y.era, *CONSTRUCTOR_YEAR_RANGE.start() - 1),
