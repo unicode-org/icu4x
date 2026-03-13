@@ -178,6 +178,9 @@ impl<A: AsCalendar> Date<A> {
     /// let date_iso = Date::try_from_codes(YearInput::Extended(1970), Month::new(1), 2, Iso)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
+    /// // Shorthand using From impls:
+    /// assert_eq!(date_iso, Date::try_from_codes(1970.into(), 1.into(), 2, Iso).unwrap());
+    ///
     /// assert_eq!(date_iso.era_year().year, 1970);
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
