@@ -477,6 +477,11 @@ fn gen_time_components(
     if check_for_field(attributes, "h0") {
         filtered_components.hour_cycle = Some(HourCycle::H23);
     }
+    // Select timezone if requested (for Hv/hv skeleton utilization)
+    if check_for_field(attributes, "v") {
+        filtered_components.time_zone_name =
+            Some(components::TimeZoneName::ShortGeneric);
+    }
     filtered_components
 }
 
