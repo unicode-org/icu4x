@@ -247,6 +247,18 @@ impl Predictor {
         }
         breakpoints
     }
+
+    pub(crate) fn predict_thai_breakpoints(&self, sentence: &str) -> Vec<usize> {
+        let mut breakpoints = vec![0];
+        let mut offset = 0;
+        for (&score, ch) in self.predict_thai(sentence).iter().zip(sentence.chars()) {
+            offset += ch.len_utf8();
+            if score > 0 {
+                breakpoints.push(offset);
+            }
+        }
+        breakpoints
+    }
 }
 
 #[cfg(test)]
