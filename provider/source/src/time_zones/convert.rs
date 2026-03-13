@@ -356,7 +356,7 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                 .into_keys()
                 .map(|ps| {
                     let convert = |&(t, os, mz)| {
-                        let t2 = ZoneNameTimestamp::from_zoned_date_time_iso(t);
+                        let t2 = ZoneNameTimestamp::from_zoned_date_time(t);
                         if t2.to_zoned_date_time_iso() != t {
                             log::warn!("{t:?} does not round-trip through ZoneNameTimestamp");
                         }

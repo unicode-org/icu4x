@@ -265,12 +265,7 @@ impl GetField<Option<UtcOffset>> for time::OffsetDateTime {
 impl GetField<ZoneNameTimestamp> for time::OffsetDateTime {
     #[inline]
     fn get_field(&self) -> ZoneNameTimestamp {
-        ZoneNameTimestamp::from_zoned_date_time_iso(
-            ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-                self.unix_timestamp(),
-                UtcOffset::zero(),
-            ),
-        )
+        ZoneNameTimestamp::from_epoch_seconds(self.unix_timestamp())
     }
 }
 

@@ -5,7 +5,7 @@
 use core::fmt;
 
 use icu_calendar::types::RataDie;
-use icu_calendar::Iso;
+use icu_calendar::{AsCalendar, Iso};
 use zerovec::ule::AsULE;
 
 use crate::Time;
@@ -84,7 +84,7 @@ impl ZoneNameTimestamp {
     ///     zone: UtcOffset::zero(),
     /// };
     ///
-    /// let zone_name_timestamp = ZoneNameTimestamp::from_zoned_date_time_iso(zoned_date_time);
+    /// let zone_name_timestamp = ZoneNameTimestamp::from_zoned_date_time(zoned_date_time);
     ///
     /// let recovered_zoned_date_time = zone_name_timestamp.to_zoned_date_time_iso();
     ///
@@ -106,12 +106,20 @@ impl ZoneNameTimestamp {
     }
 
     /// Creates an instance of [`ZoneNameTimestamp`] from a [`ZonedDateTime`] with an explicit [`UtcOffset`].
-    pub fn from_zoned_date_time_iso(zoned_date_time: ZonedDateTime<Iso, UtcOffset>) -> Self {
+    pub fn from_zoned_date_time<C: AsCalendar>(
+        zoned_date_time: ZonedDateTime<C, UtcOffset>,
+    ) -> Self {
         Self::from_rd_time_zone(
             zoned_date_time.date.to_rata_die(),
             zoned_date_time.time,
             zoned_date_time.zone,
         )
+    }
+
+    /// Use [`Self::from_zoned_date_time`].
+    #[deprecated(since = "2.2.0", note = "use `Self::from_zoned_date_time`")]
+    pub fn from_zoned_date_time_iso(zoned_date_time: ZonedDateTime<Iso, UtcOffset>) -> Self {
+        Self::from_zoned_date_time(zoned_date_time)
     }
 
     pub(crate) fn from_rd_time_zone(rd: RataDie, time: Time, zone: UtcOffset) -> Self {
@@ -186,7 +194,7 @@ impl ZoneNameTimestamp {
         note = "implicitly interprets the DateTime as UTC. Use `from_zoned_date_time_iso` instead."
     )]
     pub fn from_date_time_iso(DateTime { date, time }: DateTime<Iso>) -> Self {
-        Self::from_zoned_date_time_iso(ZonedDateTime {
+        Self::from_zoned_date_time(ZonedDateTime {
             date,
             time,
             zone: UtcOffset::zero(),
@@ -280,7 +288,7 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
             let day = parts[8..10].parse::<u8>().map_err(e1)?;
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
-            return Ok(Self::from_zoned_date_time_iso(ZonedDateTime {
+            return Ok(Self::from_zoned_date_time(ZonedDateTime {
                 date: icu_calendar::Date::try_new_iso(year, month, day).map_err(e2)?,
                 time: Time::try_new(hour, minute, 0, 0).map_err(e3)?,
                 zone: UtcOffset::zero(),
@@ -360,7 +368,7 @@ mod test {
                 output: "2025-04-30T15:15Z",
             },
         ] {
-            let znt = ZoneNameTimestamp::from_zoned_date_time_iso(
+            let znt = ZoneNameTimestamp::from_zoned_date_time(
                 ZonedDateTime::try_offset_only_from_str(test_case.input, Iso).unwrap(),
             );
             let actual = znt.to_zoned_date_time_iso();
