@@ -640,6 +640,19 @@ impl Month {
     }
 }
 
+impl From<u8> for Month {
+    #[inline]
+    fn from(number: u8) -> Self {
+        Self::new(number)
+    }
+}
+
+#[test]
+fn test_month_from_u8() {
+    assert_eq!(Month::from(1), Month::new(1));
+    assert_eq!(Month::from(100), Month::new(100));
+}
+
 #[test]
 fn test_month_cmp() {
     let months_in_order = [
