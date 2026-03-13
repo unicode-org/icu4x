@@ -25,6 +25,7 @@ Fully filled in up to 30c187f4b7
         - Optimize Hebrew and Julian calendars (unicode-org#7213)
         - Optimize day/week diffing to use RDs (unicode-org#7308)
         - Optimize `until` month and day calculation performance
+        - Speed up `until` year and month field handling by 75% on average by optimizing `surpasses` calculation (unicode-org#7745)
     - `icu_casemap`
         - General changes only
     - `icu_collections`
