@@ -1078,7 +1078,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             candidate_days += sign;
         }
 
-        // // 12. Return ! CreateDateDurationRecord(years, months, weeks, days).
+        // 12. Return ! CreateDateDurationRecord(years, months, weeks, days).
         DateDuration::from_signed_ymwd(years, months, weeks, days)
     }
 }
