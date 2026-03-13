@@ -140,6 +140,31 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             .rev()
             .collect::<Vec<&str>>(),
     );
+
+    let content_secondary: (&str, Vec<&str>) = (
+        "TestNames_Secondary",
+        include_str!("data/TestNames_Secondary.txt")
+            .lines()
+            .filter(|&s| !s.starts_with('#') && !s.trim().is_empty())
+            .rev()
+            .collect(),
+    );
+    let content_tertiary: (&str, Vec<&str>) = (
+        "TestNames_Tertiary",
+        include_str!("data/TestNames_Tertiary.txt")
+            .lines()
+            .filter(|&s| !s.starts_with('#') && !s.trim().is_empty())
+            .rev()
+            .collect(),
+    );
+    let content_quaternary: (&str, Vec<&str>) = (
+        "TestNames_Quaternary",
+        include_str!("data/TestNames_Quaternary.txt")
+            .lines()
+            .filter(|&s| !s.starts_with('#') && !s.trim().is_empty())
+            .rev()
+            .collect(),
+    );
     let content_polish: (&str, Vec<&str>) = (
         "TestNames_Polish",
         include_str!("data/TestNames_Polish.txt")
@@ -158,64 +183,74 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
     // In particular, to get full Japanese standard behavior, you need the identical strength.
     // Furthermore, CLDR used to default to quaternary for Japanese but now defaults to tertiary
     // as for every other language for performance reasons.
-    let all_strength = [
+    let _all_strength = [
         Strength::Primary,
         Strength::Secondary,
         Strength::Tertiary,
         Strength::Quaternary,
         Strength::Identical,
     ];
+    let tertiary_only = [Strength::Tertiary];
+    let secondary_only = [Strength::Secondary];
+    let quaternary_only = [Strength::Quaternary];
     let performance_parameters = [
         (
             locale!("en-US"),
             vec![&content_latin, &content_photos],
-            &all_strength,
+            &tertiary_only,
         ),
         (
             locale!("da-DK"),
             vec![&content_latin, &content_photos],
-            &all_strength,
+            &tertiary_only,
         ),
-        (locale!("fr-CA"), vec![&content_latin], &all_strength),
+        (locale!("fr-CA"), vec![&content_latin], &tertiary_only),
         (
             locale!("ja-JP"),
             vec![&content_latin, &content_jp_h, &content_jp_k, &content_asian],
-            &all_strength,
+            &tertiary_only,
         ),
         (
             locale!("zh-u-co-pinyin"),
             vec![&content_latin, &content_chinese],
-            &all_strength,
+            &tertiary_only,
         ), // zh_CN
         (
             locale!("zh-u-co-stroke"),
             vec![&content_latin, &content_chinese],
-            &all_strength,
+            &tertiary_only,
         ), // zh_TW
         (
             locale!("ru-RU"),
             vec![&content_latin, &content_russian],
-            &all_strength,
+            &tertiary_only,
         ),
         (
             locale!("sv"),
             vec![&content_latin, &content_swedish],
-            &all_strength,
+            &tertiary_only,
         ),
         (
             locale!("th"),
             vec![&content_latin, &content_thai],
-            &all_strength,
+            &tertiary_only,
         ),
         (
             locale!("ko-KR"),
             vec![&content_latin, &content_korean],
-            &all_strength,
+            &tertiary_only,
         ),
         (
             locale!("pl"),
             vec![&content_latin, &content_polish],
-            &all_strength,
+            &tertiary_only,
+        ),
+        (locale!("en-US"), vec![&content_secondary], &secondary_only),
+        (locale!("en-US"), vec![&content_tertiary], &tertiary_only),
+        (
+            locale!("en-US"),
+            vec![&content_quaternary],
+            &quaternary_only,
         ),
     ];
     for perf_parameter in performance_parameters {
