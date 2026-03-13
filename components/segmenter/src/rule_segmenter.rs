@@ -19,7 +19,10 @@ use utf8_iter::Utf8CharIndices;
 /// </div>
 pub trait RuleBreakType: crate::private::Sealed + Sized {
     /// The iterator over characters.
-    type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
+    type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)>
+        + DoubleEndedIterator
+        + Clone
+        + core::fmt::Debug;
 
     /// The character type.
     type CharType: Copy + Into<u32> + core::fmt::Debug;
@@ -50,6 +53,7 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     pub(crate) data: &'data RuleBreakData<'data>,
     pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     pub(crate) boundary_property: u8,
+    pub(crate) right_boundary_property: Option<u8>,
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
     // Should return None if there is no complex language handling
     pub(crate) handle_complex_language:
@@ -206,6 +210,63 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
     }
 }
 
+impl<Y: RuleBreakType> DoubleEndedIterator for RuleBreakIterator<'_, '_, Y> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        if let Some(last_result) = self.result_cache.pop() {
+            return Some(last_result);
+        }
+        let mut right_prop = self
+            .right_boundary_property
+            .unwrap_or(self.data.eot_property);
+
+        while let Some((pos, code_point)) = self.iter.next_back() {
+            let left_prop = self.get_break_property(code_point);
+
+            // calculate the effective state of the left token
+            let (effective_left_prop, backtrack_len) = self.get_break_property_with_state(Some(code_point));
+            let state = self.get_break_state_from_table(effective_left_prop, right_prop);
+
+            match state {
+                BreakState::Keep => {
+                    right_prop = left_prop;
+                    continue;
+                }
+                BreakState::Break => {
+                    self.right_boundary_property = Some(left_prop);
+                    let len = Y::char_len(code_point);
+                    return Some(pos + len);
+                }
+                BreakState::NoMatch => {
+                    self.right_boundary_property = Some(left_prop);
+                    let len = Y::char_len(code_point);
+                    self.result_cache.push(pos + len - backtrack_len);
+                    return Some(pos + len);
+                }
+                BreakState::Index(_) | BreakState::Intermediate(_) => {
+                    right_prop = left_prop;
+                    continue;
+                }
+            }
+        }
+
+        if self.right_boundary_property == Some(255) {
+            return None;
+        }
+
+        let sot_prop = self.data.sot_property;
+        if matches!(
+            self.get_break_state_from_table(sot_prop, right_prop),
+            BreakState::Break | BreakState::NoMatch
+        ) {
+            self.right_boundary_property = Some(255);
+            return Some(0);
+        }
+
+        self.right_boundary_property = Some(255);
+        None
+    }
+}
+
 impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
@@ -271,6 +332,50 @@ impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
     /// If segmenter isn't word, return false
     pub fn is_word_like(&self) -> bool {
         self.word_type().is_word_like()
+    }
+
+    fn get_break_property_with_state(
+        &self,
+        right_token_codepoint: Option<Y::CharType>,
+    ) -> (u8, usize) {
+        let mut iter = self.iter.clone();
+        let mut stack: alloc::vec::Vec<(u8, usize)> = alloc::vec::Vec::new();
+
+        if let Some(cp) = right_token_codepoint {
+             stack.push((self.get_break_property(cp), Y::char_len(cp)));
+        }
+
+        // scan back to find a safe starting point
+        loop {
+            let Some((_, code_point)) = iter.next_back() else {
+                 // reached Start of Text
+                 let mut state = self.data.sot_property;
+                 let mut last_marker_offset = 0;
+
+                 let total_len: usize = stack.iter().map(|(_, l)| l).sum();
+                 let mut processed_len = 0;
+
+                 for (prop, len) in stack.iter().rev() {
+                     if state <= self.data.last_codepoint_property {
+                         last_marker_offset = total_len - processed_len;
+                     }
+
+                     let res = self.get_break_state_from_table(state, *prop);
+                     match res {
+                          BreakState::Index(i) | BreakState::Intermediate(i) => state = i,
+                          BreakState::Keep => state = *prop,
+                          _ => state = *prop,
+                     }
+                     processed_len += len;
+                 }
+                 
+                 return (state, last_marker_offset);
+            };
+
+             let prop = self.get_break_property(code_point);
+             let len = Y::char_len(code_point);
+             stack.push((prop, len));
+        }
     }
 }
 

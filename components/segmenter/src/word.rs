@@ -638,6 +638,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             data: self.data,
             complex: Some(self.complex),
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: self.locale_override,
             handle_complex_language: Utf8::word_handle_complex_language,
         })
@@ -660,6 +661,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             data: self.data,
             complex: Some(self.complex),
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: self.locale_override,
             handle_complex_language: PotentiallyIllFormedUtf8::word_handle_complex_language,
         })
@@ -677,6 +679,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             data: self.data,
             complex: Some(self.complex),
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: self.locale_override,
             handle_complex_language: Latin1::word_handle_complex_language,
         })
@@ -694,6 +697,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             data: self.data,
             complex: Some(self.complex),
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: self.locale_override,
             handle_complex_language: Utf16::word_handle_complex_language,
         })

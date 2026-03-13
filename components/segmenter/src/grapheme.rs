@@ -174,6 +174,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             data: self.data,
             complex: None,
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: None,
             handle_complex_language: empty_handle_complex_language,
         })
@@ -195,6 +196,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             data: self.data,
             complex: None,
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: None,
             handle_complex_language: empty_handle_complex_language,
         })
@@ -214,6 +216,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             data: self.data,
             complex: None,
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: None,
             handle_complex_language: empty_handle_complex_language,
         })
@@ -234,6 +237,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             data: self.data,
             complex: None,
             boundary_property: 0,
+            right_boundary_property: None,
             locale_override: None,
             handle_complex_language: empty_handle_complex_language,
         })
