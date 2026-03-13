@@ -52,6 +52,7 @@ simple_logger = { workspace = true }
 ureq = { workspace = true }
 insta = "1.38.0"
 time = { workspace = true, features = ["large-dates"]}
+writeable = { workspace = true }
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
