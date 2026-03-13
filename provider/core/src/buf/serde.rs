@@ -232,6 +232,7 @@ where
 
 #[cfg(feature = "deserialize_json")]
 impl From<serde_json::error::Error> for DataError {
+    #[track_caller]
     fn from(e: serde_json::error::Error) -> Self {
         DataErrorKind::Deserialize
             .with_str_context("serde_json")
@@ -241,6 +242,7 @@ impl From<serde_json::error::Error> for DataError {
 
 #[cfg(feature = "deserialize_bincode_1")]
 impl From<bincode::Error> for DataError {
+    #[track_caller]
     fn from(e: bincode::Error) -> Self {
         DataErrorKind::Deserialize
             .with_str_context("bincode")
@@ -250,6 +252,7 @@ impl From<bincode::Error> for DataError {
 
 #[cfg(feature = "deserialize_postcard_1")]
 impl From<postcard::Error> for DataError {
+    #[track_caller]
     fn from(e: postcard::Error) -> Self {
         DataErrorKind::Deserialize
             .with_str_context("postcard")

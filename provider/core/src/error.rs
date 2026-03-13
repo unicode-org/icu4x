@@ -87,11 +87,14 @@ pub struct DataError {
 
     /// Whether this error was created in silent mode to not log.
     pub silent: bool,
+
+    /// The source location where the error was created.
+    pub location: core::panic::Location<'static>,
 }
 
 impl fmt::Display for DataError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "ICU4X data error")?;
+        write!(f, "ICU4X data error at {}", self.location)?;
         if self.kind != DataErrorKind::Custom {
             write!(f, ": {}", self.kind)?;
         }
@@ -110,35 +113,41 @@ impl DataErrorKind {
     ///
     /// If possible, you should attach context using a `with_` function.
     #[inline]
+    #[track_caller]
     pub const fn into_error(self) -> DataError {
         DataError {
             kind: self,
             marker: None,
             str_context: None,
             silent: false,
+            location: *core::panic::Location::caller(),
         }
     }
 
     /// Creates a [`DataError`] with a data marker context.
     #[inline]
+    #[track_caller]
     pub const fn with_marker(self, marker: DataMarkerInfo) -> DataError {
         self.into_error().with_marker(marker)
     }
 
     /// Creates a [`DataError`] with a string context.
     #[inline]
+    #[track_caller]
     pub const fn with_str_context(self, context: &'static str) -> DataError {
         self.into_error().with_str_context(context)
     }
 
     /// Creates a [`DataError`] with a type name context.
     #[inline]
+    #[track_caller]
     pub fn with_type_context<T>(self) -> DataError {
         self.into_error().with_type_context::<T>()
     }
 
     /// Creates a [`DataError`] with a request context.
     #[inline]
+    #[track_caller]
     pub fn with_req(self, marker: DataMarkerInfo, req: DataRequest) -> DataError {
         self.into_error().with_req(marker, req)
     }
@@ -147,12 +156,14 @@ impl DataErrorKind {
 impl DataError {
     /// Returns a new, empty [`DataError`] with kind Custom and a string error message.
     #[inline]
+    #[track_caller]
     pub const fn custom(str_context: &'static str) -> Self {
         Self {
             kind: DataErrorKind::Custom,
             marker: None,
             str_context: Some(str_context),
             silent: false,
+            location: *core::panic::Location::caller(),
         }
     }
 
@@ -164,6 +175,7 @@ impl DataError {
             marker: Some(marker.id),
             str_context: self.str_context,
             silent: self.silent,
+            location: self.location,
         }
     }
 
@@ -175,6 +187,7 @@ impl DataError {
             marker: self.marker,
             str_context: Some(context),
             silent: self.silent,
+            location: self.location,
         }
     }
 
@@ -241,12 +254,14 @@ impl DataError {
     }
 
     #[inline]
+    #[track_caller]
     pub(crate) fn for_type<T>() -> DataError {
         DataError {
             kind: DataErrorKind::Downcast(core::any::type_name::<T>()),
             marker: None,
             str_context: None,
             silent: false,
+            location: *core::panic::Location::caller(),
         }
     }
 }
@@ -255,6 +270,7 @@ impl core::error::Error for DataError {}
 
 #[cfg(feature = "std")]
 impl From<std::io::Error> for DataError {
+    #[track_caller]
     fn from(e: std::io::Error) -> Self {
         log::warn!("I/O error: {e}");
         DataErrorKind::Io(e.kind()).into_error()
