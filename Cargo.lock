@@ -1417,7 +1417,6 @@ dependencies = [
  "time",
  "tinystr",
  "ureq",
- "writeable",
  "zerovec",
 ]
 
