@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::displaynames::{ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use core::convert::TryFrom;
@@ -10,6 +11,7 @@ use icu::experimental::displaynames::provider::*;
 use icu::locale::{subtags::Variant, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::VarZeroCow;
 
 impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<VariantDisplayNamesV1>, DataError> {
@@ -29,27 +31,25 @@ impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<VariantDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .displaynames()
-            .list_locales()?
-            .filter(|locale| {
-                // The directory might exist without variants.json
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(locale, "variants.json")
-                    .unwrap_or_default()
-            })
-            .map(DataIdentifierCow::from_locale)
-            .collect())
-    }
-}
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesVariantLongV1,
+    cldr_serde::displaynames::variant::Resource,
+    "variants.json",
+    variants,
+    None::<&str>,
+    "VariantDisplayNames"
+);
 
-/// Substring used to denote alternative display names data variants for a given variant. For example: "FONUPA-alt-secondary".
-const ALT_SUBSTRING: &str = "-alt-";
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesVariantShortV1,
+    cldr_serde::displaynames::variant::Resource,
+    "variants.json",
+    variants,
+    Some(ALT_SHORT_SUBSTRING),
+    "VariantDisplayNames"
+);
+
+crate::displaynames::impl_displaynames_main_iter_v1!(VariantDisplayNamesV1, "variants.json");
 
 impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     type Error = ParseError;
@@ -100,5 +100,23 @@ mod tests {
                 .unwrap(),
             "Computer"
         );
+    }
+
+    #[test]
+    fn test_locale_names_variant_long() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesVariantLongV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("POSIX").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Computer");
     }
 }

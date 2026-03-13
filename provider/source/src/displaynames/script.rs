@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::displaynames::{ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use core::convert::TryFrom;
@@ -10,6 +11,7 @@ use icu::experimental::displaynames::provider::*;
 use icu::locale::{subtags::Script, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::VarZeroCow;
 
 impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDisplayNamesV1>, DataError> {
@@ -29,30 +31,25 @@ impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<ScriptDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .displaynames()
-            .list_locales()?
-            .filter(|locale| {
-                // The directory might exist without scripts.json
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(locale, "scripts.json")
-                    .unwrap_or_default()
-            })
-            .map(DataIdentifierCow::from_locale)
-            .collect())
-    }
-}
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesScriptLongV1,
+    cldr_serde::displaynames::script::Resource,
+    "scripts.json",
+    scripts,
+    None::<&str>,
+    "ScriptDisplayNames"
+);
 
-/// Substring used to denote alternative display names data variants for a given script. For example: "BA-alt-short", "TL-alt-variant".
-// TODO(#3316): Distinguish stand-alone ("Traditional Han") from default ("Traditional")
-const ALT_SUBSTRING: &str = "-alt-";
-/// Substring used to denote short display names data variants for a given script. For example: "az-alt-short".
-const ALT_SHORT_SUBSTRING: &str = "-alt-short";
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesScriptShortV1,
+    cldr_serde::displaynames::script::Resource,
+    "scripts.json",
+    scripts,
+    Some(ALT_SHORT_SUBSTRING),
+    "ScriptDisplayNames"
+);
+
+crate::displaynames::impl_displaynames_main_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
 
 impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
     type Error = ParseError;
@@ -131,5 +128,41 @@ mod tests {
                 .unwrap(),
             "UCAS"
         );
+    }
+
+    #[test]
+    fn test_locale_names_script_long() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesScriptLongV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("Latn").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Latin");
+    }
+
+    #[test]
+    fn test_locale_names_script_short() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesScriptShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("Cans").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "UCAS");
     }
 }

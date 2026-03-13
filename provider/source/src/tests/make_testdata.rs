@@ -86,6 +86,15 @@ fn make_testdata() {
             "001" | "419" | "FR" | "JP" | "CG" | "HK" | "ZA"
         )
     })
+    .with_marker_attributes_filter("locale_names_language", |attrs| {
+        matches!(attrs.as_str(), "fr" | "zh" | "en-GB" | "zh-Hant" | "de-CH")
+    })
+    .with_marker_attributes_filter("locale_names_script", |attrs| {
+        matches!(attrs.as_str(), "Latn" | "Hans" | "Hant" | "Cans")
+    })
+    .with_marker_attributes_filter("locale_names_variant", |attrs| {
+        matches!(attrs.as_str(), "POSIX")
+    })
     .with_marker_attributes_filter("numbering_system", |attrs| {
         matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")
     })

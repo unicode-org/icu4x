@@ -162,3 +162,84 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
 );
+
+icu_provider::data_marker!(
+    /// Data marker for short region display names.
+    LocaleNamesRegionShortV1,
+    "locale/names/region/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_region",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for language display names.
+    LocaleNamesLanguageLongV1,
+    "locale/names/language/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for short language display names.
+    LocaleNamesLanguageShortV1,
+    "locale/names/language/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for menu-short language display names.
+    LocaleNamesLanguageMenuShortV1,
+    "locale/names/language/menu/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for menu-long language display names.
+    LocaleNamesLanguageMenuLongV1,
+    "locale/names/language/menu/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for script display names.
+    LocaleNamesScriptLongV1,
+    "locale/names/script/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_script",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for short script display names.
+    LocaleNamesScriptShortV1,
+    "locale/names/script/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_script",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for variant display names.
+    LocaleNamesVariantLongV1,
+    "locale/names/variant/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_variant",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for short variant display names.
+    LocaleNamesVariantShortV1,
+    "locale/names/variant/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_variant",
+);
