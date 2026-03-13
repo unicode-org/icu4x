@@ -9,7 +9,6 @@ use icu::properties::provider::{names::*, *};
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
-use std::convert::TryFrom;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 
@@ -67,21 +66,38 @@ impl SourceDataProvider {
 }
 
 impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
-    pub(crate) fn build_codepointtrie<T: TrieValue>(
+    #[cfg_attr(
+        any(feature = "use_wasm", feature = "use_icu4c"),
+        allow(clippy::unnecessary_wraps)
+    )]
+    pub(crate) fn build_codepointtrie<T: TrieValue + Copy>(
         &self,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
-        let code_point_trie = CodePointTrie::try_from(&self.code_point_trie)
-            .map_err(|e| DataError::custom("CPT").with_display_context(&e))?;
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+            return Err(DataError::custom(
+                "icu_provider_source must be built with `use_icu4c` or `use_wasm` to build enumerated properties data",
+            ));
 
-        for (cpt_range, raw_range) in code_point_trie.iter_ranges().zip(&self.ranges) {
-            if (cpt_range.range, TrieValue::to_u32(cpt_range.value))
-                != (raw_range.a..=raw_range.b, raw_range.v as u32)
-            {
-                return Err(DataError::custom("precomputed CPT doesn't match ranges"));
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            use icu::collections::codepointtrie::TrieType;
+            use icu_codepointtrie_builder::CodePointTrieBuilder;
+
+            let mut builder = CodePointTrieBuilder::new(
+                T::try_from_u32(0).ok().unwrap(),
+                T::try_from_u32(0).ok().unwrap(),
+                TrieType::Small,
+            );
+
+            for range in &self.ranges {
+                builder.set_range_value(
+                    range.a..=range.b,
+                    T::try_from_u32(range.v as u32).ok().unwrap(),
+                );
             }
-        }
 
-        Ok(code_point_trie)
+            Ok(builder.build())
+        }
     }
 
     pub(crate) fn names_to_values(&self) -> BTreeMap<&str, u16> {
