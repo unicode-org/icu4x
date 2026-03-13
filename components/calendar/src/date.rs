@@ -423,12 +423,18 @@ impl<A: AsCalendar> Date<A> {
         Ok(self)
     }
 
-    /// Calculating the duration between `other - self`
+    /// Calculating the duration between `other - self`, counting from `self`
     ///
     /// Although this returns a [`Result`], with most fixed calendars, this operation can't fail.
     /// In such cases, the error type is [`Infallible`], and the inner value can be safely
     /// unwrapped using [`Result::into_ok()`], which is available in nightly Rust as of this
     /// writing. In stable Rust, the value can be unwrapped using [pattern matching].
+    ///
+    /// Note that `a.try_until_with_options(b, ..)` is not necessarily the same as
+    /// `-b.try_until_with_options(a, ..)`. `a.try_until_with_options(b, ..)`
+    /// computes a duration starting at `a` by adding years, months, sometimes weeks, and days in order
+    /// (based on the options) until it reaches `b`. So, `(Sep 30).until(Oct 31)` with `largest_unit = DateDurationUnit::Months`
+    /// will be a duration of 1 month and 1 day, but `(Oct 31).until(Sep 30)` will be a duration of -1 months.
     ///
     /// # Examples
     ///
@@ -444,6 +450,25 @@ impl<A: AsCalendar> Date<A> {
     /// let Ok(duration) = d1.try_until_with_options(&d2, options);
     ///
     /// assert_eq!(duration, DateDuration::for_days(2101));
+    /// ```
+    ///
+    /// Reversing the order of parameters does not necessarily produce the inverse result:
+    ///
+    /// ```
+    /// use icu::calendar::types::DateDuration;
+    /// use icu::calendar::options::{DateDifferenceOptions, DateDurationUnit};
+    /// use icu::calendar::Date;
+    ///
+    /// let d1 = Date::try_new_iso(2025, 9, 30).unwrap();
+    /// let d2 = Date::try_new_iso(2025, 10, 31).unwrap();
+    /// let mut options = DateDifferenceOptions::default();
+    /// options.largest_unit = Some(DateDurationUnit::Months);
+    ///
+    /// let Ok(duration_forward) = d1.try_until_with_options(&d2, options);
+    /// let Ok(duration_backward) = d2.try_until_with_options(&d1, options);
+    ///
+    /// assert_eq!(duration_forward, DateDuration {months: 1, days: 1, ..Default::default()});
+    /// assert_eq!(duration_backward, DateDuration::for_months(-1));
     /// ```
     ///
     /// [`Infallible`]: core::convert::Infallible
