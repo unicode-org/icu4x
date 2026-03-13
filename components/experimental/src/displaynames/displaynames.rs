@@ -25,7 +25,7 @@ define_preferences!(
 
 /// Lookup of the locale-specific display names by region code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
@@ -45,6 +45,78 @@ pub struct RegionDisplayNames {
     options: DisplayNamesOptions,
     region_data: DataPayload<RegionDisplayNamesV1>,
 }
+
+/// A localized region display name.
+#[derive(Debug)]
+pub struct RegionDisplayName {
+    payload: DataPayload<LocaleNamesRegionLongV1>,
+}
+
+impl RegionDisplayName {
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
+        /// Loads the long region display name for a given region and locale using compiled data.
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::{
+        ///     DisplayNamesPreferences, RegionDisplayName,
+        /// };
+        /// use icu::locale::{locale, subtags::region};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let mut prefs = DisplayNamesPreferences::default();
+        /// prefs.locale_preferences = (&locale!("en-001")).into();
+        /// let display_name = RegionDisplayName::try_new(prefs, region!("AE"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "United Arab Emirates");
+        /// ```
+        functions: [
+            try_new,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesRegionLongV1> + ?Sized>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        region: Region,
+    ) -> Result<Self, DataError> {
+        let locale = LocaleNamesRegionLongV1::make_locale(prefs.locale_preferences);
+        let payload = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str(region.as_str())
+                        .map_err(|_| DataError::custom("Invalid region"))?,
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+        Ok(Self { payload })
+    }
+}
+
+impl writeable::Writeable for RegionDisplayName {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        sink.write_str(self.payload.get())
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.payload.get().len())
+    }
+
+    fn write_to_string(&self) -> Cow<'_, str> {
+        Cow::Borrowed(self.payload.get())
+    }
+}
+
+writeable::impl_display_with_writeable!(RegionDisplayName);
 
 impl RegionDisplayNames {
     icu_provider::gen_buffer_data_constructors!(
@@ -92,7 +164,7 @@ impl RegionDisplayNames {
 
 /// Lookup of the locale-specific display names by script code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
@@ -159,7 +231,7 @@ impl ScriptDisplayNames {
 
 /// Lookup of the locale-specific display names by variant.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
@@ -223,7 +295,7 @@ impl VariantDisplayNames {
 
 /// Lookup of the locale-specific display names by language code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
@@ -294,7 +366,7 @@ impl LanguageDisplayNames {
 
 /// Format a locale as a display string.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
@@ -533,4 +605,16 @@ fn test_language_display() {
 
     assert_eq!(dialect.of(&locale!("zh-Hant")), "Traditional Chinese");
     assert_eq!(standard.of(&locale!("zh-Hant")), "Chinese (Traditional)");
+}
+
+#[test]
+fn test_region_load_long() {
+    use icu_locale_core::locale;
+    use icu_locale_core::subtags::region;
+    use writeable::assert_writeable_eq;
+
+    let mut prefs = DisplayNamesPreferences::default();
+    prefs.locale_preferences = (&locale!("en-001")).into();
+    let data = RegionDisplayName::try_new(prefs, region!("AE")).unwrap();
+    assert_writeable_eq!(data, "United Arab Emirates");
 }
