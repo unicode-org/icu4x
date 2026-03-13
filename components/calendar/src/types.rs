@@ -505,6 +505,18 @@ impl fmt::Display for MonthCode {
 /// * `Month::leap(2)` = `M02L`
 ///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
+///
+/// # Examples
+///
+/// ```
+/// use icu::calendar::types::Month;
+///
+/// assert_eq!(Month::new(7).code().0.as_str(), "M07");
+/// assert_eq!(Month::leap(7).code().0.as_str(), "M07L");
+///
+/// // impl From<u8> returns a normal month:
+/// assert_eq!(Month::from(7), Month::new(7));
+/// ```
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]
 pub struct Month {
     /// Month number between 0 and 99
@@ -637,6 +649,14 @@ impl Month {
             ])
             .unwrap(),
         )
+    }
+}
+
+/// Returns a new normal (non-leap) [`Month`].
+impl From<u8> for Month {
+    #[inline]
+    fn from(number: u8) -> Self {
+        Self::new(number)
     }
 }
 
