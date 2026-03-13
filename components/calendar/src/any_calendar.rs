@@ -24,80 +24,46 @@ macro_rules! make_any_calendar {
         #[$unstable_cfg:meta],
 
         $(
+            $(#[$variant_meta:meta])*
             $variant:ident($ty:ty),
         )+
-
-        $(
-            #[deprecated(since = $since:literal, note = $note:literal)]
-            $deprecated_variant:ident($deprecated_ty:ty),
-        )*
     ) => {
         $(#[$any_calendar_meta])*
         #[derive(Debug, Clone)]
+        #[allow(deprecated)]
         pub enum $any_calendar_ident {
             $(
                 #[doc = concat!("A [`", stringify!($ty), "`] calendar")]
+                $(#[$variant_meta])*
                 $variant($ty),
             )+
-            $(
-                /// Deprecated
-                #[deprecated(since = $since, note = $note)]
-                #[allow(deprecated)]
-                $deprecated_variant($deprecated_ty),
-            )*
-        }
-
-        impl PartialEq for $any_calendar_ident {
-            #[rustfmt::skip]
-            fn eq(&self, other: &Self) -> bool {
-                use $any_calendar_ident::*;
-                match (self, other) {
-                    $(
-                        ($variant(c1), $variant(c2)) => AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2),
-                    )+
-                    $(
-                        #[allow(deprecated)]
-                        ($deprecated_variant(c1), $deprecated_variant(c2)) => AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2),
-                    )*
-                    _ => false,
-                }
-            }
         }
 
         $(#[$any_date_meta])*
         #[doc = concat!("The inner date type for [`", stringify!($any_calendar_ident), "`]")]
         #[derive(Clone, PartialEq, Eq, Debug, Copy)]
-        #[allow(deprecated)] // weird, the allow below doesn't suffice
+        #[allow(deprecated)]
         pub enum $any_date_ident {
             $(
                 #[doc = concat!("A date for a [`", stringify!($variant), "`] calendar")]
-                $variant(<$ty as $crate::Calendar>::DateInner, <$ty as AnyCalendarable>::Identity),
+                $variant(<$ty as $crate::Calendar>::DateInner),
             )+
-            $(
-                #[doc = concat!("A date for a [`", stringify!($deprecated_variant), "`] calendar")]
-                #[allow(deprecated)]
-                $deprecated_variant(<$deprecated_ty as $crate::Calendar>::DateInner, <$deprecated_ty as AnyCalendarable>::Identity),
-            )*
         }
 
         impl PartialOrd for $any_date_ident {
-            #[rustfmt::skip]
             fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
                 use $any_date_ident::*;
                 match (self, other) {
                     $(
-                        ($variant(d1, q1), $variant(d2, q2)) if q1 == q2 => d1.partial_cmp(d2),
+                        ($variant(d1), $variant(d2)) => d1.partial_cmp(d2),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        ($deprecated_variant(d1, q1), $deprecated_variant(d2, q2)) if q1 == q2 => d1.partial_cmp(d2),
-                    )*
                     _ => None,
                 }
             }
         }
 
         impl $crate::cal::scaffold::UnstableSealed for $any_calendar_ident {}
+        #[allow(deprecated)]
         impl $crate::Calendar for $any_calendar_ident {
             type DateInner = $any_date_ident;
             type Year = $crate::types::YearInfo;
@@ -111,12 +77,8 @@ macro_rules! make_any_calendar {
             ) -> Result<Self::DateInner, $crate::error::DateFromCodesError> {
                 Ok(match self {
                     $(
-                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes2(year, month, day)?, AnyCalendarable::identity(c)),
+                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes2(year, month, day)?),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_codes2(year, month, day)?, AnyCalendarable::identity(c)),
-                    )*
                 })
             }
 
@@ -128,12 +90,8 @@ macro_rules! make_any_calendar {
             ) -> Result<Self::DateInner, $crate::error::DateFromFieldsError> {
                 Ok(match self {
                     $(
-                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_fields(fields, options)?, AnyCalendarable::identity(c)),
+                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_fields(fields, options)?),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_fields(fields, options)?, AnyCalendarable::identity(c)),
-                    )*
                 })
             }
 
@@ -142,34 +100,22 @@ macro_rules! make_any_calendar {
                     $(
                         Self::$variant(ref c) => c.has_cheap_iso_conversion(),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        Self::$deprecated_variant(ref c) => c.has_cheap_iso_conversion(),
-                    )*
                 }
             }
 
             fn from_iso(&self, iso: <$crate::Iso as $crate::Calendar>::DateInner) -> Self::DateInner {
                 match self {
                     $(
-                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_iso(iso), AnyCalendarable::identity(c)),
+                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_iso(iso)),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_iso(iso), AnyCalendarable::identity(c)),
-                    )*
                 }
             }
 
             fn to_iso(&self, date: &Self::DateInner) -> <$crate::Iso as $crate::Calendar>::DateInner {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_iso(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.to_iso(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_iso(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -178,24 +124,16 @@ macro_rules! make_any_calendar {
             fn from_rata_die(&self, rd: $crate::types::RataDie) -> Self::DateInner {
                 match self {
                     $(
-                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_rata_die(rd), AnyCalendarable::identity(c)),
+                        &Self::$variant(ref c) => $any_date_ident::$variant(c.from_rata_die(rd)),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_rata_die(rd), AnyCalendarable::identity(c)),
-                    )*
                 }
             }
 
             fn to_rata_die(&self, date: &Self::DateInner) -> $crate::types::RataDie {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_rata_die(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.to_rata_die(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_rata_die(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -204,12 +142,8 @@ macro_rules! make_any_calendar {
             fn months_in_year(&self, date: &Self::DateInner) -> u8 {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.months_in_year(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.months_in_year(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.months_in_year(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -218,12 +152,8 @@ macro_rules! make_any_calendar {
             fn days_in_year(&self, date: &Self::DateInner) -> u16 {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_year(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.days_in_year(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_year(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -232,12 +162,8 @@ macro_rules! make_any_calendar {
             fn days_in_month(&self, date: &Self::DateInner) -> u8 {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_month(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.days_in_month(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_month(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -246,12 +172,8 @@ macro_rules! make_any_calendar {
             fn year_info(&self, date: &Self::DateInner) -> $crate::types::YearInfo {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.year_info(&d).into(),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.year_info(&d).into(),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.year_info(&d).into(),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -261,12 +183,8 @@ macro_rules! make_any_calendar {
             fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.is_in_leap_year(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.is_in_leap_year(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.is_in_leap_year(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -276,12 +194,8 @@ macro_rules! make_any_calendar {
             fn month(&self, date: &Self::DateInner) -> $crate::types::MonthInfo {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.month(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.month(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.month(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -291,12 +205,8 @@ macro_rules! make_any_calendar {
             fn day_of_month(&self, date: &Self::DateInner) -> $crate::types::DayOfMonth {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_month(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.day_of_month(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_month(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -306,12 +216,8 @@ macro_rules! make_any_calendar {
             fn day_of_year(&self, date: &Self::DateInner) -> $crate::types::DayOfYear {
                 match (self, date) {
                     $(
-                        (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_year(&d),
+                        (&Self::$variant(ref c), &$any_date_ident::$variant(d)) => c.day_of_year(&d),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_year(&d),
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -327,16 +233,10 @@ macro_rules! make_any_calendar {
                 let mut date = *date;
                 match (self, &mut date) {
                     $(
-                        (&Self::$variant(ref c), $any_date_ident::$variant(ref mut d, q)) if AnyCalendarable::identity(c) == *q => {
+                        (&Self::$variant(ref c), $any_date_ident::$variant(ref mut d)) => {
                             *d = c.add(d, duration, options)?;
                         },
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (&Self::$deprecated_variant(ref c), $any_date_ident::$deprecated_variant(ref mut d, q)) if AnyCalendarable::identity(c) == *q => {
-                            *d = c.add(d, duration, options)?;
-                        },
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -352,16 +252,10 @@ macro_rules! make_any_calendar {
             ) -> $crate::types::DateDuration {
                 match (self, date1, date2) {
                     $(
-                        (Self::$variant(ref c), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c) == *q1 && q1 == q2 => {
+                        (Self::$variant(ref c), $any_date_ident::$variant(d1), $any_date_ident::$variant(d2)) => {
                             c.until(d1, d2, options)
                         }
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c) == *q1 && q1 == q2  => {
-                            c.until(d1, d2, options)
-                        }
-                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -374,12 +268,6 @@ macro_rules! make_any_calendar {
                             Ok(())
                         }
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        (Self::$deprecated_variant(ref c1), Self::$deprecated_variant(ref c2)) if c1.check_date_compatibility(c2).is_ok() => {
-                            Ok(())
-                        }
-                    )*
                     _ => Err($crate::error::MismatchedCalendarError),
                 }
             }
@@ -389,10 +277,6 @@ macro_rules! make_any_calendar {
                     $(
                         &Self::$variant(_) => concat!(stringify!($any_calendar_ident), " (", stringify!($variant), ")"),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        &Self::$deprecated_variant(_) => concat!(stringify!($any_calendar_ident), " (", stringify!($deprecated_variant), ")"),
-                    )*
                 }
             }
 
@@ -401,53 +285,62 @@ macro_rules! make_any_calendar {
                     $(
                         Self::$variant(ref c) => c.calendar_algorithm(),
                     )+
-                    $(
-                        #[allow(deprecated)]
-                        Self::$deprecated_variant(ref c) => c.calendar_algorithm(),
-                    )*
                 }
             }
         }
+    };
+}
 
+macro_rules! make_any_calendar_impls {
+    ($($variant:ident($ty:ty),)+) => {
         $(
-            impl From<$ty> for $any_calendar_ident {
-                fn from(value: $ty) -> Self {
-                    Self::$variant(value)
+            #[allow(deprecated)]
+            impl IntoAnyCalendar for $ty {
+                #[inline]
+                fn to_any(self) -> AnyCalendar {
+                    AnyCalendar::$variant(self)
                 }
-            }
-
-            impl PartialEq<$ty> for $any_calendar_ident {
-                fn eq(&self, other: &$ty) -> bool {
-                    if let Self::$variant(ref c) = self {
-                        AnyCalendarable::identity(c) == AnyCalendarable::identity(other)
-                    } else {
-                        false
-                    }
+                #[inline]
+                fn kind(&self) -> AnyCalendarKind {
+                    AnyCalendar::$variant(*self).kind()
                 }
-            }
-
-            impl TryFrom<$any_calendar_ident> for $ty {
-                type Error = $any_calendar_ident;
-                fn try_from(value: $any_calendar_ident) -> Result<Self, Self::Error> {
-                    if let $any_calendar_ident::$variant(c) = value {
+                #[inline]
+                fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+                    if let AnyCalendar::$variant(c) = any {
                         Ok(c)
                     } else {
-                        Err(value)
+                        Err(any)
+                    }
+
+                }
+                #[inline]
+                fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+                    if let AnyCalendar::$variant(c) = any {
+                        Some(c)
+                    } else {
+                        None
                     }
                 }
-            }
-
-            impl<'a> TryFrom<&'a $any_calendar_ident> for &'a $ty {
-                type Error = &'a $any_calendar_ident;
-                fn try_from(value: &'a $any_calendar_ident) -> Result<Self, Self::Error> {
-                    if let $any_calendar_ident::$variant(ref c) = value {
-                        Ok(c)
-                    } else {
-                        Err(value)
-                    }
+                #[inline]
+                fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+                    AnyDateInner::$variant(*d)
                 }
             }
         )+
+
+        #[allow(deprecated)]
+        impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
+            /// Convert this `Date<AnyCalendar>` to another [`AnyCalendar`], if conversion is needed
+            pub fn convert_any<'a>(&self, calendar: &'a AnyCalendar) -> Date<Ref<'a, AnyCalendar>> {
+                match (self.calendar(), calendar) {
+                    $(
+                        (AnyCalendar::$variant(c1), AnyCalendar::$variant(c2)) if c1.check_date_compatibility(c2).is_ok()
+                            => Date::from_raw(*self.inner(), Ref(calendar)),
+                    )+
+                    _ => self.to_calendar(Ref(calendar)),
+                }
+            }
+        }
     };
 }
 
@@ -507,6 +400,27 @@ make_any_calendar!(
     Ethiopian(Ethiopian),
     Gregorian(Gregorian),
     Hebrew(Hebrew),
+    #[deprecated(since = "2.2.0", note = "see `HijriUmmAlQura`")]
+    HijriSimulated(Hijri<hijri::AstronomicalSimulation>),
+    HijriTabular(Hijri<hijri::TabularAlgorithm>),
+    HijriUmmAlQura(Hijri<hijri::UmmAlQura>),
+    Indian(Indian),
+    Iso(Iso),
+    Japanese(Japanese),
+    #[deprecated(since = "2.2.0", note = "see `Japanese`")]
+    JapaneseExtended(Japanese),
+    Persian(Persian),
+    Roc(Roc),
+);
+
+make_any_calendar_impls!(
+    Buddhist(Buddhist),
+    Chinese(ChineseTraditional),
+    Coptic(Coptic),
+    Dangi(KoreanTraditional),
+    Ethiopian(Ethiopian),
+    Gregorian(Gregorian),
+    Hebrew(Hebrew),
     HijriTabular(Hijri<hijri::TabularAlgorithm>),
     HijriUmmAlQura(Hijri<hijri::UmmAlQura>),
     Indian(Indian),
@@ -514,10 +428,7 @@ make_any_calendar!(
     Japanese(Japanese),
     Persian(Persian),
     Roc(Roc),
-    #[deprecated(since = "2.2.0", note = "see `HijriUmmAlQura`")]
     HijriSimulated(Hijri<hijri::AstronomicalSimulation>),
-    #[deprecated(since = "2.2.0", note = "see `Japanese`")]
-    JapaneseExtended(Japanese),
 );
 
 impl AnyCalendar {
@@ -721,34 +632,35 @@ impl AnyCalendar {
     /// The [`AnyCalendarKind`] corresponding to the calendar this contains
     pub fn kind(&self) -> AnyCalendarKind {
         match *self {
-            Self::Buddhist(ref c) => IntoAnyCalendar::kind(c),
-            Self::Chinese(ref c) => IntoAnyCalendar::kind(c),
-            Self::Coptic(ref c) => IntoAnyCalendar::kind(c),
-            Self::Dangi(ref c) => IntoAnyCalendar::kind(c),
-            Self::Ethiopian(ref c) => IntoAnyCalendar::kind(c),
-            Self::Gregorian(ref c) => IntoAnyCalendar::kind(c),
-            Self::Hebrew(ref c) => IntoAnyCalendar::kind(c),
+            Self::Buddhist(_) => AnyCalendarKind::Buddhist,
+            Self::Chinese(_) => AnyCalendarKind::Chinese,
+            Self::Coptic(_) => AnyCalendarKind::Coptic,
+            Self::Dangi(_) => AnyCalendarKind::Dangi,
+            Self::Ethiopian(ref c) => match c.era_style() {
+                EthiopianEraStyle::AmeteAlem => AnyCalendarKind::EthiopianAmeteAlem,
+                EthiopianEraStyle::AmeteMihret => AnyCalendarKind::Ethiopian,
+            },
+            Self::Gregorian(_) => AnyCalendarKind::Gregorian,
+            Self::Hebrew(_) => AnyCalendarKind::Hebrew,
             #[allow(deprecated)]
-            Self::HijriSimulated(ref c) => IntoAnyCalendar::kind(c),
-            Self::HijriTabular(ref c) => IntoAnyCalendar::kind(c),
-            Self::HijriUmmAlQura(ref c) => IntoAnyCalendar::kind(c),
-            Self::Indian(ref c) => IntoAnyCalendar::kind(c),
-            Self::Iso(ref c) => IntoAnyCalendar::kind(c),
+            Self::HijriSimulated(_) => AnyCalendarKind::HijriSimulatedMecca,
+            Self::HijriTabular(ref c) => match c.0 {
+                hijri::TabularAlgorithm {
+                    leap_years: hijri::TabularAlgorithmLeapYears::TypeII,
+                    epoch: hijri::TabularAlgorithmEpoch::Friday,
+                } => AnyCalendarKind::HijriTabularTypeIIFriday,
+                hijri::TabularAlgorithm {
+                    leap_years: hijri::TabularAlgorithmLeapYears::TypeII,
+                    epoch: hijri::TabularAlgorithmEpoch::Thursday,
+                } => AnyCalendarKind::HijriTabularTypeIIThursday,
+            },
+            Self::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
+            Self::Indian(_) => AnyCalendarKind::Indian,
+            Self::Iso(_) => AnyCalendarKind::Iso,
             #[allow(deprecated)]
-            Self::Japanese(ref c) | Self::JapaneseExtended(ref c) => IntoAnyCalendar::kind(c),
-            Self::Persian(ref c) => IntoAnyCalendar::kind(c),
-            Self::Roc(ref c) => IntoAnyCalendar::kind(c),
-        }
-    }
-}
-
-impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
-    /// Convert this `Date<AnyCalendar>` to another [`AnyCalendar`], if conversion is needed
-    pub fn convert_any<'a>(&self, calendar: &'a AnyCalendar) -> Date<Ref<'a, AnyCalendar>> {
-        if calendar.check_date_compatibility(self.calendar()).is_ok() {
-            Date::from_raw(*self.inner(), Ref(calendar))
-        } else {
-            self.to_calendar(Ref(calendar))
+            Self::Japanese(_) | Self::JapaneseExtended(_) => AnyCalendarKind::Japanese,
+            Self::Persian(_) => AnyCalendarKind::Persian,
+            Self::Roc(_) => AnyCalendarKind::Roc,
         }
     }
 }
@@ -789,14 +701,18 @@ pub enum AnyCalendarKind {
     ///
     /// This corresponds to the `"hebrew"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Hebrew,
-    /// The kind of a [`HijriSimulated`] calendar
+    /// The kind of an [`Indian`] calendar
     ///
-    /// This does not correspond to a CLDR calendar.
-    HijriSimulatedMecca,
+    /// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+    Indian,
     /// The kind of a [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
     ///
     /// This corresponds to the `"islamic-civil"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIFriday,
+    /// The kind of a [`HijriSimulated`] calendar
+    ///
+    /// This does not correspond to a CLDR calendar.
+    HijriSimulatedMecca,
     /// The kind of a [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
     ///
     /// This corresponds to the `"islamic-tbla"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
@@ -805,10 +721,6 @@ pub enum AnyCalendarKind {
     ///
     /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriUmmAlQura,
-    /// The kind of an [`Indian`] calendar
-    ///
-    /// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
-    Indian,
     /// The kind of an [`Iso`] calendar
     ///
     /// This corresponds to the `"iso8601"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
@@ -881,94 +793,6 @@ impl fmt::Display for AnyCalendarKind {
     }
 }
 
-pub trait AnyCalendarable: Calendar + Sized {
-    type Identity: PartialEq + Eq + Copy;
-
-    fn identity(&self) -> Self::Identity;
-}
-
-impl AnyCalendarable for Buddhist {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-
-impl AnyCalendarable for ChineseTraditional {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Coptic {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for KoreanTraditional {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Ethiopian {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Gregorian {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Hebrew {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-#[allow(deprecated)]
-impl AnyCalendarable for Hijri<hijri::AstronomicalSimulation> {
-    type Identity = hijri::AstronomicalSimulation;
-
-    fn identity(&self) -> Self::Identity {
-        self.0
-    }
-}
-impl AnyCalendarable for Hijri<hijri::TabularAlgorithm> {
-    type Identity = hijri::TabularAlgorithm;
-
-    fn identity(&self) -> Self::Identity {
-        self.0
-    }
-}
-impl AnyCalendarable for Hijri<hijri::UmmAlQura> {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Indian {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Iso {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Japanese {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Persian {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for Roc {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-
 /// Trait for calendars that may be converted to [`AnyCalendar`]
 pub trait IntoAnyCalendar: Calendar + Sized {
     /// Convert this calendar into an [`AnyCalendar`], moving it
@@ -1016,373 +840,6 @@ impl IntoAnyCalendar for AnyCalendar {
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         *d
-    }
-}
-
-impl IntoAnyCalendar for Buddhist {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Buddhist
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Buddhist(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for ChineseTraditional {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Chinese
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Chinese(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Coptic {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Coptic
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Coptic(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for KoreanTraditional {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Dangi
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Dangi(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Ethiopian {
-    // Amete Mihret calendars are the default
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        match self.era_style() {
-            EthiopianEraStyle::AmeteAlem => AnyCalendarKind::EthiopianAmeteAlem,
-            EthiopianEraStyle::AmeteMihret => AnyCalendarKind::Ethiopian,
-        }
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Ethiopian(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Gregorian {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Gregorian
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Gregorian(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Hebrew {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Hebrew
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Hebrew(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Indian {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Indian
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Indian(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Hijri<hijri::TabularAlgorithm> {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        match self.0 {
-            hijri::TabularAlgorithm {
-                leap_years: hijri::TabularAlgorithmLeapYears::TypeII,
-                epoch: hijri::TabularAlgorithmEpoch::Friday,
-            } => AnyCalendarKind::HijriTabularTypeIIFriday,
-            hijri::TabularAlgorithm {
-                leap_years: hijri::TabularAlgorithmLeapYears::TypeII,
-                epoch: hijri::TabularAlgorithmEpoch::Thursday,
-            } => AnyCalendarKind::HijriTabularTypeIIThursday,
-        }
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::HijriTabular(*d, self.identity())
-    }
-}
-
-#[allow(deprecated)]
-impl IntoAnyCalendar for Hijri<hijri::AstronomicalSimulation> {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::HijriSimulatedMecca
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        if let AnyCalendar::HijriSimulated(c) = any {
-            Ok(c)
-        } else {
-            Err(any)
-        }
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        if let AnyCalendar::HijriSimulated(c) = any {
-            Some(c)
-        } else {
-            None
-        }
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::HijriSimulated(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Hijri<hijri::UmmAlQura> {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::HijriUmmAlQura
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::HijriUmmAlQura(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Iso {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Iso
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Iso(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Japanese {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Japanese
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Japanese(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Persian {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Persian
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Persian(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for Roc {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::Roc
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Roc(*d, self.identity())
     }
 }
 
