@@ -166,12 +166,19 @@ impl SourceDataProvider {
                     while let Err(e) = names
                         .load_for_pattern(&DebugProvider, &DateTimePattern::from(pattern.clone()))
                     {
-                        let PatternLoadError::ConflictingField {
-                            field: requested_field,
-                            previous_field,
-                        } = e
-                        else {
-                            panic!("only know how to fix ConflictingField, but got: {e:?}")
+                        let (requested_field, previous_field) = match e {
+                            PatternLoadError::ConflictingField {
+                                field: requested_field,
+                                previous_field,
+                            } => (requested_field, previous_field),
+                            PatternLoadError::FormatterTooSpecific(field) => {
+                                // This can happen if the selected pattern has a field that
+                                // doesn't exist in the components bag. For example, 'v' vs 'V'.
+                                // For now, we just skip it.
+                                log::warn!("FormatterTooSpecific: {:?}", field);
+                                break;
+                            }
+                            _ => panic!("only know how to fix ConflictingField, but got: {e:?}"),
                         };
                         log_fn(previous_field, requested_field, variant.distance);
                         let requested_field = Field::from(requested_field);
@@ -477,6 +484,9 @@ fn gen_time_components(
     if check_for_field(attributes, "h0") {
         filtered_components.hour_cycle = Some(HourCycle::H23);
     }
+    if check_for_field(attributes, "v") {
+        filtered_components.time_zone_name = Some(components::TimeZoneName::ShortGeneric);
+    }
     filtered_components
 }
 
@@ -535,6 +545,14 @@ fn gen_date_components(
     }
     if check_for_field(attributes, "j") {
         filtered_components.hour = Some(components::Numeric::Numeric);
+    }
+    if check_for_field(attributes, "h") {
+        filtered_components.hour = Some(components::Numeric::Numeric);
+        filtered_components.hour_cycle = Some(HourCycle::H12);
+    }
+    if check_for_field(attributes, "h0") {
+        filtered_components.hour = Some(components::Numeric::Numeric);
+        filtered_components.hour_cycle = Some(HourCycle::H23);
     }
     filtered_components
 }
