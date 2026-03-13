@@ -744,6 +744,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     /// This takes two dates (`self` and `other`), `duration`, and `sign` (either -1 or 1), then
     /// returns whether adding the duration to `self` results in a year/month/day that exceeds
     /// `other` in the direction indicated by `sign`, constraining the month but not the day.
+    ///
+    /// Note: This function is no longer used, but the code is retained for
+    /// reference. The `until()` implementation uses `SurpassesChecker`, which
+    /// implements the same spec, but with better performance.
     #[allow(dead_code)] // TODO: remove surpasses() method when no longer needed
     pub(crate) fn surpasses(
         &self,
@@ -1005,8 +1009,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_years += sign;
             }
         }
-        // Final (or only) call to freeze the checker's Years field state.
-        surpasses_checker.surpasses_years(years);
+        // Freeze the checker's Years field state.
+        surpasses_checker.set_years(years);
 
         // 5. Let months be 0.
         // 6. If largestUnit is year or largestUnit is month, then
@@ -1043,8 +1047,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_months += sign;
             }
         }
-        // Final (or only) call to freeze the checker's Months field state.
-        surpasses_checker.surpasses_months(months);
+        // Freeze the checker's Months field state.
+        surpasses_checker.set_months(months);
 
         // 7. Let weeks be 0.
         // 8. If largestUnit is week, then
@@ -1060,8 +1064,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 candidate_weeks += sign;
             }
         }
-        // Final (or only) call to freeze the checker's Weeks field state.
-        surpasses_checker.surpasses_weeks(weeks);
+        // Freeze the checker's Weeks field state.
+        surpasses_checker.set_weeks(weeks);
 
         // 9. Let days be 0.
         // 10. Let candidateDays be sign.
@@ -1086,10 +1090,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 /// Stateful checker for iterative per-field `surpasses()` checks
 ///
 /// This checker for `surpasses()` is designed to iteratively evaluate one field
-/// at a time, from largest to smallest. At each point, the caller must cache
-/// the computed state of a larger field by calling
-/// `surpasses_<field>(<field_value>)` before moving on to the next smaller
-/// field.
+/// at a time, from largest to smallest. After each field value is determined,
+/// the caller must cache the computed state of the field's value by calling
+/// `set_<field>(<field_value>)` before moving on to the next smaller field.
 struct SurpassesChecker<'a, C: DateFieldsResolver> {
     parts: &'a ArithmeticDate<C>,
     cal_date_2: &'a ArithmeticDate<C>,
@@ -1142,11 +1145,19 @@ impl<'a, C: DateFieldsResolver> SurpassesChecker<'a, C> {
         let base_month = self
             .cal
             .month_from_ordinal(self.parts.year(), self.parts.month());
+        let surpasses_years = ArithmeticDate::<C>::compare_surpasses_lexicographic(
+            self.sign,
+            self.y0,
+            base_month,
+            self.parts.day(),
+            self.cal_date_2,
+            self.cal,
+        );
+        // 5. Let m0 be MonthCodeToOrdinal(calendar, y0, ! ConstrainMonthCode(calendar, y0, parts.[[MonthCode]], constrain)).
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
         };
-        // 5. Let m0 be MonthCodeToOrdinal(calendar, y0, ! ConstrainMonthCode(calendar, y0, parts.[[MonthCode]], constrain)).
         let m0_result = self.cal.ordinal_from_month(self.y0, base_month, constrain);
         self.m0 = match m0_result {
             Ok(m0) => m0,
@@ -1159,23 +1170,14 @@ impl<'a, C: DateFieldsResolver> SurpassesChecker<'a, C> {
             }
         };
 
-        let surpasses_years = ArithmeticDate::<C>::compare_surpasses_lexicographic(
-            self.sign,
-            self.y0,
-            base_month,
-            self.parts.day(),
-            self.cal_date_2,
-            self.cal,
-        );
-        // Because of leap months in the Hebrew calendar, year checks must also include
-        // an ordinal test of the month. This handles cases where a date in Adar I (M05L)
-        // in a leap year (e.g., 5784) is compared to a date in Adar (M06) in a
-        // non-leap year (e.g., 5785). Since lexicographical order (M05L < M06) differs
-        // from temporal order when constrained to a non-leap year (where both map to
-        // ordinal month 6), a lexicographical-only check fails to detect that a later
-        // day in Adar I actually surpasses an earlier day in Adar. This ordinal check
-        // ensures the year counter correctly stays at 0 instead of over-incrementing to 1.
+        // If the lexicographic check returns false, the spec continues to the
+        // ordinal check, which is implemented in `surpasses_months`.
         surpasses_years || self.surpasses_months(0)
+    }
+
+    #[inline]
+    fn set_years(&mut self, years: i64) {
+        self.surpasses_years(years);
     }
 
     fn surpasses_months(&mut self, months: i64) -> bool {
@@ -1184,13 +1186,21 @@ impl<'a, C: DateFieldsResolver> SurpassesChecker<'a, C> {
             ArithmeticDate::<C>::new_balanced(self.y0, months + i64::from(self.m0), 1, self.cal);
 
         // 7. If CompareSurpasses(sign, monthsAdded.[[Year]], monthsAdded.[[Month]], parts.[[Day]], calDate2) is true, return true.
-        let surpasses = ArithmeticDate::<C>::compare_surpasses_ordinal(
+        // We do not need to perform any other checks because step 8 of the spec
+        // guarantees an early return if weeks and days are 0.
+        ArithmeticDate::<C>::compare_surpasses_ordinal(
             self.sign,
             months_added.year,
             months_added.ordinal_month,
             self.parts.day(),
             self.cal_date_2,
-        );
+        )
+    }
+
+    fn set_months(&mut self, months: i64) {
+        // 6. Let monthsAdded be BalanceNonISODate(calendar, y0, m0 + months, 1).
+        let months_added =
+            ArithmeticDate::<C>::new_balanced(self.y0, months + i64::from(self.m0), 1, self.cal);
 
         // 9. Let endOfMonth be BalanceNonISODate(calendar, monthsAdded.[[Year]], monthsAdded.[[Month]] + 1, 0).
         self.end_of_month = ArithmeticDate::<C>::new_balanced(
@@ -1210,8 +1220,6 @@ impl<'a, C: DateFieldsResolver> SurpassesChecker<'a, C> {
         } else {
             self.end_of_month.day
         };
-
-        surpasses
     }
 
     fn surpasses_weeks(&mut self, weeks: i64) -> bool {
@@ -1239,6 +1247,11 @@ impl<'a, C: DateFieldsResolver> SurpassesChecker<'a, C> {
             balanced_date.day,
             self.cal_date_2,
         )
+    }
+
+    #[inline]
+    fn set_weeks(&mut self, weeks: i64) {
+        self.surpasses_weeks(weeks);
     }
 
     fn surpasses_days(&mut self, days: i64) -> bool {
