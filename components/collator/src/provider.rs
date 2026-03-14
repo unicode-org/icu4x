@@ -98,6 +98,8 @@ icu_provider::data_marker!(
     fallback_config = SCRIPT_FALLBACK,
     #[cfg(feature = "datagen")]
     attributes_domain = "collator",
+    #[cfg(feature = "datagen")]
+    expose_baked_consts = true,
 );
 icu_provider::data_marker!(
     /// Data marker for collation jamo data.

@@ -24,6 +24,7 @@ icu::collator::CollationKeySink::write#FnInTrait
 icu::collator::CollationKeySink::write_byte#FnInTrait
 icu::collator::CollatorBorrowed::compare_latin1#FnInStruct
 icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
+icu::collator::CollatorBorrowed::new_root#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
