@@ -385,6 +385,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             return Err(Error::DataTooShortForFastAccess);
         }
 
+        // The builder is supposed to support direct indexing to the data array
+        // by ASCII.
+        if data.len() < 128 {
+            return Err(Error::DataTooShortForAsciiAccess);
+        }
+
         // Invariant upheld for `data`: If we got this far, the length of `data`
         // satisfies `data`'s length invariant on the assumption that the contents
         // of `fast_index` subslice of `index` and `header.trie_type` will not
@@ -395,7 +401,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 
     /// Turns this trie into a version whose trie type is encoded in the Rust type.
     #[inline]
-    pub fn to_typed(self) -> Typed<FastCodePointTrie<'trie, T>, SmallCodePointTrie<'trie, T>> {
+    pub const fn to_typed(
+        self,
+    ) -> Typed<FastCodePointTrie<'trie, T>, SmallCodePointTrie<'trie, T>> {
         match self.header.trie_type {
             TrieType::Fast => Typed::Fast(FastCodePointTrie { inner: self }),
             TrieType::Small => Typed::Small(SmallCodePointTrie { inner: self }),
@@ -577,6 +585,16 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         );
 
         let bit_prefix = (code_point as usize) >> FAST_TYPE_SHIFT;
+        let bit_suffix = (code_point & FAST_TYPE_DATA_MASK) as usize;
+        self.get_bit_prefix_suffix_assuming_fast_index(bit_prefix, bit_suffix)
+    }
+
+    #[inline(always)]
+    unsafe fn get_bit_prefix_suffix_assuming_fast_index(
+        &self,
+        bit_prefix: usize,
+        bit_suffix: usize,
+    ) -> T {
         debug_assert!(bit_prefix < self.index.len());
         // SAFETY: Relying on the length invariant of `self.index` having
         // been checked and on the unchangedness invariant of `self.index`
@@ -584,7 +602,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let base_offset_to_data: usize = usize::from(u16::from_unaligned(*unsafe {
             self.index.as_ule_slice().get_unchecked(bit_prefix)
         }));
-        let bit_suffix = (code_point & FAST_TYPE_DATA_MASK) as usize;
         // SAFETY: Cannot overflow with supported (32-bit and 64-bit) `usize`
         // sizes, since `base_offset_to_data` was extended from `u16` and
         // `bit_suffix` is at most `FAST_TYPE_DATA_MASK`, which is well
@@ -692,6 +709,97 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             v
         } else {
             self.get32_by_small_index_cold(code_point)
+        }
+    }
+
+    /// Returns the value that is associated with `latin1` in this [`CodePointTrie`].
+    #[inline(always)]
+    pub fn get8(&self, latin1: u8) -> T {
+        let code_point = u32::from(latin1);
+        debug_assert!(code_point <= SMALL_TYPE_FAST_INDEXING_MAX);
+        // SAFETY: `u8` is always below `SMALL_TYPE_FAST_INDEXING_MAX` and,
+        // therefore, belowe `FAST_TYPE_FAST_INDEXING_MAX`.
+        unsafe { self.get32_assuming_fast_index(code_point) }
+    }
+
+    /// Returns the value that is associated with `ascii` in this [`CodePointTrie`].
+    ///
+    /// # Safety
+    ///
+    /// `ascii` must be less than 128.
+    #[inline(always)]
+    pub unsafe fn get7(&self, ascii: u8) -> T {
+        debug_assert!(ascii < 128);
+        debug_assert!((ascii as usize) < self.data.len());
+        // SAFETY: Length of `self.data` checked in the constructor.
+        T::from_unaligned(*unsafe { self.data.as_ule_slice().get_unchecked(ascii as usize) })
+    }
+
+    /// Returns the value that is associated with a two-byte UTF-8 sequence in this [`CodePointTrie`].
+    ///
+    /// `high_five` is the low five bits of the lead byte of a two-byte UTF-8 sequence.
+    /// `low_six` is the low six bits of the trail byte of a two-byte UTF-8 sequence.
+    ///
+    /// # Safety
+    ///
+    /// `high_five` must not have bit positions other than the lowest 5 set to 1.
+    /// `low_six` must not have bit positions other than the lowest 6 set to 1.
+    ///
+    /// # Panics
+    ///
+    /// With debug assertions enabled, panics if the above safety invariants are
+    /// violated or `high_five` represents non-shortest form.
+    #[inline(always)]
+    pub unsafe fn get_utf8_two_byte(&self, high_five: u32, low_six: u32) -> T {
+        debug_assert!(low_six <= 0b111_111); // Safety invariant.
+        debug_assert!(high_five <= 0b11_111); // Safety invariant.
+        debug_assert!(high_five > 0b1); // Non-shortest form; not safety invariant.
+                                        // SAFETY: The highest character representable as a two-byte
+                                        // UTF-8 sequence is U+07FF, eleven binary ones, which is below
+                                        // both `SMALL_TYPE_FAST_INDEXING_MAX` and `FAST_TYPE_FAST_INDEXING_MAX`.
+        self.get_bit_prefix_suffix_assuming_fast_index(high_five as usize, low_six as usize)
+    }
+
+    /// Returns the value that is associated with a three-byte UTF-8 or WTF-8 sequence in this [`CodePointTrie`].
+    ///
+    /// `high_ten` is the low four bits of the lead byte of three-byte UTF-8 or WTF-8 sequence shifted left by 6 followed by the low six bits of the first trail byte.
+    /// `low_six` is the low six bits of the last trail byte of a three-byte UTF-8 or WTF-8 sequence.
+    ///
+    /// Sequences representing surrogates (WTF-8) are allowed.
+    ///
+    /// # Safety
+    ///
+    /// `low_six` must not have bit positions other than the lowest 6 set to 1.
+    ///
+    /// # Intended Invariant
+    ///
+    /// `high_ten` must not have bit positions other than the lowest 10 set to 1.
+    ///
+    /// # Panics
+    ///
+    /// With debug assertions enabled, panics if the above safety invariant is
+    /// violated or `high_ten` is out of range for three-byte WTF-8 (or UTF-8)
+    /// sequence.
+    #[inline(always)]
+    #[allow(clippy::unusual_byte_groupings)]
+    pub unsafe fn get_utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
+        debug_assert!(low_six <= 0b111_111); // Safety invariant.
+        debug_assert!(high_ten <= 0b1111_111_111); // Not actually a _safety_ invariant for this impl.
+        debug_assert!(high_ten > 0b11_111); // Non-shortest form; not safety invariant.
+
+        let fast_max = match self.header.trie_type {
+            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+        };
+        // Keep only the prefix bits:
+        let max_bit_prefix = fast_max >> FAST_TYPE_SHIFT;
+        if high_ten <= max_bit_prefix {
+            // SAFETY: The caller is responsible for upholding the safety
+            // invariant for `low_six` and we just checked the safety
+            // invariant of `high_ten`.
+            self.get_bit_prefix_suffix_assuming_fast_index(high_ten as usize, low_six as usize)
+        } else {
+            self.get32_by_small_index_cold((high_ten << 6) | low_six)
         }
     }
 
@@ -1432,6 +1540,8 @@ impl<T: TrieValue> Iterator for CodePointMapRangeIterator<'_, T> {
 /// All implementations of `TypedCodePointTrie` are reviewable in this module.
 trait Seal {}
 
+impl<'trie, T: TrieValue> Seal for CodePointTrie<'trie, T> {}
+
 /// Trait for writing trait bounds for monomorphizing over either
 /// `FastCodePointTrie` or `SmallCodePointTrie`.
 #[allow(private_bounds)] // Permit sealing
@@ -1461,6 +1571,22 @@ pub trait TypedCodePointTrie<'trie, T: TrieValue>: Seal {
         } else {
             self.as_untyped_ref().get32_by_small_index_cold(code_point)
         }
+    }
+
+    /// Lookup trie value by Latin1 Code Point without branching on trie type.
+    #[inline(always)]
+    fn get8(&self, latin1: u8) -> T {
+        self.as_untyped_ref().get8(latin1)
+    }
+
+    /// Lookup trie value by ASCII Code Point without branching on trie type.
+    ///
+    /// # Safety
+    ///
+    /// `ascii` must be less than 128.
+    #[inline(always)]
+    unsafe fn get7(&self, ascii: u8) -> T {
+        self.as_untyped_ref().get7(ascii)
     }
 
     /// Lookup trie value by non-Basic Multilingual Plane Scalar Value without branching on trie type.
@@ -1524,6 +1650,69 @@ pub trait TypedCodePointTrie<'trie, T: TrieValue>: Seal {
         }
     }
 
+    /// Returns the value that is associated with a two-byte UTF-8 sequence.
+    ///
+    /// `high_five` is the low five bits of the lead byte of a two-byte UTF-8 sequence.
+    /// `low_six` is the low six bits of the trail byte of a two-byte UTF-8 sequence.
+    ///
+    /// # Safety
+    ///
+    /// `high_five` must not have bit positions other than the lowest 5 set to 1.
+    /// `low_six` must not have bit positions other than the lowest 6 set to 1.
+    ///
+    /// # Panics
+    ///
+    /// With debug assertions enabled, panics if the above safety invariants are
+    /// violated or `high_five` represents non-shortest form.
+    #[inline(always)]
+    unsafe fn get_utf8_two_byte(&self, high_five: u32, low_six: u32) -> T {
+        self.as_untyped_ref().get_utf8_two_byte(high_five, low_six)
+    }
+
+    /// Returns the value that is associated with a three-byte UTF-8 or WTF-8 sequence.
+    ///
+    /// `high_ten` is the low four bits of the lead byte of three-byte UTF-8 or WTF-8 sequence shifted left by 6 followed by the low six bits of the first trail byte.
+    /// `low_six` is the low six bits of the last trail byte of a three-byte UTF-8 or WTF-8 sequence.
+    ///
+    /// Sequences representing surrogates (WTF-8) are allowed.
+    ///
+    /// # Safety
+    ///
+    /// `high_ten` must not have bit positions other than the lowest 10 set to 1.
+    /// `low_six` must not have bit positions other than the lowest 6 set to 1.
+    ///
+    /// # Panics
+    ///
+    /// With debug assertions enabled, panics if the above safety invariants are
+    /// violated or `high_ten` is out of range for three-byte WTF-8 (or UTF-8)
+    /// sequence.
+    #[inline(always)]
+    #[allow(clippy::unusual_byte_groupings)]
+    unsafe fn get_utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
+        debug_assert!(low_six <= 0b111_111); // Safety invariant.
+        debug_assert!(high_ten <= 0b1111_111_111); // Not actually a _safety_ invariant for this impl.
+        debug_assert!(high_ten > 0b11_111); // Non-shortest form; not safety invariant.
+
+        debug_assert_eq!(Self::TRIE_TYPE, self.as_untyped_ref().header.trie_type);
+        let fast_max = match Self::TRIE_TYPE {
+            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+        };
+
+        // Keep only the prefix bits:
+        let max_bit_prefix = fast_max >> FAST_TYPE_SHIFT;
+        if high_ten <= max_bit_prefix {
+            // SAFETY: The caller is responsible for upholding the safety
+            // invariant for `low_six` and we just checked the safety
+            // invariant of `high_ten`.
+            self.as_untyped_ref()
+                .get_bit_prefix_suffix_assuming_fast_index(high_ten as usize, low_six as usize)
+        } else {
+            self.as_untyped_ref()
+                .get32_by_small_index_cold((high_ten << 6) | low_six)
+        }
+    }
+
     /// Returns a reference to the wrapped `CodePointTrie`.
     fn as_untyped_ref(&self) -> &CodePointTrie<'trie, T>;
 
@@ -1535,10 +1724,37 @@ pub trait TypedCodePointTrie<'trie, T: TrieValue>: Seal {
 /// the the getters don't branch on the trie type
 /// and for guarenteeing that `get16` is branchless
 /// in release builds.
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom, Clone)]
 #[repr(transparent)]
 pub struct FastCodePointTrie<'trie, T: TrieValue> {
     inner: CodePointTrie<'trie, T>,
+}
+
+impl<'trie, T: TrieValue> FastCodePointTrie<'trie, T> {
+    #[doc(hidden)] // databake internal
+    /// # Safety
+    ///
+    /// `header.trie_type`, `index`, and `data` must
+    /// satisfy the invariants for the fields of the
+    /// same names on `CodePointTrie`.
+    pub const unsafe fn from_parts_unstable_unchecked_v1(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, T>,
+        error_value: T,
+    ) -> Self {
+        // Field invariants upheld: The caller is responsible.
+        // In practice, this means that datagen in the databake
+        // mode upholds these invariants when constructing the
+        // `CodePointTrie` that is then baked.
+        let untyped = CodePointTrie::<'trie, T>::from_parts_unstable_unchecked_v1(
+            header,
+            index,
+            data,
+            error_value,
+        );
+        Self { inner: untyped }
+    }
 }
 
 impl<'trie, T: TrieValue> TypedCodePointTrie<'trie, T> for FastCodePointTrie<'trie, T> {
@@ -1573,6 +1789,37 @@ impl<'trie, T: TrieValue> TypedCodePointTrie<'trie, T> for FastCodePointTrie<'tr
         // being correct and the exclusive ways of obtaining `Self`.
         unsafe { self.as_untyped_ref().get32_assuming_fast_index(code_point) }
     }
+
+    /// Returns the value that is associated with a three-byte UTF-8 or WTF-8 sequence.
+    ///
+    /// `high_ten` is the low four bits of the lead byte of three-byte UTF-8 or WTF-8 sequence shifted left by 6 followed by the low six bits of the first trail byte.
+    /// `low_six` is the low six bits of the last trail byte of a three-byte UTF-8 or WTF-8 sequence.
+    ///
+    /// Sequences representing surrogates (WTF-8) are allowed.
+    ///
+    /// # Safety
+    ///
+    /// `high_ten` must not have bit positions other than the lowest 10 set to 1.
+    /// `low_six` must not have bit positions other than the lowest 6 set to 1.
+    ///
+    /// # Panics
+    ///
+    /// With debug assertions enabled, panics if the above safety invariants are
+    /// violated or `high_ten` is out of range for three-byte WTF-8 (or UTF-8)
+    /// sequence.
+    #[inline(always)]
+    #[allow(clippy::unusual_byte_groupings)]
+    unsafe fn get_utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
+        debug_assert!(low_six <= 0b111_111); // Safety invariant.
+        debug_assert!(high_ten <= 0b1111_111_111); // Safety invariant.
+        debug_assert!(high_ten > 0b11_111); // Non-shortest form; not safety invariant.
+        debug_assert_eq!(Self::TRIE_TYPE, TrieType::Fast);
+        debug_assert_eq!(self.as_untyped_ref().header.trie_type, TrieType::Fast);
+        // SAFETY: The highest character representable as a three-byte
+        // UTF-8 sequence is U+FFFF, which is `FAST_TYPE_FAST_INDEXING_MAX`.
+        self.inner
+            .get_bit_prefix_suffix_assuming_fast_index(high_ten as usize, low_six as usize)
+    }
 }
 
 impl<'trie, T: TrieValue> Seal for FastCodePointTrie<'trie, T> {}
@@ -1605,12 +1852,57 @@ impl<'trie, T: TrieValue> TryFrom<CodePointTrie<'trie, T>> for FastCodePointTrie
     }
 }
 
+#[cfg(feature = "databake")]
+impl<T: TrieValue + databake::Bake> databake::Bake for FastCodePointTrie<'_, T> {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        let header = self.inner.header.bake(env);
+        let index = self.inner.index.bake(env);
+        let data = self.inner.data.bake(env);
+        let error_value = self.inner.error_value.bake(env);
+        databake::quote! { unsafe { icu_collections::codepointtrie::FastCodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value) } }
+    }
+}
+
+#[cfg(feature = "databake")]
+impl<T: TrieValue + databake::Bake> databake::BakeSize for FastCodePointTrie<'_, T> {
+    fn borrows_size(&self) -> usize {
+        self.inner.borrows_size()
+    }
+}
+
 /// Type-safe wrapper for a small trie guaranteeing
 /// the the getters don't branch on the trie type.
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom, Clone)]
 #[repr(transparent)]
 pub struct SmallCodePointTrie<'trie, T: TrieValue> {
     inner: CodePointTrie<'trie, T>,
+}
+
+impl<'trie, T: TrieValue> SmallCodePointTrie<'trie, T> {
+    #[doc(hidden)] // databake internal
+    /// # Safety
+    ///
+    /// `header.trie_type`, `index`, and `data` must
+    /// satisfy the invariants for the fields of the
+    /// same names on `CodePointTrie`.
+    pub const unsafe fn from_parts_unstable_unchecked_v1(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, T>,
+        error_value: T,
+    ) -> Self {
+        // Field invariants upheld: The caller is responsible.
+        // In practice, this means that datagen in the databake
+        // mode upholds these invariants when constructing the
+        // `CodePointTrie` that is then baked.
+        let untyped = CodePointTrie::<'trie, T>::from_parts_unstable_unchecked_v1(
+            header,
+            index,
+            data,
+            error_value,
+        );
+        Self { inner: untyped }
+    }
 }
 
 impl<'trie, T: TrieValue> TypedCodePointTrie<'trie, T> for SmallCodePointTrie<'trie, T> {
@@ -1659,6 +1951,24 @@ impl<'trie, T: TrieValue> TryFrom<CodePointTrie<'trie, T>> for SmallCodePointTri
     }
 }
 
+#[cfg(feature = "databake")]
+impl<T: TrieValue + databake::Bake> databake::Bake for SmallCodePointTrie<'_, T> {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        let header = self.inner.header.bake(env);
+        let index = self.inner.index.bake(env);
+        let data = self.inner.data.bake(env);
+        let error_value = self.inner.error_value.bake(env);
+        databake::quote! { unsafe { icu_collections::codepointtrie::SmallCodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value) } }
+    }
+}
+
+#[cfg(feature = "databake")]
+impl<T: TrieValue + databake::Bake> databake::BakeSize for SmallCodePointTrie<'_, T> {
+    fn borrows_size(&self) -> usize {
+        self.inner.borrows_size()
+    }
+}
+
 /// Error indicating that the `TrieType` of an untyped trie
 /// does not match the requested typed trie type.
 #[derive(Debug)]
@@ -1674,6 +1984,194 @@ pub enum Typed<F, S> {
     Fast(F),
     /// The trie type is small.
     Small(S),
+}
+
+/// Trait for writing trait bounds for monomorphizing over either
+/// `CodePointTrie`, `FastCodePointTrie`, or `SmallCodePointTrie`.
+///
+/// Method naming intentionally differs from the method naming on
+/// those types in order to disambiguate.
+#[allow(private_bounds)] // Permit sealing
+pub trait AbstractCodePointTrie<'trie, T: TrieValue>: Seal {
+    /// Look up trie value by an ASCII character.
+    ///
+    /// # Safety
+    ///
+    /// `ascii` must be less than 128.
+    unsafe fn ascii(&self, ascii: u8) -> T;
+
+    /// Look up trie value by a two-byte UTF-8 sequence.
+    ///
+    /// `high_five` is the low five bits of the lead byte of a two-byte UTF-8 sequence.
+    /// `low_six` is the low six bits of the trail byte of a two-byte UTF-8 sequence.
+    ///
+    /// # Safety
+    ///
+    /// `high_five` must not have bit positions other than the lowest 5 set to 1.
+    /// `low_six` must not have bit positions other than the lowest 6 set to 1.
+    unsafe fn utf8_two_byte(&self, high_five: u32, low_six: u32) -> T;
+
+    /// Look up trie value by a three-byte UTF-8 or WTF-8 sequence.
+    ///
+    /// `high_ten` is the low four bits of the lead byte of three-byte UTF-8 or WTF-8 sequence shifted left by 6 followed by the low six bits of the first trail byte.
+    /// `low_six` is the low six bits of the last trail byte of a three-byte UTF-8 or WTF-8 sequence.
+    ///
+    /// Sequences representing surrogates (WTF-8) are allowed.
+    ///
+    /// # Safety
+    ///
+    /// `high_ten` must not have bit positions other than the lowest 10 set to 1.
+    /// `low_six` must not have bit positions other than the lowest 6 set to 1.
+    unsafe fn utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T;
+
+    /// Look up trie value by a Latin1 character.
+    fn latin1(&self, latin1: u8) -> T;
+
+    /// Look up trie value by a Basic Multilingual Plane character.
+    ///
+    /// Surrogate values are allowed.
+    fn bmp(&self, bmp: u16) -> T;
+
+    /// Look up trie value by a non-Basic Multilingual Plane character.
+    ///
+    /// The behavior is memory-safe nonsense if the argument is not
+    /// actually a non-Basic Multilingual Plane character.
+    fn supplementary(&self, supplementary: u32) -> T;
+
+    /// Look up trie value by a Unicode Scalar Value.
+    fn scalar(&self, scalar: char) -> T;
+
+    /// Look up trie value by Unicode Code Point.
+    ///
+    /// Surrogate values are allowed. Out of range input
+    /// results in the error value.
+    fn code_point(&self, code_point: u32) -> T;
+}
+
+impl<'trie, T: TrieValue> AbstractCodePointTrie<'trie, T> for FastCodePointTrie<'trie, T> {
+    #[inline(always)]
+    unsafe fn ascii(&self, ascii: u8) -> T {
+        self.get7(ascii)
+    }
+
+    #[inline(always)]
+    unsafe fn utf8_two_byte(&self, high_five: u32, low_six: u32) -> T {
+        self.get_utf8_two_byte(high_five, low_six)
+    }
+
+    #[inline(always)]
+    unsafe fn utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
+        self.get_utf8_three_byte(high_ten, low_six)
+    }
+
+    #[inline(always)]
+    fn latin1(&self, latin1: u8) -> T {
+        self.get8(latin1)
+    }
+
+    #[inline(always)]
+    fn bmp(&self, bmp: u16) -> T {
+        self.get16(bmp)
+    }
+
+    #[inline(always)]
+    fn supplementary(&self, supplementary: u32) -> T {
+        self.get32_supplementary(supplementary)
+    }
+
+    #[inline(always)]
+    fn scalar(&self, scalar: char) -> T {
+        self.get(scalar)
+    }
+
+    #[inline(always)]
+    fn code_point(&self, code_point: u32) -> T {
+        self.get32(code_point)
+    }
+}
+
+impl<'trie, T: TrieValue> AbstractCodePointTrie<'trie, T> for SmallCodePointTrie<'trie, T> {
+    #[inline(always)]
+    unsafe fn ascii(&self, ascii: u8) -> T {
+        self.get7(ascii)
+    }
+
+    #[inline(always)]
+    unsafe fn utf8_two_byte(&self, high_five: u32, low_six: u32) -> T {
+        self.get_utf8_two_byte(high_five, low_six)
+    }
+
+    #[inline(always)]
+    unsafe fn utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
+        self.get_utf8_three_byte(high_ten, low_six)
+    }
+
+    #[inline(always)]
+    fn latin1(&self, latin1: u8) -> T {
+        self.get8(latin1)
+    }
+
+    #[inline(always)]
+    fn bmp(&self, bmp: u16) -> T {
+        self.get16(bmp)
+    }
+
+    #[inline(always)]
+    fn supplementary(&self, supplementary: u32) -> T {
+        self.get32_supplementary(supplementary)
+    }
+
+    #[inline(always)]
+    fn scalar(&self, scalar: char) -> T {
+        self.get(scalar)
+    }
+
+    #[inline(always)]
+    fn code_point(&self, code_point: u32) -> T {
+        self.get32(code_point)
+    }
+}
+
+impl<'trie, T: TrieValue> AbstractCodePointTrie<'trie, T> for CodePointTrie<'trie, T> {
+    #[inline(always)]
+    unsafe fn ascii(&self, ascii: u8) -> T {
+        self.get7(ascii)
+    }
+
+    #[inline(always)]
+    unsafe fn utf8_two_byte(&self, high_five: u32, low_six: u32) -> T {
+        self.get_utf8_two_byte(high_five, low_six)
+    }
+
+    #[inline(always)]
+    unsafe fn utf8_three_byte(&self, high_ten: u32, low_six: u32) -> T {
+        self.get_utf8_three_byte(high_ten, low_six)
+    }
+
+    #[inline(always)]
+    fn latin1(&self, latin1: u8) -> T {
+        self.get8(latin1)
+    }
+
+    #[inline(always)]
+    fn bmp(&self, bmp: u16) -> T {
+        self.get16(bmp)
+    }
+
+    #[inline(always)]
+    fn supplementary(&self, supplementary: u32) -> T {
+        self.get32_supplementary(supplementary)
+    }
+
+    #[inline(always)]
+    fn scalar(&self, scalar: char) -> T {
+        self.get(scalar)
+    }
+
+    #[inline(always)]
+    fn code_point(&self, code_point: u32) -> T {
+        self.get32(code_point)
+    }
 }
 
 #[cfg(test)]
@@ -1829,6 +2327,144 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
+    fn test_serde_with_postcard_roundtrip_small() -> Result<(), postcard::Error> {
+        let untyped = planes::get_planes_trie();
+        let trie = <SmallCodePointTrie<_>>::try_from(untyped.clone()).unwrap();
+
+        let trie_serialized: Vec<u8> = postcard::to_allocvec(&trie).unwrap();
+
+        // Assert an expected (golden data) version of the serialized trie.
+        const EXP_TRIE_SERIALIZED: &[u8] = &[
+            128, 128, 64, 128, 2, 2, 0, 0, 1, 160, 18, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 136,
+            2, 144, 2, 144, 2, 144, 2, 176, 2, 176, 2, 176, 2, 176, 2, 208, 2, 208, 2, 208, 2, 208,
+            2, 240, 2, 240, 2, 240, 2, 240, 2, 16, 3, 16, 3, 16, 3, 16, 3, 48, 3, 48, 3, 48, 3, 48,
+            3, 80, 3, 80, 3, 80, 3, 80, 3, 112, 3, 112, 3, 112, 3, 112, 3, 144, 3, 144, 3, 144, 3,
+            144, 3, 176, 3, 176, 3, 176, 3, 176, 3, 208, 3, 208, 3, 208, 3, 208, 3, 240, 3, 240, 3,
+            240, 3, 240, 3, 16, 4, 16, 4, 16, 4, 16, 4, 48, 4, 48, 4, 48, 4, 48, 4, 80, 4, 80, 4,
+            80, 4, 80, 4, 112, 4, 112, 4, 112, 4, 112, 4, 0, 0, 16, 0, 32, 0, 48, 0, 64, 0, 80, 0,
+            96, 0, 112, 0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32,
+            0, 48, 0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32, 0, 48,
+            0, 0, 0, 16, 0, 32, 0, 48, 0, 0, 0, 16, 0, 32, 0, 48, 0, 128, 0, 128, 0, 128, 0, 128,
+            0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128,
+            0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128,
+            0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 128, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144,
+            0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144,
+            0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 144,
+            0, 144, 0, 144, 0, 144, 0, 144, 0, 144, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160,
+            0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160,
+            0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160, 0, 160,
+            0, 160, 0, 160, 0, 160, 0, 160, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176,
+            0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176,
+            0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176, 0, 176,
+            0, 176, 0, 176, 0, 176, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192,
+            0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192,
+            0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192, 0, 192,
+            0, 192, 0, 192, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208,
+            0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208,
+            0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208, 0, 208,
+            0, 208, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224,
+            0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224,
+            0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224, 0, 224,
+            0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240,
+            0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240,
+            0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 240, 0, 0,
+            1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+            0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+            1, 0, 1, 0, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1,
+            16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16,
+            1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 16, 1, 32, 1, 32, 1, 32, 1,
+            32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32,
+            1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1, 32, 1,
+            32, 1, 32, 1, 32, 1, 32, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48,
+            1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1,
+            48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 48, 1, 64, 1, 64,
+            1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1,
+            64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 64,
+            1, 64, 1, 64, 1, 64, 1, 64, 1, 64, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1,
+            80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80,
+            1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1, 80, 1,
+            96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96,
+            1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1,
+            96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 96, 1, 128, 0, 136, 0, 136, 0, 136, 0, 136,
+            0, 136, 0, 136, 0, 136, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
+            2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2,
+            0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0,
+            168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0,
+            168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 168, 0,
+            168, 0, 168, 0, 168, 0, 168, 0, 168, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0,
+            200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0,
+            200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0, 200, 0,
+            200, 0, 200, 0, 200, 0, 200, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0,
+            232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0,
+            232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0, 232, 0,
+            232, 0, 232, 0, 232, 0, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8,
+            1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1,
+            8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40,
+            1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1,
+            40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40, 1, 40,
+            1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1,
+            72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72,
+            1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 72, 1, 104, 1, 104, 1, 104, 1, 104, 1,
+            104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1,
+            104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1,
+            104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 104, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1,
+            136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1,
+            136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 136, 1,
+            136, 1, 136, 1, 136, 1, 136, 1, 136, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1,
+            168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1,
+            168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1, 168, 1,
+            168, 1, 168, 1, 168, 1, 168, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1,
+            200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1,
+            200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1, 200, 1,
+            200, 1, 200, 1, 200, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1,
+            232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1,
+            232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1, 232, 1,
+            232, 1, 232, 1, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2,
+            8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 8,
+            2, 8, 2, 8, 2, 8, 2, 8, 2, 8, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40,
+            2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2,
+            40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 40, 2, 72,
+            2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2,
+            72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72,
+            2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 72, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2,
+            104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2,
+            104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 104, 2,
+            104, 2, 104, 2, 104, 2, 104, 2, 104, 2, 244, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+            2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+            4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6,
+            6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8,
+            8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10,
+            10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11,
+            11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+            12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14,
+            14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+            15, 15, 15, 15, 15, 15, 15, 16, 16, 16, 0,
+        ];
+        assert_eq!(trie_serialized, EXP_TRIE_SERIALIZED);
+
+        let trie_deserialized = postcard::from_bytes::<SmallCodePointTrie<u8>>(&trie_serialized)?;
+
+        let trie_deserialized_untyped = trie_deserialized.as_untyped_ref();
+        assert_eq!(&untyped.index, &trie_deserialized_untyped.index);
+        assert_eq!(&untyped.data, &trie_deserialized_untyped.data);
+
+        assert!(!trie_deserialized_untyped.index.is_owned());
+        assert!(!trie_deserialized_untyped.data.is_owned());
+
+        Ok(())
+    }
+
+    #[test]
     fn test_get_range() {
         let planes_trie = planes::get_planes_trie();
 
@@ -1884,6 +2520,58 @@ mod tests {
                         data_null_offset: 4u32,
                         null_value: 5u32,
                         trie_type: crate::codepointtrie::TrieType::Small,
+                    },
+                    zerovec::ZeroVec::new(),
+                    zerovec::ZeroVec::new(),
+                    0u32,
+                )
+            },
+            icu_collections,
+            [zerovec],
+        );
+    }
+
+    #[test]
+    #[allow(unused_unsafe)] // `unsafe` below is both necessary and unnecessary
+    fn databake_small() {
+        databake::test_bake!(
+            SmallCodePointTrie<'static, u32>,
+            const,
+            unsafe {
+                crate::codepointtrie::SmallCodePointTrie::from_parts_unstable_unchecked_v1(
+                    crate::codepointtrie::CodePointTrieHeader {
+                        high_start: 1u32,
+                        shifted12_high_start: 2u16,
+                        index3_null_offset: 3u16,
+                        data_null_offset: 4u32,
+                        null_value: 5u32,
+                        trie_type: crate::codepointtrie::TrieType::Small,
+                    },
+                    zerovec::ZeroVec::new(),
+                    zerovec::ZeroVec::new(),
+                    0u32,
+                )
+            },
+            icu_collections,
+            [zerovec],
+        );
+    }
+
+    #[test]
+    #[allow(unused_unsafe)] // `unsafe` below is both necessary and unnecessary
+    fn databake_fast() {
+        databake::test_bake!(
+            FastCodePointTrie<'static, u32>,
+            const,
+            unsafe {
+                crate::codepointtrie::FastCodePointTrie::from_parts_unstable_unchecked_v1(
+                    crate::codepointtrie::CodePointTrieHeader {
+                        high_start: 1u32,
+                        shifted12_high_start: 2u16,
+                        index3_null_offset: 3u16,
+                        data_null_offset: 4u32,
+                        null_value: 5u32,
+                        trie_type: crate::codepointtrie::TrieType::Fast,
                     },
                     zerovec::ZeroVec::new(),
                     zerovec::ZeroVec::new(),
