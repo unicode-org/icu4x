@@ -523,7 +523,7 @@ pub struct Month {
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
 pub enum LeapStatus {
-    /// Not a leap month, aka a "normal", "common", or "standard" month.
+    /// Not a leap month, aka a "normal", "common", "ordinary", or "standard" month.
     Normal,
     /// A leap month.
     Leap,
