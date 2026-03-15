@@ -119,9 +119,8 @@ mod tests {
     #[test]
     fn cast_aligned_correct_length() {
         let data: [u32; 2] = [1, 2];
-        let bytes: &[u8] = unsafe {
-            core::slice::from_raw_parts(data.as_ptr() as *const u8, size_of_val(&data))
-        };
+        let bytes: &[u8] =
+            unsafe { core::slice::from_raw_parts(data.as_ptr() as *const u8, size_of_val(&data)) };
         let result: Result<&[u32], E> = unsafe { cast_bytes_to_slice(bytes) };
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), &[1u32, 2]);
@@ -131,9 +130,7 @@ mod tests {
     fn cast_wrong_length_only() {
         // 4-byte aligned but 5 bytes long (not a multiple of 4)
         let data: [u32; 2] = [1, 2];
-        let bytes: &[u8] = unsafe {
-            core::slice::from_raw_parts(data.as_ptr() as *const u8, 5)
-        };
+        let bytes: &[u8] = unsafe { core::slice::from_raw_parts(data.as_ptr() as *const u8, 5) };
         let result: Result<&[u32], E> = unsafe { cast_bytes_to_slice(bytes) };
         assert!(result.is_err(), "wrong length alone must be rejected");
     }
