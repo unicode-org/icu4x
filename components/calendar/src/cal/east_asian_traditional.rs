@@ -793,7 +793,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         let mut m = types::MonthInfo::new(self, date.0);
         if date.0.year().packed.leap_month() == Some(m.ordinal + 1) {
-            m.leap_status = types::LeapStatus::LeapBase;
+            m.leap_status = types::LeapStatus::Base;
         }
         m
     }

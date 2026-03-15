@@ -46,7 +46,7 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// In leap years (years 3, 6, 8, 11, 17, 19 in a 19-year cycle), the leap month Adar I (`M05L`, 30 days)
 /// is inserted before Adar (`M06`), which is then called Adar II ([`MonthInfo::leap_status`] will be
-/// [`LeapStatus::LeapBase`] to mark this).
+/// [`LeapStatus::Base`] to mark this).
 ///
 /// Standard years thus have 353-355 days, and leap years 383-385.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
@@ -359,7 +359,7 @@ impl Calendar for Hebrew {
         // Even though the leap month is modeled as M05L,
         // the actual leap base is M06.
         if m.number() == 6 && m.ordinal == 7 {
-            m.leap_status = LeapStatus::LeapBase;
+            m.leap_status = LeapStatus::Base;
             #[allow(deprecated)]
             {
                 // This is an ICU4X invention, it's not needed by
