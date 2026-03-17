@@ -188,7 +188,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
         });
 
         if let Some(single_char) = single_char {
-            return self.contains(first_char);
+            return self.contains(single_char);
         }
 
         self.str_list

@@ -27,6 +27,13 @@ where
     V: TrieValue,
     T: AbstractCodePointTrie<'trie, V>,
 {
+    /// # Safety Invariant
+    ///
+    /// `delegate` must represent a slice of well-formed UTF-8,
+    ///  except temporarily within the implementation of `next()` and
+    /// `next_back()`. In particular, `next()` and `next_back()` may
+    /// assume that this invariant holds upon entry into `next()`/`next_back()`
+    /// and the invariant must hold upon return from `next()`/`next_back()`.
     delegate: core::slice::Iter<'slice, u8>,
     trie: &'trie T,
     phantom: PhantomData<V>,
@@ -41,6 +48,8 @@ where
     #[inline]
     pub fn new(s: &'slice str, trie: &'trie T) -> Self {
         Self {
+            // Field invariant upheld: `s` is well-formed UTF-8,
+            // so `delegate` is as well.
             delegate: s.as_bytes().iter(),
             trie,
             phantom: PhantomData,
@@ -50,9 +59,8 @@ where
     /// Obtains the remainder of the iterator as a string slice.
     #[inline]
     pub fn as_str(&self) -> &'slice str {
-        // SAFETY: OK, because `delegate` came from `str` and is always
-        // advanced in a way that leaves the iterator at an UTF-8 sequence
-        // boundary.
+        // SAFETY: OK due to field invariant of `delegate` guaranteeing
+        // well-formed UTF-8.
         unsafe { core::str::from_utf8_unchecked(self.delegate.as_slice()) }
     }
 }
@@ -65,6 +73,7 @@ where
     #[inline]
     fn clone(&self) -> Self {
         Self {
+            // Field invariant upheld: Clone of well-formed UTF-8 is well-formed UTF-8.
             delegate: self.delegate.clone(),
             trie: self.trie,
             phantom: PhantomData,
@@ -96,52 +105,58 @@ where
         if lead < 0x80 {
             // SAFETY: We checked the invariant of `ascii` immediately
             // above.
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete one-byte sequence.
             return Some((char::from(lead), unsafe { self.trie.ascii(lead) }));
         }
-        // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume that we
+        // SAFETY: Due to the field invariant of `delegate`, we may assume that we
         // have a valid lead byte. Not need to check for other cases.
         if lead < 0xE0 {
             // Two-byte sequence.
-            // SAFETY, since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
-            // presence of a trail byte.
+            // SAFETY: The field invariant of `delegate` providing UTF-8 well-formedness upon entry into this method and
+            // having seen a two-byte lead we may assume the presence of a trail byte.
             let trail = *unsafe { self.delegate.next().unwrap_unchecked() };
             let high_five = u32::from(lead & 0b11_111);
             let low_six = u32::from(trail & 0b111_111);
-            // SAFETY: By construction, `high_five` and `low_six` conform
-            // to the invariant of `utf8_two_byte`.
+            // SAFETY: By construction and the two above safety remarks, `high_five` and
+            // `low_six` conform to the invariant of `utf8_two_byte`.
             let v = unsafe { self.trie.utf8_two_byte(high_five, low_six) };
-            // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+            // SAFETY: Due to the field invariant of `delegate`, `lead` must be a
             // valid (not overlong) two-byte lead and `trail` must be a valid
             // trail. Therefore, the following shift and OR stays in the
             // scalar value range.
             let c = unsafe { char::from_u32_unchecked((high_five << 6) | low_six) };
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete two-byte sequence.
             return Some((c, v));
         }
         if lead < 0xF0 {
             // Three-byte sequence.
-            // SAFETY, since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
-            // presence of two trail bytes.
+            // SAFETY: The field invariant of `delegate` providing UTF-8 well-formedness upon entry into this method and
+            // having seen a two-byte lead we may assume the presence of two trail bytes.
             let second = *unsafe { self.delegate.next().unwrap_unchecked() };
             let third = *unsafe { self.delegate.next().unwrap_unchecked() };
             let high_ten = (u32::from(lead & 0b1111) << 6) | u32::from(second & 0b111_111);
             let low_six = u32::from(third & 0b111_111);
-            // SAFETY: By construction, `high_ten` and `low_six` conform
-            // to the invariant of `utf8_three_byte`.
+            // SAFETY: By construction and the safety remarks on the path to this point,
+            // `high_ten` and `low_six` conform to the invariant of `utf8_three_byte`.
             let v = unsafe { self.trie.utf8_three_byte(high_ten, low_six) };
-            // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+            // SAFETY: Due to the field invariant of `delegate`, `lead` must be a
             // valid (not overlong) three-byte lead and `second` and `third`
             // must be valid trails. Therefore, the following shift and OR
             // stays in the scalar value range.
             let c = unsafe { char::from_u32_unchecked((high_ten << 6) | low_six) };
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete three-byte sequence.
             return Some((c, v));
         }
         // Four-byte sequence
-        // SAFETY, since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
-        // presence of three trail bytes.
+        // SAFETY: The field invariant of `delegate` providing UTF-8 well-formedness upon entry into this method and
+        // having seen a two-byte lead we may assume the presence of three trail bytes.
         let second = *unsafe { self.delegate.next().unwrap_unchecked() };
         let third = *unsafe { self.delegate.next().unwrap_unchecked() };
         let fourth = *unsafe { self.delegate.next().unwrap_unchecked() };
-        // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+        // SAFETY: Due to the field invariant of `delegate`, `lead` must be a
         // valid (not overlong or out-of-range) four-byte lead and `second`,
         // `third`, and `fourth` must be valid trails. Therefore, the
         // following shift and OR stays in the scalar value range.
@@ -153,6 +168,8 @@ where
                     | u32::from(fourth & 0b111_111),
             )
         };
+        // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+        // a complete four-byte sequence.
         Some((c, self.trie.supplementary(c as u32)))
     }
 
@@ -185,9 +202,11 @@ where
         if last < 0x80 {
             // SAFETY: We checked the invariant of `ascii` immediately
             // above.
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete one-byte sequence.
             return Some((char::from(last), unsafe { self.trie.ascii(last) }));
         }
-        // SAFETY Since `delegate` came from `str` and we always advance by a full UTF-8 sequence,
+        // SAFETY Due to the field invariant of `delegate`,
         // `last` must be a valid trail byte and it is preceded either by a lead byte for a
         // two-byte sequence or by another trail byte.
         let second_last = *unsafe { self.delegate.next_back().unwrap_unchecked() };
@@ -195,17 +214,19 @@ where
             // Two-byte sequence.
             let high_five = u32::from(second_last & 0b11_111);
             let low_six = u32::from(last & 0b111_111);
-            // SAFETY: By construction, `high_five` and `low_six` conform
+            // SAFETY: By construction and the two above safety remarks, `high_five` and `low_six` conform
             // to the invariant of `utf8_two_byte`.
             let v = unsafe { self.trie.utf8_two_byte(high_five, low_six) };
-            // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `second_last` must be a
+            // SAFETY: Due to the field invariant of `delegate`, `second_last` must be a
             // valid (not overlong) two-byte lead and `last` must be a valid
             // trail. Therefore, the following shift and OR stays in the
             // scalar value range.
             let c = unsafe { char::from_u32_unchecked((high_five << 6) | low_six) };
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete two-byte sequence.
             return Some((c, v));
         }
-        // SAFETY Since `delegate` came from `str` and we always advance by a full UTF-8 sequence,
+        // SAFETY: Due to the field invariant of `delegate`,
         // `second_last` must be a valid trail byte and it is preceded either by a lead byte for a
         // three-byte sequence or by another trail byte.
         let third_last = *unsafe { self.delegate.next_back().unwrap_unchecked() };
@@ -214,21 +235,23 @@ where
             let high_ten =
                 (u32::from(third_last & 0b1111) << 6) | u32::from(second_last & 0b111_111);
             let low_six = u32::from(last & 0b111_111);
-            // SAFETY: By construction, `high_ten` and `low_six` conform
+            // SAFETY: By construction and the safety remarks on the path to this point, `high_ten` and `low_six` conform
             // to the invariant of `utf8_three_byte`.
             let v = unsafe { self.trie.utf8_three_byte(high_ten, low_six) };
-            // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `third_last` must be a
+            // SAFETY: Due to the field invariant of `delegate`, `third_last` must be a
             // valid (not overlong) three-byte lead and `second_last` and `last`
             // must be valid trails. Therefore, the following shift and OR
             // stays in the scalar value range.
             let c = unsafe { char::from_u32_unchecked((high_ten << 6) | low_six) };
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete three-byte sequence.
             return Some((c, v));
         }
         // Four-byte sequence
-        // SAFETY, since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
+        // SAFETY: Due to the field invariant of `delegate`, we may assume the
         // presence of a lead byte.
         let lead = *unsafe { self.delegate.next_back().unwrap_unchecked() };
-        // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+        // SAFETY: Due to the field invariant of `delegate`, `lead` must be a
         // valid (not overlong or out-of-range) four-byte lead and `third_last`,
         // `second_last`, and `last` must be valid trails. Therefore, the
         // following shift and OR stays in the scalar value range.
@@ -240,6 +263,8 @@ where
                     | u32::from(last & 0b111_111),
             )
         };
+        // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+        // a complete four-byte sequence.
         Some((c, self.trie.supplementary(c as u32)))
     }
 }
@@ -414,6 +439,15 @@ where
     V: TrieValue + Default,
     T: AbstractCodePointTrie<'trie, V>,
 {
+    /// # Safety Invariant
+    ///
+    /// `delegate` must represent a slice of well-formed UTF-8,
+    ///  except temporarily within the implementation of `next()` and
+    /// `next_back()`. In particular, `next()` and `next_back()` may
+    /// assume that this invariant holds upon entry into `next()`/`next_back()`
+    /// and the invariant must hold upon return from `next()`/`next_back()`.
+    ///
+    /// Note: All-safety-relavant code is copypaste from `CharsWithTrie`.
     delegate: core::slice::Iter<'slice, u8>,
     trie: &'trie T,
     phantom: PhantomData<V>,
@@ -428,6 +462,8 @@ where
     #[inline]
     pub fn new(s: &'slice str, trie: &'trie T) -> Self {
         Self {
+            // Field invariant upheld: `s` is well-formed UTF-8,
+            // so `delegate` is as well.
             delegate: s.as_bytes().iter(),
             trie,
             phantom: PhantomData,
@@ -437,9 +473,8 @@ where
     /// Obtains the remainder of the iterator as a string slice.
     #[inline]
     pub fn as_str(&self) -> &'slice str {
-        // SAFETY: OK, because `delegate` came from `str` and is always
-        // advanced in a way that leaves the iterator at an UTF-8 sequence
-        // boundary.
+        // SAFETY: OK due to field invariant of `delegate` guaranteeing
+        // well-formed UTF-8.
         unsafe { core::str::from_utf8_unchecked(self.delegate.as_slice()) }
     }
 }
@@ -452,6 +487,7 @@ where
     #[inline]
     fn clone(&self) -> Self {
         Self {
+            // Field invariant upheld: Clone of well-formed UTF-8 is well-formed UTF-8.
             delegate: self.delegate.clone(),
             trie: self.trie,
             phantom: PhantomData,
@@ -482,54 +518,58 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         let lead = *self.delegate.next()?;
         if lead < 0x80 {
-            // SAFETY: We checked the invariant of `ascii` immediately
-            // above.
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete one-byte sequence.
             return Some((char::from(lead), V::default()));
         }
-        // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume that we
+        // SAFETY: Due to the field invariant of `delegate`, we may assume that we
         // have a valid lead byte. Not need to check for other cases.
         if lead < 0xE0 {
             // Two-byte sequence.
-            // SAFETY, since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
-            // presence of a trail byte.
+            // SAFETY: The field invariant of `delegate` providing UTF-8 well-formedness upon entry into this method and
+            // having seen a two-byte lead we may assume the presence of a trail byte.
             let trail = *unsafe { self.delegate.next().unwrap_unchecked() };
             let high_five = u32::from(lead & 0b11_111);
             let low_six = u32::from(trail & 0b111_111);
-            // SAFETY: By construction, `high_five` and `low_six` conform
-            // to the invariant of `utf8_two_byte`.
+            // SAFETY: By construction and the two above safety remarks, `high_five` and
+            // `low_six` conform to the invariant of `utf8_two_byte`.
             let v = unsafe { self.trie.utf8_two_byte(high_five, low_six) };
-            // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+            // SAFETY: Due to the field invariant of `delegate`, `lead` must be a
             // valid (not overlong) two-byte lead and `trail` must be a valid
             // trail. Therefore, the following shift and OR stays in the
             // scalar value range.
             let c = unsafe { char::from_u32_unchecked((high_five << 6) | low_six) };
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete two-byte sequence.
             return Some((c, v));
         }
         if lead < 0xF0 {
             // Three-byte sequence.
-            // SAFETY, since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
-            // presence of two trail bytes.
+            // SAFETY: The field invariant of `delegate` providing UTF-8 well-formedness upon entry into this method and
+            // having seen a two-byte lead we may assume the presence of two trail bytes.
             let second = *unsafe { self.delegate.next().unwrap_unchecked() };
             let third = *unsafe { self.delegate.next().unwrap_unchecked() };
             let high_ten = (u32::from(lead & 0b1111) << 6) | u32::from(second & 0b111_111);
             let low_six = u32::from(third & 0b111_111);
-            // SAFETY: By construction, `high_ten` and `low_six` conform
-            // to the invariant of `utf8_three_byte`.
+            // SAFETY: By construction and the safety remarks on the path to this point,
+            // `high_ten` and `low_six` conform to the invariant of `utf8_three_byte`.
             let v = unsafe { self.trie.utf8_three_byte(high_ten, low_six) };
-            // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+            // SAFETY: Due to the field invariant of `delegate`, `lead` must be a
             // valid (not overlong) three-byte lead and `second` and `third`
             // must be valid trails. Therefore, the following shift and OR
             // stays in the scalar value range.
             let c = unsafe { char::from_u32_unchecked((high_ten << 6) | low_six) };
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete three-byte sequence.
             return Some((c, v));
         }
         // Four-byte sequence
-        // SAFETY, since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
-        // presence of three trail bytes.
+        // SAFETY: The field invariant of `delegate` providing UTF-8 well-formedness upon entry into this method and
+        // having seen a two-byte lead we may assume the presence of three trail bytes.
         let second = *unsafe { self.delegate.next().unwrap_unchecked() };
         let third = *unsafe { self.delegate.next().unwrap_unchecked() };
         let fourth = *unsafe { self.delegate.next().unwrap_unchecked() };
-        // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+        // SAFETY: Due to the field invariant of `delegate`, `lead` must be a
         // valid (not overlong or out-of-range) four-byte lead and `second`,
         // `third`, and `fourth` must be valid trails. Therefore, the
         // following shift and OR stays in the scalar value range.
@@ -541,6 +581,8 @@ where
                     | u32::from(fourth & 0b111_111),
             )
         };
+        // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+        // a complete four-byte sequence.
         Some((c, self.trie.supplementary(c as u32)))
     }
 
@@ -571,11 +613,11 @@ where
     fn next_back(&mut self) -> Option<Self::Item> {
         let last = *self.delegate.next_back()?;
         if last < 0x80 {
-            // SAFETY: We checked the invariant of `ascii` immediately
-            // above.
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete one-byte sequence.
             return Some((char::from(last), V::default()));
         }
-        // SAFETY Since `delegate` came from `str` and we always advance by a full UTF-8 sequence,
+        // SAFETY Due to the field invariant of `delegate`,
         // `last` must be a valid trail byte and it is preceded either by a lead byte for a
         // two-byte sequence or by another trail byte.
         let second_last = *unsafe { self.delegate.next_back().unwrap_unchecked() };
@@ -583,17 +625,19 @@ where
             // Two-byte sequence.
             let high_five = u32::from(second_last & 0b11_111);
             let low_six = u32::from(last & 0b111_111);
-            // SAFETY: By construction, `high_five` and `low_six` conform
+            // SAFETY: By construction and the two above safety remarks, `high_five` and `low_six` conform
             // to the invariant of `utf8_two_byte`.
             let v = unsafe { self.trie.utf8_two_byte(high_five, low_six) };
-            // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `second_last` must be a
+            // SAFETY: Due to the field invariant of `delegate`, `second_last` must be a
             // valid (not overlong) two-byte lead and `last` must be a valid
             // trail. Therefore, the following shift and OR stays in the
             // scalar value range.
             let c = unsafe { char::from_u32_unchecked((high_five << 6) | low_six) };
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete two-byte sequence.
             return Some((c, v));
         }
-        // SAFETY Since `delegate` came from `str` and we always advance by a full UTF-8 sequence,
+        // SAFETY: Due to the field invariant of `delegate`,
         // `second_last` must be a valid trail byte and it is preceded either by a lead byte for a
         // three-byte sequence or by another trail byte.
         let third_last = *unsafe { self.delegate.next_back().unwrap_unchecked() };
@@ -602,21 +646,23 @@ where
             let high_ten =
                 (u32::from(third_last & 0b1111) << 6) | u32::from(second_last & 0b111_111);
             let low_six = u32::from(last & 0b111_111);
-            // SAFETY: By construction, `high_ten` and `low_six` conform
+            // SAFETY: By construction and the safety remarks on the path to this point, `high_ten` and `low_six` conform
             // to the invariant of `utf8_three_byte`.
             let v = unsafe { self.trie.utf8_three_byte(high_ten, low_six) };
-            // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `third_last` must be a
+            // SAFETY: Due to the field invariant of `delegate`, `third_last` must be a
             // valid (not overlong) three-byte lead and `second_last` and `last`
             // must be valid trails. Therefore, the following shift and OR
             // stays in the scalar value range.
             let c = unsafe { char::from_u32_unchecked((high_ten << 6) | low_six) };
+            // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+            // a complete three-byte sequence.
             return Some((c, v));
         }
         // Four-byte sequence
-        // SAFETY, since `delegate` came from `str` and we always advance by a full UTF-8 sequence, we may assume the
+        // SAFETY: Due to the field invariant of `delegate`, we may assume the
         // presence of a lead byte.
         let lead = *unsafe { self.delegate.next_back().unwrap_unchecked() };
-        // SAFETY: Since `delegate` came from `str` and we always advance by a full UTF-8 sequence, `lead` must be a
+        // SAFETY: Due to the field invariant of `delegate`, `lead` must be a
         // valid (not overlong or out-of-range) four-byte lead and `third_last`,
         // `second_last`, and `last` must be valid trails. Therefore, the
         // following shift and OR stays in the scalar value range.
@@ -628,6 +674,8 @@ where
                     | u32::from(last & 0b111_111),
             )
         };
+        // Field invariant upheld: `delegate` is again well-formed UTF-8, because we consumed
+        // a complete four-byte sequence.
         Some((c, self.trie.supplementary(c as u32)))
     }
 }
