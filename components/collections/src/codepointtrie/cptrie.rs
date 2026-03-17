@@ -756,9 +756,10 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         debug_assert!(low_six <= 0b111_111); // Safety invariant.
         debug_assert!(high_five <= 0b11_111); // Safety invariant.
         debug_assert!(high_five > 0b1); // Non-shortest form; not safety invariant.
-                                        // SAFETY: The highest character representable as a two-byte
-                                        // UTF-8 sequence is U+07FF, eleven binary ones, which is below
-                                        // both `SMALL_TYPE_FAST_INDEXING_MAX` and `FAST_TYPE_FAST_INDEXING_MAX`.
+
+        // SAFETY: The highest character representable as a two-byte
+        // UTF-8 sequence is U+07FF, eleven binary ones, which is below
+        // both `SMALL_TYPE_FAST_INDEXING_MAX` and `FAST_TYPE_FAST_INDEXING_MAX`.
         self.get_bit_prefix_suffix_assuming_fast_index(high_five as usize, low_six as usize)
     }
 
