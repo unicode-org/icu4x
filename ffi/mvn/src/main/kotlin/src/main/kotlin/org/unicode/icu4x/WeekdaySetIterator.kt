@@ -19,12 +19,22 @@ class WeekdaySetIterator internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 ): Iterator<Weekday> {
 
-    internal class WeekdaySetIteratorCleaner(val handle: Pointer, val lib: WeekdaySetIteratorLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class WeekdaySetIteratorCleaner(val handle: Pointer, val lib: WeekdaySetIteratorLib) : Runnable {
         override fun run() {
             lib.icu4x_WeekdaySetIterator_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, WeekdaySetIterator.WeekdaySetIteratorCleaner(handle, WeekdaySetIterator.lib));
     }
 
     companion object {

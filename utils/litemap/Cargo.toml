@@ -5,7 +5,7 @@
 [package]
 name = "litemap"
 version = "0.8.1"
-keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
+keywords = ["data-structures", "memory-efficiency", "sorted", "vec", "map"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
 documentation = "https://docs.rs/litemap"
 

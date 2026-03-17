@@ -6,7 +6,7 @@ use crate::cal::coptic::CopticDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -95,6 +95,11 @@ impl DateFieldsResolver for Ethiopian {
     }
 
     #[inline]
+    fn min_months_from(start: Self::YearInfo, years: i64) -> i64 {
+        Coptic::min_months_from(start, years)
+    }
+
+    #[inline]
     fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
@@ -138,16 +143,15 @@ impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
 impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
     type Year = <Coptic as Calendar>::Year;
-    type DifferenceError = <Coptic as Calendar>::DifferenceError;
+    type DateCompatibilityError = <Coptic as Calendar>::DateCompatibilityError;
 
-    fn from_codes(
+    fn new_date(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
+        year: types::YearInput,
+        month: types::Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+    ) -> Result<Self::DateInner, DateNewError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self)
             .map(ArithmeticDate::cast)
             .map(CopticDateInner)
             .map(EthiopianDateInner)
@@ -207,8 +211,13 @@ impl Calendar for Ethiopian {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
+    ) -> types::DateDuration {
         Coptic.until(&date1.0, &date2.0, options)
+    }
+
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+        let _does_not_affect_semantics = other.era_style();
+        Ok(())
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {

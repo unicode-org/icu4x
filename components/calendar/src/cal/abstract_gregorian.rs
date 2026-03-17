@@ -5,7 +5,7 @@
 use crate::cal::iso::{IsoDateInner, IsoEra};
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -84,16 +84,15 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
     type Year = EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes(
+    fn new_date(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
+        year: types::YearInput,
+        month: types::Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+    ) -> Result<Self::DateInner, DateNewError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self)
             .map(ArithmeticDate::cast)
     }
 
@@ -159,8 +158,15 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
-        Ok(date1.until(date2, &AbstractGregorian(IsoEra), options))
+    ) -> types::DateDuration {
+        date1.until(date2, &AbstractGregorian(IsoEra), options)
+    }
+
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+        // The GregorianYears generic only affects constructors and year_info,
+        // it does not affect date identity.
+        let _ignored = other;
+        Ok(())
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
@@ -212,18 +218,16 @@ macro_rules! impl_with_abstract_gregorian {
         impl crate::Calendar for $cal_ty {
             type DateInner = $inner_date_ty;
             type Year = types::EraYear;
-            type DifferenceError = core::convert::Infallible;
-
-            fn from_codes(
+            type DateCompatibilityError = core::convert::Infallible;
+            fn new_date(
                 &self,
-                era: Option<&str>,
-                year: i32,
-                month_code: types::MonthCode,
+                year: types::YearInput,
+                month: types::Month,
                 day: u8,
-            ) -> Result<Self::DateInner, crate::error::DateError> {
+            ) -> Result<Self::DateInner, crate::error::DateNewError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .from_codes(era, year, month_code, day)
+                    .new_date(year, month, day)
                     .map($inner_date_ty)
             }
 
@@ -304,10 +308,21 @@ macro_rules! impl_with_abstract_gregorian {
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
                 options: crate::options::DateDifferenceOptions,
-            ) -> Result<crate::types::DateDuration, Self::DifferenceError> {
+            ) -> crate::types::DateDuration {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
                     .until(&date1.0, &date2.0, options)
+            }
+
+            fn check_date_compatibility(
+                &self,
+                other: &Self,
+            ) -> Result<(), Self::DateCompatibilityError> {
+                let $self_ident = self;
+                let c1 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                let $self_ident = other;
+                let c2 = crate::cal::abstract_gregorian::AbstractGregorian($eras_expr);
+                c1.check_date_compatibility(&c2)
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {

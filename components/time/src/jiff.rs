@@ -7,6 +7,8 @@ use icu_calendar::Gregorian;
 #[cfg(feature = "compiled_data")]
 use crate::zone::models::{AtTime, Base};
 use crate::zone::UtcOffset;
+#[cfg(feature = "compiled_data")]
+use crate::zone::ZoneNameTimestamp;
 use crate::{DateTime, Hour, Minute, Nanosecond, Second, Time};
 #[cfg(feature = "compiled_data")]
 use crate::{TimeZone, TimeZoneInfo, ZonedDateTime};
@@ -69,10 +71,9 @@ impl From<&jiff::Zoned> for ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>> {
         ZonedDateTime {
             date,
             time,
-            zone: zone.at_date_time_iso(DateTime {
-                date: date.to_calendar(icu_calendar::Iso),
-                time,
-            }),
+            zone: zone.with_zone_name_timestamp(ZoneNameTimestamp::from_epoch_seconds(
+                jiff.timestamp().as_second(),
+            )),
         }
     }
 }

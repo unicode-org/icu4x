@@ -5,7 +5,7 @@
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -138,17 +138,15 @@ impl crate::cal::scaffold::UnstableSealed for Julian {}
 impl Calendar for Julian {
     type DateInner = JulianDateInner;
     type Year = types::EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes(
+    fn new_date(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month: types::MonthCode,
+        year: types::YearInput,
+        month: types::Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month, day, self)
-            .map(JulianDateInner)
+    ) -> Result<Self::DateInner, DateNewError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(JulianDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -205,8 +203,12 @@ impl Calendar for Julian {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
-        Ok(date1.0.until(&date2.0, self, options))
+    ) -> types::DateDuration {
+        date1.0.until(&date2.0, self, options)
+    }
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
     }
 
     /// The calendar-specific year represented by `date`

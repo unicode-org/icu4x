@@ -17,12 +17,22 @@ class SentenceBreakIteratorUtf16 internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class SentenceBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: SentenceBreakIteratorUtf16Lib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class SentenceBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: SentenceBreakIteratorUtf16Lib) : Runnable {
         override fun run() {
             lib.icu4x_SentenceBreakIteratorUtf16_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, SentenceBreakIteratorUtf16.SentenceBreakIteratorUtf16Cleaner(handle, SentenceBreakIteratorUtf16.lib));
     }
 
     companion object {

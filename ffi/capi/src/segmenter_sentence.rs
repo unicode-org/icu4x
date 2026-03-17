@@ -19,21 +19,21 @@ pub mod ffi {
     #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed, Struct, hidden)]
     pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct SentenceBreakIteratorUtf8<'a>(
         icu_segmenter::iterators::SentenceBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct SentenceBreakIteratorUtf16<'a>(
         icu_segmenter::iterators::SentenceBreakIterator<'a, 'a, Utf16>,
     );
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator, Struct)]
     #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct SentenceBreakIteratorLatin1<'a>(
@@ -112,7 +112,6 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed::segment_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
-        #[diplomat::attr(kotlin, disable)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,

@@ -110,9 +110,13 @@ enum class LineBreak {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
             val returnVal = lib.icu4x_LineBreak_try_from_str_mv1(sSliceMemory.slice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return LineBreak.fromNative(intermediateOption)
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return LineBreak.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     

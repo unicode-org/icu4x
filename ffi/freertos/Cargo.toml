@@ -5,6 +5,8 @@
 [package]
 name = "icu_freertos"
 description = "C interface to ICU4X"
+categories = ["internationalization", "localization", "external-ffi-bindings", "no-std", "embedded"]
+keywords = ["ffi", "internationalization"]
 license = "Unicode-3.0"
 include = [
     "build.rs",
@@ -15,7 +17,6 @@ include = [
 ]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true

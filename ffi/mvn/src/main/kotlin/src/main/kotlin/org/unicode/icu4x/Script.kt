@@ -417,9 +417,13 @@ enum class Script(val inner: Int) {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
             val returnVal = lib.icu4x_Script_try_from_str_mv1(sSliceMemory.slice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return Script.fromNative(intermediateOption)
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return Script.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     

@@ -18,12 +18,22 @@ class TimeZoneAndCanonicalIterator internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 ): Iterator<TimeZoneAndCanonical> {
 
-    internal class TimeZoneAndCanonicalIteratorCleaner(val handle: Pointer, val lib: TimeZoneAndCanonicalIteratorLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class TimeZoneAndCanonicalIteratorCleaner(val handle: Pointer, val lib: TimeZoneAndCanonicalIteratorLib) : Runnable {
         override fun run() {
             lib.icu4x_TimeZoneAndCanonicalIterator_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, TimeZoneAndCanonicalIterator.TimeZoneAndCanonicalIteratorCleaner(handle, TimeZoneAndCanonicalIterator.lib));
     }
 
     companion object {

@@ -12,13 +12,16 @@ use zerovec::ule::AsULE;
 
 // Export the duration types from here
 #[cfg(feature = "unstable")]
-pub use crate::duration::{DateDuration, DateDurationUnit};
+pub use crate::duration::DateDuration;
 use crate::{calendar_arithmetic::ArithmeticDate, error::MonthCodeParseError};
 
 #[cfg(feature = "unstable")]
 pub use unstable::DateFields;
 #[cfg(not(feature = "unstable"))]
 pub(crate) use unstable::DateFields;
+
+#[cfg(doc)]
+use crate::Date;
 
 mod unstable {
     /// A bag of various ways of expressing the year, month, and/or day.
@@ -248,6 +251,33 @@ impl fmt::Debug for DateFields<'_> {
     }
 }
 
+/// Year information to be used as input to [`Date::try_new()`].
+///
+/// Note: The input variants represent different ways of specifying a year;
+/// see [`YearInfo`] for the output formats.
+///
+/// This type implements `From<i32>` producing an extended year, so you can simply
+/// call `2026.into()` to produce a `YearInput::Extended(2026)`.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum YearInput<'a> {
+    /// An "extended year", which is a single number representing the year.
+    ///
+    /// For many calendars this matches the year number.
+    ///
+    /// See [`YearInfo::extended_year()`] for more information.
+    Extended(i32),
+    /// A year specified by an era code and the year in that era.
+    EraYear(&'a str, i32),
+}
+
+impl From<i32> for YearInput<'_> {
+    /// Produces an extended year.
+    fn from(year: i32) -> Self {
+        Self::Extended(year)
+    }
+}
+
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
@@ -460,22 +490,26 @@ impl fmt::Display for MonthCode {
 ///
 /// A month has a "number" and "leap flag". In calendars without leap months (non-lunisolar
 /// calendars), the month with number n is always the nth month of the year (_ordinal month_),
-/// for example the Gregorian September is `Month:new(9)` and the 9th month of the year.
+/// for example the Gregorian September is `Month::new(9)` and the 9th month of the year.
 /// However, in calendars with leap months (lunisolar calendars), such as the Hebrew calendar,
 /// a month might repeat (leap) without affecting the number of each subsequent month (but
 /// obviously affecting their _ordinal number_). For example, the Hebrew month Nisan
 /// (`Month::new(7)`) might be the 7th or 8th month of the year, depending if the month
 /// Adar was repeated or not.
 ///
-/// Check the docs for a particular calendar for details on what its months are.
+/// In this model, `Month::leap(2)` is the month that occurs after `Month::new(2)`, even if the calendar considers the month to be a variant of
+/// the subsequent month.
+///
+/// Check the docs for a particular calendar (e.g. [`Hebrew`](crate::cal::Hebrew)) for details on
+/// what its months are.
 ///
 /// This concept of months matches the "month code" in [Temporal], and borrows its string
 /// representation:
 /// * `Month::new(7)` = `M07`
 /// * `Month::leap(2)` = `M02L`
 ///
-/// This means that the Hebrew months "Adar" and "Adar II"
-/// ("Adar, but during a leap year") are considered the same month, `Month::new(6)`.
+/// This type implements `From<u8>` producing an non-leap month, so you can simply
+/// call `5.into()` to produce a `Month::new(5)`.
 ///
 /// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq, PartialOrd)]
@@ -489,16 +523,18 @@ pub struct Month {
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
 pub enum LeapStatus {
-    /// Not a leap month.
+    /// Not a leap month, aka a "normal", "common", "ordinary", or "standard" month.
     Normal,
     /// A leap month.
     Leap,
-    /// A month that is not itself considered a leap month, but might
-    /// have special formatting because it occurs after a leap month.
+    /// A normal month that has a corresponding leap month
+    /// in the same year.
     ///
-    /// An example of this is the Hebrew month "Adar", which is called
-    /// "Adar II" when it follows the leap month "Adar I".
-    StandardAfterLeap,
+    /// "Corresponding" is used in a formatting sense here:
+    /// even though the Hebrew "Adar I" is `M05L`, the
+    /// `LeapBase` will be `M06` (not `M05`), so formatting
+    /// knows to produce "Adar II".
+    Base,
 }
 
 impl Month {
@@ -544,11 +580,11 @@ impl Month {
     /// See [`Self::try_from_str()`].
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
         match *bytes {
-            [b'M', tens, ones] => Ok(Self {
+            [b'M', tens @ b'0'..=b'9', ones @ b'0'..=b'9'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
                 is_leap: false,
             }),
-            [b'M', tens, ones, b'L'] => Ok(Self {
+            [b'M', tens @ b'0'..=b'9', ones @ b'0'..=b'9', b'L'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
                 is_leap: true,
             }),
@@ -611,6 +647,13 @@ impl Month {
     }
 }
 
+impl From<u8> for Month {
+    /// Same behavior as [`Month::new()`]
+    fn from(other: u8) -> Self {
+        Self::new(other)
+    }
+}
+
 #[test]
 fn test_month_cmp() {
     let months_in_order = [
@@ -646,8 +689,8 @@ pub struct MonthInfo {
 
     pub(crate) leap_status: LeapStatus,
 
-    /// The [`Month::code()`] of [`Self::as_input`].
-    #[deprecated(since = "2.2.0", note = "use `as_input().code()")]
+    /// The [`Month::code()`] of [`Self::to_input`].
+    #[deprecated(since = "2.2.0", note = "use `to_input().code()`")]
     pub standard_code: MonthCode,
 
     /// Deprecated
@@ -708,20 +751,20 @@ impl MonthInfo {
     }
 
     /// Returns the [`Month`], which round-trips through constructors like
-    /// [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
+    /// [`Date::try_new`] and [`Date::try_from_fields`].
     ///
     /// Returns a leap month iff [`Self::leap_status`] is [`LeapStatus::Leap`].
     ///
-    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+    /// [`Date::try_new`]: crate::Date::try_new
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
-    pub fn as_input(&self) -> Month {
+    pub fn to_input(&self) -> Month {
         Month::new_unchecked(self.number, self.leap_status == LeapStatus::Leap)
     }
 
-    /// Equivalent to `.as_input().is_leap()`
-    #[deprecated(since = "2.2.0", note = "use `.as_input().is_leap()`")]
+    /// Equivalent to `.to_input().is_leap()`
+    #[deprecated(since = "2.2.0", note = "use `.to_input().is_leap()`")]
     pub fn is_leap(self) -> bool {
-        self.as_input().is_leap()
+        self.to_input().is_leap()
     }
 
     /// Gets the month number. A month number N is not necessarily the Nth month in the year

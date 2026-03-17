@@ -20,12 +20,22 @@ class PluralRulesWithRanges internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class PluralRulesWithRangesCleaner(val handle: Pointer, val lib: PluralRulesWithRangesLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class PluralRulesWithRangesCleaner(val handle: Pointer, val lib: PluralRulesWithRangesLib) : Runnable {
         override fun run() {
             lib.icu4x_PluralRulesWithRanges_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, PluralRulesWithRanges.PluralRulesWithRangesCleaner(handle, PluralRulesWithRanges.lib));
     }
 
     companion object {
@@ -40,14 +50,14 @@ class PluralRulesWithRanges internal constructor (
         fun createCardinal(locale: Locale): Result<PluralRulesWithRanges> {
             
             val returnVal = lib.icu4x_PluralRulesWithRanges_create_cardinal_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PluralRulesWithRanges(handle, selfEdges)
-                CLEANER.register(returnOpaque, PluralRulesWithRanges.PluralRulesWithRangesCleaner(handle, PluralRulesWithRanges.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PluralRulesWithRanges(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -59,14 +69,14 @@ class PluralRulesWithRanges internal constructor (
         fun createCardinalWithProvider(provider: DataProvider, locale: Locale): Result<PluralRulesWithRanges> {
             
             val returnVal = lib.icu4x_PluralRulesWithRanges_create_cardinal_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PluralRulesWithRanges(handle, selfEdges)
-                CLEANER.register(returnOpaque, PluralRulesWithRanges.PluralRulesWithRangesCleaner(handle, PluralRulesWithRanges.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PluralRulesWithRanges(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -78,14 +88,14 @@ class PluralRulesWithRanges internal constructor (
         fun createOrdinal(locale: Locale): Result<PluralRulesWithRanges> {
             
             val returnVal = lib.icu4x_PluralRulesWithRanges_create_ordinal_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PluralRulesWithRanges(handle, selfEdges)
-                CLEANER.register(returnOpaque, PluralRulesWithRanges.PluralRulesWithRangesCleaner(handle, PluralRulesWithRanges.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PluralRulesWithRanges(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -97,14 +107,14 @@ class PluralRulesWithRanges internal constructor (
         fun createOrdinalWithProvider(provider: DataProvider, locale: Locale): Result<PluralRulesWithRanges> {
             
             val returnVal = lib.icu4x_PluralRulesWithRanges_create_ordinal_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PluralRulesWithRanges(handle, selfEdges)
-                CLEANER.register(returnOpaque, PluralRulesWithRanges.PluralRulesWithRangesCleaner(handle, PluralRulesWithRanges.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PluralRulesWithRanges(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

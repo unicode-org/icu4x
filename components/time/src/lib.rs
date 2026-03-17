@@ -44,3 +44,5 @@ pub use types::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime}
 mod chrono;
 #[cfg(feature = "jiff_0_2")]
 mod jiff;
+#[cfg(feature = "time_0_3")]
+mod time_crate;

@@ -21,12 +21,22 @@ class LocaleFallbacker internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LocaleFallbackerCleaner(val handle: Pointer, val lib: LocaleFallbackerLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleFallbackerCleaner(val handle: Pointer, val lib: LocaleFallbackerLib) : Runnable {
         override fun run() {
             lib.icu4x_LocaleFallbacker_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LocaleFallbacker.LocaleFallbackerCleaner(handle, LocaleFallbacker.lib));
     }
 
     companion object {
@@ -43,8 +53,7 @@ class LocaleFallbacker internal constructor (
             val returnVal = lib.icu4x_LocaleFallbacker_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LocaleFallbacker(handle, selfEdges)
-            CLEANER.register(returnOpaque, LocaleFallbacker.LocaleFallbackerCleaner(handle, LocaleFallbacker.lib));
+            val returnOpaque = LocaleFallbacker(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -56,14 +65,14 @@ class LocaleFallbacker internal constructor (
         fun createWithProvider(provider: DataProvider): Result<LocaleFallbacker> {
             
             val returnVal = lib.icu4x_LocaleFallbacker_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = LocaleFallbacker(handle, selfEdges)
-                CLEANER.register(returnOpaque, LocaleFallbacker.LocaleFallbackerCleaner(handle, LocaleFallbacker.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = LocaleFallbacker(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -77,8 +86,7 @@ class LocaleFallbacker internal constructor (
             val returnVal = lib.icu4x_LocaleFallbacker_without_data_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = LocaleFallbacker(handle, selfEdges)
-            CLEANER.register(returnOpaque, LocaleFallbacker.LocaleFallbackerCleaner(handle, LocaleFallbacker.lib));
+            val returnOpaque = LocaleFallbacker(handle, selfEdges, true)
             return returnOpaque
         }
     }
@@ -94,8 +102,7 @@ class LocaleFallbacker internal constructor (
         val returnVal = lib.icu4x_LocaleFallbacker_for_config_mv1(handle, config.toNative());
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = LocaleFallbackerWithConfig(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, LocaleFallbackerWithConfig.LocaleFallbackerWithConfigCleaner(handle, LocaleFallbackerWithConfig.lib));
+        val returnOpaque = LocaleFallbackerWithConfig(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
 

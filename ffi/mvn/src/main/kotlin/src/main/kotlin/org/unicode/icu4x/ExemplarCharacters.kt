@@ -33,12 +33,22 @@ class ExemplarCharacters internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class ExemplarCharactersCleaner(val handle: Pointer, val lib: ExemplarCharactersLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class ExemplarCharactersCleaner(val handle: Pointer, val lib: ExemplarCharactersLib) : Runnable {
         override fun run() {
             lib.icu4x_ExemplarCharacters_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
     }
 
     companion object {
@@ -53,14 +63,14 @@ class ExemplarCharacters internal constructor (
         fun createMain(locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_main_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -72,14 +82,14 @@ class ExemplarCharacters internal constructor (
         fun createMainWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_main_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -91,14 +101,14 @@ class ExemplarCharacters internal constructor (
         fun createAuxiliary(locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_auxiliary_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -110,14 +120,14 @@ class ExemplarCharacters internal constructor (
         fun createAuxiliaryWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -129,14 +139,14 @@ class ExemplarCharacters internal constructor (
         fun createPunctuation(locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_punctuation_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -148,14 +158,14 @@ class ExemplarCharacters internal constructor (
         fun createPunctuationWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -167,14 +177,14 @@ class ExemplarCharacters internal constructor (
         fun createNumbers(locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_numbers_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -186,14 +196,14 @@ class ExemplarCharacters internal constructor (
         fun createNumbersWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_numbers_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -205,14 +215,14 @@ class ExemplarCharacters internal constructor (
         fun createIndex(locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_index_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -224,14 +234,14 @@ class ExemplarCharacters internal constructor (
         fun createIndexWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
             val returnVal = lib.icu4x_ExemplarCharacters_create_index_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ExemplarCharacters(handle, selfEdges)
-                CLEANER.register(returnOpaque, ExemplarCharacters.ExemplarCharactersCleaner(handle, ExemplarCharacters.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ExemplarCharacters(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -244,7 +254,11 @@ class ExemplarCharacters internal constructor (
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
         val returnVal = lib.icu4x_ExemplarCharacters_contains_str_mv1(handle, sSliceMemory.slice);
-        return (returnVal > 0)
+        try {
+            return (returnVal > 0)
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Checks whether the code point is in the set.

@@ -75,8 +75,8 @@ class IsoDateTime (var date: IsoDate, var time: Time) {
         val NATIVESIZE: Long = Native.getNativeSize(IsoDateTimeNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: IsoDateTimeNative): IsoDateTime {
-            val date: IsoDate = IsoDate(nativeStruct.date, listOf())
-            val time: Time = Time(nativeStruct.time, listOf())
+            val date: IsoDate = IsoDate(nativeStruct.date, listOf(), true)
+            val time: Time = Time(nativeStruct.time, listOf(), true)
 
             return IsoDateTime(date, time)
         }
@@ -91,12 +91,16 @@ class IsoDateTime (var date: IsoDate, var time: Time) {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
             val returnVal = lib.icu4x_IsoDateTime_from_string_mv1(vSliceMemory.slice);
-            if (returnVal.isOk == 1.toByte()) {
-                val returnStruct = IsoDateTime.fromNative(returnVal.union.ok)
-                vSliceMemory?.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = IsoDateTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }

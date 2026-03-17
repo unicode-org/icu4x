@@ -6,11 +6,13 @@
 
 #[cfg(feature = "unstable")]
 pub use unstable::{
-    DateAddOptions, DateDifferenceOptions, DateFromFieldsOptions, MissingFieldsStrategy, Overflow,
+    DateAddOptions, DateDifferenceOptions, DateDurationUnit, DateFromFieldsOptions,
+    MissingFieldsStrategy, Overflow,
 };
 #[cfg(not(feature = "unstable"))]
 pub(crate) use unstable::{
-    DateAddOptions, DateDifferenceOptions, DateFromFieldsOptions, MissingFieldsStrategy, Overflow,
+    DateAddOptions, DateDifferenceOptions, DateDurationUnit, DateFromFieldsOptions,
+    MissingFieldsStrategy, Overflow,
 };
 
 mod unstable {
@@ -173,16 +175,21 @@ mod unstable {
     pub struct DateDifferenceOptions {
         /// Which date field to allow as the largest in a duration when taking the difference.
         ///
+        /// This defaults to [`DateDurationUnit::Days`].
+        ///
         /// When choosing [`Months`] or [`Years`], the resulting [`DateDuration`] might not be
         /// associative or commutative in subsequent arithmetic operations, and it might require
         /// [`Overflow::Constrain`] in addition.
+        ///
+        /// The resultant duration will not have any `weeks` value unless [`DateDurationUnit::Weeks`]
+        /// is explicitly specified as `largest_unit`.
         ///
         /// # Examples
         ///
         /// ```
         /// use icu::calendar::options::DateDifferenceOptions;
         /// use icu::calendar::types::DateDuration;
-        /// use icu::calendar::types::DateDurationUnit;
+        /// use icu::calendar::options::DateDurationUnit;
         /// use icu::calendar::Date;
         ///
         /// let d1 = Date::try_new_iso(2025, 3, 31).unwrap();
@@ -197,7 +204,7 @@ mod unstable {
         /// let mut options_days = options_default;
         /// options_days.largest_unit = Some(DateDurationUnit::Days);
         /// assert_eq!(
-        ///     d1.try_until_with_options(&d2, options_default).unwrap(),
+        ///     d1.try_until_with_options(&d2, options_days).unwrap(),
         ///     DateDuration::for_days(410)
         /// );
         ///
@@ -206,6 +213,7 @@ mod unstable {
         /// assert_eq!(
         ///     d1.try_until_with_options(&d2, options_weeks).unwrap(),
         ///     DateDuration {
+        ///         // This is the only time there is a `weeks` value.
         ///         weeks: 58,
         ///         days: 4,
         ///         ..Default::default()
@@ -236,10 +244,10 @@ mod unstable {
         /// );
         /// ```
         ///
-        /// [`Months`]: crate::types::DateDurationUnit::Months
-        /// [`Years`]: crate::types::DateDurationUnit::Years
+        /// [`Months`]: crate::options::DateDurationUnit::Months
+        /// [`Years`]: crate::options::DateDurationUnit::Years
         /// [`DateDuration`]: crate::types::DateDuration
-        pub largest_unit: Option<crate::duration::DateDurationUnit>,
+        pub largest_unit: Option<DateDurationUnit>,
     }
 
     /// Whether to constrain or reject out-of-bounds values when constructing a Date.
@@ -402,13 +410,37 @@ mod unstable {
         /// This strategy makes the following changes:
         ///
         /// 1. If the fields identify a year and a month, but not a day, then set `day` to 1.
-        /// 2. If `month_code` and `day` are set but nothing else, then set the year to a
+        /// 2. If month and day are set but nothing else, then set the year to a
         ///    _reference year_: some year in the calendar that contains the specified month
         ///    and day, according to the ECMAScript specification.
         ///
         /// Note that the reference year is _not_ added if an ordinal month is present, since
         /// the identity of an ordinal month changes from year to year.
         Ecma,
+    }
+
+    /// A "duration unit" used to specify the minimum or maximum duration of time to
+    /// care about.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+    #[allow(clippy::exhaustive_enums)] // this type should be stable
+    pub enum DateDurationUnit {
+        /// Duration in years
+        Years,
+        /// Duration in months
+        Months,
+        /// Duration in weeks
+        Weeks,
+        /// Duration in days
+        Days,
     }
 }
 #[cfg(test)]

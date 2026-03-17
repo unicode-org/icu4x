@@ -514,6 +514,16 @@ pub struct VarZeroSliceIter<'a, T: ?Sized, F = Index16> {
     start_index: usize,
 }
 
+impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> Clone for VarZeroSliceIter<'a, T, F> {
+    fn clone(&self) -> Self {
+        Self {
+            components: self.components,
+            index: self.index,
+            start_index: self.start_index,
+        }
+    }
+}
+
 impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSliceIter<'a, T, F> {
     fn new(c: VarZeroVecComponents<'a, T, F>) -> Self {
         Self {

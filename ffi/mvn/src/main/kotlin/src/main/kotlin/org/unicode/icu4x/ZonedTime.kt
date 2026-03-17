@@ -78,8 +78,8 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
         val NATIVESIZE: Long = Native.getNativeSize(ZonedTimeNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: ZonedTimeNative): ZonedTime {
-            val time: Time = Time(nativeStruct.time, listOf())
-            val zone: TimeZoneInfo = TimeZoneInfo(nativeStruct.zone, listOf())
+            val time: Time = Time(nativeStruct.time, listOf(), true)
+            val zone: TimeZoneInfo = TimeZoneInfo(nativeStruct.zone, listOf(), true)
 
             return ZonedTime(time, zone)
         }
@@ -94,12 +94,16 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
             val returnVal = lib.icu4x_ZonedTime_strict_from_string_mv1(vSliceMemory.slice, ianaParser.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val returnStruct = ZonedTime.fromNative(returnVal.union.ok)
-                vSliceMemory?.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic
@@ -112,12 +116,16 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
             val returnVal = lib.icu4x_ZonedTime_location_only_from_string_mv1(vSliceMemory.slice, ianaParser.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val returnStruct = ZonedTime.fromNative(returnVal.union.ok)
-                vSliceMemory?.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic
@@ -130,12 +138,16 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
             val returnVal = lib.icu4x_ZonedTime_offset_only_from_string_mv1(vSliceMemory.slice);
-            if (returnVal.isOk == 1.toByte()) {
-                val returnStruct = ZonedTime.fromNative(returnVal.union.ok)
-                vSliceMemory?.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
         @JvmStatic
@@ -148,12 +160,16 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
             val returnVal = lib.icu4x_ZonedTime_lenient_from_string_mv1(vSliceMemory.slice, ianaParser.handle);
-            if (returnVal.isOk == 1.toByte()) {
-                val returnStruct = ZonedTime.fromNative(returnVal.union.ok)
-                vSliceMemory?.close()
-                return returnStruct.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val returnStruct = ZonedTime.fromNative(nativeOkVal)
+                    return returnStruct.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }

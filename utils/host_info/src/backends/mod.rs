@@ -32,6 +32,13 @@ use icu_locale_core::{
 
 use crate::error::HostInfoError;
 
+#[cfg(any(
+    target_os = "android",
+    target_os = "ios",
+    target_os = "linux",
+    target_os = "macos",
+    target_os = "windows"
+))]
 mod shared;
 
 #[cfg(target_os = "android")]

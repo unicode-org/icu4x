@@ -113,6 +113,8 @@ pub mod error;
 mod ixdtf;
 #[cfg(feature = "jiff_0_2")]
 mod jiff;
+#[cfg(feature = "time_0_3")]
+mod time_crate;
 
 // Top-level types
 pub use any_calendar::IntoAnyCalendar;

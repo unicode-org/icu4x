@@ -7,7 +7,7 @@ use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::PackWithMD;
 use crate::calendar_arithmetic::ToExtendedYear;
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -146,6 +146,15 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
+    /// The error that is returned by [`Self::check_date_compatibility`].
+    ///
+    /// Set this to [`core::convert::Infallible`] if the type is a singleton or
+    /// the parameterization does not affect calendar semantics.
+    type DateCompatibilityError: Debug;
+
+    /// Checks whether two [`Rules`] values are equal for the purpose of [`Date`] interaction.
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError>;
+
     /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using these rules, if defined.
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         None
@@ -199,6 +208,12 @@ impl Rules for AstronomicalSimulation {
 
     fn year_containing_rd(&self, rd: RataDie) -> HijriYear {
         UmmAlQura.year_containing_rd(rd)
+    }
+
+    type DateCompatibilityError = core::convert::Infallible;
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
     }
 }
 
@@ -275,6 +290,12 @@ impl Rules for UmmAlQura {
             }
             .year(extended_year)
         }
+    }
+
+    type DateCompatibilityError = core::convert::Infallible;
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
     }
 }
 
@@ -370,6 +391,15 @@ impl Rules for TabularAlgorithm {
             packed: PackedHijriYearData::new_unchecked(extended_year, month_lengths, start_day),
             extended_year,
         }
+    }
+
+    type DateCompatibilityError = crate::error::MismatchedCalendarError;
+
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+        if self != other {
+            return Err(crate::error::MismatchedCalendarError);
+        }
+        Ok(())
     }
 }
 
@@ -481,7 +511,7 @@ impl Hijri<TabularAlgorithm> {
 ///
 /// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
-#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Hash)]
 pub struct HijriYear {
     packed: PackedHijriYearData,
     extended_year: i32,
@@ -589,7 +619,8 @@ impl HijriYear {
 ///
 /// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
-#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[derive(Copy, Clone, Hash, Debug)]
+#[cfg_attr(test, derive(PartialEq))]
 struct PackedHijriYearData(u16);
 
 impl PackedHijriYearData {
@@ -885,17 +916,15 @@ impl<R: Rules> crate::cal::scaffold::UnstableSealed for Hijri<R> {}
 impl<R: Rules> Calendar for Hijri<R> {
     type DateInner = HijriDateInner<R>;
     type Year = types::EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type DateCompatibilityError = R::DateCompatibilityError;
 
-    fn from_codes(
+    fn new_date(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
+        year: types::YearInput,
+        month: Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
-            .map(HijriDateInner)
+    ) -> Result<Self::DateInner, DateNewError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(HijriDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -952,8 +981,12 @@ impl<R: Rules> Calendar for Hijri<R> {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
-        Ok(date1.0.until(&date2.0, self, options))
+    ) -> types::DateDuration {
+        date1.0.until(&date2.0, self, options)
+    }
+
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError> {
+        self.0.check_date_compatibility(&other.0)
     }
 
     fn debug_name(&self) -> &'static str {
@@ -1037,7 +1070,7 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
 
 impl Date<Hijri<UmmAlQura>> {
     /// Deprecated
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
     pub fn try_new_ummalqura(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
         Date::try_new_hijri_with_calendar(year, month, day, Hijri::new_umm_al_qura())
     }
@@ -1045,7 +1078,7 @@ impl Date<Hijri<UmmAlQura>> {
 
 impl<A: AsCalendar<Calendar = Hijri<TabularAlgorithm>>> Date<A> {
     /// Deprecated
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
     pub fn try_new_hijri_tabular_with_calendar(
         year: i32,
         month: u8,
@@ -1692,7 +1725,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let dt = Hijri::new_umm_al_qura()
-            .from_codes(Some("bh"), 6824, Month::new(1).code(), 1)
+            .new_date(types::YearInput::EraYear("bh", 6824), Month::new(1), 1)
             .unwrap();
         assert_eq!(dt.0.day(), 1);
         assert_eq!(dt.0.month(), 1);

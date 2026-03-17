@@ -21,12 +21,22 @@ class LocaleFallbackerWithConfig internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LocaleFallbackerWithConfigCleaner(val handle: Pointer, val lib: LocaleFallbackerWithConfigLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleFallbackerWithConfigCleaner(val handle: Pointer, val lib: LocaleFallbackerWithConfigLib) : Runnable {
         override fun run() {
             lib.icu4x_LocaleFallbackerWithConfig_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LocaleFallbackerWithConfig.LocaleFallbackerWithConfigCleaner(handle, LocaleFallbackerWithConfig.lib));
     }
 
     companion object {
@@ -45,8 +55,7 @@ class LocaleFallbackerWithConfig internal constructor (
         val returnVal = lib.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(handle, locale.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = LocaleFallbackIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, LocaleFallbackIterator.LocaleFallbackIteratorCleaner(handle, LocaleFallbackIterator.lib));
+        val returnOpaque = LocaleFallbackIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
 

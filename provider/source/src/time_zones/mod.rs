@@ -181,25 +181,28 @@ impl SourceDataProvider {
                                     (curr_offset.total_offset(), None)
                                 } else if Some(curr_offset.total_offset()) == dst_override {
                                     let previous_offset = offsets_vec
-                                            .iter()
-                                            .rev()
-                                            .find(|&&(tp, _)| curr_offset.transition > tp)
-                                            .filter(|_| mzi.from.is_none_or(|f| f <= curr_offset.transition));
-                                        let next_offset = offsets
-                                            .peek()
-                                            .filter(|&&(tn, _)| mzi.to.is_none_or(|to| tn < to));
-                                        (
-                                            // Check the previous or next offset for the standard offset
-                                            previous_offset
-                                                .into_iter()
-                                                .chain(next_offset)
-                                                .filter(|(_, o)| Some(o.total_offset()) != dst_override)
-                                                .map(|(_, o)| o.total_offset())
-                                                .next()
-                                            // Permanent DST
-                                            .unwrap_or_else(|| curr_offset.total_offset()),
-                                            Some(curr_offset.total_offset()),
-                                        )
+                                        .iter()
+                                        .rev()
+                                        .find(|&&(tp, _)| curr_offset.transition > tp)
+                                        .filter(|_| mzi.from.is_none_or(|f| f <= curr_offset.transition));
+                                    let next_offset = offsets
+                                        .peek()
+                                        .filter(|&&(tn, _)| mzi.to.is_none_or(|to| tn < to));
+
+                                    // Check the previous or next offset for the standard offset
+                                    let inferred = [previous_offset, next_offset]
+                                        .into_iter()
+                                        .flatten()
+                                        .filter(|(_, o)| Some(o.total_offset()) != dst_override)
+                                        .map(|(_, o)| o.total_offset())
+                                        .next()
+                                        // Permanent DST
+                                        .unwrap_or_else(|| curr_offset.total_offset());
+
+                                    (
+                                        std_override.unwrap_or(inferred),
+                                        Some(curr_offset.total_offset()),
+                                    )
                                 } else {
                                     if curr_offset.rearguard_agrees == Some(false) || curr_offset.vanguard_agrees == Some(false) {
                                         log::warn!("Unhandled TZDB inconsistency for {tz:?}: {curr_offset:?}");
@@ -304,7 +307,10 @@ impl SourceDataProvider {
 
                                 let kind = if os.daylight.is_some() && golden_os.daylight.is_none() {
                                     MetazoneMembershipKind::CustomVariants
-                                } else if os.daylight.is_none() && golden_os.daylight.is_some() || Some(os.standard) == os.daylight {
+                                } else if Some(os.standard) == os.daylight {
+                                    // Permanent daylight time
+                                    MetazoneMembershipKind::CustomTransitions
+                                } else if os.daylight.is_none() && golden_os.daylight.is_some() {
                                     // TODO: detect custom transitions
                                     MetazoneMembershipKind::BehavesLikeGolden
                                 } else {

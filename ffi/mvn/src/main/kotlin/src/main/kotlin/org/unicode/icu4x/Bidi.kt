@@ -9,6 +9,7 @@ internal interface BidiLib: Library {
     fun icu4x_Bidi_destroy_mv1(handle: Pointer)
     fun icu4x_Bidi_create_mv1(): Pointer
     fun icu4x_Bidi_create_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_Bidi_for_text_valid_utf8_mv1(handle: Pointer, text: Slice, defaultLevel: OptionFFIUint8): Pointer
     fun icu4x_Bidi_reorder_visual_mv1(handle: Pointer, levels: Slice): Pointer
     fun icu4x_Bidi_level_is_rtl_mv1(level: FFIUint8): Byte
     fun icu4x_Bidi_level_is_ltr_mv1(level: FFIUint8): Byte
@@ -24,12 +25,22 @@ class Bidi internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class BidiCleaner(val handle: Pointer, val lib: BidiLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class BidiCleaner(val handle: Pointer, val lib: BidiLib) : Runnable {
         override fun run() {
             lib.icu4x_Bidi_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Bidi.BidiCleaner(handle, Bidi.lib));
     }
 
     companion object {
@@ -44,8 +55,7 @@ class Bidi internal constructor (
             val returnVal = lib.icu4x_Bidi_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Bidi(handle, selfEdges)
-            CLEANER.register(returnOpaque, Bidi.BidiCleaner(handle, Bidi.lib));
+            val returnOpaque = Bidi(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -55,14 +65,14 @@ class Bidi internal constructor (
         fun createWithProvider(provider: DataProvider): Result<Bidi> {
             
             val returnVal = lib.icu4x_Bidi_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Bidi(handle, selfEdges)
-                CLEANER.register(returnOpaque, Bidi.BidiCleaner(handle, Bidi.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = Bidi(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -115,6 +125,24 @@ class Bidi internal constructor (
         }
     }
     
+    /** Use the data loaded in this object to process a string and calculate bidi information
+    *
+    *Takes in a Level for the default level, if it is an invalid value it will default to LTR
+    *
+    *See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
+    */
+    fun for_text(text: String, defaultLevel: UByte?): BidiInfo {
+        // This lifetime edge depends on lifetimes: 'text
+        val textEdges: MutableList<Any> = mutableListOf();
+        val textSliceMemory = PrimitiveArrayTools.borrowUtf8(text).into(listOf(textEdges))
+        
+        val returnVal = lib.icu4x_Bidi_for_text_valid_utf8_mv1(handle, textSliceMemory.slice, defaultLevel?.let { OptionFFIUint8.some(FFIUint8(it)) } ?: OptionFFIUint8.none());
+        val selfEdges: List<Any> = listOf()
+        val handle = returnVal 
+        val returnOpaque = BidiInfo(handle, selfEdges, textEdges, true)
+        return returnOpaque
+    }
+    
     /** Utility function for producing reorderings given a list of levels
     *
     *Produces a map saying which visual index maps to which source index.
@@ -130,12 +158,14 @@ class Bidi internal constructor (
         val levelsSliceMemory = PrimitiveArrayTools.borrow(levels)
         
         val returnVal = lib.icu4x_Bidi_reorder_visual_mv1(handle, levelsSliceMemory.slice);
-        val selfEdges: List<Any> = listOf()
-        val handle = returnVal 
-        val returnOpaque = ReorderedIndexMap(handle, selfEdges)
-        CLEANER.register(returnOpaque, ReorderedIndexMap.ReorderedIndexMapCleaner(handle, ReorderedIndexMap.lib));
-        levelsSliceMemory?.close()
-        return returnOpaque
+        try {
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = ReorderedIndexMap(handle, selfEdges, true)
+            return returnOpaque
+        } finally {
+            levelsSliceMemory.close()
+        }
     }
 
 }

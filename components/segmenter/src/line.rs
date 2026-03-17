@@ -266,6 +266,10 @@ impl LineBreakOptions<'_> {
 /// always a breakpoint returned at index 0, but this breakpoint is not a
 /// meaningful line break opportunity.
 ///
+/// Line segmenter is curretly compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0).
+///
+/// [UAX14]: https://www.unicode.org/reports/tr14/tr14-51.html
+///
 /// [LD3]: https://www.unicode.org/reports/tr14/#LD3
 /// [LD7]: https://www.unicode.org/reports/tr14/#LD7
 /// [LB3]: https://www.unicode.org/reports/tr14/#LB3

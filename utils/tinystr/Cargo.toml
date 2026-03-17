@@ -6,7 +6,7 @@
 name = "tinystr"
 description = "A small ASCII-only bounded length string representation."
 version = "0.8.2"
-keywords = ["string", "str", "small", "tiny", "no_std"]
+keywords = ["small-string", "ascii", "string", "str"]
 categories = ["data-structures"]
 
 authors.workspace = true

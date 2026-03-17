@@ -5,9 +5,10 @@
 [package]
 name = "icu_plurals"
 description = "Unicode Plural Rules categorizer for numeric input"
+categories.workspace = true
+keywords = ["unicode", "plurals", "grammar"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

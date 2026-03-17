@@ -4,7 +4,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateAddError, DateError, DateFromFieldsError, EcmaReferenceYearError, LunisolarDateError,
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, LunisolarDateError,
     MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -45,8 +45,8 @@ use calendrical_calculations::rata_die::RataDie;
 /// Due to Rosh Hashanah postponement rules, Ḥešvan and Kislev vary in length.
 ///
 /// In leap years (years 3, 6, 8, 11, 17, 19 in a 19-year cycle), the leap month Adar I (`M05L`, 30 days)
-/// is inserted before Adar, and Adar is called Adar II (the `formatting_code` returned by [`MonthInfo`]
-/// will be `M06L` to mark this, while the `standard_code` remains `M06`).
+/// is inserted before Adar (`M06`), which is then called Adar II ([`MonthInfo::leap_status`] will be
+/// [`LeapStatus::Base`] to mark this).
 ///
 /// Standard years thus have 353-355 days, and leap years 383-385.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
@@ -64,7 +64,7 @@ impl Hebrew {
     }
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug)]
 pub(crate) struct HebrewYear {
     keviyah: Keviyah,
     value: i32,
@@ -132,6 +132,35 @@ impl DateFieldsResolver for Hebrew {
 
     fn months_in_provided_year(year: HebrewYear) -> u8 {
         12 + year.keviyah.is_leap() as u8
+    }
+
+    #[inline]
+    fn min_months_from(_start: HebrewYear, years: i64) -> i64 {
+        // The Hebrew Metonic cycle is 7 leap years every 19 years,
+        // which comes out to 235 months per 19 years.
+        //
+        // We need to ensure that this is always *lower or equal to* the number of
+        // months in a given year span.
+        //
+        // Firstly, note that this math will produce exactly the number of months in any given period
+        // that spans a whole number of cycles. Note that we are only performing integer
+        // ops here, and our SAFE_YEAR_RANGE is well within the range of allowed values
+        // for multiplying by 235.
+        //
+        // So we only need to verify that this math produces the right results within a single cycle.
+        //
+        // The Hebrew Metonic cycle has leap years in year 3, 6, 8, 11, 14, 17, and 19 (starting counting at year 1),
+        // i.e., leap year gaps of +3, +3, +2, +3, +3, +3, +2.
+        //
+        // 235 / 19 is ≈12 7/19 months per year, which leads to one leap month every three years plus 2/19
+        // months left over. So this is correct as long as it does not predict a leap month in 2 years
+        // where the Hebrew calendar expects one in 3.
+        //
+        // The longest sequence of "three year leap months" in the Hebrew calendar
+        // is 4: year 8->11->14->17. In that time the error will accumulate to 6/19, which is not
+        // enough to create a "two year leap month" in our calculation. So this calculation cannot go past
+        // the actual cycle of the Hebrew calendar.
+        235 * years / 19
     }
 
     #[inline]
@@ -225,17 +254,15 @@ impl crate::cal::scaffold::UnstableSealed for Hebrew {}
 impl Calendar for Hebrew {
     type DateInner = HebrewDateInner;
     type Year = types::EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes(
+    fn new_date(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
+        year: types::YearInput,
+        month: Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
-            .map(HebrewDateInner)
+    ) -> Result<Self::DateInner, DateNewError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(HebrewDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -300,8 +327,12 @@ impl Calendar for Hebrew {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
-        Ok(date1.0.until(&date2.0, self, options))
+    ) -> types::DateDuration {
+        date1.0.until(&date2.0, self, options)
+    }
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
     }
 
     fn debug_name(&self) -> &'static str {
@@ -325,10 +356,17 @@ impl Calendar for Hebrew {
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
         let mut m = MonthInfo::new(self, date.0);
-        #[allow(deprecated)]
+        // Even though the leap month is modeled as M05L,
+        // the actual leap base is M06.
         if m.number() == 6 && m.ordinal == 7 {
-            m.leap_status = LeapStatus::StandardAfterLeap;
-            m.formatting_code = Month::leap(6).code();
+            m.leap_status = LeapStatus::Base;
+            #[allow(deprecated)]
+            {
+                // This is an ICU4X invention, it's not needed by
+                // formatting anymore, but we keep producing it
+                // for now.
+                m.formatting_code = Month::leap(6).code();
+            }
         }
         m
     }
@@ -490,10 +528,9 @@ mod tests {
             assert_eq!(date.day_of_month().0, d, "{date:?}");
 
             assert_eq!(
-                Date::try_new_from_codes(
-                    Some(&date.era_year().era),
-                    date.era_year().year,
-                    date.month().as_input().code(),
+                Date::try_new(
+                    types::YearInput::EraYear(&date.era_year().era, date.era_year().year),
+                    date.month().to_input(),
                     date.day_of_month().0,
                     Hebrew
                 ),
@@ -503,7 +540,7 @@ mod tests {
             assert_eq!(
                 Date::try_new_hebrew_v2(
                     date.era_year().year,
-                    date.month().as_input(),
+                    date.month().to_input(),
                     date.day_of_month().0,
                 ),
                 Ok(date)

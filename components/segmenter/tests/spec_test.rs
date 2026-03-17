@@ -117,7 +117,7 @@ fn line_break_test(file: &'static str) {
             test.break_result_utf8.insert(0, 0);
         }
         if result != test.break_result_utf8 {
-            use icu::properties::{
+            use icu_properties::{
                 props::{GeneralCategory, LineBreak},
                 CodePointMapData,
             };
@@ -213,7 +213,7 @@ fn word_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            use icu::properties::{props::WordBreak, CodePointMapData};
+            use icu_properties::{props::WordBreak, CodePointMapData};
             let wb = CodePointMapData::<WordBreak>::new();
             let wb_name = PropertyNamesLong::<WordBreak>::new();
             let mut iter = segmenter.segment_str(&s);
@@ -292,7 +292,7 @@ fn grapheme_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            use icu::properties::{props::GraphemeClusterBreak, CodePointMapData};
+            use icu_properties::{props::GraphemeClusterBreak, CodePointMapData};
             let gcb = CodePointMapData::<GraphemeClusterBreak>::new();
             let gcb_name = PropertyNamesLong::<GraphemeClusterBreak>::new();
             let mut iter = segmenter.segment_str(&s);
@@ -371,7 +371,7 @@ fn sentence_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            use icu::properties::{props::SentenceBreak, CodePointMapData};
+            use icu_properties::{props::SentenceBreak, CodePointMapData};
             let sb = CodePointMapData::<SentenceBreak>::new();
             let sb_name = PropertyNamesLong::<SentenceBreak>::new();
             let mut iter = segmenter.segment_str(&s);

@@ -18,12 +18,22 @@ class TimeZoneIterator internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 ): Iterator<TimeZone?> {
 
-    internal class TimeZoneIteratorCleaner(val handle: Pointer, val lib: TimeZoneIteratorLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class TimeZoneIteratorCleaner(val handle: Pointer, val lib: TimeZoneIteratorLib) : Runnable {
         override fun run() {
             lib.icu4x_TimeZoneIterator_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, TimeZoneIterator.TimeZoneIteratorCleaner(handle, TimeZoneIterator.lib));
     }
 
     companion object {
@@ -38,8 +48,7 @@ class TimeZoneIterator internal constructor (
         val returnVal = lib.icu4x_TimeZoneIterator_next_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal ?: return null
-        val returnOpaque = TimeZone(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
+        val returnOpaque = TimeZone(handle, selfEdges, true)
         return returnOpaque
     }
 

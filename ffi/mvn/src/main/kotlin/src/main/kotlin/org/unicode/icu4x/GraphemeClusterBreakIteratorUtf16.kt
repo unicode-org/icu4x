@@ -17,12 +17,22 @@ class GraphemeClusterBreakIteratorUtf16 internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class GraphemeClusterBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: GraphemeClusterBreakIteratorUtf16Lib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class GraphemeClusterBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: GraphemeClusterBreakIteratorUtf16Lib) : Runnable {
         override fun run() {
             lib.icu4x_GraphemeClusterBreakIteratorUtf16_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, GraphemeClusterBreakIteratorUtf16.GraphemeClusterBreakIteratorUtf16Cleaner(handle, GraphemeClusterBreakIteratorUtf16.lib));
     }
 
     companion object {

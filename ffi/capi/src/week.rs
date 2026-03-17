@@ -70,7 +70,7 @@ pub mod ffi {
 
     /// Documents which days of the week are considered to be a part of the weekend
     #[diplomat::rust_link(icu::calendar::week::WeekdaySetIterator, Struct)]
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     pub struct WeekdaySetIterator(icu_calendar::week::WeekdaySetIterator);
 
     impl WeekdaySetIterator {

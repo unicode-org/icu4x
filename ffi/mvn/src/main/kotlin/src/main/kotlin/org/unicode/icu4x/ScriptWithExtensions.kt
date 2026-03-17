@@ -23,12 +23,22 @@ class ScriptWithExtensions internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class ScriptWithExtensionsCleaner(val handle: Pointer, val lib: ScriptWithExtensionsLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class ScriptWithExtensionsCleaner(val handle: Pointer, val lib: ScriptWithExtensionsLib) : Runnable {
         override fun run() {
             lib.icu4x_ScriptWithExtensions_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, ScriptWithExtensions.ScriptWithExtensionsCleaner(handle, ScriptWithExtensions.lib));
     }
 
     companion object {
@@ -45,8 +55,7 @@ class ScriptWithExtensions internal constructor (
             val returnVal = lib.icu4x_ScriptWithExtensions_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = ScriptWithExtensions(handle, selfEdges)
-            CLEANER.register(returnOpaque, ScriptWithExtensions.ScriptWithExtensionsCleaner(handle, ScriptWithExtensions.lib));
+            val returnOpaque = ScriptWithExtensions(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -58,14 +67,14 @@ class ScriptWithExtensions internal constructor (
         fun createWithProvider(provider: DataProvider): Result<ScriptWithExtensions> {
             
             val returnVal = lib.icu4x_ScriptWithExtensions_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = ScriptWithExtensions(handle, selfEdges)
-                CLEANER.register(returnOpaque, ScriptWithExtensions.ScriptWithExtensionsCleaner(handle, ScriptWithExtensions.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = ScriptWithExtensions(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -101,8 +110,7 @@ class ScriptWithExtensions internal constructor (
         val returnVal = lib.icu4x_ScriptWithExtensions_as_borrowed_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = ScriptWithExtensionsBorrowed(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, ScriptWithExtensionsBorrowed.ScriptWithExtensionsBorrowedCleaner(handle, ScriptWithExtensionsBorrowed.lib));
+        val returnOpaque = ScriptWithExtensionsBorrowed(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
     
@@ -117,8 +125,7 @@ class ScriptWithExtensions internal constructor (
         val returnVal = lib.icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(handle, FFIUint16(script));
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
+        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
 

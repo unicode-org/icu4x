@@ -1283,7 +1283,7 @@ where
 
 #[cfg(test)]
 pub(super) fn parse(source: &str) -> Result<Vec<Rule>> {
-    use icu::properties::CodePointSetData;
+    use icu_properties::CodePointSetData;
     Parser::run(
         source,
         &CodePointSetData::new::<XidStart>()

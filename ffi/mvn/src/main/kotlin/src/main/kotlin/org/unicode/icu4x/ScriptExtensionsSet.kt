@@ -21,12 +21,22 @@ class ScriptExtensionsSet internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class ScriptExtensionsSetCleaner(val handle: Pointer, val lib: ScriptExtensionsSetLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class ScriptExtensionsSetCleaner(val handle: Pointer, val lib: ScriptExtensionsSetLib) : Runnable {
         override fun run() {
             lib.icu4x_ScriptExtensionsSet_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, ScriptExtensionsSet.ScriptExtensionsSetCleaner(handle, ScriptExtensionsSet.lib));
     }
 
     companion object {

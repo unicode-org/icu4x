@@ -8,7 +8,7 @@ description = "ZeroFrom trait for constructing"
 version = "0.1.6"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["data-structures", "caching", "no-std"]
-keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
+keywords = ["zero-copy", "serialization", "memory-efficiency"]
 
 edition.workspace = true
 include.workspace = true

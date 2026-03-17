@@ -80,6 +80,16 @@ internal class GCSlice(val memory: Memory?, val slice: Slice) {
         }
         return this
     }
+
+    // Stop managing this memory
+    fun leakStatic(): GCSlice {
+        GCSlice.persistedStaticSlices.add(this)
+        return this
+    }
+
+    companion object {
+        val persistedStaticSlices: MutableList<GCSlice> = mutableListOf()
+    }
 }
 
 internal class GCSlices(val memory: Memory?, val subMemory: List<Memory?>, val slice: Slice) {
@@ -96,6 +106,16 @@ internal class GCSlices(val memory: Memory?, val subMemory: List<Memory?>, val s
             edge.add(this)
         }
         return this
+    }
+
+    // Stop managing this memory
+    fun leakStatic(): GCSlices {
+        GCSlices.persistedStaticSlices.add(this)
+        return this
+    }
+
+    companion object {
+        val persistedStaticSlices: MutableList<GCSlices> = mutableListOf()
     }
 }
 
@@ -660,6 +680,100 @@ class UnitError internal constructor(): Exception("Rust error result for Unit") 
     }
 }
 
+internal class ResultByteIntUnion: Union() {
+    @JvmField
+    internal var ok: Byte = 0
+    @JvmField
+    internal var err: Int = 0
+}
+
+class ResultByteInt: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultByteIntUnion = ResultByteIntUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): Byte? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(Byte::class.java) as Byte
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
+}
+internal class ResultDateDurationNativeCalendarMismatchedCalendarErrorNativeUnion: Union() {
+    @JvmField
+    internal var ok: DateDurationNative = DateDurationNative()
+}
+
+class ResultDateDurationNativeCalendarMismatchedCalendarErrorNative: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultDateDurationNativeCalendarMismatchedCalendarErrorNativeUnion = ResultDateDurationNativeCalendarMismatchedCalendarErrorNativeUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): DateDurationNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(DateDurationNative::class.java) as DateDurationNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Unit? {
+        if (isOk == 0.toByte()) {
+            return Unit
+        }
+        return null
+    }
+
+}
+internal class ResultDateDurationNativeIntUnion: Union() {
+    @JvmField
+    internal var ok: DateDurationNative = DateDurationNative()
+    @JvmField
+    internal var err: Int = 0
+}
+
+class ResultDateDurationNativeInt: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultDateDurationNativeIntUnion = ResultDateDurationNativeIntUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): DateDurationNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(DateDurationNative::class.java) as DateDurationNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
+}
 internal class ResultDateTimeNativeIntUnion: Union() {
     @JvmField
     internal var ok: DateTimeNative = DateTimeNative()
@@ -678,6 +792,19 @@ class ResultDateTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): DateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(DateTimeNative::class.java) as DateTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultIsoDateTimeNativeIntUnion: Union() {
     @JvmField
@@ -697,6 +824,19 @@ class ResultIsoDateTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): IsoDateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(IsoDateTimeNative::class.java) as IsoDateTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultPointerDecimalLimitErrorNativeUnion: Union() {
     @JvmField
@@ -714,6 +854,19 @@ class ResultPointerDecimalLimitErrorNative: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Pointer? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(Pointer::class.java) as Pointer
+        }
+        return null
+    }
+    internal fun getNativeErr(): Unit? {
+        if (isOk == 0.toByte()) {
+            return Unit
+        }
+        return null
+    }
+
 }
 internal class ResultPointerIntUnion: Union() {
     @JvmField
@@ -733,6 +886,19 @@ class ResultPointerInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Pointer? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(Pointer::class.java) as Pointer
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultPointerTimeZoneInvalidOffsetErrorNativeUnion: Union() {
     @JvmField
@@ -750,6 +916,49 @@ class ResultPointerTimeZoneInvalidOffsetErrorNative: Structure(), Structure.ByVa
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Pointer? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(Pointer::class.java) as Pointer
+        }
+        return null
+    }
+    internal fun getNativeErr(): Unit? {
+        if (isOk == 0.toByte()) {
+            return Unit
+        }
+        return null
+    }
+
+}
+internal class ResultUnitDateTimeMismatchedCalendarErrorNativeUnion: Union() {
+    @JvmField
+    internal var err: DateTimeMismatchedCalendarErrorNative = DateTimeMismatchedCalendarErrorNative()
+}
+
+class ResultUnitDateTimeMismatchedCalendarErrorNative: Structure(), Structure.ByValue  {
+    @JvmField
+    internal var union: ResultUnitDateTimeMismatchedCalendarErrorNativeUnion = ResultUnitDateTimeMismatchedCalendarErrorNativeUnion()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("union", "isOk")
+    }
+    internal fun getNativeOk(): Unit? {
+        if (isOk == 1.toByte()) {
+            return Unit
+        }
+        return null
+    }
+    internal fun getNativeErr(): DateTimeMismatchedCalendarErrorNative? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(DateTimeMismatchedCalendarErrorNative::class.java) as DateTimeMismatchedCalendarErrorNative
+        }
+        return null
+    }
+
 }
 internal class ResultUnitIntUnion: Union() {
     @JvmField
@@ -767,6 +976,19 @@ class ResultUnitInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Unit? {
+        if (isOk == 1.toByte()) {
+            return Unit
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultUnitUnitUnion: Union() {
 }
@@ -782,6 +1004,19 @@ class ResultUnitUnit: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): Unit? {
+        if (isOk == 1.toByte()) {
+            return Unit
+        }
+        return null
+    }
+    internal fun getNativeErr(): Unit? {
+        if (isOk == 0.toByte()) {
+            return Unit
+        }
+        return null
+    }
+
 }
 internal class ResultZonedDateTimeNativeIntUnion: Union() {
     @JvmField
@@ -801,6 +1036,19 @@ class ResultZonedDateTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): ZonedDateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(ZonedDateTimeNative::class.java) as ZonedDateTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultZonedIsoDateTimeNativeIntUnion: Union() {
     @JvmField
@@ -820,6 +1068,19 @@ class ResultZonedIsoDateTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): ZonedIsoDateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(ZonedIsoDateTimeNative::class.java) as ZonedIsoDateTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 internal class ResultZonedTimeNativeIntUnion: Union() {
     @JvmField
@@ -839,6 +1100,19 @@ class ResultZonedTimeNativeInt: Structure(), Structure.ByValue  {
     override fun getFieldOrder(): List<String> {
         return listOf("union", "isOk")
     }
+    internal fun getNativeOk(): ZonedTimeNative? {
+        if (isOk == 1.toByte()) {
+            return union.getTypedValue(ZonedTimeNative::class.java) as ZonedTimeNative
+        }
+        return null
+    }
+    internal fun getNativeErr(): Int? {
+        if (isOk == 0.toByte()) {
+            return union.getTypedValue(Int::class.java) as Int
+        }
+        return null
+    }
+
 }
 
 

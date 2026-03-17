@@ -4,15 +4,18 @@
 
 use core::fmt::Display;
 
+use crate::input::Decimal;
+use crate::Cow;
 use crate::{
-    error::ExponentError,
+    error::CompactExponentError,
     options::CompactDecimalFormatterOptions,
     preferences::{CompactDecimalFormatterPreferences, DecimalFormatterPreferences},
     provider::*,
     DecimalFormatter,
 };
-use alloc::borrow::Cow;
-use fixed_decimal::{Decimal, UnsignedDecimal};
+#[cfg(feature = "alloc")]
+use alloc::string::String;
+use fixed_decimal::UnsignedDecimal;
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 use icu_plurals::PluralRules;
 use icu_provider::DataError;
@@ -72,9 +75,7 @@ pub struct CompactDecimalFormatter {
 }
 
 impl CompactDecimalFormatter {
-    /// Constructor that takes a selected locale and a list of preferences,
-    /// then collects all compiled data necessary to format numbers in short compact
-    /// decimal notation for the given locale.
+    /// Creates a new short [`CompactDecimalFormatter`] from compiled data and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -85,11 +86,14 @@ impl CompactDecimalFormatter {
     /// ```
     /// use icu::decimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
     ///
-    /// CompactDecimalFormatter::try_new_short(
+    /// let formatter = CompactDecimalFormatter::try_new_short(
     ///     locale!("sv").into(),
     ///     Default::default(),
-    /// );
+    /// ).unwrap();
+    ///
+    /// assert_writeable_eq!(formatter.format(&1234.into()), "1,2 tn");
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_short(
@@ -98,10 +102,7 @@ impl CompactDecimalFormatter {
     ) -> Result<Self, DataError> {
         let locale = DecimalCompactShortV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            decimal_formatter: DecimalFormatter::try_new(
-                (&prefs).into(),
-                options.decimal_formatter_options,
-            )?,
+            decimal_formatter: DecimalFormatter::try_new((&prefs).into(), options.into())?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
             compact_data: load_with_fallback::<DecimalCompactShortV1>(
                 &Baked,
@@ -143,7 +144,7 @@ impl CompactDecimalFormatter {
             decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
-                options.decimal_formatter_options,
+                options.into(),
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
             compact_data: load_with_fallback::<DecimalCompactShortV1>(
@@ -158,9 +159,7 @@ impl CompactDecimalFormatter {
         })
     }
 
-    /// Constructor that takes a selected locale and a list of preferences,
-    /// then collects all compiled data necessary to format numbers in short compact
-    /// decimal notation for the given locale.
+    /// Creates a new long [`CompactDecimalFormatter`] from compiled data and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -171,11 +170,14 @@ impl CompactDecimalFormatter {
     /// ```
     /// use icu::decimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
     ///
-    /// CompactDecimalFormatter::try_new_long(
+    /// let formatter = CompactDecimalFormatter::try_new_long(
     ///     locale!("sv").into(),
     ///     Default::default(),
-    /// );
+    /// ).unwrap();
+    ///
+    /// assert_writeable_eq!(formatter.format(&1234.into()), "1,2 tusen");
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_long(
@@ -184,10 +186,7 @@ impl CompactDecimalFormatter {
     ) -> Result<Self, DataError> {
         let locale = DecimalCompactLongV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            decimal_formatter: DecimalFormatter::try_new(
-                (&prefs).into(),
-                options.decimal_formatter_options,
-            )?,
+            decimal_formatter: DecimalFormatter::try_new((&prefs).into(), options.into())?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
             compact_data: load_with_fallback::<DecimalCompactLongV1>(
                 &Baked,
@@ -229,7 +228,7 @@ impl CompactDecimalFormatter {
             decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
-                options.decimal_formatter_options,
+                options.into(),
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
             compact_data: load_with_fallback::<DecimalCompactLongV1>(
@@ -249,14 +248,11 @@ impl CompactDecimalFormatter {
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted.
     ///
-    /// Because the Decimal is mutated before formatting, this function
-    /// takes ownership of it.
-    ///
     /// # Examples
     ///
     /// ```
     /// use icu::decimal::CompactDecimalFormatter;
-    /// use icu::decimal::input::{Decimal, FloatPrecision, SignDisplay};
+    /// use icu::decimal::input::{Decimal, SignDisplay};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -303,14 +299,6 @@ impl CompactDecimalFormatter {
     ///     ),
     ///     "+2.5K"
     /// );
-    ///
-    /// // Floating point inputs should use FloatPrecision::RoundTrip
-    /// assert_writeable_eq!(
-    ///     short_english.format(
-    ///         &Decimal::try_from_f64(999_499.99, FloatPrecision::RoundTrip).unwrap()
-    ///     ),
-    ///     "999K"
-    /// );
     /// ```
     ///
     /// The result is the nearest such compact number, with halfway cases-
@@ -354,6 +342,26 @@ impl CompactDecimalFormatter {
     ///     "0.22"
     /// );
     /// ```
+    ///
+    /// Floating point inputs should use [`FloatPrecision::RoundTrip`](fixed_decimal::FloatPrecision::RoundTrip).
+    ///
+    /// ```
+    /// # use icu::decimal::input::{Decimal, FloatPrecision};
+    /// # use icu::decimal::CompactDecimalFormatter;
+    /// # use icu::locale::locale;
+    /// # use writeable::assert_writeable_eq;
+    /// #
+    /// # let short_english = CompactDecimalFormatter::try_new_short(
+    /// #    locale!("en").into(),
+    /// #    Default::default(),
+    /// # ).unwrap();
+    /// assert_writeable_eq!(
+    ///     short_english.format(
+    ///         &Decimal::try_from_f64(999_499.99, FloatPrecision::RoundTrip).unwrap()
+    ///     ),
+    ///     "999K"
+    /// );
+    /// ```
     pub fn format(&self, value: &Decimal) -> impl Writeable + Display + '_ {
         let (compact_pattern, significand) = self
             .compact_data
@@ -368,6 +376,15 @@ impl CompactDecimalFormatter {
                     .decimal_formatter
                     .format_unsigned(Cow::Owned(significand))]),
         )
+    }
+
+    /// Formats a [`Decimal`], returning a [`String`].
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    #[cfg(feature = "alloc")]
+    pub fn format_to_string(&self, value: &Decimal) -> String {
+        use writeable::Writeable;
+        self.format(value).write_to_string().into_owned()
     }
 
     /// Formats a [`Decimal`] with a given exponent according to locale data.
@@ -395,7 +412,7 @@ impl CompactDecimalFormatter {
     /// # use icu::locale::locale;
     /// # use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
-    ///
+    /// #
     /// # let short_french = CompactDecimalFormatter::try_new_short(
     /// #    locale!("fr").into(),
     /// #    Default::default(),
@@ -470,7 +487,7 @@ impl CompactDecimalFormatter {
         &'l self,
         significand: &'l Decimal,
         exponent: u8,
-    ) -> Result<impl Writeable + Display + 'l, ExponentError> {
+    ) -> Result<impl Writeable + Display + 'l, CompactExponentError> {
         let log10_type = significand.absolute.nonzero_magnitude_start() + i16::from(exponent);
 
         let (pattern, expected_exponent) = self
@@ -491,10 +508,10 @@ impl CompactDecimalFormatter {
             .unwrap_or((Pattern::<SinglePlaceholder>::PASS_THROUGH, 0));
 
         if exponent != expected_exponent {
-            return Err(ExponentError {
+            return Err(CompactExponentError {
                 actual: exponent,
                 expected: expected_exponent,
-                log10_type,
+                magnitude: log10_type,
             });
         }
 

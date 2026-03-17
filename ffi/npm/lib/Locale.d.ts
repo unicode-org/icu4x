@@ -106,6 +106,61 @@ export class Locale {
     set script(s: string);
 
     /**
+     * Returns a string representation of the {@link Locale} variants.
+     *
+     * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+     */
+    variants(): string;
+
+    /**
+     * Returns the number of variants in this {@link Locale}.
+     *
+     * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+     */
+    get variantCount(): number;
+
+    /**
+     * Returns the variant at the given index, or nothing if the index is out of bounds.
+     *
+     * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+     */
+    variantAt(index: number): string | null;
+
+    /**
+     * Returns whether the {@link Locale} has a specific variant.
+     *
+     * See the [Rust documentation for `Variants`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html) for more information.
+     */
+    hasVariant(s: string): boolean;
+
+    /**
+     * Adds a variant to the {@link Locale}.
+     *
+     * Returns an error if the variant string is invalid.
+     * Returns `true` if the variant was added, `false` if already present.
+     *
+     * See the [Rust documentation for `push`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.push) for more information.
+     */
+    addVariant(s: string): boolean;
+
+    /**
+     * Removes a variant from the {@link Locale}.
+     *
+     * Returns `true` if the variant was removed, `false` if not present.
+     * Returns `false` for invalid variant strings (they cannot exist in the locale).
+     *
+     * See the [Rust documentation for `remove`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.remove) for more information.
+     */
+    removeVariant(s: string): boolean;
+
+    /**
+     * Clears all variants from the {@link Locale}.
+     *
+     * See the [Rust documentation for `clear`](https://docs.rs/icu/2.1.1/icu/locale/struct.Variants.html#method.clear) for more information.
+     */
+    clearVariants(): void;
+
+    /**
      * Normalizes a locale string.
      *
      * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.

@@ -8,8 +8,10 @@ import com.sun.jna.Structure
 internal interface TimeZoneInfoLib: Library {
     fun icu4x_TimeZoneInfo_destroy_mv1(handle: Pointer)
     fun icu4x_TimeZoneInfo_utc_mv1(): Pointer
+    fun icu4x_TimeZoneInfo_from_parts_mv1(id: Pointer, offset: Pointer?, variant: OptionInt): Pointer
     fun icu4x_TimeZoneInfo_id_mv1(handle: Pointer): Pointer
     fun icu4x_TimeZoneInfo_at_date_time_iso_mv1(handle: Pointer, date: Pointer, time: Pointer): Pointer
+    fun icu4x_TimeZoneInfo_at_date_time_mv1(handle: Pointer, date: Pointer, time: Pointer): Pointer
     fun icu4x_TimeZoneInfo_at_timestamp_mv1(handle: Pointer, timestamp: Long): Pointer
     fun icu4x_TimeZoneInfo_zone_name_date_time_mv1(handle: Pointer): OptionIsoDateTimeNative
     fun icu4x_TimeZoneInfo_with_variant_mv1(handle: Pointer, timeVariant: Int): Pointer
@@ -24,12 +26,22 @@ class TimeZoneInfo internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class TimeZoneInfoCleaner(val handle: Pointer, val lib: TimeZoneInfoLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class TimeZoneInfoCleaner(val handle: Pointer, val lib: TimeZoneInfoLib) : Runnable {
         override fun run() {
             lib.icu4x_TimeZoneInfo_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
     }
 
     companion object {
@@ -46,8 +58,21 @@ class TimeZoneInfo internal constructor (
             val returnVal = lib.icu4x_TimeZoneInfo_utc_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = TimeZoneInfo(handle, selfEdges)
-            CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+            val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Creates a time zone info from parts.
+        *
+        *`variant` is ignored.
+        */
+        fun fromParts(id: TimeZone, offset: UtcOffset?, variant: TimeZoneVariant?): TimeZoneInfo {
+            
+            val returnVal = lib.icu4x_TimeZoneInfo_from_parts_mv1(id.handle, offset?.handle, variant?.let { OptionInt.some(it.toNative()) } ?: OptionInt.none());
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
             return returnOpaque
         }
     }
@@ -59,8 +84,7 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_id_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZone(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
+        val returnOpaque = TimeZone(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -74,7 +98,7 @@ class TimeZoneInfo internal constructor (
     *- The constraints are the same as with `ZoneNameTimestamp` in Rust.
     *- Set to year 1000 or 9999 for a reference far in the past or future.
     *
-    *See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+    *See the [Rust documentation for `at_date_time`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.at_date_time) for more information.
     *
     *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html)
     */
@@ -83,8 +107,30 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_at_date_time_iso_mv1(handle, date.handle, time.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneInfo(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
+        return returnOpaque
+    }
+    
+    /** Sets the datetime at which to interpret the time zone
+    *for display name lookup.
+    *
+    *Notes:
+    *
+    *- If not set, the formatting datetime is used if possible.
+    *- If the offset is not set, the datetime is interpreted as UTC.
+    *- The constraints are the same as with `ZoneNameTimestamp` in Rust.
+    *- Set to year 1000 or 9999 for a reference far in the past or future.
+    *
+    *See the [Rust documentation for `at_date_time`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.at_date_time) for more information.
+    *
+    *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html)
+    */
+    fun atDateTime(date: Date, time: Time): TimeZoneInfo {
+        
+        val returnVal = lib.icu4x_TimeZoneInfo_at_date_time_mv1(handle, date.handle, time.handle);
+        val selfEdges: List<Any> = listOf()
+        val handle = returnVal 
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -98,15 +144,14 @@ class TimeZoneInfo internal constructor (
     *
     *See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
     *
-    *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html)
+    *Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_epoch_seconds)
     */
     fun atTimestamp(timestamp: Long): TimeZoneInfo {
         
         val returnVal = lib.icu4x_TimeZoneInfo_at_timestamp_mv1(handle, timestamp);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneInfo(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -131,8 +176,7 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_with_variant_mv1(handle, timeVariant.toNative());
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneInfo(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -143,8 +187,7 @@ class TimeZoneInfo internal constructor (
         val returnVal = lib.icu4x_TimeZoneInfo_offset_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal ?: return null
-        val returnOpaque = UtcOffset(handle, selfEdges)
-        CLEANER.register(returnOpaque, UtcOffset.UtcOffsetCleaner(handle, UtcOffset.lib));
+        val returnOpaque = UtcOffset(handle, selfEdges, true)
         return returnOpaque
     }
     

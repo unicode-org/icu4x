@@ -17,7 +17,7 @@ mod lstm;
 use lstm::*;
 
 #[derive(Debug, Clone)]
-#[expect(clippy::large_enum_variant)]
+#[cfg_attr(feature = "lstm", expect(clippy::large_enum_variant))]
 enum DictOrLstm {
     Dict(DataPayload<UCharDictionaryBreakDataV1>),
     #[cfg(feature = "lstm")]

@@ -53,7 +53,7 @@ pub mod ffi {
     );
 
     /// An iterator over the locale under fallback.
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackIterator, Struct)]
     pub struct LocaleFallbackIterator<'a>(pub icu_locale::fallback::LocaleFallbackIterator<'a>);
 

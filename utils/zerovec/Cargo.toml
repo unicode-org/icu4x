@@ -7,7 +7,7 @@ name = "zerovec"
 description = "Zero-copy vector backed by a byte array"
 version = "0.11.5"
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
-keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
+keywords = ["zero-copy", "serialization", "memory-efficiency", "serde"]
 
 authors.workspace = true
 edition.workspace = true

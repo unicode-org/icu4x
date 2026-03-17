@@ -7,6 +7,7 @@ use core::fmt::Write;
 use writeable::Part;
 
 use crate::grouper;
+use crate::input::Decimal;
 use crate::options::*;
 use crate::parts;
 use crate::provider::*;
@@ -14,7 +15,7 @@ use crate::size_test_macro::size_test;
 use crate::DecimalFormatterPreferences;
 #[cfg(feature = "alloc")]
 use alloc::string::String;
-use fixed_decimal::{Decimal, Sign, UnsignedDecimal};
+use fixed_decimal::{Sign, UnsignedDecimal};
 use icu_provider::prelude::*;
 use writeable::PartsWrite;
 use writeable::Writeable;

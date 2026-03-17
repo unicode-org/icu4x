@@ -6,6 +6,8 @@
 name = "zoneinfo64"
 description = "Working with ICU zoneinfo64.res timezone data bundles"
 version = "0.3.0-dev"
+categories.workspace = true
+keywords = ["timezone", "database"]
 
 rust-version = "1.82"
 authors.workspace = true
@@ -13,7 +15,6 @@ edition.workspace = true
 repository.workspace = true
 homepage.workspace = true
 license.workspace = true
-categories.workspace = true
 include.workspace = true
 
 [package.metadata.workspaces]

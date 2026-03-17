@@ -285,6 +285,18 @@ One suggested situation in which public fields would be acceptable is for user-f
 
 See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more.
 
+### Cross-crate internal APIs :: suggested
+
+Cross-crate internal APIs (public APIs marked `#[doc(hidden)]` for use by other ICU4X crates) allow sharing functionality between crates. If used, they must adhere to the following guidelines:
+
+- **Test and document as if stable:** A change to an internal API in one crate can break assumptions in another ("action at a distance"). To mitigate this, cross-crate internal APIs should be documented and tested to a similar level of scrutiny as public APIs.
+- **Design for graceful upgrades:** When clients update one crate at a time, they may experience ephemeral build breakages if these APIs change. Spend time designing the API shape to reduce the potential that you need to change it in the next release, which can cause friction for clients, or such that it is easy to "duplicate" the API instead of editing the existing one. (Note: anything using a trait impl is trickier to duplicate.)
+    - For **core crates** (e.g., `icu_provider`, `icu_locale_core`) that are not used with `~` dependencies, internal APIs _must not_ be changed in breaking ways, since doing so violates Cargo semver. If you need to change something, make a new internal API and keep the old one working.
+    - For **other crates**, internal APIs _should not_ be changed in breaking ways, since non-Cargo clients may still upgrade the crates out-of-sync, but exceptions can be made on a case-by-case basis.
+- **Take steps to reduce usage outside ICU4X:** Exported APIs can be discovered and used by clients. To discourage this, name such APIs explicitly (e.g., including `unstable` or `internal` in the name).
+
+In other words, spend time on the design of these APIs, treating them with the same care as public APIs even if they are not yet stabilized.
+
 ## Derived Traits
 
 ### Debug Trait on Public Types :: suggested

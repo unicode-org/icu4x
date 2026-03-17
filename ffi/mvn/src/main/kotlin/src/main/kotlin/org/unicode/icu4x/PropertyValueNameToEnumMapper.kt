@@ -55,12 +55,22 @@ class PropertyValueNameToEnumMapper internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class PropertyValueNameToEnumMapperCleaner(val handle: Pointer, val lib: PropertyValueNameToEnumMapperLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class PropertyValueNameToEnumMapperCleaner(val handle: Pointer, val lib: PropertyValueNameToEnumMapperLib) : Runnable {
         override fun run() {
             lib.icu4x_PropertyValueNameToEnumMapper_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
     }
 
     companion object {
@@ -77,8 +87,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -90,14 +99,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createBidiClassWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -111,8 +120,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -124,14 +132,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createNumericTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -145,8 +153,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_script_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -158,14 +165,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createScriptWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -179,8 +186,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -192,14 +198,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createHangulSyllableTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -213,8 +219,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -226,14 +231,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createEastAsianWidthWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -247,8 +252,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -260,14 +264,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createLineBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -281,8 +285,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -294,14 +297,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createGraphemeClusterBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -315,8 +318,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -328,14 +330,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createWordBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -349,8 +351,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -362,14 +363,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createSentenceBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -383,8 +384,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -396,14 +396,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createCanonicalCombiningClassWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -417,8 +417,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -430,14 +429,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createIndicSyllabicCategoryWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -451,8 +450,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -464,14 +462,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createIndicConjunctBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -485,8 +483,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_joining_group_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -498,14 +495,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createJoiningGroupWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_joining_group_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -519,8 +516,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_joining_type_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -532,14 +528,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createJoiningTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_joining_type_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -553,8 +549,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -566,14 +561,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createGeneralCategoryWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
@@ -587,8 +582,7 @@ class PropertyValueNameToEnumMapper internal constructor (
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -600,14 +594,14 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createVerticalOrientationWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -622,7 +616,11 @@ class PropertyValueNameToEnumMapper internal constructor (
         val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
         
         val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(handle, nameSliceMemory.slice);
-        return (returnVal)
+        try {
+            return (returnVal)
+        } finally {
+            nameSliceMemory.close()
+        }
     }
     
     /** Get the property value matching the given name, using loose matching
@@ -635,7 +633,11 @@ class PropertyValueNameToEnumMapper internal constructor (
         val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
         
         val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(handle, nameSliceMemory.slice);
-        return (returnVal)
+        try {
+            return (returnVal)
+        } finally {
+            nameSliceMemory.close()
+        }
     }
 
 }

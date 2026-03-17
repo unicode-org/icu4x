@@ -20,12 +20,22 @@ class CanonicalCombiningClassMap internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CanonicalCombiningClassMapCleaner(val handle: Pointer, val lib: CanonicalCombiningClassMapLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CanonicalCombiningClassMapCleaner(val handle: Pointer, val lib: CanonicalCombiningClassMapLib) : Runnable {
         override fun run() {
             lib.icu4x_CanonicalCombiningClassMap_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CanonicalCombiningClassMap.CanonicalCombiningClassMapCleaner(handle, CanonicalCombiningClassMap.lib));
     }
 
     companion object {
@@ -42,8 +52,7 @@ class CanonicalCombiningClassMap internal constructor (
             val returnVal = lib.icu4x_CanonicalCombiningClassMap_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CanonicalCombiningClassMap(handle, selfEdges)
-            CLEANER.register(returnOpaque, CanonicalCombiningClassMap.CanonicalCombiningClassMapCleaner(handle, CanonicalCombiningClassMap.lib));
+            val returnOpaque = CanonicalCombiningClassMap(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -55,14 +64,14 @@ class CanonicalCombiningClassMap internal constructor (
         fun createWithProvider(provider: DataProvider): Result<CanonicalCombiningClassMap> {
             
             val returnVal = lib.icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CanonicalCombiningClassMap(handle, selfEdges)
-                CLEANER.register(returnOpaque, CanonicalCombiningClassMap.CanonicalCombiningClassMapCleaner(handle, CanonicalCombiningClassMap.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CanonicalCombiningClassMap(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

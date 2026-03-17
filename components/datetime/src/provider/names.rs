@@ -8,8 +8,11 @@ use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
+#[cfg(feature = "serde")]
 use potential_utf::PotentialUtf8;
-use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec};
+use zerovec::VarZeroVec;
+#[cfg(feature = "serde")]
+use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice};
 
 icu_provider::data_marker!(
     /// `DatetimeNamesYearBuddhistV1`
@@ -231,7 +234,7 @@ size_test!(YearNames, year_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -242,9 +245,56 @@ pub enum YearNames<'data> {
     FixedEras(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
     /// This calendar has a variable set of eras with numeric years, this stores the era names mapped from
     /// era code to the name.
+    #[cfg(feature = "serde")]
     VariableEras(#[cfg_attr(feature = "serde", serde(borrow))] YearNamesMap<'data>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+}
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for YearNames<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use alloc::vec::Vec;
+
+        #[derive(serde::Serialize)]
+        enum Raw<'a> {
+            FixedEras(&'a VarZeroVec<'a, str>),
+            VariableEras(&'a YearNamesMap<'a>),
+            Cyclic(&'a VarZeroVec<'a, str>),
+        }
+
+        let x: YearNamesMap;
+
+        match self {
+            // Japanese eras are now generated as `FixedEras`, but we want to keep serializing
+            // them as VariableEras. It's the only calendar with 7 eras.
+            Self::FixedEras(e) if e.len() == 7 => {
+                let mut kvs = [
+                    PotentialUtf8::from_str("bce"),
+                    PotentialUtf8::from_str("ce"),
+                    PotentialUtf8::from_str("meiji"),
+                    PotentialUtf8::from_str("taisho"),
+                    PotentialUtf8::from_str("showa"),
+                    PotentialUtf8::from_str("heisei"),
+                    PotentialUtf8::from_str("reiwa"),
+                ]
+                .into_iter()
+                .zip(e.iter())
+                .collect::<Vec<_>>();
+                kvs.sort_unstable();
+                let (ks, vs) = kvs.into_iter().unzip::<_, _, Vec<_>, Vec<_>>();
+                x = VarZeroCow::from_encodeable(&(ks, vs));
+                Raw::VariableEras(&x)
+            }
+            Self::FixedEras(e) => Raw::FixedEras(e),
+            Self::VariableEras(e) => Raw::VariableEras(e),
+            Self::Cyclic(c) => Raw::Cyclic(c),
+        }
+        .serialize(serializer)
+    }
 }
 
 icu_provider::data_struct!(
@@ -252,9 +302,11 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
+#[cfg(feature = "serde")]
 type YearNamesMap<'data> =
     VarZeroCow<'data, Tuple2VarULE<VarZeroSlice<PotentialUtf8>, VarZeroSlice<str>>>;
 
+#[cfg(feature = "serde")]
 pub(crate) fn get_year_name_from_map<'a>(
     map: &'a YearNamesMap<'_>,
     year: &PotentialUtf8,
@@ -277,7 +329,7 @@ size_test!(MonthNames, month_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -286,12 +338,16 @@ pub enum MonthNames<'data> {
     ///
     /// Found for solar and pure lunar calendars
     Linear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+
+    #[cfg(feature = "serde")]
     /// Month codes M01, M02, M03, .. M01L, M02L, ...
     ///
     /// Empty entries for non-present month codes. Will have an equal number of leap and non-leap
     /// entries.
     ///
     /// Found for lunisolar and lunisidereal calendars
+    ///
+    /// Not used anymore, but kept around for serde stabililty.
     LeapLinear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 
     /// This represents the formatting to apply to numeric values to produce the corresponding
@@ -308,6 +364,88 @@ pub enum MonthNames<'data> {
         )]
         Cow<'data, SinglePlaceholderPattern>,
     ),
+
+    /// This represents the formatting to apply to calendars with leap months.
+    /// The last two elements are patterns:
+    /// * N-2: `SinglePlaceholderPattern` for leap months
+    /// * N-1: `SinglePlaceholderPattern` for leap base months
+    LeapPattern(VarZeroVec<'data, str>),
+}
+
+// Stability, don't want to serialize ::LeapPattern
+#[cfg(feature = "serde")]
+impl serde::Serialize for MonthNames<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        #[derive(serde::Serialize)]
+        enum Raw<'a> {
+            Linear(&'a VarZeroVec<'a, str>),
+            LeapLinear(&'a VarZeroVec<'a, str>),
+            LeapNumeric(&'a Cow<'a, SinglePlaceholderPattern>),
+        }
+
+        let z;
+
+        match self {
+            Self::Linear(l) => Raw::Linear(l),
+            Self::LeapLinear(l) => Raw::LeapLinear(l),
+            Self::LeapNumeric(l) => Raw::LeapNumeric(l),
+            Self::LeapPattern(l) => {
+                use alloc::string::String;
+                use alloc::vec::Vec;
+                use zerovec::vecs::VarZeroVecOwned;
+
+                let leap_pattern = l.get(l.len() - 2).unwrap_or_default();
+                let leap_base_pattern = l.get(l.len() - 1).unwrap_or_default();
+
+                let normal_names = l.iter().take(l.len() - 2);
+
+                let r = if leap_pattern.starts_with('\0') {
+                    // The leap pattern is not actually a pattern (no placeholder) - this means it's Hebrew
+                    normal_names
+                        .map(String::from)
+                        .chain([
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            SinglePlaceholderPattern::from_ref_store(leap_pattern)
+                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                                .interpolate_to_string([l.get(5).unwrap_or_default()]),
+                            SinglePlaceholderPattern::from_ref_store(leap_base_pattern)
+                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                                .interpolate_to_string([l.get(5).unwrap_or_default()]),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                            String::new(),
+                        ])
+                        .collect()
+                } else {
+                    normal_names
+                        .clone()
+                        .map(String::from)
+                        .chain(normal_names.map(|m| {
+                            SinglePlaceholderPattern::from_ref_store(leap_pattern)
+                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                                .interpolate_to_string([m])
+                        }))
+                        .collect::<Vec<_>>()
+                };
+
+                #[allow(clippy::unwrap_used)] // small enough
+                {
+                    z = VarZeroVecOwned::try_from_elements(&r).unwrap().into();
+                }
+                Raw::LeapLinear(&z)
+            }
+        }
+        .serialize(serializer)
+    }
 }
 
 icu_provider::data_struct!(

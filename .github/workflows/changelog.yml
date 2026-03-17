@@ -1,0 +1,73 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+name: Changelog Check
+
+on:
+  merge_group:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  # Only one per PR.
+  cancel-in-progress: true
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for Changelog section
+        shell: python
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          import os
+          import sys
+          import re
+
+          body = os.environ.get("PR_BODY", "")
+          
+          # Remove HTML comments
+          body = re.sub(r'<!--.*?-->', '', body, flags=re.DOTALL)
+          
+          # Find # Changelog section header (case-insensitive)
+          header_match = re.search(r'^##\s*Changelog\b(.*?)$', body, re.IGNORECASE | re.MULTILINE)
+          
+          if not header_match:
+              print("::error::No '## Changelog' section found in the PR description.")
+              print("Please add a '## Changelog' section to your PR body.")
+              sys.exit(1)
+          
+          header_suffix = header_match.group(1).strip()
+          
+          # Check for escape hatches in the header line
+          # Allow: # Changelog (N/A), # Changelog: N/A, # Changelog: TBD, etc.
+          if re.search(r'\(N/A\)|:\s*N/A|:\s*TBD', header_suffix, re.IGNORECASE):
+              print("Changelog check passed (opted out or deferred via header).")
+              sys.exit(0)
+          
+          # Extract content after the header until the next header or end of string
+          content_start = header_match.end()
+          # We look for the next header by looking for '^#+\s+' after a newline
+          next_header_match = re.search(r'\n#+\s+', body[content_start:])
+          if next_header_match:
+              content = body[content_start:content_start + next_header_match.start()]
+          else:
+              content = body[content_start:]
+          
+          content = content.strip()
+          
+          # Also check if the content itself starts with N/A or TBD
+          if re.match(r'^(N/A|TBD)\b', content, re.IGNORECASE):
+              print("Changelog check passed (opted out or deferred in content).")
+              sys.exit(0)
+          
+          if not content:
+              print("::error::The '## Changelog' section is empty.")
+              print("Please provide a changelog entry, or use '## Changelog (N/A)' or '## Changelog: TBD' if appropriate.")
+              sys.exit(1)
+          
+          print("Changelog check passed.")
+

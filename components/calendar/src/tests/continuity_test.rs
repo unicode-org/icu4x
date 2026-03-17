@@ -4,7 +4,7 @@
 
 use crate::{types::*, *};
 
-fn check_continuity<A: AsCalendar>(mut date: Date<A>, years_to_check: usize) {
+fn check_continuity<A: AsCalendar + Clone>(mut date: Date<A>, years_to_check: usize) {
     let duration = DateDuration::for_days(1);
 
     let mut rata_die = date.to_rata_die();

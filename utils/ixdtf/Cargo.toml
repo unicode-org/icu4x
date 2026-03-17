@@ -6,9 +6,10 @@
 name = "ixdtf"
 description = "Parser for Internet eXtended DateTime Format"
 version = "0.6.4"
+categories.workspace = true
+keywords = ["iso8601", "date-time"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true

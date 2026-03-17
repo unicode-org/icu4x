@@ -47,9 +47,13 @@ enum class PluralCategory {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
             val returnVal = lib.icu4x_PluralCategory_get_for_cldr_string_mv1(sSliceMemory.slice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return PluralCategory.fromNative(intermediateOption)
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return PluralCategory.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
 }

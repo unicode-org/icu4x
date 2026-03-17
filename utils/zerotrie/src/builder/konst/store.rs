@@ -60,16 +60,6 @@ impl<'a, T> ConstSlice<'a, T> {
         }
     }
 
-    /// Gets the last element or `None` if empty.
-    pub const fn last(&self) -> Option<&T> {
-        if self.len() == 0 {
-            None
-        } else {
-            // Won't panic: we already handled an empty slice
-            Some(self.get_or_panic(self.len() - 1))
-        }
-    }
-
     /// Gets a subslice of this slice.
     #[cfg(test)]
     pub const fn get_subslice_or_panic(

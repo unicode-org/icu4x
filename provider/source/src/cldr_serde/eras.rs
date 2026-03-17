@@ -42,6 +42,10 @@ pub(crate) struct EraData {
     pub(crate) code: String,
     #[serde(rename = "_aliases", default)]
     pub(crate) aliases: String,
+    /// The offset from the arithmetic start of the era to when it was started
+    /// to be used. CLDR doesn't track this, we manually set this for Meiji.
+    #[serde(default)]
+    pub(crate) offset: i32,
     /// `EraYear::era_index`
     #[serde(skip)]
     pub(crate) icu4x_era_index: Option<u8>,

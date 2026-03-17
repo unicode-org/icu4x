@@ -23,12 +23,22 @@ class TimeZone internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class TimeZoneCleaner(val handle: Pointer, val lib: TimeZoneLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class TimeZoneCleaner(val handle: Pointer, val lib: TimeZoneLib) : Runnable {
         override fun run() {
             lib.icu4x_TimeZone_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
     }
 
     companion object {
@@ -45,8 +55,7 @@ class TimeZone internal constructor (
             val returnVal = lib.icu4x_TimeZone_unknown_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = TimeZone(handle, selfEdges)
-            CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
+            val returnOpaque = TimeZone(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -59,12 +68,14 @@ class TimeZone internal constructor (
             val ianaIdSliceMemory = PrimitiveArrayTools.borrowUtf8(ianaId)
             
             val returnVal = lib.icu4x_TimeZone_create_from_iana_id_mv1(ianaIdSliceMemory.slice);
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = TimeZone(handle, selfEdges)
-            CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
-            ianaIdSliceMemory?.close()
-            return returnOpaque
+            try {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal 
+                val returnOpaque = TimeZone(handle, selfEdges, true)
+                return returnOpaque
+            } finally {
+                ianaIdSliceMemory.close()
+            }
         }
         @JvmStatic
         
@@ -77,13 +88,15 @@ class TimeZone internal constructor (
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
             
             val returnVal = lib.icu4x_TimeZone_create_from_windows_id_mv1(windowsIdSliceMemory.slice, regionSliceMemory.slice);
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = TimeZone(handle, selfEdges)
-            CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
-            windowsIdSliceMemory?.close()
-            regionSliceMemory?.close()
-            return returnOpaque
+            try {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal 
+                val returnOpaque = TimeZone(handle, selfEdges, true)
+                return returnOpaque
+            } finally {
+                windowsIdSliceMemory.close()
+                regionSliceMemory.close()
+            }
         }
         @JvmStatic
         
@@ -96,13 +109,15 @@ class TimeZone internal constructor (
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
             
             val returnVal = lib.icu4x_TimeZone_create_from_system_id_mv1(idSliceMemory.slice, regionSliceMemory.slice);
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = TimeZone(handle, selfEdges)
-            CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
-            idSliceMemory?.close()
-            regionSliceMemory?.close()
-            return returnOpaque
+            try {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal 
+                val returnOpaque = TimeZone(handle, selfEdges, true)
+                return returnOpaque
+            } finally {
+                idSliceMemory.close()
+                regionSliceMemory.close()
+            }
         }
         @JvmStatic
         
@@ -116,12 +131,14 @@ class TimeZone internal constructor (
             val idSliceMemory = PrimitiveArrayTools.borrowUtf8(id)
             
             val returnVal = lib.icu4x_TimeZone_create_from_bcp47_mv1(idSliceMemory.slice);
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = TimeZone(handle, selfEdges)
-            CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
-            idSliceMemory?.close()
-            return returnOpaque
+            try {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal 
+                val returnOpaque = TimeZone(handle, selfEdges, true)
+                return returnOpaque
+            } finally {
+                idSliceMemory.close()
+            }
         }
     }
     
@@ -142,8 +159,7 @@ class TimeZone internal constructor (
         val returnVal = lib.icu4x_TimeZone_with_offset_mv1(handle, offset.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneInfo(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
         return returnOpaque
     }
     
@@ -154,8 +170,7 @@ class TimeZone internal constructor (
         val returnVal = lib.icu4x_TimeZone_without_offset_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = TimeZoneInfo(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZoneInfo.TimeZoneInfoCleaner(handle, TimeZoneInfo.lib));
+        val returnOpaque = TimeZoneInfo(handle, selfEdges, true)
         return returnOpaque
     }
 

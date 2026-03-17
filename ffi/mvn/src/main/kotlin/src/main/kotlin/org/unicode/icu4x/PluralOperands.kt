@@ -18,12 +18,22 @@ class PluralOperands internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class PluralOperandsCleaner(val handle: Pointer, val lib: PluralOperandsLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class PluralOperandsCleaner(val handle: Pointer, val lib: PluralOperandsLib) : Runnable {
         override fun run() {
             lib.icu4x_PluralOperands_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, PluralOperands.PluralOperandsCleaner(handle, PluralOperands.lib));
     }
 
     companion object {
@@ -39,15 +49,18 @@ class PluralOperands internal constructor (
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
             val returnVal = lib.icu4x_PluralOperands_from_string_mv1(sSliceMemory.slice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = PluralOperands(handle, selfEdges)
-                CLEANER.register(returnOpaque, PluralOperands.PluralOperandsCleaner(handle, PluralOperands.lib));
-                sSliceMemory?.close()
-                return returnOpaque.ok()
-            } else {
-                return DecimalParseErrorError(DecimalParseError.fromNative(returnVal.union.err)).err()
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = PluralOperands(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DecimalParseErrorError(DecimalParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                sSliceMemory.close()
             }
         }
         @JvmStatic
@@ -59,8 +72,7 @@ class PluralOperands internal constructor (
             val returnVal = lib.icu4x_PluralOperands_from_int64_mv1(i);
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PluralOperands(handle, selfEdges)
-            CLEANER.register(returnOpaque, PluralOperands.PluralOperandsCleaner(handle, PluralOperands.lib));
+            val returnOpaque = PluralOperands(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
@@ -74,8 +86,7 @@ class PluralOperands internal constructor (
             val returnVal = lib.icu4x_PluralOperands_from_fixed_decimal_mv1(x.handle);
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = PluralOperands(handle, selfEdges)
-            CLEANER.register(returnOpaque, PluralOperands.PluralOperandsCleaner(handle, PluralOperands.lib));
+            val returnOpaque = PluralOperands(handle, selfEdges, true)
             return returnOpaque
         }
     }

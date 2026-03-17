@@ -7,9 +7,9 @@
 use crate::types::MonthCode;
 use displaydoc::Display;
 
-/// Error type for date creation via [`Date::try_new_from_codes`].
+/// Error type for date creation via [`Date::try_new`].
 ///
-/// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+/// [`Date::try_new`]: crate::Date::try_new
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum DateError {
@@ -33,6 +33,7 @@ pub enum DateError {
     /// # Examples
     ///
     /// ```
+    /// # #![allow(deprecated)]
     /// use icu::calendar::cal::Hebrew;
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
@@ -143,12 +144,13 @@ pub enum LunisolarDateError {
 impl core::error::Error for LunisolarDateError {}
 
 #[cfg(feature = "unstable")]
-pub use unstable::{DateAddError, DateFromFieldsError};
+pub use unstable::{DateAddError, DateFromFieldsError, MismatchedCalendarError};
 #[cfg(not(feature = "unstable"))]
-pub(crate) use unstable::{DateAddError, DateFromFieldsError};
+pub(crate) use unstable::{DateAddError, DateFromFieldsError, MismatchedCalendarError};
 
 mod unstable {
     pub use super::*;
+
     /// Error type for date creation via [`Date::try_from_fields`].
     ///
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
@@ -433,7 +435,8 @@ mod unstable {
         /// ```
         #[displaydoc("Not enough fields")]
         NotEnoughFields,
-        /// The date is out of range.
+        /// The date is out of range (see docs on [`Date`](crate::Date)
+        /// for more information about `Date`'s fundamental range invariant).
         ///
         /// # Examples
         ///
@@ -450,7 +453,7 @@ mod unstable {
         /// fields.day = Some(31);
         ///
         /// let err = Date::try_from_fields(fields, Default::default(), Iso)
-        ///     .expect_err("no day 31 in November");
+        ///     .expect_err("date out of range");
         ///
         /// assert!(matches!(
         ///     err,
@@ -536,7 +539,8 @@ mod unstable {
         /// ```
         #[displaydoc("The specified month exists in this calendar, but not for this year")]
         MonthNotInYear,
-        /// The date is out of range.
+        /// The date is out of range (see docs on [`Date`](crate::Date)
+        /// for more information about `Date`'s fundamental range invariant).
         ///
         /// # Examples
         ///
@@ -559,6 +563,98 @@ mod unstable {
     }
 
     impl core::error::Error for DateAddError {}
+
+    /// Error returned when interacting two [`Date`](crate::Date)s with non-singleton calendars.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::error::MismatchedCalendarError;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::options::DateDifferenceOptions;
+    /// use icu::calendar::options::DateDurationUnit;
+    ///
+    /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
+    /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
+    ///
+    /// assert_eq!(
+    ///     d1.try_until_with_options(&d2, Default::default())
+    ///         .unwrap_err(),
+    ///     MismatchedCalendarError,
+    /// );
+    ///
+    /// // To compare the dates, convert them to the same calendar.
+    /// // Note that the result may differ based on the calendar used,
+    /// // e.g if comparing in months and days.
+    ///
+    /// let mut options = DateDifferenceOptions::default();
+    /// options.largest_unit = Some(DateDurationUnit::Months);
+    ///
+    /// let diff1 = d1.to_calendar(d2.calendar().clone())
+    ///     .try_until_with_options(&d2, options)
+    ///     .unwrap();
+    /// let diff2 = d1
+    ///     .try_until_with_options(&d2.to_calendar(d1.calendar().clone()),
+    ///                             options)
+    ///     .unwrap();
+    ///
+    /// assert_ne!(diff1, diff2);
+    /// ```
+    ///
+    /// N
+    #[derive(Clone, Copy, PartialEq, Debug, Display)]
+    #[displaydoc("Attempted to interact two `Date`s with different calendars")]
+    #[allow(
+        clippy::exhaustive_structs,
+        reason = "This is the only possible error with multi-calendar operations"
+    )]
+    pub struct MismatchedCalendarError;
+
+    impl core::error::Error for MismatchedCalendarError {}
+}
+
+/// Error type for date creation via [`Date::try_new`].
+///
+/// [`Date::try_new`]: crate::Date::try_new
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #7512](https://github.com/unicode-org/icu4x/issues/7512).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+#[derive(Debug, Copy, Clone, PartialEq, Display)]
+#[non_exhaustive]
+pub enum DateNewError {
+    /// The day is invalid for the given month.
+    #[displaydoc("Invalid day for month, max is {max}")]
+    InvalidDay {
+        /// The maximum allowed value (the minimum is 1).
+        max: u8,
+    },
+    /// The specified month does not exist in this calendar.
+    #[displaydoc("The specified month does not exist in this calendar")]
+    MonthNotInCalendar,
+    /// The specified month exists in this calendar, but not in the specified year.
+    #[displaydoc("The specified month exists in this calendar, but not for this year")]
+    MonthNotInYear,
+    /// The era code is invalid for the calendar.
+    #[displaydoc("Unknown era or invalid syntax")]
+    InvalidEra,
+
+    /// The year was out of range
+    #[displaydoc("Invalid year, must be within -9999..=9999")]
+    InvalidYear,
+}
+
+impl core::error::Error for DateNewError {}
+
+impl From<UnknownEraError> for DateNewError {
+    fn from(_: UnknownEraError) -> Self {
+        Self::InvalidEra
+    }
 }
 
 /// Internal narrow error type for functions that only fail on unknown eras
@@ -579,7 +675,7 @@ impl From<UnknownEraError> for DateFromFieldsError {
 }
 
 /// Error for [`Month`](crate::types::Month) parsing
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum MonthCodeParseError {
     /// Invalid syntax

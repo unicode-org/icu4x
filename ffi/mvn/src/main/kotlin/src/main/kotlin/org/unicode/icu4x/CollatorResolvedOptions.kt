@@ -6,10 +6,10 @@ import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.Structure
 
-internal interface CollatorResolvedOptionsV1Lib: Library {
+internal interface CollatorResolvedOptionsLib: Library {
 }
 
-internal class CollatorResolvedOptionsV1Native: Structure(), Structure.ByValue {
+internal class CollatorResolvedOptionsNative: Structure(), Structure.ByValue {
     @JvmField
     internal var strength: Int = CollatorStrength.default().toNative();
     @JvmField
@@ -32,9 +32,9 @@ internal class CollatorResolvedOptionsV1Native: Structure(), Structure.ByValue {
 
 
 
-internal class OptionCollatorResolvedOptionsV1Native constructor(): Structure(), Structure.ByValue {
+internal class OptionCollatorResolvedOptionsNative constructor(): Structure(), Structure.ByValue {
     @JvmField
-    internal var value: CollatorResolvedOptionsV1Native = CollatorResolvedOptionsV1Native()
+    internal var value: CollatorResolvedOptionsNative = CollatorResolvedOptionsNative()
 
     @JvmField
     internal var isOk: Byte = 0
@@ -44,7 +44,7 @@ internal class OptionCollatorResolvedOptionsV1Native constructor(): Structure(),
         return listOf("value", "isOk")
     }
 
-    internal fun option(): CollatorResolvedOptionsV1Native? {
+    internal fun option(): CollatorResolvedOptionsNative? {
         if (isOk == 1.toByte()) {
             return value
         } else {
@@ -53,18 +53,18 @@ internal class OptionCollatorResolvedOptionsV1Native constructor(): Structure(),
     }
 
 
-    constructor(value: CollatorResolvedOptionsV1Native, isOk: Byte): this() {
+    constructor(value: CollatorResolvedOptionsNative, isOk: Byte): this() {
         this.value = value
         this.isOk = isOk
     }
 
     companion object {
-        internal fun some(value: CollatorResolvedOptionsV1Native): OptionCollatorResolvedOptionsV1Native {
-            return OptionCollatorResolvedOptionsV1Native(value, 1)
+        internal fun some(value: CollatorResolvedOptionsNative): OptionCollatorResolvedOptionsNative {
+            return OptionCollatorResolvedOptionsNative(value, 1)
         }
 
-        internal fun none(): OptionCollatorResolvedOptionsV1Native {
-            return OptionCollatorResolvedOptionsV1Native(CollatorResolvedOptionsV1Native(), 0)
+        internal fun none(): OptionCollatorResolvedOptionsNative {
+            return OptionCollatorResolvedOptionsNative(CollatorResolvedOptionsNative(), 0)
         }
     }
 
@@ -72,14 +72,14 @@ internal class OptionCollatorResolvedOptionsV1Native constructor(): Structure(),
 
 /** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.1.1/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
 */
-class CollatorResolvedOptionsV1 (var strength: CollatorStrength, var alternateHandling: CollatorAlternateHandling, var caseFirst: CollatorCaseFirst, var maxVariable: CollatorMaxVariable, var caseLevel: CollatorCaseLevel, var numeric: CollatorNumericOrdering) {
+class CollatorResolvedOptions (var strength: CollatorStrength, var alternateHandling: CollatorAlternateHandling, var caseFirst: CollatorCaseFirst, var maxVariable: CollatorMaxVariable, var caseLevel: CollatorCaseLevel, var numeric: CollatorNumericOrdering) {
     companion object {
 
-        internal val libClass: Class<CollatorResolvedOptionsV1Lib> = CollatorResolvedOptionsV1Lib::class.java
-        internal val lib: CollatorResolvedOptionsV1Lib = Native.load("icu4x", libClass)
-        val NATIVESIZE: Long = Native.getNativeSize(CollatorResolvedOptionsV1Native::class.java).toLong()
+        internal val libClass: Class<CollatorResolvedOptionsLib> = CollatorResolvedOptionsLib::class.java
+        internal val lib: CollatorResolvedOptionsLib = Native.load("icu4x", libClass)
+        val NATIVESIZE: Long = Native.getNativeSize(CollatorResolvedOptionsNative::class.java).toLong()
 
-        internal fun fromNative(nativeStruct: CollatorResolvedOptionsV1Native): CollatorResolvedOptionsV1 {
+        internal fun fromNative(nativeStruct: CollatorResolvedOptionsNative): CollatorResolvedOptions {
             val strength: CollatorStrength = CollatorStrength.fromNative(nativeStruct.strength)
             val alternateHandling: CollatorAlternateHandling = CollatorAlternateHandling.fromNative(nativeStruct.alternateHandling)
             val caseFirst: CollatorCaseFirst = CollatorCaseFirst.fromNative(nativeStruct.caseFirst)
@@ -87,7 +87,7 @@ class CollatorResolvedOptionsV1 (var strength: CollatorStrength, var alternateHa
             val caseLevel: CollatorCaseLevel = CollatorCaseLevel.fromNative(nativeStruct.caseLevel)
             val numeric: CollatorNumericOrdering = CollatorNumericOrdering.fromNative(nativeStruct.numeric)
 
-            return CollatorResolvedOptionsV1(strength, alternateHandling, caseFirst, maxVariable, caseLevel, numeric)
+            return CollatorResolvedOptions(strength, alternateHandling, caseFirst, maxVariable, caseLevel, numeric)
         }
 
     }

@@ -177,15 +177,17 @@ fn overlap_patterns() {
 
 #[test]
 fn hebrew_months() {
-    let datetime = DateTime {
-        date: Date::try_new_iso(2011, 4, 3).unwrap().to_calendar(Hebrew),
-        time: Time::try_new(14, 15, 7, 0).unwrap(),
-    };
     let formatter =
         FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), fieldsets::YMD::medium())
             .unwrap();
 
-    let formatted_datetime = formatter.format(&datetime);
+    let formatted_datetime =
+        formatter.format(&Date::try_new_iso(2011, 3, 4).unwrap().to_calendar(Hebrew));
+
+    assert_writeable_eq!(formatted_datetime, "28 Adar I 5771");
+
+    let formatted_datetime =
+        formatter.format(&Date::try_new_iso(2011, 4, 3).unwrap().to_calendar(Hebrew));
 
     assert_writeable_eq!(formatted_datetime, "28 Adar II 5771");
 }
