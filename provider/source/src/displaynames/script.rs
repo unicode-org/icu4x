@@ -47,7 +47,7 @@ crate::displaynames::impl_displaynames_v1!(
     Some(ALT_SHORT_SUBSTRING),
 );
 
-crate::displaynames::impl_displaynames_main_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
 
 impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
     type Error = ParseError;

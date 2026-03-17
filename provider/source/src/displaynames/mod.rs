@@ -159,7 +159,7 @@ macro_rules! impl_displaynames_iter_v1 {
     };
 }
 
-macro_rules! impl_displaynames_main_iter_v1 {
+macro_rules! impl_displaynames_legacy_iter_v1 {
     ($marker:ident, $file:literal) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -183,6 +183,6 @@ macro_rules! impl_displaynames_main_iter_v1 {
 }
 
 pub(crate) use impl_displaynames_iter_v1;
-pub(crate) use impl_displaynames_main_iter_v1;
+pub(crate) use impl_displaynames_legacy_iter_v1;
 pub(crate) use impl_displaynames_menu_v1;
 pub(crate) use impl_displaynames_v1;

@@ -48,8 +48,8 @@ impl DataProvider<LocaleDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-crate::displaynames::impl_displaynames_main_iter_v1!(LanguageDisplayNamesV1, "languages.json");
-crate::displaynames::impl_displaynames_main_iter_v1!(LocaleDisplayNamesV1, "languages.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LanguageDisplayNamesV1, "languages.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "languages.json");
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageLongV1,
