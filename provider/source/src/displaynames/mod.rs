@@ -10,6 +10,7 @@ pub(crate) mod variant;
 pub(crate) const ALT_SUBSTRING: &str = "-alt-";
 pub(crate) const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 pub(crate) const ALT_LONG_SUBSTRING: &str = "-alt-long";
+pub(crate) const MENU_SUBSTRING: &str = "-menu-";
 pub(crate) const MENU_CORE_SUBSTRING: &str = "-menu-core";
 pub(crate) const MENU_EXTENSION_SUBSTRING: &str = "-menu-extension";
 
@@ -132,12 +133,10 @@ macro_rules! impl_displaynames_iter_v1 {
                     for key_str in data.main.value.localedisplaynames.$field.keys() {
                         let attr = if let Some(suffix) = $suffix {
                             key_str.strip_suffix(suffix)
+                        } else if key_str.contains(crate::displaynames::ALT_SUBSTRING) || key_str.contains(crate::displaynames::MENU_SUBSTRING) {
+                            None
                         } else {
-                            if key_str.contains(crate::displaynames::ALT_SUBSTRING) {
-                                None
-                            } else {
-                                Some(key_str.as_str())
-                            }
+                            Some(key_str.as_str())
                         };
 
                         if let Some(attr_str) = attr {

@@ -63737,8 +63737,8 @@ locale/display/names/v1, zh-HK, 839B, 657B, 2ff4e4e25b712021
 locale/display/names/v1, zh-Hant, 452B, 269B, a29ee7ed91614ee1
 locale/display/names/v1, zh-MO, -> zh-HK
 locale/display/names/v1, zu, 903B, 721B, f41fadad6c4fafe2
-locale/names/language/long/v1, <lookup>, 382656B, 70430 identifiers
-locale/names/language/long/v1, <total>, 2036707B, 875875B, 50471 unique payloads
+locale/names/language/long/v1, <lookup>, 379315B, 70200 identifiers
+locale/names/language/long/v1, <total>, 2032964B, 874225B, 50380 unique payloads
 locale/names/language/long/v1, af/aa, 28B, 5B, 301aac73d82fc83c
 locale/names/language/long/v1, af/ab, 32B, 9B, 7b3a06c954a74386
 locale/names/language/long/v1, af/ace, 33B, 10B, 15884ae484d4124e
@@ -63951,8 +63951,6 @@ locale/names/language/long/v1, af/ksb, 32B, 9B, 32911396550b89be
 locale/names/language/long/v1, af/ksf, 29B, 6B, 6813b0860dcb2975
 locale/names/language/long/v1, af/ksh, 29B, 6B, 6a6750109e3017bb
 locale/names/language/long/v1, af/ku, 32B, 9B, c903a76c0bdd730f
-locale/names/language/long/v1, af/ku-menu-core, -> af/ku
-locale/names/language/long/v1, af/ku-menu-extension, 34B, 11B, 3ce57f8d22b22a71
 locale/names/language/long/v1, af/kum, 29B, 6B, 40b76ea39e9f1e81
 locale/names/language/long/v1, af/kv, 28B, 5B, 438c3a475d51a47c
 locale/names/language/long/v1, af/kw, 31B, 8B, 479f5f1674f57f3f
@@ -64619,8 +64617,6 @@ locale/names/language/long/v1, am/ksb, 36B, 13B, 894569f254d6d971
 locale/names/language/long/v1, am/ksf, 33B, 10B, 9f09dbfc279addc2
 locale/names/language/long/v1, am/ksh, 36B, 13B, 8e52f2cf1f854948
 locale/names/language/long/v1, am/ku, 36B, 13B, 578864de26095891
-locale/names/language/long/v1, am/ku-menu-core, -> am/ku
-locale/names/language/long/v1, am/ku-menu-extension, -> am/ku
 locale/names/language/long/v1, am/kum, 36B, 13B, 739e7413d6da8028
 locale/names/language/long/v1, am/kv, 30B, 7B, 126f220c155124ae
 locale/names/language/long/v1, am/kw, 36B, 13B, f481af3d553b5274
@@ -65164,8 +65160,6 @@ locale/names/language/long/v1, ar/ksb, 38B, 15B, 467a56e417fd9409
 locale/names/language/long/v1, ar/ksf, 45B, 22B, 2e3f65a0be88364
 locale/names/language/long/v1, ar/ksh, 51B, 28B, 9d1415232ca0fd21
 locale/names/language/long/v1, ar/ku, 38B, 15B, e2c71cac709e5d92
-locale/names/language/long/v1, ar/ku-menu-core, -> ar/ku
-locale/names/language/long/v1, ar/ku-menu-extension, 44B, 21B, 2be2478ac1a016b9
 locale/names/language/long/v1, ar/kum, 40B, 17B, 7ea7f91b3c69c6ef
 locale/names/language/long/v1, ar/kut, 40B, 17B, 147589831a76e6ca
 locale/names/language/long/v1, ar/kv, 36B, 13B, 740d5cafc16488a9
@@ -65673,8 +65667,6 @@ locale/names/language/long/v1, as/ksb, 48B, 25B, 56958a392794e1bf
 locale/names/language/long/v1, as/ksf, 45B, 22B, d5e50b0ccc1eada3
 locale/names/language/long/v1, as/ksh, 57B, 34B, 2892e95fdcabb7e7
 locale/names/language/long/v1, as/ku, 45B, 22B, a24efca9b0e2ecf3
-locale/names/language/long/v1, as/ku-menu-core, 51B, 28B, 3a4f63627814c28
-locale/names/language/long/v1, as/ku-menu-extension, -> as/ku-menu-core
 locale/names/language/long/v1, as/kum, 39B, 16B, e65109ec6df01df7
 locale/names/language/long/v1, as/kv, 36B, 13B, f3f5bd43f7082d33
 locale/names/language/long/v1, as/kw, 45B, 22B, b043b2d45b51ddc2
@@ -66794,8 +66786,6 @@ locale/names/language/long/v1, az/ksb, 32B, 9B, d41cc574c7014ea4
 locale/names/language/long/v1, az/ksf, -> ast/ksf
 locale/names/language/long/v1, az/ksh, 29B, 6B, d19257361224805
 locale/names/language/long/v1, az/ku, 29B, 6B, bd13d407d0d81c31
-locale/names/language/long/v1, az/ku-menu-core, 34B, 11B, f6972ffc883c2c7c
-locale/names/language/long/v1, az/ku-menu-extension, 54B, 31B, f54e08e006027a36
 locale/names/language/long/v1, az/kum, 30B, 7B, 14331d99b018ac3c
 locale/names/language/long/v1, az/kut, 31B, 8B, e138c3bdcf879370
 locale/names/language/long/v1, az/kv, -> ast/kv
@@ -67248,8 +67238,6 @@ locale/names/language/long/v1, ba/ksb, 38B, 15B, bb27116350d86a25
 locale/names/language/long/v1, ba/ksf, 34B, 11B, 6adf8c6b2b96427a
 locale/names/language/long/v1, ba/ksh, 34B, 11B, 1d7a65dfc3bce03b
 locale/names/language/long/v1, ba/ku, 32B, 9B, 40cdadfac7e78ae1
-locale/names/language/long/v1, ba/ku-menu-core, -> ba/ku
-locale/names/language/long/v1, ba/ku-menu-extension, 42B, 19B, f8c4a762e2cfb03f
 locale/names/language/long/v1, ba/kw, 32B, 9B, 815ef205fe84b168
 locale/names/language/long/v1, ba/kxv, 32B, 9B, 10d23e4ac0a2bd23
 locale/names/language/long/v1, ba/ky, 36B, 13B, a0f7791b864e8c47
@@ -67988,8 +67976,6 @@ locale/names/language/long/v1, be/ksb, -> ba/ksb
 locale/names/language/long/v1, be/ksf, 34B, 11B, 467993f5b0da2113
 locale/names/language/long/v1, be/ksh, 42B, 19B, af323c26d0900fe0
 locale/names/language/long/v1, be/ku, 40B, 17B, 7dd1d81f26e4f8a4
-locale/names/language/long/v1, be/ku-menu-core, -> be/ku
-locale/names/language/long/v1, be/ku-menu-extension, 42B, 19B, dcb62509bfbc72fb
 locale/names/language/long/v1, be/kum, 40B, 17B, 38b3ab2ebc79c847
 locale/names/language/long/v1, be/kv, 32B, 9B, ca660e37678838d9
 locale/names/language/long/v1, be/kw, 40B, 17B, cd657999d03a1b10
@@ -68501,8 +68487,6 @@ locale/names/language/long/v1, bg/ksb, -> ba/ksb
 locale/names/language/long/v1, bg/ksf, -> ba/ksf
 locale/names/language/long/v1, bg/ksh, 40B, 17B, f017921a51a18e73
 locale/names/language/long/v1, bg/ku, 38B, 15B, f0baf7e1189c9553
-locale/names/language/long/v1, bg/ku-menu-core, -> bg/ku
-locale/names/language/long/v1, bg/ku-menu-extension, -> ba/ku-menu-extension
 locale/names/language/long/v1, bg/kum, 40B, 17B, b5c1e5b9b96bf50f
 locale/names/language/long/v1, bg/kut, 38B, 15B, 2cf30fb4e103390e
 locale/names/language/long/v1, bg/kv, 32B, 9B, d8c59174655629bd
@@ -68951,8 +68935,6 @@ locale/names/language/long/v1, blo/ksb, 41B, 18B, ecf444c6d9b11173
 locale/names/language/long/v1, blo/ksf, 38B, 15B, 859c46ddf48a986c
 locale/names/language/long/v1, blo/ksh, 41B, 18B, f110d54544029b5e
 locale/names/language/long/v1, blo/ku, 41B, 18B, 967f54a472d28220
-locale/names/language/long/v1, blo/ku-menu-core, 43B, 20B, 2e3907d8833cb3c8
-locale/names/language/long/v1, blo/ku-menu-extension, 42B, 19B, d5a2cbac8996bbd0
 locale/names/language/long/v1, blo/kw, 40B, 17B, 91dcc8554d36d444
 locale/names/language/long/v1, blo/kxv, 38B, 15B, 71ed06bc7984378d
 locale/names/language/long/v1, blo/ky, 38B, 15B, 698b7cc2cf037a4d
@@ -69392,8 +69374,6 @@ locale/names/language/long/v1, bn/ksb, 48B, 25B, ed5f964ab878decb
 locale/names/language/long/v1, bn/ksf, -> as/ksf
 locale/names/language/long/v1, bn/ksh, 54B, 31B, d844443249a55fda
 locale/names/language/long/v1, bn/ku, 45B, 22B, e264c0c8de20f2b2
-locale/names/language/long/v1, bn/ku-menu-core, -> bn/ku
-locale/names/language/long/v1, bn/ku-menu-extension, 51B, 28B, ea1daa0a47df7112
 locale/names/language/long/v1, bn/kum, 48B, 25B, 86d00acae83254ce
 locale/names/language/long/v1, bn/kut, 45B, 22B, 6b2cbc813fe6f61f
 locale/names/language/long/v1, bn/kv, -> as/kv
@@ -69962,8 +69942,6 @@ locale/names/language/long/v1, br/ksb, -> ast/ksb
 locale/names/language/long/v1, br/ksf, 31B, 8B, b0d2696a27790ae8
 locale/names/language/long/v1, br/ksh, 31B, 8B, fbd231f26e4fa3e6
 locale/names/language/long/v1, br/ku, 30B, 7B, f3e321d0f47edcdd
-locale/names/language/long/v1, br/ku-menu-core, -> br/ku
-locale/names/language/long/v1, br/ku-menu-extension, 33B, 10B, b69ff267bb271d2b
 locale/names/language/long/v1, br/kum, 32B, 9B, 1fb3e2429c537db4
 locale/names/language/long/v1, br/kut, -> ast/kut
 locale/names/language/long/v1, br/kv, 30B, 7B, 86b829e6eac47fed
@@ -71594,8 +71572,6 @@ locale/names/language/long/v1, bs/ksb, 32B, 9B, 1985eb7019f4e56d
 locale/names/language/long/v1, bs/ksf, -> ast/ksf
 locale/names/language/long/v1, bs/ksh, 31B, 8B, a30486f43d6cbae6
 locale/names/language/long/v1, bs/ku, 31B, 8B, f7ab68b6786b8657
-locale/names/language/long/v1, bs/ku-menu-core, -> bs/ku
-locale/names/language/long/v1, bs/ku-menu-extension, 32B, 9B, 8a985b6dc07b3c30
 locale/names/language/long/v1, bs/kum, 29B, 6B, 211c4c22a4397f09
 locale/names/language/long/v1, bs/kut, -> ast/kut
 locale/names/language/long/v1, bs/kv, -> ast/kv
@@ -72184,8 +72160,6 @@ locale/names/language/long/v1, ca/ksb, -> ast/ksb
 locale/names/language/long/v1, ca/ksf, -> ast/ksf
 locale/names/language/long/v1, ca/ksh, 31B, 8B, 90481387a05d050f
 locale/names/language/long/v1, ca/ku, 28B, 5B, cd4b4b87d952c756
-locale/names/language/long/v1, ca/ku-menu-core, -> ca/ku
-locale/names/language/long/v1, ca/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, ca/kum, 30B, 7B, 79d3e021490faa4f
 locale/names/language/long/v1, ca/kut, -> ast/kut
 locale/names/language/long/v1, ca/kv, -> ast/kv
@@ -72744,8 +72718,6 @@ locale/names/language/long/v1, chr/ksb, 36B, 13B, 485637a1ea151579
 locale/names/language/long/v1, chr/ksf, 33B, 10B, 18e3e2fbdce7f48b
 locale/names/language/long/v1, chr/ksh, 39B, 16B, 6aa2cb6c40019e73
 locale/names/language/long/v1, chr/ku, 33B, 10B, c63df7d0d3a109be
-locale/names/language/long/v1, chr/ku-menu-core, 36B, 13B, a0aa79190dad7155
-locale/names/language/long/v1, chr/ku-menu-extension, 33B, 10B, 83130aa0e4a930bd
 locale/names/language/long/v1, chr/kum, 33B, 10B, 7f33f36acba929c7
 locale/names/language/long/v1, chr/kv, 30B, 7B, 231effe242696ad5
 locale/names/language/long/v1, chr/kw, 33B, 10B, 4c52f44f34ab1f07
@@ -73294,8 +73266,6 @@ locale/names/language/long/v1, cs/ksb, -> bs/ksb
 locale/names/language/long/v1, cs/ksf, -> ast/ksf
 locale/names/language/long/v1, cs/ksh, 36B, 13B, 89ded54fcf908d24
 locale/names/language/long/v1, cs/ku, 34B, 11B, 97ce865590fd38ec
-locale/names/language/long/v1, cs/ku-menu-core, -> cs/ku
-locale/names/language/long/v1, cs/ku-menu-extension, 36B, 13B, 4953dba285913e46
 locale/names/language/long/v1, cs/kum, 34B, 11B, d30fa524bded4206
 locale/names/language/long/v1, cs/kut, 37B, 14B, bc2dd60891e709f7
 locale/names/language/long/v1, cs/kv, 35B, 12B, 62955cb801b23e7f
@@ -73808,8 +73778,6 @@ locale/names/language/long/v1, cv/ksb, 49B, 26B, 69370a4cfa0b8c3e
 locale/names/language/long/v1, cv/ksf, 43B, 20B, 56ef08ad6786f28a
 locale/names/language/long/v1, cv/ksh, 45B, 22B, f2213ef2ad70dc8c
 locale/names/language/long/v1, cv/ku, 43B, 20B, b4e1178079716adb
-locale/names/language/long/v1, cv/ku-menu-core, -> cv/ku
-locale/names/language/long/v1, cv/ku-menu-extension, 53B, 30B, 1a2ab26554823e47
 locale/names/language/long/v1, cv/kw, 43B, 20B, 2d11d7510d1f719e
 locale/names/language/long/v1, cv/kxv, 43B, 20B, fe41fe23b0a5e2b5
 locale/names/language/long/v1, cv/ky, 47B, 24B, 3446b5422ccb48b8
@@ -74269,8 +74237,6 @@ locale/names/language/long/v1, cy/ksb, -> af/ksb
 locale/names/language/long/v1, cy/ksf, 30B, 7B, af476361b536a870
 locale/names/language/long/v1, cy/ksh, 31B, 8B, fe6575d066028fd3
 locale/names/language/long/v1, cy/ku, 30B, 7B, 186a66fc4e83a3c5
-locale/names/language/long/v1, cy/ku-menu-core, -> cy/ku
-locale/names/language/long/v1, cy/ku-menu-extension, 33B, 10B, bc47edea570ca5bf
 locale/names/language/long/v1, cy/kum, 31B, 8B, 4b31b939e39e520c
 locale/names/language/long/v1, cy/kv, 28B, 5B, ae479acb2e523356
 locale/names/language/long/v1, cy/kw, 32B, 9B, 44a6274e83bc5fc9
@@ -74857,8 +74823,6 @@ locale/names/language/long/v1, da/ksb, -> ast/ksb
 locale/names/language/long/v1, da/ksf, -> ast/ksf
 locale/names/language/long/v1, da/ksh, -> ca/ksh
 locale/names/language/long/v1, da/ku, 31B, 8B, 9689a00091704202
-locale/names/language/long/v1, da/ku-menu-core, -> da/ku
-locale/names/language/long/v1, da/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, da/kum, 29B, 6B, f05331681d27e0b9
 locale/names/language/long/v1, da/kut, 31B, 8B, 102f9b38f18c9adc
 locale/names/language/long/v1, da/kv, -> ast/kv
@@ -75483,8 +75447,6 @@ locale/names/language/long/v1, de/ksb, -> af/ksb
 locale/names/language/long/v1, de/ksf, -> af/ksf
 locale/names/language/long/v1, de/ksh, 31B, 8B, 30d9e1a474eb8aa2
 locale/names/language/long/v1, de/ku, 32B, 9B, 3b7aa34fbf1458a6
-locale/names/language/long/v1, de/ku-menu-core, -> de/ku
-locale/names/language/long/v1, de/ku-menu-extension, 35B, 12B, f9530a558e4f8664
 locale/names/language/long/v1, de/kum, 34B, 11B, 2e8fe19cd0dc919b
 locale/names/language/long/v1, de/kut, 31B, 8B, 6affcbf496572f28
 locale/names/language/long/v1, de/kv, -> af/kv
@@ -76063,8 +76025,6 @@ locale/names/language/long/v1, dsb/ksb, -> bs/ksb
 locale/names/language/long/v1, dsb/ksf, -> ast/ksf
 locale/names/language/long/v1, dsb/ksh, 35B, 12B, b390fbb255f7c6
 locale/names/language/long/v1, dsb/ku, 36B, 13B, bd7d75f11e9bbb6a
-locale/names/language/long/v1, dsb/ku-menu-core, -> dsb/ku
-locale/names/language/long/v1, dsb/ku-menu-extension, 41B, 18B, 23dc64d08c09ec8c
 locale/names/language/long/v1, dsb/kum, 36B, 13B, 263224ec7c30a7c
 locale/names/language/long/v1, dsb/kv, 35B, 12B, 4845f113b1d48b48
 locale/names/language/long/v1, dsb/kw, 36B, 13B, 92da25b7c6226234
@@ -76776,8 +76736,6 @@ locale/names/language/long/v1, el/ksb, 38B, 15B, 3c1bd07ea11bee8d
 locale/names/language/long/v1, el/ksf, 36B, 13B, 6cc977c7b165a2bd
 locale/names/language/long/v1, el/ksh, 40B, 17B, dde90aed016bbf99
 locale/names/language/long/v1, el/ku, 40B, 17B, 5a78add40efa1e0b
-locale/names/language/long/v1, el/ku-menu-core, -> el/ku
-locale/names/language/long/v1, el/ku-menu-extension, 44B, 21B, 242aa90a5e7f2742
 locale/names/language/long/v1, el/kum, 42B, 19B, f842a1159a46676a
 locale/names/language/long/v1, el/kut, 40B, 17B, 4302af6f41880bbf
 locale/names/language/long/v1, el/kv, 32B, 9B, f273971b1a9bce34
@@ -77199,8 +77157,6 @@ locale/names/language/long/v1, en/chr, -> de/chr
 locale/names/language/long/v1, en/chy, -> cy/chy
 locale/names/language/long/v1, en/cic, 33B, 10B, 870f81f761036581
 locale/names/language/long/v1, en/ckb, 39B, 16B, 4daf04978e39173b
-locale/names/language/long/v1, en/ckb-menu-core, 31B, 8B, 9a781159660f1e79
-locale/names/language/long/v1, en/ckb-menu-extension, 31B, 8B, 698bfb089fc28140
 locale/names/language/long/v1, en/clc, -> cy/clc
 locale/names/language/long/v1, en/co, 32B, 9B, d9eb6396b553fefe
 locale/names/language/long/v1, en/cop, 30B, 7B, c9b341c5ab7f33b0
@@ -77409,9 +77365,7 @@ locale/names/language/long/v1, en/ks, -> bal-Latn/ks
 locale/names/language/long/v1, en/ksb, -> af/ksb
 locale/names/language/long/v1, en/ksf, -> af/ksf
 locale/names/language/long/v1, en/ksh, 33B, 10B, 53d68318e8a2b110
-locale/names/language/long/v1, en/ku, -> en/ckb-menu-core
-locale/names/language/long/v1, en/ku-menu-core, -> en/ckb-menu-core
-locale/names/language/long/v1, en/ku-menu-extension, 32B, 9B, c838eb67a3292c69
+locale/names/language/long/v1, en/ku, 31B, 8B, 9a781159660f1e79
 locale/names/language/long/v1, en/kum, -> af/kum
 locale/names/language/long/v1, en/kut, -> de/kut
 locale/names/language/long/v1, en/kv, -> af/kv
@@ -77606,8 +77560,6 @@ locale/names/language/long/v1, en/sco, 29B, 6B, 96e605ae9a61d7f2
 locale/names/language/long/v1, en/sd, -> af/sd
 locale/names/language/long/v1, en/sdc, 43B, 20B, e6e60203e261c80d
 locale/names/language/long/v1, en/sdh, 40B, 17B, a7804c14960718a
-locale/names/language/long/v1, en/sdh-menu-core, -> en/ckb-menu-core
-locale/names/language/long/v1, en/sdh-menu-extension, 32B, 9B, a8cdf67fa0c42c04
 locale/names/language/long/v1, en/se, 37B, 14B, ccf39d96c423a006
 locale/names/language/long/v1, en/see, -> cy/see
 locale/names/language/long/v1, en/seh, -> af/seh
@@ -77963,8 +77915,6 @@ locale/names/language/long/v1, eo/ks, 32B, 9B, 8f5b756365c9b1fb
 locale/names/language/long/v1, eo/ksb, 31B, 8B, d48783339b1bcc04
 locale/names/language/long/v1, eo/ksh, 31B, 8B, 8fbb4d1192baa84b
 locale/names/language/long/v1, eo/ku, 29B, 6B, 166b9807e3b5c288
-locale/names/language/long/v1, eo/ku-menu-core, -> eo/ku
-locale/names/language/long/v1, eo/ku-menu-extension, 33B, 10B, 8037ea7f5e567494
 locale/names/language/long/v1, eo/kum, 30B, 7B, 17da22130b5b83d5
 locale/names/language/long/v1, eo/kv, 29B, 6B, 6eb64e51a790b2ef
 locale/names/language/long/v1, eo/kw, 32B, 9B, c15de7d072f29b47
@@ -78214,7 +78164,6 @@ locale/names/language/long/v1, es-419/grc, 39B, 16B, 402b688ee0c75f1
 locale/names/language/long/v1, es-419/ht, 32B, 9B, d2dcc2e053a70195
 locale/names/language/long/v1, es-419/kbd, 34B, 11B, 44b64d29e270fe1
 locale/names/language/long/v1, es-419/krc, 42B, 19B, e5dc0c491a91f010
-locale/names/language/long/v1, es-419/ku-menu-extension, 32B, 9B, 1965eaf3abc989a0
 locale/names/language/long/v1, es-419/lij, 32B, 9B, 45d767b864b8dc6c
 locale/names/language/long/v1, es-419/ml, 31B, 8B, 4a72b44f33dd08a1
 locale/names/language/long/v1, es-419/mni, -> ast/mni
@@ -78467,7 +78416,6 @@ locale/names/language/long/v1, es-US/ikt, -> es-MX/ikt
 locale/names/language/long/v1, es-US/inh, -> es-MX/inh
 locale/names/language/long/v1, es-US/kab, 31B, 8B, 8e87eb50d60e1424
 locale/names/language/long/v1, es-US/krc, -> ast/krc
-locale/names/language/long/v1, es-US/ku-menu-extension, 38B, 15B, 788b1fab183ecf89
 locale/names/language/long/v1, es-US/lij, 29B, 6B, 3ff448443ed6ce4c
 locale/names/language/long/v1, es-US/lou, 42B, 19B, 7f4b326b2b12fd0a
 locale/names/language/long/v1, es-US/lrc, 39B, 16B, 26110a9a3ea88551
@@ -78780,8 +78728,6 @@ locale/names/language/long/v1, es/ksb, -> ast/ksb
 locale/names/language/long/v1, es/ksf, -> ast/ksf
 locale/names/language/long/v1, es/ksh, -> ca/ksh
 locale/names/language/long/v1, es/ku, 29B, 6B, cb4a9c0941959e91
-locale/names/language/long/v1, es/ku-menu-core, -> es/ku
-locale/names/language/long/v1, es/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, es/kum, -> ast/kum
 locale/names/language/long/v1, es/kut, -> ast/kut
 locale/names/language/long/v1, es/kv, -> ast/kv
@@ -79392,8 +79338,6 @@ locale/names/language/long/v1, et/ksb, -> bs/ksb
 locale/names/language/long/v1, et/ksf, -> ast/ksf
 locale/names/language/long/v1, et/ksh, 30B, 7B, d5d95491d86d31d3
 locale/names/language/long/v1, et/ku, 29B, 6B, 32e426dc721d2556
-locale/names/language/long/v1, et/ku-menu-core, -> et/ku
-locale/names/language/long/v1, et/ku-menu-extension, 34B, 11B, 8342fa0addd7b0c
 locale/names/language/long/v1, et/kum, 31B, 8B, df92ca630ec17c82
 locale/names/language/long/v1, et/kut, -> ast/kut
 locale/names/language/long/v1, et/kv, -> ast/kv
@@ -79949,8 +79893,6 @@ locale/names/language/long/v1, eu/ksb, 34B, 11B, ac6574450785b976
 locale/names/language/long/v1, eu/ksf, 31B, 8B, 989088ecf89da657
 locale/names/language/long/v1, eu/ksh, 33B, 10B, f23c9d5245b9106f
 locale/names/language/long/v1, eu/ku, 32B, 9B, 98e98c0a89f70582
-locale/names/language/long/v1, eu/ku-menu-core, -> eu/ku
-locale/names/language/long/v1, eu/ku-menu-extension, 33B, 10B, 694fb3f4bdfb5c44
 locale/names/language/long/v1, eu/kum, 32B, 9B, d15561ec0e966158
 locale/names/language/long/v1, eu/kv, 31B, 8B, d51f42bcac3e007c
 locale/names/language/long/v1, eu/kw, 34B, 11B, a494c8743f71173b
@@ -80506,8 +80448,6 @@ locale/names/language/long/v1, fa/ksb, -> ar/ksb
 locale/names/language/long/v1, fa/ksf, 38B, 15B, 5c18e627936bf3cb
 locale/names/language/long/v1, fa/ksh, 32B, 9B, 133b748f79f1d938
 locale/names/language/long/v1, fa/ku, 32B, 9B, 8df58a39dc239048
-locale/names/language/long/v1, fa/ku-menu-core, -> fa/ku
-locale/names/language/long/v1, fa/ku-menu-extension, -> fa/kiu
 locale/names/language/long/v1, fa/kum, 36B, 13B, 96c35bfe6e668beb
 locale/names/language/long/v1, fa/kut, 34B, 11B, e54bd0563185b4f
 locale/names/language/long/v1, fa/kv, 38B, 15B, 7df6ebbaf91a75a4
@@ -81557,8 +81497,6 @@ locale/names/language/long/v1, fi/ksb, -> ast/ksb
 locale/names/language/long/v1, fi/ksf, -> ast/ksf
 locale/names/language/long/v1, fi/ksh, -> ca/ksh
 locale/names/language/long/v1, fi/ku, -> et/ku
-locale/names/language/long/v1, fi/ku-menu-core, -> et/ku
-locale/names/language/long/v1, fi/ku-menu-extension, -> et/ku-menu-extension
 locale/names/language/long/v1, fi/kum, 31B, 8B, 56b73c98a3dcb8cc
 locale/names/language/long/v1, fi/kut, -> ast/kut
 locale/names/language/long/v1, fi/kv, -> ast/kv
@@ -82107,9 +82045,7 @@ locale/names/language/long/v1, fil/ks, -> bal-Latn/ks
 locale/names/language/long/v1, fil/ksb, -> af/ksb
 locale/names/language/long/v1, fil/ksf, -> af/ksf
 locale/names/language/long/v1, fil/ksh, -> en/ksh
-locale/names/language/long/v1, fil/ku, -> en/ckb-menu-core
-locale/names/language/long/v1, fil/ku-menu-core, -> en/ckb-menu-core
-locale/names/language/long/v1, fil/ku-menu-extension, -> en/ku-menu-extension
+locale/names/language/long/v1, fil/ku, -> en/ku
 locale/names/language/long/v1, fil/kum, -> af/kum
 locale/names/language/long/v1, fil/kv, -> af/kv
 locale/names/language/long/v1, fil/kw, -> en/kw
@@ -82798,7 +82734,6 @@ locale/names/language/long/v1, fr-CA/ken, -> ast/ken
 locale/names/language/long/v1, fr-CA/kl, -> ast/kl
 locale/names/language/long/v1, fr-CA/ks, -> da/ks
 locale/names/language/long/v1, fr-CA/ksb, 32B, 9B, c1cd3aa3a268e273
-locale/names/language/long/v1, fr-CA/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, fr-CA/liv, 28B, 5B, 36a3e6bd23ce7df1
 locale/names/language/long/v1, fr-CA/lu, -> ast/lu
 locale/names/language/long/v1, fr-CA/lzh, 41B, 18B, 77ab9b311c43d6f4
@@ -83147,8 +83082,6 @@ locale/names/language/long/v1, fr/ksb, -> ast/ksb
 locale/names/language/long/v1, fr/ksf, -> ast/ksf
 locale/names/language/long/v1, fr/ksh, -> ca/ksh
 locale/names/language/long/v1, fr/ku, 29B, 6B, ef8e78ddbeb20128
-locale/names/language/long/v1, fr/ku-menu-core, -> fr/ku
-locale/names/language/long/v1, fr/ku-menu-extension, -> br/ku-menu-extension
 locale/names/language/long/v1, fr/kum, 30B, 7B, f5f621f0e0dd509a
 locale/names/language/long/v1, fr/kut, -> ast/kut
 locale/names/language/long/v1, fr/kv, -> ast/kv
@@ -84237,8 +84170,6 @@ locale/names/language/long/v1, ga/ksb, -> af/ksb
 locale/names/language/long/v1, ga/ksf, 32B, 9B, ada2817d45987494
 locale/names/language/long/v1, ga/ksh, 31B, 8B, 2703bc32bdebfe1a
 locale/names/language/long/v1, ga/ku, 31B, 8B, 3d43eb75e9240bf
-locale/names/language/long/v1, ga/ku-menu-core, -> ga/ku
-locale/names/language/long/v1, ga/ku-menu-extension, 34B, 11B, 7deffc9873f07ac4
 locale/names/language/long/v1, ga/kum, 33B, 10B, ef4d29e92a2adeae
 locale/names/language/long/v1, ga/kv, 30B, 7B, 2e872393a3841eec
 locale/names/language/long/v1, ga/kw, 31B, 8B, 2094a1213a4d813d
@@ -84813,8 +84744,6 @@ locale/names/language/long/v1, gd/ksb, -> af/ksb
 locale/names/language/long/v1, gd/ksf, -> af/ksf
 locale/names/language/long/v1, gd/ksh, 44B, 21B, 3757b49ce018d5f5
 locale/names/language/long/v1, gd/ku, 32B, 9B, 5bccce1942bba46
-locale/names/language/long/v1, gd/ku-menu-core, -> gd/ku
-locale/names/language/long/v1, gd/ku-menu-extension, -> en/ku-menu-extension
 locale/names/language/long/v1, gd/kum, -> af/kum
 locale/names/language/long/v1, gd/kut, -> de/kut
 locale/names/language/long/v1, gd/kv, -> af/kv
@@ -85367,8 +85296,6 @@ locale/names/language/long/v1, gl/ksb, -> ast/ksb
 locale/names/language/long/v1, gl/ksf, -> ast/ksf
 locale/names/language/long/v1, gl/ksh, -> ca/ksh
 locale/names/language/long/v1, gl/ku, -> es/ku
-locale/names/language/long/v1, gl/ku-menu-core, -> es/ku
-locale/names/language/long/v1, gl/ku-menu-extension, 42B, 19B, 9afd414ea9402afd
 locale/names/language/long/v1, gl/kum, -> ast/kum
 locale/names/language/long/v1, gl/kv, -> ast/kv
 locale/names/language/long/v1, gl/kw, -> es/kw
@@ -85885,8 +85812,6 @@ locale/names/language/long/v1, gu/ksb, 45B, 22B, dff804e4f61630c2
 locale/names/language/long/v1, gu/ksf, 39B, 16B, ab39f187ad48474
 locale/names/language/long/v1, gu/ksh, 54B, 31B, ab8b501def712da8
 locale/names/language/long/v1, gu/ku, 45B, 22B, 304f401466a61e8
-locale/names/language/long/v1, gu/ku-menu-core, -> gu/ku
-locale/names/language/long/v1, gu/ku-menu-extension, 48B, 25B, 6f3a3acd8bdbdd25
 locale/names/language/long/v1, gu/kum, 39B, 16B, 252273c7e5638441
 locale/names/language/long/v1, gu/kut, 45B, 22B, 8b538b128d96636a
 locale/names/language/long/v1, gu/kv, 36B, 13B, fe94bf3ddf553862
@@ -86390,8 +86315,6 @@ locale/names/language/long/v1, ha/ksb, -> af/ksb
 locale/names/language/long/v1, ha/ksf, -> af/ksf
 locale/names/language/long/v1, ha/ksh, -> en/ksh
 locale/names/language/long/v1, ha/ku, 32B, 9B, 2b0a581576443107
-locale/names/language/long/v1, ha/ku-menu-core, -> ha/ku
-locale/names/language/long/v1, ha/ku-menu-extension, -> en/ku-menu-extension
 locale/names/language/long/v1, ha/kum, -> af/kum
 locale/names/language/long/v1, ha/kv, -> af/kv
 locale/names/language/long/v1, ha/kw, -> en/kw
@@ -86893,8 +86816,6 @@ locale/names/language/long/v1, he/ksb, 36B, 13B, 64ebc4df194610c2
 locale/names/language/long/v1, he/ksf, 34B, 11B, 85d7189db4b63912
 locale/names/language/long/v1, he/ksh, 40B, 17B, f815a3a39a5b7c86
 locale/names/language/long/v1, he/ku, 36B, 13B, 96e0e33d78252b79
-locale/names/language/long/v1, he/ku-menu-core, -> he/ku
-locale/names/language/long/v1, he/ku-menu-extension, -> he/ku
 locale/names/language/long/v1, he/kum, 38B, 15B, dd3c0cbce5b4726b
 locale/names/language/long/v1, he/kut, 36B, 13B, 4cf76e229c3ae02a
 locale/names/language/long/v1, he/kv, 32B, 9B, 64f2c2c279eddb1
@@ -87477,8 +87398,6 @@ locale/names/language/long/v1, hi/ksb, 45B, 22B, 55a701960abb4fbf
 locale/names/language/long/v1, hi/ksf, 36B, 13B, f80f921edaecb632
 locale/names/language/long/v1, hi/ksh, 51B, 28B, b47deff278412f9b
 locale/names/language/long/v1, hi/ku, 45B, 22B, 6f49a0d089c9f454
-locale/names/language/long/v1, hi/ku-menu-core, -> hi/ku
-locale/names/language/long/v1, hi/ku-menu-extension, -> hi/ku
 locale/names/language/long/v1, hi/kum, -> brx/kum
 locale/names/language/long/v1, hi/kut, 48B, 25B, c9e2c64312fbefac
 locale/names/language/long/v1, hi/kv, 36B, 13B, 3ba9c5ac62eb6c35
@@ -88051,8 +87970,6 @@ locale/names/language/long/v1, hr/ksb, -> ast/ksb
 locale/names/language/long/v1, hr/ksf, -> ast/ksf
 locale/names/language/long/v1, hr/ksh, -> bs/ksh
 locale/names/language/long/v1, hr/ku, -> bs/ku
-locale/names/language/long/v1, hr/ku-menu-core, -> bs/ku
-locale/names/language/long/v1, hr/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, hr/kum, -> ast/kum
 locale/names/language/long/v1, hr/kut, -> ast/kut
 locale/names/language/long/v1, hr/kv, -> ast/kv
@@ -88566,8 +88483,6 @@ locale/names/language/long/v1, hsb/ksb, -> bs/ksb
 locale/names/language/long/v1, hsb/ksf, -> ast/ksf
 locale/names/language/long/v1, hsb/ksh, -> dsb/ksh
 locale/names/language/long/v1, hsb/ku, -> dsb/ku
-locale/names/language/long/v1, hsb/ku-menu-core, -> dsb/ku
-locale/names/language/long/v1, hsb/ku-menu-extension, -> dsb/ku-menu-extension
 locale/names/language/long/v1, hsb/kum, -> dsb/kum
 locale/names/language/long/v1, hsb/kv, -> dsb/kv
 locale/names/language/long/v1, hsb/kw, -> dsb/kw
@@ -89087,8 +89002,6 @@ locale/names/language/long/v1, hu/ksb, 31B, 8B, f44dc6a08dcfbfed
 locale/names/language/long/v1, hu/ksf, -> ast/ksf
 locale/names/language/long/v1, hu/ksh, -> ca/ksh
 locale/names/language/long/v1, hu/ku, -> ca/ku
-locale/names/language/long/v1, hu/ku-menu-core, -> ca/ku
-locale/names/language/long/v1, hu/ku-menu-extension, 34B, 11B, 2a2944e8e6194226
 locale/names/language/long/v1, hu/kum, 30B, 7B, 6b4572a54efed4e8
 locale/names/language/long/v1, hu/kut, -> ast/kut
 locale/names/language/long/v1, hu/kv, -> ast/kv
@@ -89622,8 +89535,6 @@ locale/names/language/long/v1, hy/ksb, 38B, 15B, 574dd03e4e8e84eb
 locale/names/language/long/v1, hy/ksf, 34B, 11B, f7b8f2ae08f4f79e
 locale/names/language/long/v1, hy/ksh, 42B, 19B, 40d2a14feb808d89
 locale/names/language/long/v1, hy/ku, 38B, 15B, 6b7e87d988aeed34
-locale/names/language/long/v1, hy/ku-menu-core, -> hy/ku
-locale/names/language/long/v1, hy/ku-menu-extension, 42B, 19B, a2783156c87030e8
 locale/names/language/long/v1, hy/kum, 44B, 21B, 7edef9582c8d2684
 locale/names/language/long/v1, hy/kv, 40B, 17B, 36ec769a238391f7
 locale/names/language/long/v1, hy/kw, 40B, 17B, 4e47ccf8f01d6444
@@ -90128,8 +90039,6 @@ locale/names/language/long/v1, ia/ksb, -> ast/ksb
 locale/names/language/long/v1, ia/ksf, -> ast/ksf
 locale/names/language/long/v1, ia/ksh, 33B, 10B, df0de33532001a03
 locale/names/language/long/v1, ia/ku, -> es/ku
-locale/names/language/long/v1, ia/ku-menu-core, -> es/ku
-locale/names/language/long/v1, ia/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, ia/kum, 30B, 7B, 5d5c11a6a0ff5b6a
 locale/names/language/long/v1, ia/kv, -> ast/kv
 locale/names/language/long/v1, ia/kw, 31B, 8B, a2ff28e1f809d8e1
@@ -90665,8 +90574,6 @@ locale/names/language/long/v1, id/ksb, -> af/ksb
 locale/names/language/long/v1, id/ksf, -> af/ksf
 locale/names/language/long/v1, id/ksh, 37B, 14B, 48969c2b39ce0861
 locale/names/language/long/v1, id/ku, 29B, 6B, a64038ee39ea4feb
-locale/names/language/long/v1, id/ku-menu-core, -> id/ku
-locale/names/language/long/v1, id/ku-menu-extension, -> en/ku-menu-extension
 locale/names/language/long/v1, id/kum, -> af/kum
 locale/names/language/long/v1, id/kut, -> de/kut
 locale/names/language/long/v1, id/kv, -> af/kv
@@ -91250,9 +91157,7 @@ locale/names/language/long/v1, ig/ks, -> bal-Latn/ks
 locale/names/language/long/v1, ig/ksb, -> af/ksb
 locale/names/language/long/v1, ig/ksf, 31B, 8B, 892d687fe3e09154
 locale/names/language/long/v1, ig/ksh, -> en/ksh
-locale/names/language/long/v1, ig/ku, -> en/ckb-menu-core
-locale/names/language/long/v1, ig/ku-menu-core, 41B, 18B, 88678abd4fc1b041
-locale/names/language/long/v1, ig/ku-menu-extension, 42B, 19B, 33b81da7c869cbf9
+locale/names/language/long/v1, ig/ku, -> en/ku
 locale/names/language/long/v1, ig/kum, 29B, 6B, fbfbd6db1a681a44
 locale/names/language/long/v1, ig/kv, -> af/kv
 locale/names/language/long/v1, ig/kw, -> en/kw
@@ -91785,8 +91690,6 @@ locale/names/language/long/v1, is/ksb, 32B, 9B, a0452f8ccc5ac30b
 locale/names/language/long/v1, is/ksf, 30B, 7B, ba7b964f98b223e0
 locale/names/language/long/v1, is/ksh, 34B, 11B, ce3d534d1117dbc
 locale/names/language/long/v1, is/ku, 34B, 11B, 786628373aac3424
-locale/names/language/long/v1, is/ku-menu-core, -> is/ku
-locale/names/language/long/v1, is/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, is/kum, 31B, 8B, d2f89062030b13bc
 locale/names/language/long/v1, is/kut, 33B, 10B, d6b170e4c5c41036
 locale/names/language/long/v1, is/kv, 32B, 9B, 983c25055885d9be
@@ -92390,8 +92293,6 @@ locale/names/language/long/v1, it/ksb, -> ast/ksb
 locale/names/language/long/v1, it/ksf, -> ast/ksf
 locale/names/language/long/v1, it/ksh, -> ia/ksh
 locale/names/language/long/v1, it/ku, 29B, 6B, cca227e2769af162
-locale/names/language/long/v1, it/ku-menu-core, -> it/ku
-locale/names/language/long/v1, it/ku-menu-extension, 33B, 10B, 24aa75bd6ccc70f6
 locale/names/language/long/v1, it/kum, -> ast/kum
 locale/names/language/long/v1, it/kut, -> ast/kut
 locale/names/language/long/v1, it/kv, -> ast/kv
@@ -93037,8 +92938,6 @@ locale/names/language/long/v1, ja/ksb, 39B, 16B, 86fdd1e18b0c81b6
 locale/names/language/long/v1, ja/ksf, 39B, 16B, 1783eba325e92dcf
 locale/names/language/long/v1, ja/ksh, 36B, 13B, 7e45b3d4e46f2128
 locale/names/language/long/v1, ja/ku, 36B, 13B, af28318f70cc5996
-locale/names/language/long/v1, ja/ku-menu-core, -> ja/ku
-locale/names/language/long/v1, ja/ku-menu-extension, 42B, 19B, 86bf87983916bf8d
 locale/names/language/long/v1, ja/kum, 36B, 13B, 49f9312a7208245f
 locale/names/language/long/v1, ja/kut, 39B, 16B, c9456be1287cc7d7
 locale/names/language/long/v1, ja/kv, 33B, 10B, 777c65bddc057431
@@ -93584,8 +93483,6 @@ locale/names/language/long/v1, jv/ksb, -> af/ksb
 locale/names/language/long/v1, jv/ksf, -> af/ksf
 locale/names/language/long/v1, jv/ksh, 31B, 8B, 8ea60cfbcd60eb7a
 locale/names/language/long/v1, jv/ku, 30B, 7B, 3e182dd910a14a33
-locale/names/language/long/v1, jv/ku-menu-core, -> id/ku
-locale/names/language/long/v1, jv/ku-menu-extension, -> en/ku-menu-extension
 locale/names/language/long/v1, jv/kum, -> ig/kum
 locale/names/language/long/v1, jv/kv, -> af/kv
 locale/names/language/long/v1, jv/kw, 32B, 9B, dfd79396b164a0ec
@@ -94070,8 +93967,6 @@ locale/names/language/long/v1, ka/ksb, 45B, 22B, fe2635f1cef1efc0
 locale/names/language/long/v1, ka/ksf, 39B, 16B, 43a84a185a104b16
 locale/names/language/long/v1, ka/ksh, 42B, 19B, 8c7b750db9b2ded7
 locale/names/language/long/v1, ka/ku, 45B, 22B, b0f8c995248a8bb3
-locale/names/language/long/v1, ka/ku-menu-core, -> ka/ku
-locale/names/language/long/v1, ka/ku-menu-extension, 48B, 25B, a1f8c2cbde642adc
 locale/names/language/long/v1, ka/kum, 48B, 25B, 1fd0238fbe7df958
 locale/names/language/long/v1, ka/kut, 45B, 22B, 45f5742210b5bdd1
 locale/names/language/long/v1, ka/kv, 36B, 13B, 51f15b44c6a748ae
@@ -95235,8 +95130,6 @@ locale/names/language/long/v1, kk-Arab/ksb, 49B, 26B, 46b32ccba4788ec
 locale/names/language/long/v1, kk-Arab/ksf, 45B, 22B, fc6e8b534d956610
 locale/names/language/long/v1, kk-Arab/ksh, 51B, 28B, f6777b3bb082aec3
 locale/names/language/long/v1, kk-Arab/ku, 43B, 20B, bf5b3cd96ea25291
-locale/names/language/long/v1, kk-Arab/ku-menu-core, -> kk-Arab/ku
-locale/names/language/long/v1, kk-Arab/ku-menu-extension, 40B, 17B, 861df9dde5db32e2
 locale/names/language/long/v1, kk-Arab/kw, 43B, 20B, 8f717de1c6a3d871
 locale/names/language/long/v1, kk-Arab/kxv, 43B, 20B, 110219c533b3a812
 locale/names/language/long/v1, kk-Arab/ky, 47B, 24B, bbce3762615c024d
@@ -95639,8 +95532,6 @@ locale/names/language/long/v1, kk/ksb, 47B, 24B, 86f67f90e66ea259
 locale/names/language/long/v1, kk/ksf, 43B, 20B, 7f8ca45bf68090e5
 locale/names/language/long/v1, kk/ksh, 43B, 20B, 894f69c5a3de9e2e
 locale/names/language/long/v1, kk/ku, 41B, 18B, 1c608160b51dac74
-locale/names/language/long/v1, kk/ku-menu-core, -> kk/ku
-locale/names/language/long/v1, kk/ku-menu-extension, 60B, 37B, 4c3608c89d56dce0
 locale/names/language/long/v1, kk/kum, 43B, 20B, d20f62e4551f93fb
 locale/names/language/long/v1, kk/kv, 41B, 18B, 51ec401c2340417f
 locale/names/language/long/v1, kk/kw, 41B, 18B, e2100327a3aa9e79
@@ -96101,8 +95992,6 @@ locale/names/language/long/v1, km/ksb, 45B, 22B, 22d6f136d3e58be1
 locale/names/language/long/v1, km/ksf, 42B, 19B, 87c14e70fb75a01c
 locale/names/language/long/v1, km/ksh, 39B, 16B, 5cc4fc6e2ec17290
 locale/names/language/long/v1, km/ku, 33B, 10B, a6b71817259c2f2f
-locale/names/language/long/v1, km/ku-menu-core, -> km/ku
-locale/names/language/long/v1, km/ku-menu-extension, 54B, 31B, e22b911eda3ea234
 locale/names/language/long/v1, km/kum, 39B, 16B, 12585e06c368a21c
 locale/names/language/long/v1, km/kv, 36B, 13B, 8ee840ab242a0b3c
 locale/names/language/long/v1, km/kw, 39B, 16B, cf898cd2dea9e8f1
@@ -96615,8 +96504,6 @@ locale/names/language/long/v1, kn/ksb, 36B, 13B, 313247d1bd2d74f5
 locale/names/language/long/v1, kn/ksf, 36B, 13B, c891c76bbfafcea6
 locale/names/language/long/v1, kn/ksh, 54B, 31B, e86485dc5b0f163f
 locale/names/language/long/v1, kn/ku, 48B, 25B, 58fa6bdeebd19ed
-locale/names/language/long/v1, kn/ku-menu-core, -> kn/ku
-locale/names/language/long/v1, kn/ku-menu-extension, 48B, 25B, f5c222a77a8cf8a4
 locale/names/language/long/v1, kn/kum, 42B, 19B, 19525f6a351a0499
 locale/names/language/long/v1, kn/kut, 48B, 25B, c4db0632d775e4d9
 locale/names/language/long/v1, kn/kv, 36B, 13B, e0b80a989d2abfba
@@ -97188,8 +97075,6 @@ locale/names/language/long/v1, ko/ksb, 36B, 13B, 8fc2a790a5c3a90
 locale/names/language/long/v1, ko/ksf, 36B, 13B, 833cff1a9613dae7
 locale/names/language/long/v1, ko/ksh, 42B, 19B, 2ca7d4b927c75309
 locale/names/language/long/v1, ko/ku, 36B, 13B, 10978eb2e473e8e4
-locale/names/language/long/v1, ko/ku-menu-core, -> ko/ku
-locale/names/language/long/v1, ko/ku-menu-extension, 36B, 13B, 732638aabe01c430
 locale/names/language/long/v1, ko/kum, 33B, 10B, 583b1a58aa53f758
 locale/names/language/long/v1, ko/kut, 36B, 13B, efeb1ef62d199008
 locale/names/language/long/v1, ko/kv, 33B, 10B, 6eecd6140e827da7
@@ -97579,8 +97464,6 @@ locale/names/language/long/v1, kok-Latn/ko, -> ceb/ko
 locale/names/language/long/v1, kok-Latn/kok, 31B, 8B, 4619cc36d8cc4375
 locale/names/language/long/v1, kok-Latn/ks, 31B, 8B, 1b3a0b1e3232d3bc
 locale/names/language/long/v1, kok-Latn/ku, 30B, 7B, cf13d9b7466c2e86
-locale/names/language/long/v1, kok-Latn/ku-menu-core, -> kok-Latn/ku
-locale/names/language/long/v1, kok-Latn/ku-menu-extension, -> en/ku-menu-extension
 locale/names/language/long/v1, kok-Latn/kxv, -> af/kxv
 locale/names/language/long/v1, kok-Latn/ky, -> en/ky
 locale/names/language/long/v1, kok-Latn/la, -> en/la
@@ -97884,8 +97767,6 @@ locale/names/language/long/v1, kok/ksb, 45B, 22B, 1b9c7c1776139b1a
 locale/names/language/long/v1, kok/ksf, -> brx/ksf
 locale/names/language/long/v1, kok/ksh, 48B, 25B, ef54d32bbdbbda97
 locale/names/language/long/v1, kok/ku, 42B, 19B, 1bdf9c5c76556c01
-locale/names/language/long/v1, kok/ku-menu-core, -> kok/ku
-locale/names/language/long/v1, kok/ku-menu-extension, 48B, 25B, 4bd6e0459e488f4f
 locale/names/language/long/v1, kok/kum, 39B, 16B, fcdd07da7e3e13d5
 locale/names/language/long/v1, kok/kv, -> hi/kv
 locale/names/language/long/v1, kok/kw, -> hi/kw
@@ -98808,8 +98689,6 @@ locale/names/language/long/v1, ku/ksb, -> ast/ksb
 locale/names/language/long/v1, ku/ksf, 32B, 9B, d1d1d4bd1f350b64
 locale/names/language/long/v1, ku/ksh, 33B, 10B, 68c53acc919ba49b
 locale/names/language/long/v1, ku/ku, 42B, 19B, fa0e3e542713937
-locale/names/language/long/v1, ku/ku-menu-core, -> ku/ku
-locale/names/language/long/v1, ku/ku-menu-extension, -> it/ku-menu-extension
 locale/names/language/long/v1, ku/kum, 31B, 8B, d1aa26175943b9eb
 locale/names/language/long/v1, ku/kv, 29B, 6B, 9f4c8dcf65166ef7
 locale/names/language/long/v1, ku/kw, 30B, 7B, 38143ca79d57f84f
@@ -99698,8 +99577,6 @@ locale/names/language/long/v1, ky/ksb, 44B, 21B, 66869b3184d89754
 locale/names/language/long/v1, ky/ksf, 38B, 15B, 8d031c303119d81a
 locale/names/language/long/v1, ky/ksh, 42B, 19B, 9aee79ee0001e629
 locale/names/language/long/v1, ky/ku, 36B, 13B, be710a2b9fb83f6b
-locale/names/language/long/v1, ky/ku-menu-core, -> ky/ku
-locale/names/language/long/v1, ky/ku-menu-extension, 59B, 36B, 1fbfb40ba32908f0
 locale/names/language/long/v1, ky/kum, 38B, 15B, 11bf2e9ae69fc7ca
 locale/names/language/long/v1, ky/kv, 36B, 13B, 6284d97036204850
 locale/names/language/long/v1, ky/kw, 40B, 17B, bac34b7d141b9d92
@@ -100822,8 +100699,6 @@ locale/names/language/long/v1, lo/ksb, 45B, 22B, 51e0a84e3df48c98
 locale/names/language/long/v1, lo/ksf, 39B, 16B, c92cf2327aa25a16
 locale/names/language/long/v1, lo/ksh, 48B, 25B, 25537b67e0040a02
 locale/names/language/long/v1, lo/ku, 42B, 19B, aba18f3bd285bb18
-locale/names/language/long/v1, lo/ku-menu-core, -> lo/ku
-locale/names/language/long/v1, lo/ku-menu-extension, 48B, 25B, 29c9fe1d4bbcca78
 locale/names/language/long/v1, lo/kum, 39B, 16B, 5933404b89f3155a
 locale/names/language/long/v1, lo/kut, 42B, 19B, fd6a4cb10309e3f4
 locale/names/language/long/v1, lo/kv, 36B, 13B, ce168ad157488ad4
@@ -101431,8 +101306,6 @@ locale/names/language/long/v1, lt/ksb, 33B, 10B, c036049ffb74b8
 locale/names/language/long/v1, lt/ksf, 29B, 6B, 7b4514ef51c7424
 locale/names/language/long/v1, lt/ksh, 32B, 9B, ed79ebc70d7292fb
 locale/names/language/long/v1, lt/ku, 30B, 7B, e3fa769eb601023a
-locale/names/language/long/v1, lt/ku-menu-core, -> lt/ku
-locale/names/language/long/v1, lt/ku-menu-extension, 40B, 17B, db783ec1e93f74ea
 locale/names/language/long/v1, lt/kum, 31B, 8B, f51be7979df99fb5
 locale/names/language/long/v1, lt/kut, -> ast/kut
 locale/names/language/long/v1, lt/kv, -> ast/kv
@@ -102034,8 +101907,6 @@ locale/names/language/long/v1, lv/ksb, 32B, 9B, 56711871ca155e47
 locale/names/language/long/v1, lv/ksf, 30B, 7B, e919d90f32f30672
 locale/names/language/long/v1, lv/ksh, 37B, 14B, 9756478c3727aa29
 locale/names/language/long/v1, lv/ku, -> kea/ku
-locale/names/language/long/v1, lv/ku-menu-core, -> kea/ku
-locale/names/language/long/v1, lv/ku-menu-extension, -> et/ku-menu-extension
 locale/names/language/long/v1, lv/kum, 30B, 7B, 61e31e7e63a6c9d
 locale/names/language/long/v1, lv/kut, 32B, 9B, 8eda2c390f48347a
 locale/names/language/long/v1, lv/kv, 32B, 9B, bac74e2ad9d7643b
@@ -103498,8 +103369,6 @@ locale/names/language/long/v1, mk/ksb, -> ba/ksb
 locale/names/language/long/v1, mk/ksf, -> bs-Cyrl/ksf
 locale/names/language/long/v1, mk/ksh, 40B, 17B, 81c4fa65da87e79b
 locale/names/language/long/v1, mk/ku, -> bs-Cyrl/ku
-locale/names/language/long/v1, mk/ku-menu-core, -> bs-Cyrl/ku
-locale/names/language/long/v1, mk/ku-menu-extension, 40B, 17B, f0096a3e390570d5
 locale/names/language/long/v1, mk/kum, 38B, 15B, bbb115c548a01c99
 locale/names/language/long/v1, mk/kut, 44B, 21B, ac9888230e5af745
 locale/names/language/long/v1, mk/kv, -> bg/kv
@@ -104115,8 +103984,6 @@ locale/names/language/long/v1, ml/ksb, 39B, 16B, 28a201ac2ad2dc04
 locale/names/language/long/v1, ml/ksf, 39B, 16B, 72e3759c6e0cfa06
 locale/names/language/long/v1, ml/ksh, 48B, 25B, 43f5f8f55df00f19
 locale/names/language/long/v1, ml/ku, 51B, 28B, b136ddef653d136e
-locale/names/language/long/v1, ml/ku-menu-core, -> ml/ku
-locale/names/language/long/v1, ml/ku-menu-extension, 48B, 25B, 3c327f0f599013d2
 locale/names/language/long/v1, ml/kum, 48B, 25B, 8eac65f3b5aceb5a
 locale/names/language/long/v1, ml/kut, 42B, 19B, 15ad4b1c7f1574ea
 locale/names/language/long/v1, ml/kv, 36B, 13B, 6c3757f1201d64
@@ -104624,8 +104491,6 @@ locale/names/language/long/v1, mn/ksb, 36B, 13B, cd0b09a9a8ac7f8a
 locale/names/language/long/v1, mn/ksf, 34B, 11B, d2f652ca537b7ec8
 locale/names/language/long/v1, mn/ksh, 34B, 11B, 9b8063c27f355b1
 locale/names/language/long/v1, mn/ku, -> ba/ku
-locale/names/language/long/v1, mn/ku-menu-core, -> ba/ku
-locale/names/language/long/v1, mn/ku-menu-extension, 40B, 17B, c33a81b7ef93164f
 locale/names/language/long/v1, mn/kum, 34B, 11B, 1ab3c03b3feb0ec4
 locale/names/language/long/v1, mn/kv, -> bg/kv
 locale/names/language/long/v1, mn/kw, -> ba/kw
@@ -105172,8 +105037,6 @@ locale/names/language/long/v1, mr/ksb, -> kok/ksb
 locale/names/language/long/v1, mr/ksf, -> brx/ksf
 locale/names/language/long/v1, mr/ksh, 54B, 31B, 60c9ffc3c95f3200
 locale/names/language/long/v1, mr/ku, -> hi/ku
-locale/names/language/long/v1, mr/ku-menu-core, -> hi/ku
-locale/names/language/long/v1, mr/ku-menu-extension, 45B, 22B, e8f3870555e3e23e
 locale/names/language/long/v1, mr/kum, -> brx/kum
 locale/names/language/long/v1, mr/kut, -> brx/kut
 locale/names/language/long/v1, mr/kv, -> hi/kv
@@ -105710,9 +105573,7 @@ locale/names/language/long/v1, ms/ks, -> id/ks
 locale/names/language/long/v1, ms/ksb, -> af/ksb
 locale/names/language/long/v1, ms/ksf, -> af/ksf
 locale/names/language/long/v1, ms/ksh, -> en/ksh
-locale/names/language/long/v1, ms/ku, -> en/ckb-menu-core
-locale/names/language/long/v1, ms/ku-menu-core, -> en/ckb-menu-core
-locale/names/language/long/v1, ms/ku-menu-extension, -> en/ku-menu-extension
+locale/names/language/long/v1, ms/ku, -> en/ku
 locale/names/language/long/v1, ms/kum, -> af/kum
 locale/names/language/long/v1, ms/kv, -> af/kv
 locale/names/language/long/v1, ms/kw, -> en/kw
@@ -106692,8 +106553,6 @@ locale/names/language/long/v1, my/ksb, 48B, 25B, 5297bcd903bd3d50
 locale/names/language/long/v1, my/ksf, 42B, 19B, bc852f4277f6b352
 locale/names/language/long/v1, my/ksh, 60B, 37B, 8d18cc98fe9db49d
 locale/names/language/long/v1, my/ku, 33B, 10B, 1dfc60d5c66f1714
-locale/names/language/long/v1, my/ku-menu-core, -> my/ku
-locale/names/language/long/v1, my/ku-menu-extension, 51B, 28B, 20c768f82e4a4e05
 locale/names/language/long/v1, my/kum, 51B, 28B, 2003f5296e9b572e
 locale/names/language/long/v1, my/kv, 39B, 16B, 5e623e4a4245d87
 locale/names/language/long/v1, my/kw, 48B, 25B, e7a0fb810d9cc602
@@ -107248,8 +107107,6 @@ locale/names/language/long/v1, ne/ksb, 48B, 25B, 92f60cfbe9f92e03
 locale/names/language/long/v1, ne/ksf, -> brx/ksf
 locale/names/language/long/v1, ne/ksh, 60B, 37B, e436861764250758
 locale/names/language/long/v1, ne/ku, -> mai/ku
-locale/names/language/long/v1, ne/ku-menu-core, 45B, 22B, a1776c990c33c47c
-locale/names/language/long/v1, ne/ku-menu-extension, 54B, 31B, 7ca0dcda9aa877f3
 locale/names/language/long/v1, ne/kum, -> mai/kum
 locale/names/language/long/v1, ne/kut, 45B, 22B, 1f342c1398abf3d4
 locale/names/language/long/v1, ne/kv, -> hi/kv
@@ -107851,8 +107708,6 @@ locale/names/language/long/v1, nl/ksb, -> af/ksb
 locale/names/language/long/v1, nl/ksf, -> af/ksf
 locale/names/language/long/v1, nl/ksh, -> de/ksh
 locale/names/language/long/v1, nl/ku, 33B, 10B, 4761591f196c3767
-locale/names/language/long/v1, nl/ku-menu-core, -> nl/ku
-locale/names/language/long/v1, nl/ku-menu-extension, 32B, 9B, 6d13eca231842358
 locale/names/language/long/v1, nl/kum, -> fy/kum
 locale/names/language/long/v1, nl/kut, -> de/kut
 locale/names/language/long/v1, nl/kv, -> af/kv
@@ -108571,8 +108426,6 @@ locale/names/language/long/v1, no/ksb, -> ast/ksb
 locale/names/language/long/v1, no/ksf, -> ast/ksf
 locale/names/language/long/v1, no/ksh, 31B, 8B, a8e914dcb3ae3537
 locale/names/language/long/v1, no/ku, -> da/ku
-locale/names/language/long/v1, no/ku-menu-core, -> da/ku
-locale/names/language/long/v1, no/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, no/kum, 32B, 9B, fe9298e2da985ea7
 locale/names/language/long/v1, no/kut, -> ast/kut
 locale/names/language/long/v1, no/kv, -> ast/kv
@@ -109551,8 +109404,6 @@ locale/names/language/long/v1, or/ksb, 45B, 22B, 84c5abd081d9e241
 locale/names/language/long/v1, or/ksf, 39B, 16B, e74c46106117b2d2
 locale/names/language/long/v1, or/ksh, 48B, 25B, 91576522d83c8434
 locale/names/language/long/v1, or/ku, 54B, 31B, f5026c0447c6629f
-locale/names/language/long/v1, or/ku-menu-core, 57B, 34B, 4561917201fe42f
-locale/names/language/long/v1, or/ku-menu-extension, 57B, 34B, ddd6103ebd5631b4
 locale/names/language/long/v1, or/kum, 42B, 19B, 80e81bd99fd709b
 locale/names/language/long/v1, or/kut, 45B, 22B, a969871caa8a1e27
 locale/names/language/long/v1, or/kv, 36B, 13B, 3aa773f8fd3dc684
@@ -110061,8 +109912,6 @@ locale/names/language/long/v1, pa/ksb, 45B, 22B, 9073edea6edec168
 locale/names/language/long/v1, pa/ksf, 39B, 16B, 456212710e559385
 locale/names/language/long/v1, pa/ksh, 45B, 22B, acd2590de62cf536
 locale/names/language/long/v1, pa/ku, 45B, 22B, 8433f888463d730
-locale/names/language/long/v1, pa/ku-menu-core, -> pa/ku
-locale/names/language/long/v1, pa/ku-menu-extension, 48B, 25B, f73e204411b5089f
 locale/names/language/long/v1, pa/kum, 39B, 16B, b9b14b2372557fed
 locale/names/language/long/v1, pa/kv, 36B, 13B, 3075d1f0258c4982
 locale/names/language/long/v1, pa/kw, 45B, 22B, dc97faf50550c687
@@ -110514,8 +110363,6 @@ locale/names/language/long/v1, pcm/ksb, 33B, 10B, 23f6a4551b44cec8
 locale/names/language/long/v1, pcm/ksf, 39B, 16B, a2dfbb30c490e819
 locale/names/language/long/v1, pcm/ksh, 45B, 22B, e0c1638fbcf0785b
 locale/names/language/long/v1, pcm/ku, 44B, 21B, 5fc7f7c9a6463065
-locale/names/language/long/v1, pcm/ku-menu-core, -> pcm/ku
-locale/names/language/long/v1, pcm/ku-menu-extension, 45B, 22B, 96b9c2be9354787a
 locale/names/language/long/v1, pcm/kum, 40B, 17B, 322ae49f54458ec7
 locale/names/language/long/v1, pcm/kv, 37B, 14B, c5da2e57f2cc494
 locale/names/language/long/v1, pcm/kw, 43B, 20B, c388c2e9d506c773
@@ -111061,8 +110908,6 @@ locale/names/language/long/v1, pl/ksb, -> hu/ksb
 locale/names/language/long/v1, pl/ksf, -> ast/ksf
 locale/names/language/long/v1, pl/ksh, 39B, 16B, d55f578b730439d7
 locale/names/language/long/v1, pl/ku, 33B, 10B, fa592c87e5f4fada
-locale/names/language/long/v1, pl/ku-menu-core, -> pl/ku
-locale/names/language/long/v1, pl/ku-menu-extension, 34B, 11B, 928a8ffae4760fd4
 locale/names/language/long/v1, pl/kum, 31B, 8B, 964ab649ac8b53fe
 locale/names/language/long/v1, pl/kut, -> ast/kut
 locale/names/language/long/v1, pl/kv, -> ast/kv
@@ -111621,8 +111466,6 @@ locale/names/language/long/v1, ps/ksb, 36B, 13B, b898eb05590a6467
 locale/names/language/long/v1, ps/ksf, 32B, 9B, 8ada3d46b06bd9a1
 locale/names/language/long/v1, ps/ksh, 44B, 21B, 93cf59b6a6acd9dd
 locale/names/language/long/v1, ps/ku, 32B, 9B, 3803df8f6a64ae29
-locale/names/language/long/v1, ps/ku-menu-core, 32B, 9B, 204177303da2de1
-locale/names/language/long/v1, ps/ku-menu-extension, 38B, 15B, dabb595cd215c758
 locale/names/language/long/v1, ps/kum, 32B, 9B, 7067dd6530db3c82
 locale/names/language/long/v1, ps/kv, -> ks/kv
 locale/names/language/long/v1, ps/kw, 38B, 15B, d505a4221c4b303f
@@ -112234,8 +112077,6 @@ locale/names/language/long/v1, pt/ksb, -> ast/ksb
 locale/names/language/long/v1, pt/ksf, -> ast/ksf
 locale/names/language/long/v1, pt/ksh, -> ca/ksh
 locale/names/language/long/v1, pt/ku, -> it/ku
-locale/names/language/long/v1, pt/ku-menu-core, -> it/ku
-locale/names/language/long/v1, pt/ku-menu-extension, 33B, 10B, 51ed44b1ae104f77
 locale/names/language/long/v1, pt/kum, -> ast/kum
 locale/names/language/long/v1, pt/kut, -> ast/kut
 locale/names/language/long/v1, pt/kv, -> ast/kv
@@ -112730,8 +112571,6 @@ locale/names/language/long/v1, qu/ksb, 37B, 14B, 894369c479c7a46f
 locale/names/language/long/v1, qu/ksf, 34B, 11B, 2c4d52719300231e
 locale/names/language/long/v1, qu/ksh, 36B, 13B, 41a3bfd46240a66b
 locale/names/language/long/v1, qu/ku, 34B, 11B, 7e688d4185da7cbe
-locale/names/language/long/v1, qu/ku-menu-core, -> qu/ku
-locale/names/language/long/v1, qu/ku-menu-extension, 37B, 14B, b6305123f743e2de
 locale/names/language/long/v1, qu/kum, 34B, 11B, 84071204669dce26
 locale/names/language/long/v1, qu/kv, 33B, 10B, 887b6d36bc28ef98
 locale/names/language/long/v1, qu/kw, 37B, 14B, e54b2cc094ab7554
@@ -113213,8 +113052,6 @@ locale/names/language/long/v1, rm/ksb, -> ast/ksb
 locale/names/language/long/v1, rm/ksf, -> ast/ksf
 locale/names/language/long/v1, rm/ksh, 33B, 10B, e7e53e0a317c5aaf
 locale/names/language/long/v1, rm/ku, 28B, 5B, e05dc577c37ab201
-locale/names/language/long/v1, rm/ku-menu-core, -> rm/ku
-locale/names/language/long/v1, rm/ku-menu-extension, 42B, 19B, d2d753f39768bee6
 locale/names/language/long/v1, rm/kum, 29B, 6B, 186637ece08142fb
 locale/names/language/long/v1, rm/kut, -> ast/kut
 locale/names/language/long/v1, rm/kv, -> ast/kv
@@ -113747,8 +113584,6 @@ locale/names/language/long/v1, ro/ksb, -> ast/ksb
 locale/names/language/long/v1, ro/ksf, -> ast/ksf
 locale/names/language/long/v1, ro/ksh, -> ca/ksh
 locale/names/language/long/v1, ro/ku, 30B, 7B, f1116da866376c40
-locale/names/language/long/v1, ro/ku-menu-core, -> ro/ku
-locale/names/language/long/v1, ro/ku-menu-extension, 32B, 9B, 2e23dc18c8bdf012
 locale/names/language/long/v1, ro/kum, -> ast/kum
 locale/names/language/long/v1, ro/kut, -> ast/kut
 locale/names/language/long/v1, ro/kv, -> ast/kv
@@ -114321,8 +114156,6 @@ locale/names/language/long/v1, ru/ksb, -> ba/ksb
 locale/names/language/long/v1, ru/ksf, -> ba/ksf
 locale/names/language/long/v1, ru/ksh, 42B, 19B, 8ef4daa2b3990509
 locale/names/language/long/v1, ru/ku, 40B, 17B, c69893acc3512e90
-locale/names/language/long/v1, ru/ku-menu-core, -> ru/ku
-locale/names/language/long/v1, ru/ku-menu-extension, -> ba/ku-menu-extension
 locale/names/language/long/v1, ru/kum, 42B, 19B, 7b978c56c91a8dfb
 locale/names/language/long/v1, ru/kut, -> bs-Cyrl/kut
 locale/names/language/long/v1, ru/kv, -> bg/kv
@@ -115084,8 +114917,6 @@ locale/names/language/long/v1, sc/ksb, -> ast/ksb
 locale/names/language/long/v1, sc/ksf, -> ast/ksf
 locale/names/language/long/v1, sc/ksh, 33B, 10B, 7b01876187292e7d
 locale/names/language/long/v1, sc/ku, -> ast/ku
-locale/names/language/long/v1, sc/ku-menu-core, -> ast/ku
-locale/names/language/long/v1, sc/ku-menu-extension, 32B, 9B, 7361a412a9be9c97
 locale/names/language/long/v1, sc/kum, 30B, 7B, b6c23c785c764b9d
 locale/names/language/long/v1, sc/kv, -> ast/kv
 locale/names/language/long/v1, sc/kw, 32B, 9B, 574c5b83ac2e45d6
@@ -115486,8 +115317,6 @@ locale/names/language/long/v1, scn/ks, -> da/ks
 locale/names/language/long/v1, scn/ksf, -> ast/ksf
 locale/names/language/long/v1, scn/ksh, 32B, 9B, 59c7543913dede0f
 locale/names/language/long/v1, scn/ku, -> ast/ku
-locale/names/language/long/v1, scn/ku-menu-core, -> ast/ku
-locale/names/language/long/v1, scn/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, scn/kw, -> sc/kw
 locale/names/language/long/v1, scn/kxv, -> az/kxv
 locale/names/language/long/v1, scn/ky, 33B, 10B, 8615f5fa209a997
@@ -115848,8 +115677,6 @@ locale/names/language/long/v1, sd/ksb, -> ps/ksb
 locale/names/language/long/v1, sd/ksf, 34B, 11B, 8f70307af0129d4f
 locale/names/language/long/v1, sd/ksh, 38B, 15B, 80ab73e7e7654219
 locale/names/language/long/v1, sd/ku, 32B, 9B, e817e5f163ed6420
-locale/names/language/long/v1, sd/ku-menu-core, -> sd/ku
-locale/names/language/long/v1, sd/ku-menu-extension, 38B, 15B, ee7dafc57f97871a
 locale/names/language/long/v1, sd/kum, 32B, 9B, 40c0866de762a5f1
 locale/names/language/long/v1, sd/kv, 32B, 9B, 29245b6e1c529f9d
 locale/names/language/long/v1, sd/kw, 34B, 11B, fca36cba80f66443
@@ -116249,8 +116076,6 @@ locale/names/language/long/v1, shn/ksb, 48B, 25B, d46b0cf806c3bee8
 locale/names/language/long/v1, shn/ksf, 57B, 34B, 18406d3fa0665c85
 locale/names/language/long/v1, shn/ksh, 72B, 49B, 8a80aecffd5da747
 locale/names/language/long/v1, shn/ku, 66B, 43B, d1d2814503ca6bc3
-locale/names/language/long/v1, shn/ku-menu-core, -> shn/ku
-locale/names/language/long/v1, shn/ku-menu-extension, 60B, 37B, 33856ac16aaf3641
 locale/names/language/long/v1, shn/kw, 63B, 40B, 91b55afe3c890f91
 locale/names/language/long/v1, shn/kxv, 42B, 19B, 1aa65f2e037c2129
 locale/names/language/long/v1, shn/ky, 54B, 31B, 4af40e5e444c9f2c
@@ -116657,8 +116482,6 @@ locale/names/language/long/v1, si/ksb, 45B, 22B, bd79fbd8d91fbca6
 locale/names/language/long/v1, si/ksf, 42B, 19B, 4038994847749408
 locale/names/language/long/v1, si/ksh, 57B, 34B, 138022a0f05a3cd1
 locale/names/language/long/v1, si/ku, 42B, 19B, 2ecc4eb035be6386
-locale/names/language/long/v1, si/ku-menu-core, -> si/ku
-locale/names/language/long/v1, si/ku-menu-extension, 51B, 28B, 3120ea9a599d3318
 locale/names/language/long/v1, si/kum, 42B, 19B, ed627889c88501e8
 locale/names/language/long/v1, si/kv, 36B, 13B, 174b769adec68783
 locale/names/language/long/v1, si/kw, 54B, 31B, 14ce5a9e72f582db
@@ -117175,8 +116998,6 @@ locale/names/language/long/v1, sk/ksb, -> bs/ksb
 locale/names/language/long/v1, sk/ksf, -> ast/ksf
 locale/names/language/long/v1, sk/ksh, 35B, 12B, cc59ba8c43a72f25
 locale/names/language/long/v1, sk/ku, 33B, 10B, 3dc06c505b60e855
-locale/names/language/long/v1, sk/ku-menu-core, -> sk/ku
-locale/names/language/long/v1, sk/ku-menu-extension, -> et/ku-menu-extension
 locale/names/language/long/v1, sk/kum, -> cs/kum
 locale/names/language/long/v1, sk/kut, 36B, 13B, 477be766ed2b95e0
 locale/names/language/long/v1, sk/kv, 34B, 11B, a001c5eee1c3c0a8
@@ -117738,8 +117559,6 @@ locale/names/language/long/v1, sl/ksb, -> bs/ksb
 locale/names/language/long/v1, sl/ksf, -> ast/ksf
 locale/names/language/long/v1, sl/ksh, 41B, 18B, 7af7f7cdc0c08841
 locale/names/language/long/v1, sl/ku, 35B, 12B, 906b9457b678469e
-locale/names/language/long/v1, sl/ku-menu-core, -> sl/ku
-locale/names/language/long/v1, sl/ku-menu-extension, 37B, 14B, 404d845aa1ee1a30
 locale/names/language/long/v1, sl/kum, 35B, 12B, 3c6a0477f93abf8c
 locale/names/language/long/v1, sl/kut, 38B, 15B, 9c167a1ccd37913e
 locale/names/language/long/v1, sl/kv, 36B, 13B, 8610026e87a94626
@@ -118240,8 +118059,6 @@ locale/names/language/long/v1, so/ksb, 33B, 10B, c19c0fecab8d3fac
 locale/names/language/long/v1, so/ksf, -> af/ksf
 locale/names/language/long/v1, so/ksh, 35B, 12B, 31208460a6a2bfe0
 locale/names/language/long/v1, so/ku, 33B, 10B, 24ad8cc8729e1da6
-locale/names/language/long/v1, so/ku-menu-core, -> en/ckb-menu-core
-locale/names/language/long/v1, so/ku-menu-extension, -> en/ku-menu-extension
 locale/names/language/long/v1, so/kum, -> af/kum
 locale/names/language/long/v1, so/kv, -> af/kv
 locale/names/language/long/v1, so/kw, -> id/kw
@@ -118689,8 +118506,6 @@ locale/names/language/long/v1, sq/ksb, 35B, 12B, f487bbbba18b9345
 locale/names/language/long/v1, sq/ksf, 34B, 11B, cdc555fc40b0beb5
 locale/names/language/long/v1, sq/ksh, 33B, 10B, f6e4487ffbe3638f
 locale/names/language/long/v1, sq/ku, 32B, 9B, 5abbf2c78ef7a002
-locale/names/language/long/v1, sq/ku-menu-core, -> sq/ku
-locale/names/language/long/v1, sq/ku-menu-extension, 35B, 12B, 7922af1552830354
 locale/names/language/long/v1, sq/kum, 33B, 10B, bfdc6372d9ee0ce2
 locale/names/language/long/v1, sq/kv, 31B, 8B, 621b45d832cc3d6c
 locale/names/language/long/v1, sq/kw, 32B, 9B, 750d404f413a4565
@@ -119248,8 +119063,6 @@ locale/names/language/long/v1, sr-Latn/ksb, -> bs/ksb
 locale/names/language/long/v1, sr-Latn/ksf, 30B, 7B, 74c4d2ca7cbac927
 locale/names/language/long/v1, sr-Latn/ksh, -> bs/ksh
 locale/names/language/long/v1, sr-Latn/ku, -> bs/ku
-locale/names/language/long/v1, sr-Latn/ku-menu-core, -> bs/ku
-locale/names/language/long/v1, sr-Latn/ku-menu-extension, -> et/ku-menu-extension
 locale/names/language/long/v1, sr-Latn/kum, 32B, 9B, f60e185fff2e3a6b
 locale/names/language/long/v1, sr-Latn/kut, -> da/kut
 locale/names/language/long/v1, sr-Latn/kv, -> ast/kv
@@ -119838,8 +119651,6 @@ locale/names/language/long/v1, sr/ksb, -> ba/ksb
 locale/names/language/long/v1, sr/ksf, -> bs-Cyrl/ksf
 locale/names/language/long/v1, sr/ksh, -> bs-Cyrl/ksh
 locale/names/language/long/v1, sr/ku, -> bs-Cyrl/ku
-locale/names/language/long/v1, sr/ku-menu-core, -> bs-Cyrl/ku
-locale/names/language/long/v1, sr/ku-menu-extension, -> mk/ku-menu-extension
 locale/names/language/long/v1, sr/kum, -> mk/kum
 locale/names/language/long/v1, sr/kut, 38B, 15B, 591ac4d3e31c1c03
 locale/names/language/long/v1, sr/kv, -> bg/kv
@@ -120476,8 +120287,6 @@ locale/names/language/long/v1, sv/ksb, 32B, 9B, f94e8cf0072a2aea
 locale/names/language/long/v1, sv/ksf, -> ast/ksf
 locale/names/language/long/v1, sv/ksh, 33B, 10B, 2f95c235709591ba
 locale/names/language/long/v1, sv/ku, 32B, 9B, ec73e567a3a7b027
-locale/names/language/long/v1, sv/ku-menu-core, -> sv/ku
-locale/names/language/long/v1, sv/ku-menu-extension, -> br/ku-menu-extension
 locale/names/language/long/v1, sv/kum, 33B, 10B, 2cbed03faff57c17
 locale/names/language/long/v1, sv/kut, -> da/kut
 locale/names/language/long/v1, sv/kv, 28B, 5B, 8e24feb0c96c7c1c
@@ -121222,8 +121031,6 @@ locale/names/language/long/v1, sw/ksb, 32B, 9B, 35cc195011fca7b3
 locale/names/language/long/v1, sw/ksf, 31B, 8B, 368ef410520a4214
 locale/names/language/long/v1, sw/ksh, 33B, 10B, daf722b5c7fbcb3f
 locale/names/language/long/v1, sw/ku, 31B, 8B, a7e89eadfb6792a1
-locale/names/language/long/v1, sw/ku-menu-core, -> sw/ku
-locale/names/language/long/v1, sw/ku-menu-extension, 34B, 11B, d3124a9fd4b67ab4
 locale/names/language/long/v1, sw/kum, -> af/kum
 locale/names/language/long/v1, sw/kv, 30B, 7B, c79a404857312a6c
 locale/names/language/long/v1, sw/kw, 31B, 8B, 6b427cab7836c86d
@@ -121814,8 +121621,6 @@ locale/names/language/long/v1, ta/ksb, 45B, 22B, 7c3eca5e9f0baefb
 locale/names/language/long/v1, ta/ksf, 45B, 22B, 5705450c2e611479
 locale/names/language/long/v1, ta/ksh, 57B, 34B, 76ade663082e3ce6
 locale/names/language/long/v1, ta/ku, 48B, 25B, bd0d619d8b85cefd
-locale/names/language/long/v1, ta/ku-menu-core, -> ta/ku
-locale/names/language/long/v1, ta/ku-menu-extension, 54B, 31B, 1465a0a953f84e6d
 locale/names/language/long/v1, ta/kum, 48B, 25B, 5332e0a8c2679f6c
 locale/names/language/long/v1, ta/kut, 42B, 19B, 5fc89549a884e63a
 locale/names/language/long/v1, ta/kv, 36B, 13B, 3a525028a0ee360e
@@ -122384,8 +122189,6 @@ locale/names/language/long/v1, te/ksb, 42B, 19B, 9749ba78d57b8b0
 locale/names/language/long/v1, te/ksf, 39B, 16B, f1d67e5313c807c6
 locale/names/language/long/v1, te/ksh, 51B, 28B, 534f98798dfd109d
 locale/names/language/long/v1, te/ku, 48B, 25B, cc5d7299377bd6b7
-locale/names/language/long/v1, te/ku-menu-core, 45B, 22B, eed5aa4cbba46492
-locale/names/language/long/v1, te/ku-menu-extension, 48B, 25B, 8bdd6f619b0a34c6
 locale/names/language/long/v1, te/kum, 48B, 25B, 6bdcaa41d8f7cbe7
 locale/names/language/long/v1, te/kut, 42B, 19B, 6f11b4506a15681
 locale/names/language/long/v1, te/kv, 36B, 13B, 4e5d389d842cb54a
@@ -123161,8 +122964,6 @@ locale/names/language/long/v1, th/ksb, 45B, 22B, d67ba643a7947d29
 locale/names/language/long/v1, th/ksf, 42B, 19B, 83dd7d28ea138058
 locale/names/language/long/v1, th/ksh, 39B, 16B, 945cd87bdcab4e12
 locale/names/language/long/v1, th/ku, 42B, 19B, f8e814b467547215
-locale/names/language/long/v1, th/ku-menu-core, -> th/ku
-locale/names/language/long/v1, th/ku-menu-extension, 48B, 25B, e09c81a9644f2974
 locale/names/language/long/v1, th/kum, 45B, 22B, d652303809a3176e
 locale/names/language/long/v1, th/kut, 42B, 19B, f4dcd924cd367435
 locale/names/language/long/v1, th/kv, 36B, 13B, 1170f727cf824de4
@@ -123727,8 +123528,6 @@ locale/names/language/long/v1, ti/ksb, -> am/ksb
 locale/names/language/long/v1, ti/ksf, 33B, 10B, a51706bc600c3c5e
 locale/names/language/long/v1, ti/ksh, 33B, 10B, f225c5507f39574
 locale/names/language/long/v1, ti/ku, 36B, 13B, 142c3be5a5364b8f
-locale/names/language/long/v1, ti/ku-menu-core, -> ti/ku
-locale/names/language/long/v1, ti/ku-menu-extension, 39B, 16B, 6c67f33eedef5911
 locale/names/language/long/v1, ti/kum, 36B, 13B, 48c0af8fff855186
 locale/names/language/long/v1, ti/kv, -> am/kv
 locale/names/language/long/v1, ti/kw, 36B, 13B, f2f937efb7597d52
@@ -124184,8 +123983,6 @@ locale/names/language/long/v1, tk/ksb, 37B, 14B, f27de2c821b3c8cd
 locale/names/language/long/v1, tk/ksf, 34B, 11B, 90a697249b5e2849
 locale/names/language/long/v1, tk/ksh, 33B, 10B, d3c9df4302cc4569
 locale/names/language/long/v1, tk/ku, 34B, 11B, e2b0e9d51c8c4056
-locale/names/language/long/v1, tk/ku-menu-core, -> tk/ku
-locale/names/language/long/v1, tk/ku-menu-extension, 37B, 14B, f52b7202a75a4ab4
 locale/names/language/long/v1, tk/kum, 34B, 11B, bb748d57a08b3f05
 locale/names/language/long/v1, tk/kv, 33B, 10B, 313a42366020349b
 locale/names/language/long/v1, tk/kw, 33B, 10B, 7299adca017aabc3
@@ -125388,8 +125185,6 @@ locale/names/language/long/v1, tr/ksb, 32B, 9B, 9e8f00dad9898faf
 locale/names/language/long/v1, tr/ksf, -> af/ksf
 locale/names/language/long/v1, tr/ksh, 38B, 15B, 65028027e66c1a22
 locale/names/language/long/v1, tr/ku, 32B, 9B, 6a2d18831cc72444
-locale/names/language/long/v1, tr/ku-menu-core, -> tr/ku
-locale/names/language/long/v1, tr/ku-menu-extension, -> nl/ku-menu-extension
 locale/names/language/long/v1, tr/kum, 32B, 9B, a9980234bd46ca60
 locale/names/language/long/v1, tr/kut, 36B, 13B, 227f5d8d93cba403
 locale/names/language/long/v1, tr/kv, -> af/kv
@@ -126708,8 +126503,6 @@ locale/names/language/long/v1, uk/ksb, -> ba/ksb
 locale/names/language/long/v1, uk/ksf, 34B, 11B, 8c8a3ce8a14b49c
 locale/names/language/long/v1, uk/ksh, 42B, 19B, 66ca8ad2c69ef10f
 locale/names/language/long/v1, uk/ku, 40B, 17B, 9588ab6389f26655
-locale/names/language/long/v1, uk/ku-menu-core, -> uk/ku
-locale/names/language/long/v1, uk/ku-menu-extension, 42B, 19B, 1efa9ea6a1605810
 locale/names/language/long/v1, uk/kum, 40B, 17B, 2a99a02080959c0d
 locale/names/language/long/v1, uk/kut, 38B, 15B, eb5f36fc7b59d3cf
 locale/names/language/long/v1, uk/kv, -> be/kv
@@ -127241,8 +127034,6 @@ locale/names/language/long/v1, ur/ksb, -> ar/ksb
 locale/names/language/long/v1, ur/ksf, -> sd/ksf
 locale/names/language/long/v1, ur/ksh, 44B, 21B, 5a78aa6cbea4e34b
 locale/names/language/long/v1, ur/ku, -> fa/ku
-locale/names/language/long/v1, ur/ku-menu-core, -> fa/ku
-locale/names/language/long/v1, ur/ku-menu-extension, -> fa/kiu
 locale/names/language/long/v1, ur/kum, 34B, 11B, 2771c4848abc42f2
 locale/names/language/long/v1, ur/kv, -> ks/kv
 locale/names/language/long/v1, ur/kw, 34B, 11B, 5b2393ec31da5a67
@@ -128002,8 +127793,6 @@ locale/names/language/long/v1, uz/ksb, -> ast/ksb
 locale/names/language/long/v1, uz/ksf, 30B, 7B, 35922268f1fecfa0
 locale/names/language/long/v1, uz/ksh, 29B, 6B, 9fe195a5784c1572
 locale/names/language/long/v1, uz/ku, 31B, 8B, 93c53fa014149caf
-locale/names/language/long/v1, uz/ku-menu-core, -> ca/ku
-locale/names/language/long/v1, uz/ku-menu-extension, -> bs/ku-menu-extension
 locale/names/language/long/v1, uz/kum, 32B, 9B, 5d38780a3438c22f
 locale/names/language/long/v1, uz/kv, -> ast/kv
 locale/names/language/long/v1, uz/kw, -> az/kw
@@ -129003,8 +128792,6 @@ locale/names/language/long/v1, vi/ksb, 40B, 17B, 711c19b4157432a8
 locale/names/language/long/v1, vi/ksf, 37B, 14B, d7886e0dfa5b6e9b
 locale/names/language/long/v1, vi/ksh, 39B, 16B, 3b9390100be3eaa0
 locale/names/language/long/v1, vi/ku, 36B, 13B, 4c28fa11515a9a3d
-locale/names/language/long/v1, vi/ku-menu-core, -> vi/ku
-locale/names/language/long/v1, vi/ku-menu-extension, 40B, 17B, 5032a0b1eeca89fd
 locale/names/language/long/v1, vi/kum, 37B, 14B, 98034f6f191a2cea
 locale/names/language/long/v1, vi/kut, 39B, 16B, 46695800d77896a5
 locale/names/language/long/v1, vi/kv, 36B, 13B, 731d874f5acbfa5c
@@ -130020,7 +129807,6 @@ locale/names/language/long/v1, yo-BJ/kln, 35B, 12B, d0fa24556592c809
 locale/names/language/long/v1, yo-BJ/ks, 35B, 12B, 718908cf00bd0b98
 locale/names/language/long/v1, yo-BJ/ksb, 36B, 13B, 7acecd99f16caf85
 locale/names/language/long/v1, yo-BJ/ku, 33B, 10B, 4a416dce33d3eb5
-locale/names/language/long/v1, yo-BJ/ku-menu-core, 42B, 19B, 1fdead3c4d5d1386
 locale/names/language/long/v1, yo-BJ/kw, 44B, 21B, c1e312afda63dbdf
 locale/names/language/long/v1, yo-BJ/lb, 46B, 23B, 18b1a6df731a7d22
 locale/names/language/long/v1, yo-BJ/mul, 42B, 19B, 953dde562a3dd654
@@ -130267,8 +130053,6 @@ locale/names/language/long/v1, yo/ksb, 37B, 14B, 6f1aa75b02823ce4
 locale/names/language/long/v1, yo/ksf, 38B, 15B, b5cef64f2bc61660
 locale/names/language/long/v1, yo/ksh, 39B, 16B, 6949a677ed736be9
 locale/names/language/long/v1, yo/ku, 35B, 12B, 64c653b1b566bfc9
-locale/names/language/long/v1, yo/ku-menu-core, 44B, 21B, e7f605666ead11f9
-locale/names/language/long/v1, yo/ku-menu-extension, 41B, 18B, e6855940cd077af6
 locale/names/language/long/v1, yo/kum, 36B, 13B, c43b8585912f3d6e
 locale/names/language/long/v1, yo/kv, 34B, 11B, 9d955ea5d7cfd045
 locale/names/language/long/v1, yo/kw, 46B, 23B, b222a42d70d40c12
@@ -131363,8 +131147,6 @@ locale/names/language/long/v1, yue-Hans/ksb, 36B, 13B, 254b4794f14a186d
 locale/names/language/long/v1, yue-Hans/ksf, 36B, 13B, 677af7f4221af194
 locale/names/language/long/v1, yue-Hans/ksh, 33B, 10B, 2b5ac6962698d8b8
 locale/names/language/long/v1, yue-Hans/ku, 33B, 10B, b6104cd4b1e86146
-locale/names/language/long/v1, yue-Hans/ku-menu-core, -> yue-Hans/ku
-locale/names/language/long/v1, yue-Hans/ku-menu-extension, 36B, 13B, 72ec9585fb1c4a19
 locale/names/language/long/v1, yue-Hans/kum, 36B, 13B, 9fd8959c87b99e7e
 locale/names/language/long/v1, yue-Hans/kut, 36B, 13B, 47e9bd636067801
 locale/names/language/long/v1, yue-Hans/kv, 33B, 10B, e0a3174111233395
@@ -132006,8 +131788,6 @@ locale/names/language/long/v1, yue/ksb, -> yue-Hans/ksb
 locale/names/language/long/v1, yue/ksf, 36B, 13B, bc70e1579ecb43dc
 locale/names/language/long/v1, yue/ksh, -> yue-Hans/ksh
 locale/names/language/long/v1, yue/ku, 33B, 10B, f3821fb137c748d
-locale/names/language/long/v1, yue/ku-menu-core, -> yue/ku
-locale/names/language/long/v1, yue/ku-menu-extension, 36B, 13B, 89efc8a3d78ecee4
 locale/names/language/long/v1, yue/kum, 36B, 13B, 7c820a8fc50f3b1b
 locale/names/language/long/v1, yue/kut, 36B, 13B, f5115b6ef80c1b5
 locale/names/language/long/v1, yue/kv, -> yue-Hans/kv
@@ -132383,8 +132163,6 @@ locale/names/language/long/v1, zh-HK/ka, 39B, 16B, f530b42b91823ad2
 locale/names/language/long/v1, zh-HK/kiu, 36B, 13B, c846415ba72f109f
 locale/names/language/long/v1, zh-HK/kn, 36B, 13B, 7224a0bc6db957ab
 locale/names/language/long/v1, zh-HK/kri, 39B, 16B, 3340788f214d4cf0
-locale/names/language/long/v1, zh-HK/ku-menu-core, -> yue/ku
-locale/names/language/long/v1, zh-HK/ku-menu-extension, -> yue/ku-menu-extension
 locale/names/language/long/v1, zh-HK/lo, 33B, 10B, 4eb0e29e8924c101
 locale/names/language/long/v1, zh-HK/luo, 33B, 10B, df2b74b2009bd36e
 locale/names/language/long/v1, zh-HK/mfe, 51B, 28B, de88c7eb0c7a2a85
@@ -132716,8 +132494,6 @@ locale/names/language/long/v1, zh-Hant/ksb, -> yue-Hans/ksb
 locale/names/language/long/v1, zh-Hant/ksf, -> yue/ksf
 locale/names/language/long/v1, zh-Hant/ksh, -> yue-Hans/ksh
 locale/names/language/long/v1, zh-Hant/ku, -> yue/ku
-locale/names/language/long/v1, zh-Hant/ku-menu-core, 33B, 10B, 7652d5c90996a52f
-locale/names/language/long/v1, zh-Hant/ku-menu-extension, 36B, 13B, 9dfb2fc61d8995e1
 locale/names/language/long/v1, zh-Hant/kum, -> yue/kum
 locale/names/language/long/v1, zh-Hant/kut, -> yue/kut
 locale/names/language/long/v1, zh-Hant/kv, -> yue-Hans/kv
@@ -133091,8 +132867,6 @@ locale/names/language/long/v1, zh-MO/ka, -> zh-HK/ka
 locale/names/language/long/v1, zh-MO/kiu, -> zh-HK/kiu
 locale/names/language/long/v1, zh-MO/kn, -> zh-HK/kn
 locale/names/language/long/v1, zh-MO/kri, -> zh-HK/kri
-locale/names/language/long/v1, zh-MO/ku-menu-core, -> yue/ku
-locale/names/language/long/v1, zh-MO/ku-menu-extension, -> yue/ku-menu-extension
 locale/names/language/long/v1, zh-MO/lo, -> zh-HK/lo
 locale/names/language/long/v1, zh-MO/luo, -> zh-HK/luo
 locale/names/language/long/v1, zh-MO/mfe, -> zh-HK/mfe
@@ -133397,8 +133171,6 @@ locale/names/language/long/v1, zh/ksb, 36B, 13B, ec30df5f7e6e29aa
 locale/names/language/long/v1, zh/ksf, 36B, 13B, 8006bf09339b5973
 locale/names/language/long/v1, zh/ksh, 33B, 10B, c6e5b9de19347c33
 locale/names/language/long/v1, zh/ku, 36B, 13B, 75362938451a930f
-locale/names/language/long/v1, zh/ku-menu-core, -> zh/ku
-locale/names/language/long/v1, zh/ku-menu-extension, 39B, 16B, 89eb7206ad2f29e6
 locale/names/language/long/v1, zh/kum, 36B, 13B, 54170d707208105f
 locale/names/language/long/v1, zh/kut, 36B, 13B, 7e7ebeb6e8dacfd
 locale/names/language/long/v1, zh/kv, 33B, 10B, 4a969a1643849775
@@ -133921,8 +133693,6 @@ locale/names/language/long/v1, zu/ksb, 35B, 12B, 57201cfca8a9bfe3
 locale/names/language/long/v1, zu/ksf, 33B, 10B, 315344b78a0e1ca6
 locale/names/language/long/v1, zu/ksh, 37B, 14B, 9ae0b0a52c8467a3
 locale/names/language/long/v1, zu/ku, 35B, 12B, 2374e5863a14c529
-locale/names/language/long/v1, zu/ku-menu-core, 34B, 11B, db3b1ca06d0fe637
-locale/names/language/long/v1, zu/ku-menu-extension, 35B, 12B, adacd90f5d10197
 locale/names/language/long/v1, zu/kum, 33B, 10B, e3e12ae29e479ff3
 locale/names/language/long/v1, zu/kv, 32B, 9B, cf2a5b817b8eb1f4
 locale/names/language/long/v1, zu/kw, 35B, 12B, 6228f6d42a7dd4ed
