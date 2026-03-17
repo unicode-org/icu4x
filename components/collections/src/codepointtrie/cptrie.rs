@@ -148,6 +148,8 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
     pub(crate) index: ZeroVec<'trie, u16>,
     /// # Safety Invariant
     ///
+    /// `data.len()` must be 128 or greater regardless of trie type. Furthermore:
+    ///
     /// If `header.trie_type == TrieType::Fast`, `data.len()` must be greater
     /// than `FAST_TYPE_DATA_MASK` plus the largest value in
     /// `index[0..FAST_TYPE_FAST_INDEXING_MAX + 1]`. Otherwise, `data.len()`
@@ -385,8 +387,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             return Err(Error::DataTooShortForFastAccess);
         }
 
-        // The builder is supposed to support direct indexing to the data array
-        // by ASCII.
+        // Invariant upheld for `data`: Length must be at least 128.
         if data.len() < 128 {
             return Err(Error::DataTooShortForAsciiAccess);
         }
@@ -731,7 +732,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     pub unsafe fn get7(&self, ascii: u8) -> T {
         debug_assert!(ascii < 128);
         debug_assert!((ascii as usize) < self.data.len());
-        // SAFETY: Length of `self.data` checked in the constructor.
+        // SAFETY: Allowed by the safety invariant of `self.data` guaranteering a length of at least
+        // 128.
         T::from_unaligned(*unsafe { self.data.as_ule_slice().get_unchecked(ascii as usize) })
     }
 
