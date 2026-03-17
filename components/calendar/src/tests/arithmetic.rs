@@ -54,6 +54,7 @@ struct TestOutput {
     pub end: ArithmeticDateForLogging,
     pub duration: DateDurationForLogging,
     pub calculated_duration: DateDurationForLogging,
+    pub is_rejected: bool,
 }
 
 impl fmt::Display for TestOutput {
@@ -65,6 +66,9 @@ impl fmt::Display for TestOutput {
         )?;
         if self.duration.0 != self.calculated_duration.0 {
             write!(f, "; round-trip duration: {}", self.calculated_duration)?;
+        }
+        if self.is_rejected {
+            write!(f, "; rejected")?;
         }
         Ok(())
     }
@@ -197,6 +201,7 @@ super::test_all_cals!(
                     end: added_date.into(),
                     duration: DateDurationForLogging(*duration),
                     calculated_duration: DateDurationForLogging(calculated_duration),
+                    is_rejected,
                 };
 
                 // The durations should have the same sign!
@@ -260,7 +265,6 @@ super::test_all_cals!(
                     }
                 } else if duration.years != 0 && duration.months != 0 && duration.days == 0 {
                     // These cases are some of the trickiest. Toss them all in the snapshots!
-                    // TODO: Test rejection behavior
                     outputs.0.push(output);
                 } else if duration.years == 0 && duration.months != 0 && duration.days == 1 {
                     // This should add months, constrain, and add a day.
