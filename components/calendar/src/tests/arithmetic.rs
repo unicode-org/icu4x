@@ -221,7 +221,7 @@ super::test_all_cals!(
                         "{output}"
                     );
                     // Month or day could constrain; add the ones that do to the snapshot.
-                    if date.month() != added_date.month()
+                    if date.month().to_input() != added_date.month().to_input()
                         || date.day_of_month() != added_date.day_of_month()
                     {
                         outputs.0.push(output);
