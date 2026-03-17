@@ -251,17 +251,21 @@ super::test_all_cals!(
                     assert_eq!(duration.months, month_diff.unsigned_abs(), "{output}");
                     // Days could constrain; add the ones that do to the snapshot.
                     if date.day_of_month() != added_date.day_of_month() {
+                        assert!(is_rejected, "should reject: {output}");
                         outputs.0.push(output);
                     } else {
                         // Make sure we aren't skipping any normalized-duration tests
+                        assert!(!is_rejected, "should NOT reject: {output}");
                         assert_eq!(*duration, calculated_duration);
                     }
                 } else if duration.years != 0 && duration.months != 0 && duration.days == 0 {
                     // These cases are some of the trickiest. Toss them all in the snapshots!
+                    // TODO: Test rejection behavior
                     outputs.0.push(output);
                 } else if duration.years == 0 && duration.months != 0 && duration.days == 1 {
                     // This should add months, constrain, and add a day.
-                    // Month-constrain by itself is tested by other cases.
+                    // Month-constrain by itself is tested by other cases,
+                    // which also test Overflow::Reject behavior.
                     let signed_months = duration.add_months_to(0);
                     let expected_rd = date
                         .try_added_with_options(
@@ -278,7 +282,8 @@ super::test_all_cals!(
                     }
                 } else if duration.years != 0 && duration.months == 0 && duration.days == 1 {
                     // This should add years, constrain, and add a day.
-                    // Year-constrain by itself is tested by other cases.
+                    // Year-constrain by itself is tested by other cases,
+                    // which also test Overflow::Reject behavior.
                     let signed_years = duration.add_years_to(0);
                     let expected_rd = date
                         .try_added_with_options(
@@ -295,7 +300,8 @@ super::test_all_cals!(
                     }
                 } else if duration.years != 0 && duration.months != 0 && duration.days == 1 {
                     // This should add years and months, constrain, and add a day.
-                    // Year-month-constrain by itself is tested by other cases.
+                    // Year-month-constrain by itself is tested by other cases,
+                    // which also test Overflow::Reject behavior.
                     let mut year_month_duration = *duration;
                     year_month_duration.days = 0;
                     let expected_rd = date
