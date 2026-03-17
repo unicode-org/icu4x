@@ -39,7 +39,6 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None::<&str>,
-    "RegionDisplayNames"
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -48,7 +47,6 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(ALT_SHORT_SUBSTRING),
-    "RegionDisplayNames"
 );
 
 impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {

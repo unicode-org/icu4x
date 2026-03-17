@@ -37,7 +37,6 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None::<&str>,
-    "ScriptDisplayNames"
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -46,7 +45,6 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     Some(ALT_SHORT_SUBSTRING),
-    "ScriptDisplayNames"
 );
 
 crate::displaynames::impl_displaynames_main_iter_v1!(ScriptDisplayNamesV1, "scripts.json");

@@ -37,7 +37,6 @@ crate::displaynames::impl_displaynames_v1!(
     "variants.json",
     variants,
     None::<&str>,
-    "VariantDisplayNames"
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -46,7 +45,6 @@ crate::displaynames::impl_displaynames_v1!(
     "variants.json",
     variants,
     Some(ALT_SHORT_SUBSTRING),
-    "VariantDisplayNames"
 );
 
 crate::displaynames::impl_displaynames_main_iter_v1!(VariantDisplayNamesV1, "variants.json");

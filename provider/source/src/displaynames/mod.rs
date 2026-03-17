@@ -10,10 +10,14 @@ pub(crate) mod variant;
 pub(crate) const ALT_SUBSTRING: &str = "-alt-";
 pub(crate) const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 pub(crate) const ALT_LONG_SUBSTRING: &str = "-alt-long";
+pub(crate) const MENU_CORE_SUBSTRING: &str = "-menu-core";
+pub(crate) const MENU_EXTENSION_SUBSTRING: &str = "-menu-extension";
+
+// TODO: ALT_MENU_SUBSTRING should be dead. Remove when possible.
 pub(crate) const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 
 macro_rules! impl_displaynames_v1 {
-    ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr, $label:literal) => {
+    ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -35,7 +39,8 @@ macro_rules! impl_displaynames_v1 {
                     .$field
                     .get(&key)
                     .ok_or_else(|| {
-                        DataError::custom(concat!("data for ", $label)).with_req($marker::INFO, req)
+                        DataError::custom(concat!("failed to find attribute"))
+                            .with_req($marker::INFO, req)
                     })?;
 
                 Ok(DataResponse {
@@ -45,6 +50,72 @@ macro_rules! impl_displaynames_v1 {
             }
         }
 
+        $crate::displaynames::impl_displaynames_iter_v1!(
+            $marker, $resource, $file, $field, $suffix
+        );
+    };
+}
+
+macro_rules! impl_displaynames_menu_v1 {
+    ($marker:ident, $resource:path, $file:literal, $field:ident,) => {
+        impl DataProvider<$marker> for SourceDataProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
+
+                let data: &$resource = self
+                    .cldr()?
+                    .displaynames()
+                    .read_and_parse(req.id.locale, $file)?;
+
+                let mut key_core = req.id.marker_attributes.as_str().to_string();
+                let mut key_extension = key_core.clone();
+                key_core.push_str(MENU_CORE_SUBSTRING);
+                key_extension.push_str(MENU_EXTENSION_SUBSTRING);
+
+                let name_core = data
+                    .main
+                    .value
+                    .localedisplaynames
+                    .$field
+                    .get(&key_core)
+                    .ok_or_else(|| {
+                        DataError::custom(concat!("failed to find attribute"))
+                            .with_req($marker::INFO, req)
+                    })?;
+
+                let name_extension = data
+                    .main
+                    .value
+                    .localedisplaynames
+                    .$field
+                    .get(&key_extension)
+                    .ok_or_else(|| {
+                        DataError::custom(concat!("failed to find attribute"))
+                            .with_req($marker::INFO, req)
+                    })?;
+
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(VarZeroCow::from_encodeable(&MenuNameParts {
+                        core: VarZeroCow::from_encodeable(&name_core),
+                        extension: VarZeroCow::from_encodeable(&name_extension),
+                    })),
+                })
+            }
+        }
+
+        $crate::displaynames::impl_displaynames_iter_v1!(
+            $marker,
+            $resource,
+            $file,
+            $field,
+            Some(MENU_CORE_SUBSTRING)
+        );
+    };
+}
+
+macro_rules! impl_displaynames_iter_v1 {
+    ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
@@ -73,12 +144,8 @@ macro_rules! impl_displaynames_v1 {
                             let data_identifier = DataIdentifierCow::from_owned(
                                 DataMarkerAttributes::try_from_string(attr_str.to_string())
                                     .map_err(|_| {
-                                        DataError::custom(concat!(
-                                            "Failed to parse ",
-                                            $label,
-                                            " as attribute"
-                                        ))
-                                        .with_debug_context(&attr_str)
+                                        DataError::custom(concat!("Failed to parse attribute"))
+                                            .with_debug_context(&attr_str)
                                     })?,
                                 locale,
                             );
@@ -115,5 +182,7 @@ macro_rules! impl_displaynames_main_iter_v1 {
     };
 }
 
+pub(crate) use impl_displaynames_iter_v1;
 pub(crate) use impl_displaynames_main_iter_v1;
+pub(crate) use impl_displaynames_menu_v1;
 pub(crate) use impl_displaynames_v1;

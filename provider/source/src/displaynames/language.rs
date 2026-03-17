@@ -5,6 +5,7 @@
 use crate::cldr_serde;
 use crate::displaynames::{
     ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING,
+    MENU_CORE_SUBSTRING, MENU_EXTENSION_SUBSTRING,
 };
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
@@ -56,7 +57,6 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     None::<&str>,
-    "LanguageDisplayNames"
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -65,25 +65,13 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(ALT_SHORT_SUBSTRING),
-    "LanguageDisplayNames"
 );
 
-crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageMenuShortV1,
-    cldr_serde::displaynames::language::Resource,
-    "languages.json",
-    languages,
-    Some(ALT_MENU_SUBSTRING),
-    "LanguageDisplayNames"
-);
-
-crate::displaynames::impl_displaynames_v1!(
+crate::displaynames::impl_displaynames_menu_v1!(
     LocaleNamesLanguageMenuLongV1,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some(ALT_LONG_SUBSTRING),
-    "LanguageDisplayNames"
 );
 
 impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
@@ -337,31 +325,13 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_menu_short() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data: DataPayload<LocaleNamesLanguageMenuShortV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("zh").unwrap(),
-                    &langid!("en-001").into(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(&**data.get(), "Chinese, Mandarin");
-    }
-
-    #[test]
     fn test_locale_names_language_menu_long() {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesLanguageMenuLongV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("zh").unwrap(),
+                    DataMarkerAttributes::try_from_str("ku").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -369,6 +339,7 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "Mandarin Chinese");
+        assert_eq!(data.get().core(), "Kurdish");
+        assert_eq!(data.get().extension(), "Kurmanji");
     }
 }
