@@ -242,16 +242,9 @@ fn test_vancouver_2026() {
         let offset = UtcOffset::from_seconds_unchecked(-8 * 3600);
         let zone = TimeZone::from_iana_id("America/Vancouver")
             .with_offset(Some(offset))
-            .at_date_time(DateTime {
-                date,
-                time,
-            });
+            .at_date_time(DateTime { date, time });
 
-        let zdt = ZonedDateTime {
-            date,
-            time,
-            zone,
-        };
+        let zdt = ZonedDateTime { date, time, zone };
 
         assert_writeable_eq!(fmt.format(&zdt), "December 1, 2026 at 12:00\u{202f}PM PST");
     }
@@ -261,16 +254,9 @@ fn test_vancouver_2026() {
         let offset = UtcOffset::from_seconds_unchecked(-7 * 3600);
         let zone = TimeZone::from_iana_id("America/Vancouver")
             .with_offset(Some(offset))
-            .at_date_time(DateTime {
-                date,
-                time,
-            });
+            .at_date_time(DateTime { date, time });
 
-        let zdt = ZonedDateTime {
-            date,
-            time,
-            zone,
-        };
+        let zdt = ZonedDateTime { date, time, zone };
 
         assert_writeable_eq!(fmt.format(&zdt), "December 1, 2026 at 12:00\u{202f}PM PDT");
     }
