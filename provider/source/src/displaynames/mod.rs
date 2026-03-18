@@ -40,8 +40,7 @@ macro_rules! impl_displaynames_v1 {
                     .$field
                     .get(&key)
                     .ok_or_else(|| {
-                        DataError::custom(concat!("failed to find attribute"))
-                            .with_req($marker::INFO, req)
+                        DataError::custom("failed to find attribute").with_req($marker::INFO, req)
                     })?;
 
                 Ok(DataResponse {
@@ -80,8 +79,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     .$field
                     .get(&key_core)
                     .ok_or_else(|| {
-                        DataError::custom(concat!("failed to find attribute"))
-                            .with_req($marker::INFO, req)
+                        DataError::custom("failed to find attribute").with_req($marker::INFO, req)
                     })?;
 
                 let name_extension = data
@@ -91,8 +89,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     .$field
                     .get(&key_extension)
                     .ok_or_else(|| {
-                        DataError::custom(concat!("failed to find attribute"))
-                            .with_req($marker::INFO, req)
+                        DataError::custom("failed to find attribute").with_req($marker::INFO, req)
                     })?;
 
                 Ok(DataResponse {
@@ -133,7 +130,9 @@ macro_rules! impl_displaynames_iter_v1 {
                     for key_str in data.main.value.localedisplaynames.$field.keys() {
                         let attr = if let Some(suffix) = $suffix {
                             key_str.strip_suffix(suffix)
-                        } else if key_str.contains(crate::displaynames::ALT_SUBSTRING) || key_str.contains(crate::displaynames::MENU_SUBSTRING) {
+                        } else if key_str.contains(crate::displaynames::ALT_SUBSTRING)
+                            || key_str.contains(crate::displaynames::MENU_SUBSTRING)
+                        {
                             None
                         } else {
                             Some(key_str.as_str())
@@ -143,7 +142,7 @@ macro_rules! impl_displaynames_iter_v1 {
                             let data_identifier = DataIdentifierCow::from_owned(
                                 DataMarkerAttributes::try_from_string(attr_str.to_string())
                                     .map_err(|_| {
-                                        DataError::custom(concat!("Failed to parse attribute"))
+                                        DataError::custom("Failed to parse attribute")
                                             .with_debug_context(&attr_str)
                                     })?,
                                 locale,
