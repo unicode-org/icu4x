@@ -1,5 +1,5 @@
-datetime/names/dayperiod/v1, <lookup>, 4446B, 1028 identifiers
-datetime/names/dayperiod/v1, <total>, 17195B, 9973B, 314 unique payloads
+datetime/names/dayperiod/v1, <lookup>, 4448B, 1029 identifiers
+datetime/names/dayperiod/v1, <total>, 17147B, 9948B, 313 unique payloads
 datetime/names/dayperiod/v1, af/3, 47B, 24B, dc2d3f22238d96ba
 datetime/names/dayperiod/v1, af/3s, -> af/3
 datetime/names/dayperiod/v1, af/4, 36B, 13B, 5fab3f486a766900
@@ -541,12 +541,12 @@ datetime/names/dayperiod/v1, kn/4, 64B, 41B, 11843bcec8821be3
 datetime/names/dayperiod/v1, kn/4s, -> kn/3s
 datetime/names/dayperiod/v1, kn/5, -> kn/3
 datetime/names/dayperiod/v1, kn/5s, -> kn/3s
-datetime/names/dayperiod/v1, ko/3, 48B, 25B, 4a42a4b68960252c
+datetime/names/dayperiod/v1, ko/3, 56B, 33B, 98d783940c92b1dc
 datetime/names/dayperiod/v1, ko/3s, -> ko/3
 datetime/names/dayperiod/v1, ko/4, -> ko/3
 datetime/names/dayperiod/v1, ko/4s, -> ko/3
-datetime/names/dayperiod/v1, ko/5, 56B, 33B, 98d783940c92b1dc
-datetime/names/dayperiod/v1, ko/5s, -> ko/5
+datetime/names/dayperiod/v1, ko/5, -> ko/3
+datetime/names/dayperiod/v1, ko/5s, -> ko/3
 datetime/names/dayperiod/v1, kok-Latn/3, 43B, 20B, f346ac36b5b1c546
 datetime/names/dayperiod/v1, kok-Latn/3s, -> kok-Latn/3
 datetime/names/dayperiod/v1, kok-Latn/4, 36B, 13B, 29e21d4304fe22fc
@@ -726,11 +726,12 @@ datetime/names/dayperiod/v1, pl/4, 50B, 27B, 676be44aed7abccf
 datetime/names/dayperiod/v1, pl/4s, 46B, 23B, 3b08defbe71ac5e4
 datetime/names/dayperiod/v1, pl/5, -> pl/3
 datetime/names/dayperiod/v1, pl/5s, -> pl/3s
-datetime/names/dayperiod/v1, ps/3s, 40B, 17B, b0861a547ba20a9e
-datetime/names/dayperiod/v1, ps/4, -> ps/3s
-datetime/names/dayperiod/v1, ps/4s, -> ps/3s
-datetime/names/dayperiod/v1, ps/5, -> ps/3s
-datetime/names/dayperiod/v1, ps/5s, -> ps/3s
+datetime/names/dayperiod/v1, ps/3, 40B, 17B, b0861a547ba20a9e
+datetime/names/dayperiod/v1, ps/3s, -> ps/3
+datetime/names/dayperiod/v1, ps/4, -> ps/3
+datetime/names/dayperiod/v1, ps/4s, -> ps/3
+datetime/names/dayperiod/v1, ps/5, -> ps/3
+datetime/names/dayperiod/v1, ps/5s, -> ps/3
 datetime/names/dayperiod/v1, pt-PT/3, 58B, 35B, 7b0bc1223c641110
 datetime/names/dayperiod/v1, pt-PT/3s, -> pt-PT/3
 datetime/names/dayperiod/v1, pt-PT/4, -> pt-PT/3
