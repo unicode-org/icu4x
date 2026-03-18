@@ -28,8 +28,16 @@ extern crate alloc;
 
 mod macro_impls;
 mod zero_from;
+mod zf_transparent;
 
 #[cfg(feature = "derive")]
 pub use zerofrom_derive::ZeroFrom;
 
 pub use crate::zero_from::ZeroFrom;
+
+#[cfg(feature = "alloc")]
+#[doc(hidden)] // for macros
+pub mod internal {
+    pub use alloc::boxed::Box;
+    pub use alloc::rc::Rc;
+}
