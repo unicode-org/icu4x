@@ -243,12 +243,12 @@ fn test_vancouver_2026() {
         let zone = TimeZone::from_iana_id("America/Vancouver")
             .with_offset(Some(offset))
             .at_date_time(DateTime {
-                date: date.clone(),
+                date,
                 time,
             });
 
         let zdt = ZonedDateTime {
-            date: date.clone(),
+            date,
             time,
             zone,
         };
@@ -262,12 +262,12 @@ fn test_vancouver_2026() {
         let zone = TimeZone::from_iana_id("America/Vancouver")
             .with_offset(Some(offset))
             .at_date_time(DateTime {
-                date: date.clone(),
+                date,
                 time,
             });
 
         let zdt = ZonedDateTime {
-            date: date.clone(),
+            date,
             time,
             zone,
         };
