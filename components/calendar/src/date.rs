@@ -802,16 +802,12 @@ mod tests {
         // 10 Adar I 5787
         // 5787 is a leap year; 5788 is not
         let mut date = Date::try_new(5787.into(), Month::leap(5), 10, Hebrew).unwrap();
-
-        // Panics with:
-        // called `Result::unwrap()` on an `Err` value: UnknownMonthCode(MonthCode("M05L"))
         date.try_add_with_options(DateDuration::for_years(1), DateAddOptions::default())
             .unwrap();
-
         assert_eq!(date.month().to_input(), Month::new(6));
 
         // Leap Month 6, day 1, 2025.
-        //
+        // 2025 is a leap year; 2026 is not
         let mut date = Date::try_new(
             2025.into(),
             Month::leap(6),
