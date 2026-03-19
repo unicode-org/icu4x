@@ -103,7 +103,6 @@ fn make_testdata() {
     .with_marker_attributes_filter("locale_names_script", |attrs| {
         matches!(
             attrs.as_str(),
-            // Latn: standard, Hant/Hans: contrast zh-Hant, Cans: has short
             "Latn" // standard
             | "Hans" | "Hant" // for contrast
             | "Cans" // has short script name
