@@ -815,7 +815,9 @@ mod tests {
             ChineseTraditional::default(),
         )
         .unwrap();
+
         date.try_add_with_options(DateDuration::for_years(1), DateAddOptions::default())
             .unwrap();
+        assert_eq!(date.month().to_input(), Month::new(6));
     }
 }
