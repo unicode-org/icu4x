@@ -663,9 +663,13 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
             return Ok(leap_month_sentinel);
         }
 
-        if leap && options.overflow != Some(Overflow::Constrain) {
-            // wrong leap month and not constraining
-            return Err(MonthError::NotInYear);
+        if leap {
+            // This leap month doesn't exist in the year, reject if needed
+            match options.overflow {
+                Some(Overflow::Reject) => return Err(MonthError::NotInYear),
+                // Written as a match for exhaustiveness
+                Some(Overflow::Constrain) | None => (),
+            }
         }
 
         // add one if there was a leap month before

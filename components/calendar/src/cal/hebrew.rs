@@ -225,11 +225,12 @@ impl DateFieldsResolver for Hebrew {
             (5, true) => {
                 if is_leap_year {
                     6
-                } else if matches!(options.overflow, Some(Overflow::Constrain)) {
-                    // M05L maps to M06 in a common year
-                    6
                 } else {
-                    return Err(MonthError::NotInYear);
+                    // Requesting Adar 1 in non-leap year, handle constrain/reject behavior
+                    match options.overflow {
+                        Some(Overflow::Constrain) | None => 6,
+                        Some(Overflow::Reject) => return Err(MonthError::NotInYear),
+                    }
                 }
             }
             _ => return Err(MonthError::NotInCalendar),
