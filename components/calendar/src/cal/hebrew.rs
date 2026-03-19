@@ -217,7 +217,7 @@ impl DateFieldsResolver for Hebrew {
         &self,
         year: Self::YearInfo,
         month: Month,
-        options: DateFromFieldsOptions,
+        overflow: Overflow,
     ) -> Result<u8, MonthError> {
         let is_leap_year = year.keviyah.is_leap();
         let ordinal_month = match (month.number(), month.is_leap()) {
@@ -227,9 +227,9 @@ impl DateFieldsResolver for Hebrew {
                     6
                 } else {
                     // Requesting Adar 1 in non-leap year, handle constrain/reject behavior
-                    match options.overflow {
-                        Some(Overflow::Constrain) | None => 6,
-                        Some(Overflow::Reject) => return Err(MonthError::NotInYear),
+                    match overflow {
+                        Overflow::Constrain => 6,
+                        Overflow::Reject => return Err(MonthError::NotInYear),
                     }
                 }
             }

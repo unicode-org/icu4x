@@ -100,15 +100,6 @@ mod unstable {
         pub missing_fields_strategy: Option<MissingFieldsStrategy>,
     }
 
-    impl DateFromFieldsOptions {
-        pub(crate) fn from_add_options(options: DateAddOptions) -> Self {
-            Self {
-                overflow: options.overflow,
-                missing_fields_strategy: Default::default(),
-            }
-        }
-    }
-
     /// Options for adding a duration to a date.
     ///
     /// <div class="stab unstable">

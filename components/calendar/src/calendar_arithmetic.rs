@@ -258,7 +258,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
         &self,
         year: Self::YearInfo,
         month: Month,
-        _options: DateFromFieldsOptions,
+        _overflow: Overflow,
     ) -> Result<u8, MonthError> {
         match (month.number(), month.is_leap()) {
             (month_number, false)
@@ -340,7 +340,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let year = calendar.year_info_from_extended(extended_year);
 
         let month = calendar
-            .ordinal_from_month(year, month, Default::default())
+            .ordinal_from_month(year, month, Overflow::Reject)
             .map_err(|e| match e {
                 MonthError::NotInCalendar => DateNewError::MonthNotInCalendar,
                 MonthError::NotInYear => DateNewError::MonthNotInYear,
@@ -367,7 +367,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         }
         let year = calendar.year_info_from_extended(year);
 
-        let month = match calendar.ordinal_from_month(year, month, Default::default()) {
+        let month = match calendar.ordinal_from_month(year, month, Overflow::Reject) {
             Ok(month) => month,
             Err(MonthError::NotInCalendar) => return Err(LunisolarDateError::MonthNotInCalendar),
             Err(MonthError::NotInYear) => return Err(LunisolarDateError::MonthNotInYear),
@@ -388,6 +388,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         calendar: &C,
     ) -> Result<Self, DateFromFieldsError> {
         let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
+
+        // DateFromFieldsOptions documents the default as reject
+        let overflow = options.overflow.unwrap_or(Overflow::Reject);
 
         let day = match fields.day {
             Some(day) => day,
@@ -444,7 +447,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                         };
                         let ref_year = calendar.reference_year_from_month_day(m, d);
                         if ref_year.err() == Some(EcmaReferenceYearError::UseRegularIfConstrain)
-                            && options.overflow == Some(Overflow::Constrain)
+                            && overflow == Overflow::Constrain
                         {
                             let new_valid_month = Month::new(m.number());
                             valid_month = Some(new_valid_month);
@@ -475,7 +478,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
         let month = match (fields.month_code, fields.month) {
             (_, Some(month)) => {
-                let computed_month = calendar.ordinal_from_month(year, month, options)?;
+                let computed_month = calendar.ordinal_from_month(year, month, overflow)?;
                 if let Some(ordinal_month) = fields.ordinal_month {
                     if computed_month != ordinal_month {
                         return Err(DateFromFieldsError::InconsistentMonth);
@@ -488,7 +491,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                     Some(validated) => validated,
                     None => Month::try_from_utf8(month_code)?,
                 };
-                let computed_month = calendar.ordinal_from_month(year, validated, options)?;
+                let computed_month = calendar.ordinal_from_month(year, validated, overflow)?;
                 if let Some(ordinal_month) = fields.ordinal_month {
                     if computed_month != ordinal_month {
                         return Err(DateFromFieldsError::InconsistentMonth);
@@ -506,7 +509,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         };
 
         let max_month = C::months_in_provided_year(year);
-        let month = if matches!(options.overflow.unwrap_or_default(), Overflow::Constrain) {
+        let month = if matches!(overflow, Overflow::Constrain) {
             month.clamp(1, max_month)
         } else if (1..=max_month).contains(&month) {
             month
@@ -515,7 +518,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         };
 
         let max_day = C::days_in_provided_month(year, month);
-        let day = if matches!(options.overflow.unwrap_or_default(), Overflow::Constrain) {
+        let day = if matches!(overflow, Overflow::Constrain) {
             day.clamp(1, max_day)
         } else if (1..=max_day).contains(&day) {
             day
@@ -770,11 +773,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             return true;
         }
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let constrain = DateFromFieldsOptions {
-            overflow: Some(Overflow::Constrain),
-            ..Default::default()
-        };
-        let m0_result = cal.ordinal_from_month(y0, base_month, constrain);
+        let m0_result = cal.ordinal_from_month(y0, base_month, Overflow::Constrain);
         let m0 = match m0_result {
             Ok(m0) => m0,
             Err(_) => {
@@ -870,6 +869,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             return Err(DateAddError::Overflow);
         }
 
+        // DateAddOptions documents the default as constrain
+        let overflow = options.overflow.unwrap_or(Overflow::Constrain);
+
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _isoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let extended_year = duration.add_years_to(self.year().to_extended_year());
@@ -879,11 +881,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let y0 = cal.year_info_from_extended(extended_year);
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
         let base_month = cal.month_from_ordinal(self.year(), self.month());
-        let m0_result = cal.ordinal_from_month(
-            y0,
-            base_month,
-            DateFromFieldsOptions::from_add_options(options),
-        );
+        let m0_result = cal.ordinal_from_month(y0, base_month, overflow);
         let m0 = match m0_result {
             Ok(m0) => m0,
             Err(MonthError::NotInCalendar) => {
@@ -907,7 +905,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             // 1. Else,
             //   1. If _overflow_ is ~reject~, throw a *RangeError* exception.
             // Note: ICU4X default is constrain here
-            if matches!(options.overflow, Some(Overflow::Reject)) {
+            if overflow == Overflow::Reject {
                 return Err(DateAddError::InvalidDay {
                     max: end_of_month.day,
                 });
@@ -1155,11 +1153,10 @@ impl<'a, C: DateFieldsResolver> SurpassesChecker<'a, C> {
             self.cal,
         );
         // 5. Let m0 be MonthCodeToOrdinal(calendar, y0, ! ConstrainMonthCode(calendar, y0, parts.[[MonthCode]], constrain)).
-        let constrain = DateFromFieldsOptions {
-            overflow: Some(Overflow::Constrain),
-            ..Default::default()
-        };
-        let m0_result = self.cal.ordinal_from_month(self.y0, base_month, constrain);
+
+        let m0_result = self
+            .cal
+            .ordinal_from_month(self.y0, base_month, Overflow::Constrain);
         self.m0 = match m0_result {
             Ok(m0) => m0,
             Err(_) => {
