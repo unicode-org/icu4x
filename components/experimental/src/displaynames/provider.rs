@@ -163,8 +163,12 @@ pub struct VariantDisplayNames<'data> {
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 pub struct MenuNameParts<'data> {
     /// The "core" part of a language menu display name.
+    ///
+    /// For example, "Kurdish" in "Kurdish (Kurmanji)".
     pub core: VarZeroCow<'data, str>,
     /// The "extension" part of a language menu display name.
+    ///
+    /// For example, "Kurmanji" in "Kurdish (Kurmanji)".
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extension: VarZeroCow<'data, str>,
 }

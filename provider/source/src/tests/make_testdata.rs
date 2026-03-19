@@ -83,17 +83,31 @@ fn make_testdata() {
     .with_marker_attributes_filter("locale_names_region", |attrs| {
         matches!(
             attrs.as_str(),
-            "001" | "419" | "FR" | "JP" | "CG" | "HK" | "ZA"
+            "419" // part of dialect name
+            | "FR" // standard
+            | "CG" | "MM" // nested parens
+            | "HK" // has alt name
         )
     })
     .with_marker_attributes_filter("locale_names_language", |attrs| {
         matches!(
             attrs.as_str(),
-            "fr" | "zh" | "en-GB" | "zh-Hant" | "de-CH" | "ku"
+            "fr" // standard
+            | "zh" // has short menu name
+            | "en-GB" // has short name
+            | "zh-Hant" // has long menu name but not short menu name
+            | "de-CH" // has dialect name
+            | "ku" // has menu attributes
         )
     })
     .with_marker_attributes_filter("locale_names_script", |attrs| {
-        matches!(attrs.as_str(), "Latn" | "Hans" | "Hant" | "Cans")
+        matches!(
+            attrs.as_str(),
+            // Latn: standard, Hant/Hans: contrast zh-Hant, Cans: has short
+            "Latn" // standard
+            | "Hans" | "Hant" // for contrast
+            | "Cans" // has short script name
+        )
     })
     .with_marker_attributes_filter("locale_names_variant", |attrs| {
         matches!(attrs.as_str(), "POSIX")

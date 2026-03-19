@@ -17,6 +17,14 @@ pub(crate) const MENU_EXTENSION_SUBSTRING: &str = "-menu-extension";
 // TODO: ALT_MENU_SUBSTRING should be dead. Remove when possible.
 pub(crate) const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 
+/// Macro for implementing a single-name display names data provider.
+///
+/// Parameters:
+/// - `$marker`: The data marker type.
+/// - `$resource`: The CLDR serde resource type.
+/// - `$file`: The JSON file name in CLDR.
+/// - `$field`: The field name in `LocaleDisplayNames` containing the data.
+/// - `$suffix`: An optional string to append to the marker attribute to form the CLDR key.
 macro_rules! impl_displaynames_v1 {
     ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr,) => {
         impl DataProvider<$marker> for SourceDataProvider {
@@ -56,6 +64,13 @@ macro_rules! impl_displaynames_v1 {
     };
 }
 
+/// Macro for implementing a menu display names data provider.
+///
+/// Parameters:
+/// - `$marker`: The data marker type.
+/// - `$resource`: The CLDR serde resource type.
+/// - `$file`: The JSON file name in CLDR.
+/// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 macro_rules! impl_displaynames_menu_v1 {
     ($marker:ident, $resource:path, $file:literal, $field:ident,) => {
         impl DataProvider<$marker> for SourceDataProvider {
@@ -112,6 +127,14 @@ macro_rules! impl_displaynames_menu_v1 {
     };
 }
 
+/// Macro for implementing the iterable data provider for display names.
+///
+/// Parameters:
+/// - `$marker`: The data marker type.
+/// - `$resource`: The CLDR serde resource type.
+/// - `$file`: The JSON file name in CLDR.
+/// - `$field`: The field name in `LocaleDisplayNames` containing the data.
+/// - `$suffix`: An optional string that marks which entries to include in this provider.
 macro_rules! impl_displaynames_iter_v1 {
     ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
@@ -157,6 +180,11 @@ macro_rules! impl_displaynames_iter_v1 {
     };
 }
 
+/// Macro for implementing the iterable data provider for legacy display name markers.
+///
+/// Parameters:
+/// - `$marker`: The data marker type.
+/// - `$file`: The JSON file name in CLDR.
 macro_rules! impl_displaynames_legacy_iter_v1 {
     ($marker:ident, $file:literal) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
