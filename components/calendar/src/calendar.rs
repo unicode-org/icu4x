@@ -103,17 +103,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ) -> Result<Self::DateInner, DateNewError>;
 
     /// Construct a date from a bag of date fields.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
-    ///
-    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
-    /// </div>
-    ///
-    /// ✨ *Enabled with the `unstable` Cargo feature.*
     #[expect(clippy::wrong_self_convention)]
-    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: types::DateFields,
@@ -177,16 +167,6 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
     /// Add `duration` to `date`
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
-    ///
-    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
-    /// </div>
-    ///
-    /// ✨ *Enabled with the `unstable` Cargo feature.*
-    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
@@ -197,16 +177,6 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// Calculate `date2 - date` as a duration.
     ///
     /// This requires the associated calendars to have passed [`Self::check_date_compatibility`].
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
-    ///
-    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
-    /// </div>
-    ///
-    /// ✨ *Enabled with the `unstable` Cargo feature.*
-    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,

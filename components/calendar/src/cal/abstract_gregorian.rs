@@ -96,7 +96,6 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
             .map(ArithmeticDate::cast)
     }
 
-    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: types::DateFields,
@@ -142,7 +141,6 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         AbstractGregorian::<IsoEra>::days_in_provided_month(date.year(), date.month())
     }
 
-    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
@@ -152,7 +150,6 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date.added(duration, &AbstractGregorian(IsoEra), options)
     }
 
-    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,
@@ -231,7 +228,6 @@ macro_rules! impl_with_abstract_gregorian {
                     .map($inner_date_ty)
             }
 
-            #[cfg(feature = "unstable")]
             fn from_fields(
                 &self,
                 fields: crate::types::DateFields,
@@ -289,7 +285,6 @@ macro_rules! impl_with_abstract_gregorian {
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).days_in_month(&date.0)
             }
 
-            #[cfg(feature = "unstable")]
             fn add(
                 &self,
                 date: &Self::DateInner,
@@ -302,7 +297,6 @@ macro_rules! impl_with_abstract_gregorian {
                     .map($inner_date_ty)
             }
 
-            #[cfg(feature = "unstable")]
             fn until(
                 &self,
                 date1: &Self::DateInner,

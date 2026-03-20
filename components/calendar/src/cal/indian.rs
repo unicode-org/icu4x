@@ -141,7 +141,6 @@ impl Calendar for Indian {
         ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(IndianDateInner)
     }
 
-    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: DateFields,
@@ -217,7 +216,6 @@ impl Calendar for Indian {
         Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
-    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
@@ -227,7 +225,6 @@ impl Calendar for Indian {
         date.0.added(duration, self, options).map(IndianDateInner)
     }
 
-    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,

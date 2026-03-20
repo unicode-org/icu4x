@@ -8,9 +8,7 @@ import com.sun.jna.Structure
 
 internal interface DateMissingFieldsStrategyLib: Library {
 }
-/** 🚧 This API is unstable and may experience breaking changes outside major releases.
-*
-*See the [Rust documentation for `MissingFieldsStrategy`](https://docs.rs/icu/2.1.1/icu/calendar/options/enum.MissingFieldsStrategy.html) for more information.
+/** See the [Rust documentation for `MissingFieldsStrategy`](https://docs.rs/icu/2.1.1/icu/calendar/options/enum.MissingFieldsStrategy.html) for more information.
 */
 enum class DateMissingFieldsStrategy {
     Reject,

@@ -82,8 +82,6 @@ export class Date {
     /**
      * Creates a new {@link Date} from the given fields, which are interpreted in the given calendar system.
      *
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
      */
     static fromFieldsInCalendar(fields, options, calendar) {
@@ -575,8 +573,6 @@ export class Date {
     /**
      * Returns a new {@link Date} with the given duration added to it.
      *
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
      */
     tryAddWithOptions(duration, options) {
@@ -605,8 +601,6 @@ export class Date {
 
     /**
      * Calculating the duration between `other - self`
-     *
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
      * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
      */

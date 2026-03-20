@@ -21,8 +21,6 @@ macro_rules! make_any_calendar {
         $(#[$any_date_meta:meta])*
         $any_date_ident:ident,
 
-        #[$unstable_cfg:meta],
-
         $(
             $(#[$variant_meta:meta])*
             $variant:ident($ty:ty),
@@ -82,7 +80,6 @@ macro_rules! make_any_calendar {
                 })
             }
 
-            #[$unstable_cfg]
             fn from_fields(
                 &self,
                 fields: $crate::types::DateFields,
@@ -223,7 +220,6 @@ macro_rules! make_any_calendar {
                 }
             }
 
-            #[$unstable_cfg]
             fn add(
                 &self,
                 date: &Self::DateInner,
@@ -243,7 +239,6 @@ macro_rules! make_any_calendar {
                 Ok(date)
             }
 
-            #[$unstable_cfg]
             fn until(
                 &self,
                 date1: &Self::DateInner,
@@ -391,7 +386,6 @@ make_any_calendar!(
 
     #[non_exhaustive]
     AnyDateInner,
-    #[cfg(feature = "unstable")],
 
     Buddhist(Buddhist),
     Chinese(ChineseTraditional),

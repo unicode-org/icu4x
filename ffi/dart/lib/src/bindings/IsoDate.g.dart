@@ -181,8 +181,6 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns a new [IsoDate] with the given duration added to it.
   ///
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
   ///
   /// Throws [CalendarDateAddError] on failure.
@@ -196,8 +194,6 @@ final class IsoDate implements ffi.Finalizable {
   }
 
   /// Calculating the duration between `other - self`
-  ///
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
   /// See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
   DateDuration untilWithOptions(IsoDate other, DateDifferenceOptions options) {

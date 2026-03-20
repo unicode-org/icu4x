@@ -81,7 +81,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::error::DateFromFieldsError, Enum, compact)]
-    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     #[non_exhaustive]
     #[diplomat::attr(auto, error)]
     pub enum CalendarDateFromFieldsError {
@@ -102,7 +102,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::error::DateAddError, Enum, compact)]
-    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     #[non_exhaustive]
     #[diplomat::attr(auto, error)]
     pub enum CalendarDateAddError {
@@ -115,7 +115,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::error::MismatchedCalendarError, Struct, compact)]
-    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     #[non_exhaustive]
     #[diplomat::attr(auto, error)]
     pub struct CalendarMismatchedCalendarError;
@@ -123,7 +123,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::error::DateDurationParseError, Enum, compact)]
-    #[cfg(all(feature = "unstable", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     #[non_exhaustive]
     #[diplomat::attr(auto, error)]
     pub enum DateDurationParseError {
@@ -260,7 +260,6 @@ impl From<icu_calendar::DateError> for CalendarError {
 }
 
 #[cfg(feature = "calendar")]
-#[cfg(all(feature = "unstable", feature = "calendar"))]
 impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsError {
     fn from(e: icu_calendar::error::DateFromFieldsError) -> Self {
         match e {
@@ -301,7 +300,6 @@ impl From<icu_calendar::error::DateNewError> for CalendarError {
 }
 
 #[cfg(feature = "calendar")]
-#[cfg(all(feature = "unstable", feature = "calendar"))]
 impl From<icu_calendar::error::DateAddError> for CalendarDateAddError {
     fn from(e: icu_calendar::error::DateAddError) -> Self {
         match e {
@@ -314,7 +312,6 @@ impl From<icu_calendar::error::DateAddError> for CalendarDateAddError {
 }
 
 #[cfg(feature = "calendar")]
-#[cfg(all(feature = "unstable", feature = "calendar"))]
 impl From<icu_calendar::error::DateDurationParseError> for DateDurationParseError {
     fn from(e: icu_calendar::error::DateDurationParseError) -> Self {
         match e {

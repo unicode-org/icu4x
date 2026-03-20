@@ -101,17 +101,6 @@ use crate::error::DateDurationParseError;
 /// assert_eq!(mutated_date_iso.month().ordinal, 11);
 /// assert_eq!(mutated_date_iso.day_of_month().0, 27);
 /// ```
-///
-/// Currently unstable for ICU4X 1.0
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
-///
-/// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
-/// </div>
-///
-/// ✨ *Enabled with the `unstable` Cargo feature.*
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Default)]
 #[allow(clippy::exhaustive_structs)] // spec-defined in Temporal
 pub struct DateDuration {

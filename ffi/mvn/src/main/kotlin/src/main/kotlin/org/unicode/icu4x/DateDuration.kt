@@ -96,8 +96,6 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         
         /** Creates a new [DateDuration] from an ISO 8601 string.
         *
-        *🚧 This API is unstable and may experience breaking changes outside major releases.
-        *
         *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<DateDuration> {
@@ -120,8 +118,6 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         
         /** Returns a new [DateDuration] representing a number of years.
         *
-        *🚧 This API is unstable and may experience breaking changes outside major releases.
-        *
         *See the [Rust documentation for `for_years`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
         */
         fun forYears(years: Int): DateDuration {
@@ -133,8 +129,6 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         @JvmStatic
         
         /** Returns a new [DateDuration] representing a number of months.
-        *
-        *🚧 This API is unstable and may experience breaking changes outside major releases.
         *
         *See the [Rust documentation for `for_months`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
         */
@@ -148,8 +142,6 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         
         /** Returns a new [DateDuration] representing a number of weeks.
         *
-        *🚧 This API is unstable and may experience breaking changes outside major releases.
-        *
         *See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
         */
         fun forWeeks(weeks: Int): DateDuration {
@@ -161,8 +153,6 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         @JvmStatic
         
         /** Returns a new [DateDuration] representing a number of days.
-        *
-        *🚧 This API is unstable and may experience breaking changes outside major releases.
         *
         *See the [Rust documentation for `for_days`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
         */

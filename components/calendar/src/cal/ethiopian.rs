@@ -157,7 +157,6 @@ impl Calendar for Ethiopian {
             .map(EthiopianDateInner)
     }
 
-    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: DateFields,
@@ -193,7 +192,6 @@ impl Calendar for Ethiopian {
         Coptic.days_in_month(&date.0)
     }
 
-    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
@@ -205,7 +203,6 @@ impl Calendar for Ethiopian {
             .map(EthiopianDateInner)
     }
 
-    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,
