@@ -13,6 +13,7 @@ fn load_irg_from_baked() -> &'static UnihanIrgData<'static> {
 }
 
 static MODEL_FOR_TEST: &str = include_str!("model.json");
+static MODEL_FOR_TEST_THAI: &str = include_str!("model_thai.json");
 
 static CODEPOINTS: &[u16] = &[
     20008, 20022, 20031, 20057, 20101, 20108, 20128, 20154, 20799, 20837, 20843, 20866, 20886,
@@ -130,6 +131,111 @@ impl<'a> Predictor<'a> {
         mask
     }
 
+    pub(crate) fn predict_thai(&self, sentence: &str) -> Vec<i16> {
+        let chars: Vec<char> = sentence.chars().collect();
+        if chars.is_empty() {
+            return Vec::new();
+        }
+
+        let mut mask = Vec::with_capacity(chars.len());
+
+        for i in 1..chars.len() {
+            let c_prev = chars[i - 1];
+            let c = chars[i];
+
+            let mut score: i16 = -3755;
+
+            if i > 2 {
+                if let Some(map) = self.model.get("TW1") {
+                    let key: String = chars[i - 3..=i - 1].iter().collect();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if i > 1 {
+                if let Some(map) = self.model.get("TW2") {
+                    let key: String = chars[i - 2..=i].iter().collect();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if i + 1 < chars.len() {
+                if let Some(map) = self.model.get("TW3") {
+                    let key: String = chars[i - 1..=i + 1].iter().collect();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if i + 2 < chars.len() {
+                if let Some(map) = self.model.get("TW4") {
+                    let key: String = chars[i..=i + 2].iter().collect();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if i > 1 {
+                if let Some(map) = self.model.get("BW1") {
+                    let key: String = chars[i - 2..=i - 1].iter().collect();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if let Some(map) = self.model.get("BW2") {
+                let key: String = chars[i - 1..=i].iter().collect();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
+            }
+
+            if i + 1 < chars.len() {
+                if let Some(map) = self.model.get("BW3") {
+                    let key: String = chars[i..=i + 1].iter().collect();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if i > 2 {
+                if let Some(map) = self.model.get("UW1") {
+                    let key = chars[i - 3].to_string();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if i > 1 {
+                if let Some(map) = self.model.get("UW2") {
+                    let key = chars[i - 2].to_string();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if let Some(map) = self.model.get("UW3") {
+                let key = c_prev.to_string();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
+            }
+
+            if let Some(map) = self.model.get("UW4") {
+                let key = c.to_string();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
+            }
+
+            if i + 1 < chars.len() {
+                if let Some(map) = self.model.get("UW5") {
+                    let key = chars[i + 1].to_string();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            if i + 2 < chars.len() {
+                if let Some(map) = self.model.get("UW6") {
+                    let key = chars[i + 2].to_string();
+                    score += map.get(&key).copied().unwrap_or(0) << 1;
+                }
+            }
+
+            mask.push(score);
+        }
+
+        mask
+    }
+
     pub(crate) fn predict_breakpoints(&self, sentence: &str) -> Vec<usize> {
         let mut breakpoints = vec![0];
         let mut offset = 0;
@@ -146,6 +252,16 @@ impl<'a> Predictor<'a> {
 #[cfg(test)]
 fn python_test_output() -> Vec<i16> {
     const PYTHON_OUTPUT: &str = include_str!("python_test_output.txt");
+    PYTHON_OUTPUT
+        .split_whitespace()
+        .filter(|s| !s.is_empty())
+        .map(|s| s.parse::<i16>().expect("failed to parse reference float"))
+        .collect()
+}
+
+#[cfg(test)]
+fn python_test_output_thai() -> Vec<i16> {
+    const PYTHON_OUTPUT: &str = include_str!("python_test_output_thai.txt");
     PYTHON_OUTPUT
         .split_whitespace()
         .filter(|s| !s.is_empty())
@@ -180,10 +296,23 @@ fn rust_matches_python_probs() {
             .to_string();
     let mask = predictor.predict(&sentence);
 
+    let sentence = "ประเทศไทย หรือชื่อทางการว่า ราชอาณาจักรไทย เดิมเรียกว่า สยาม".to_string();
+    let mask_thai = predictor_thai.predict_thai(&sentence);
+
     assert_eq!(mask.len(), python.len());
+    assert_eq!(mask_thai.len(), python_thai.len());
 
     let tol = 0;
     for (i, (&got, &expected)) in mask.iter().zip(python.iter()).enumerate() {
+        let diff = (got - expected).abs();
+        assert!(
+            diff <= tol,
+            "mismatch at index {i}: got={got:}, expected={expected:}, diff={diff:}"
+        );
+    }
+
+    let tol = 0;
+    for (i, (&got, &expected)) in mask_thai.iter().zip(python_thai.iter()).enumerate() {
         let diff = (got - expected).abs();
         assert!(
             diff <= tol,
