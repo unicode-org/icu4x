@@ -4,13 +4,12 @@
 
 #![allow(dead_code)]
 
-use icu::segmenter::provider::{SegmenterUnihanIrgV1, UnihanIrgData};
-use icu_provider::prelude::*;
+use icu::segmenter::provider::UnihanIrgData;
 use icu_segmenter::provider::Baked;
 use std::collections::HashMap;
 
-fn load_irg_from_baked() -> DataPayload<SegmenterUnihanIrgV1> {
-    Baked.load(DataRequest::default()).unwrap().payload
+fn load_irg_from_baked() -> &'static UnihanIrgData<'static> {
+    Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1
 }
 
 static MODEL_FOR_TEST: &str = include_str!("model.json");
@@ -53,6 +52,10 @@ impl<'a> Predictor<'a> {
 
     pub(crate) fn for_test(irg: &'a UnihanIrgData<'a>) -> Self {
         Self::from_json(MODEL_FOR_TEST, irg)
+    }
+
+    pub(crate) fn for_test_thai(irg: &'a UnihanIrgData<'a>) -> Self {
+        Self::from_json(MODEL_FOR_TEST_THAI, irg)
     }
 
     pub(crate) fn predict(&self, sentence: &str) -> Vec<i16> {
@@ -152,8 +155,7 @@ fn python_test_output() -> Vec<i16> {
 
 #[test]
 fn main() {
-    let payload = load_irg_from_baked();
-    let irg = payload.get();
+    let irg = load_irg_from_baked();
     let predictor = Predictor::for_test(irg);
 
     let sentence =
@@ -168,9 +170,10 @@ fn main() {
 #[test]
 fn rust_matches_python_probs() {
     let python = python_test_output();
-    let payload = load_irg_from_baked();
-    let irg = payload.get();
+    let python_thai = python_test_output_thai();
+    let irg = load_irg_from_baked();
     let predictor = Predictor::for_test(irg);
+    let predictor_thai = Predictor::for_test_thai(irg);
 
     let sentence =
         "根据最新的财报数据显示，该公司的市盈率已经达到了历史最低点，但是其核心竞争力依然保持稳定增长的态势。"

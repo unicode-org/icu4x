@@ -6,26 +6,27 @@
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::collections::codepointtrie;
-use icu::segmenter::provider::{SegmenterUnihanIrgV1, UnihanIrgData};
+use icu::segmenter::provider::{SegmenterUnihanRadicalV1, UnihanIrgData};
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl DataProvider<SegmenterUnihanIrgV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterUnihanIrgV1>, DataError> {
+impl DataProvider<SegmenterUnihanRadicalV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterUnihanRadicalV1>, DataError> {
         #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
         return Err(
             DataError::custom("Unihan data generation requires use_wasm or use_icu4c")
-                .with_req(SegmenterUnihanIrgV1::INFO, req),
+                .with_req(SegmenterUnihanRadicalV1::INFO, req),
         );
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            self.check_req::<SegmenterUnihanIrgV1>(req)?;
+            self.check_req::<SegmenterUnihanRadicalV1>(req)?;
 
             let unihan_cache = self.unihan()?;
-            let irg_map = unihan_cache.irg_sources()?;
+            let ucd = self.ucd()?;
+            let irg_map = unihan_cache.irg_sources(ucd)?;
 
             let mut builder = CodePointTrieBuilder::new(
                 0u8,
@@ -50,7 +51,7 @@ impl DataProvider<SegmenterUnihanIrgV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<SegmenterUnihanIrgV1> for SourceDataProvider {
+impl IterableDataProviderCached<SegmenterUnihanRadicalV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::new())
     }
@@ -59,7 +60,7 @@ impl IterableDataProviderCached<SegmenterUnihanIrgV1> for SourceDataProvider {
 #[cfg(test)]
 mod tests {
     use crate::SourceDataProvider;
-    use icu::segmenter::provider::SegmenterUnihanIrgV1;
+    use icu::segmenter::provider::SegmenterUnihanRadicalV1;
     use icu_provider::prelude::*;
 
     #[test]
@@ -82,7 +83,7 @@ mod tests {
     fn test_chinese_irg_values_trie() {
         let provider = SourceDataProvider::new_testing();
 
-        let response: DataResponse<SegmenterUnihanIrgV1> = provider
+        let response: DataResponse<SegmenterUnihanRadicalV1> = provider
             .load(DataRequest::default())
             .expect("Failed to build CodePointTrie from Unihan data");
 

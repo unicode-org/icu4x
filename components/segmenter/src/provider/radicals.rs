@@ -24,8 +24,8 @@ icu_provider::data_struct!(
 );
 
 icu_provider::data_marker!(
-    /// `SegmenterUnihanIrgV1`
-    SegmenterUnihanIrgV1,
+    /// `SegmenterUnihanRadicalV1`
+    SegmenterUnihanRadicalV1,
     "segmenter/unihan/irg/v1",
     UnihanIrgData<'static>,
     is_singleton = true

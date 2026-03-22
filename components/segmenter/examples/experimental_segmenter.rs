@@ -13,8 +13,6 @@ mod cnn;
 
 use adaboost::Predictor;
 use cnn::{CnnSegmenter, RawCnnData};
-use icu::segmenter::provider::SegmenterUnihanIrgV1;
-use icu_provider::prelude::*;
 use icu_segmenter::provider::Baked;
 use icu_segmenter::{options::WordBreakOptions, WordSegmenter, WordSegmenterBorrowed};
 use std::time::SystemTime;
@@ -22,11 +20,7 @@ use std::time::SystemTime;
 const REPETITIONS: usize = 1000;
 
 fn main_adaboost(args: &[String]) {
-    let response: DataResponse<SegmenterUnihanIrgV1> = Baked.load(DataRequest::default()).unwrap();
-
-    let payload = response.payload;
-    let irg = payload.get();
-
+    let irg = Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1;
     let segmenter = Predictor::for_test(irg);
     let s = &args[0];
     let start_time = SystemTime::now();
