@@ -185,6 +185,11 @@ struct Cli {
     #[cfg(feature = "provider")]
     unihan_root: Option<PathBuf>,
 
+    #[arg(long, value_name = "PATH")]
+    #[arg(help = "Path to a local UCD directory containing IdentifierStatus.txt.")]
+    #[cfg(feature = "provider")]
+    ucd_root: Option<PathBuf>,
+
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
@@ -441,6 +446,8 @@ fn run(cli: Cli) -> eyre::Result<()> {
             eyre::bail!(
                 "Unihan data is required for this invocation, set --unihan-root or --ucd-tag"
             );
+        } else if SourceDataProvider::is_missing_ucd_error(e) {
+            eyre::bail!("UCD data is required for this invocation, set --ucd-root");
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
             eyre::bail!(
                 "Timezone data is required for this invocation, set --tzdb-root or --tzdb-tag"
@@ -523,15 +530,18 @@ fn run(cli: Cli) -> eyre::Result<()> {
             p = match (cli.unihan_root, cli.ucd_tag.as_str()) {
                 (Some(path), _) => p.with_unihan(&path)?,
                 #[cfg(feature = "networking")]
-                (_, "latest") => {
-                    p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG)
-                }
+                (_, "latest") => p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG),
                 #[cfg(feature = "networking")]
                 (_, "latest-tag") => p.with_unihan_for_tag("latest"),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_unihan_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => p,
+            };
+
+            p = match cli.ucd_root {
+                Some(path) => p.with_ucd(&path)?,
+                None => p,
             };
 
             p = match (cli.tzdb_root, cli.tzdb_tag.as_str()) {

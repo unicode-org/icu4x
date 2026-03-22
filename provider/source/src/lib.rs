@@ -89,6 +89,9 @@ mod tests;
 /// * [`is_missing_cldr_error`](Self::is_missing_cldr_error)
 /// * [`is_missing_icuexport_error`](Self::is_missing_icuexport_error)
 /// * [`is_missing_segmenter_lstm_error`](Self::is_missing_segmenter_lstm_error)
+/// * [`is_missing_unihan_error`](Self::is_missing_unihan_error)
+/// * [`is_missing_ucd_error`](Self::is_missing_ucd_error)
+/// * [`is_missing_tzdb_error`](Self::is_missing_tzdb_error)
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
 #[derive(Debug, Clone)]
 pub struct SourceDataProvider {
@@ -97,6 +100,7 @@ pub struct SourceDataProvider {
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
     unihan_paths: Option<Arc<UnihanCache>>,
+    ucd_paths: Option<Arc<AbstractFs>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
     pub(crate) timezone_horizon: time_zones::Timestamp,
@@ -143,6 +147,7 @@ impl SourceDataProvider {
     /// See [`TESTED_CLDR_TAG`](Self::TESTED_CLDR_TAG),
     /// [`TESTED_ICUEXPORT_TAG`](Self::TESTED_ICUEXPORT_TAG),
     /// [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG),
+    /// [`TESTED_UCD_TAG`](Self::TESTED_UCD_TAG),
     /// [`TESTED_TZDB_TAG`](Self::TESTED_TZDB_TAG).
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
@@ -175,6 +180,7 @@ impl SourceDataProvider {
             segmenter_lstm_paths: None,
             tzdb_paths: None,
             unihan_paths: None,
+            ucd_paths: None,
             trie_type: Default::default(),
             timezone_horizon: time_zones::Timestamp::try_offset_only_from_str(
                 "2015-01-01T00:00:00Z",
@@ -226,6 +232,15 @@ impl SourceDataProvider {
                 root: AbstractFs::new(root)?,
                 irg_cache: Default::default(),
             })),
+            ..self
+        })
+    }
+
+    /// Adds UCD source data to the provider. The path should point to a
+    /// directory containing `IdentifierStatus.txt`.
+    pub fn with_ucd(self, root: &Path) -> Result<Self, DataError> {
+        Ok(Self {
+            ucd_paths: Some(Arc::new(AbstractFs::new(root)?)),
             ..self
         })
     }
@@ -350,6 +365,9 @@ impl SourceDataProvider {
     const MISSING_UNIHAN_ERROR: DataError =
         DataError::custom("Missing Unihan data. Use `.with_unihan[_for_tag]` to set Unihan data.");
 
+    const MISSING_UCD_ERROR: DataError =
+        DataError::custom("Missing UCD data. Use `.with_ucd` to set UCD data.");
+
     const MISSING_TZDB_ERROR: DataError =
         DataError::custom("Missing tzdb data. Use `.with_tzdb[_for_tag]` to set tzdb data.");
 
@@ -383,6 +401,12 @@ impl SourceDataProvider {
         e == Self::MISSING_UNIHAN_ERROR
     }
 
+    /// Identifies errors that are due to missing UCD data.
+    pub fn is_missing_ucd_error(mut e: DataError) -> bool {
+        e.marker = None;
+        e == Self::MISSING_UCD_ERROR
+    }
+
     fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths.as_deref().ok_or(Self::MISSING_CLDR_ERROR)
     }
@@ -404,6 +428,11 @@ impl SourceDataProvider {
         self.unihan_paths
             .as_deref()
             .ok_or(Self::MISSING_UNIHAN_ERROR)
+    }
+
+    #[allow(dead_code)]
+    fn ucd(&self) -> Result<&AbstractFs, DataError> {
+        self.ucd_paths.as_deref().ok_or(Self::MISSING_UCD_ERROR)
     }
 
     fn tzdb(&self) -> Result<&TzdbCache, DataError> {

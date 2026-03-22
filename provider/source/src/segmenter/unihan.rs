@@ -13,9 +13,10 @@ mod tests {
         let provider = SourceDataProvider::new_testing();
 
         let unihan_cache = provider.unihan().expect("Unihan data should be available");
+        let ucd = provider.ucd().expect("UCD data should be available");
 
         let irg_map = unihan_cache
-            .irg_sources()
+            .irg_sources(ucd)
             .expect("Should be able to parse Unihan_IRGSources.txt");
 
         assert_eq!(irg_map.get(&'我').map(|v| v.value), Some(62));

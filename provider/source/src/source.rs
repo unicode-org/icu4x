@@ -502,9 +502,28 @@ pub(crate) struct UnihanCache {
 
 impl UnihanCache {
     #[allow(dead_code)]
-    pub(crate) fn irg_sources(&self) -> Result<&LiteMap<char, IRGValue>, DataError> {
+    pub(crate) fn irg_sources(
+        &self,
+        identifier_status: &AbstractFs,
+    ) -> Result<&LiteMap<char, IRGValue>, DataError> {
         self.irg_cache
             .get_or_init(|| {
+                let identifier_status = identifier_status.read_to_string("IdentifierStatus.txt")?;
+                let identifier_status = identifier_status
+                    .lines()
+                    .filter(|line| !line.starts_with('#') && !line.trim().is_empty())
+                    .map(|line| {
+                        let field = line.split(';').next().unwrap().trim();
+                        let (start, end) = field.split_once("..").unwrap_or((field, field));
+                        (
+                            u32::from_str_radix(start, 16)
+                                .expect("Invalid IdentifierStatus codepoint format"),
+                            u32::from_str_radix(end, 16)
+                                .expect("Invalid IdentifierStatus codepoint format"),
+                        )
+                    })
+                    .collect::<Vec<_>>();
+
                 let raw_content = self.root.read_to_string("Unihan_IRGSources.txt")?;
                 let mut map = LiteMap::new();
                 for line in raw_content.lines() {
@@ -518,8 +537,16 @@ impl UnihanCache {
                     let codepoint = parts[0]
                         .strip_prefix("U+")
                         .and_then(|hex| u32::from_str_radix(hex, 16).ok())
-                        .and_then(char::from_u32)
                         .expect("Invalid Unihan codepoint format");
+
+                    let codepoint_idx =
+                        identifier_status.partition_point(|(start, _)| *start <= codepoint);
+                    if codepoint_idx == 0 || identifier_status[codepoint_idx - 1].1 < codepoint {
+                        continue;
+                    }
+
+                    let codepoint =
+                        char::from_u32(codepoint).expect("Invalid Unihan codepoint format");
 
                     let mut candidate = parts[2].trim();
                     if let Some(first_part) = candidate.split_whitespace().next() {

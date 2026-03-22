@@ -701,6 +701,11 @@ impl SourceDataProvider {
                         ("Unihan_IRGSources.txt", include_bytes!("../../tests/data/unihan/Unihan_IRGSources.txt").as_slice())
                     ].into_iter().collect(),
                 ), irg_cache: Default::default() })),
+                ucd_paths: Some(Arc::new(AbstractFs::Memory(
+                    [
+                        ("IdentifierStatus.txt", include_bytes!("../../tests/data/ucd/IdentifierStatus.txt").as_slice())
+                    ].into_iter().collect(),
+                ))),
                 tzdb_paths: Some(Arc::new(TzdbCache { root: AbstractFs::Memory(
                     [
                         ("africa", include_bytes!("../../tests/data/tzdb/africa").as_slice()),

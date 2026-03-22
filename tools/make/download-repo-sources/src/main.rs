@@ -218,6 +218,21 @@ fn main() -> eyre::Result<()> {
         &mut Default::default(),
     )?;
 
+    let ucd_path = out_root.join("tests/data/ucd");
+    if ucd_path.exists() {
+        std::fs::remove_dir_all(&ucd_path)?;
+    }
+    std::fs::create_dir_all(&ucd_path)?;
+    let identifier_status_path = ucd_path.join(UCD_GLOB[0]);
+    std::fs::copy(
+        cached(&format!(
+            "https://www.unicode.org/Public/{}/security/IdentifierStatus.txt",
+            SourceDataProvider::TESTED_UCD_TAG,
+        ))
+        .with_context(|| "Failed to download IdentifierStatus.txt".to_owned())?,
+        &identifier_status_path,
+    )?;
+
     std::fs::remove_dir_all(out_root.join("tests/data/tzdb"))?;
     extract_tar(
         cached(&format!(
@@ -277,6 +292,14 @@ fn main() -> eyre::Result<()> {
         })
         .collect::<Vec<_>>()
         .join(",\n                        ");
+    let ucd_data = UCD_GLOB
+        .iter()
+        .map(|path| {
+            let path = path.replace('\\', "/");
+            format!(r#"("{path}", include_bytes!("../../tests/data/ucd/{path}").as_slice())"#)
+        })
+        .collect::<Vec<_>>()
+        .join(",\n                        ");
     let irg_path = out_root.join("tests/data/unihan/Unihan_IRGSources.txt");
     let file = File::open(&irg_path)?;
     let reader = io::BufReader::new(file);
@@ -287,6 +310,16 @@ fn main() -> eyre::Result<()> {
         .collect::<Vec<_>>()
         .join("\n");
     fs::write(&irg_path, filtered_content)?;
+    let identifier_status_path = out_root.join("tests/data/ucd/IdentifierStatus.txt");
+    let file = File::open(&identifier_status_path)?;
+    let reader = io::BufReader::new(file);
+    let filtered_content: String = reader
+        .lines()
+        .map_while(Result::ok)
+        .filter(|l| l.contains("CJK") || l.starts_with('#'))
+        .collect::<Vec<_>>()
+        .join("\n");
+    fs::write(&identifier_status_path, filtered_content)?;
     let tzdb_data: String = tzdb_data
         .iter()
         .map(|path| {
@@ -332,6 +365,11 @@ impl SourceDataProvider {{
                         {unihan_data}
                     ].into_iter().collect(),
                 ), irg_cache: Default::default() }})),
+                ucd_paths: Some(Arc::new(AbstractFs::Memory(
+                    [
+                        {ucd_data}
+                    ].into_iter().collect(),
+                ))),
                 tzdb_paths: Some(Arc::new(TzdbCache {{ root: AbstractFs::Memory(
                     [
                         {tzdb_data}
