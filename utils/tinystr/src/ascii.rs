@@ -50,7 +50,15 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `replacement` is not a non-null ASCII byte (i.e. not in `1..=127`).
     pub const fn from_utf8_lossy(code_units: &[u8], replacement: u8) -> Self {
+        assert!(
+            replacement > 0 && replacement < 0x80,
+            "replacement must be a non-null ASCII byte (1..=127)"
+        );
         let mut out = [0; N];
         let mut i = 0;
         // Ord is not available in const, so no `.min(N)`
@@ -85,7 +93,15 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// will be replaced with the replacement byte.
     ///
     /// The input slice will be truncated if its length exceeds `N`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `replacement` is not a non-null ASCII byte (i.e. not in `1..=127`).
     pub const fn from_utf16_lossy(code_units: &[u16], replacement: u8) -> Self {
+        assert!(
+            replacement > 0 && replacement < 0x80,
+            "replacement must be a non-null ASCII byte (1..=127)"
+        );
         let mut out = [0; N];
         let mut i = 0;
         // Ord is not available in const, so no `.min(N)`
@@ -1225,5 +1241,27 @@ mod test {
             TinyAsciiStr::<4>::from_utf8_lossy(&[b'a', 0x80, 0xFF, b'1'], b'?').as_str(),
             "a??1"
         );
+    }
+
+    #[test]
+    #[should_panic(expected = "replacement must be a non-null ASCII byte")]
+    fn from_utf8_lossy_rejects_non_ascii_replacement() {
+        // A non-ASCII replacement byte (>= 0x80) would create an invalid AsciiByte
+        // discriminant and then from_utf8_unchecked would be called on non-UTF-8
+        // data (UB). The fix validates the replacement byte on entry.
+        let _ = TinyAsciiStr::<4>::from_utf8_lossy(b"\xFF", 0xFF);
+    }
+
+    #[test]
+    #[should_panic(expected = "replacement must be a non-null ASCII byte")]
+    fn from_utf16_lossy_rejects_non_ascii_replacement() {
+        let _ = TinyAsciiStr::<4>::from_utf16_lossy(&[0xFFFF], 0xFF);
+    }
+
+    #[test]
+    #[should_panic(expected = "replacement must be a non-null ASCII byte")]
+    fn from_utf8_lossy_rejects_null_replacement() {
+        // Null (0x00) is also invalid — it's the TinyAsciiStr terminator.
+        let _ = TinyAsciiStr::<4>::from_utf8_lossy(b"\xFF", 0x00);
     }
 }

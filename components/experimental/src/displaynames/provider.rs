@@ -152,6 +152,27 @@ pub struct VariantDisplayNames<'data> {
     pub names: ZeroMap<'data, UnvalidatedVariant, str>,
 }
 
+/// Display name parts for use in menus.
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
+#[zerovec::make_varule(MenuNamePartsULE)]
+#[zerovec::skip_derive(Ord)]
+#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
+pub struct MenuNameParts<'data> {
+    /// The "core" part of a language menu display name.
+    ///
+    /// For example, "Kurdish" in "Kurdish (Kurmanji)".
+    pub core: VarZeroCow<'data, str>,
+    /// The "extension" part of a language menu display name.
+    ///
+    /// For example, "Kurmanji" in "Kurdish (Kurmanji)".
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub extension: VarZeroCow<'data, str>,
+}
+
 icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
 icu_provider::data_marker!(
@@ -161,4 +182,76 @@ icu_provider::data_marker!(
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for short region display names.
+    LocaleNamesRegionShortV1,
+    "locale/names/region/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_region",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for language display names.
+    LocaleNamesLanguageLongV1,
+    "locale/names/language/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for short language display names.
+    LocaleNamesLanguageShortV1,
+    "locale/names/language/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for menu-long language display names.
+    LocaleNamesLanguageMenuLongV1,
+    "locale/names/language/menu/long/v1",
+    VarZeroCow<'static, MenuNamePartsULE>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for script display names.
+    LocaleNamesScriptLongV1,
+    "locale/names/script/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_script",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for short script display names.
+    LocaleNamesScriptShortV1,
+    "locale/names/script/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_script",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for variant display names.
+    LocaleNamesVariantLongV1,
+    "locale/names/variant/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_variant",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for short variant display names.
+    LocaleNamesVariantShortV1,
+    "locale/names/variant/short/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_variant",
 );

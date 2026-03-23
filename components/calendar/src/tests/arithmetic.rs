@@ -54,6 +54,7 @@ struct TestOutput {
     pub end: ArithmeticDateForLogging,
     pub duration: DateDurationForLogging,
     pub calculated_duration: DateDurationForLogging,
+    pub is_rejected: bool,
 }
 
 impl fmt::Display for TestOutput {
@@ -65,6 +66,9 @@ impl fmt::Display for TestOutput {
         )?;
         if self.duration.0 != self.calculated_duration.0 {
             write!(f, "; round-trip duration: {}", self.calculated_duration)?;
+        }
+        if self.is_rejected {
+            write!(f, "; rejected")?;
         }
         Ok(())
     }
@@ -141,8 +145,11 @@ super::test_all_cals!(
         let start_rd = start_date.to_rata_die();
         let end_rd = end_date.to_rata_die();
 
-        let add_options = DateAddOptions {
+        let add_constrain = DateAddOptions {
             overflow: Some(Overflow::Constrain),
+        };
+        let add_reject = DateAddOptions {
+            overflow: Some(Overflow::Reject),
         };
 
         let mut outputs = TestOutputs(Vec::new());
@@ -165,7 +172,7 @@ super::test_all_cals!(
                 }
 
                 let added_date = date
-                    .try_added_with_options(*duration, add_options)
+                    .try_added_with_options(*duration, add_constrain)
                     .unwrap_or_else(|_| {
                         panic!(
                             "Failed to add duration {:?} to date {:?} in calendar {:?}",
@@ -186,12 +193,15 @@ super::test_all_cals!(
                         )
                     });
 
+                let is_rejected = date.try_added_with_options(*duration, add_reject).is_err();
+
                 let output = TestOutput {
                     cal: cal.debug_name(),
                     start: date.into(),
                     end: added_date.into(),
                     duration: DateDurationForLogging(*duration),
                     calculated_duration: DateDurationForLogging(calculated_duration),
+                    is_rejected,
                 };
 
                 // The durations should have the same sign!
@@ -203,7 +213,7 @@ super::test_all_cals!(
 
                 // Round-trip check
                 let added_back = date
-                    .try_added_with_options(calculated_duration, add_options)
+                    .try_added_with_options(calculated_duration, add_constrain)
                     .unwrap();
                 assert_eq!(
                     added_back, added_date,
@@ -221,12 +231,14 @@ super::test_all_cals!(
                         "{output}"
                     );
                     // Month or day could constrain; add the ones that do to the snapshot.
-                    if date.month() != added_date.month()
+                    if date.month().to_input() != added_date.month().to_input()
                         || date.day_of_month() != added_date.day_of_month()
                     {
+                        assert!(is_rejected, "should reject: {output}");
                         outputs.0.push(output);
                     } else {
                         // Make sure we aren't skipping any normalized-duration tests
+                        assert!(!is_rejected, "should NOT reject: {output}");
                         assert_eq!(*duration, calculated_duration);
                     }
                 } else if duration.years == 0 && duration.days == 0 {
@@ -244,9 +256,11 @@ super::test_all_cals!(
                     assert_eq!(duration.months, month_diff.unsigned_abs(), "{output}");
                     // Days could constrain; add the ones that do to the snapshot.
                     if date.day_of_month() != added_date.day_of_month() {
+                        assert!(is_rejected, "should reject: {output}");
                         outputs.0.push(output);
                     } else {
                         // Make sure we aren't skipping any normalized-duration tests
+                        assert!(!is_rejected, "should NOT reject: {output}");
                         assert_eq!(*duration, calculated_duration);
                     }
                 } else if duration.years != 0 && duration.months != 0 && duration.days == 0 {
@@ -254,12 +268,13 @@ super::test_all_cals!(
                     outputs.0.push(output);
                 } else if duration.years == 0 && duration.months != 0 && duration.days == 1 {
                     // This should add months, constrain, and add a day.
-                    // Month-constrain by itself is tested by other cases.
+                    // Month-constrain by itself is tested by other cases,
+                    // which also test Overflow::Reject behavior.
                     let signed_months = duration.add_months_to(0);
                     let expected_rd = date
                         .try_added_with_options(
                             DateDuration::for_months(signed_months as i32),
-                            add_options,
+                            add_constrain,
                         )
                         .unwrap()
                         .to_rata_die()
@@ -271,10 +286,14 @@ super::test_all_cals!(
                     }
                 } else if duration.years != 0 && duration.months == 0 && duration.days == 1 {
                     // This should add years, constrain, and add a day.
-                    // Year-constrain by itself is tested by other cases.
+                    // Year-constrain by itself is tested by other cases,
+                    // which also test Overflow::Reject behavior.
                     let signed_years = duration.add_years_to(0);
                     let expected_rd = date
-                        .try_added_with_options(DateDuration::for_years(signed_years), add_options)
+                        .try_added_with_options(
+                            DateDuration::for_years(signed_years),
+                            add_constrain,
+                        )
                         .unwrap()
                         .to_rata_die()
                         + signed_years.signum() as i64;
@@ -285,11 +304,12 @@ super::test_all_cals!(
                     }
                 } else if duration.years != 0 && duration.months != 0 && duration.days == 1 {
                     // This should add years and months, constrain, and add a day.
-                    // Year-month-constrain by itself is tested by other cases.
+                    // Year-month-constrain by itself is tested by other cases,
+                    // which also test Overflow::Reject behavior.
                     let mut year_month_duration = *duration;
                     year_month_duration.days = 0;
                     let expected_rd = date
-                        .try_added_with_options(year_month_duration, add_options)
+                        .try_added_with_options(year_month_duration, add_constrain)
                         .unwrap()
                         .to_rata_die()
                         + if duration.is_negative { -1 } else { 1 } as i64;
@@ -315,8 +335,11 @@ super::test_all_cals!(
         let start_rd = start_date.to_rata_die();
         let end_rd = end_date.to_rata_die();
 
-        let add_options = DateAddOptions {
+        let add_constrain = DateAddOptions {
             overflow: Some(Overflow::Constrain),
+        };
+        let add_reject = DateAddOptions {
+            overflow: Some(Overflow::Reject),
         };
         let diff_options = DateDifferenceOptions {
             largest_unit: Some(DateDurationUnit::Days),
@@ -328,12 +351,16 @@ super::test_all_cals!(
             // Check +/- 65 days
             for i in -65..=65 {
                 let duration = DateDuration::for_days(i);
-                let added_date = date.try_added_with_options(duration, add_options).unwrap();
+                let added_date = date
+                    .try_added_with_options(duration, add_constrain)
+                    .unwrap();
+                let is_rejected = date.try_added_with_options(duration, add_reject).is_err();
                 let calculated_duration = date
                     .try_until_with_options(&added_date, diff_options)
                     .unwrap();
                 assert_eq!(duration, calculated_duration);
                 assert_eq!(i, added_date.to_rata_die() - date.to_rata_die());
+                assert!(!is_rejected, "should NOT reject");
             }
         }
     }

@@ -793,4 +793,31 @@ mod tests {
             Date::try_new_japanese_with_calendar("reiwa", 7, 1, 1, Japanese::new()).unwrap();
         assert_eq!(date2, date2_expected);
     }
+    #[test]
+    fn date_add_options_default_is_constrain() {
+        use crate::cal::ChineseTraditional;
+        use crate::duration::DateDuration;
+        use crate::types::Month;
+
+        // 10 Adar I 5787
+        // 5787 is a leap year; 5788 is not
+        let mut date = Date::try_new(5787.into(), Month::leap(5), 10, Hebrew).unwrap();
+        date.try_add_with_options(DateDuration::for_years(1), DateAddOptions::default())
+            .unwrap();
+        assert_eq!(date.month().to_input(), Month::new(6));
+
+        // Leap Month 6, day 1, 2025.
+        // 2025 is a leap year; 2026 is not
+        let mut date = Date::try_new(
+            2025.into(),
+            Month::leap(6),
+            1,
+            ChineseTraditional::default(),
+        )
+        .unwrap();
+
+        date.try_add_with_options(DateDuration::for_years(1), DateAddOptions::default())
+            .unwrap();
+        assert_eq!(date.month().to_input(), Month::new(6));
+    }
 }

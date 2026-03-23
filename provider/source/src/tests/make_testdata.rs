@@ -83,8 +83,33 @@ fn make_testdata() {
     .with_marker_attributes_filter("locale_names_region", |attrs| {
         matches!(
             attrs.as_str(),
-            "001" | "419" | "FR" | "JP" | "CG" | "HK" | "ZA"
+            "419" // part of dialect name
+            | "FR" // standard
+            | "CG" | "MM" // nested parens
+            | "HK" // has alt name
         )
+    })
+    .with_marker_attributes_filter("locale_names_language", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "fr" // standard
+            | "zh" // has short menu name
+            | "en-GB" // has short name
+            | "zh-Hant" // has long menu name but not short menu name
+            | "de-CH" // has dialect name
+            | "ku" // has menu attributes
+        )
+    })
+    .with_marker_attributes_filter("locale_names_script", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "Latn" // standard
+            | "Hans" | "Hant" // for contrast
+            | "Cans" // has short script name
+        )
+    })
+    .with_marker_attributes_filter("locale_names_variant", |attrs| {
+        matches!(attrs.as_str(), "POSIX")
     })
     .with_marker_attributes_filter("numbering_system", |attrs| {
         matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")

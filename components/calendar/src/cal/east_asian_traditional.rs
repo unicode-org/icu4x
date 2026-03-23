@@ -647,7 +647,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         &self,
         year: Self::YearInfo,
         month: types::Month,
-        options: DateFromFieldsOptions,
+        overflow: Overflow,
     ) -> Result<u8, MonthError> {
         let (number @ 1..=12, leap) = (month.number(), month.is_leap()) else {
             return Err(MonthError::NotInCalendar);
@@ -663,9 +663,13 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
             return Ok(leap_month_sentinel);
         }
 
-        if leap && options.overflow != Some(Overflow::Constrain) {
-            // wrong leap month and not constraining
-            return Err(MonthError::NotInYear);
+        if leap {
+            // This leap month doesn't exist in the year, reject if needed
+            match overflow {
+                Overflow::Reject => return Err(MonthError::NotInYear),
+                // Written as a match for exhaustiveness
+                Overflow::Constrain => (),
+            }
         }
 
         // add one if there was a leap month before
@@ -1650,10 +1654,6 @@ mod test {
     #[test]
     fn test_month_to_ordinal() {
         let cal = ChineseTraditional::new();
-        let reject = DateFromFieldsOptions {
-            overflow: Some(Overflow::Reject),
-            ..Default::default()
-        };
         let year = cal.year_info_from_extended(2023);
         for (ordinal, month) in [
             Month::new(1),
@@ -1675,7 +1675,7 @@ mod test {
         {
             let ordinal = ordinal as u8 + 1;
             assert_eq!(
-                cal.ordinal_from_month(year, month, reject),
+                cal.ordinal_from_month(year, month, Overflow::Reject),
                 Ok(ordinal),
                 "Code to ordinal failed for year: {}, code: {ordinal}",
                 year.related_iso
@@ -1686,10 +1686,6 @@ mod test {
     #[test]
     fn check_invalid_month_to_ordinal() {
         let cal = ChineseTraditional::new();
-        let reject = DateFromFieldsOptions {
-            overflow: Some(Overflow::Reject),
-            ..Default::default()
-        };
         for year in [4659, 4660] {
             let year = cal.year_info_from_extended(year);
             for (month, error) in [
@@ -1697,7 +1693,7 @@ mod test {
                 (Month::new(13), MonthError::NotInCalendar),
             ] {
                 assert_eq!(
-                    cal.ordinal_from_month(year, month, reject),
+                    cal.ordinal_from_month(year, month, Overflow::Reject),
                     Err(error),
                     "Invalid month code failed for year: {}, code: {month:?}",
                     year.related_iso,
