@@ -13,24 +13,51 @@ mod cnn;
 
 use adaboost::Predictor;
 use cnn::{CnnSegmenter, RawCnnData};
+use icu_segmenter::provider::Baked;
 use icu_segmenter::{options::WordBreakOptions, WordSegmenter, WordSegmenterBorrowed};
-use std::time::SystemTime;
+use std::time::Instant;
 
 const REPETITIONS: usize = 1000;
 
-fn main_adaboost(args: &[String]) {
-    let segmenter = Predictor::for_test();
+fn main_radaboost(args: &[String]) {
+    let irg = Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1;
+    let segmenter = Predictor::for_test(irg);
     let s = &args[0];
-    let start_time = SystemTime::now();
+    let start_time = Instant::now();
     for _ in 0..REPETITIONS {
         segmenter.predict(s);
     }
-    let elapsed = start_time.elapsed().unwrap();
+    let elapsed = start_time.elapsed();
     println!("Output:");
     let mut prev = 0;
     for breakpoint in segmenter.predict_breakpoints(s) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
+    }
+    if prev < s.len() {
+        print!("{}", &s[prev..]);
+    }
+    println!();
+    println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
+}
+
+fn main_thadaboost(args: &[String]) {
+    let irg = Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1;
+    let segmenter = Predictor::for_test_thai(irg);
+    let s = &args[0];
+    let start_time = Instant::now();
+    for _ in 0..REPETITIONS {
+        segmenter.predict_thai(s);
+    }
+    let elapsed = start_time.elapsed();
+    println!("Output:");
+    let mut prev = 0;
+    for breakpoint in segmenter.predict_thai_breakpoints(s) {
+        print!("{}|", &s[prev..breakpoint]);
+        prev = breakpoint;
+    }
+    if prev < s.len() {
+        print!("{}", &s[prev..]);
     }
     println!();
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
@@ -55,11 +82,11 @@ fn main_cnn(args: &[String]) {
         .unwrap();
     let segmenter = CnnSegmenter::new(&cnndata);
     let s = &args[0];
-    let start_time = SystemTime::now();
+    let start_time = Instant::now();
     for _ in 0..REPETITIONS {
         segmenter.segment_str(s);
     }
-    let elapsed = start_time.elapsed().unwrap();
+    let elapsed = start_time.elapsed();
     println!("Output:");
     let mut prev = 0;
     for breakpoint in segmenter.segment_str(s).to_breakpoints() {
@@ -82,11 +109,11 @@ fn main_lstm(mut args: &[String]) {
 }
 
 fn run_word_segmenter(segmenter: WordSegmenterBorrowed, s: &str) {
-    let start_time = SystemTime::now();
+    let start_time = Instant::now();
     for _ in 0..REPETITIONS {
         segmenter.segment_str(s).count(); // consume the iterator
     }
-    let elapsed = start_time.elapsed().unwrap();
+    let elapsed = start_time.elapsed();
     println!("Output:");
     let mut prev = 0;
     for breakpoint in segmenter.segment_str(s) {
@@ -104,7 +131,8 @@ fn main() {
         return;
     }
     match args[1].as_str() {
-        "adaboost" => main_adaboost(&args[2..]),
+        "radaboost" => main_radaboost(&args[2..]),
+        "thadaboost" => main_thadaboost(&args[2..]),
         "dict" | "dictionary" => main_dict(&args[2..]),
         "cnn" => main_cnn(&args[2..]),
         "lstm" => main_lstm(&args[2..]),

@@ -16,7 +16,9 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 mod lstm;
+mod radical;
 pub use lstm::*;
+pub use radical::*;
 
 use crate::options::WordType;
 use icu_collections::codepointtrie::CodePointTrie;
@@ -51,6 +53,8 @@ const _: () = {
     impl_segmenter_break_line_v1!(Baked);
     #[cfg(feature = "lstm")]
     impl_segmenter_lstm_auto_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_unihan_radical_v1!(Baked);
     impl_segmenter_break_word_v1!(Baked);
     impl_segmenter_break_word_override_v1!(Baked);
     impl_segmenter_break_sentence_override_v1!(Baked);
@@ -135,6 +139,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterDictionaryAutoV1::INFO,
     SegmenterDictionaryExtendedV1::INFO,
     SegmenterLstmAutoV1::INFO,
+    SegmenterUnihanRadicalV1::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
