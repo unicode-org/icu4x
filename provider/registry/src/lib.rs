@@ -227,7 +227,6 @@ macro_rules! registry(
             icu::segmenter::provider::SegmenterBreakSentenceV1: SegmenterBreakSentenceV1,
             icu::segmenter::provider::SegmenterBreakWordOverrideV1: SegmenterBreakWordOverrideV1,
             icu::segmenter::provider::SegmenterBreakWordV1: SegmenterBreakWordV1,
-            icu::segmenter::provider::SegmenterUnihanRadicalV1: SegmenterUnihanRadicalV1,
             icu::time::provider::iana::TimezoneIdentifiersIanaExtendedV1: TimezoneIdentifiersIanaExtendedV1,
             icu::time::provider::iana::TimezoneIdentifiersIanaCoreV1: TimezoneIdentifiersIanaCoreV1,
             icu::time::provider::windows::TimezoneIdentifiersWindowsV1: TimezoneIdentifiersWindowsV1,
@@ -342,6 +341,7 @@ macro_rules! registry(
             icu::experimental::transliterate::provider::TransliteratorRulesV1: TransliteratorRulesV1,
             icu::experimental::units::provider::UnitsInfoV1: UnitsInfoV1,
             icu::plurals::provider::PluralsRangesV1: PluralsRangesV1,
+            icu::segmenter::provider::SegmenterUnihanRadicalV1: SegmenterUnihanRadicalV1,
         );
     }
 );
