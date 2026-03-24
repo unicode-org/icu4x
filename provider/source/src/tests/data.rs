@@ -703,7 +703,7 @@ impl SourceDataProvider {
                 ), irg_cache: Default::default() })),
                 ucd_paths: Some(Arc::new(AbstractFs::Memory(
                     [
-                        ("IdentifierStatus.txt", include_bytes!("../../tests/data/ucd/IdentifierStatus.txt").as_slice())
+                        ("security/IdentifierStatus.txt", include_bytes!("../../tests/data/ucd/security/IdentifierStatus.txt").as_slice())
                     ].into_iter().collect(),
                 ))),
                 tzdb_paths: Some(Arc::new(TzdbCache { root: AbstractFs::Memory(

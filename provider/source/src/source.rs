@@ -508,7 +508,8 @@ impl UnihanCache {
     ) -> Result<&LiteMap<char, IRGValue>, DataError> {
         self.irg_cache
             .get_or_init(|| {
-                let identifier_status = identifier_status.read_to_string("IdentifierStatus.txt")?;
+                let identifier_status =
+                    identifier_status.read_to_string("security/IdentifierStatus.txt")?;
                 let identifier_status = identifier_status
                     .lines()
                     .filter(|line| !line.starts_with('#') && !line.trim().is_empty())

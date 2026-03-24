@@ -224,6 +224,7 @@ fn main() -> eyre::Result<()> {
     }
     std::fs::create_dir_all(&ucd_path)?;
     let identifier_status_path = ucd_path.join(UCD_GLOB[0]);
+    std::fs::create_dir_all(identifier_status_path.parent().unwrap())?;
     std::fs::copy(
         cached(&format!(
             "https://www.unicode.org/Public/{}/security/IdentifierStatus.txt",
@@ -310,7 +311,7 @@ fn main() -> eyre::Result<()> {
         .collect::<Vec<_>>()
         .join("\n");
     fs::write(&irg_path, filtered_content)?;
-    let identifier_status_path = out_root.join("tests/data/ucd/IdentifierStatus.txt");
+    let identifier_status_path = out_root.join("tests/data/ucd/security/IdentifierStatus.txt");
     let file = File::open(&identifier_status_path)?;
     let reader = io::BufReader::new(file);
     let filtered_content: String = reader

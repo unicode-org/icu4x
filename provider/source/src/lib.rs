@@ -237,7 +237,7 @@ impl SourceDataProvider {
     }
 
     /// Adds UCD source data to the provider. The path should point to a
-    /// directory containing `IdentifierStatus.txt`.
+    /// directory containing `security/IdentifierStatus.txt`.
     pub fn with_ucd(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
             ucd_paths: Some(Arc::new(AbstractFs::new(root)?)),
@@ -329,6 +329,22 @@ impl SourceDataProvider {
                 )),
                 irg_cache: Default::default(),
             })),
+            ..self
+        }
+    }
+
+    /// Adds UCD source data to the provider. The data will be downloaded from unicode.org
+    /// using the given version tag (see [Unicode Character Database](https://www.unicode.org/ucd/)).
+    ///
+    /// Also see: [`TESTED_UCD_TAG`](Self::TESTED_UCD_TAG)
+    ///
+    /// ✨ *Enabled with the `networking` Cargo feature.*
+    #[cfg(feature = "networking")]
+    pub fn with_ucd_for_tag(self, tag: &str) -> Self {
+        Self {
+            ucd_paths: Some(Arc::new(AbstractFs::new_from_url(format!(
+                "https://www.unicode.org/Public/{tag}/"
+            )))),
             ..self
         }
     }

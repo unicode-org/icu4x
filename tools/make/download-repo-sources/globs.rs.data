@@ -223,7 +223,7 @@ const LSTM_GLOB: &[&str] = &[
 
 const UNIHAN_GLOB: &[&str] = &["Unihan_IRGSources.txt"];
 
-const UCD_GLOB: &[&str] = &["IdentifierStatus.txt"];
+const UCD_GLOB: &[&str] = &["security/IdentifierStatus.txt"];
 
 const TZDB_GLOB: &[&str] = &[
     "africa",
