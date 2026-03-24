@@ -4,7 +4,7 @@
 
 use crate::duration::options::*;
 
-/// Validated options for [DurationFormatter](crate::duration::DurationFormatter).
+/// Validated options for [`DurationFormatter`](crate::duration::DurationFormatter).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ValidatedDurationFormatterOptions {
     /// The style that will be applied to units
