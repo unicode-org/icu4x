@@ -157,9 +157,9 @@ impl OrganizedChangelog {
         for (header, entries) in &self.sections {
             println!("\n## {header}\n");
             for entry in entries {
-                println!(" - {} (unicode-org#{})", entry.entry, entry.number);
+                println!("- {} (unicode-org#{})", entry.entry, entry.number);
                 for bullet in &entry.bullets {
-                    println!("  {}- {}", &INDENTATION[..bullet.0], bullet.1);
+                    println!(" {}- {}", &INDENTATION[..bullet.0], bullet.1);
                 }
             }
         }
