@@ -4,7 +4,7 @@
 
 use crate::duration::options::*;
 
-/// Validated options for [DurationFormatter](DurationFormatter).
+/// Validated options for [DurationFormatter](crate::duration::DurationFormatter).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ValidatedDurationFormatterOptions {
     /// The style that will be applied to units
@@ -63,18 +63,18 @@ pub struct ValidatedDurationFormatterOptions {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, displaydoc::Display)]
 pub enum DurationFormatterOptionsError {
-    /// A unit field is set to [`FieldDisplay::Always`] and the style is set to [`FieldStyle::Fractional`].
+    /// A unit field is set to [`FieldDisplay::Always`] and the style is set to `Fractional`.
     #[displaydoc("A unit field is set to Always and the style is set to Fractional")]
     DisplayAlwaysFractional,
 
-    /// A previous unit's style is [`FieldStyle::Fractional`], but the following unit's style is not [`FieldStyle::Fractional`].
+    /// A previous unit's style is `Fractional`, but the following unit's style is not `Fractional`.
     #[displaydoc(
         "A previous unit's style is Fractional, but the following unit's style is not Fractional"
     )]
     PreviousFractional,
 
-    /// A previous unit's style is set to [`FieldStyle::Numeric`] or [`FieldStyle::TwoDigit`] and the following unit's style is not
-    /// [`FieldStyle::Fractional`], [`FieldStyle::Numeric`], or [`FieldStyle::TwoDigit`].
+    /// A previous unit's style is set to `Numeric` or `TwoDigit` and the following unit's style is not
+    /// `Fractional`, `Numeric`, or `TwoDigit`.
     #[displaydoc("A previous unit's style is set to Numeric or TwoDigit and the following unit's style is not Fractional, Numeric, or TwoDigit")]
     PreviousNumeric,
 
