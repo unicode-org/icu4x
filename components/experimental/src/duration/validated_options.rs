@@ -86,6 +86,11 @@ pub enum DurationFormatterOptionsError {
 impl core::error::Error for DurationFormatterOptionsError {}
 
 impl ValidatedDurationFormatterOptions {
+    /// Constructs a [`ValidatedDurationFormatterOptions`] from an unvalidated
+    /// [`DurationFormatterOptions`] by checking for invariants and resolving various implied
+    /// field values.
+    ///
+    /// Follows <https://tc39.es/proposal-intl-duration-format/#sec-getdurationunitoptions>
     pub fn validate(
         value: DurationFormatterOptions,
     ) -> Result<Self, DurationFormatterOptionsError> {
