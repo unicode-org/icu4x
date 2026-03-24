@@ -4,8 +4,8 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
-    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError,
-    LunisolarDateError, MonthError, UnknownEraError,
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, LunisolarDateError,
+    MonthError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -46,7 +46,7 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// In leap years (years 3, 6, 8, 11, 17, 19 in a 19-year cycle), the leap month Adar I (`M05L`, 30 days)
 /// is inserted before Adar (`M06`), which is then called Adar II ([`MonthInfo::leap_status`] will be
-/// [`LeapStatus::LeapBase`] to mark this).
+/// [`LeapStatus::Base`] to mark this).
 ///
 /// Standard years thus have 353-355 days, and leap years 383-385.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
@@ -256,12 +256,12 @@ impl Calendar for Hebrew {
     type Year = types::EraYear;
     type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes2(
+    fn new_date(
         &self,
         year: types::YearInput,
         month: Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateFromCodesError> {
+    ) -> Result<Self::DateInner, DateNewError> {
         ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(HebrewDateInner)
     }
 
@@ -359,7 +359,7 @@ impl Calendar for Hebrew {
         // Even though the leap month is modeled as M05L,
         // the actual leap base is M06.
         if m.number() == 6 && m.ordinal == 7 {
-            m.leap_status = LeapStatus::LeapBase;
+            m.leap_status = LeapStatus::Base;
             #[allow(deprecated)]
             {
                 // This is an ICU4X invention, it's not needed by
@@ -528,7 +528,7 @@ mod tests {
             assert_eq!(date.day_of_month().0, d, "{date:?}");
 
             assert_eq!(
-                Date::try_from_codes(
+                Date::try_new(
                     types::YearInput::EraYear(&date.era_year().era, date.era_year().year),
                     date.month().to_input(),
                     date.day_of_month().0,

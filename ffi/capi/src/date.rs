@@ -395,7 +395,7 @@ pub mod ffi {
         /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
         ///
         /// An empty era code will treat the year as an extended year
-        #[diplomat::rust_link(icu::calendar::Date::try_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::Month::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::Month::try_from_utf8, FnInStruct, hidden)]
@@ -419,7 +419,7 @@ pub mod ffi {
             };
             let month = icu_calendar::types::Month::try_from_utf8(month_code)?;
             let cal = calendar.0.clone();
-            Ok(Box::new(Date(icu_calendar::Date::try_from_codes(
+            Ok(Box::new(Date(icu_calendar::Date::try_new(
                 input_year, month, day, cal,
             )?)))
         }

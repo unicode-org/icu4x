@@ -44,7 +44,8 @@ pub struct Location {
     pub(crate) longitude: f64,
     /// elevation in meters
     pub(crate) elevation: f64,
-    /// UTC timezone offset in fractional days (1 hr = 1.0 / 24.0 day)
+    /// UTC timezone offset in fractional days (1 hr = 1.0 / 24.0 day),
+    /// within the range (-12.0 / 24.0) to (14.0 / 24.0)
     pub(crate) utc_offset: f64,
 }
 
@@ -77,10 +78,10 @@ pub const WINTER: f64 = 270.0;
 pub const NEW_MOON_ZERO: Moment = Moment::new(11.458922815770109);
 
 impl Location {
-    /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
+    /// Create a location; latitude is from -90 to 90, longitude is from -180 to 180,
+    /// and `utc_offset` is from (-12.0 / 24.0) to (14.0 / 24.0);
     /// attempting to create a location outside of these bounds will result in a [`LocationOutOfBoundsError`].
-    #[allow(dead_code)] // TODO: Remove dead_code tag after use
-    pub(crate) fn try_new(
+    pub fn try_new(
         latitude: f64,
         longitude: f64,
         elevation: f64,

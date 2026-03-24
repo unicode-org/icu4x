@@ -137,7 +137,7 @@ pub fn ethiopic_and_ethioaa_are_compatible() {
     use icu::calendar::cal::{Ethiopian, EthiopianEraStyle};
     use icu::calendar::types::{Month, YearInput};
     assert_eq!(
-        Date::try_from_codes(
+        Date::try_new(
             YearInput::EraYear("aa", 1),
             Month::new(1),
             1,
@@ -146,7 +146,7 @@ pub fn ethiopic_and_ethioaa_are_compatible() {
         .unwrap()
         .era_year()
         .era_index,
-        Date::try_from_codes(
+        Date::try_new(
             YearInput::EraYear("aa", 1),
             Month::new(1),
             1,
@@ -217,7 +217,7 @@ fn test_calendar_eras() {
                 .filter(|s| !s.is_empty())
             {
                 assert_eq!(
-                    Date::try_from_codes(
+                    Date::try_new(
                         YearInput::EraYear(era, in_era.year().era().unwrap().year),
                         in_era.month().to_input(),
                         in_era.day_of_month().0,

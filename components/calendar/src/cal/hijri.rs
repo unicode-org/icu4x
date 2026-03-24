@@ -7,7 +7,7 @@ use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::PackWithMD;
 use crate::calendar_arithmetic::ToExtendedYear;
 use crate::error::{
-    DateAddError, DateFromCodesError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError,
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -918,12 +918,12 @@ impl<R: Rules> Calendar for Hijri<R> {
     type Year = types::EraYear;
     type DateCompatibilityError = R::DateCompatibilityError;
 
-    fn from_codes2(
+    fn new_date(
         &self,
         year: types::YearInput,
         month: Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateFromCodesError> {
+    ) -> Result<Self::DateInner, DateNewError> {
         ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(HijriDateInner)
     }
 
@@ -1070,7 +1070,7 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
 
 impl Date<Hijri<UmmAlQura>> {
     /// Deprecated
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
     pub fn try_new_ummalqura(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
         Date::try_new_hijri_with_calendar(year, month, day, Hijri::new_umm_al_qura())
     }
@@ -1078,7 +1078,7 @@ impl Date<Hijri<UmmAlQura>> {
 
 impl<A: AsCalendar<Calendar = Hijri<TabularAlgorithm>>> Date<A> {
     /// Deprecated
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
     pub fn try_new_hijri_tabular_with_calendar(
         year: i32,
         month: u8,
@@ -1725,7 +1725,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let dt = Hijri::new_umm_al_qura()
-            .from_codes2(types::YearInput::EraYear("bh", 6824), Month::new(1), 1)
+            .new_date(types::YearInput::EraYear("bh", 6824), Month::new(1), 1)
             .unwrap();
         assert_eq!(dt.0.day(), 1);
         assert_eq!(dt.0.month(), 1);

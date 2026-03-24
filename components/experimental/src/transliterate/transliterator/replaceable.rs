@@ -28,8 +28,10 @@
 // quite closely coupled to Transform Rules is `RepMatcher` and its explicit `ante`, `post`, `key`
 // handling.
 
-// QUESTION: for this whole module, I don't know how panics work together with safety invariants. I'm fairly sure that unexpected panics
-//  could break some invariants.
+// NOTE: Panics (e.g., from CustomTransliterator impls) during transliteration could unwind through
+//  Drop impls (Insertable, InsertableGuard, etc.) that may not fully restore UTF-8 validity.
+//  As a mitigation, TransliteratorBuffer::into_string() uses checked UTF-8 conversion so that
+//  any such corruption results in a clean panic rather than undefined behavior.
 
 use super::Filter;
 use alloc::string::String;
@@ -50,10 +52,13 @@ impl TransliteratorBuffer {
         Self(s.into_bytes())
     }
 
+    #[allow(clippy::expect_used)] // panic is strictly better than UB from from_utf8_unchecked
     pub(crate) fn into_string(self) -> String {
-        debug_assert!(core::str::from_utf8(&self.0).is_ok());
-        // SAFETY: We have exclusive access, so the vec must contain valid UTF-8
-        unsafe { String::from_utf8_unchecked(self.0) }
+        // Using checked conversion: if a panic during transliteration unwinds through
+        // Drop impls that fail to fully restore UTF-8 validity, this will panic cleanly
+        // instead of producing undefined behavior.
+        String::from_utf8(self.0)
+            .expect("TransliteratorBuffer must contain valid UTF-8 after transliteration")
     }
 }
 
@@ -1054,4 +1059,20 @@ enum CursorOffset {
     CharsOffEnd(u16),
     /// A `char`-based offset for before the replacement string.
     CharsOffStart(u16),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[should_panic(expected = "valid UTF-8")]
+    fn test_into_string_rejects_invalid_utf8() {
+        // Simulate what would happen if a panic during transliteration
+        // left the buffer with invalid UTF-8.
+        let buffer = TransliteratorBuffer(vec![0xFF, 0xFE, 0xFD]);
+        // With checked conversion: panics cleanly.
+        // With unchecked conversion: silently produces an invalid String (UB).
+        let _ = buffer.into_string();
+    }
 }

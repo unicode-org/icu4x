@@ -67,7 +67,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
     #[diplomat::rust_link(icu::calendar::error::LunisolarRangeError, Enum, hidden)]
     #[diplomat::rust_link(icu::calendar::error::MonthCodeParseError, Enum, compact)]
-    #[diplomat::rust_link(icu::calendar::error::DateFromCodesError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::error::DateNewError, Enum, compact)]
     #[cfg(feature = "calendar")]
     #[non_exhaustive]
     #[diplomat::attr(auto, error)]
@@ -287,14 +287,14 @@ impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsEr
 }
 
 #[cfg(feature = "calendar")]
-impl From<icu_calendar::error::DateFromCodesError> for CalendarError {
-    fn from(e: icu_calendar::error::DateFromCodesError) -> Self {
+impl From<icu_calendar::error::DateNewError> for CalendarError {
+    fn from(e: icu_calendar::error::DateNewError) -> Self {
         match e {
-            icu_calendar::error::DateFromCodesError::InvalidDay { .. } => Self::OutOfRange,
-            icu_calendar::error::DateFromCodesError::InvalidEra => Self::UnknownEra,
-            icu_calendar::error::DateFromCodesError::MonthNotInCalendar => Self::UnknownMonthCode,
-            icu_calendar::error::DateFromCodesError::MonthNotInYear => Self::UnknownMonthCode,
-            icu_calendar::error::DateFromCodesError::InvalidYear => Self::OutOfRange,
+            icu_calendar::error::DateNewError::InvalidDay { .. } => Self::OutOfRange,
+            icu_calendar::error::DateNewError::InvalidEra => Self::UnknownEra,
+            icu_calendar::error::DateNewError::MonthNotInCalendar => Self::UnknownMonthCode,
+            icu_calendar::error::DateNewError::MonthNotInYear => Self::UnknownMonthCode,
+            icu_calendar::error::DateNewError::InvalidYear => Self::OutOfRange,
             _ => Self::Unknown,
         }
     }
