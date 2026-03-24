@@ -613,8 +613,10 @@ fn test_region_load_long() {
     use icu_locale_core::subtags::region;
     use writeable::assert_writeable_eq;
 
-    let mut prefs = DisplayNamesPreferences::default();
-    prefs.locale_preferences = (&locale!("en-001")).into();
+    let prefs = DisplayNamesPreferences {
+        locale_preferences: (&locale!("en-001")).into(),
+        ..Default::default()
+    };
     let data = RegionDisplayName::try_new(prefs, region!("AE")).unwrap();
     assert_writeable_eq!(data, "United Arab Emirates");
 }
