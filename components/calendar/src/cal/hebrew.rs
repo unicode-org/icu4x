@@ -398,7 +398,7 @@ impl Date<Hebrew> {
     /// assert_eq!(date.era_year().year, 5782);
     /// // Adar I
     /// assert_eq!(date.month().number(), 5);
-    /// assert_eq!(date.month().is_leap(), true);
+    /// assert!(date.month().to_input().is_leap());
     /// assert_eq!(date.day_of_month().0, 7);
     /// ```
     pub fn try_new_hebrew_v2(

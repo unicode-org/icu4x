@@ -1044,7 +1044,7 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
     /// use icu::calendar::cal::Hijri;
     /// use icu::calendar::Date;
     ///
-    /// let hijri = Hijri::new_simulated_mecca();
+    /// let hijri = Hijri::new_umm_al_qura();
     ///
     /// let date_hijri = Date::try_new_hijri_with_calendar(1392, 4, 25, hijri)
     ///     .expect("Failed to initialize Hijri Date instance.");

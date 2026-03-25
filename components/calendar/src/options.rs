@@ -241,7 +241,7 @@ pub enum Overflow {
     ///
     /// // Constrained to the 30th day of M05L of year 5784
     /// assert_eq!(date.year().extended_year(), 5784);
-    /// assert_eq!(date.month().standard_code.0, "M05L");
+    /// assert_eq!(date.month().to_input().code().0, "M05L");
     /// assert_eq!(date.day_of_month().0, 30);
     ///
     /// // 5785, a common year, does not contain M05L.
@@ -251,7 +251,7 @@ pub enum Overflow {
     ///
     /// // Constrained to the 29th day of M06 of year 5785
     /// assert_eq!(date.year().extended_year(), 5785);
-    /// assert_eq!(date.month().standard_code.0, "M06");
+    /// assert_eq!(date.month().to_input().code().0, "M06");
     /// assert_eq!(date.day_of_month().0, 29);
     /// ```
     Constrain,

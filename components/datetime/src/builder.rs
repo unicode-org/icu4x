@@ -531,7 +531,7 @@ impl FieldSetBuilder {
     /// ));
     ///
     /// builder.date_fields = Some(DateFields::YMD);
-    /// assert!(matches!(builder.clone().build_date(), Ok(_)));
+    /// assert!(builder.clone().build_date().is_ok());
     ///
     /// builder.time_precision = Some(TimePrecision::Minute);
     /// assert!(matches!(
@@ -575,7 +575,7 @@ impl FieldSetBuilder {
     /// ));
     ///
     /// builder.date_fields = Some(DateFields::YM);
-    /// assert!(matches!(builder.clone().build_calendar_period(), Ok(_)));
+    /// assert!(builder.clone().build_calendar_period().is_ok());
     ///
     /// builder.time_precision = Some(TimePrecision::Minute);
     /// assert!(matches!(
@@ -613,7 +613,7 @@ impl FieldSetBuilder {
     /// ));
     ///
     /// builder.time_precision = Some(TimePrecision::Minute);
-    /// assert!(matches!(builder.clone().build_time(), Ok(_)));
+    /// assert!(builder.clone().build_time().is_ok());
     ///
     /// builder.date_fields = Some(DateFields::YMD);
     /// assert!(matches!(
@@ -676,7 +676,7 @@ impl FieldSetBuilder {
     /// ));
     ///
     /// builder.zone_style = Some(ZoneStyle::SpecificLong);
-    /// assert!(matches!(builder.clone().build_zone(), Ok(_)));
+    /// assert!(builder.clone().build_zone().is_ok());
     ///
     /// builder.time_precision = Some(TimePrecision::Minute);
     /// assert!(matches!(
@@ -721,7 +721,7 @@ impl FieldSetBuilder {
     /// ));
     ///
     /// builder.date_fields = Some(DateFields::YMD);
-    /// assert!(matches!(builder.clone().build_date_and_time(), Ok(_)));
+    /// assert!(builder.clone().build_date_and_time().is_ok());
     ///
     /// builder.zone_style = Some(ZoneStyle::SpecificLong);
     /// assert!(matches!(
@@ -858,7 +858,7 @@ impl FieldSetBuilder {
     /// ));
     ///
     /// builder.date_fields = Some(DateFields::YMD);
-    /// assert!(matches!(builder.clone().build_zoned_date(), Ok(_)));
+    /// assert!(builder.clone().build_zoned_date().is_ok());
     ///
     /// builder.time_precision = Some(TimePrecision::Minute);
     /// assert!(matches!(
@@ -897,7 +897,7 @@ impl FieldSetBuilder {
     /// ));
     ///
     /// builder.time_precision = Some(TimePrecision::Minute);
-    /// assert!(matches!(builder.clone().build_zoned_time(), Ok(_)));
+    /// assert!(builder.clone().build_zoned_time().is_ok());
     ///
     /// builder.date_fields = Some(DateFields::YMD);
     /// assert!(matches!(
@@ -948,7 +948,7 @@ impl FieldSetBuilder {
     /// ));
     ///
     /// builder.date_fields = Some(DateFields::YMD);
-    /// assert!(matches!(builder.clone().build_zoned_date_and_time(), Ok(_)));
+    /// assert!(builder.clone().build_zoned_date_and_time().is_ok());
     /// ```
     pub fn build_zoned_date_and_time(mut self) -> Result<ZonedDateAndTimeFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;

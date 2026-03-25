@@ -436,7 +436,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// assert_eq!(zoneddatetime.date.year().extended_year(), 5784);
     /// assert_eq!(
-    ///     zoneddatetime.date.month().standard_code,
+    ///     zoneddatetime.date.month().to_input().code(),
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M11"))
     /// );
     /// assert_eq!(zoneddatetime.date.day_of_month().0, 4);
@@ -872,7 +872,7 @@ impl<A: AsCalendar> DateTime<A> {
     ///
     /// assert_eq!(datetime.date.era_year().year, 5784);
     /// assert_eq!(
-    ///     datetime.date.month().standard_code,
+    ///     datetime.date.month().to_input().code(),
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
     /// );
     /// assert_eq!(datetime.date.day_of_month().0, 11);
