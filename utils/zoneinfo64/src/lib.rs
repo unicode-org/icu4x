@@ -795,6 +795,11 @@ mod tests {
         for chrono in time_zones_to_test() {
             let iana = chrono.name();
 
+            if iana == "America/Tijuana" {
+                // 2025c not yet in chrono
+                continue;
+            }
+
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
             for seconds_since_epoch in transitions(iana, false)
