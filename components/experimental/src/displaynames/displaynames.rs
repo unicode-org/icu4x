@@ -116,11 +116,17 @@ impl RegionDisplayName {
         /// use writeable::assert_writeable_eq;
         ///
         /// let mut prefs = DisplayNamesPreferences::default();
-        /// prefs.locale_preferences = (&locale!("en-001")).into();
-        /// let display_name = RegionDisplayName::try_new_short(prefs, region!("AE"))
-        ///     .expect("Data should load successfully");
+        /// prefs.locale_preferences = (&locale!("en-US")).into();
         ///
-        /// assert_writeable_eq!(display_name, "United Arab Emirates");
+        /// // "US" has a short display name in en-US
+        /// let display_name_us = RegionDisplayName::try_new_short(prefs, region!("US"))
+        ///     .expect("Data should load successfully");
+        /// assert_writeable_eq!(display_name_us, "US");
+        ///
+        /// // "AE" does not have a short display name, so it falls back to the long display name
+        /// let display_name_ae = RegionDisplayName::try_new_short(prefs, region!("AE"))
+        ///     .expect("Data should load successfully");
+        /// assert_writeable_eq!(display_name_ae, "United Arab Emirates");
         /// ```
         functions: [
             try_new_short,
@@ -145,22 +151,19 @@ impl RegionDisplayName {
                 .map_err(|_| DataError::custom("Invalid region"))?,
             &locale,
         );
+        let mut metadata = DataRequestMetadata::default();
+        metadata.silent = true;
         let result: Result<DataResponse<LocaleNamesRegionShortV1>, DataError> =
-            provider.load(DataRequest {
-                id,
-                ..Default::default()
-            });
+            provider.load(DataRequest { id, metadata });
 
         match result {
             Ok(response) => Ok(Self {
                 payload: response.payload.cast(),
             }),
-            Err(e)
-                if e.kind == DataErrorKind::IdentifierNotFound
-                    || e.kind == DataErrorKind::MarkerNotFound =>
-            {
-                Self::try_new_unstable(provider, prefs, region)
-            }
+            Err(DataError {
+                kind: DataErrorKind::IdentifierNotFound,
+                ..
+            }) => Self::try_new_unstable(provider, prefs, region),
             Err(e) => Err(e),
         }
     }
