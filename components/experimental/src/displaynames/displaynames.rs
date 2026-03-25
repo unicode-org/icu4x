@@ -66,8 +66,7 @@ impl RegionDisplayName {
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let mut prefs = DisplayNamesPreferences::default();
-        /// prefs.locale_preferences = (&locale!("en-001")).into();
+        /// let prefs: DisplayNamesPreferences = locale!("en-001").into();
         /// let display_name = RegionDisplayName::try_new(prefs, region!("AE"))
         ///     .expect("Data should load successfully");
         ///
@@ -115,8 +114,7 @@ impl RegionDisplayName {
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let mut prefs = DisplayNamesPreferences::default();
-        /// prefs.locale_preferences = (&locale!("en-US")).into();
+        /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
         ///
         /// // "US" has a short display name in en-US
         /// let display_name_us = RegionDisplayName::try_new_short(prefs, region!("US"))
