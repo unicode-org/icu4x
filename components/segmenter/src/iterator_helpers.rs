@@ -13,6 +13,13 @@ macro_rules! derive_usize_iterator_with_type {
                 self.0.next()
             }
         }
+
+        impl<$($lt,)* 's, Y: RuleBreakType> DoubleEndedIterator for $ty<$($lt,)* 's, Y> {
+            #[inline]
+            fn next_back(&mut self) -> Option<Self::Item> {
+                self.0.next_back()
+            }
+        }
     };
 }
 
