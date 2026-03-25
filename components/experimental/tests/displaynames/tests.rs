@@ -97,3 +97,28 @@ fn test_concatenate() {
         }
     }
 }
+
+#[test]
+fn test_region_display_name_short() {
+    use icu_experimental::displaynames::{DisplayNamesPreferences, RegionDisplayName};
+    use icu_locale_core::subtags::region;
+    use writeable::assert_writeable_eq;
+
+    let mut prefs = DisplayNamesPreferences::default();
+    prefs.locale_preferences = (&locale!("en-US")).into();
+
+    let display_name = RegionDisplayName::try_new_short(prefs, region!("US"))
+        .expect("Data should load successfully");
+
+    // In en-US, US short is "US".
+    assert_writeable_eq!(display_name, "US");
+
+    let display_name_long =
+        RegionDisplayName::try_new(prefs, region!("US")).expect("Data should load successfully");
+    assert_writeable_eq!(display_name_long, "United States");
+
+    let display_name_ae = RegionDisplayName::try_new_short(prefs, region!("AE"))
+        .expect("Data should load successfully");
+    // AE does not have a short name in English, should fall back to long.
+    assert_writeable_eq!(display_name_ae, "United Arab Emirates");
+}
