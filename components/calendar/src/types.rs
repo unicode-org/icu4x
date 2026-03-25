@@ -185,7 +185,7 @@ pub struct DateFields<'a> {
     /// let month_info = date1.month();
     /// assert_eq!(month_info.ordinal, 3);
     /// assert_eq!(month_info.number(), 2);
-    /// assert!(month_info.as_input().is_leap());
+    /// assert!(month_info.to_input().is_leap());
     /// ```
     pub ordinal_month: Option<u8>,
     /// See [`DayOfMonth`].
