@@ -41,12 +41,13 @@ use writeable::Writeable;
 /// use writeable::assert_writeable_eq;
 ///
 /// let short_french = CompactDecimalFormatter::try_new_short(
-///    locale!("fr").into(),
-///    Default::default(),
-/// ).unwrap();
+///     locale!("fr").into(),
+///     Default::default(),
+/// )
+/// .unwrap();
 ///
-/// let [long_french, long_japanese, long_bangla] = [locale!("fr"), locale!("ja"), locale!("bn")]
-///     .map(|locale| {
+/// let [long_french, long_japanese, long_bangla] =
+///     [locale!("fr"), locale!("ja"), locale!("bn")].map(|locale| {
 ///         CompactDecimalFormatter::try_new_long(
 ///             locale.into(),
 ///             Default::default(),
@@ -57,11 +58,17 @@ use writeable::Writeable;
 /// /// Supports short and long notations:
 /// # // The following line contains U+00A0 NO-BREAK SPACE.
 /// assert_writeable_eq!(short_french.format(&35_357_670i64.into()), "35 M");
-/// assert_writeable_eq!(long_french.format(&35_357_670i64.into()), "35 millions");
+/// assert_writeable_eq!(
+///     long_french.format(&35_357_670i64.into()),
+///     "35 millions"
+/// );
 /// /// The powers of ten used are locale-dependent:
 /// assert_writeable_eq!(long_japanese.format(&3535_7670i64.into()), "3536万");
 /// /// So are the digits:
-/// assert_writeable_eq!(long_bangla.format(&3_53_57_670i64.into()), "৩.৫ কোটি");
+/// assert_writeable_eq!(
+///     long_bangla.format(&3_53_57_670i64.into()),
+///     "৩.৫ কোটি"
+/// );
 ///
 /// /// The output does not always contain digits:
 /// assert_writeable_eq!(long_french.format(&1000i64.into()), "mille");
@@ -91,7 +98,8 @@ impl CompactDecimalFormatter {
     /// let formatter = CompactDecimalFormatter::try_new_short(
     ///     locale!("sv").into(),
     ///     Default::default(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
     /// assert_writeable_eq!(formatter.format(&1234.into()), "1,2 tn");
     /// ```
@@ -175,7 +183,8 @@ impl CompactDecimalFormatter {
     /// let formatter = CompactDecimalFormatter::try_new_long(
     ///     locale!("sv").into(),
     ///     Default::default(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
     /// assert_writeable_eq!(formatter.format(&1234.into()), "1,2 tusen");
     /// ```
@@ -251,8 +260,8 @@ impl CompactDecimalFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::decimal::CompactDecimalFormatter;
     /// use icu::decimal::input::{Decimal, SignDisplay};
+    /// use icu::decimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -262,40 +271,18 @@ impl CompactDecimalFormatter {
     /// )
     /// .unwrap();
     ///
-    /// assert_writeable_eq!(
-    ///     short_english.format(&Decimal::from(0)),
-    ///     "0"
-    /// );
-    /// assert_writeable_eq!(
-    ///     short_english.format(&Decimal::from(2)),
-    ///     "2"
-    /// );
-    /// assert_writeable_eq!(
-    ///     short_english.format(&Decimal::from(843)),
-    ///     "843"
-    /// );
-    /// assert_writeable_eq!(
-    ///     short_english.format(&Decimal::from(2207)),
-    ///     "2.2K"
-    /// );
-    /// assert_writeable_eq!(
-    ///     short_english.format(&Decimal::from(15127)),
-    ///     "15K"
-    /// );
-    /// assert_writeable_eq!(
-    ///     short_english.format(&Decimal::from(3010349)),
-    ///     "3M"
-    /// );
-    /// assert_writeable_eq!(
-    ///     short_english.format(&Decimal::from(-13132)),
-    ///     "-13K"
-    /// );
+    /// assert_writeable_eq!(short_english.format(&Decimal::from(0)), "0");
+    /// assert_writeable_eq!(short_english.format(&Decimal::from(2)), "2");
+    /// assert_writeable_eq!(short_english.format(&Decimal::from(843)), "843");
+    /// assert_writeable_eq!(short_english.format(&Decimal::from(2207)), "2.2K");
+    /// assert_writeable_eq!(short_english.format(&Decimal::from(15127)), "15K");
+    /// assert_writeable_eq!(short_english.format(&Decimal::from(3010349)), "3M");
+    /// assert_writeable_eq!(short_english.format(&Decimal::from(-13132)), "-13K");
     ///
     /// // The sign display on the Decimal is respected:
     /// assert_writeable_eq!(
     ///     short_english.format(
-    ///         &Decimal::from(2500)
-    ///             .with_sign_display(SignDisplay::ExceptZero)
+    ///         &Decimal::from(2500).with_sign_display(SignDisplay::ExceptZero)
     ///     ),
     ///     "+2.5K"
     /// );
@@ -329,10 +316,7 @@ impl CompactDecimalFormatter {
     ///     short_english.format(&"1750".parse().unwrap()),
     ///     "1.8K"
     /// );
-    /// assert_writeable_eq!(
-    ///     short_english.format(&"1950".parse().unwrap()),
-    ///     "2K"
-    /// );
+    /// assert_writeable_eq!(short_english.format(&"1950".parse().unwrap()), "2K");
     /// assert_writeable_eq!(
     ///     short_english.format(&"-1172700".parse().unwrap()),
     ///     "-1.2M"
@@ -357,7 +341,8 @@ impl CompactDecimalFormatter {
     /// # ).unwrap();
     /// assert_writeable_eq!(
     ///     short_english.format(
-    ///         &Decimal::try_from_f64(999_499.99, FloatPrecision::RoundTrip).unwrap()
+    ///         &Decimal::try_from_f64(999_499.99, FloatPrecision::RoundTrip)
+    ///             .unwrap()
     ///     ),
     ///     "999K"
     /// );
@@ -437,9 +422,7 @@ impl CompactDecimalFormatter {
     ///     "1,20 M"
     /// );
     /// assert_writeable_eq!(
-    ///     long_french
-    ///         .format_with_exponent(&one_point_two, 6)
-    ///         .unwrap(),
+    ///     long_french.format_with_exponent(&one_point_two, 6).unwrap(),
     ///     "1,20 million"
     /// );
     ///

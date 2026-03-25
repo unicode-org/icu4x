@@ -170,8 +170,8 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```rust
+    /// use icu::calendar::types::{Month, YearInput};
     /// use icu::calendar::Date;
-    /// use icu::calendar::types::{YearInput, Month};
     /// use icu::calendar::Iso;
     ///
     /// // Example: creation of ISO date from integers.
@@ -179,7 +179,10 @@ impl<A: AsCalendar> Date<A> {
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// // Shorthand using From impls:
-    /// assert_eq!(date_iso, Date::try_new(1970.into(), 1.into(), 2, Iso).unwrap());
+    /// assert_eq!(
+    ///     date_iso,
+    ///     Date::try_new(1970.into(), 1.into(), 2, Iso).unwrap()
+    /// );
     ///
     /// assert_eq!(date_iso.era_year().year, 1970);
     /// assert_eq!(date_iso.month().ordinal, 1);
@@ -243,7 +246,7 @@ impl<A: AsCalendar> Date<A> {
     /// described on the [`Date`] type instead clamping the result:
     ///
     /// ```rust
-    /// use icu::calendar::{Date, Gregorian, types::RataDie};
+    /// use icu::calendar::{types::RataDie, Date, Gregorian};
     ///
     /// let rd = RataDie::new(1_000_000_000);
     /// assert_ne!(Date::from_rata_die(rd, Gregorian).to_rata_die(), rd);
@@ -428,8 +431,8 @@ impl<A: AsCalendar> Date<A> {
     /// Reversing the order of parameters does not necessarily produce the inverse result:
     ///
     /// ```
-    /// use icu::calendar::types::DateDuration;
     /// use icu::calendar::options::{DateDifferenceOptions, DateDurationUnit};
+    /// use icu::calendar::types::DateDuration;
     /// use icu::calendar::Date;
     ///
     /// let d1 = Date::try_new_iso(2025, 9, 30).unwrap();
@@ -440,7 +443,14 @@ impl<A: AsCalendar> Date<A> {
     /// let Ok(duration_forward) = d1.try_until_with_options(&d2, options);
     /// let Ok(duration_backward) = d2.try_until_with_options(&d1, options);
     ///
-    /// assert_eq!(duration_forward, DateDuration {months: 1, days: 1, ..Default::default()});
+    /// assert_eq!(
+    ///     duration_forward,
+    ///     DateDuration {
+    ///         months: 1,
+    ///         days: 1,
+    ///         ..Default::default()
+    ///     }
+    /// );
     /// assert_eq!(duration_backward, DateDuration::for_months(-1));
     /// ```
     ///

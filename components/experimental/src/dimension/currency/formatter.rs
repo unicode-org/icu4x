@@ -140,7 +140,10 @@ impl CurrencyFormatter {
     /// let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value, &currency_code), "$12,345.67");
+    /// assert_writeable_eq!(
+    ///     fmt.format_fixed_decimal(&value, &currency_code),
+    ///     "$12,345.67"
+    /// );
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,

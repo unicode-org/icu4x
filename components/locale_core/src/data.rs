@@ -27,16 +27,16 @@ use core::str::FromStr;
 ///
 /// ```
 /// use icu_locale_core::locale;
-/// use icu_provider::DataLocale;
 /// use icu_locale_core::preferences::LocalePreferences;
+/// use icu_provider::DataLocale;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Locale: American English with British user preferences
 /// let locale = locale!("en-US-u-rg-gbzzzz");
 ///
 /// // For language-priority fallback, the region override is ignored
-/// let data_locale = LocalePreferences::from(&locale)
-///     .to_data_locale_language_priority();
+/// let data_locale =
+///     LocalePreferences::from(&locale).to_data_locale_language_priority();
 /// assert_writeable_eq!(data_locale, "en-US");
 ///
 /// // The direct conversion implicitly uses language-priority fallback
@@ -44,8 +44,8 @@ use core::str::FromStr;
 /// assert_eq!(data_locale, DataLocale::from(&locale));
 ///
 /// // For region-priority fallback, the region override is applied
-/// let data_locale = LocalePreferences::from(&locale)
-///     .to_data_locale_region_priority();
+/// let data_locale =
+///     LocalePreferences::from(&locale).to_data_locale_region_priority();
 /// assert_writeable_eq!(data_locale, "en-GB");
 /// ```
 ///

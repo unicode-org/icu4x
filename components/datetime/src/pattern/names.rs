@@ -2754,7 +2754,9 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::{DayPeriodNameLength, FixedCalendarDateTimeNames};
+    /// use icu::datetime::pattern::{
+    ///     DayPeriodNameLength, FixedCalendarDateTimeNames,
+    /// };
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -2796,7 +2798,9 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::{DayPeriodNameLength, FixedCalendarDateTimeNames};
+    /// use icu::datetime::pattern::{
+    ///     DayPeriodNameLength, FixedCalendarDateTimeNames,
+    /// };
     /// use icu::locale::locale;
     ///
     /// let mut names =

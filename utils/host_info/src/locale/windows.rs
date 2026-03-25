@@ -7,13 +7,18 @@
 //!
 //! # Usage example
 //! ```
-//! use icu_locale_core::{Locale, locale};
-//! use icu_host_info::locale::{WindowsLocale, windows::WindowsLocaleParseError};
+//! use icu_host_info::locale::{
+//!     windows::WindowsLocaleParseError, WindowsLocale,
+//! };
+//! use icu_locale_core::{locale, Locale};
 //!
 //! # fn main() -> Result<(), WindowsLocaleParseError> {
 //! let windows_locale = WindowsLocale::try_from_str("zh-CN_radstr")?;
 //!
-//! assert_eq!(Locale::try_from(windows_locale), Ok(locale!("zh-CN-u-co-unihan")));
+//! assert_eq!(
+//!     Locale::try_from(windows_locale),
+//!     Ok(locale!("zh-CN-u-co-unihan"))
+//! );
 //! # Ok(())
 //! # }
 //! ```

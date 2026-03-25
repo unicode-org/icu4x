@@ -19,8 +19,8 @@ use crate::error::DateDurationParseError;
 ///
 /// ```rust
 /// use icu::calendar::options::DateDifferenceOptions;
-/// use icu::calendar::types::DateDuration;
 /// use icu::calendar::options::DateDurationUnit;
+/// use icu::calendar::types::DateDuration;
 /// use icu::calendar::types::Weekday;
 /// use icu::calendar::Date;
 ///

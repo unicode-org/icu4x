@@ -23,14 +23,17 @@ use core::fmt;
 ///
 /// ```
 /// use writeable::adapters::Concat;
-/// use writeable::TryWriteable;
 /// use writeable::assert_try_writeable_eq;
+/// use writeable::TryWriteable;
 ///
 /// struct AlwaysPanic;
 ///
 /// impl TryWriteable for AlwaysPanic {
 ///     type Error = &'static str;
-///     fn try_write_to_parts<W: writeable::PartsWrite + ?Sized>(&self, _sink: &mut W) -> Result<Result<(), Self::Error>, core::fmt::Error> {
+///     fn try_write_to_parts<W: writeable::PartsWrite + ?Sized>(
+///         &self,
+///         _sink: &mut W,
+///     ) -> Result<Result<(), Self::Error>, core::fmt::Error> {
 ///         // Unreachable panic: the first Writeable errors,
 ///         // so the second Writeable is not evaluated.
 ///         panic!("this is a test to demonstrate unreachable code")
@@ -124,12 +127,7 @@ where
 /// ```
 /// use writeable::assert_writeable_eq;
 ///
-/// let concatenated = writeable::concat_writeable!(
-///     "Health: ",
-///     5,
-///     '/',
-///     8
-/// );
+/// let concatenated = writeable::concat_writeable!("Health: ", 5, '/', 8);
 ///
 /// assert_writeable_eq!(concatenated, "Health: 5/8");
 /// ```

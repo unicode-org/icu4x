@@ -156,7 +156,11 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// .unwrap();
 ///
 /// assert_writeable_eq!(
-///     formatter.format(&Date::try_new_iso(2023, 12, 20).unwrap().to_calendar(Japanese::new())),
+///     formatter.format(
+///         &Date::try_new_iso(2023, 12, 20)
+///             .unwrap()
+///             .to_calendar(Japanese::new())
+///     ),
 ///     "20 de diciembre de 5 Reiwa"
 /// );
 /// ```

@@ -61,7 +61,9 @@ pub(crate) type DenseType = u16;
 /// data.entry("ddd").or_default().insert("EEE", 4);
 /// data.entry("fff").or_default().insert("BBB", 5);
 ///
-/// let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+/// let trie =
+///     ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/')
+///         .unwrap();
 /// let trie = trie.as_borrowed();
 ///
 /// assert_eq!(trie.get("aaa", "CCC"), Some(2));

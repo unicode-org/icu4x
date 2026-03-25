@@ -18,8 +18,8 @@ const MIN_UNIT_DAYS: u16 = 14;
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::week::WeekInformation;
 /// use icu::calendar::types::Weekday;
+/// use icu::calendar::week::WeekInformation;
 /// use icu::locale::{locale, Locale};
 ///
 /// // For en-US
@@ -31,11 +31,17 @@ const MIN_UNIT_DAYS: u16 = 14;
 /// assert_eq!(info.first_weekday, Weekday::Monday);
 ///
 /// // For en-US with a Germany region preference override
-/// let info = WeekInformation::try_new(locale!("en-US-u-rg-dezzzz").into()).unwrap();
+/// let info =
+///     WeekInformation::try_new(locale!("en-US-u-rg-dezzzz").into()).unwrap();
 /// assert_eq!(info.first_weekday, Weekday::Monday);
 ///
 /// // As above but also with a First Weekday override
-/// let info = WeekInformation::try_new(Locale::try_from_str("en-US-u-rg-dezzzz-fw-wed").unwrap().into()).unwrap();
+/// let info = WeekInformation::try_new(
+///     Locale::try_from_str("en-US-u-rg-dezzzz-fw-wed")
+///         .unwrap()
+///         .into(),
+/// )
+/// .unwrap();
 /// assert_eq!(info.first_weekday, Weekday::Wednesday);
 /// ```
 #[derive(Clone, Copy, Debug)]

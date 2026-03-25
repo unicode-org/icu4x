@@ -121,7 +121,8 @@ impl SinglePlaceholderPattern {
     ///
     /// assert_eq!(
     ///     SinglePlaceholderPattern::PASS_THROUGH,
-    ///     &*SinglePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap()
+    ///     &*SinglePlaceholderPattern::try_from_str("{0}", Default::default())
+    ///         .unwrap()
     /// );
     ///
     /// assert_writeable_eq!(

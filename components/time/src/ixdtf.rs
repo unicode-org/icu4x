@@ -445,7 +445,10 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// assert_eq!(zoneddatetime.time.minute.number(), 8);
     /// assert_eq!(zoneddatetime.time.second.number(), 19);
     /// assert_eq!(zoneddatetime.time.subsecond.number(), 0);
-    /// assert_eq!(zoneddatetime.zone.id(), TimeZone::from_iana_id("America/Chicago"));
+    /// assert_eq!(
+    ///     zoneddatetime.zone.id(),
+    ///     TimeZone::from_iana_id("America/Chicago")
+    /// );
     /// assert_eq!(
     ///     zoneddatetime.zone.offset(),
     ///     Some(UtcOffset::try_from_seconds(-5 * 3600).unwrap())
@@ -741,10 +744,8 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::Iso;
     /// use icu::time::{zone::UtcOffset, TimeZoneInfo, ZonedTime};
     ///
-    /// let tz_from_offset = ZonedTime::try_offset_only_from_str(
-    ///     "T12:08:19-05:00",
-    /// )
-    /// .unwrap();
+    /// let tz_from_offset =
+    ///     ZonedTime::try_offset_only_from_str("T12:08:19-05:00").unwrap();
     ///
     /// assert_eq!(
     ///     tz_from_offset.zone,
@@ -764,10 +765,8 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     ///     TimeZone, TimeZoneInfo, ZonedTime,
     /// };
     ///
-    /// let tz_from_offset_annotation = ZonedTime::try_offset_only_from_str(
-    ///     "T12:08:19[-05:00]",
-    /// )
-    /// .unwrap();
+    /// let tz_from_offset_annotation =
+    ///     ZonedTime::try_offset_only_from_str("T12:08:19[-05:00]").unwrap();
     /// let tz_from_iana_annotation = ZonedTime::try_location_only_from_str(
     ///     "T12:08:19[America/Chicago]",
     ///     IanaParser::new(),
@@ -802,19 +801,16 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// };
     /// use tinystr::tinystr;
     ///
-    /// let consistent_tz_from_both = ZonedTime::try_offset_only_from_str(
-    ///     "T12:08:19-05:00[-05:00]",
-    /// )
-    /// .unwrap();
+    /// let consistent_tz_from_both =
+    ///     ZonedTime::try_offset_only_from_str("T12:08:19-05:00[-05:00]").unwrap();
     ///
     /// assert_eq!(
     ///     consistent_tz_from_both.zone,
     ///     UtcOffset::try_from_seconds(-5 * 3600).unwrap()
     /// );
     ///
-    /// let inconsistent_tz_from_both = ZonedTime::try_offset_only_from_str(
-    ///     "T12:08:19-05:00[+05:00]",
-    /// );
+    /// let inconsistent_tz_from_both =
+    ///     ZonedTime::try_offset_only_from_str("T12:08:19-05:00[+05:00]");
     ///
     /// assert!(matches!(
     ///     inconsistent_tz_from_both,

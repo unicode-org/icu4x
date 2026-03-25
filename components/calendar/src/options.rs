@@ -140,8 +140,8 @@ pub struct DateDifferenceOptions {
     ///
     /// ```
     /// use icu::calendar::options::DateDifferenceOptions;
-    /// use icu::calendar::types::DateDuration;
     /// use icu::calendar::options::DateDurationUnit;
+    /// use icu::calendar::types::DateDuration;
     /// use icu::calendar::Date;
     ///
     /// let d1 = Date::try_new_iso(2025, 3, 31).unwrap();

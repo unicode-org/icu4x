@@ -34,7 +34,14 @@
 //!
 //! // Calculate possible offsets at 2025-11-02T01:00:00
 //! // This is during a DST switchover and is ambiguous
-//! let PossibleOffset::Ambiguous { before, after, transition } = pacific.for_date_time(2025, 11, 2, 1, 0, 0) else { panic!() };
+//! let PossibleOffset::Ambiguous {
+//!     before,
+//!     after,
+//!     transition,
+//! } = pacific.for_date_time(2025, 11, 2, 1, 0, 0)
+//! else {
+//!     panic!()
+//! };
 //! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
 //! assert_eq!(before.offset, offset_seven);
 //! assert!(before.rule_applies);

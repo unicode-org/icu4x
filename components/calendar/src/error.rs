@@ -39,23 +39,12 @@ pub enum DateError {
     /// use icu::calendar::Date;
     /// use icu::calendar::DateError;
     ///
-    /// Date::try_new_from_codes(
-    ///     None,
-    ///     5784,
-    ///     Month::leap(5).code(),
-    ///     1,
-    ///     Hebrew,
-    /// )
-    /// .expect("5784 is a leap year");
+    /// Date::try_new_from_codes(None, 5784, Month::leap(5).code(), 1, Hebrew)
+    ///     .expect("5784 is a leap year");
     ///
-    /// let err = Date::try_new_from_codes(
-    ///     None,
-    ///     5785,
-    ///     Month::leap(5).code(),
-    ///     1,
-    ///     Hebrew,
-    /// )
-    /// .expect_err("5785 is a common year");
+    /// let err =
+    ///     Date::try_new_from_codes(None, 5785, Month::leap(5).code(), 1, Hebrew)
+    ///         .expect_err("5785 is a common year");
     ///
     /// assert!(matches!(err, DateError::UnknownMonthCode(_)));
     /// ```
@@ -74,9 +63,9 @@ pub enum LunisolarDateError {
     /// # Examples
     ///
     /// ```
+    /// use icu::calendar::error::LunisolarDateError;
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
-    /// use icu::calendar::error::LunisolarDateError;
     ///
     /// let err = Date::try_new_hebrew_v2(5785, Month::new(5), 50)
     ///     .expect_err("no month has 50 days");
@@ -93,9 +82,9 @@ pub enum LunisolarDateError {
     /// # Examples
     ///
     /// ```
+    /// use icu::calendar::error::LunisolarDateError;
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
-    /// use icu::calendar::error::LunisolarDateError;
     ///
     /// Date::try_new_hebrew_v2(5784, Month::leap(5), 1)
     ///     .expect("5784 is a leap year");
@@ -112,9 +101,9 @@ pub enum LunisolarDateError {
     /// # Examples
     ///
     /// ```
+    /// use icu::calendar::error::LunisolarDateError;
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
-    /// use icu::calendar::error::LunisolarDateError;
     ///
     /// let err = Date::try_new_hebrew_v2(5785, Month::leap(1), 1)
     ///     .expect_err("Tishrei does not have a leap month");
@@ -128,9 +117,9 @@ pub enum LunisolarDateError {
     /// # Examples
     ///
     /// ```
+    /// use icu::calendar::error::LunisolarDateError;
     /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
-    /// use icu::calendar::error::LunisolarDateError;
     ///
     /// let err = Date::try_new_hebrew_v2(56812, Month::leap(5), 1)
     ///     .expect_err("56812 is too big");
@@ -168,10 +157,7 @@ pub enum DateFromFieldsError {
     /// let err = Date::try_from_fields(fields, Default::default(), Iso)
     ///     .expect_err("no day 31 in November");
     ///
-    /// assert!(matches!(
-    ///     err,
-    ///     DateFromFieldsError::InvalidDay { max: 30 }
-    /// ));
+    /// assert!(matches!(err, DateFromFieldsError::InvalidDay { max: 30 }));
     /// ```
     #[displaydoc("Invalid day for month, max is {max}")]
     InvalidDay {
@@ -461,10 +447,10 @@ pub enum DateAddError {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::error::DateAddError;
     /// use icu::calendar::options::{DateAddOptions, Overflow};
     /// use icu::calendar::types::DateDuration;
+    /// use icu::calendar::Date;
     ///
     /// // There is a day 31 in October but not in November.
     /// let d = Date::try_new_iso(2025, 10, 31).unwrap();
@@ -492,10 +478,10 @@ pub enum DateAddError {
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::calendar::types::{DateDuration, Month};
-    /// use icu::calendar::Date;
     /// use icu::calendar::error::DateAddError;
     /// use icu::calendar::options::{DateAddOptions, Overflow};
+    /// use icu::calendar::types::{DateDuration, Month};
+    /// use icu::calendar::Date;
     ///
     /// // Hebrew year 5784 is a leap year, 5785 is not.
     /// // Adar I (the leap month) is month 5 in a leap year.
@@ -519,9 +505,9 @@ pub enum DateAddError {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::error::DateAddError;
     /// use icu::calendar::types::DateDuration;
+    /// use icu::calendar::Date;
     ///
     /// let d = Date::try_new_iso(2025, 1, 1).unwrap();
     /// let duration = DateDuration::for_years(1_000_000);
@@ -544,9 +530,9 @@ impl core::error::Error for DateAddError {}
 ///
 /// ```
 /// use icu::calendar::error::MismatchedCalendarError;
-/// use icu::calendar::Date;
 /// use icu::calendar::options::DateDifferenceOptions;
 /// use icu::calendar::options::DateDurationUnit;
+/// use icu::calendar::Date;
 ///
 /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
 /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
@@ -564,12 +550,12 @@ impl core::error::Error for DateAddError {}
 /// let mut options = DateDifferenceOptions::default();
 /// options.largest_unit = Some(DateDurationUnit::Months);
 ///
-/// let diff1 = d1.to_calendar(d2.calendar().clone())
+/// let diff1 = d1
+///     .to_calendar(d2.calendar().clone())
 ///     .try_until_with_options(&d2, options)
 ///     .unwrap();
 /// let diff2 = d1
-///     .try_until_with_options(&d2.to_calendar(d1.calendar().clone()),
-///                             options)
+///     .try_until_with_options(&d2.to_calendar(d1.calendar().clone()), options)
 ///     .unwrap();
 ///
 /// assert_ne!(diff1, diff2);
@@ -685,8 +671,14 @@ pub enum DateDurationParseError {
     /// use icu::calendar::error::DateDurationParseError;
     /// use icu::calendar::types::DateDuration;
     ///
-    /// assert_eq!(DateDuration::try_from_str("P"),  Err(DateDurationParseError::InvalidStructure));
-    /// assert_eq!(DateDuration::try_from_str("P1"), Err(DateDurationParseError::InvalidStructure));
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("P"),
+    ///     Err(DateDurationParseError::InvalidStructure)
+    /// );
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("P1"),
+    ///     Err(DateDurationParseError::InvalidStructure)
+    /// );
     /// ```
     InvalidStructure,
 
@@ -701,8 +693,14 @@ pub enum DateDurationParseError {
     /// use icu::calendar::error::DateDurationParseError;
     /// use icu::calendar::types::DateDuration;
     ///
-    /// assert_eq!(DateDuration::try_from_str("PT5M"), Err(DateDurationParseError::TimeNotSupported));
-    /// assert_eq!(DateDuration::try_from_str("P1DT"), Err(DateDurationParseError::TimeNotSupported));
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("PT5M"),
+    ///     Err(DateDurationParseError::TimeNotSupported)
+    /// );
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("P1DT"),
+    ///     Err(DateDurationParseError::TimeNotSupported)
+    /// );
     /// ```
     TimeNotSupported,
 
@@ -717,8 +715,14 @@ pub enum DateDurationParseError {
     /// use icu::calendar::error::DateDurationParseError;
     /// use icu::calendar::types::DateDuration;
     ///
-    /// assert_eq!(DateDuration::try_from_str("PY"), Err(DateDurationParseError::MissingValue));
-    /// assert_eq!(DateDuration::try_from_str("PX1D"), Err(DateDurationParseError::MissingValue));
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("PY"),
+    ///     Err(DateDurationParseError::MissingValue)
+    /// );
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("PX1D"),
+    ///     Err(DateDurationParseError::MissingValue)
+    /// );
     /// ```
     MissingValue,
 
@@ -732,8 +736,14 @@ pub enum DateDurationParseError {
     /// use icu::calendar::error::DateDurationParseError;
     /// use icu::calendar::types::DateDuration;
     ///
-    /// assert_eq!(DateDuration::try_from_str("P1Y2Y"), Err(DateDurationParseError::DuplicateUnit));
-    /// assert_eq!(DateDuration::try_from_str("P1D1D"), Err(DateDurationParseError::DuplicateUnit));
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("P1Y2Y"),
+    ///     Err(DateDurationParseError::DuplicateUnit)
+    /// );
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("P1D1D"),
+    ///     Err(DateDurationParseError::DuplicateUnit)
+    /// );
     /// ```
     DuplicateUnit,
 
@@ -745,7 +755,10 @@ pub enum DateDurationParseError {
     /// use icu::calendar::error::DateDurationParseError;
     /// use icu::calendar::types::DateDuration;
     ///
-    /// assert_eq!(DateDuration::try_from_str("P4294967296Y"), Err(DateDurationParseError::NumberOverflow));
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("P4294967296Y"),
+    ///     Err(DateDurationParseError::NumberOverflow)
+    /// );
     /// ```
     NumberOverflow,
 
@@ -759,7 +772,10 @@ pub enum DateDurationParseError {
     /// use icu::calendar::error::DateDurationParseError;
     /// use icu::calendar::types::DateDuration;
     ///
-    /// assert_eq!(DateDuration::try_from_str("+P1D"), Err(DateDurationParseError::PlusNotAllowed));
+    /// assert_eq!(
+    ///     DateDuration::try_from_str("+P1D"),
+    ///     Err(DateDurationParseError::PlusNotAllowed)
+    /// );
     /// ```
     PlusNotAllowed,
 }

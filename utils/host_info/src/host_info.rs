@@ -97,8 +97,8 @@ pub fn requested_locales() -> Result<Vec<Locale>, HostInfoError> {
 /// # Example
 ///
 /// ```
-/// let calendar = icu_host_info::calendar()
-///     .expect("Failed to retrieve calendar");
+/// let calendar =
+///     icu_host_info::calendar().expect("Failed to retrieve calendar");
 /// ```
 pub fn calendar() -> Result<Option<CalendarAlgorithm>, HostInfoError> {
     backends::Impl::calendar()
@@ -113,8 +113,7 @@ pub fn calendar() -> Result<Option<CalendarAlgorithm>, HostInfoError> {
 /// # Example
 ///
 /// ```
-/// let region = icu_host_info::region()
-///     .expect("Failed to retrieve region");
+/// let region = icu_host_info::region().expect("Failed to retrieve region");
 /// ```
 pub fn region() -> Result<Option<Region>, HostInfoError> {
     backends::Impl::region()
@@ -127,8 +126,8 @@ pub fn region() -> Result<Option<Region>, HostInfoError> {
 /// # Example
 ///
 /// ```
-/// let region = icu_host_info::hour_cycle()
-///     .expect("Failed to retrieve hour cycle");
+/// let region =
+///     icu_host_info::hour_cycle().expect("Failed to retrieve hour cycle");
 /// ```
 pub fn hour_cycle() -> Result<Option<HourCycle>, HostInfoError> {
     backends::Impl::hour_cycle()
@@ -169,8 +168,8 @@ pub fn first_day_of_week() -> Result<Option<FirstDay>, HostInfoError> {
 /// # Example
 ///
 /// ```
-/// let collation = icu_host_info::collation()
-///     .expect("Failed to retrieve collation");
+/// let collation =
+///     icu_host_info::collation().expect("Failed to retrieve collation");
 /// ```
 pub fn collation() -> Result<Option<(Language, CollationType)>, HostInfoError> {
     backends::Impl::collation()

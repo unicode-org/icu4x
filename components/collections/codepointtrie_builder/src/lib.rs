@@ -61,7 +61,8 @@
 //! let default_value = 1u8;
 //! let error_value = 2;
 //!
-//! let mut builder = CodePointTrieBuilder::new(default_value, error_value, TrieType::Small);
+//! let mut builder =
+//!     CodePointTrieBuilder::new(default_value, error_value, TrieType::Small);
 //! builder.set_value(0, 3);
 //! builder.set_value(1, 4);
 //! builder.set_value(2, 5);
