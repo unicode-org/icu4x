@@ -517,8 +517,6 @@ pub mod ffi {
         /// Returns whether the month is a leap month.
         #[diplomat::rust_link(icu::calendar::types::Month::is_leap, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::is_leap, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::MonthInfo::leap_status, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::LeapStatus, Enum, hidden)]
         #[diplomat::rust_link(icu::calendar::types::Month::is_formatting_leap, FnInStruct, hidden)]
         #[diplomat::rust_link(
             icu::calendar::types::MonthInfo::is_formatting_leap,

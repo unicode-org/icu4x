@@ -393,6 +393,10 @@ lazy_static::lazy_static! {
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
 
+        // Internal-ish type used mostly by formatting
+        "icu::calendar::types::MonthInfo::leap_status",
+        "icu::calendar::types::LeapStatus",
+
         // Rust-specific calendar and field set wrapper stuff
         "icu::calendar::AsCalendar",
         "icu::calendar::Ref",
