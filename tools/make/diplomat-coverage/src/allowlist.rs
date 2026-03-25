@@ -151,6 +151,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
         "icu::datetime::DateTimeFormatter::calendar",
+        "icu::calendar::error::EcmaReferenceYearError",
 
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
@@ -403,6 +404,10 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::into_ref_counted",
         "icu::calendar::Date::into_atomic_ref_counted",
         "icu::calendar::Date::as_borrowed",
+
+        // Rust specific crate integration
+        "icu::properties::script::HarfbuzzScriptData",
+        "icu::properties::script::HarfbuzzScriptDataBorrowed",
 
         // Generic type, primarily exists for use by ICU4X data struct internals.
         "icu::plurals::PluralElements",

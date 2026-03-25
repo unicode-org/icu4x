@@ -14,11 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::calendar::error::EcmaReferenceYearError#Enum
-icu::calendar::types::LeapStatus#Enum
-icu::calendar::types::Month::leap#FnInStruct
-icu::calendar::types::Month::new#FnInStruct
-icu::calendar::types::MonthInfo::leap_status#FnInStruct
 icu::collator::CollationKeySink::finish#FnInTrait
 icu::collator::CollationKeySink::write#FnInTrait
 icu::collator::CollationKeySink::write_byte#FnInTrait
@@ -27,6 +22,3 @@ icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
-icu::properties::script::HarfbuzzScriptData#Struct
-icu::properties::script::HarfbuzzScriptData::new#FnInStruct
-icu::properties::script::HarfbuzzScriptDataBorrowed#Struct
