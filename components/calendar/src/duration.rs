@@ -15,6 +15,8 @@ use crate::error::DateDurationParseError;
 /// It is not designed to be used more generally as a duration, such as for parsing,
 /// formatting, or storage.
 ///
+/// [`Date::try_add_with_options()`]: crate::Date::try_add_with_options
+/// [`Date::try_until_with_options()`]: crate::Date::try_until_with_options
 /// [`Date`]: crate::Date
 ///
 /// # Example
