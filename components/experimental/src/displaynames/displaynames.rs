@@ -253,10 +253,10 @@ impl ScriptDisplayName {
         ///
         /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
         ///
-        /// // "Maya" has a short display name in en-US
-        /// let display_name_maya = ScriptDisplayName::try_new_short(prefs, script!("Maya"))
+        /// // "Xsux" has a short display name in en-US
+        /// let display_name_xsux = ScriptDisplayName::try_new_short(prefs, script!("Xsux"))
         ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_maya, "Maya");
+        /// assert_writeable_eq!(display_name_xsux, "S-A Cuneiform");
         /// ```
         functions: [
             try_new_short,
