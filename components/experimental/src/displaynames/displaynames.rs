@@ -257,6 +257,11 @@ impl ScriptDisplayName {
         /// let display_name_xsux = ScriptDisplayName::try_new_short(prefs, script!("Xsux"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_xsux, "S-A Cuneiform");
+        ///
+        /// // "Maya" does not have a short display name, so it falls back to the long display name
+        /// let display_name_maya = ScriptDisplayName::try_new_short(prefs, script!("Maya"))
+        ///     .expect("Data should load successfully");
+        /// assert_writeable_eq!(display_name_maya, "Mayan hieroglyphs");
         /// ```
         functions: [
             try_new_short,
@@ -385,10 +390,15 @@ impl LanguageDisplayName {
         ///
         /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
         ///
-        /// // "bn" has a short display name in en-US
-        /// let display_name_bn = LanguageDisplayName::try_new_short(prefs, language!("bn"))
+        /// // "az" has a short display name in en-US
+        /// let display_name_az = LanguageDisplayName::try_new_short(prefs, language!("az"))
         ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_bn, "Bengali");
+        /// assert_writeable_eq!(display_name_az, "Azeri");
+        ///
+        /// // "en" does not have a short display name, so it falls back to the long display name
+        /// let display_name_en = LanguageDisplayName::try_new_short(prefs, language!("en"))
+        ///     .expect("Data should load successfully");
+        /// assert_writeable_eq!(display_name_en, "English");
         /// ```
         functions: [
             try_new_short,
@@ -977,5 +987,45 @@ fn test_script_load_long() {
         ..Default::default()
     };
     let data = ScriptDisplayName::try_new(prefs, script!("Maya")).unwrap();
+    assert_writeable_eq!(data, "Mayan hieroglyphs");
+}
+
+#[test]
+fn test_language_load_short() {
+    use icu_locale_core::locale;
+    use icu_locale_core::subtags::language;
+    use writeable::assert_writeable_eq;
+
+    let prefs = DisplayNamesPreferences {
+        locale_preferences: (&locale!("en-US")).into(),
+        ..Default::default()
+    };
+
+    // az has a short name
+    let data = LanguageDisplayName::try_new_short(prefs, language!("az")).unwrap();
+    assert_writeable_eq!(data, "Azeri");
+
+    // en falls back
+    let data = LanguageDisplayName::try_new_short(prefs, language!("en")).unwrap();
+    assert_writeable_eq!(data, "English");
+}
+
+#[test]
+fn test_script_load_short() {
+    use icu_locale_core::locale;
+    use icu_locale_core::subtags::script;
+    use writeable::assert_writeable_eq;
+
+    let prefs = DisplayNamesPreferences {
+        locale_preferences: (&locale!("en-US")).into(),
+        ..Default::default()
+    };
+
+    // Xsux has a short name
+    let data = ScriptDisplayName::try_new_short(prefs, script!("Xsux")).unwrap();
+    assert_writeable_eq!(data, "S-A Cuneiform");
+
+    // Maya falls back
+    let data = ScriptDisplayName::try_new_short(prefs, script!("Maya")).unwrap();
     assert_writeable_eq!(data, "Mayan hieroglyphs");
 }
