@@ -183,6 +183,272 @@ impl writeable::Writeable for RegionDisplayName {
 
 writeable::impl_display_with_writeable!(RegionDisplayName);
 
+/// A localized script display name.
+#[derive(Debug)]
+pub struct ScriptDisplayName {
+    payload: DataPayload<LocaleNamesScriptLongV1>,
+}
+
+impl ScriptDisplayName {
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the long script display name for a given script and locale using compiled data.
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::{
+        ///     DisplayNamesPreferences, ScriptDisplayName,
+        /// };
+        /// use icu::locale::{locale, subtags::script};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let prefs: DisplayNamesPreferences = locale!("en-001").into();
+        /// let display_name = ScriptDisplayName::try_new(prefs, script!("Maya"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "Mayan hieroglyphs");
+        /// ```
+        functions: [
+            try_new,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesScriptLongV1> + ?Sized>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError> {
+        let locale = LocaleNamesScriptLongV1::make_locale(prefs.locale_preferences);
+        let payload = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str(script.as_str())
+                        .map_err(|_| DataError::custom("Invalid script"))?,
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+        Ok(Self { payload })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the short script display name for a given script and locale using compiled data.
+        /// It will fall back to the long name if the short name is not available.
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::{
+        ///     DisplayNamesPreferences, ScriptDisplayName,
+        /// };
+        /// use icu::locale::{locale, subtags::script};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
+        ///
+        /// // "Maya" has a short display name in en-US
+        /// let display_name_maya = ScriptDisplayName::try_new_short(prefs, script!("Maya"))
+        ///     .expect("Data should load successfully");
+        /// assert_writeable_eq!(display_name_maya, "Maya");
+        /// ```
+        functions: [
+            try_new_short,
+            try_new_short_with_buffer_provider,
+            try_new_short_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
+    pub fn try_new_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<LocaleNamesScriptShortV1> + DataProvider<LocaleNamesScriptLongV1> + ?Sized,
+    {
+        let locale = LocaleNamesScriptShortV1::make_locale(prefs.locale_preferences);
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            DataMarkerAttributes::try_from_str(script.as_str())
+                .map_err(|_| DataError::custom("Invalid script"))?,
+            &locale,
+        );
+        let mut metadata = DataRequestMetadata::default();
+        metadata.silent = true;
+        let result: Result<DataResponse<LocaleNamesScriptShortV1>, DataError> =
+            provider.load(DataRequest { id, metadata });
+
+        match result {
+            Ok(response) => Ok(Self {
+                payload: response.payload.cast(),
+            }),
+            Err(DataError {
+                kind: DataErrorKind::IdentifierNotFound,
+                ..
+            }) => Self::try_new_unstable(provider, prefs, script),
+            Err(e) => Err(e),
+        }
+    }
+}
+
+impl writeable::Writeable for ScriptDisplayName {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        sink.write_str(self.payload.get())
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.payload.get().len())
+    }
+
+    fn write_to_string(&self) -> Cow<'_, str> {
+        Cow::Borrowed(self.payload.get())
+    }
+}
+
+writeable::impl_display_with_writeable!(ScriptDisplayName);
+
+/// A localized language display name.
+#[derive(Debug)]
+pub struct LanguageDisplayName {
+    payload: DataPayload<LocaleNamesLanguageLongV1>,
+}
+
+impl LanguageDisplayName {
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, language: Language) -> result: Result<Self, DataError>,
+        /// Loads the long language display name for a given language and locale using compiled data.
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::{
+        ///     DisplayNamesPreferences, LanguageDisplayName,
+        /// };
+        /// use icu::locale::{locale, subtags::language};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let prefs: DisplayNamesPreferences = locale!("en-001").into();
+        /// let display_name = LanguageDisplayName::try_new(prefs, language!("de"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "German");
+        /// ```
+        functions: [
+            try_new,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesLanguageLongV1> + ?Sized>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        language: Language,
+    ) -> Result<Self, DataError> {
+        let locale = LocaleNamesLanguageLongV1::make_locale(prefs.locale_preferences);
+        let payload = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str(language.as_str())
+                        .map_err(|_| DataError::custom("Invalid language"))?,
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+        Ok(Self { payload })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, language: Language) -> result: Result<Self, DataError>,
+        /// Loads the short language display name for a given language and locale using compiled data.
+        /// It will fall back to the long name if the short name is not available.
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::{
+        ///     DisplayNamesPreferences, LanguageDisplayName,
+        /// };
+        /// use icu::locale::{locale, subtags::language};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
+        ///
+        /// // "bn" has a short display name in en-US
+        /// let display_name_bn = LanguageDisplayName::try_new_short(prefs, language!("bn"))
+        ///     .expect("Data should load successfully");
+        /// assert_writeable_eq!(display_name_bn, "Bengali");
+        /// ```
+        functions: [
+            try_new_short,
+            try_new_short_with_buffer_provider,
+            try_new_short_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
+    pub fn try_new_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        language: Language,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<LocaleNamesLanguageShortV1>
+            + DataProvider<LocaleNamesLanguageLongV1>
+            + ?Sized,
+    {
+        let locale = LocaleNamesLanguageShortV1::make_locale(prefs.locale_preferences);
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            DataMarkerAttributes::try_from_str(language.as_str())
+                .map_err(|_| DataError::custom("Invalid language"))?,
+            &locale,
+        );
+        let mut metadata = DataRequestMetadata::default();
+        metadata.silent = true;
+        let result: Result<DataResponse<LocaleNamesLanguageShortV1>, DataError> =
+            provider.load(DataRequest { id, metadata });
+
+        match result {
+            Ok(response) => Ok(Self {
+                payload: response.payload.cast(),
+            }),
+            Err(DataError {
+                kind: DataErrorKind::IdentifierNotFound,
+                ..
+            }) => Self::try_new_unstable(provider, prefs, language),
+            Err(e) => Err(e),
+        }
+    }
+}
+
+impl writeable::Writeable for LanguageDisplayName {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        sink.write_str(self.payload.get())
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.payload.get().len())
+    }
+
+    fn write_to_string(&self) -> Cow<'_, str> {
+        Cow::Borrowed(self.payload.get())
+    }
+}
+
+writeable::impl_display_with_writeable!(LanguageDisplayName);
+
 impl RegionDisplayNames {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, options: DisplayNamesOptions) -> error: DataError,
@@ -684,4 +950,32 @@ fn test_region_load_long() {
     };
     let data = RegionDisplayName::try_new(prefs, region!("AE")).unwrap();
     assert_writeable_eq!(data, "United Arab Emirates");
+}
+
+#[test]
+fn test_language_load_long() {
+    use icu_locale_core::locale;
+    use icu_locale_core::subtags::language;
+    use writeable::assert_writeable_eq;
+
+    let prefs = DisplayNamesPreferences {
+        locale_preferences: (&locale!("en-001")).into(),
+        ..Default::default()
+    };
+    let data = LanguageDisplayName::try_new(prefs, language!("de")).unwrap();
+    assert_writeable_eq!(data, "German");
+}
+
+#[test]
+fn test_script_load_long() {
+    use icu_locale_core::locale;
+    use icu_locale_core::subtags::script;
+    use writeable::assert_writeable_eq;
+
+    let prefs = DisplayNamesPreferences {
+        locale_preferences: (&locale!("en-001")).into(),
+        ..Default::default()
+    };
+    let data = ScriptDisplayName::try_new(prefs, script!("Maya")).unwrap();
+    assert_writeable_eq!(data, "Mayan hieroglyphs");
 }

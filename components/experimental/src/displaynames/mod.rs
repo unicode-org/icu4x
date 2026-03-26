@@ -11,10 +11,12 @@ mod options;
 pub mod provider;
 
 pub use displaynames::DisplayNamesPreferences;
+pub use displaynames::LanguageDisplayName;
 pub use displaynames::LanguageDisplayNames;
 pub use displaynames::LocaleDisplayNamesFormatter;
 pub use displaynames::RegionDisplayName;
 pub use displaynames::RegionDisplayNames;
+pub use displaynames::ScriptDisplayName;
 pub use displaynames::ScriptDisplayNames;
 pub use displaynames::VariantDisplayNames;
 pub use options::DisplayNamesOptions;
