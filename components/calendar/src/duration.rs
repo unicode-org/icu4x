@@ -10,8 +10,10 @@ use crate::error::DateDurationParseError;
 /// "1 month" is represented as "1 month" in the data model, without any context of how many
 /// days the month might be.
 ///
-/// Use [`DateDuration`] for calculating the difference between two [`Date`]s and adding
-/// date units to a [`Date`].
+/// [`DateDuration`] is the input and output type of date arithmetic operations in `icu_calendar`,
+/// such as [`Date::try_add_with_options()`] and [`Date::try_until_with_options()`].
+/// It is not designed to be used more generally as a duration, such as for parsing,
+/// formatting, or storage.
 ///
 /// [`Date`]: crate::Date
 ///
