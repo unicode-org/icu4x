@@ -7,6 +7,61 @@ use crate::displaynames::provider::*;
 use alloc::borrow::Cow;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
+use zerovec::VarZeroCow;
+
+fn try_new_unstable<M, D>(
+    provider: &D,
+    prefs: DisplayNamesPreferences,
+    region: Region,
+) -> Result<DataPayload<M>, DataError>
+where
+    M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
+    D: DataProvider<M> + ?Sized,
+{
+    let locale = M::make_locale(prefs.locale_preferences);
+    let payload = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::try_from_str(region.as_str())
+                    .map_err(|_| DataError::custom("Invalid region"))?,
+                &locale,
+            ),
+            ..Default::default()
+        })?
+        .payload;
+    Ok(payload)
+}
+
+fn try_new_short_unstable<MShort, MLong, D>(
+    provider: &D,
+    prefs: DisplayNamesPreferences,
+    region: Region,
+) -> Result<DataPayload<MLong>, DataError>
+where
+    MShort: DataMarker<DataStruct = VarZeroCow<'static, str>>,
+    MLong: DataMarker<DataStruct = VarZeroCow<'static, str>>,
+    D: DataProvider<MShort> + DataProvider<MLong> + ?Sized,
+{
+    let locale = MShort::make_locale(prefs.locale_preferences);
+    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+        DataMarkerAttributes::try_from_str(region.as_str())
+            .map_err(|_| DataError::custom("Invalid region"))?,
+        &locale,
+    );
+    let mut metadata = DataRequestMetadata::default();
+    metadata.silent = true;
+    let result: Result<DataResponse<MShort>, DataError> =
+        provider.load(DataRequest { id, metadata });
+
+    match result {
+        Ok(response) => Ok(response.payload.cast()),
+        Err(DataError {
+            kind: DataErrorKind::IdentifierNotFound,
+            ..
+        }) => try_new_unstable(provider, prefs, region),
+        Err(e) => Err(e),
+    }
+}
 
 /// A localized region display name.
 #[derive(Debug)]
@@ -29,10 +84,10 @@ impl RegionDisplayName {
         /// use writeable::assert_writeable_eq;
         ///
         /// let prefs: DisplayNamesPreferences = locale!("en-001").into();
-        /// let display_name = RegionDisplayName::try_new(prefs, region!("AE"))
+        /// let display_name = RegionDisplayName::try_new(prefs, region!("FR"))
         ///     .expect("Data should load successfully");
         ///
-        /// assert_writeable_eq!(display_name, "United Arab Emirates");
+        /// assert_writeable_eq!(display_name, "France");
         /// ```
         functions: [
             try_new,
@@ -48,18 +103,8 @@ impl RegionDisplayName {
         prefs: DisplayNamesPreferences,
         region: Region,
     ) -> Result<Self, DataError> {
-        let locale = LocaleNamesRegionLongV1::make_locale(prefs.locale_preferences);
-        let payload = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(region.as_str())
-                        .map_err(|_| DataError::custom("Invalid region"))?,
-                    &locale,
-                ),
-                ..Default::default()
-            })?
-            .payload;
-        Ok(Self { payload })
+        try_new_unstable::<LocaleNamesRegionLongV1, _>(provider, prefs, region)
+            .map(|payload| Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -83,10 +128,10 @@ impl RegionDisplayName {
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_us, "US");
         ///
-        /// // "AE" does not have a short display name, so it falls back to the long display name
-        /// let display_name_ae = RegionDisplayName::try_new_short(prefs, region!("AE"))
+        /// // "FR" does not have a short display name, so it falls back to the long display name
+        /// let display_name_fr = RegionDisplayName::try_new_short(prefs, region!("FR"))
         ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_ae, "United Arab Emirates");
+        /// assert_writeable_eq!(display_name_fr, "France");
         /// ```
         functions: [
             try_new_short,
@@ -105,27 +150,10 @@ impl RegionDisplayName {
     where
         D: DataProvider<LocaleNamesRegionShortV1> + DataProvider<LocaleNamesRegionLongV1> + ?Sized,
     {
-        let locale = LocaleNamesRegionShortV1::make_locale(prefs.locale_preferences);
-        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-            DataMarkerAttributes::try_from_str(region.as_str())
-                .map_err(|_| DataError::custom("Invalid region"))?,
-            &locale,
-        );
-        let mut metadata = DataRequestMetadata::default();
-        metadata.silent = true;
-        let result: Result<DataResponse<LocaleNamesRegionShortV1>, DataError> =
-            provider.load(DataRequest { id, metadata });
-
-        match result {
-            Ok(response) => Ok(Self {
-                payload: response.payload.cast(),
-            }),
-            Err(DataError {
-                kind: DataErrorKind::IdentifierNotFound,
-                ..
-            }) => Self::try_new_unstable(provider, prefs, region),
-            Err(e) => Err(e),
-        }
+        try_new_short_unstable::<LocaleNamesRegionShortV1, LocaleNamesRegionLongV1, _>(
+            provider, prefs, region,
+        )
+        .map(|payload| Self { payload })
     }
 }
 
