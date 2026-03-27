@@ -22,3 +22,4 @@ pub use options::Fallback;
 pub use options::LanguageDisplay;
 pub use options::Style;
 pub use singular::RegionDisplayName;
+pub use singular::ScriptDisplayName;
