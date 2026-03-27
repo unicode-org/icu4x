@@ -63,7 +63,20 @@ where
     }
 }
 
-/// A localized region display name.
+/// A localized display name for a single region.
+///
+/// # Example
+///
+/// ```
+/// use icu::experimental::displaynames::RegionDisplayName;
+/// use icu::locale::{locale, subtags::region};
+/// use writeable::assert_writeable_eq;
+///
+/// let display_name = RegionDisplayName::try_new(locale!("en").into(), region!("FR"))
+///     .expect("Data should load successfully");
+///
+/// assert_writeable_eq!(display_name, "France");
+/// ```
 #[derive(Debug)]
 pub struct RegionDisplayName {
     payload: DataPayload<LocaleNamesRegionLongV1>,
@@ -73,22 +86,6 @@ impl RegionDisplayName {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the long region display name for a given region and locale using compiled data.
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, RegionDisplayName,
-        /// };
-        /// use icu::locale::{locale, subtags::region};
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let prefs: DisplayNamesPreferences = locale!("en-001").into();
-        /// let display_name = RegionDisplayName::try_new(prefs, region!("FR"))
-        ///     .expect("Data should load successfully");
-        ///
-        /// assert_writeable_eq!(display_name, "France");
-        /// ```
         functions: [
             try_new,
             try_new_with_buffer_provider,
@@ -110,7 +107,8 @@ impl RegionDisplayName {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the short region display name for a given region and locale using compiled data.
-        /// It will fall back to the long name if the short name is not available.
+        ///
+        /// Falls back to the long name if the short name is not available.
         ///
         /// # Example
         ///
