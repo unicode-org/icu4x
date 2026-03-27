@@ -156,16 +156,19 @@ impl RegionDisplayName {
 }
 
 impl writeable::Writeable for RegionDisplayName {
+    #[inline]
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         sink.write_str(self.payload.get())
     }
 
+    #[inline]
     fn writeable_length_hint(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(self.payload.get().len())
     }
 
-    fn write_to_string(&self) -> Cow<'_, str> {
-        Cow::Borrowed(self.payload.get())
+    #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        Some(&*self.payload.get())
     }
 }
 
