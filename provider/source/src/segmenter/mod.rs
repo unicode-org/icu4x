@@ -181,6 +181,28 @@ fn generate_rule_break_data(
         )
     }
 
+    fn is_east_asian(eaw: CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
+        matches!(
+            eaw.get32(codepoint),
+            EastAsianWidth::Fullwidth | EastAsianWidth::Halfwidth | EastAsianWidth::Wide
+        )
+    }
+
+    fn is_wide(eaw: CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
+        matches!(
+            eaw.get32(codepoint),
+            EastAsianWidth::Fullwidth | EastAsianWidth::Wide
+        )
+    }
+
+    fn is_half_wide(eaw: CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
+        matches!(eaw.get32(codepoint), EastAsianWidth::Halfwidth)
+    }
+
+    fn is_ambiguous(eaw: CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
+        matches!(eaw.get32(codepoint), EastAsianWidth::Ambiguous)
+    }
+
     // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
     // summarized in the following list. See details in the property txt in
     // https://www.unicode.org/Public/14.0.0/ucd/
@@ -367,28 +389,31 @@ fn generate_rule_break_data(
                 }
 
                 "line" => {
-                    if p.name == "CP_EA"
-                        || p.name == "OP_OP30"
-                        || p.name == "OP_EA"
-                        || p.name == "ID_CN"
-                        || p.name == "PO_EAW"
-                        || p.name == "PR_EAW"
-                        || p.name == "AL_DOTTED_CIRCLE"
+                    if p.name == "ID_CN"
                         || p.name == "QU_PI"
                         || p.name == "QU_PF"
+                        || p.name == "SA_MC_MN"
+                        || p.name == "AI_EastAsian"
+                        || p.name == "AL_DottedCircle"
+                        || p.name == "AL_EastAsian"
+                        || p.name == "BA_EastAsian"
+                        || p.name == "CL_EastAsian"
+                        || p.name == "CM_EastAsian"
+                        || p.name == "EB_EastAsian"
+                        || p.name == "EX_EastAsian"
+                        || p.name == "GL_EastAsian"
+                        || p.name == "ID_EastAsian"
+                        || p.name == "IN_EastAsian"
+                        || p.name == "NS_EastAsian"
+                        || p.name == "OP_EastAsian"
+                        || p.name == "PO_EastAsian"
+                        || p.name == "PR_EastAsian"
+                        || p.name == "XX_ExtPict"
                     {
                         for cp in 0..(CODEPOINT_TABLE_LEN as u32) {
                             match lb.get32(cp) {
                                 LineBreak::OpenPunctuation => {
-                                    if (p.name == "OP_OP30"
-                                        && (eaw.get32(cp) != EastAsianWidth::Fullwidth
-                                            && eaw.get32(cp) != EastAsianWidth::Halfwidth
-                                            && eaw.get32(cp) != EastAsianWidth::Wide))
-                                        || (p.name == "OP_EA"
-                                            && (eaw.get32(cp) == EastAsianWidth::Fullwidth
-                                                || eaw.get32(cp) == EastAsianWidth::Halfwidth
-                                                || eaw.get32(cp) == EastAsianWidth::Wide))
-                                    {
+                                    if p.name == "OP_EastAsian" && is_east_asian(eaw, cp) {
                                         properties_trie.set_value(cp, property_index);
                                     }
                                 }
@@ -411,42 +436,35 @@ fn generate_rule_break_data(
                                         if let Some(c) = char::from_u32(cp) {
                                             if extended_pictographic.contains(c) {
                                                 properties_trie.set_value(cp, property_index);
-                                            } else {
-                                                // Line segmenter doesn't use Unicode 17's data,
-                                                // but extended_pictographic is 17.
-                                                // So this is a hack to use old Unicode rules with
-                                                // newer Unicode data.
-                                                // This should be removed when line segmenter uses
-                                                // Unicode 17.
-                                                // (https://github.com/unicode-org/icu4x/issues/7134)
-                                                match cp {
-                                                    0x1f774..=0x1f77f => properties_trie
-                                                        .set_value(cp, property_index),
-                                                    0x1f8ae..=0x1f8ff => properties_trie
-                                                        .set_value(cp, property_index),
-                                                    0x1f947..=0x1faff => properties_trie
-                                                        .set_value(cp, property_index),
-                                                    _ => {}
-                                                };
                                             }
                                         }
+                                    } else if p.name == "ID_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
                                 LineBreak::PostfixNumeric => {
-                                    if p.name == "PO_EAW" && is_cjk_fullwidth(eaw, cp) {
+                                    if p.name == "PO_EastAsian" && is_east_asian(eaw, cp) {
                                         properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
                                 LineBreak::PrefixNumeric => {
-                                    if p.name == "PR_EAW" && is_cjk_fullwidth(eaw, cp) {
+                                    if p.name == "PR_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::Ambiguous => {
+                                    if p.name == "AI_EastAsian" && is_east_asian(eaw, cp) {
                                         properties_trie.set_value(cp, property_index);
                                     }
                                 }
 
                                 LineBreak::Alphabetic => {
-                                    if p.name == "AL_DOTTED_CIRCLE" && cp == 0x25CC {
+                                    if (p.name == "AL_EastAsian" && is_east_asian(eaw, cp))
+                                        || (p.name == "AL_DottedCircle" && cp == 0x25CC)
+                                    {
                                         properties_trie.set_value(cp, property_index);
                                     }
                                 }
@@ -460,6 +478,72 @@ fn generate_rule_break_data(
 
                                     if p.name == "QU_PF"
                                         && gc.get32(cp) == GeneralCategory::FinalPunctuation
+                                    {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::BreakAfter => {
+                                    if p.name == "BA_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::ClosePunctuation => {
+                                    if p.name == "CL_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::CombiningMark => {
+                                    if p.name == "CM_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::ComplexContext => {
+                                    if p.name == "SA_MC_MN"
+                                        && (gc.get32(cp) == GeneralCategory::NonspacingMark
+                                            || gc.get32(cp) == GeneralCategory::SpacingMark)
+                                    {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::EBase => {
+                                    if p.name == "EB_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::Exclamation => {
+                                    if p.name == "EX_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::Glue => {
+                                    if p.name == "GL_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::Inseparable => {
+                                    if p.name == "IN_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::Nonstarter => {
+                                    if p.name == "NS_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+                                }
+
+                                LineBreak::Unknown => {
+                                    if p.name == "XX_ExtPict"
+                                        && extended_pictographic.contains32(cp)
+                                        && gc.get32(cp) == GeneralCategory::Unassigned
                                     {
                                         properties_trie.set_value(cp, property_index);
                                     }
@@ -541,7 +625,8 @@ fn generate_rule_break_data(
                 }
                 continue;
             }
-            let left_index = get_index_from_name(&properties_names, l).unwrap();
+            let left_index =
+                get_index_from_name(&properties_names, l).expect("left property should be valid!");
             for r in &rule.right {
                 // Special case: right is Any
                 if r == "Any" {
@@ -591,7 +676,8 @@ fn generate_rule_break_data(
         if let Some(left) = &p.left {
             if let Some(right) = &p.right {
                 let right_index = get_index_from_name(&properties_names, right).unwrap();
-                let left_index = get_index_from_name(&properties_names, left).unwrap();
+                let left_index = get_index_from_name(&properties_names, left)
+                    .expect("left property should be valid!");
 
                 let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
                 break_state_table[left_index * properties_names.len() + right_index] =
@@ -906,9 +992,9 @@ mod tests {
         //     _ => XX,
         // }
 
-        const CM: u8 = 14;
-        const XX: u8 = 52;
-        const ID: u8 = 25;
+        const CM: u8 = 18;
+        const XX: u8 = 65;
+        const ID: u8 = 36;
 
         assert_eq!(data.property_table.get32(0x20000), ID);
         assert_eq!(data.property_table.get32(0x3fffd), ID);

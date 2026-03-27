@@ -124,6 +124,25 @@ mod tests {
     }
 
     #[test]
+    fn test_burmese_only() {
+        let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
+        let utf16: Vec<u16> = s.encode_utf16().collect();
+        let mut iter = LanguageIteratorUtf16::new(&utf16);
+        assert_eq!(
+            iter.next(),
+            Some((utf16.as_slice(), Language::Burmese)),
+            "Burmese language only with UTF-16"
+        );
+        let mut iter = LanguageIterator::new(s);
+        assert_eq!(
+            iter.next(),
+            Some((s, Language::Burmese)),
+            "Burmese language only with UTF-8"
+        );
+        assert_eq!(iter.next(), None, "Iterator for UTF-8 is finished");
+    }
+
+    #[test]
     fn test_combine() {
         const TEST_STR_THAI: &str = "ภาษาไทยภาษาไทย";
         const TEST_STR_BURMESE: &str = "ဗမာနွယ်ဘာသာစကားမျာ";
