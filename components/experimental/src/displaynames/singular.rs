@@ -170,7 +170,7 @@ impl writeable::Writeable for ScriptDisplayName {
 
     #[inline]
     fn writeable_borrow(&self) -> Option<&str> {
-        Some(&*self.payload.get())
+        Some(self.payload.get())
     }
 }
 
@@ -283,7 +283,7 @@ impl writeable::Writeable for RegionDisplayName {
 
     #[inline]
     fn writeable_borrow(&self) -> Option<&str> {
-        Some(&*self.payload.get())
+        Some(self.payload.get())
     }
 }
 
