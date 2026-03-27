@@ -2096,6 +2096,28 @@ fn test_latin1_utf16_fi() {
     );
 }
 
+#[test]
+fn test_numeric_zeros() {
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(CollationNumericOrdering::True);
+
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+    let mut left = String::new();
+    left.push('1');
+    for _ in 0..510 {
+        left.push('0');
+    }
+    let mut right = String::new();
+    right.push('2');
+    for _ in 0..509 {
+        right.push('0');
+    }
+    // Should be `Greater`, but we do `Less` for now to replicate
+    // ICU4C behavior. Let's treat fixing both as a shared design bug
+    // to figure out.
+    assert_eq!(collator.compare(&left, &right), Ordering::Less);
+}
+
 // TODO: Test languages that map to the root.
 // The languages that map to root without script reordering are:
 // ca (at least for now)

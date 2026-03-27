@@ -40,7 +40,7 @@ Fully filled in up to 43d4d6f154
             - New method: `Date::weekday()`
         - Deprecate `Date::new_from_iso`/`Date::to_iso` (unicode-org#7287)
         - Deprecate `Date::extended_year()` (use `Date::year().extended_year()`) (unicode-org#7289)
-        - Remove `YearInfo: PartialEq` bound (unicode-org#7743) 
+        - Remove `YearInfo: PartialEq` bound (unicode-org#7743)
         - Start producing Meiji era only after Meiji 6 (unicode-org#7503)
         - Correctly produce `ethioaa` calendars from `CalendarAlgorithm` (unicode-org#7321)
         - Respect `-u-rg` in calendar resolution (unicode-org#7376)
@@ -355,6 +355,7 @@ Several crates have had patch releases in the 2.1 stream:
         - Make merge separator compare less than U+0000 on the identical strength (unicode-org#6814, unicode-org#6823)
         - Add Latin1 comparisons to the collator (unicode-org#6674)
         - Avoid double-validating `char`s (unicode-org#6924)
+        - Make skipping zeros in the numeric mode bugwards-compatible with ICU4C fixing a panic
     - `icu_collections`
         - Fix building without the `alloc` crate (unicode-org#6997)
         - Optimize `CodePointTrie` by hoisting fast path bound checks to constructor (unicode-org#6863)

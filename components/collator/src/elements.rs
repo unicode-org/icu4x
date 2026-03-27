@@ -2095,22 +2095,32 @@ where
                                             digits.push(ce32.digit());
                                         }
                                     }
-                                    // Skip leading zeros
-                                    let mut zeros = 0;
-                                    while let Some(&digit) = digits.get(zeros) {
-                                        if digit != 0 {
-                                            break;
-                                        }
-                                        zeros += 1;
-                                    }
-                                    if zeros == digits.len() {
-                                        // All zeros, keep a zero
-                                        zeros = digits.len() - 1;
-                                    }
-                                    // Index in range by construction above
-                                    #[expect(clippy::indexing_slicing)]
-                                    let mut remaining = &digits[zeros..];
+                                    let mut remaining = digits.as_slice();
                                     while !remaining.is_empty() {
+                                        // Skip leading zeros
+
+                                        // If this isn't our initial loop round and we've truncated
+                                        // a chunk to 254 digits on a previous round, the eventual
+                                        // comparison result can be wrong, but that replicates an
+                                        // ICU4C bug. Let's fix both as a follow-up.
+                                        loop {
+                                            let Some((first, tail)) = remaining.split_first()
+                                            else {
+                                                // Keep one zero
+                                                // If we get here, we must have skipped a zero, since
+                                                // 1) the while loop condition above meant that we started
+                                                //    with a non-empty slice AND
+                                                // 2) this loop only skips zeros
+                                                // Instead of trying to recover the same zero that we already
+                                                // skipped, let's just fill in a static slice.
+                                                remaining = &[0];
+                                                break;
+                                            };
+                                            if *first != 0 {
+                                                break;
+                                            }
+                                            remaining = tail;
+                                        }
                                         // Numeric CEs are generated for segments of
                                         // up to 254 digits.
                                         let (head, tail) = remaining
