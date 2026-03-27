@@ -9,11 +9,11 @@
 mod displaynames;
 mod options;
 pub mod provider;
+mod singular;
 
 pub use displaynames::DisplayNamesPreferences;
 pub use displaynames::LanguageDisplayNames;
 pub use displaynames::LocaleDisplayNamesFormatter;
-pub use displaynames::RegionDisplayName;
 pub use displaynames::RegionDisplayNames;
 pub use displaynames::ScriptDisplayNames;
 pub use displaynames::VariantDisplayNames;
@@ -21,3 +21,4 @@ pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;
 pub use options::Style;
+pub use singular::RegionDisplayName;
