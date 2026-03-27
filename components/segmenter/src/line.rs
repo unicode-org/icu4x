@@ -15,66 +15,77 @@ use icu_locale_core::subtags::{Language, language};
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
+#[allow(dead_code)]
 #[doc(hidden)]
 impl RuleBreakData<'_> {
     pub const LINE_PROPERTY_AI: u8 = 1;
-    pub const LINE_PROPERTY_AL: u8 = 3;
-    pub const LINE_PROPERTY_BA: u8 = 8;
-    pub const LINE_PROPERTY_BK: u8 = 10;
-    pub const LINE_PROPERTY_CJ: u8 = 12;
-    pub const LINE_PROPERTY_CM: u8 = 14;
-    pub const LINE_PROPERTY_CR: u8 = 16;
-    pub const LINE_PROPERTY_EX: u8 = 19;
-    pub const LINE_PROPERTY_H2: u8 = 21;
-    pub const LINE_PROPERTY_H3: u8 = 22;
-    pub const LINE_PROPERTY_HY: u8 = 24;
-    pub const LINE_PROPERTY_ID: u8 = 25;
-    pub const LINE_PROPERTY_IN: u8 = 27;
-    pub const LINE_PROPERTY_JL: u8 = 29;
-    pub const LINE_PROPERTY_JT: u8 = 30;
-    pub const LINE_PROPERTY_JV: u8 = 31;
-    pub const LINE_PROPERTY_LF: u8 = 32;
-    pub const LINE_PROPERTY_NL: u8 = 33;
-    pub const LINE_PROPERTY_NS: u8 = 34;
-    pub const LINE_PROPERTY_NU: u8 = 35;
-    pub const LINE_PROPERTY_PO_EAW: u8 = 39;
-    pub const LINE_PROPERTY_PR_EAW: u8 = 41;
-    pub const LINE_PROPERTY_SP: u8 = 47;
-    pub const LINE_PROPERTY_ZW: u8 = 53;
-    pub const LINE_PROPERTY_ZWJ: u8 = 54;
-}
-
-#[cfg_attr(not(test), allow(dead_code))]
-#[doc(hidden)]
-impl RuleBreakData<'_> {
-    pub const LINE_PROPERTY_AK: u8 = 2;
-    pub const LINE_PROPERTY_AL_DOTTED_CIRCLE: u8 = 4;
-    pub const LINE_PROPERTY_AP: u8 = 5;
-    pub const LINE_PROPERTY_AS: u8 = 6;
-    pub const LINE_PROPERTY_B2: u8 = 7;
-    pub const LINE_PROPERTY_BB: u8 = 9;
-    pub const LINE_PROPERTY_CB: u8 = 11;
-    pub const LINE_PROPERTY_CL: u8 = 13;
-    pub const LINE_PROPERTY_CP: u8 = 15;
-    pub const LINE_PROPERTY_EB: u8 = 17;
-    pub const LINE_PROPERTY_EM: u8 = 18;
-    pub const LINE_PROPERTY_GL: u8 = 20;
-    pub const LINE_PROPERTY_HL: u8 = 23;
-    pub const LINE_PROPERTY_ID_CN: u8 = 26;
-    pub const LINE_PROPERTY_IS: u8 = 28;
-    pub const LINE_PROPERTY_OP_EA: u8 = 36;
-    pub const LINE_PROPERTY_OP_OP30: u8 = 37;
-    pub const LINE_PROPERTY_PO: u8 = 38;
-    pub const LINE_PROPERTY_PR: u8 = 40;
-    pub const LINE_PROPERTY_QU: u8 = 42;
-    pub const LINE_PROPERTY_QU_PF: u8 = 43;
-    pub const LINE_PROPERTY_QU_PI: u8 = 44;
-    pub const LINE_PROPERTY_RI: u8 = 45;
-    pub const LINE_PROPERTY_SY: u8 = 48;
-    pub const LINE_PROPERTY_VF: u8 = 49;
-    pub const LINE_PROPERTY_VI: u8 = 50;
-    pub const LINE_PROPERTY_WJ: u8 = 51;
-    pub const LINE_PROPERTY_XX: u8 = 52;
+    pub const LINE_PROPERTY_AI_EASTASIAN: u8 = 2;
+    pub const LINE_PROPERTY_AK: u8 = 3;
+    pub const LINE_PROPERTY_AL: u8 = 4;
+    pub const LINE_PROPERTY_AL_DOTTED_CIRCLE: u8 = 5;
+    pub const LINE_PROPERTY_AL_EASTASIAN: u8 = 6;
+    pub const LINE_PROPERTY_AP: u8 = 7;
+    pub const LINE_PROPERTY_AS: u8 = 8;
+    pub const LINE_PROPERTY_B2: u8 = 9;
+    pub const LINE_PROPERTY_BA: u8 = 10;
+    pub const LINE_PROPERTY_BA_EASTASIAN: u8 = 11;
+    pub const LINE_PROPERTY_BB: u8 = 12;
+    pub const LINE_PROPERTY_BK: u8 = 13;
+    pub const LINE_PROPERTY_CB: u8 = 14;
+    pub const LINE_PROPERTY_CJ: u8 = 15;
+    pub const LINE_PROPERTY_CL: u8 = 16;
+    pub const LINE_PROPERTY_CL_EASTASIAN: u8 = 17;
+    pub const LINE_PROPERTY_CM: u8 = 18;
+    pub const LINE_PROPERTY_CM_EASTASIAN: u8 = 19;
+    pub const LINE_PROPERTY_CP: u8 = 20;
+    pub const LINE_PROPERTY_CR: u8 = 21;
+    pub const LINE_PROPERTY_EB: u8 = 22;
+    pub const LINE_PROPERTY_EB_EASTASIAN: u8 = 23;
+    pub const LINE_PROPERTY_EM: u8 = 24;
+    pub const LINE_PROPERTY_EX: u8 = 25;
+    pub const LINE_PROPERTY_EX_EASTASIAN: u8 = 26;
+    pub const LINE_PROPERTY_GL: u8 = 27;
+    pub const LINE_PROPERTY_GL_EASTASIAN: u8 = 28;
+    pub const LINE_PROPERTY_H2: u8 = 29;
+    pub const LINE_PROPERTY_H3: u8 = 30;
+    pub const LINE_PROPERTY_HH: u8 = 31;
+    pub const LINE_PROPERTY_HL: u8 = 32;
+    pub const LINE_PROPERTY_HY: u8 = 33;
+    pub const LINE_PROPERTY_ID: u8 = 34;
+    pub const LINE_PROPERTY_ID_CN: u8 = 35;
+    pub const LINE_PROPERTY_ID_EASTASIAN: u8 = 36;
+    pub const LINE_PROPERTY_IN: u8 = 37;
+    pub const LINE_PROPERTY_IN_EASTASIAN: u8 = 38;
+    pub const LINE_PROPERTY_IS: u8 = 39;
+    pub const LINE_PROPERTY_JL: u8 = 40;
+    pub const LINE_PROPERTY_JT: u8 = 41;
+    pub const LINE_PROPERTY_JV: u8 = 42;
+    pub const LINE_PROPERTY_LF: u8 = 43;
+    pub const LINE_PROPERTY_NL: u8 = 44;
+    pub const LINE_PROPERTY_NS: u8 = 45;
+    pub const LINE_PROPERTY_NS_EASTASIAN: u8 = 46;
+    pub const LINE_PROPERTY_NU: u8 = 47;
+    pub const LINE_PROPERTY_OP: u8 = 48;
+    pub const LINE_PROPERTY_OP_EASTASIAN: u8 = 49;
+    pub const LINE_PROPERTY_PO: u8 = 50;
+    pub const LINE_PROPERTY_PO_EASTASIAN: u8 = 51;
+    pub const LINE_PROPERTY_PR: u8 = 52;
+    pub const LINE_PROPERTY_PR_EASTASIAN: u8 = 53;
+    pub const LINE_PROPERTY_QU: u8 = 54;
+    pub const LINE_PROPERTY_QU_PF: u8 = 55;
+    pub const LINE_PROPERTY_QU_PI: u8 = 56;
+    pub const LINE_PROPERTY_RI: u8 = 57;
+    pub const LINE_PROPERTY_SA: u8 = 58;
+    pub const LINE_PROPERTY_SA_MC_MN: u8 = 59;
+    pub const LINE_PROPERTY_SP: u8 = 60;
+    pub const LINE_PROPERTY_SY: u8 = 61;
+    pub const LINE_PROPERTY_VF: u8 = 62;
+    pub const LINE_PROPERTY_VI: u8 = 63;
+    pub const LINE_PROPERTY_WJ: u8 = 64;
+    pub const LINE_PROPERTY_XX: u8 = 65;
+    pub const LINE_PROPERTY_XX_EXTPICT: u8 = 66;
+    pub const LINE_PROPERTY_ZW: u8 = 67;
+    pub const LINE_PROPERTY_ZWJ: u8 = 68;
 }
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
@@ -216,9 +227,9 @@ impl LineBreakOptions<'_> {
 /// always a breakpoint returned at index 0, but this breakpoint is not a
 /// meaningful line break opportunity.
 ///
-/// Line segmenter is curretly compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0).
+/// Line segmenter is curretly compatible with [Unicode Standard Annex #14][UAX14] (Version 17.0.0).
 ///
-/// [UAX14]: https://www.unicode.org/reports/tr14/tr14-51.html
+/// [UAX14]: https://www.unicode.org/reports/tr14/tr14-55.html
 ///
 /// [LD3]: https://www.unicode.org/reports/tr14/#LD3
 /// [LD7]: https://www.unicode.org/reports/tr14/#LD7
@@ -716,40 +727,80 @@ fn is_break_utf32_by_normal(codepoint: u32, ja_zh: bool) -> bool {
 
 #[inline]
 fn is_break_utf32_by_loose(
+    left_codepoint: u32,
     right_codepoint: u32,
     left_prop: u8,
     right_prop: u8,
     ja_zh: bool,
 ) -> Option<bool> {
-    Some(match (right_prop, right_codepoint, left_prop) {
-        // breaks before hyphens
-        (RuleBreakData::LINE_PROPERTY_BA, 0x2010 | 0x2013, RuleBreakData::LINE_PROPERTY_ID) => true,
-        // breaks before certain CJK hyphen-like characters
-        (RuleBreakData::LINE_PROPERTY_NS, 0x301C | 0x30A0, _) => ja_zh,
-        // breaks before iteration marks
-        (
-            RuleBreakData::LINE_PROPERTY_NS,
-            0x3005 | 0x303B | 0x309D | 0x309E | 0x30FD | 0x30FE,
-            _,
-        ) => true,
-        // breaks before certain centered punctuation marks:
-        (
-            RuleBreakData::LINE_PROPERTY_NS,
-            0x30FB | 0xFF1A | 0xFF1B | 0xFF65 | 0x203C | 0x2047..=0x2049,
-            _,
-        ) => ja_zh,
-        // breaks between inseparable characters such as U+2025, U+2026 i.e. characters with the Unicode Line Break property IN
-        (RuleBreakData::LINE_PROPERTY_IN, _, RuleBreakData::LINE_PROPERTY_IN) => true,
-        // breaks before certain centered punctuation marks:
-        (RuleBreakData::LINE_PROPERTY_EX, 0xFF01 | 0xFF1F, _) => ja_zh,
-        // breaks before suffixes:
-        // Characters with the Unicode Line Break property PO and the East Asian Width property
-        (RuleBreakData::LINE_PROPERTY_PO_EAW, _, _) => ja_zh,
-        // breaks after prefixes:
-        // Characters with the Unicode Line Break property PR and the East Asian Width property
-        (_, _, RuleBreakData::LINE_PROPERTY_PR_EAW) => ja_zh,
-        _ => return None,
-    })
+    Some(
+        match (right_prop, right_codepoint, left_prop, left_codepoint) {
+            // breaks before hyphens
+            (
+                _,
+                0x2010 | 0x2013,
+                RuleBreakData::LINE_PROPERTY_ID | RuleBreakData::LINE_PROPERTY_ID_EASTASIAN,
+                _,
+            ) => true,
+            // breaks before certain CJK hyphen-like characters
+            (
+                RuleBreakData::LINE_PROPERTY_NS | RuleBreakData::LINE_PROPERTY_NS_EASTASIAN,
+                0x301C | 0x30A0,
+                _,
+                _,
+            ) => ja_zh,
+            // breaks before iteration marks
+            (
+                RuleBreakData::LINE_PROPERTY_NS | RuleBreakData::LINE_PROPERTY_NS_EASTASIAN,
+                0x3005 | 0x303B | 0x309D | 0x309E | 0x30FD | 0x30FE,
+                _,
+                _,
+            ) => true,
+            // breaks before certain centered punctuation marks:
+            (
+                RuleBreakData::LINE_PROPERTY_NS | RuleBreakData::LINE_PROPERTY_NS_EASTASIAN,
+                0x30FB | 0xFF1A | 0xFF1B | 0xFF65 | 0x203C | 0x2047..=0x2049,
+                _,
+                _,
+            ) => ja_zh,
+            // breaks between inseparable characters such as U+2025, U+2026 i.e. characters with the Unicode Line Break property IN
+            (
+                RuleBreakData::LINE_PROPERTY_IN | RuleBreakData::LINE_PROPERTY_IN_EASTASIAN,
+                _,
+                _,
+                _,
+            ) => true,
+            // breaks before certain centered punctuation marks:
+            (
+                RuleBreakData::LINE_PROPERTY_EX | RuleBreakData::LINE_PROPERTY_EX_EASTASIAN,
+                0xFF01 | 0xFF1F,
+                _,
+                _,
+            ) => ja_zh,
+            // breaks before suffixes:
+            // Characters with the Unicode Line Break property PO and the East Asian Width property
+            (RuleBreakData::LINE_PROPERTY_PO_EASTASIAN, _, _, _) => ja_zh,
+            (
+                RuleBreakData::LINE_PROPERTY_PO,
+                0x00B0 | 0x2030 | 0x2032 | 0x2033 | 0x2035 | 0x2103 | 0x2109,
+                _,
+                _,
+            ) => ja_zh,
+            // breaks after prefixes:
+            // Characters with the Unicode Line Break property PR and the East Asian Width property
+            (_, _, RuleBreakData::LINE_PROPERTY_PR_EASTASIAN, _) => ja_zh,
+            // Ambiguous characters should be CJK
+            (_, _, RuleBreakData::LINE_PROPERTY_PR, 0x00A4 | 0x00B1 | 0x20AC | 0x2116) => ja_zh,
+            _ => return None,
+        },
+    )
+}
+
+fn is_complex_rule(property: u8) -> bool {
+    matches!(
+        property,
+        RuleBreakData::LINE_PROPERTY_SA | RuleBreakData::LINE_PROPERTY_SA_MC_MN
+    )
 }
 
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string.
@@ -830,59 +881,96 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
         // position must be suppressed.
         let mut lb8a_after_lb9 = false;
 
+        let mut lb14 = false;
+
         'a: loop {
             debug_assert!(!self.is_eof());
 
             let left_codepoint = self.get_current_codepoint()?;
+            let mut left_prop =
+                lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
+            let after_zwj = lb8a_after_lb9
+                || (lb9_left.is_none() && left_prop == RuleBreakData::LINE_PROPERTY_ZWJ);
+            let is_sot = self.get_current_position().unwrap_or(0) == 0;
+            if is_sot {
+                // LB19a/LB20a hack for SOT then.
+                if matches!(
+                    left_prop,
+                    RuleBreakData::LINE_PROPERTY_HY
+                        | RuleBreakData::LINE_PROPERTY_HH
+                        | RuleBreakData::LINE_PROPERTY_QU_PI
+                        | RuleBreakData::LINE_PROPERTY_QU_PF
+                        | RuleBreakData::LINE_PROPERTY_QU
+                ) {
+                    left_prop = match self
+                        .data
+                        .get_break_state_from_table(self.data.sot_property, left_prop)
+                    {
+                        BreakState::Index(index) => index,
+                        _ => left_prop,
+                    }
+                }
+            }
+
             self.advance_iter();
             let Some(right_codepoint) = self.get_current_codepoint() else {
                 return Some(self.len);
             };
 
-            let left_prop = lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
             let right_prop = self.get_linebreak_property(right_codepoint);
 
-            // UAX14 doesn't have Thai etc, so use another way.
             if Y::CAN_CONTAIN_SA
-                && self.get_linebreak_property(left_codepoint) == self.data.complex_property
-                && right_prop == self.data.complex_property
+                && is_complex_rule(left_prop)
+                && right_prop == RuleBreakData::LINE_PROPERTY_SA_MC_MN
+                && self.options.strictness != LineBreakStrictness::Anywhere
             {
-                let result = (self.handle_complex_language)(self, left_codepoint);
-                if result.is_some() {
-                    return result;
-                }
-                // I may have to fetch text until non-SA character?.
-            }
-
-            let after_zwj = lb8a_after_lb9
-                || (lb9_left.is_none() && left_prop == RuleBreakData::LINE_PROPERTY_ZWJ);
-
-            if (right_prop == RuleBreakData::LINE_PROPERTY_CM
-                || right_prop == RuleBreakData::LINE_PROPERTY_ZWJ)
-                && left_prop != RuleBreakData::LINE_PROPERTY_BK
-                && left_prop != RuleBreakData::LINE_PROPERTY_CR
-                && left_prop != RuleBreakData::LINE_PROPERTY_LF
-                && left_prop != RuleBreakData::LINE_PROPERTY_NL
-                && left_prop != RuleBreakData::LINE_PROPERTY_SP
-                && left_prop != RuleBreakData::LINE_PROPERTY_ZW
+                // Use dictionary or LSTM instead of rules
+                lb9_left = None;
+                lb8a_after_lb9 = false;
+            } else if (matches!(
+                right_prop,
+                RuleBreakData::LINE_PROPERTY_CM
+                    | RuleBreakData::LINE_PROPERTY_CM_EASTASIAN
+                    | RuleBreakData::LINE_PROPERTY_SA_MC_MN
+            ) || (right_prop == RuleBreakData::LINE_PROPERTY_ZWJ
+                && self.options.strictness != LineBreakStrictness::Anywhere))
+                && !matches!(
+                    left_prop,
+                    RuleBreakData::LINE_PROPERTY_BK
+                        | RuleBreakData::LINE_PROPERTY_CR
+                        | RuleBreakData::LINE_PROPERTY_LF
+                        | RuleBreakData::LINE_PROPERTY_NL
+                        | RuleBreakData::LINE_PROPERTY_SP
+                        | RuleBreakData::LINE_PROPERTY_ZW
+                )
             {
                 lb9_left = Some(left_prop);
                 lb8a_after_lb9 = right_prop == RuleBreakData::LINE_PROPERTY_ZWJ;
                 continue;
             } else {
+                if matches!(
+                    left_prop,
+                    RuleBreakData::LINE_PROPERTY_OP | RuleBreakData::LINE_PROPERTY_OP_EASTASIAN
+                ) && right_prop == RuleBreakData::LINE_PROPERTY_SP
+                {
+                    lb14 = true;
+                }
                 lb9_left = None;
                 lb8a_after_lb9 = false;
             }
 
             // CSS word-break property handling
-            #[allow(clippy::single_match)]
             if self.options.word_option == LineBreakWordOption::KeepAll {
                 //  typographic letter units shouldn't be break
                 if matches!(
                     left_prop,
                     RuleBreakData::LINE_PROPERTY_AI
+                        | RuleBreakData::LINE_PROPERTY_AI_EASTASIAN
                         | RuleBreakData::LINE_PROPERTY_AL
+                        | RuleBreakData::LINE_PROPERTY_AL_DOTTED_CIRCLE
+                        | RuleBreakData::LINE_PROPERTY_AL_EASTASIAN
                         | RuleBreakData::LINE_PROPERTY_ID
+                        | RuleBreakData::LINE_PROPERTY_ID_EASTASIAN
                         | RuleBreakData::LINE_PROPERTY_NU
                         | RuleBreakData::LINE_PROPERTY_HY
                         | RuleBreakData::LINE_PROPERTY_H2
@@ -894,8 +982,12 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 ) && matches!(
                     right_prop,
                     RuleBreakData::LINE_PROPERTY_AI
+                        | RuleBreakData::LINE_PROPERTY_AI_EASTASIAN
                         | RuleBreakData::LINE_PROPERTY_AL
+                        | RuleBreakData::LINE_PROPERTY_AL_DOTTED_CIRCLE
+                        | RuleBreakData::LINE_PROPERTY_AL_EASTASIAN
                         | RuleBreakData::LINE_PROPERTY_ID
+                        | RuleBreakData::LINE_PROPERTY_ID_EASTASIAN
                         | RuleBreakData::LINE_PROPERTY_NU
                         | RuleBreakData::LINE_PROPERTY_HY
                         | RuleBreakData::LINE_PROPERTY_H2
@@ -919,6 +1011,7 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 }
                 LineBreakStrictness::Loose => {
                     if let Some(breakable) = is_break_utf32_by_loose(
+                        left_codepoint.into(),
                         right_codepoint.into(),
                         left_prop,
                         right_prop,
@@ -933,6 +1026,151 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 _ => (),
             };
 
+            // UAX14 doesn't have Thai etc, so use another way.
+            if Y::CAN_CONTAIN_SA
+                && is_complex_rule(self.get_linebreak_property(left_codepoint))
+                && is_complex_rule(right_prop)
+            {
+                let result = (self.handle_complex_language)(self, left_codepoint);
+                if result.is_some() {
+                    return result;
+                }
+                // I may have to fetch text until non-SA character?.
+            }
+
+            if self.options.strictness != LineBreakStrictness::Anywhere {
+                // LB15 and LB19 have some special rules that are not covered by the break state
+                // table.
+
+                // LB15c (SP / IS NU)
+                if left_prop == RuleBreakData::LINE_PROPERTY_SP
+                    && right_prop == RuleBreakData::LINE_PROPERTY_IS
+                {
+                    if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
+                        if self.get_linebreak_property(next_char) == RuleBreakData::LINE_PROPERTY_NU
+                        {
+                            return self.get_current_position();
+                        }
+                    }
+                }
+
+                // LB4 and LB5 (BK | CR | LF | NL) !
+                // LB8 ZW SP* /
+                // LB15a Any x QU_Pf ( SP | GL | WJ | CL | QU | CP | EX | IS | SY | BK | CR | LF | NL | ZW | eot )
+                // LB19a Any (x or /) QU x Any
+                if right_prop == RuleBreakData::LINE_PROPERTY_QU_PF {
+                    match left_prop {
+                        RuleBreakData::LINE_PROPERTY_BK
+                        | RuleBreakData::LINE_PROPERTY_CR
+                        | RuleBreakData::LINE_PROPERTY_LF
+                        | RuleBreakData::LINE_PROPERTY_NL
+                        | RuleBreakData::LINE_PROPERTY_ZW => {
+                            // Apply LB15a
+                            let result = self.get_current_position();
+                            if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
+                                if matches!(
+                                    self.get_linebreak_property(next_char),
+                                    RuleBreakData::LINE_PROPERTY_HH
+                                        | RuleBreakData::LINE_PROPERTY_HY
+                                ) {
+                                    return result;
+                                }
+                            }
+                            if let Some((_, next_char)) = self.peek_iter() {
+                                if matches!(
+                                    self.get_linebreak_property(next_char),
+                                    RuleBreakData::LINE_PROPERTY_CM
+                                        | RuleBreakData::LINE_PROPERTY_CM_EASTASIAN
+                                        | RuleBreakData::LINE_PROPERTY_ZWJ
+                                ) {
+                                    self.advance_iter();
+                                    self.skip_combining_mark();
+                                    return result;
+                                }
+                            }
+                            return result;
+                        }
+                        RuleBreakData::LINE_PROPERTY_SP => {
+                            if lb14 {
+                                continue;
+                            }
+
+                            // LB18 is after LB15a
+                            let result = self.get_current_position();
+                            if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
+                                match self.get_linebreak_property(next_char) {
+                                    RuleBreakData::LINE_PROPERTY_SP
+                                    | RuleBreakData::LINE_PROPERTY_GL
+                                    | RuleBreakData::LINE_PROPERTY_GL_EASTASIAN
+                                    | RuleBreakData::LINE_PROPERTY_WJ
+                                    | RuleBreakData::LINE_PROPERTY_CL
+                                    | RuleBreakData::LINE_PROPERTY_CL_EASTASIAN
+                                    | RuleBreakData::LINE_PROPERTY_QU
+                                    | RuleBreakData::LINE_PROPERTY_QU_PI
+                                    | RuleBreakData::LINE_PROPERTY_QU_PF
+                                    | RuleBreakData::LINE_PROPERTY_CP
+                                    | RuleBreakData::LINE_PROPERTY_EX
+                                    | RuleBreakData::LINE_PROPERTY_EX_EASTASIAN
+                                    | RuleBreakData::LINE_PROPERTY_IS
+                                    | RuleBreakData::LINE_PROPERTY_SY
+                                    | RuleBreakData::LINE_PROPERTY_BK
+                                    | RuleBreakData::LINE_PROPERTY_CR
+                                    | RuleBreakData::LINE_PROPERTY_LF
+                                    | RuleBreakData::LINE_PROPERTY_NL
+                                    | RuleBreakData::LINE_PROPERTY_ZW => (),
+                                    RuleBreakData::LINE_PROPERTY_HH
+                                    | RuleBreakData::LINE_PROPERTY_HY => {
+                                        return result;
+                                    }
+                                    _ => {
+                                        self.advance_iter();
+                                        self.skip_combining_mark();
+                                        return result;
+                                    }
+                                }
+                            }
+                        }
+                        _ => (),
+                    }
+                }
+
+                // LB20a - (BK | CR | LF | NL | SP | ZW | CB) / (HY | HH) x (AL | HL)
+                if matches!(
+                    left_prop,
+                    RuleBreakData::LINE_PROPERTY_BK
+                        | RuleBreakData::LINE_PROPERTY_CB
+                        | RuleBreakData::LINE_PROPERTY_CR
+                        | RuleBreakData::LINE_PROPERTY_LF
+                        | RuleBreakData::LINE_PROPERTY_NL
+                        | RuleBreakData::LINE_PROPERTY_SP
+                        | RuleBreakData::LINE_PROPERTY_ZW
+                ) && matches!(
+                    right_prop,
+                    RuleBreakData::LINE_PROPERTY_HY | RuleBreakData::LINE_PROPERTY_HH
+                ) {
+                    if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
+                        match self.get_linebreak_property(next_char) {
+                            RuleBreakData::LINE_PROPERTY_AL
+                            | RuleBreakData::LINE_PROPERTY_AL_EASTASIAN
+                            | RuleBreakData::LINE_PROPERTY_AL_DOTTED_CIRCLE
+                            | RuleBreakData::LINE_PROPERTY_HL
+                            | RuleBreakData::LINE_PROPERTY_AI
+                            | RuleBreakData::LINE_PROPERTY_AI_EASTASIAN
+                            | RuleBreakData::LINE_PROPERTY_XX
+                            | RuleBreakData::LINE_PROPERTY_XX_EXTPICT => {
+                                let result = self.get_current_position();
+                                self.advance_iter();
+                                if left_prop == RuleBreakData::LINE_PROPERTY_CB && after_zwj {
+                                    continue;
+                                }
+                                return result;
+                            }
+                            _ => (),
+                        }
+                    }
+                }
+            }
+
             // If break_state is equals or grater than 0, it is alias of property.
             match self.data.get_break_state_from_table(left_prop, right_prop) {
                 BreakState::Break | BreakState::NoMatch => {
@@ -944,9 +1182,9 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 }
                 BreakState::Keep => continue,
                 BreakState::Index(mut index) | BreakState::Intermediate(mut index) => {
-                    let mut previous_iter = self.iter.clone();
-                    let mut previous_pos_data = self.current_pos_data;
-                    let mut previous_is_after_zwj = after_zwj;
+                    let mut intermediate_iter = self.iter.clone();
+                    let mut intermediate_pos_data = self.current_pos_data;
+                    let mut intermediate_is_after_zwj = after_zwj;
 
                     // Since we are building up a state in this inner loop, we do not
                     // need an analogue of lb9_left; continuing the inner loop preserves
@@ -977,9 +1215,9 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                                 .data
                                 .get_break_state_from_table(index, self.data.eot_property);
                             if break_state == BreakState::NoMatch {
-                                self.iter = previous_iter;
-                                self.current_pos_data = previous_pos_data;
-                                if previous_is_after_zwj {
+                                self.iter = intermediate_iter;
+                                self.current_pos_data = intermediate_pos_data;
+                                if intermediate_is_after_zwj {
                                     // Do not break [AK] [ZWJ] ÷ [AS] (eot).
                                     continue 'a;
                                 } else {
@@ -990,32 +1228,121 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                             return Some(self.len);
                         };
 
-                        if (prop == RuleBreakData::LINE_PROPERTY_CM
-                            || prop == RuleBreakData::LINE_PROPERTY_ZWJ)
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_BK
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_CR
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_LF
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_NL
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_SP
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_ZW
-                        {
+                        if matches!(
+                            prop,
+                            RuleBreakData::LINE_PROPERTY_CM
+                                | RuleBreakData::LINE_PROPERTY_CM_EASTASIAN
+                                | RuleBreakData::LINE_PROPERTY_SA_MC_MN
+                                | RuleBreakData::LINE_PROPERTY_ZWJ
+                        ) && !matches!(
+                            left_prop_pre_lb9,
+                            RuleBreakData::LINE_PROPERTY_BK
+                                | RuleBreakData::LINE_PROPERTY_CR
+                                | RuleBreakData::LINE_PROPERTY_LF
+                                | RuleBreakData::LINE_PROPERTY_NL
+                                | RuleBreakData::LINE_PROPERTY_SP
+                                | RuleBreakData::LINE_PROPERTY_ZW
+                        ) {
                             left_prop_pre_lb9 = prop;
                             continue;
+                        }
+
+                        // LB14 is OP SP* x Any
+                        if lb14 && prop != RuleBreakData::LINE_PROPERTY_SP {
+                            lb14 = false;
+                            // This might be LB20a
+                            if !matches!(
+                                prop,
+                                RuleBreakData::LINE_PROPERTY_HH | RuleBreakData::LINE_PROPERTY_HY
+                            ) {
+                                continue 'a;
+                            }
+                        }
+
+                        if left_prop_pre_lb9 == RuleBreakData::LINE_PROPERTY_SP
+                            && index != RuleBreakData::LINE_PROPERTY_ZW
+                            && prop == RuleBreakData::LINE_PROPERTY_IS
+                        {
+                            // LB15c or LB15d
+                            self.iter = intermediate_iter;
+                            self.current_pos_data = intermediate_pos_data;
+                            continue 'a;
+                        }
+
+                        if prop == RuleBreakData::LINE_PROPERTY_QU_PF
+                            && left_prop_pre_lb9 == RuleBreakData::LINE_PROPERTY_SP
+                            && index > self.data.last_codepoint_property
+                        {
+                            // This might be combined property such OP SP* (LB14), but next is
+                            // QU_Pf, it might be LB18 and LB19a.
+                            // If the state has sticky "× Any" semantics (LB14 OP_SP / LB15a
+                            // QU_SP), the no-break before QU_PF is preserved by NOT reverting:
+                            // continue with current at QU_PF so the next iteration processes
+                            // QU_PF → next directly (no spurious break emitted by runtime
+                            // SP arm). For other states (B2_SP, CL_CP_SP, ...), revert so
+                            // LB18 / runtime SP arm emits the break before QU_PF.
+                            if matches!(
+                                self.data.get_break_state_from_table(
+                                    index,
+                                    RuleBreakData::LINE_PROPERTY_AL
+                                ),
+                                BreakState::Keep
+                            ) {
+                                continue 'a;
+                            }
+                            self.iter = intermediate_iter;
+                            self.current_pos_data = intermediate_pos_data;
+                            continue 'a;
+                        }
+
+                        if left_prop_pre_lb9 == RuleBreakData::LINE_PROPERTY_SP
+                            && (prop == RuleBreakData::LINE_PROPERTY_HH || prop == RuleBreakData::LINE_PROPERTY_HY)
+                            // Skip if the current state has sticky "× Any" semantics for AL,
+                            // i.e., LB14 (OP_SP) or LB15a (QU_SP). For those, LB14/LB15a
+                            // override LB20a and no break should be emitted before HY/HH.
+                            && !matches!(
+                                self.data.get_break_state_from_table(index, RuleBreakData::LINE_PROPERTY_AL),
+                                BreakState::Keep
+                            )
+                        {
+                            // LB20a - (BK | CR | LF | NL | SP | ZW | CB) / (HY | HH) x (AL | HL)
+                            // The leading SP context is preserved by intermediate states like
+                            // CL_CP_SP (LB16) and B2_SP (LB17). If the next char is AL/HL/AI/XX,
+                            // emit the break before HY/HH and skip ahead so the break before
+                            // AL/HL is suppressed.
+                            if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
+                                let next_prop = self.get_linebreak_property(next_char);
+                                if matches!(
+                                    next_prop,
+                                    RuleBreakData::LINE_PROPERTY_AL
+                                        | RuleBreakData::LINE_PROPERTY_AL_EASTASIAN
+                                        | RuleBreakData::LINE_PROPERTY_AL_DOTTED_CIRCLE
+                                        | RuleBreakData::LINE_PROPERTY_HL
+                                        | RuleBreakData::LINE_PROPERTY_AI
+                                        | RuleBreakData::LINE_PROPERTY_AI_EASTASIAN
+                                        | RuleBreakData::LINE_PROPERTY_XX
+                                        | RuleBreakData::LINE_PROPERTY_XX_EXTPICT
+                                ) {
+                                    let result = self.get_current_position();
+                                    self.advance_iter();
+                                    return result;
+                                }
+                            }
                         }
 
                         match self.data.get_break_state_from_table(index, prop) {
                             BreakState::Keep => continue 'a,
                             BreakState::NoMatch => {
-                                self.iter = previous_iter;
-                                self.current_pos_data = previous_pos_data;
+                                self.iter = intermediate_iter;
+                                self.current_pos_data = intermediate_pos_data;
                                 if after_zwj {
                                     // Break [AK] ÷ [AS] [ZWJ] [XX],
                                     // but not [AK] [ZWJ] ÷ [AS] [ZWJ] [XX].
-                                    if is_intermediate_rule_no_match && !previous_is_after_zwj {
+                                    if is_intermediate_rule_no_match && !intermediate_is_after_zwj {
                                         return self.get_current_position();
                                     }
                                     continue 'a;
-                                } else if previous_is_after_zwj {
+                                } else if intermediate_is_after_zwj {
                                     // Do not break [AK] [ZWJ] ÷ [AS] [XX].
                                     continue 'a;
                                 } else {
@@ -1031,16 +1358,16 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                             }
                             BreakState::Intermediate(i) => {
                                 index = i;
-                                previous_iter = self.iter.clone();
-                                previous_pos_data = self.current_pos_data;
-                                previous_is_after_zwj = after_zwj;
+                                intermediate_iter = self.iter.clone();
+                                intermediate_pos_data = self.current_pos_data;
+                                intermediate_is_after_zwj = after_zwj;
                             }
                             BreakState::Index(i) => {
                                 index = i;
                                 if previous_break_state_is_cp_prop {
-                                    previous_iter = self.iter.clone();
-                                    previous_pos_data = self.current_pos_data;
-                                    previous_is_after_zwj = after_zwj;
+                                    intermediate_iter = self.iter.clone();
+                                    intermediate_pos_data = self.current_pos_data;
+                                    intermediate_is_after_zwj = after_zwj;
                                 }
                             }
                         }
@@ -1061,6 +1388,26 @@ enum StringBoundaryPosType {
 impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
+    }
+
+    fn peek_iter(&self) -> Option<(usize, Y::CharType)> {
+        self.iter.clone().next()
+    }
+
+    fn peek_iter_until_no_combining_mark(&self) -> Option<(usize, Y::CharType)> {
+        let mut iter = self.iter.clone();
+        loop {
+            let data = iter.next()?;
+            let property = self.get_linebreak_property(data.1);
+            if !matches!(
+                property,
+                RuleBreakData::LINE_PROPERTY_CM
+                    | RuleBreakData::LINE_PROPERTY_CM_EASTASIAN
+                    | RuleBreakData::LINE_PROPERTY_ZWJ
+            ) {
+                return Some(data);
+            }
+        }
     }
 
     fn is_eof(&self) -> bool {
@@ -1097,6 +1444,23 @@ impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
         self.current_pos_data.map(|(_, codepoint)| codepoint)
     }
 
+    // apply LB9
+    fn skip_combining_mark(&mut self) {
+        if let Some(mut property) = self.get_current_linebreak_property() {
+            while property == RuleBreakData::LINE_PROPERTY_CM
+                || property == RuleBreakData::LINE_PROPERTY_CM_EASTASIAN
+                || property == RuleBreakData::LINE_PROPERTY_ZWJ
+            {
+                if let Some((_, codepoint)) = self.peek_iter() {
+                    self.advance_iter();
+                    property = self.get_linebreak_property(codepoint);
+                    continue;
+                }
+                return;
+            }
+        }
+    }
+
     fn get_linebreak_property(&self, codepoint: Y::CharType) -> u8 {
         match (
             (self.options.word_option, self.options.strictness),
@@ -1114,7 +1478,10 @@ impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
             }
             (
                 (LineBreakWordOption::BreakAll, _),
-                RuleBreakData::LINE_PROPERTY_AL | RuleBreakData::LINE_PROPERTY_NU,
+                RuleBreakData::LINE_PROPERTY_AL
+                | RuleBreakData::LINE_PROPERTY_AL_DOTTED_CIRCLE
+                | RuleBreakData::LINE_PROPERTY_AL_EASTASIAN
+                | RuleBreakData::LINE_PROPERTY_NU,
             ) => RuleBreakData::LINE_PROPERTY_ID,
             (_, prop) => prop,
         }
@@ -1143,7 +1510,7 @@ where
         s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
         if let Some(current_codepoint) = iter.get_current_codepoint() {
-            if iter.get_linebreak_property(current_codepoint) != iter.data.complex_property {
+            if !is_complex_rule(iter.get_linebreak_property(current_codepoint)) {
                 break;
             }
         } else {
@@ -1195,8 +1562,7 @@ where
         s.push(iterator.get_current_codepoint()? as u16);
         iterator.advance_iter();
         if let Some(current_codepoint) = iterator.get_current_codepoint() {
-            if iterator.get_linebreak_property(current_codepoint) != iterator.data.complex_property
-            {
+            if !is_complex_rule(iterator.get_linebreak_property(current_codepoint)) {
                 break;
             }
         } else {
@@ -1260,7 +1626,7 @@ mod tests {
         );
         assert_eq!(
             segmenter.get_linebreak_property('('),
-            RuleBreakData::LINE_PROPERTY_OP_OP30
+            RuleBreakData::LINE_PROPERTY_OP
         );
         assert_eq!(
             segmenter.get_linebreak_property('\u{0030}'),
@@ -1268,7 +1634,7 @@ mod tests {
         );
         assert_eq!(
             segmenter.get_linebreak_property('['),
-            RuleBreakData::LINE_PROPERTY_OP_OP30
+            RuleBreakData::LINE_PROPERTY_OP
         );
         assert_eq!(
             segmenter.get_linebreak_property('\u{1f3fb}'),
@@ -1276,7 +1642,7 @@ mod tests {
         );
         assert_eq!(
             segmenter.get_linebreak_property('\u{20000}'),
-            RuleBreakData::LINE_PROPERTY_ID
+            RuleBreakData::LINE_PROPERTY_ID_EASTASIAN
         );
         assert_eq!(
             segmenter.get_linebreak_property('\u{e0020}'),
@@ -1757,8 +2123,6 @@ mod tests {
         check_line("hello world", &["hello ", "world"], segmenter);
 
         check_line("$10 $10", &["$10 ", "$10"], segmenter);
-
-        // LB10
 
         // LB14
         check_line("[  abc def", &["[  abc ", "def"], segmenter);

@@ -17,7 +17,7 @@ use crate::SourceDataProvider;
 use crate::source::AbstractFs;
 #[cfg(feature = "unstable")]
 use crate::source::Cache;
-use crate::source::{UnicodeCache, include_files};
+use crate::source::include_files;
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -39,7 +39,6 @@ use std::collections::HashSet;
 #[cfg(feature = "unstable")]
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Debug;
-use std::sync::OnceLock;
 
 mod dictionary;
 mod lstm;
@@ -135,10 +134,10 @@ fn generate_rule_break_data(
         properties_names.iter().position(|n| n.eq(s))
     }
 
-    fn is_cjk_fullwidth(eaw: CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
+    fn is_east_asian(eaw: CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
         matches!(
             eaw.get32(codepoint),
-            EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
+            EastAsianWidth::Fullwidth | EastAsianWidth::Halfwidth | EastAsianWidth::Wide
         )
     }
 
@@ -399,28 +398,31 @@ fn generate_rule_break_data(
                         // defined as simple property. It means that we move the marker to the next property.
                         continue;
                     }
-                    if p.name == "CP_EA"
-                        || p.name == "OP_OP30"
-                        || p.name == "OP_EA"
-                        || p.name == "ID_CN"
-                        || p.name == "PO_EAW"
-                        || p.name == "PR_EAW"
-                        || p.name == "AL_DOTTED_CIRCLE"
+                    if p.name == "ID_CN"
                         || p.name == "QU_PI"
                         || p.name == "QU_PF"
+                        || p.name == "SA_MC_MN"
+                        || p.name == "AI_EastAsian"
+                        || p.name == "AL_DottedCircle"
+                        || p.name == "AL_EastAsian"
+                        || p.name == "BA_EastAsian"
+                        || p.name == "CL_EastAsian"
+                        || p.name == "CM_EastAsian"
+                        || p.name == "EB_EastAsian"
+                        || p.name == "EX_EastAsian"
+                        || p.name == "GL_EastAsian"
+                        || p.name == "ID_EastAsian"
+                        || p.name == "IN_EastAsian"
+                        || p.name == "NS_EastAsian"
+                        || p.name == "OP_EastAsian"
+                        || p.name == "PO_EastAsian"
+                        || p.name == "PR_EastAsian"
+                        || p.name == "XX_ExtPict"
                     {
                         for cp in 0..(CODEPOINT_TABLE_LEN as u32) {
                             match lb.get32(cp) {
                                 LineBreak::OpenPunctuation
-                                    if ((p.name == "OP_OP30"
-                                        && (eaw.get32(cp) != EastAsianWidth::Fullwidth
-                                            && eaw.get32(cp) != EastAsianWidth::Halfwidth
-                                            && eaw.get32(cp) != EastAsianWidth::Wide))
-                                        || (p.name == "OP_EA"
-                                            && (eaw.get32(cp) == EastAsianWidth::Fullwidth
-                                                || eaw.get32(cp) == EastAsianWidth::Halfwidth
-                                                || eaw.get32(cp) == EastAsianWidth::Wide)))
-                                    => {
+                                    if p.name == "OP_EastAsian" && is_east_asian(eaw, cp) => {
                                         properties_trie.set_value(cp, property_index);
                                     }
 
@@ -434,46 +436,39 @@ fn generate_rule_break_data(
                                         properties_trie.set_value(cp, property_index);
                                     }
 
-                                LineBreak::Ideographic
+                                LineBreak::Ideographic => {
                                     if p.name == "ID_CN"
                                         && gc.get32(cp) == GeneralCategory::Unassigned
-                                    => {
+                                    {
                                         if let Some(c) = char::from_u32(cp) {
                                             if extended_pictographic.contains(c) {
                                                 properties_trie.set_value(cp, property_index);
-                                            } else {
-                                                // Line segmenter doesn't use Unicode 17's data,
-                                                // but extended_pictographic is 17.
-                                                // So this is a hack to use old Unicode rules with
-                                                // newer Unicode data.
-                                                // This should be removed when line segmenter uses
-                                                // Unicode 17.
-                                                // (https://github.com/unicode-org/icu4x/issues/7134)
-                                                match cp {
-                                                    0x1f774..=0x1f77f => properties_trie
-                                                        .set_value(cp, property_index),
-                                                    0x1f8ae..=0x1f8ff => properties_trie
-                                                        .set_value(cp, property_index),
-                                                    0x1f947..=0x1faff => properties_trie
-                                                        .set_value(cp, property_index),
-                                                    _ => {}
-                                                };
                                             }
                                         }
+                                    } else if p.name == "ID_EastAsian" && is_east_asian(eaw, cp) {
+                                        properties_trie.set_value(cp, property_index);
                                     }
+                                }
 
                                 LineBreak::PostfixNumeric
-                                    if p.name == "PO_EAW" && is_cjk_fullwidth(eaw, cp) => {
+                                    if p.name == "PO_EastAsian" && is_east_asian(eaw, cp) => {
                                         properties_trie.set_value(cp, property_index);
                                     }
 
                                 LineBreak::PrefixNumeric
-                                    if p.name == "PR_EAW" && is_cjk_fullwidth(eaw, cp) => {
+                                    if p.name == "PR_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::Ambiguous
+                                    if p.name == "AI_EastAsian" && is_east_asian(eaw, cp) => {
                                         properties_trie.set_value(cp, property_index);
                                     }
 
                                 LineBreak::Alphabetic
-                                    if p.name == "AL_DOTTED_CIRCLE" && cp == 0x25CC => {
+                                    if (p.name == "AL_EastAsian" && is_east_asian(eaw, cp))
+                                        || (p.name == "AL_DottedCircle" && cp == 0x25CC) =>
+                                    {
                                         properties_trie.set_value(cp, property_index);
                                     }
 
@@ -490,6 +485,62 @@ fn generate_rule_break_data(
                                         properties_trie.set_value(cp, property_index);
                                     }
                                 }
+
+                                LineBreak::BreakAfter
+                                    if p.name == "BA_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::ClosePunctuation
+                                    if p.name == "CL_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::CombiningMark
+                                    if p.name == "CM_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::ComplexContext
+                                    if p.name == "SA_MC_MN"
+                                        && (gc.get32(cp) == GeneralCategory::NonspacingMark
+                                            || gc.get32(cp) == GeneralCategory::SpacingMark) =>
+                                    {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::EBase
+                                    if p.name == "EB_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::Exclamation
+                                    if p.name == "EX_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::Glue
+                                    if p.name == "GL_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::Inseparable
+                                    if p.name == "IN_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::Nonstarter
+                                    if p.name == "NS_EastAsian" && is_east_asian(eaw, cp) => {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
+
+                                LineBreak::Unknown
+                                    if p.name == "XX_ExtPict"
+                                        && extended_pictographic.contains32(cp)
+                                        && gc.get32(cp) == GeneralCategory::Unassigned =>
+                                    {
+                                        properties_trie.set_value(cp, property_index);
+                                    }
 
                                 _ => {}
                             }
@@ -521,7 +572,7 @@ fn generate_rule_break_data(
                 ("AI", RuleBreakData::LINE_PROPERTY_AI),
                 ("AK", RuleBreakData::LINE_PROPERTY_AK),
                 (
-                    "AL_DOTTED_CIRCLE",
+                    "AL_DottedCircle",
                     RuleBreakData::LINE_PROPERTY_AL_DOTTED_CIRCLE,
                 ),
                 ("AL", RuleBreakData::LINE_PROPERTY_AL),
@@ -529,25 +580,33 @@ fn generate_rule_break_data(
                 ("AS", RuleBreakData::LINE_PROPERTY_AS),
                 ("B2", RuleBreakData::LINE_PROPERTY_B2),
                 ("BA", RuleBreakData::LINE_PROPERTY_BA),
+                ("BA_EastAsian", RuleBreakData::LINE_PROPERTY_BA_EASTASIAN),
                 ("BB", RuleBreakData::LINE_PROPERTY_BB),
                 ("BK", RuleBreakData::LINE_PROPERTY_BK),
                 ("CB", RuleBreakData::LINE_PROPERTY_CB),
                 ("CJ", RuleBreakData::LINE_PROPERTY_CJ),
                 ("CL", RuleBreakData::LINE_PROPERTY_CL),
+                ("CL_EastAsian", RuleBreakData::LINE_PROPERTY_CL_EASTASIAN),
                 ("CM", RuleBreakData::LINE_PROPERTY_CM),
+                ("CM_EastAsian", RuleBreakData::LINE_PROPERTY_CM_EASTASIAN),
                 ("CP", RuleBreakData::LINE_PROPERTY_CP),
                 ("CR", RuleBreakData::LINE_PROPERTY_CR),
                 ("EB", RuleBreakData::LINE_PROPERTY_EB),
+                ("EB_EastAsian", RuleBreakData::LINE_PROPERTY_EB_EASTASIAN),
                 ("EM", RuleBreakData::LINE_PROPERTY_EM),
                 ("EX", RuleBreakData::LINE_PROPERTY_EX),
+                ("EX_EastAsian", RuleBreakData::LINE_PROPERTY_EX_EASTASIAN),
                 ("GL", RuleBreakData::LINE_PROPERTY_GL),
+                ("GL_EastAsian", RuleBreakData::LINE_PROPERTY_GL_EASTASIAN),
                 ("H2", RuleBreakData::LINE_PROPERTY_H2),
                 ("H3", RuleBreakData::LINE_PROPERTY_H3),
                 ("HL", RuleBreakData::LINE_PROPERTY_HL),
                 ("HY", RuleBreakData::LINE_PROPERTY_HY),
-                ("ID_CN", RuleBreakData::LINE_PROPERTY_ID_CN),
                 ("ID", RuleBreakData::LINE_PROPERTY_ID),
+                ("ID_CN", RuleBreakData::LINE_PROPERTY_ID_CN),
+                ("ID_EastAsian", RuleBreakData::LINE_PROPERTY_ID_EASTASIAN),
                 ("IN", RuleBreakData::LINE_PROPERTY_IN),
+                ("IN_EastAsian", RuleBreakData::LINE_PROPERTY_IN_EASTASIAN),
                 ("IS", RuleBreakData::LINE_PROPERTY_IS),
                 ("JL", RuleBreakData::LINE_PROPERTY_JL),
                 ("JT", RuleBreakData::LINE_PROPERTY_JT),
@@ -555,13 +614,14 @@ fn generate_rule_break_data(
                 ("LF", RuleBreakData::LINE_PROPERTY_LF),
                 ("NL", RuleBreakData::LINE_PROPERTY_NL),
                 ("NS", RuleBreakData::LINE_PROPERTY_NS),
+                ("NS_EastAsian", RuleBreakData::LINE_PROPERTY_NS_EASTASIAN),
                 ("NU", RuleBreakData::LINE_PROPERTY_NU),
-                ("OP_EA", RuleBreakData::LINE_PROPERTY_OP_EA),
-                ("OP_OP30", RuleBreakData::LINE_PROPERTY_OP_OP30),
-                ("PO_EAW", RuleBreakData::LINE_PROPERTY_PO_EAW),
+                ("OP", RuleBreakData::LINE_PROPERTY_OP),
+                ("OP_EastAsian", RuleBreakData::LINE_PROPERTY_OP_EASTASIAN),
                 ("PO", RuleBreakData::LINE_PROPERTY_PO),
-                ("PR_EAW", RuleBreakData::LINE_PROPERTY_PR_EAW),
+                ("PO_EastAsian", RuleBreakData::LINE_PROPERTY_PO_EASTASIAN),
                 ("PR", RuleBreakData::LINE_PROPERTY_PR),
+                ("PR_EastAsian", RuleBreakData::LINE_PROPERTY_PR_EASTASIAN),
                 ("QU_PF", RuleBreakData::LINE_PROPERTY_QU_PF),
                 ("QU_PI", RuleBreakData::LINE_PROPERTY_QU_PI),
                 ("QU", RuleBreakData::LINE_PROPERTY_QU),
@@ -572,6 +632,7 @@ fn generate_rule_break_data(
                 ("VI", RuleBreakData::LINE_PROPERTY_VI),
                 ("WJ", RuleBreakData::LINE_PROPERTY_WJ),
                 ("XX", RuleBreakData::LINE_PROPERTY_XX),
+                ("XX_ExtPict", RuleBreakData::LINE_PROPERTY_XX_EXTPICT),
                 ("ZW", RuleBreakData::LINE_PROPERTY_ZW),
                 ("ZWJ", RuleBreakData::LINE_PROPERTY_ZWJ),
             ] {
@@ -632,7 +693,8 @@ fn generate_rule_break_data(
                 }
                 continue;
             }
-            let left_index = get_index_from_name(&properties_names, l).unwrap();
+            let left_index =
+                get_index_from_name(&properties_names, l).expect("left property should be valid!");
             for r in &rule.right {
                 // Special case: right is Any
                 if r == "Any" {
@@ -846,29 +908,7 @@ macro_rules! implement_override {
     }
 }
 
-fn unicode_15_1() -> &'static SourceDataProvider {
-    // Singleton so that all instantiations share the same cache.
-    static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
-    SINGLETON.get_or_init(|| {
-        let mut provider = SourceDataProvider::new_custom();
-        provider.unicode_paths = Some(std::sync::Arc::new(UnicodeCache::new_local(
-            include_files!(
-                "../../data/segmenter/unicode15/";
-                "ucd/DerivedCoreProperties.txt",
-                "ucd/emoji/emoji-data.txt",
-                "ucd/extracted/DerivedEastAsianWidth.txt",
-                "ucd/extracted/DerivedGeneralCategory.txt",
-                "ucd/LineBreak.txt",
-                "ucd/PropertyAliases.txt",
-                "ucd/PropertyValueAliases.txt",
-                "ucd/PropList.txt",
-            ),
-        )));
-        provider
-    })
-}
-
-implement!(SegmenterBreakLineV1, "line.toml", |_| unicode_15_1());
+implement!(SegmenterBreakLineV1, "line.toml", |s| s);
 implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml", |s| s);
 implement!(SegmenterBreakWordV1, "word.toml", |s| s);
 implement!(SegmenterBreakSentenceV1, "sentence.toml", |s| s);
@@ -1700,9 +1740,9 @@ mod tests {
         //     _ => XX,
         // }
 
-        const CM: u8 = 14;
-        const XX: u8 = 52;
-        const ID: u8 = 25;
+        const CM: u8 = 18;
+        const XX: u8 = 65;
+        const ID: u8 = 36;
 
         assert_eq!(data.property_table.get32(0x20000), ID);
         assert_eq!(data.property_table.get32(0x3fffd), ID);

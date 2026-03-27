@@ -108,16 +108,20 @@ fn line_break_test(file: &'static str) {
         if result != test.break_result_utf8 {
             use icu_properties::{
                 CodePointMapData,
-                props::{GeneralCategory, LineBreak},
+                props::{EastAsianWidth, GeneralCategory, LineBreak},
             };
             let lb = CodePointMapData::<LineBreak>::new();
             let lb_name = PropertyNamesLong::<LineBreak>::new();
             let gc = CodePointMapData::<GeneralCategory>::new();
             let gc_name = PropertyNamesLong::<GeneralCategory>::new();
+            let eaw = CodePointMapData::<EastAsianWidth>::new();
+            let eaw_name = PropertyNamesLong::<EastAsianWidth>::new();
 
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
-            println!("  | A | E | Code pt. | Line_Break         | General_Category | Literal");
+            println!(
+                "  | A | E | Code pt. | Line_Break         | General_Category   | East_Asian_Width | Literal"
+            );
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
@@ -125,7 +129,7 @@ fn line_break_test(file: &'static str) {
                     iter.next();
                 }
                 println!(
-                    "{}| {} | {} | {:>8} | {:>18} | {:>18} | {}",
+                    "{}| {} | {} | {:>8} | {:>18} | {:>18} | {:>16} | {}",
                     if actual_break != expected_break {
                         "😭"
                     } else {
@@ -140,6 +144,9 @@ fn line_break_test(file: &'static str) {
                     gc_name
                         .get(gc.get(c))
                         .unwrap_or(&format!("{:?}", gc.get(c))),
+                    eaw_name
+                        .get(eaw.get(c))
+                        .unwrap_or(&format!("{:?}", eaw.get(c))),
                     c
                 )
             }
@@ -178,7 +185,7 @@ fn line_break_test(file: &'static str) {
 
 #[test]
 fn run_line_break_test() {
-    line_break_test("./tests/testdata/LineBreakTest_15.1.txt");
+    line_break_test("./tests/testdata/LineBreakTest.txt");
 }
 
 #[test]
@@ -188,7 +195,7 @@ fn run_line_break_extra_test() {
 
 #[test]
 fn run_line_break_random_test() {
-    line_break_test("./tests/testdata/LineBreakRandomTest_15.1.txt");
+    line_break_test("./tests/testdata/LineBreakRandomTest.txt");
 }
 
 fn word_break_test(file: &'static str) {
