@@ -15,7 +15,7 @@ internal interface CanonicalDecompositionLib: Library {
 *
 *Callers should generally use `DecomposingNormalizer` unless they specifically need raw composition operations
 *
-*See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
+*See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
 */
 class CanonicalDecomposition internal constructor (
     internal val handle: Pointer,
@@ -47,7 +47,7 @@ class CanonicalDecomposition internal constructor (
         
         /** Construct a new `CanonicalDecomposition` instance for NFC using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
         */
         fun create(): CanonicalDecomposition {
             
@@ -61,7 +61,7 @@ class CanonicalDecomposition internal constructor (
         
         /** Construct a new `CanonicalDecomposition` instance for NFC using a particular data source.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<CanonicalDecomposition> {
             
@@ -80,7 +80,7 @@ class CanonicalDecomposition internal constructor (
     
     /** Performs non-recursive canonical decomposition (including for Hangul).
     *
-    *See the [Rust documentation for `decompose`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalDecompositionBorrowed.html#method.decompose) for more information.
+    *See the [Rust documentation for `decompose`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalDecompositionBorrowed.html#method.decompose) for more information.
     */
     fun decompose(c: Int): Decomposed {
         

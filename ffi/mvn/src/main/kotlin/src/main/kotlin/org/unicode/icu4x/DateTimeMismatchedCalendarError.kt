@@ -62,7 +62,7 @@ internal class OptionDateTimeMismatchedCalendarErrorNative constructor(): Struct
 
 }
 
-/** See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.1.1/icu/datetime/struct.MismatchedCalendarError.html) for more information.
+/** See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.2.0/icu/datetime/struct.MismatchedCalendarError.html) for more information.
 */
 class DateTimeMismatchedCalendarError (var thisKind: CalendarKind, var dateKind: CalendarKind?): Exception("Rust error result for DateTimeMismatchedCalendarError") {
     companion object {

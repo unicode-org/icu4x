@@ -61,7 +61,7 @@ Fully filled in up to 43d4d6f154
         - General changes only
     - `icu_collections`
         - Add `CodePointInversionListAndStringList::contains_utf8` (unicode-org#7363)
-    - `icu_codepointtrie_builder`: `0.5.1 -> 0.6.1`
+    - `icu_codepointtrie_builder`: `0.5.1 -> 0.6.0`
         - (Breaking) Actually make `CodePointTrieBuilder` a builder type. This API has changed significantly, please look at the docs for the new API. (unicode-org#7581)
         - Remove `serde` dep from `icu_codepointtrie_builder` (unicode-org#7298)
         - Add more ways of specifying code point trie data. (unicode-org#7541)
@@ -95,7 +95,7 @@ Fully filled in up to 43d4d6f154
     - `icu_decimal`
         - Move `CompactDecimalFormatter` (experimental) to this crate (unicode-org#7565)
         - (Experimental) Consider numbering system in compact formatter (unicode-org#7543)
-    - `icu_experimental`: `0.4.0 -> ???`
+    - `icu_experimental`: `0.4.0 -> 0.5.0`
         - `compactdecimal`
             - Don't hallucinate patterns (unicode-org#7387)
             - Pack compact decimal data (unicode-org#7388)
@@ -141,7 +141,7 @@ Fully filled in up to 43d4d6f154
     - `icu_normalizer`
         - Move `harfbuzz-traits` implementations into component crates (unicode-org#7200)
         - Expose the UTS 46 virama check using UTS 46 data (unicode-org#7507)
-    - `icu_pattern`
+    - `icu_pattern`: `0.4.1 -> 0.4.2`
         - Create `SinglePlaceholderPattern::PASS_THROUGH` (unicode-org#7393)
             - New associated constant: `SinglePlaceholderPattern::PASS_THROUGH`
     - `icu_plurals`
@@ -241,8 +241,8 @@ Fully filled in up to 43d4d6f154
     - General
         - Add categories and keywords to `Cargo.toml` for all components (unicode-org#7737)
         - Opted in to many more clippy lints
-    - `bies`: `0.2.5 -> 0.2.6`
-        - General changes only
+    - `bies`: `0.2.5 -> 0.3.0`
+        - Mark `Algorithm` as `#[non_exhaustive]` (unicode-org#7451)
     - `calendrical_calculations`: `0.2.3 -> 0.2.4`
         - Optimize Hebrew and Julian calendars (unicode-org#7213)
         - Add docs about the Skaukat criterion (unicode-org#7331)
@@ -253,7 +253,7 @@ Fully filled in up to 43d4d6f154
          - New errors: `LocationOutOfBoundsError`
     - `crlify`: `1.0.4 -> 1.0.5`
         - General changes only
-    - `databake`: `0.2.0 -> 0.2.1`
+    - `databake` `databake_derive: `0.2.0 -> 0.2.1`
         - General changes only
     - `fixed_decimal`: `0.7.1 -> 0.7.2`
         - Replace `experimental` features with `unstable` features (unicode-org#7566)
@@ -272,7 +272,8 @@ Fully filled in up to 43d4d6f154
          - New methods: `UnvalidatedTinyAsciiStr::try_from_utf8()`
          - New associated const: `TinyAsciiStr::EMPTY`
         - Fix UB in `TinyAsciiStr::from_utf8_lossy` and `from_utf16_lossy`: validate that the replacement byte is ASCII (unicode-org#7783)
-    - `tzif`: No change (`0.4.1`)
+    - `tzif`: No change `0.4.1 -> 0.5.0`
+        - Mark `Error` as `#[non_exhaustive]`
     - `writeable`: `0.6.2 -> 0.6.7`
         - Add `writeable::adapters::Concat` and `writeable::concat_writeable!` (unicode-org#6929)
     - `yoke`, `yoke_derive`: `0.8.1 -> 0.8.2`
@@ -286,7 +287,7 @@ Fully filled in up to 43d4d6f154
         - derive: Loosen bounds in `prove_covariance_manually` on lifetime-less field types `T` to `T: 'static` (unicode-org#7498)
     - `zerofrom`, `zerofrom_derive`: `0.1.6 -> 0.1.7`
         - General changes only
-    - `zerotrie`: `0.2.3 ->0.2.4`
+    - `zerotrie`: `0.2.3 -> 0.2.4`
         - Add `ZeroAsciiDenseSparse2dTrie` for more efficient storage of data keys with many attributes (unicode-org#7264, unicode-org#7304, unicode-org#7305)
         - Advertise that the core abstractions in this crate use safe Rust (unicode-org#6915)
         - Fix minor unsoundness due to assumptions on the layout of tuples (unicode-org#7748)
@@ -294,7 +295,10 @@ Fully filled in up to 43d4d6f154
         - `schemars` support (unicode-org#7209)
         - Add more `const` constructors for converting ULE types to integers and floats (unicode-org#7433)
          - New methods: `RawBytesULE::as_signed_int()`, `as_float()`
-    - `zoneinfo64`: `0.2.1 -> 0.2.2`
+     - `zerovec_derive`: `0.11.2 -> 0.11.3`
+         - General changes only
+    - `zoneinfo64`: `0.2.1 -> 0.3.0`
+        - Mark `Offset`, `Transition`, and `PossibleOffset` as `#[non_exhaustive]`
         - Internal cleanups
 
 ## icu 2.1.x

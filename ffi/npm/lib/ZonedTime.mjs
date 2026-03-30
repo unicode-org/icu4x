@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /**
  * An ICU4X `ZonedTime` object capable of containing a ISO-8601 time, and zone.
  *
- * See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html) for more information.
+ * See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html) for more information.
  */
 export class ZonedTime {
     #time;
@@ -111,7 +111,7 @@ export class ZonedTime {
     /**
      * Creates a new {@link ZonedTime} from an IXDTF string.
      *
-     * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
+     * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
      */
     static strictFromString(v, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -141,7 +141,7 @@ export class ZonedTime {
     /**
      * Creates a new {@link ZonedTime} from a location-only IXDTF string.
      *
-     * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
+     * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
      */
     static locationOnlyFromString(v, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -171,7 +171,7 @@ export class ZonedTime {
     /**
      * Creates a new {@link ZonedTime} from an offset-only IXDTF string.
      *
-     * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
+     * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
      */
     static offsetOnlyFromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -201,7 +201,7 @@ export class ZonedTime {
     /**
      * Creates a new {@link ZonedTime} from an IXDTF string, without requiring the offset.
      *
-     * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
+     * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
      */
     static lenientFromString(v, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();

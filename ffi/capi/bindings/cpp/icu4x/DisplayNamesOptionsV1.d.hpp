@@ -38,7 +38,7 @@ namespace icu4x {
 /**
  * 🚧 This API is unstable and may experience breaking changes outside major releases.
  *
- * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.2.0/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
  */
 struct DisplayNamesOptionsV1 {
     std::optional<icu4x::DisplayNamesStyle> style;

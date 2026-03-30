@@ -62,7 +62,7 @@ internal class OptionTimeZoneAndCanonicalNative constructor(): Structure(), Stru
 
 }
 
-/** See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
+/** See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
 */
 class TimeZoneAndCanonical (var timeZone: TimeZone, var canonical: String) {
     companion object {

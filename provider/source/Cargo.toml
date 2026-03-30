@@ -19,7 +19,7 @@ include = [
     "LICENSE",
     "README.md",
 ]
-version = "2.1.2"
+version.workspace = true
 
 authors.workspace = true
 edition.workspace = true

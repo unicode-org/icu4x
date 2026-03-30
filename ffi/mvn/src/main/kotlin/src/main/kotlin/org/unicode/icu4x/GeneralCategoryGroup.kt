@@ -76,7 +76,7 @@ internal class OptionGeneralCategoryGroupNative constructor(): Structure(), Stru
 
 /** A mask that is capable of representing groups of `General_Category` values.
 *
-*See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+*See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
 */
 class GeneralCategoryGroup (var mask: UInt) {
     companion object {
@@ -93,7 +93,7 @@ class GeneralCategoryGroup (var mask: UInt) {
 
         @JvmStatic
         
-        /** See the [Rust documentation for `all`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.all) for more information.
+        /** See the [Rust documentation for `all`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.all) for more information.
         */
         fun all(): GeneralCategoryGroup {
             
@@ -103,7 +103,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `empty`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.empty) for more information.
+        /** See the [Rust documentation for `empty`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.empty) for more information.
         */
         fun empty(): GeneralCategoryGroup {
             
@@ -113,7 +113,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `CasedLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.CasedLetter) for more information.
+        /** See the [Rust documentation for `CasedLetter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.CasedLetter) for more information.
         */
         fun casedLetter(): GeneralCategoryGroup {
             
@@ -123,7 +123,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `Letter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
+        /** See the [Rust documentation for `Letter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
         */
         fun letter(): GeneralCategoryGroup {
             
@@ -133,7 +133,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `Mark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Mark) for more information.
+        /** See the [Rust documentation for `Mark`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Mark) for more information.
         */
         fun mark(): GeneralCategoryGroup {
             
@@ -143,7 +143,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `Number`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Number) for more information.
+        /** See the [Rust documentation for `Number`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Number) for more information.
         */
         fun number(): GeneralCategoryGroup {
             
@@ -153,7 +153,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Other) for more information.
+        /** See the [Rust documentation for `Other`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Other) for more information.
         */
         fun separator(): GeneralCategoryGroup {
             
@@ -163,7 +163,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `Letter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
+        /** See the [Rust documentation for `Letter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
         */
         fun other(): GeneralCategoryGroup {
             
@@ -173,7 +173,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `Punctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Punctuation) for more information.
+        /** See the [Rust documentation for `Punctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Punctuation) for more information.
         */
         fun punctuation(): GeneralCategoryGroup {
             
@@ -183,7 +183,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `Symbol`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Symbol) for more information.
+        /** See the [Rust documentation for `Symbol`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Symbol) for more information.
         */
         fun symbol(): GeneralCategoryGroup {
             
@@ -199,7 +199,7 @@ class GeneralCategoryGroup (var mask: UInt) {
     }
 
     
-    /** See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
+    /** See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
     */
     fun contains(val_: GeneralCategory): Boolean {
         
@@ -207,7 +207,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         return (returnVal > 0)
     }
     
-    /** See the [Rust documentation for `complement`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.complement) for more information.
+    /** See the [Rust documentation for `complement`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.complement) for more information.
     */
     fun complement(): GeneralCategoryGroup {
         
@@ -216,7 +216,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         return returnStruct
     }
     
-    /** See the [Rust documentation for `union`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.union) for more information.
+    /** See the [Rust documentation for `union`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.union) for more information.
     */
     fun union(other: GeneralCategoryGroup): GeneralCategoryGroup {
         
@@ -225,7 +225,7 @@ class GeneralCategoryGroup (var mask: UInt) {
         return returnStruct
     }
     
-    /** See the [Rust documentation for `intersection`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.intersection) for more information.
+    /** See the [Rust documentation for `intersection`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.intersection) for more information.
     */
     fun intersection(other: GeneralCategoryGroup): GeneralCategoryGroup {
         

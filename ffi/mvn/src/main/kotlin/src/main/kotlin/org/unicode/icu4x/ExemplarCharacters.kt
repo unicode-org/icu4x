@@ -22,11 +22,11 @@ internal interface ExemplarCharactersLib: Library {
 }
 /** A set of "exemplar characters" for a given locale.
 *
-*See the [Rust documentation for `locale`](https://docs.rs/icu/2.1.1/icu/locale/index.html) for more information.
+*See the [Rust documentation for `locale`](https://docs.rs/icu/2.2.0/icu/locale/index.html) for more information.
 *
-*See the [Rust documentation for `ExemplarCharacters`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html) for more information.
+*See the [Rust documentation for `ExemplarCharacters`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html) for more information.
 *
-*See the [Rust documentation for `ExemplarCharactersBorrowed`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharactersBorrowed.html) for more information.
+*See the [Rust documentation for `ExemplarCharactersBorrowed`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharactersBorrowed.html) for more information.
 */
 class ExemplarCharacters internal constructor (
     internal val handle: Pointer,
@@ -58,7 +58,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "main" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_main`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
+        *See the [Rust documentation for `try_new_main`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
         */
         fun createMain(locale: Locale): Result<ExemplarCharacters> {
             
@@ -77,7 +77,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "main" set of exemplar characters for a given locale, using a particular data source
         *
-        *See the [Rust documentation for `try_new_main`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
+        *See the [Rust documentation for `try_new_main`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
         */
         fun createMainWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
@@ -96,7 +96,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
+        *See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
         */
         fun createAuxiliary(locale: Locale): Result<ExemplarCharacters> {
             
@@ -115,7 +115,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
+        *See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
         */
         fun createAuxiliaryWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
@@ -134,7 +134,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
+        *See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
         */
         fun createPunctuation(locale: Locale): Result<ExemplarCharacters> {
             
@@ -153,7 +153,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
+        *See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
         */
         fun createPunctuationWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
@@ -172,7 +172,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "numbers" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
+        *See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
         */
         fun createNumbers(locale: Locale): Result<ExemplarCharacters> {
             
@@ -191,7 +191,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "numbers" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
+        *See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
         */
         fun createNumbersWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
@@ -210,7 +210,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "index" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_index`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
+        *See the [Rust documentation for `try_new_index`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
         */
         fun createIndex(locale: Locale): Result<ExemplarCharacters> {
             
@@ -229,7 +229,7 @@ class ExemplarCharacters internal constructor (
         
         /** Create an [ExemplarCharacters] for the "index" set of exemplar characters for a given locale, using compiled data.
         *
-        *See the [Rust documentation for `try_new_index`](https://docs.rs/icu/2.1.1/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
+        *See the [Rust documentation for `try_new_index`](https://docs.rs/icu/2.2.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
         */
         fun createIndexWithProvider(provider: DataProvider, locale: Locale): Result<ExemplarCharacters> {
             
@@ -248,7 +248,7 @@ class ExemplarCharacters internal constructor (
     
     /** Checks whether the string is in the set.
     *
-    *See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.1.1/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains_str) for more information.
+    *See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.2.0/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains_str) for more information.
     */
     fun contains(s: String): Boolean {
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
@@ -263,7 +263,7 @@ class ExemplarCharacters internal constructor (
     
     /** Checks whether the code point is in the set.
     *
-    *See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains) for more information.
+    *See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains) for more information.
     */
     fun contains(cp: Int): Boolean {
         

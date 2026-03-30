@@ -5,7 +5,7 @@
 [package]
 name = "bies"
 description = "Helpers for dealing with BIES vectors with text segmentation applications"
-version = "0.3.0-dev"
+version = "0.3.0"
 keywords = ["compression", "binary"]
 
 authors.workspace = true

@@ -68,7 +68,7 @@ internal class OptionZonedTimeNative constructor(): Structure(), Structure.ByVal
 
 /** An ICU4X `ZonedTime` object capable of containing a ISO-8601 time, and zone.
 *
-*See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html) for more information.
+*See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html) for more information.
 */
 class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
     companion object {
@@ -88,7 +88,7 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
         
         /** Creates a new [ZonedTime] from an IXDTF string.
         *
-        *See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
+        *See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
         */
         fun strictFromString(v: String, ianaParser: IanaParser): Result<ZonedTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -110,7 +110,7 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
         
         /** Creates a new [ZonedTime] from a location-only IXDTF string.
         *
-        *See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
+        *See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
         */
         fun locationOnlyFromString(v: String, ianaParser: IanaParser): Result<ZonedTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -132,7 +132,7 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
         
         /** Creates a new [ZonedTime] from an offset-only IXDTF string.
         *
-        *See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
+        *See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
         */
         fun offsetOnlyFromString(v: String): Result<ZonedTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -154,7 +154,7 @@ class ZonedTime (var time: Time, var zone: TimeZoneInfo) {
         
         /** Creates a new [ZonedTime] from an IXDTF string, without requiring the offset.
         *
-        *See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
+        *See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
         */
         fun lenientFromString(v: String, ianaParser: IanaParser): Result<ZonedTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)

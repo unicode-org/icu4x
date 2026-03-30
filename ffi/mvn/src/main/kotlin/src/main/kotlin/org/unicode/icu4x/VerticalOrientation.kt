@@ -14,7 +14,7 @@ internal interface VerticalOrientationLib: Library {
     fun icu4x_VerticalOrientation_from_integer_value_mv1(other: FFIUint8): OptionInt
     fun icu4x_VerticalOrientation_try_from_str_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+/** See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
 */
 enum class VerticalOrientation {
     Rotated,
@@ -39,7 +39,7 @@ enum class VerticalOrientation {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
         */
         fun forChar(ch: Int): VerticalOrientation {
             
@@ -50,7 +50,7 @@ enum class VerticalOrientation {
         
         /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
-        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
+        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
         */
         fun fromIntegerValue(other: UByte): VerticalOrientation? {
             
@@ -77,7 +77,7 @@ enum class VerticalOrientation {
     
     /** Get the "long" name of this property value (returns empty if property value is unknown)
     *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
     */
     fun longName(): String? {
         
@@ -90,7 +90,7 @@ enum class VerticalOrientation {
     
     /** Get the "short" name of this property value (returns empty if property value is unknown)
     *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
     */
     fun shortName(): String? {
         
@@ -103,7 +103,7 @@ enum class VerticalOrientation {
     
     /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
-    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
+    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
     */
     fun toIntegerValue(): UByte {
         

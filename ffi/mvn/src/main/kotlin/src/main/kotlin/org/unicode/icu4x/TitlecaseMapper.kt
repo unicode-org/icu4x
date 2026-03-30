@@ -12,7 +12,7 @@ internal interface TitlecaseMapperLib: Library {
     fun icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(handle: Pointer, s: Slice, locale: Pointer, options: TitlecaseOptionsNative, write: Pointer): Unit
     fun icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(s: Slice, locale: Pointer, options: TitlecaseOptionsNative, write: Pointer): Unit
 }
-/** See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/2.1.1/icu/casemap/struct.TitlecaseMapper.html) for more information.
+/** See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/2.2.0/icu/casemap/struct.TitlecaseMapper.html) for more information.
 */
 class TitlecaseMapper internal constructor (
     internal val handle: Pointer,
@@ -44,7 +44,7 @@ class TitlecaseMapper internal constructor (
         
         /** Construct a new `TitlecaseMapper` instance using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
         */
         fun create(): Result<TitlecaseMapper> {
             
@@ -63,7 +63,7 @@ class TitlecaseMapper internal constructor (
         
         /** Construct a new `TitlecaseMapper` instance using a particular data source.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<TitlecaseMapper> {
             
@@ -84,7 +84,7 @@ class TitlecaseMapper internal constructor (
         *
         *The `v1` refers to the version of the options struct, which may change as we add more options
         *
-        *See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.1.1/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+        *See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.2.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
         */
         fun titlecase_segment_with_compiled_data(s: String, locale: Locale, options: TitlecaseOptions): String {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
@@ -104,7 +104,7 @@ class TitlecaseMapper internal constructor (
     *
     *The `v1` refers to the version of the options struct, which may change as we add more options
     *
-    *See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.1.1/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+    *See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.2.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
     */
     fun titlecase_segment(s: String, locale: Locale, options: TitlecaseOptions): String {
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)

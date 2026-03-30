@@ -73,7 +73,7 @@ internal class OptionDisplayNamesOptionsNative constructor(): Structure(), Struc
 
 /** 🚧 This API is unstable and may experience breaking changes outside major releases.
 *
-*See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
+*See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.2.0/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
 */
 class DisplayNamesOptions (var style: DisplayNamesStyle?, var fallback: DisplayNamesFallback?, var languageDisplay: LanguageDisplay?) {
     companion object {

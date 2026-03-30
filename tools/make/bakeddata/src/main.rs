@@ -22,18 +22,10 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     ("calendar", icu::calendar::provider::MARKERS, REPO_VERSION),
     ("casemap", icu::casemap::provider::MARKERS, REPO_VERSION),
     ("collator", icu::collator::provider::MARKERS, REPO_VERSION),
-    (
-        "datetime",
-        icu::datetime::provider::MARKERS,
-        "version = \"2.1.2\"",
-    ),
+    ("datetime", icu::datetime::provider::MARKERS, REPO_VERSION),
     ("decimal", icu::decimal::provider::MARKERS, REPO_VERSION),
     ("list", icu::list::provider::MARKERS, REPO_VERSION),
-    (
-        "locale",
-        icu::locale::provider::MARKERS,
-        "version = \"2.1.2\"",
-    ),
+    ("locale", icu::locale::provider::MARKERS, REPO_VERSION),
     (
         "normalizer",
         icu::normalizer::provider::MARKERS,
@@ -43,7 +35,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     (
         "properties",
         icu::properties::provider::MARKERS,
-        "version = \"2.1.2\"",
+        REPO_VERSION,
     ),
     ("segmenter", icu::segmenter::provider::MARKERS, REPO_VERSION),
     ("time", icu::time::provider::MARKERS, REPO_VERSION),

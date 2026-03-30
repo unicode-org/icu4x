@@ -60,7 +60,7 @@ internal class OptionDateDifferenceOptionsNative constructor(): Structure(), Str
 
 }
 
-/** See the [Rust documentation for `DateDifferenceOptions`](https://docs.rs/icu/2.1.1/icu/calendar/options/struct.DateDifferenceOptions.html) for more information.
+/** See the [Rust documentation for `DateDifferenceOptions`](https://docs.rs/icu/2.2.0/icu/calendar/options/struct.DateDifferenceOptions.html) for more information.
 */
 class DateDifferenceOptions (var largestUnit: DateDurationUnit?) {
     companion object {

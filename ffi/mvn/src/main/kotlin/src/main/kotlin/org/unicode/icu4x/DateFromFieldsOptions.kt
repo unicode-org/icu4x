@@ -62,7 +62,7 @@ internal class OptionDateFromFieldsOptionsNative constructor(): Structure(), Str
 
 }
 
-/** See the [Rust documentation for `DateFromFieldsOptions`](https://docs.rs/icu/2.1.1/icu/calendar/options/struct.DateFromFieldsOptions.html) for more information.
+/** See the [Rust documentation for `DateFromFieldsOptions`](https://docs.rs/icu/2.2.0/icu/calendar/options/struct.DateFromFieldsOptions.html) for more information.
 */
 class DateFromFieldsOptions (var overflow: DateOverflow?, var missingFieldsStrategy: DateMissingFieldsStrategy?) {
     companion object {

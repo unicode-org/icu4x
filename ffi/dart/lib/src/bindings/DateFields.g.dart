@@ -12,7 +12,7 @@ final class _DateFieldsFfi extends ffi.Struct {
   external _ResultUint8Void day;
 }
 
-/// See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateFields.html) for more information.
+/// See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateFields.html) for more information.
 final class DateFields {
   // ignore: public_member_api_docs
   String? era;

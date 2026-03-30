@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface DateOverflowLib: Library {
 }
-/** See the [Rust documentation for `Overflow`](https://docs.rs/icu/2.1.1/icu/calendar/options/enum.Overflow.html) for more information.
+/** See the [Rust documentation for `Overflow`](https://docs.rs/icu/2.2.0/icu/calendar/options/enum.Overflow.html) for more information.
 */
 enum class DateOverflow {
     Constrain,

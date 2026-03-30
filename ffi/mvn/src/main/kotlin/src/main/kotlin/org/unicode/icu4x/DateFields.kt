@@ -70,7 +70,7 @@ internal class OptionDateFieldsNative constructor(): Structure(), Structure.ByVa
 
 }
 
-/** See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateFields.html) for more information.
+/** See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateFields.html) for more information.
 */
 class DateFields (var era: String?, var eraYear: Int?, var extendedYear: Int?, var monthCode: String?, var ordinalMonth: UByte?, var day: UByte?) {
     companion object {

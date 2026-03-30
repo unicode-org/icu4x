@@ -42,7 +42,7 @@ internal interface DecimalLib: Library {
     fun icu4x_Decimal_concatenate_end_mv1(handle: Pointer, other: Pointer): ResultUnitUnit
     fun icu4x_Decimal_to_string_mv1(handle: Pointer, write: Pointer): Unit
 }
-/** See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
+/** See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html) for more information.
 */
 class Decimal internal constructor (
     internal val handle: Pointer,
@@ -74,7 +74,7 @@ class Decimal internal constructor (
         
         /** Construct an [Decimal] from an integer.
         *
-        *See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
+        *See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html) for more information.
         */
         fun from(v: Int): Decimal {
             
@@ -88,7 +88,7 @@ class Decimal internal constructor (
         
         /** Construct an [Decimal] from an integer.
         *
-        *See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
+        *See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html) for more information.
         */
         fun from(v: UInt): Decimal {
             
@@ -102,7 +102,7 @@ class Decimal internal constructor (
         
         /** Construct an [Decimal] from an integer.
         *
-        *See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
+        *See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html) for more information.
         */
         fun from(v: Long): Decimal {
             
@@ -116,7 +116,7 @@ class Decimal internal constructor (
         
         /** Construct an [Decimal] from an integer.
         *
-        *See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
+        *See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html) for more information.
         */
         fun from(v: ULong): Decimal {
             
@@ -130,9 +130,9 @@ class Decimal internal constructor (
         
         /** Construct an [Decimal] from an integer-valued float
         *
-        *See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
+        *See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
         *
-        *See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.FloatPrecision.html) for more information.
+        *See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.FloatPrecision.html) for more information.
         */
         fun fromDoubleWithIntegerPrecision(f: Double): Result<Decimal> {
             
@@ -151,9 +151,9 @@ class Decimal internal constructor (
         
         /** Construct an [Decimal] from an float, with a given power of 10 for the lower magnitude
         *
-        *See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
+        *See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
         *
-        *See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.FloatPrecision.html) for more information.
+        *See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.FloatPrecision.html) for more information.
         */
         fun fromDoubleWithLowerMagnitude(f: Double, magnitude: Short): Result<Decimal> {
             
@@ -172,9 +172,9 @@ class Decimal internal constructor (
         
         /** Construct an [Decimal] from an float, for a given number of significant digits
         *
-        *See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
+        *See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
         *
-        *See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.FloatPrecision.html) for more information.
+        *See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.FloatPrecision.html) for more information.
         */
         fun fromDoubleWithSignificantDigits(f: Double, digits: UByte): Result<Decimal> {
             
@@ -194,9 +194,9 @@ class Decimal internal constructor (
         /** Construct an [Decimal] from an float, with enough digits to recover
         *the original floating point in IEEE 754 without needing trailing zeros
         *
-        *See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
+        *See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
         *
-        *See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.FloatPrecision.html) for more information.
+        *See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.FloatPrecision.html) for more information.
         */
         fun fromDoubleWithRoundTripPrecision(f: Double): Result<Decimal> {
             
@@ -215,7 +215,7 @@ class Decimal internal constructor (
         
         /** Construct an [Decimal] from a string.
         *
-        *See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
+        *See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<Decimal> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -237,7 +237,7 @@ class Decimal internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.digit_at) for more information.
+    /** See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.digit_at) for more information.
     */
     fun digitAt(magnitude: Short): UByte {
         
@@ -245,7 +245,7 @@ class Decimal internal constructor (
         return (returnVal.toUByte())
     }
     
-    /** See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
+    /** See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
     */
     fun magnitudeStart(): Short {
         
@@ -253,7 +253,7 @@ class Decimal internal constructor (
         return (returnVal)
     }
     
-    /** See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
+    /** See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
     */
     fun magnitudeEnd(): Short {
         
@@ -261,7 +261,7 @@ class Decimal internal constructor (
         return (returnVal)
     }
     
-    /** See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_start) for more information.
+    /** See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_start) for more information.
     */
     fun nonzeroMagnitudeStart(): Short {
         
@@ -269,7 +269,7 @@ class Decimal internal constructor (
         return (returnVal)
     }
     
-    /** See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_end) for more information.
+    /** See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_end) for more information.
     */
     fun nonzeroMagnitudeEnd(): Short {
         
@@ -277,7 +277,7 @@ class Decimal internal constructor (
         return (returnVal)
     }
     
-    /** See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.is_zero) for more information.
+    /** See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.is_zero) for more information.
     */
     fun isZero(): Boolean {
         
@@ -287,7 +287,7 @@ class Decimal internal constructor (
     
     /** Multiply the [Decimal] by a given power of ten.
     *
-    *See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.multiply_pow10) for more information.
+    *See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.multiply_pow10) for more information.
     */
     fun multiplyPow10(power: Short): Unit {
         
@@ -295,7 +295,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.sign) for more information.
+    /** See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.sign) for more information.
     */
     fun sign(): DecimalSign {
         
@@ -305,7 +305,7 @@ class Decimal internal constructor (
     
     /** Set the sign of the [Decimal].
     *
-    *See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
+    *See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
     */
     fun setSign(sign: DecimalSign): Unit {
         
@@ -313,7 +313,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.apply_sign_display) for more information.
+    /** See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.apply_sign_display) for more information.
     */
     fun applySignDisplay(signDisplay: DecimalSignDisplay): Unit {
         
@@ -321,7 +321,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.trim_start) for more information.
+    /** See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.trim_start) for more information.
     */
     fun trimStart(): Unit {
         
@@ -329,7 +329,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.trim_end) for more information.
+    /** See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.trim_end) for more information.
     */
     fun trimEnd(): Unit {
         
@@ -337,7 +337,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.trim_end_if_integer) for more information.
+    /** See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.trim_end_if_integer) for more information.
     */
     fun trimEndIfInteger(): Unit {
         
@@ -347,7 +347,7 @@ class Decimal internal constructor (
     
     /** Zero-pad the [Decimal] on the left to a particular position
     *
-    *See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.pad_start) for more information.
+    *See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.pad_start) for more information.
     */
     fun padStart(position: Short): Unit {
         
@@ -357,7 +357,7 @@ class Decimal internal constructor (
     
     /** Zero-pad the [Decimal] on the right to a particular position
     *
-    *See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.pad_end) for more information.
+    *See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.pad_end) for more information.
     */
     fun padEnd(position: Short): Unit {
         
@@ -368,7 +368,7 @@ class Decimal internal constructor (
     /** Truncate the [Decimal] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
     *("2022" -> "22")
     *
-    *See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.set_max_position) for more information.
+    *See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.set_max_position) for more information.
     */
     fun setMaxPosition(position: Short): Unit {
         
@@ -381,7 +381,7 @@ class Decimal internal constructor (
     *This uses half to even rounding, which resolves ties by selecting the nearest
     *even integer to the original value.
     *
-    *See the [Rust documentation for `round`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.round) for more information.
+    *See the [Rust documentation for `round`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.round) for more information.
     */
     fun round(position: Short): Unit {
         
@@ -389,7 +389,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.ceil) for more information.
+    /** See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.ceil) for more information.
     */
     fun ceil(position: Short): Unit {
         
@@ -397,7 +397,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.expand) for more information.
+    /** See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.expand) for more information.
     */
     fun expand(position: Short): Unit {
         
@@ -405,7 +405,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.floor) for more information.
+    /** See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.floor) for more information.
     */
     fun floor(position: Short): Unit {
         
@@ -413,7 +413,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.trunc) for more information.
+    /** See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.trunc) for more information.
     */
     fun trunc(position: Short): Unit {
         
@@ -421,7 +421,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.round_with_mode) for more information.
+    /** See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.round_with_mode) for more information.
     */
     fun roundWithMode(position: Short, mode: DecimalSignedRoundingMode): Unit {
         
@@ -429,7 +429,7 @@ class Decimal internal constructor (
         
     }
     
-    /** See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.round_with_mode_and_increment) for more information.
+    /** See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.round_with_mode_and_increment) for more information.
     */
     fun roundWithModeAndIncrement(position: Short, mode: DecimalSignedRoundingMode, increment: DecimalRoundingIncrement): Unit {
         
@@ -443,7 +443,7 @@ class Decimal internal constructor (
     *
     *If not successful, `other` will be unchanged and an error is returned.
     *
-    *See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.concatenate_end) for more information.
+    *See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.concatenate_end) for more information.
     */
     fun concatenateEnd(other: Decimal): Result<Unit> {
         
@@ -458,7 +458,7 @@ class Decimal internal constructor (
     
     /** Format the [Decimal] as a string.
     *
-    *See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.write_to) for more information.
+    *See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.write_to) for more information.
     */
     override fun toString(): String {
         val write = DW.lib.diplomat_buffer_write_create(0)

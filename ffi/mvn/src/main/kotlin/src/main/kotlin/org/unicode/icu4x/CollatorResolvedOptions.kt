@@ -70,7 +70,7 @@ internal class OptionCollatorResolvedOptionsNative constructor(): Structure(), S
 
 }
 
-/** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.1.1/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
+/** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.2.0/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
 */
 class CollatorResolvedOptions (var strength: CollatorStrength, var alternateHandling: CollatorAlternateHandling, var caseFirst: CollatorCaseFirst, var maxVariable: CollatorMaxVariable, var caseLevel: CollatorCaseLevel, var numeric: CollatorNumericOrdering) {
     companion object {

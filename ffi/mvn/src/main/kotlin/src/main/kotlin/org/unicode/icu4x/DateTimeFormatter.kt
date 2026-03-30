@@ -24,7 +24,7 @@ internal interface DateTimeFormatterLib: Library {
     fun icu4x_DateTimeFormatter_format_iso_mv1(handle: Pointer, isoDate: Pointer, time: Pointer, write: Pointer): Unit
     fun icu4x_DateTimeFormatter_format_same_calendar_mv1(handle: Pointer, date: Pointer, time: Pointer, write: Pointer): ResultUnitDateTimeMismatchedCalendarErrorNative
 }
-/** See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html) for more information.
+/** See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html) for more information.
 */
 class DateTimeFormatter internal constructor (
     internal val handle: Pointer,
@@ -54,11 +54,11 @@ class DateTimeFormatter internal constructor (
         internal val lib: DateTimeFormatterLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `DT`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DT.html) for more information.
+        *See the [Rust documentation for `DT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html#method.for_length)
         */
         fun createDt(locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -75,11 +75,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `DT`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DT.html) for more information.
+        *See the [Rust documentation for `DT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html#method.for_length)
         */
         fun createDtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -96,11 +96,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `MDT`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
+        *See the [Rust documentation for `MDT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
         */
         fun createMdt(locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -117,11 +117,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `MDT`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
+        *See the [Rust documentation for `MDT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
         */
         fun createMdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -138,11 +138,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
+        *See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
         */
         fun createYmdt(locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateTimeFormatter> {
             
@@ -159,11 +159,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
+        *See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
         */
         fun createYmdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateTimeFormatter> {
             
@@ -180,11 +180,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `DET`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DET.html) for more information.
+        *See the [Rust documentation for `DET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html#method.for_length)
         */
         fun createDet(locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -201,11 +201,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `DET`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DET.html) for more information.
+        *See the [Rust documentation for `DET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html#method.for_length)
         */
         fun createDetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -222,11 +222,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `MDET`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
+        *See the [Rust documentation for `MDET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
         */
         fun createMdet(locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -243,11 +243,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `MDET`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
+        *See the [Rust documentation for `MDET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
         */
         fun createMdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -264,11 +264,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
+        *See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
         */
         fun createYmdet(locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateTimeFormatter> {
             
@@ -285,11 +285,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
+        *See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
         */
         fun createYmdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateTimeFormatter> {
             
@@ -306,11 +306,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `ET`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.ET.html) for more information.
+        *See the [Rust documentation for `ET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html#method.for_length)
         */
         fun createEt(locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -327,11 +327,11 @@ class DateTimeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
         *
-        *See the [Rust documentation for `ET`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.ET.html) for more information.
+        *See the [Rust documentation for `ET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html) for more information.
         *
-        *Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
+        *Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html#method.for_length)
         */
         fun createEtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<DateTimeFormatter> {
             
@@ -348,7 +348,7 @@ class DateTimeFormatter internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `format`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+    /** See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
     */
     fun formatIso(isoDate: IsoDate, time: Time): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -358,7 +358,7 @@ class DateTimeFormatter internal constructor (
         return returnString
     }
     
-    /** See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
+    /** See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.2.0/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
     */
     fun formatSameCalendar(date: Date, time: Time): Result<String> {
         val write = DW.lib.diplomat_buffer_write_create(0)

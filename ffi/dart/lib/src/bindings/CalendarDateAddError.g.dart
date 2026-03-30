@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/error/enum.DateAddError.html)
+/// Additional information: [1](https://docs.rs/icu/2.2.0/icu/calendar/error/enum.DateAddError.html)
 enum CalendarDateAddError {
   // ignore: public_member_api_docs
   unknown,

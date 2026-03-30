@@ -23,7 +23,7 @@ internal interface LineSegmenterLib: Library {
 }
 /** An ICU4X line-break segmenter, capable of finding breakpoints in strings.
 *
-*See the [Rust documentation for `LineSegmenter`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html) for more information.
+*See the [Rust documentation for `LineSegmenter`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html) for more information.
 */
 class LineSegmenter internal constructor (
     internal val handle: Pointer,
@@ -56,7 +56,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
         *available payload data for Burmese, Khmer, Lao, and Thai.
         *
-        *See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
+        *See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
         */
         fun createAuto(): LineSegmenter {
             
@@ -71,7 +71,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with default options (no locale-based tailoring) and LSTM payload data for
         *Burmese, Khmer, Lao, and Thai, using compiled data.
         *
-        *See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
+        *See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
         */
         fun createLstm(): LineSegmenter {
             
@@ -86,7 +86,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with default options (no locale-based tailoring) and dictionary payload data for
         *Burmese, Khmer, Lao, and Thai, using compiled data
         *
-        *See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
+        *See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
         */
         fun createDictionary(): LineSegmenter {
             
@@ -101,7 +101,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with default options (no locale-based tailoring) and no support for scripts requiring complex context dependent line breaks
         *(Burmese, Khmer, Lao, and Thai), using compiled data
         *
-        *See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+        *See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
         */
         fun createForNonComplexScripts(): LineSegmenter {
             
@@ -116,7 +116,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with custom options using compiled data. It automatically loads the best
         *available payload data for Burmese, Khmer, Lao, and Thai.
         *
-        *See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
+        *See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
         */
         fun auto_with_options(contentLocale: Locale?, options: LineBreakOptions): LineSegmenter {
             
@@ -131,7 +131,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with custom options. It automatically loads the best
         *available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
         *
-        *See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
+        *See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
         */
         fun auto_with_options_and_provider(provider: DataProvider, contentLocale: Locale?, options: LineBreakOptions): Result<LineSegmenter> {
             
@@ -151,7 +151,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with custom options and LSTM payload data for
         *Burmese, Khmer, Lao, and Thai, using compiled data.
         *
-        *See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
+        *See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
         */
         fun lstm_with_options(contentLocale: Locale?, options: LineBreakOptions): LineSegmenter {
             
@@ -166,7 +166,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with custom options and LSTM payload data for
         *Burmese, Khmer, Lao, and Thai, using a particular data source.
         *
-        *See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
+        *See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
         */
         fun lstm_with_options_and_provider(provider: DataProvider, contentLocale: Locale?, options: LineBreakOptions): Result<LineSegmenter> {
             
@@ -186,7 +186,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with custom options and dictionary payload data for
         *Burmese, Khmer, Lao, and Thai, using compiled data.
         *
-        *See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
+        *See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
         */
         fun dictionary_with_options(contentLocale: Locale?, options: LineBreakOptions): LineSegmenter {
             
@@ -201,7 +201,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with custom options and dictionary payload data for
         *Burmese, Khmer, Lao, and Thai, using a particular data source.
         *
-        *See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
+        *See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
         */
         fun dictionary_with_options_and_provider(provider: DataProvider, contentLocale: Locale?, options: LineBreakOptions): Result<LineSegmenter> {
             
@@ -221,7 +221,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with custom options and no support for scripts requiring complex context dependent line breaks
         *(Burmese, Khmer, Lao, and Thai), using compiled data.
         *
-        *See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+        *See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
         */
         fun for_non_complex_scripts_with_options(contentLocale: Locale?, options: LineBreakOptions): LineSegmenter {
             
@@ -236,7 +236,7 @@ class LineSegmenter internal constructor (
         /** Construct a [LineSegmenter] with custom options and no support for complex languages
         *(Burmese, Khmer, Lao, and Thai), using a particular data source.
         *
-        *See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+        *See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
         */
         fun for_non_complex_scripts_with_options_and_provider(provider: DataProvider, contentLocale: Locale?, options: LineBreakOptions): Result<LineSegmenter> {
             
@@ -258,7 +258,7 @@ class LineSegmenter internal constructor (
     *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
     *to the WHATWG Encoding Standard.
     *
-    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenterBorrowed.html#method.segment_utf16) for more information.
+    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.LineSegmenterBorrowed.html#method.segment_utf16) for more information.
     */
     fun segment(input: String): LineBreakIteratorUtf16 {
         // This lifetime edge depends on lifetimes: 'a

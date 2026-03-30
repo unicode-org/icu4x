@@ -71,7 +71,7 @@ internal class OptionBidiMirroringGlyphNative constructor(): Structure(), Struct
 
 }
 
-/** See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
+/** See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
 */
 class BidiMirroringGlyph (var mirroringGlyph: Int?, var mirrored: Boolean, var pairedBracketType: BidiPairedBracketType) {
     companion object {
@@ -90,7 +90,7 @@ class BidiMirroringGlyph (var mirroringGlyph: Int?, var mirrored: Boolean, var p
 
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
         */
         fun forChar(ch: Int): BidiMirroringGlyph {
             

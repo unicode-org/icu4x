@@ -13,7 +13,7 @@ internal interface PluralRulesWithRangesLib: Library {
     fun icu4x_PluralRulesWithRanges_create_ordinal_with_provider_mv1(provider: Pointer, locale: Pointer): ResultPointerInt
     fun icu4x_PluralRulesWithRanges_category_for_range_mv1(handle: Pointer, start: Pointer, end: Pointer): Int
 }
-/** See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
+/** See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
 */
 class PluralRulesWithRanges internal constructor (
     internal val handle: Pointer,
@@ -45,7 +45,7 @@ class PluralRulesWithRanges internal constructor (
         
         /** construct a [PluralRulesWithRanges] for the given locale, for cardinal numbers, using compiled data.
         *
-        *See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+        *See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
         */
         fun createCardinal(locale: Locale): Result<PluralRulesWithRanges> {
             
@@ -64,7 +64,7 @@ class PluralRulesWithRanges internal constructor (
         
         /** construct a [PluralRulesWithRanges] for the given locale, for cardinal numbers, using a particular data source.
         *
-        *See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+        *See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
         */
         fun createCardinalWithProvider(provider: DataProvider, locale: Locale): Result<PluralRulesWithRanges> {
             
@@ -83,7 +83,7 @@ class PluralRulesWithRanges internal constructor (
         
         /** Construct a [PluralRulesWithRanges] for the given locale, for ordinal numbers, using compiled data.
         *
-        *See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+        *See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
         */
         fun createOrdinal(locale: Locale): Result<PluralRulesWithRanges> {
             
@@ -102,7 +102,7 @@ class PluralRulesWithRanges internal constructor (
         
         /** Construct a [PluralRulesWithRanges] for the given locale, for ordinal numbers, using a particular data source.
         *
-        *See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+        *See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
         */
         fun createOrdinalWithProvider(provider: DataProvider, locale: Locale): Result<PluralRulesWithRanges> {
             
@@ -121,7 +121,7 @@ class PluralRulesWithRanges internal constructor (
     
     /** Get the category for a given number represented as operands
     *
-    *See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
+    *See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
     */
     fun categoryForRange(start: PluralOperands, end: PluralOperands): PluralCategory {
         

@@ -51,7 +51,7 @@ Once the release checklist is complete, the assigned release driver will perform
       * Note: These are in a different section and easy to miss!
   * [ ] Update all relevant utils versions
     * [ ] The changelog should already mention the new versions of each util crate that needs to be published. Use those, and double-check that they are accurate.
-    * [ ] For utils that have had substantiative changes (new APIs, etc), update them in `workspace.dependencies`. When unsure, just update.
+    * [ ] For utils that have had substantiative changes (new APIs, etc), update them in `workspace.dependencies`. When unsure, just update. See "Updating the dependency specification of a util" below for more information.
 * [ ] Get this PR reviewed and checked in.
 * [ ] Perform the release.
   * The best way to do this is to use `cargo workspaces publish --from-git --no-remove-dev-deps`.
@@ -105,9 +105,9 @@ The ICU4X TC may decide to make a patch release of an ICU4X component on an old 
 
 Our `utils/` crates do not follow the same versioning scheme as the rest of ICU4X, and may experience more frequent releases.
 
-While code may compile using our local path dependencies, when publishing we must ensure that it will pull in the correct published version of a utils crate.
+In general, if you ever cut a new release of a `utils/` crate, all `icu4x` crates depending on new behavior should have their `Cargo.toml` updated to the latest version, by updating the version specification in the workspace `Cargo.toml`'s `workspace.dependencies` section. However, there are times when you don't have to, see below.
 
-In general, if you ever cut a new release of a `utils/` crate, all `icu4x` crates depending on new behavior should have their `Cargo.toml` updated to the latest version. Typically, it is more convenient to update _all_ crates that depend on the utility, not just the ones that require the new behavior. If your new release introduces behavior that is not relied upon by any of our crates (e.g. some error formatting code was improved), it is fine to cut a release of the crate
+While code may compile using our local path dependencies, when publishing we must ensure that it will pull in the correct published version of a utils crate.
 
 When cutting new ICU4X releases, make sure all utilities with changes have had a new release containing those changes. To do so, go through the `utils/` folder and check the history of each crate since the last version bump. Bear in mind that some folders like `yoke/` contain multiple crates (`yoke/derive/`), and to keep derive-crates' versions in sync with their crates.
 
@@ -118,3 +118,36 @@ If there are changes, go through the changes and determine if they are breaking 
 For non breaking changes, perform a non-breaking version bump (`x.y.z` to `x.y.z+1` or `x.y+1.0` based on the size of the changes; `0.x.y` to `0.x.y+1`). Then, determine if the introduced functionality is being relied upon by ICU4X (assume it is if this is tricky to determine). If it is, update the version in use by the ICU4X components, otherwise it is fine to not do so.
 
 This can all be done in a separate PR to chunk out the work but there should be no changes to utils between this PR landing and the overall ICU4X version bump. After landing the PR, as usual, `cargo publish` should be run on the updated utils.
+
+### Updating the dependency specification of a util
+
+We share dependency specifications for all workspace crates in the `[workspace.dependencies]` section of Cargo.toml.
+
+It is a _nice-to-have_ feature that updating ICU4X does not require one to update _every_ util. This reduces impact especially to people who need to audit new dependencies or vendor code, allowing more flexibility on ICU4X updates.
+
+However, this carries risks. We do not currently CI for `mininal-versions` (See [#2966](https://github.com/unicode-org/icu4x/issues/2966)), which means that a commit may inadvertently introduce a dependency on a newly introduced feature, which we then miss when we perform a release.
+
+
+To allow for this, we follow the rule that EVERY `[workspace.dependencies]` entry that diverges from its current version MUST have a `# Current version:` comment after it, like so:
+
+```toml
+databake = { version = "0.2.0", path = "utils/databake", default-features = false } # Current version: 0.2.1
+```
+
+This MUST be kept up to date when releases are performed.
+
+By default, when a util is being released, its `workspace.dependencies` should be updated. The following is a set of heuristics for when this rule does and doesn't need to be followed, applied in order.
+
+Firstly, if before the release the util was already diverging, you SHOULD update to at least the already-released version. For example, if ICU4X 2.2 depends on `databake = 0.2.0` and releases `databake@0.2.1`, ICU4X 2.3 should update `workspace.dependencies` to _at least_ `databake = 0.2.1`. This simplifies things when it comes to the subsequent heuristics: one doesn't have to go trawl through multiple versions worth of history. There is a decent benefit for an ICU4X release to not require an update of all utils to *newly released* versions, but that benefit is less for util versions that have been published for a few months. We encourage users who need audits and vendoring to perform periodic rolling updates of their dependencies to reduce impact of ICU4X releases.
+
+You MUST update if any part of ICU4X or ICU4X utils depends on APIs or behavior in the new version.
+
+You MAY choose to not update when the changes are only:
+ - Code style
+ - Docs updates
+ - Minor optimizations
+
+You SHOULD update for soundness fixes.
+
+You SHOULD update for major bug fixes.
+

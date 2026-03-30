@@ -10,7 +10,7 @@ internal interface DecimalRoundingIncrementLib: Library {
 }
 /** Increment used in a rounding operation.
 *
-*See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.RoundingIncrement.html) for more information.
+*See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.RoundingIncrement.html) for more information.
 */
 enum class DecimalRoundingIncrement {
     MultiplesOf1,

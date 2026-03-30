@@ -16,7 +16,7 @@ internal interface ScriptWithExtensionsLib: Library {
 }
 /** An ICU4X `ScriptWithExtensions` map object, capable of holding a map of codepoints to scriptextensions values
 *
-*See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
+*See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
 */
 class ScriptWithExtensions internal constructor (
     internal val handle: Pointer,
@@ -48,7 +48,7 @@ class ScriptWithExtensions internal constructor (
         
         /** Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
         */
         fun create(): ScriptWithExtensions {
             
@@ -62,7 +62,7 @@ class ScriptWithExtensions internal constructor (
         
         /** Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<ScriptWithExtensions> {
             
@@ -81,7 +81,7 @@ class ScriptWithExtensions internal constructor (
     
     /** Get the Script property value for a code point
     *
-    *See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+    *See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
     */
     fun getScriptVal(ch: Int): UShort {
         
@@ -91,7 +91,7 @@ class ScriptWithExtensions internal constructor (
     
     /** Check if the `Script_Extensions` property of the given code point covers the given script
     *
-    *See the [Rust documentation for `has_script`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+    *See the [Rust documentation for `has_script`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
     */
     fun hasScript(ch: Int, script: UShort): Boolean {
         
@@ -101,7 +101,7 @@ class ScriptWithExtensions internal constructor (
     
     /** Borrow this object for a slightly faster variant with more operations
     *
-    *See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
+    *See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
     */
     fun asBorrowed(): ScriptWithExtensionsBorrowed {
         // This lifetime edge depends on lifetimes: 'a
@@ -116,7 +116,7 @@ class ScriptWithExtensions internal constructor (
     
     /** Get a list of ranges of code points that contain this script in their `Script_Extensions` values
     *
-    *See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
+    *See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
     */
     fun iterRangesForScript(script: UShort): CodePointRangeIterator {
         // This lifetime edge depends on lifetimes: 'a

@@ -73,7 +73,7 @@ internal class OptionDateDurationNative constructor(): Structure(), Structure.By
 
 }
 
-/** See the [Rust documentation for `DateDuration`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html) for more information.
+/** See the [Rust documentation for `DateDuration`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html) for more information.
 */
 class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, var weeks: UInt, var days: UInt) {
     companion object {
@@ -96,7 +96,7 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         
         /** Creates a new [DateDuration] from an ISO 8601 string.
         *
-        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
+        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<DateDuration> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -118,7 +118,7 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         
         /** Returns a new [DateDuration] representing a number of years.
         *
-        *See the [Rust documentation for `for_years`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
+        *See the [Rust documentation for `for_years`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
         */
         fun forYears(years: Int): DateDuration {
             
@@ -130,7 +130,7 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         
         /** Returns a new [DateDuration] representing a number of months.
         *
-        *See the [Rust documentation for `for_months`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
+        *See the [Rust documentation for `for_months`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
         */
         fun forMonths(months: Int): DateDuration {
             
@@ -142,7 +142,7 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         
         /** Returns a new [DateDuration] representing a number of weeks.
         *
-        *See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
+        *See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
         */
         fun forWeeks(weeks: Int): DateDuration {
             
@@ -154,7 +154,7 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         
         /** Returns a new [DateDuration] representing a number of days.
         *
-        *See the [Rust documentation for `for_days`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
+        *See the [Rust documentation for `for_days`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
         */
         fun forDays(days: Int): DateDuration {
             

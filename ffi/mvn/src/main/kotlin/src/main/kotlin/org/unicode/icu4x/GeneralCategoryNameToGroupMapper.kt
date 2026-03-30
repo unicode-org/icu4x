@@ -14,9 +14,9 @@ internal interface GeneralCategoryNameToGroupMapperLib: Library {
 }
 /** A type capable of looking up General Category Group values from a string name.
 *
-*See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParser.html) for more information.
+*See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyParser.html) for more information.
 *
-*See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+*See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
 */
 class GeneralCategoryNameToGroupMapper internal constructor (
     internal val handle: Pointer,
@@ -48,7 +48,7 @@ class GeneralCategoryNameToGroupMapper internal constructor (
         
         /** Create a name-to-mask mapper for the `General_Category` property, using compiled data.
         *
-        *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+        *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
         */
         fun create(): GeneralCategoryNameToGroupMapper {
             
@@ -62,7 +62,7 @@ class GeneralCategoryNameToGroupMapper internal constructor (
         
         /** Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
         *
-        *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+        *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<GeneralCategoryNameToGroupMapper> {
             
@@ -83,7 +83,7 @@ class GeneralCategoryNameToGroupMapper internal constructor (
     *
     *Returns 0 if the name is unknown for this property
     *
-    *See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
+    *See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
     */
     fun getStrict(name: String): GeneralCategoryGroup {
         val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
@@ -101,7 +101,7 @@ class GeneralCategoryNameToGroupMapper internal constructor (
     *
     *Returns 0 if the name is unknown for this property
     *
-    *See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
+    *See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
     */
     fun getLoose(name: String): GeneralCategoryGroup {
         val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)

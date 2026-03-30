@@ -14,7 +14,7 @@ internal interface GraphemeClusterSegmenterLib: Library {
 /** An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
 *in strings.
 *
-*See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
+*See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
 */
 class GraphemeClusterSegmenter internal constructor (
     internal val handle: Pointer,
@@ -46,7 +46,7 @@ class GraphemeClusterSegmenter internal constructor (
         
         /** Construct an [GraphemeClusterSegmenter] using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
         */
         fun create(): GraphemeClusterSegmenter {
             
@@ -60,7 +60,7 @@ class GraphemeClusterSegmenter internal constructor (
         
         /** Construct an [GraphemeClusterSegmenter].
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<GraphemeClusterSegmenter> {
             
@@ -82,7 +82,7 @@ class GraphemeClusterSegmenter internal constructor (
     *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
     *to the WHATWG Encoding Standard.
     *
-    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.GraphemeClusterSegmenterBorrowed.html#method.segment_utf16) for more information.
+    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.GraphemeClusterSegmenterBorrowed.html#method.segment_utf16) for more information.
     */
     fun segment(input: String): GraphemeClusterBreakIteratorUtf16 {
         // This lifetime edge depends on lifetimes: 'a

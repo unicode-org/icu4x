@@ -20,7 +20,7 @@ internal interface DataProviderLib: Library {
 *If you wish to use ICU4X's builtin "compiled data", use the version of the constructors that do not have `_with_provider`
 *in their names.
 *
-*See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/2.1.1/icu_provider/index.html) for more information.
+*See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/2.2.0/icu_provider/index.html) for more information.
 */
 class DataProvider internal constructor (
     internal val handle: Pointer,
@@ -54,7 +54,7 @@ class DataProvider internal constructor (
         *Requires the `provider_fs` Cargo feature.
         *Not supported in WASM.
         *
-        *See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/2.1.1/icu_provider_fs/struct.FsDataProvider.html) for more information.
+        *See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/2.2.0/icu_provider_fs/struct.FsDataProvider.html) for more information.
         */
         fun fromFs(path: String): Result<DataProvider> {
             val pathSliceMemory = PrimitiveArrayTools.borrowUtf8(path)
@@ -78,7 +78,7 @@ class DataProvider internal constructor (
         
         /** Constructs a `BlobDataProvider` and returns it as an [DataProvider].
         *
-        *See the [Rust documentation for `try_new_from_static_blob`](https://docs.rs/icu_provider_blob/2.1.1/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_static_blob) for more information.
+        *See the [Rust documentation for `try_new_from_static_blob`](https://docs.rs/icu_provider_blob/2.2.0/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_static_blob) for more information.
         */
         fun fromByteSlice(blob: ByteArray): Result<DataProvider> {
             val blobSliceMemory = PrimitiveArrayTools.borrow(blob).leakStatic()
@@ -101,7 +101,7 @@ class DataProvider internal constructor (
     *
     *This takes ownership of the `other` provider, leaving an empty provider in its place.
     *
-    *See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/2.1.1/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
+    *See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/2.2.0/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
     */
     fun forkByMarker(other: DataProvider): Result<Unit> {
         
@@ -116,7 +116,7 @@ class DataProvider internal constructor (
     
     /** Same as `fork_by_key` but forks by locale instead of key.
     *
-    *See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/2.1.1/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
+    *See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/2.2.0/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
     */
     fun forkByLocale(other: DataProvider): Result<Unit> {
         
@@ -129,9 +129,9 @@ class DataProvider internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/2.1.1/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
+    /** See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/2.2.0/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
     *
-    *Additional information: [1](https://docs.rs/icu_provider_adapters/2.1.1/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
+    *Additional information: [1](https://docs.rs/icu_provider_adapters/2.2.0/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
     */
     fun enableLocaleFallbackWith(fallbacker: LocaleFallbacker): Result<Unit> {
         

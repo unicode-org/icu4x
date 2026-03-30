@@ -11,7 +11,7 @@ internal interface CalendarLib: Library {
     fun icu4x_Calendar_create_with_provider_mv1(provider: Pointer, kind: Int): ResultPointerInt
     fun icu4x_Calendar_kind_mv1(handle: Pointer): Int
 }
-/** See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/2.1.1/icu/calendar/enum.AnyCalendar.html) for more information.
+/** See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/2.2.0/icu/calendar/enum.AnyCalendar.html) for more information.
 */
 class Calendar internal constructor (
     internal val handle: Pointer,
@@ -43,7 +43,7 @@ class Calendar internal constructor (
         
         /** Creates a new [Calendar] for the specified kind, using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
         */
         fun create(kind: CalendarKind): Calendar {
             
@@ -57,7 +57,7 @@ class Calendar internal constructor (
         
         /** Creates a new [Calendar] for the specified kind, using a particular data source.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider, kind: CalendarKind): Result<Calendar> {
             
@@ -76,7 +76,7 @@ class Calendar internal constructor (
     
     /** Returns the kind of this calendar
     *
-    *See the [Rust documentation for `kind`](https://docs.rs/icu/2.1.1/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
+    *See the [Rust documentation for `kind`](https://docs.rs/icu/2.2.0/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
     */
     fun kind(): CalendarKind {
         

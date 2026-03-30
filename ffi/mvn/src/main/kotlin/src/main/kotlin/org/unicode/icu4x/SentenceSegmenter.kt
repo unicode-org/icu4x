@@ -14,7 +14,7 @@ internal interface SentenceSegmenterLib: Library {
 }
 /** An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
 *
-*See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.SentenceSegmenter.html) for more information.
+*See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.SentenceSegmenter.html) for more information.
 */
 class SentenceSegmenter internal constructor (
     internal val handle: Pointer,
@@ -46,7 +46,7 @@ class SentenceSegmenter internal constructor (
         
         /** Construct a [SentenceSegmenter] using compiled data. This does not assume any content locale.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
         */
         fun create(): SentenceSegmenter {
             
@@ -97,7 +97,7 @@ class SentenceSegmenter internal constructor (
     *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
     *to the WHATWG Encoding Standard.
     *
-    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
+    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
     */
     fun segment(input: String): SentenceBreakIteratorUtf16 {
         // This lifetime edge depends on lifetimes: 'a

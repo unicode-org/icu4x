@@ -78,7 +78,6 @@ const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
 /// An offset from UTC time (stored to seconds precision)
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
-#[non_exhaustive] // newtype
 pub struct UtcOffset(i32);
 
 impl UtcOffset {

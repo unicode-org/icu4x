@@ -14,7 +14,7 @@ internal interface LocaleFallbackerLib: Library {
 }
 /** An object that runs the ICU4X locale fallback algorithm.
 *
-*See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu_locale/2.1.1/icu_locale/struct.LocaleFallbacker.html) for more information.
+*See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html) for more information.
 */
 class LocaleFallbacker internal constructor (
     internal val handle: Pointer,
@@ -46,7 +46,7 @@ class LocaleFallbacker internal constructor (
         
         /** Creates a new `LocaleFallbacker` from compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.1.1/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
         */
         fun create(): LocaleFallbacker {
             
@@ -60,7 +60,7 @@ class LocaleFallbacker internal constructor (
         
         /** Creates a new `LocaleFallbacker` from a data provider.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.1.1/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<LocaleFallbacker> {
             
@@ -79,7 +79,7 @@ class LocaleFallbacker internal constructor (
         
         /** Creates a new `LocaleFallbacker` without data for limited functionality.
         *
-        *See the [Rust documentation for `new_without_data`](https://docs.rs/icu_locale/2.1.1/icu_locale/struct.LocaleFallbacker.html#method.new_without_data) for more information.
+        *See the [Rust documentation for `new_without_data`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html#method.new_without_data) for more information.
         */
         fun withoutData(): LocaleFallbacker {
             
@@ -93,7 +93,7 @@ class LocaleFallbacker internal constructor (
     
     /** Associates this `LocaleFallbacker` with configuration options.
     *
-    *See the [Rust documentation for `for_config`](https://docs.rs/icu_locale/2.1.1/icu_locale/struct.LocaleFallbacker.html#method.for_config) for more information.
+    *See the [Rust documentation for `for_config`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html#method.for_config) for more information.
     */
     fun forConfig(config: LocaleFallbackConfig): LocaleFallbackerWithConfig {
         // This lifetime edge depends on lifetimes: 'a

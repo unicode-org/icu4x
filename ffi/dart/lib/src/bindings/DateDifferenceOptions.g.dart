@@ -7,7 +7,7 @@ final class _DateDifferenceOptionsFfi extends ffi.Struct {
   external _ResultInt32Void largestUnit;
 }
 
-/// See the [Rust documentation for `DateDifferenceOptions`](https://docs.rs/icu/2.1.1/icu/calendar/options/struct.DateDifferenceOptions.html) for more information.
+/// See the [Rust documentation for `DateDifferenceOptions`](https://docs.rs/icu/2.2.0/icu/calendar/options/struct.DateDifferenceOptions.html) for more information.
 final class DateDifferenceOptions {
   // ignore: public_member_api_docs
   DateDurationUnit? largestUnit;

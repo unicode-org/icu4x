@@ -12,7 +12,7 @@ const PluralRulesWithRanges_box_destroy_registry = new FinalizationRegistry((ptr
 });
 
 /**
- * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
+ * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
  */
 export class PluralRulesWithRanges {
     // Internal ptr reference:
@@ -46,7 +46,7 @@ export class PluralRulesWithRanges {
     /**
      * construct a {@link PluralRulesWithRanges} for the given locale, for cardinal numbers, using compiled data.
      *
-     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
      */
     static createCardinal(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -71,7 +71,7 @@ export class PluralRulesWithRanges {
     /**
      * construct a {@link PluralRulesWithRanges} for the given locale, for cardinal numbers, using a particular data source.
      *
-     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
      */
     static createCardinalWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -96,7 +96,7 @@ export class PluralRulesWithRanges {
     /**
      * Construct a {@link PluralRulesWithRanges} for the given locale, for ordinal numbers, using compiled data.
      *
-     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
      */
     static createOrdinal(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -121,7 +121,7 @@ export class PluralRulesWithRanges {
     /**
      * Construct a {@link PluralRulesWithRanges} for the given locale, for ordinal numbers, using a particular data source.
      *
-     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
      */
     static createOrdinalWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -146,7 +146,7 @@ export class PluralRulesWithRanges {
     /**
      * Get the category for a given number represented as operands
      *
-     * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
+     * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
      */
     categoryForRange(start, end) {
 

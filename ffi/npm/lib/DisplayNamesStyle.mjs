@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /**
  * 🚧 This API is unstable and may experience breaking changes outside major releases.
  *
- * See the [Rust documentation for `Style`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/enum.Style.html) for more information.
+ * See the [Rust documentation for `Style`](https://docs.rs/icu/2.2.0/icu/experimental/displaynames/enum.Style.html) for more information.
  */
 export class DisplayNamesStyle {
     #value = undefined;

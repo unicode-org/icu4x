@@ -16,7 +16,7 @@ internal interface WindowsParserLib: Library {
 *This mapper supports two-way mapping, but it is optimized for the case of Windows to BCP-47.
 *It also supports normalizing and canonicalizing the Windows strings.
 *
-*See the [Rust documentation for `WindowsParser`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html) for more information.
+*See the [Rust documentation for `WindowsParser`](https://docs.rs/icu/2.2.0/icu/time/zone/windows/struct.WindowsParser.html) for more information.
 */
 class WindowsParser internal constructor (
     internal val handle: Pointer,
@@ -48,7 +48,7 @@ class WindowsParser internal constructor (
         
         /** Create a new [WindowsParser] using compiled data
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
         */
         fun create(): WindowsParser {
             
@@ -62,7 +62,7 @@ class WindowsParser internal constructor (
         
         /** Create a new [WindowsParser] using a particular data source
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<WindowsParser> {
             
@@ -79,7 +79,7 @@ class WindowsParser internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
+    /** See the [Rust documentation for `parse`](https://docs.rs/icu/2.2.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
     */
     fun parse(value: String, region: String): TimeZone? {
         val valueSliceMemory = PrimitiveArrayTools.borrowUtf8(value)

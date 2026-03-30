@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface CollatorCaseFirstLib: Library {
 }
-/** See the [Rust documentation for `CollationCaseFirst`](https://docs.rs/icu/2.1.1/icu/collator/preferences/enum.CollationCaseFirst.html) for more information.
+/** See the [Rust documentation for `CollationCaseFirst`](https://docs.rs/icu/2.2.0/icu/collator/preferences/enum.CollationCaseFirst.html) for more information.
 */
 enum class CollatorCaseFirst {
     Off,

@@ -5,7 +5,7 @@
 [package]
 name = "yoke-derive"
 description = "Custom derive for the yoke crate"
-version = "0.8.1"
+version = "0.8.2"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["macros", "derive", "zero-copy", "serialization", "self-referential"]
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]

@@ -60,7 +60,7 @@ internal class OptionDateAddOptionsNative constructor(): Structure(), Structure.
 
 }
 
-/** See the [Rust documentation for `DateAddOptions`](https://docs.rs/icu/2.1.1/icu/calendar/options/struct.DateAddOptions.html) for more information.
+/** See the [Rust documentation for `DateAddOptions`](https://docs.rs/icu/2.2.0/icu/calendar/options/struct.DateAddOptions.html) for more information.
 */
 class DateAddOptions (var overflow: DateOverflow?) {
     companion object {

@@ -10,7 +10,7 @@ final class _ZonedTimeFfi extends ffi.Struct {
 
 /// An ICU4X `ZonedTime` object capable of containing a ISO-8601 time, and zone.
 ///
-/// See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html) for more information.
+/// See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html) for more information.
 final class ZonedTime {
   // ignore: public_member_api_docs
   final Time time;
@@ -37,7 +37,7 @@ final class ZonedTime {
 
   /// Creates a new [ZonedTime] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
+  /// See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedTime.strictFromString(String v, IanaParser ianaParser) {
@@ -51,7 +51,7 @@ final class ZonedTime {
 
   /// Creates a new [ZonedTime] from a location-only IXDTF string.
   ///
-  /// See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
+  /// See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedTime.locationOnlyFromString(String v, IanaParser ianaParser) {
@@ -65,7 +65,7 @@ final class ZonedTime {
 
   /// Creates a new [ZonedTime] from an offset-only IXDTF string.
   ///
-  /// See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
+  /// See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedTime.offsetOnlyFromString(String v) {
@@ -79,7 +79,7 @@ final class ZonedTime {
 
   /// Creates a new [ZonedTime] from an IXDTF string, without requiring the offset.
   ///
-  /// See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
+  /// See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedTime.lenientFromString(String v, IanaParser ianaParser) {

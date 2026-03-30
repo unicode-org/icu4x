@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface LeadingAdjustmentLib: Library {
 }
-/** See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/2.1.1/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
+/** See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/2.2.0/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
 */
 enum class LeadingAdjustment {
     Auto,

@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface DateDurationUnitLib: Library {
 }
-/** See the [Rust documentation for `DateDurationUnit`](https://docs.rs/icu/2.1.1/icu/calendar/options/enum.DateDurationUnit.html) for more information.
+/** See the [Rust documentation for `DateDurationUnit`](https://docs.rs/icu/2.2.0/icu/calendar/options/enum.DateDurationUnit.html) for more information.
 */
 enum class DateDurationUnit {
     Years,

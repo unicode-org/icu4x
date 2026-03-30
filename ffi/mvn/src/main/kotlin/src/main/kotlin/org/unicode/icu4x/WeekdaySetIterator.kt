@@ -12,7 +12,7 @@ internal interface WeekdaySetIteratorLib: Library {
 typealias WeekdaySetIteratorIteratorItem = Weekday
 /** Documents which days of the week are considered to be a part of the weekend
 *
-*See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
+*See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
 */
 class WeekdaySetIterator internal constructor (
     internal val handle: Pointer,
@@ -42,7 +42,7 @@ class WeekdaySetIterator internal constructor (
         internal val lib: WeekdaySetIteratorLib = Native.load("icu4x", libClass)
     }
     
-    /** See the [Rust documentation for `next`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
+    /** See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
     */
     internal fun nextInternal(): Weekday? {
         

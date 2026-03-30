@@ -7,7 +7,7 @@ final class _DateAddOptionsFfi extends ffi.Struct {
   external _ResultInt32Void overflow;
 }
 
-/// See the [Rust documentation for `DateAddOptions`](https://docs.rs/icu/2.1.1/icu/calendar/options/struct.DateAddOptions.html) for more information.
+/// See the [Rust documentation for `DateAddOptions`](https://docs.rs/icu/2.2.0/icu/calendar/options/struct.DateAddOptions.html) for more information.
 final class DateAddOptions {
   // ignore: public_member_api_docs
   DateOverflow? overflow;

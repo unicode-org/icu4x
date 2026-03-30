@@ -13,11 +13,11 @@ const CodePointSetData_box_destroy_registry = new FinalizationRegistry((ptr) => 
 /**
  * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
  *
- * See the [Rust documentation for `properties`](https://docs.rs/icu/2.1.1/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/2.2.0/icu/properties/index.html) for more information.
  *
- * See the [Rust documentation for `CodePointSetData`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html) for more information.
+ * See the [Rust documentation for `CodePointSetData`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetData.html) for more information.
  *
- * See the [Rust documentation for `CodePointSetDataBorrowed`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetDataBorrowed.html) for more information.
+ * See the [Rust documentation for `CodePointSetDataBorrowed`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetDataBorrowed.html) for more information.
  */
 export class CodePointSetData {
     // Internal ptr reference:
@@ -51,7 +51,7 @@ export class CodePointSetData {
     /**
      * Checks whether the code point is in the set.
      *
-     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetDataBorrowed.html#method.contains) for more information.
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetDataBorrowed.html#method.contains) for more information.
      */
     contains(cp) {
 
@@ -69,7 +69,7 @@ export class CodePointSetData {
     /**
      * Produces an iterator over ranges of code points contained in this set
      *
-     * See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
+     * See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
      */
     iterRanges() {
         // This lifetime edge depends on lifetimes 'a
@@ -90,7 +90,7 @@ export class CodePointSetData {
     /**
      * Produces an iterator over ranges of code points not contained in this set
      *
-     * See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
+     * See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
      */
     iterRangesComplemented() {
         // This lifetime edge depends on lifetimes 'a
@@ -112,9 +112,9 @@ export class CodePointSetData {
      * Produces a set for obtaining General Category Group values
      * which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C, using compiled data.
      *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      *
-     * See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
+     * See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
      */
     static createGeneralCategoryGroup(group) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -137,9 +137,9 @@ export class CodePointSetData {
      * Produces a set for obtaining General Category Group values
      * which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C, using a provided data source.
      *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      *
-     * See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
+     * See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
      */
     static createGeneralCategoryGroupWithProvider(provider, group) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -164,7 +164,7 @@ export class CodePointSetData {
     /**
      * Get the `Ascii_Hex_Digit` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static asciiHexDigitForChar(ch) {
 
@@ -182,7 +182,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ascii_Hex_Digit` property, using compiled data.
      *
-     * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
+     * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.AsciiHexDigit.html) for more information.
      */
     static createAsciiHexDigit() {
 
@@ -200,7 +200,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ascii_Hex_Digit` property, using a particular data source.
      *
-     * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.AsciiHexDigit.html) for more information.
+     * See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.AsciiHexDigit.html) for more information.
      */
     static createAsciiHexDigitWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -225,7 +225,7 @@ export class CodePointSetData {
     /**
      * Get the `Alnum` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static alnumForChar(ch) {
 
@@ -243,7 +243,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Alnum` property, using compiled data.
      *
-     * See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alnum.html) for more information.
+     * See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Alnum.html) for more information.
      */
     static createAlnum() {
 
@@ -261,7 +261,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Alnum` property, using a particular data source.
      *
-     * See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alnum.html) for more information.
+     * See the [Rust documentation for `Alnum`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Alnum.html) for more information.
      */
     static createAlnumWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -286,7 +286,7 @@ export class CodePointSetData {
     /**
      * Get the `Alphabetic` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static alphabeticForChar(ch) {
 
@@ -304,7 +304,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Alphabetic` property, using compiled data.
      *
-     * See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alphabetic.html) for more information.
+     * See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Alphabetic.html) for more information.
      */
     static createAlphabetic() {
 
@@ -322,7 +322,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Alphabetic` property, using a particular data source.
      *
-     * See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Alphabetic.html) for more information.
+     * See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Alphabetic.html) for more information.
      */
     static createAlphabeticWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -347,7 +347,7 @@ export class CodePointSetData {
     /**
      * Get the `Bidi_Control` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static bidiControlForChar(ch) {
 
@@ -365,7 +365,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Bidi_Control` property, using compiled data.
      *
-     * See the [Rust documentation for `BidiControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiControl.html) for more information.
+     * See the [Rust documentation for `BidiControl`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiControl.html) for more information.
      */
     static createBidiControl() {
 
@@ -383,7 +383,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Bidi_Control` property, using a particular data source.
      *
-     * See the [Rust documentation for `BidiControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiControl.html) for more information.
+     * See the [Rust documentation for `BidiControl`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiControl.html) for more information.
      */
     static createBidiControlWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -408,7 +408,7 @@ export class CodePointSetData {
     /**
      * Get the `Bidi_Mirrored` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static bidiMirroredForChar(ch) {
 
@@ -426,7 +426,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Bidi_Mirrored` property, using compiled data.
      *
-     * See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiMirrored.html) for more information.
+     * See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiMirrored.html) for more information.
      */
     static createBidiMirrored() {
 
@@ -444,7 +444,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Bidi_Mirrored` property, using a particular data source.
      *
-     * See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiMirrored.html) for more information.
+     * See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiMirrored.html) for more information.
      */
     static createBidiMirroredWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -469,7 +469,7 @@ export class CodePointSetData {
     /**
      * Get the `Blank` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static blankForChar(ch) {
 
@@ -487,7 +487,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Blank` property, using compiled data.
      *
-     * See the [Rust documentation for `Blank`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Blank.html) for more information.
+     * See the [Rust documentation for `Blank`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Blank.html) for more information.
      */
     static createBlank() {
 
@@ -505,7 +505,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Blank` property, using a particular data source.
      *
-     * See the [Rust documentation for `Blank`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Blank.html) for more information.
+     * See the [Rust documentation for `Blank`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Blank.html) for more information.
      */
     static createBlankWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -530,7 +530,7 @@ export class CodePointSetData {
     /**
      * Get the `Cased` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static casedForChar(ch) {
 
@@ -548,7 +548,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Cased` property, using compiled data.
      *
-     * See the [Rust documentation for `Cased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Cased.html) for more information.
+     * See the [Rust documentation for `Cased`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Cased.html) for more information.
      */
     static createCased() {
 
@@ -566,7 +566,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Cased` property, using a particular data source.
      *
-     * See the [Rust documentation for `Cased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Cased.html) for more information.
+     * See the [Rust documentation for `Cased`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Cased.html) for more information.
      */
     static createCasedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -591,7 +591,7 @@ export class CodePointSetData {
     /**
      * Get the `Case_Ignorable` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static caseIgnorableForChar(ch) {
 
@@ -609,7 +609,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Case_Ignorable` property, using compiled data.
      *
-     * See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseIgnorable.html) for more information.
+     * See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseIgnorable.html) for more information.
      */
     static createCaseIgnorable() {
 
@@ -627,7 +627,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Case_Ignorable` property, using a particular data source.
      *
-     * See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseIgnorable.html) for more information.
+     * See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseIgnorable.html) for more information.
      */
     static createCaseIgnorableWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -652,7 +652,7 @@ export class CodePointSetData {
     /**
      * Get the `Full_Composition_Exclusion` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static fullCompositionExclusionForChar(ch) {
 
@@ -670,7 +670,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Full_Composition_Exclusion` property, using compiled data.
      *
-     * See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
+     * See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
      */
     static createFullCompositionExclusion() {
 
@@ -688,7 +688,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Full_Composition_Exclusion` property, using a particular data source.
      *
-     * See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
+     * See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
      */
     static createFullCompositionExclusionWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -713,7 +713,7 @@ export class CodePointSetData {
     /**
      * Get the `Changes_When_Casefolded` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenCasefoldedForChar(ch) {
 
@@ -731,7 +731,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Casefolded` property, using compiled data.
      *
-     * See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
+     * See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
      */
     static createChangesWhenCasefolded() {
 
@@ -749,7 +749,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Casefolded` property, using a particular data source.
      *
-     * See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
+     * See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
      */
     static createChangesWhenCasefoldedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -774,7 +774,7 @@ export class CodePointSetData {
     /**
      * Get the `Changes_When_Casemapped` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenCasemappedForChar(ch) {
 
@@ -792,7 +792,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Casemapped` property, using compiled data.
      *
-     * See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
+     * See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
      */
     static createChangesWhenCasemapped() {
 
@@ -810,7 +810,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Casemapped` property, using a particular data source.
      *
-     * See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
+     * See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
      */
     static createChangesWhenCasemappedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -835,7 +835,7 @@ export class CodePointSetData {
     /**
      * Get the `Changes_When_Nfkc_Casefolded` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenNfkcCasefoldedForChar(ch) {
 
@@ -853,7 +853,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Nfkc_Casefolded` property, using compiled data.
      *
-     * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
+     * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
      */
     static createChangesWhenNfkcCasefolded() {
 
@@ -871,7 +871,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Nfkc_Casefolded` property, using a particular data source.
      *
-     * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
+     * See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
      */
     static createChangesWhenNfkcCasefoldedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -896,7 +896,7 @@ export class CodePointSetData {
     /**
      * Get the `Changes_When_Lowercased` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenLowercasedForChar(ch) {
 
@@ -914,7 +914,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Lowercased` property, using compiled data.
      *
-     * See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
+     * See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
      */
     static createChangesWhenLowercased() {
 
@@ -932,7 +932,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Lowercased` property, using a particular data source.
      *
-     * See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
+     * See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
      */
     static createChangesWhenLowercasedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -957,7 +957,7 @@ export class CodePointSetData {
     /**
      * Get the `Changes_When_Titlecased` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenTitlecasedForChar(ch) {
 
@@ -975,7 +975,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Titlecased` property, using compiled data.
      *
-     * See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
+     * See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
      */
     static createChangesWhenTitlecased() {
 
@@ -993,7 +993,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Titlecased` property, using a particular data source.
      *
-     * See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
+     * See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
      */
     static createChangesWhenTitlecasedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1018,7 +1018,7 @@ export class CodePointSetData {
     /**
      * Get the `Changes_When_Uppercased` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static changesWhenUppercasedForChar(ch) {
 
@@ -1036,7 +1036,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Uppercased` property, using compiled data.
      *
-     * See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
+     * See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
      */
     static createChangesWhenUppercased() {
 
@@ -1054,7 +1054,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Changes_When_Uppercased` property, using a particular data source.
      *
-     * See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
+     * See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
      */
     static createChangesWhenUppercasedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1079,7 +1079,7 @@ export class CodePointSetData {
     /**
      * Get the `Dash` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static dashForChar(ch) {
 
@@ -1097,7 +1097,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Dash` property, using compiled data.
      *
-     * See the [Rust documentation for `Dash`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Dash.html) for more information.
+     * See the [Rust documentation for `Dash`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Dash.html) for more information.
      */
     static createDash() {
 
@@ -1115,7 +1115,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Dash` property, using a particular data source.
      *
-     * See the [Rust documentation for `Dash`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Dash.html) for more information.
+     * See the [Rust documentation for `Dash`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Dash.html) for more information.
      */
     static createDashWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1140,7 +1140,7 @@ export class CodePointSetData {
     /**
      * Get the `Deprecated` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static deprecatedForChar(ch) {
 
@@ -1158,7 +1158,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Deprecated` property, using compiled data.
      *
-     * See the [Rust documentation for `Deprecated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Deprecated.html) for more information.
+     * See the [Rust documentation for `Deprecated`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Deprecated.html) for more information.
      */
     static createDeprecated() {
 
@@ -1176,7 +1176,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Deprecated` property, using a particular data source.
      *
-     * See the [Rust documentation for `Deprecated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Deprecated.html) for more information.
+     * See the [Rust documentation for `Deprecated`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Deprecated.html) for more information.
      */
     static createDeprecatedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1201,7 +1201,7 @@ export class CodePointSetData {
     /**
      * Get the `Default_Ignorable_Code_Point` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static defaultIgnorableCodePointForChar(ch) {
 
@@ -1219,7 +1219,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Default_Ignorable_Code_Point` property, using compiled data.
      *
-     * See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
+     * See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
      */
     static createDefaultIgnorableCodePoint() {
 
@@ -1237,7 +1237,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Default_Ignorable_Code_Point` property, using a particular data source.
      *
-     * See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
+     * See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
      */
     static createDefaultIgnorableCodePointWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1262,7 +1262,7 @@ export class CodePointSetData {
     /**
      * Get the `Diacritic` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static diacriticForChar(ch) {
 
@@ -1280,7 +1280,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Diacritic` property, using compiled data.
      *
-     * See the [Rust documentation for `Diacritic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Diacritic.html) for more information.
+     * See the [Rust documentation for `Diacritic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Diacritic.html) for more information.
      */
     static createDiacritic() {
 
@@ -1298,7 +1298,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Diacritic` property, using a particular data source.
      *
-     * See the [Rust documentation for `Diacritic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Diacritic.html) for more information.
+     * See the [Rust documentation for `Diacritic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Diacritic.html) for more information.
      */
     static createDiacriticWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1323,7 +1323,7 @@ export class CodePointSetData {
     /**
      * Get the `Emoji_Modifier_Base` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiModifierBaseForChar(ch) {
 
@@ -1341,7 +1341,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji_Modifier_Base` property, using compiled data.
      *
-     * See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifierBase.html) for more information.
+     * See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EmojiModifierBase.html) for more information.
      */
     static createEmojiModifierBase() {
 
@@ -1359,7 +1359,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji_Modifier_Base` property, using a particular data source.
      *
-     * See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifierBase.html) for more information.
+     * See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EmojiModifierBase.html) for more information.
      */
     static createEmojiModifierBaseWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1384,7 +1384,7 @@ export class CodePointSetData {
     /**
      * Get the `Emoji_Component` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiComponentForChar(ch) {
 
@@ -1402,7 +1402,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji_Component` property, using compiled data.
      *
-     * See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiComponent.html) for more information.
+     * See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EmojiComponent.html) for more information.
      */
     static createEmojiComponent() {
 
@@ -1420,7 +1420,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji_Component` property, using a particular data source.
      *
-     * See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiComponent.html) for more information.
+     * See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EmojiComponent.html) for more information.
      */
     static createEmojiComponentWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1445,7 +1445,7 @@ export class CodePointSetData {
     /**
      * Get the `Emoji_Modifier` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiModifierForChar(ch) {
 
@@ -1463,7 +1463,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji_Modifier` property, using compiled data.
      *
-     * See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifier.html) for more information.
+     * See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EmojiModifier.html) for more information.
      */
     static createEmojiModifier() {
 
@@ -1481,7 +1481,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji_Modifier` property, using a particular data source.
      *
-     * See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiModifier.html) for more information.
+     * See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EmojiModifier.html) for more information.
      */
     static createEmojiModifierWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1506,7 +1506,7 @@ export class CodePointSetData {
     /**
      * Get the `Emoji` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiForChar(ch) {
 
@@ -1524,7 +1524,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji` property, using compiled data.
      *
-     * See the [Rust documentation for `Emoji`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Emoji.html) for more information.
+     * See the [Rust documentation for `Emoji`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Emoji.html) for more information.
      */
     static createEmoji() {
 
@@ -1542,7 +1542,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji` property, using a particular data source.
      *
-     * See the [Rust documentation for `Emoji`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Emoji.html) for more information.
+     * See the [Rust documentation for `Emoji`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Emoji.html) for more information.
      */
     static createEmojiWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1567,7 +1567,7 @@ export class CodePointSetData {
     /**
      * Get the `Emoji_Presentation` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static emojiPresentationForChar(ch) {
 
@@ -1585,7 +1585,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji_Presentation` property, using compiled data.
      *
-     * See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiPresentation.html) for more information.
+     * See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EmojiPresentation.html) for more information.
      */
     static createEmojiPresentation() {
 
@@ -1603,7 +1603,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Emoji_Presentation` property, using a particular data source.
      *
-     * See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EmojiPresentation.html) for more information.
+     * See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EmojiPresentation.html) for more information.
      */
     static createEmojiPresentationWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1628,7 +1628,7 @@ export class CodePointSetData {
     /**
      * Get the `Extender` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static extenderForChar(ch) {
 
@@ -1646,7 +1646,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Extender` property, using compiled data.
      *
-     * See the [Rust documentation for `Extender`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Extender.html) for more information.
+     * See the [Rust documentation for `Extender`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Extender.html) for more information.
      */
     static createExtender() {
 
@@ -1664,7 +1664,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Extender` property, using a particular data source.
      *
-     * See the [Rust documentation for `Extender`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Extender.html) for more information.
+     * See the [Rust documentation for `Extender`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Extender.html) for more information.
      */
     static createExtenderWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1689,7 +1689,7 @@ export class CodePointSetData {
     /**
      * Get the `Extended_Pictographic` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static extendedPictographicForChar(ch) {
 
@@ -1707,7 +1707,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Extended_Pictographic` property, using compiled data.
      *
-     * See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ExtendedPictographic.html) for more information.
+     * See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ExtendedPictographic.html) for more information.
      */
     static createExtendedPictographic() {
 
@@ -1725,7 +1725,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Extended_Pictographic` property, using a particular data source.
      *
-     * See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ExtendedPictographic.html) for more information.
+     * See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ExtendedPictographic.html) for more information.
      */
     static createExtendedPictographicWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1750,7 +1750,7 @@ export class CodePointSetData {
     /**
      * Get the `Graph` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static graphForChar(ch) {
 
@@ -1768,7 +1768,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Graph` property, using compiled data.
      *
-     * See the [Rust documentation for `Graph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Graph.html) for more information.
+     * See the [Rust documentation for `Graph`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Graph.html) for more information.
      */
     static createGraph() {
 
@@ -1786,7 +1786,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Graph` property, using a particular data source.
      *
-     * See the [Rust documentation for `Graph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Graph.html) for more information.
+     * See the [Rust documentation for `Graph`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Graph.html) for more information.
      */
     static createGraphWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1811,7 +1811,7 @@ export class CodePointSetData {
     /**
      * Get the `Grapheme_Base` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static graphemeBaseForChar(ch) {
 
@@ -1829,7 +1829,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Grapheme_Base` property, using compiled data.
      *
-     * See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeBase.html) for more information.
+     * See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeBase.html) for more information.
      */
     static createGraphemeBase() {
 
@@ -1847,7 +1847,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Grapheme_Base` property, using a particular data source.
      *
-     * See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeBase.html) for more information.
+     * See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeBase.html) for more information.
      */
     static createGraphemeBaseWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1872,7 +1872,7 @@ export class CodePointSetData {
     /**
      * Get the `Grapheme_Extend` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static graphemeExtendForChar(ch) {
 
@@ -1890,7 +1890,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Grapheme_Extend` property, using compiled data.
      *
-     * See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeExtend.html) for more information.
+     * See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeExtend.html) for more information.
      */
     static createGraphemeExtend() {
 
@@ -1908,7 +1908,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Grapheme_Extend` property, using a particular data source.
      *
-     * See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeExtend.html) for more information.
+     * See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeExtend.html) for more information.
      */
     static createGraphemeExtendWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1933,7 +1933,7 @@ export class CodePointSetData {
     /**
      * Get the `Grapheme_Link` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static graphemeLinkForChar(ch) {
 
@@ -1951,7 +1951,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Grapheme_Link` property, using compiled data.
      *
-     * See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeLink.html) for more information.
+     * See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeLink.html) for more information.
      */
     static createGraphemeLink() {
 
@@ -1969,7 +1969,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Grapheme_Link` property, using a particular data source.
      *
-     * See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeLink.html) for more information.
+     * See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeLink.html) for more information.
      */
     static createGraphemeLinkWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1994,7 +1994,7 @@ export class CodePointSetData {
     /**
      * Get the `Hex_Digit` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static hexDigitForChar(ch) {
 
@@ -2012,7 +2012,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Hex_Digit` property, using compiled data.
      *
-     * See the [Rust documentation for `HexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HexDigit.html) for more information.
+     * See the [Rust documentation for `HexDigit`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HexDigit.html) for more information.
      */
     static createHexDigit() {
 
@@ -2030,7 +2030,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Hex_Digit` property, using a particular data source.
      *
-     * See the [Rust documentation for `HexDigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HexDigit.html) for more information.
+     * See the [Rust documentation for `HexDigit`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HexDigit.html) for more information.
      */
     static createHexDigitWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2055,7 +2055,7 @@ export class CodePointSetData {
     /**
      * Get the `Hyphen` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static hyphenForChar(ch) {
 
@@ -2073,7 +2073,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Hyphen` property, using compiled data.
      *
-     * See the [Rust documentation for `Hyphen`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Hyphen.html) for more information.
+     * See the [Rust documentation for `Hyphen`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Hyphen.html) for more information.
      */
     static createHyphen() {
 
@@ -2091,7 +2091,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Hyphen` property, using a particular data source.
      *
-     * See the [Rust documentation for `Hyphen`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Hyphen.html) for more information.
+     * See the [Rust documentation for `Hyphen`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Hyphen.html) for more information.
      */
     static createHyphenWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2116,7 +2116,7 @@ export class CodePointSetData {
     /**
      * Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idCompatMathContinueForChar(ch) {
 
@@ -2134,7 +2134,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `ID_Compat_Math_Continue` property, using compiled data.
      *
-     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
      */
     static createIdCompatMathContinue() {
 
@@ -2152,7 +2152,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `ID_Compat_Math_Continue` property, using a particular data source.
      *
-     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
      */
     static createIdCompatMathContinueWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2177,7 +2177,7 @@ export class CodePointSetData {
     /**
      * Get the `ID_Compat_Math_Start` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idCompatMathStartForChar(ch) {
 
@@ -2195,7 +2195,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `ID_Compat_Math_Start` property, using compiled data.
      *
-     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
      */
     static createIdCompatMathStart() {
 
@@ -2213,7 +2213,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `ID_Compat_Math_Start` property, using a particular data source.
      *
-     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
      */
     static createIdCompatMathStartWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2238,7 +2238,7 @@ export class CodePointSetData {
     /**
      * Get the `Id_Continue` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idContinueForChar(ch) {
 
@@ -2256,7 +2256,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Id_Continue` property, using compiled data.
      *
-     * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
+     * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdContinue.html) for more information.
      */
     static createIdContinue() {
 
@@ -2274,7 +2274,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Id_Continue` property, using a particular data source.
      *
-     * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdContinue.html) for more information.
+     * See the [Rust documentation for `IdContinue`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdContinue.html) for more information.
      */
     static createIdContinueWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2299,7 +2299,7 @@ export class CodePointSetData {
     /**
      * Get the `Ideographic` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static ideographicForChar(ch) {
 
@@ -2317,7 +2317,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ideographic` property, using compiled data.
      *
-     * See the [Rust documentation for `Ideographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Ideographic.html) for more information.
+     * See the [Rust documentation for `Ideographic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Ideographic.html) for more information.
      */
     static createIdeographic() {
 
@@ -2335,7 +2335,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ideographic` property, using a particular data source.
      *
-     * See the [Rust documentation for `Ideographic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Ideographic.html) for more information.
+     * See the [Rust documentation for `Ideographic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Ideographic.html) for more information.
      */
     static createIdeographicWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2360,7 +2360,7 @@ export class CodePointSetData {
     /**
      * Get the `Id_Start` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idStartForChar(ch) {
 
@@ -2378,7 +2378,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Id_Start` property, using compiled data.
      *
-     * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
+     * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdStart.html) for more information.
      */
     static createIdStart() {
 
@@ -2396,7 +2396,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Id_Start` property, using a particular data source.
      *
-     * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdStart.html) for more information.
+     * See the [Rust documentation for `IdStart`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdStart.html) for more information.
      */
     static createIdStartWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2421,7 +2421,7 @@ export class CodePointSetData {
     /**
      * Get the `Ids_Binary_Operator` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idsBinaryOperatorForChar(ch) {
 
@@ -2439,7 +2439,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ids_Binary_Operator` property, using compiled data.
      *
-     * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
+     * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
      */
     static createIdsBinaryOperator() {
 
@@ -2457,7 +2457,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ids_Binary_Operator` property, using a particular data source.
      *
-     * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
+     * See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
      */
     static createIdsBinaryOperatorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2482,7 +2482,7 @@ export class CodePointSetData {
     /**
      * Get the `Ids_Trinary_Operator` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idsTrinaryOperatorForChar(ch) {
 
@@ -2500,7 +2500,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ids_Trinary_Operator` property, using compiled data.
      *
-     * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
+     * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
      */
     static createIdsTrinaryOperator() {
 
@@ -2518,7 +2518,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ids_Trinary_Operator` property, using a particular data source.
      *
-     * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
+     * See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
      */
     static createIdsTrinaryOperatorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2543,7 +2543,7 @@ export class CodePointSetData {
     /**
      * Get the `Ids_Unary_Operator` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static idsUnaryOperatorForChar(ch) {
 
@@ -2561,7 +2561,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ids_Unary_Operator` property, using compiled data.
      *
-     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
      */
     static createIdsUnaryOperator() {
 
@@ -2579,7 +2579,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Ids_Unary_Operator` property, using a particular data source.
      *
-     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
      */
     static createIdsUnaryOperatorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2604,7 +2604,7 @@ export class CodePointSetData {
     /**
      * Get the `Join_Control` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static joinControlForChar(ch) {
 
@@ -2622,7 +2622,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Join_Control` property, using compiled data.
      *
-     * See the [Rust documentation for `JoinControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoinControl.html) for more information.
+     * See the [Rust documentation for `JoinControl`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoinControl.html) for more information.
      */
     static createJoinControl() {
 
@@ -2640,7 +2640,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Join_Control` property, using a particular data source.
      *
-     * See the [Rust documentation for `JoinControl`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoinControl.html) for more information.
+     * See the [Rust documentation for `JoinControl`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoinControl.html) for more information.
      */
     static createJoinControlWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2665,7 +2665,7 @@ export class CodePointSetData {
     /**
      * Get the `Logical_Order_Exception` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static logicalOrderExceptionForChar(ch) {
 
@@ -2683,7 +2683,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Logical_Order_Exception` property, using compiled data.
      *
-     * See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LogicalOrderException.html) for more information.
+     * See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LogicalOrderException.html) for more information.
      */
     static createLogicalOrderException() {
 
@@ -2701,7 +2701,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Logical_Order_Exception` property, using a particular data source.
      *
-     * See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LogicalOrderException.html) for more information.
+     * See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LogicalOrderException.html) for more information.
      */
     static createLogicalOrderExceptionWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2726,7 +2726,7 @@ export class CodePointSetData {
     /**
      * Get the `Lowercase` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static lowercaseForChar(ch) {
 
@@ -2744,7 +2744,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Lowercase` property, using compiled data.
      *
-     * See the [Rust documentation for `Lowercase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Lowercase.html) for more information.
+     * See the [Rust documentation for `Lowercase`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Lowercase.html) for more information.
      */
     static createLowercase() {
 
@@ -2762,7 +2762,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Lowercase` property, using a particular data source.
      *
-     * See the [Rust documentation for `Lowercase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Lowercase.html) for more information.
+     * See the [Rust documentation for `Lowercase`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Lowercase.html) for more information.
      */
     static createLowercaseWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2787,7 +2787,7 @@ export class CodePointSetData {
     /**
      * Get the `Math` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static mathForChar(ch) {
 
@@ -2805,7 +2805,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Math` property, using compiled data.
      *
-     * See the [Rust documentation for `Math`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Math.html) for more information.
+     * See the [Rust documentation for `Math`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Math.html) for more information.
      */
     static createMath() {
 
@@ -2823,7 +2823,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Math` property, using a particular data source.
      *
-     * See the [Rust documentation for `Math`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Math.html) for more information.
+     * See the [Rust documentation for `Math`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Math.html) for more information.
      */
     static createMathWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2848,7 +2848,7 @@ export class CodePointSetData {
     /**
      * Get the `Modifier_Combining_mark` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static modifierCombiningMarkForChar(ch) {
 
@@ -2866,7 +2866,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Modifier_Combining_mark` property, using compiled data.
      *
-     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
      */
     static createModifierCombiningMark() {
 
@@ -2884,7 +2884,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Modifier_Combining_mark` property, using a particular data source.
      *
-     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
      */
     static createModifierCombiningMarkWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2909,7 +2909,7 @@ export class CodePointSetData {
     /**
      * Get the `Noncharacter_Code_Point` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static noncharacterCodePointForChar(ch) {
 
@@ -2927,7 +2927,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Noncharacter_Code_Point` property, using compiled data.
      *
-     * See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
+     * See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
      */
     static createNoncharacterCodePoint() {
 
@@ -2945,7 +2945,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Noncharacter_Code_Point` property, using a particular data source.
      *
-     * See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
+     * See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
      */
     static createNoncharacterCodePointWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -2970,7 +2970,7 @@ export class CodePointSetData {
     /**
      * Get the `Nfc_Inert` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static nfcInertForChar(ch) {
 
@@ -2988,7 +2988,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Nfc_Inert` property, using compiled data.
      *
-     * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
+     * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfcInert.html) for more information.
      */
     static createNfcInert() {
 
@@ -3006,7 +3006,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Nfc_Inert` property, using a particular data source.
      *
-     * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfcInert.html) for more information.
+     * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfcInert.html) for more information.
      */
     static createNfcInertWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3031,7 +3031,7 @@ export class CodePointSetData {
     /**
      * Get the `Nfd_Inert` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static nfdInertForChar(ch) {
 
@@ -3049,7 +3049,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Nfd_Inert` property, using compiled data.
      *
-     * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
+     * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfdInert.html) for more information.
      */
     static createNfdInert() {
 
@@ -3067,7 +3067,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Nfd_Inert` property, using a particular data source.
      *
-     * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfdInert.html) for more information.
+     * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfdInert.html) for more information.
      */
     static createNfdInertWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3092,7 +3092,7 @@ export class CodePointSetData {
     /**
      * Get the `Nfkc_Inert` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static nfkcInertForChar(ch) {
 
@@ -3110,7 +3110,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Nfkc_Inert` property, using compiled data.
      *
-     * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
+     * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkcInert.html) for more information.
      */
     static createNfkcInert() {
 
@@ -3128,7 +3128,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Nfkc_Inert` property, using a particular data source.
      *
-     * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkcInert.html) for more information.
+     * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkcInert.html) for more information.
      */
     static createNfkcInertWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3153,7 +3153,7 @@ export class CodePointSetData {
     /**
      * Get the `Nfkd_Inert` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static nfkdInertForChar(ch) {
 
@@ -3171,7 +3171,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Nfkd_Inert` property, using compiled data.
      *
-     * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
+     * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkdInert.html) for more information.
      */
     static createNfkdInert() {
 
@@ -3189,7 +3189,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Nfkd_Inert` property, using a particular data source.
      *
-     * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NfkdInert.html) for more information.
+     * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkdInert.html) for more information.
      */
     static createNfkdInertWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3214,7 +3214,7 @@ export class CodePointSetData {
     /**
      * Get the `Pattern_Syntax` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static patternSyntaxForChar(ch) {
 
@@ -3232,7 +3232,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Pattern_Syntax` property, using compiled data.
      *
-     * See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternSyntax.html) for more information.
+     * See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.PatternSyntax.html) for more information.
      */
     static createPatternSyntax() {
 
@@ -3250,7 +3250,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Pattern_Syntax` property, using a particular data source.
      *
-     * See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternSyntax.html) for more information.
+     * See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.PatternSyntax.html) for more information.
      */
     static createPatternSyntaxWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3275,7 +3275,7 @@ export class CodePointSetData {
     /**
      * Get the `Pattern_White_Space` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static patternWhiteSpaceForChar(ch) {
 
@@ -3293,7 +3293,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Pattern_White_Space` property, using compiled data.
      *
-     * See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
+     * See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
      */
     static createPatternWhiteSpace() {
 
@@ -3311,7 +3311,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Pattern_White_Space` property, using a particular data source.
      *
-     * See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
+     * See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
      */
     static createPatternWhiteSpaceWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3336,7 +3336,7 @@ export class CodePointSetData {
     /**
      * Get the `Prepended_Concatenation_Mark` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static prependedConcatenationMarkForChar(ch) {
 
@@ -3354,7 +3354,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Prepended_Concatenation_Mark` property, using compiled data.
      *
-     * See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
+     * See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
      */
     static createPrependedConcatenationMark() {
 
@@ -3372,7 +3372,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Prepended_Concatenation_Mark` property, using a particular data source.
      *
-     * See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
+     * See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
      */
     static createPrependedConcatenationMarkWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3397,7 +3397,7 @@ export class CodePointSetData {
     /**
      * Get the `Print` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static printForChar(ch) {
 
@@ -3415,7 +3415,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Print` property, using compiled data.
      *
-     * See the [Rust documentation for `Print`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Print.html) for more information.
+     * See the [Rust documentation for `Print`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Print.html) for more information.
      */
     static createPrint() {
 
@@ -3433,7 +3433,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Print` property, using a particular data source.
      *
-     * See the [Rust documentation for `Print`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Print.html) for more information.
+     * See the [Rust documentation for `Print`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Print.html) for more information.
      */
     static createPrintWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3458,7 +3458,7 @@ export class CodePointSetData {
     /**
      * Get the `Quotation_Mark` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static quotationMarkForChar(ch) {
 
@@ -3476,7 +3476,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Quotation_Mark` property, using compiled data.
      *
-     * See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.QuotationMark.html) for more information.
+     * See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.QuotationMark.html) for more information.
      */
     static createQuotationMark() {
 
@@ -3494,7 +3494,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Quotation_Mark` property, using a particular data source.
      *
-     * See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.QuotationMark.html) for more information.
+     * See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.QuotationMark.html) for more information.
      */
     static createQuotationMarkWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3519,7 +3519,7 @@ export class CodePointSetData {
     /**
      * Get the `Radical` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static radicalForChar(ch) {
 
@@ -3537,7 +3537,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Radical` property, using compiled data.
      *
-     * See the [Rust documentation for `Radical`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Radical.html) for more information.
+     * See the [Rust documentation for `Radical`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Radical.html) for more information.
      */
     static createRadical() {
 
@@ -3555,7 +3555,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Radical` property, using a particular data source.
      *
-     * See the [Rust documentation for `Radical`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Radical.html) for more information.
+     * See the [Rust documentation for `Radical`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Radical.html) for more information.
      */
     static createRadicalWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3580,7 +3580,7 @@ export class CodePointSetData {
     /**
      * Get the `Regional_Indicator` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static regionalIndicatorForChar(ch) {
 
@@ -3598,7 +3598,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Regional_Indicator` property, using compiled data.
      *
-     * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.RegionalIndicator.html) for more information.
+     * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.RegionalIndicator.html) for more information.
      */
     static createRegionalIndicator() {
 
@@ -3616,7 +3616,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Regional_Indicator` property, using a particular data source.
      *
-     * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.RegionalIndicator.html) for more information.
+     * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.RegionalIndicator.html) for more information.
      */
     static createRegionalIndicatorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3641,7 +3641,7 @@ export class CodePointSetData {
     /**
      * Get the `Soft_Dotted` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static softDottedForChar(ch) {
 
@@ -3659,7 +3659,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Soft_Dotted` property, using compiled data.
      *
-     * See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SoftDotted.html) for more information.
+     * See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SoftDotted.html) for more information.
      */
     static createSoftDotted() {
 
@@ -3677,7 +3677,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Soft_Dotted` property, using a particular data source.
      *
-     * See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SoftDotted.html) for more information.
+     * See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SoftDotted.html) for more information.
      */
     static createSoftDottedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3702,7 +3702,7 @@ export class CodePointSetData {
     /**
      * Get the `Segment_Starter` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static segmentStarterForChar(ch) {
 
@@ -3720,7 +3720,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Segment_Starter` property, using compiled data.
      *
-     * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SegmentStarter.html) for more information.
+     * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SegmentStarter.html) for more information.
      */
     static createSegmentStarter() {
 
@@ -3738,7 +3738,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Segment_Starter` property, using a particular data source.
      *
-     * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SegmentStarter.html) for more information.
+     * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SegmentStarter.html) for more information.
      */
     static createSegmentStarterWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3763,7 +3763,7 @@ export class CodePointSetData {
     /**
      * Get the `Case_Sensitive` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static caseSensitiveForChar(ch) {
 
@@ -3781,7 +3781,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Case_Sensitive` property, using compiled data.
      *
-     * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseSensitive.html) for more information.
+     * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseSensitive.html) for more information.
      */
     static createCaseSensitive() {
 
@@ -3799,7 +3799,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Case_Sensitive` property, using a particular data source.
      *
-     * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CaseSensitive.html) for more information.
+     * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseSensitive.html) for more information.
      */
     static createCaseSensitiveWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3824,7 +3824,7 @@ export class CodePointSetData {
     /**
      * Get the `Sentence_Terminal` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static sentenceTerminalForChar(ch) {
 
@@ -3842,7 +3842,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Sentence_Terminal` property, using compiled data.
      *
-     * See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceTerminal.html) for more information.
+     * See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceTerminal.html) for more information.
      */
     static createSentenceTerminal() {
 
@@ -3860,7 +3860,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Sentence_Terminal` property, using a particular data source.
      *
-     * See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceTerminal.html) for more information.
+     * See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceTerminal.html) for more information.
      */
     static createSentenceTerminalWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3885,7 +3885,7 @@ export class CodePointSetData {
     /**
      * Get the `Terminal_Punctuation` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static terminalPunctuationForChar(ch) {
 
@@ -3903,7 +3903,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Terminal_Punctuation` property, using compiled data.
      *
-     * See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.TerminalPunctuation.html) for more information.
+     * See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.TerminalPunctuation.html) for more information.
      */
     static createTerminalPunctuation() {
 
@@ -3921,7 +3921,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Terminal_Punctuation` property, using a particular data source.
      *
-     * See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.TerminalPunctuation.html) for more information.
+     * See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.TerminalPunctuation.html) for more information.
      */
     static createTerminalPunctuationWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -3946,7 +3946,7 @@ export class CodePointSetData {
     /**
      * Get the `Unified_Ideograph` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static unifiedIdeographForChar(ch) {
 
@@ -3964,7 +3964,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Unified_Ideograph` property, using compiled data.
      *
-     * See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
+     * See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
      */
     static createUnifiedIdeograph() {
 
@@ -3982,7 +3982,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Unified_Ideograph` property, using a particular data source.
      *
-     * See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
+     * See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
      */
     static createUnifiedIdeographWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -4007,7 +4007,7 @@ export class CodePointSetData {
     /**
      * Get the `Uppercase` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static uppercaseForChar(ch) {
 
@@ -4025,7 +4025,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Uppercase` property, using compiled data.
      *
-     * See the [Rust documentation for `Uppercase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Uppercase.html) for more information.
+     * See the [Rust documentation for `Uppercase`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Uppercase.html) for more information.
      */
     static createUppercase() {
 
@@ -4043,7 +4043,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Uppercase` property, using a particular data source.
      *
-     * See the [Rust documentation for `Uppercase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Uppercase.html) for more information.
+     * See the [Rust documentation for `Uppercase`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Uppercase.html) for more information.
      */
     static createUppercaseWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -4068,7 +4068,7 @@ export class CodePointSetData {
     /**
      * Get the `Variation_Selector` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static variationSelectorForChar(ch) {
 
@@ -4086,7 +4086,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Variation_Selector` property, using compiled data.
      *
-     * See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VariationSelector.html) for more information.
+     * See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VariationSelector.html) for more information.
      */
     static createVariationSelector() {
 
@@ -4104,7 +4104,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Variation_Selector` property, using a particular data source.
      *
-     * See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VariationSelector.html) for more information.
+     * See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VariationSelector.html) for more information.
      */
     static createVariationSelectorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -4129,7 +4129,7 @@ export class CodePointSetData {
     /**
      * Get the `White_Space` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static whiteSpaceForChar(ch) {
 
@@ -4147,7 +4147,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `White_Space` property, using compiled data.
      *
-     * See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WhiteSpace.html) for more information.
+     * See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WhiteSpace.html) for more information.
      */
     static createWhiteSpace() {
 
@@ -4165,7 +4165,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `White_Space` property, using a particular data source.
      *
-     * See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WhiteSpace.html) for more information.
+     * See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WhiteSpace.html) for more information.
      */
     static createWhiteSpaceWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -4190,7 +4190,7 @@ export class CodePointSetData {
     /**
      * Get the `Xdigit` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static xdigitForChar(ch) {
 
@@ -4208,7 +4208,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Xdigit` property, using compiled data.
      *
-     * See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Xdigit.html) for more information.
+     * See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Xdigit.html) for more information.
      */
     static createXdigit() {
 
@@ -4226,7 +4226,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Xdigit` property, using a particular data source.
      *
-     * See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Xdigit.html) for more information.
+     * See the [Rust documentation for `Xdigit`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Xdigit.html) for more information.
      */
     static createXdigitWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -4251,7 +4251,7 @@ export class CodePointSetData {
     /**
      * Get the `Xid_Continue` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static xidContinueForChar(ch) {
 
@@ -4269,7 +4269,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Xid_Continue` property, using compiled data.
      *
-     * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
+     * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.XidContinue.html) for more information.
      */
     static createXidContinue() {
 
@@ -4287,7 +4287,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Xid_Continue` property, using a particular data source.
      *
-     * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidContinue.html) for more information.
+     * See the [Rust documentation for `XidContinue`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.XidContinue.html) for more information.
      */
     static createXidContinueWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -4312,7 +4312,7 @@ export class CodePointSetData {
     /**
      * Get the `Xid_Start` value for a given character, using compiled data
      *
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
      */
     static xidStartForChar(ch) {
 
@@ -4330,7 +4330,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Xid_Start` property, using compiled data.
      *
-     * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
+     * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.XidStart.html) for more information.
      */
     static createXidStart() {
 
@@ -4348,7 +4348,7 @@ export class CodePointSetData {
     /**
      * Create a set for the `Xid_Start` property, using a particular data source.
      *
-     * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.XidStart.html) for more information.
+     * See the [Rust documentation for `XidStart`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.XidStart.html) for more information.
      */
     static createXidStartWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -4373,7 +4373,7 @@ export class CodePointSetData {
     /**
      * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
      *
-     * See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
+     * See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
      */
     static createForEcma262(propertyName) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -4403,7 +4403,7 @@ export class CodePointSetData {
     /**
      * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
      *
-     * See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
+     * See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
      */
     static createForEcma262WithProvider(provider, propertyName) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();

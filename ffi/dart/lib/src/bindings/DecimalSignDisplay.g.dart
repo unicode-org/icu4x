@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// ECMA-402 compatible sign display preference.
 ///
-/// See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.SignDisplay.html) for more information.
+/// See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.SignDisplay.html) for more information.
 enum DecimalSignDisplay {
   // ignore: public_member_api_docs
   auto,

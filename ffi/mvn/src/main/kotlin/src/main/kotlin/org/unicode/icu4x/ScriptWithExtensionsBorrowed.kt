@@ -14,7 +14,7 @@ internal interface ScriptWithExtensionsBorrowedLib: Library {
 }
 /** A slightly faster `ScriptWithExtensions` object
 *
-*See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
+*See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
 */
 class ScriptWithExtensionsBorrowed internal constructor (
     internal val handle: Pointer,
@@ -48,7 +48,7 @@ class ScriptWithExtensionsBorrowed internal constructor (
     /** Get the Script property value for a code point
     *Get the Script property value for a code point
     *
-    *See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+    *See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
     */
     fun getScriptVal(ch: Int): UShort {
         
@@ -58,7 +58,7 @@ class ScriptWithExtensionsBorrowed internal constructor (
     
     /** Get the Script property value for a code point
     *
-    *See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
+    *See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
     */
     fun getScriptExtensionsVal(ch: Int): ScriptExtensionsSet {
         // This lifetime edge depends on lifetimes: 'a
@@ -73,7 +73,7 @@ class ScriptWithExtensionsBorrowed internal constructor (
     
     /** Check if the `Script_Extensions` property of the given code point covers the given script
     *
-    *See the [Rust documentation for `has_script`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+    *See the [Rust documentation for `has_script`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
     */
     fun hasScript(ch: Int, script: UShort): Boolean {
         
@@ -84,7 +84,7 @@ class ScriptWithExtensionsBorrowed internal constructor (
     /** Build the `CodePointSetData` corresponding to a codepoints matching a particular script
     *in their `Script_Extensions`
     *
-    *See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
+    *See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
     */
     fun getScriptExtensionsSet(script: UShort): CodePointSetData {
         

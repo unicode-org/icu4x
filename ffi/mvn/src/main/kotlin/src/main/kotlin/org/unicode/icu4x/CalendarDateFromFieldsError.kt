@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface CalendarDateFromFieldsErrorLib: Library {
 }
-/** Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/error/enum.DateFromFieldsError.html)
+/** Additional information: [1](https://docs.rs/icu/2.2.0/icu/calendar/error/enum.DateFromFieldsError.html)
 */
 enum class CalendarDateFromFieldsError(val inner: Int) {
     Unknown(0),

@@ -12,7 +12,7 @@ internal interface VariantOffsetsCalculatorLib: Library {
     fun icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(handle: Pointer, timeZone: Pointer, utcDate: Pointer, utcTime: Pointer): OptionVariantOffsetsNative
     fun icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(handle: Pointer, timeZone: Pointer, timestamp: Long): OptionVariantOffsetsNative
 }
-/** See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+/** See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.2.0/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
 */
 class VariantOffsetsCalculator internal constructor (
     internal val handle: Pointer,
@@ -44,7 +44,7 @@ class VariantOffsetsCalculator internal constructor (
         
         /** Construct a new [VariantOffsetsCalculator] instance using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
         */
         fun create(): VariantOffsetsCalculator {
             
@@ -58,7 +58,7 @@ class VariantOffsetsCalculator internal constructor (
         
         /** Construct a new [VariantOffsetsCalculator] instance using a particular data source.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<VariantOffsetsCalculator> {
             
@@ -75,7 +75,7 @@ class VariantOffsetsCalculator internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+    /** See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.2.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
     */
     fun computeOffsetsFromTimeZoneAndDateTime(timeZone: TimeZone, utcDate: IsoDate, utcTime: Time): VariantOffsets? {
         
@@ -87,7 +87,7 @@ class VariantOffsetsCalculator internal constructor (
                                 
     }
     
-    /** See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+    /** See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.2.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
     */
     fun computeOffsetsFromTimeZoneAndTimestamp(timeZone: TimeZone, timestamp: Long): VariantOffsets? {
         

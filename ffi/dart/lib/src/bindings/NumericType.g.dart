@@ -3,18 +3,18 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+/// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
 enum NumericType {
-  /// See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.None) for more information.
+  /// See the [Rust documentation for `None`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html#associatedconstant.None) for more information.
   none,
-  /// See the [Rust documentation for `Decimal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Decimal) for more information.
+  /// See the [Rust documentation for `Decimal`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html#associatedconstant.Decimal) for more information.
   decimal,
-  /// See the [Rust documentation for `Digit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Digit) for more information.
+  /// See the [Rust documentation for `Digit`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html#associatedconstant.Digit) for more information.
   digit,
-  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Numeric) for more information.
+  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html#associatedconstant.Numeric) for more information.
   numeric;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static NumericType forChar(Rune ch) {
     final result = _icu4x_NumericType_for_char_mv1(ch);
     return NumericType.values[result];
@@ -22,7 +22,7 @@ enum NumericType {
 
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
   String? longName() {
     final result = _icu4x_NumericType_long_name_mv1(index);
     if (!result.isOk) {
@@ -33,7 +33,7 @@ enum NumericType {
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
   String? shortName() {
     final result = _icu4x_NumericType_short_name_mv1(index);
     if (!result.isOk) {
@@ -44,7 +44,7 @@ enum NumericType {
 
   /// Convert to an integer value usable with ICU4C and `CodePointMapData`
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_NumericType_to_integer_value_mv1(index);
     return result;
@@ -52,7 +52,7 @@ enum NumericType {
 
   /// Convert from an integer value from ICU4C or `CodePointMapData`
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html#method.from_icu4c_value) for more information.
   static NumericType? fromIntegerValue(int other) {
     final result = _icu4x_NumericType_from_integer_value_mv1(other);
     if (!result.isOk) {

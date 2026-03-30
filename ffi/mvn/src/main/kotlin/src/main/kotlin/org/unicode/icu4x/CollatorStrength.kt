@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface CollatorStrengthLib: Library {
 }
-/** See the [Rust documentation for `Strength`](https://docs.rs/icu/2.1.1/icu/collator/options/enum.Strength.html) for more information.
+/** See the [Rust documentation for `Strength`](https://docs.rs/icu/2.2.0/icu/collator/options/enum.Strength.html) for more information.
 */
 enum class CollatorStrength {
     Primary,

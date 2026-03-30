@@ -13,7 +13,7 @@ const LocaleExpander_box_destroy_registry = new FinalizationRegistry((ptr) => {
 /**
  * A locale expander.
  *
- * See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html) for more information.
+ * See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html) for more information.
  */
 export class LocaleExpander {
     // Internal ptr reference:
@@ -47,7 +47,7 @@ export class LocaleExpander {
     /**
      * Create a new {@link LocaleExpander} using compiled data.
      *
-     * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
      */
     #defaultConstructor() {
 
@@ -65,7 +65,7 @@ export class LocaleExpander {
     /**
      * Create a new {@link LocaleExpander} using a `new_common` data source.
      *
-     * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
      */
     static createCommonWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -90,7 +90,7 @@ export class LocaleExpander {
     /**
      * Create a new {@link LocaleExpander} with extended data using compiled data.
      *
-     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
+     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
      */
     static createExtended() {
 
@@ -108,7 +108,7 @@ export class LocaleExpander {
     /**
      * Create a new {@link LocaleExpander} with extended data using a particular data source.
      *
-     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
+     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
      */
     static createExtendedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -131,7 +131,7 @@ export class LocaleExpander {
     }
 
     /**
-     * See the [Rust documentation for `maximize`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
+     * See the [Rust documentation for `maximize`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
      */
     maximize(locale) {
 
@@ -147,7 +147,7 @@ export class LocaleExpander {
     }
 
     /**
-     * See the [Rust documentation for `minimize`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
+     * See the [Rust documentation for `minimize`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
      */
     minimize(locale) {
 
@@ -163,7 +163,7 @@ export class LocaleExpander {
     }
 
     /**
-     * See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
+     * See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
      */
     minimizeFavorScript(locale) {
 
@@ -181,7 +181,7 @@ export class LocaleExpander {
     /**
      * Create a new {@link LocaleExpander} using compiled data.
      *
-     * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
      */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

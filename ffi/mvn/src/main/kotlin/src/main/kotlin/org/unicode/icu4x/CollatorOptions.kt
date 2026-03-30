@@ -66,7 +66,7 @@ internal class OptionCollatorOptionsNative constructor(): Structure(), Structure
 
 }
 
-/** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.1.1/icu/collator/options/struct.CollatorOptions.html) for more information.
+/** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.2.0/icu/collator/options/struct.CollatorOptions.html) for more information.
 */
 class CollatorOptions (var strength: CollatorStrength?, var alternateHandling: CollatorAlternateHandling?, var maxVariable: CollatorMaxVariable?, var caseLevel: CollatorCaseLevel?) {
     companion object {

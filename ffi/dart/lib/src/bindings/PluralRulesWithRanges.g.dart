@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
+/// See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
 final class PluralRulesWithRanges implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class PluralRulesWithRanges implements ffi.Finalizable {
 
   /// construct a [PluralRulesWithRanges] for the given locale, for cardinal numbers, using compiled data.
   ///
-  /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+  /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
   ///
   /// Throws [DataError] on failure.
   factory PluralRulesWithRanges.cardinal(Locale locale) {
@@ -39,7 +39,7 @@ final class PluralRulesWithRanges implements ffi.Finalizable {
 
   /// construct a [PluralRulesWithRanges] for the given locale, for cardinal numbers, using a particular data source.
   ///
-  /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+  /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
   ///
   /// Throws [DataError] on failure.
   factory PluralRulesWithRanges.cardinalWithProvider(DataProvider provider, Locale locale) {
@@ -52,7 +52,7 @@ final class PluralRulesWithRanges implements ffi.Finalizable {
 
   /// Construct a [PluralRulesWithRanges] for the given locale, for ordinal numbers, using compiled data.
   ///
-  /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+  /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
   ///
   /// Throws [DataError] on failure.
   factory PluralRulesWithRanges.ordinal(Locale locale) {
@@ -65,7 +65,7 @@ final class PluralRulesWithRanges implements ffi.Finalizable {
 
   /// Construct a [PluralRulesWithRanges] for the given locale, for ordinal numbers, using a particular data source.
   ///
-  /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+  /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
   ///
   /// Throws [DataError] on failure.
   factory PluralRulesWithRanges.ordinalWithProvider(DataProvider provider, Locale locale) {
@@ -78,7 +78,7 @@ final class PluralRulesWithRanges implements ffi.Finalizable {
 
   /// Get the category for a given number represented as operands
   ///
-  /// See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
+  /// See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
   PluralCategory categoryForRange(PluralOperands start, PluralOperands end) {
     final result = _icu4x_PluralRulesWithRanges_category_for_range_mv1(_ffi, start._ffi, end._ffi);
     return PluralCategory.values[result];

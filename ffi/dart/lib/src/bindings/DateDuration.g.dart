@@ -16,7 +16,7 @@ final class _DateDurationFfi extends ffi.Struct {
   external int days;
 }
 
-/// See the [Rust documentation for `DateDuration`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html) for more information.
+/// See the [Rust documentation for `DateDuration`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html) for more information.
 final class DateDuration {
   // ignore: public_member_api_docs
   bool isNegative;
@@ -58,7 +58,7 @@ final class DateDuration {
 
   /// Creates a new [DateDuration] from an ISO 8601 string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
   ///
   /// Throws [DateDurationParseError] on failure.
   factory DateDuration.fromString(String v) {
@@ -72,7 +72,7 @@ final class DateDuration {
 
   /// Returns a new [DateDuration] representing a number of years.
   ///
-  /// See the [Rust documentation for `for_years`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
+  /// See the [Rust documentation for `for_years`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
   factory DateDuration.forYears(int years) {
     final result = _icu4x_DateDuration_for_years_mv1(years);
     return DateDuration._fromFfi(result);
@@ -80,7 +80,7 @@ final class DateDuration {
 
   /// Returns a new [DateDuration] representing a number of months.
   ///
-  /// See the [Rust documentation for `for_months`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
+  /// See the [Rust documentation for `for_months`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
   factory DateDuration.forMonths(int months) {
     final result = _icu4x_DateDuration_for_months_mv1(months);
     return DateDuration._fromFfi(result);
@@ -88,7 +88,7 @@ final class DateDuration {
 
   /// Returns a new [DateDuration] representing a number of weeks.
   ///
-  /// See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
+  /// See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
   factory DateDuration.forWeeks(int weeks) {
     final result = _icu4x_DateDuration_for_weeks_mv1(weeks);
     return DateDuration._fromFfi(result);
@@ -96,7 +96,7 @@ final class DateDuration {
 
   /// Returns a new [DateDuration] representing a number of days.
   ///
-  /// See the [Rust documentation for `for_days`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
+  /// See the [Rust documentation for `for_days`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
   factory DateDuration.forDays(int days) {
     final result = _icu4x_DateDuration_for_days_mv1(days);
     return DateDuration._fromFfi(result);

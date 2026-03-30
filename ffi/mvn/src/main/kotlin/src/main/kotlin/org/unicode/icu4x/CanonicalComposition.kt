@@ -15,7 +15,7 @@ internal interface CanonicalCompositionLib: Library {
 *
 *Callers should generally use `ComposingNormalizer` unless they specifically need raw composition operations
 *
-*See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+*See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
 */
 class CanonicalComposition internal constructor (
     internal val handle: Pointer,
@@ -47,7 +47,7 @@ class CanonicalComposition internal constructor (
         
         /** Construct a new `CanonicalComposition` instance for NFC using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
         */
         fun create(): CanonicalComposition {
             
@@ -61,7 +61,7 @@ class CanonicalComposition internal constructor (
         
         /** Construct a new `CanonicalComposition` instance for NFC using a particular data source.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<CanonicalComposition> {
             
@@ -81,7 +81,7 @@ class CanonicalComposition internal constructor (
     /** Performs canonical composition (including Hangul) on a pair of characters
     *or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
     *
-    *See the [Rust documentation for `compose`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
+    *See the [Rust documentation for `compose`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
     */
     fun compose(starter: Int, second: Int): Int {
         

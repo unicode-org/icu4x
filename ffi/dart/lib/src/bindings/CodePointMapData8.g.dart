@@ -7,11 +7,11 @@ part of 'lib.g.dart';
 ///
 /// For properties whose values fit into 8 bits.
 ///
-/// See the [Rust documentation for `properties`](https://docs.rs/icu/2.1.1/icu/properties/index.html) for more information.
+/// See the [Rust documentation for `properties`](https://docs.rs/icu/2.2.0/icu/properties/index.html) for more information.
 ///
-/// See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapData.html) for more information.
+/// See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapData.html) for more information.
 ///
-/// See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+/// See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
 final class CodePointMapData8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -34,7 +34,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Gets the value for a code point.
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
   int operator [](Rune cp) {
     final result = _icu4x_CodePointMapData8_get_mv1(_ffi, cp);
     return result;
@@ -42,7 +42,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Produces an iterator over ranges of code points that map to `value`
   ///
-  /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+  /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
   CodePointRangeIterator iterRangesForValue(int value) {
     // This lifetime edge depends on lifetimes: 'a
     final aEdges = [this];
@@ -52,7 +52,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Produces an iterator over ranges of code points that do not map to `value`
   ///
-  /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+  /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
     // This lifetime edge depends on lifetimes: 'a
     final aEdges = [this];
@@ -69,7 +69,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// Should only be used on maps for properties with values less than 32 (like `General_Category`),
   /// other maps will have unpredictable results
   ///
-  /// See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
+  /// See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
   CodePointRangeIterator iterRangesForGroup(GeneralCategoryGroup group) {
     final temp = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
@@ -80,7 +80,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Gets a [CodePointSetData] representing all entries in this map that map to the given value
   ///
-  /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+  /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
   CodePointSetData getSetForValue(int value) {
     final result = _icu4x_CodePointMapData8_get_set_for_value_mv1(_ffi, value);
     return CodePointSetData._fromFfi(result, []);
@@ -88,7 +88,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `BidiClass` property, using compiled data.
   ///
-  /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
+  /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiClass.html) for more information.
   factory CodePointMapData8.bidiClass() {
     final result = _icu4x_CodePointMapData8_create_bidi_class_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -96,7 +96,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `BidiClass` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
+  /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiClass.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.bidiClassWithProvider(DataProvider provider) {
@@ -109,7 +109,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `NumericType` property, using compiled data.
   ///
-  /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+  /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
   factory CodePointMapData8.numericType() {
     final result = _icu4x_CodePointMapData8_create_numeric_type_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -117,7 +117,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `NumericType` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+  /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.numericTypeWithProvider(DataProvider provider) {
@@ -130,7 +130,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `HangulSyllableType` property, using compiled data.
   ///
-  /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
+  /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
   factory CodePointMapData8.hangulSyllableType() {
     final result = _icu4x_CodePointMapData8_create_hangul_syllable_type_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -138,7 +138,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `HangulSyllableType` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
+  /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.hangulSyllableTypeWithProvider(DataProvider provider) {
@@ -151,7 +151,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `EastAsianWidth` property, using compiled data.
   ///
-  /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+  /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
   factory CodePointMapData8.eastAsianWidth() {
     final result = _icu4x_CodePointMapData8_create_east_asian_width_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -159,7 +159,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `EastAsianWidth` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+  /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.eastAsianWidthWithProvider(DataProvider provider) {
@@ -172,7 +172,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `LineBreak` property, using compiled data.
   ///
-  /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
+  /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LineBreak.html) for more information.
   factory CodePointMapData8.lineBreak() {
     final result = _icu4x_CodePointMapData8_create_line_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -180,7 +180,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `LineBreak` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
+  /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LineBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.lineBreakWithProvider(DataProvider provider) {
@@ -193,7 +193,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `GraphemeClusterBreak` property, using compiled data.
   ///
-  /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+  /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
   factory CodePointMapData8.graphemeClusterBreak() {
     final result = _icu4x_CodePointMapData8_create_grapheme_cluster_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -201,7 +201,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `GraphemeClusterBreak` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+  /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.graphemeClusterBreakWithProvider(DataProvider provider) {
@@ -214,7 +214,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `WordBreak` property, using compiled data.
   ///
-  /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
+  /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WordBreak.html) for more information.
   factory CodePointMapData8.wordBreak() {
     final result = _icu4x_CodePointMapData8_create_word_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -222,7 +222,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `WordBreak` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
+  /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WordBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.wordBreakWithProvider(DataProvider provider) {
@@ -235,7 +235,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `SentenceBreak` property, using compiled data.
   ///
-  /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+  /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceBreak.html) for more information.
   factory CodePointMapData8.sentenceBreak() {
     final result = _icu4x_CodePointMapData8_create_sentence_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -243,7 +243,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `SentenceBreak` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+  /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.sentenceBreakWithProvider(DataProvider provider) {
@@ -256,7 +256,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `CanonicalCombiningClass` property, using compiled data.
   ///
-  /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+  /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
   factory CodePointMapData8.canonicalCombiningClass() {
     final result = _icu4x_CodePointMapData8_create_canonical_combining_class_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -264,7 +264,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `CanonicalCombiningClass` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+  /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.canonicalCombiningClassWithProvider(DataProvider provider) {
@@ -277,7 +277,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `IndicSyllabicCategory` property, using compiled data.
   ///
-  /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+  /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
   factory CodePointMapData8.indicSyllabicCategory() {
     final result = _icu4x_CodePointMapData8_create_indic_syllabic_category_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -285,7 +285,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `IndicSyllabicCategory` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+  /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.indicSyllabicCategoryWithProvider(DataProvider provider) {
@@ -298,7 +298,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `IndicConjunctBreak` property, using compiled data.
   ///
-  /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+  /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
   factory CodePointMapData8.indicConjunctBreak() {
     final result = _icu4x_CodePointMapData8_create_indic_conjunct_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -306,7 +306,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `IndicConjunctBreak` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+  /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.indicConjunctBreakWithProvider(DataProvider provider) {
@@ -319,7 +319,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `JoiningGroup` property, using compiled data.
   ///
-  /// See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+  /// See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html) for more information.
   factory CodePointMapData8.joiningGroup() {
     final result = _icu4x_CodePointMapData8_create_joining_group_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -327,7 +327,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `JoiningGroup` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+  /// See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.joiningGroupWithProvider(DataProvider provider) {
@@ -340,7 +340,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `JoiningType` property, using compiled data.
   ///
-  /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+  /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningType.html) for more information.
   factory CodePointMapData8.joiningType() {
     final result = _icu4x_CodePointMapData8_create_joining_type_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -348,7 +348,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `JoiningType` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+  /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningType.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.joiningTypeWithProvider(DataProvider provider) {
@@ -361,7 +361,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `GeneralCategory` property, using compiled data.
   ///
-  /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+  /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
   factory CodePointMapData8.generalCategory() {
     final result = _icu4x_CodePointMapData8_create_general_category_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -369,7 +369,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `GeneralCategory` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+  /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.generalCategoryWithProvider(DataProvider provider) {
@@ -382,7 +382,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `VerticalOrientation` property, using compiled data.
   ///
-  /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+  /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
   factory CodePointMapData8.verticalOrientation() {
     final result = _icu4x_CodePointMapData8_create_vertical_orientation_mv1();
     return CodePointMapData8._fromFfi(result, []);
@@ -390,7 +390,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Create a map for the `VerticalOrientation` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+  /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData8.verticalOrientationWithProvider(DataProvider provider) {

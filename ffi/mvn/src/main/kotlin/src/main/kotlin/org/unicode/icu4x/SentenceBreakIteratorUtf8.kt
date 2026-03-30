@@ -9,7 +9,7 @@ internal interface SentenceBreakIteratorUtf8Lib: Library {
     fun icu4x_SentenceBreakIteratorUtf8_destroy_mv1(handle: Pointer)
     fun icu4x_SentenceBreakIteratorUtf8_next_mv1(handle: Pointer): Int
 }
-/** See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
+/** See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
 */
 class SentenceBreakIteratorUtf8 internal constructor (
     internal val handle: Pointer,
@@ -43,7 +43,7 @@ class SentenceBreakIteratorUtf8 internal constructor (
     /** Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
     *out of range of a 32-bit signed integer.
     *
-    *See the [Rust documentation for `next`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.SentenceBreakIterator.html#method.next) for more information.
+    *See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.SentenceBreakIterator.html#method.next) for more information.
     */
     fun next(): Int {
         

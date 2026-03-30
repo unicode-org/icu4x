@@ -4,7 +4,7 @@
 
 [package]
 name = "crlify"
-version = "1.0.4"
+version = "1.0.5"
 keywords = ["text-processing", "line-endings", "io", "crlf", "windows"]
 description = "A std::io::Write wrapper that replaces \n with \r\n on Windows."
 documentation = "https://docs.rs/litemap"

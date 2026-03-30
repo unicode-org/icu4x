@@ -62,7 +62,7 @@ internal class OptionLineBreakOptionsNative constructor(): Structure(), Structur
 
 }
 
-/** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/2.1.1/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
+/** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/2.2.0/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
 */
 class LineBreakOptions (var strictness: LineBreakStrictness?, var wordOption: LineBreakWordOption?) {
     companion object {

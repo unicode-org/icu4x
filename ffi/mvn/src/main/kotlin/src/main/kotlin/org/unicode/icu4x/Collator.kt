@@ -12,7 +12,7 @@ internal interface CollatorLib: Library {
     fun icu4x_Collator_compare_utf16_mv1(handle: Pointer, left: Slice, right: Slice): Byte
     fun icu4x_Collator_resolved_options_v1_mv1(handle: Pointer): CollatorResolvedOptionsNative
 }
-/** See the [Rust documentation for `Collator`](https://docs.rs/icu/2.1.1/icu/collator/struct.Collator.html) for more information.
+/** See the [Rust documentation for `Collator`](https://docs.rs/icu/2.2.0/icu/collator/struct.Collator.html) for more information.
 */
 class Collator internal constructor (
     internal val handle: Pointer,
@@ -44,7 +44,7 @@ class Collator internal constructor (
         
         /** Construct a new Collator instance using compiled data.
         *
-        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/collator/struct.Collator.html#method.try_new) for more information.
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/collator/struct.Collator.html#method.try_new) for more information.
         */
         fun create(locale: Locale, options: CollatorOptions): Result<Collator> {
             
@@ -63,7 +63,7 @@ class Collator internal constructor (
         
         /** Construct a new Collator instance using a particular data source.
         *
-        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/collator/struct.Collator.html#method.try_new) for more information.
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/collator/struct.Collator.html#method.try_new) for more information.
         */
         fun create_with_provider(provider: DataProvider, locale: Locale, options: CollatorOptions): Result<Collator> {
             
@@ -85,7 +85,7 @@ class Collator internal constructor (
     *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
     *to the WHATWG Encoding Standard.
     *
-    *See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/2.1.1/icu/collator/struct.CollatorBorrowed.html#method.compare_utf16) for more information.
+    *See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/2.2.0/icu/collator/struct.CollatorBorrowed.html#method.compare_utf16) for more information.
     */
     fun compare(left: String, right: String): Byte {
         val leftSliceMemory = PrimitiveArrayTools.borrowUtf16(left)
@@ -104,7 +104,7 @@ class Collator internal constructor (
     *and the options from locale data were combined. None of the struct fields
     *will have `Auto` as the value.
     *
-    *See the [Rust documentation for `resolved_options`](https://docs.rs/icu/2.1.1/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
+    *See the [Rust documentation for `resolved_options`](https://docs.rs/icu/2.2.0/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
     */
     fun resolved_options(): CollatorResolvedOptions {
         

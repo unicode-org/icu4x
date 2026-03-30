@@ -11,7 +11,7 @@ const ListFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 /**
- * See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html) for more information.
+ * See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html) for more information.
  */
 export class ListFormatter {
     // Internal ptr reference:
@@ -45,7 +45,7 @@ export class ListFormatter {
     /**
      * Construct a new `ListFormatter` instance for And patterns from compiled data.
      *
-     * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
+     * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
      */
     static createAndWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -70,7 +70,7 @@ export class ListFormatter {
     /**
      * Construct a new `ListFormatter` instance for And patterns
      *
-     * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
+     * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
      */
     static createAndWithLengthAndProvider(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -95,7 +95,7 @@ export class ListFormatter {
     /**
      * Construct a new `ListFormatter` instance for And patterns from compiled data.
      *
-     * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
+     * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
      */
     static createOrWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -120,7 +120,7 @@ export class ListFormatter {
     /**
      * Construct a new `ListFormatter` instance for And patterns
      *
-     * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
+     * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
      */
     static createOrWithLengthAndProvider(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -145,7 +145,7 @@ export class ListFormatter {
     /**
      * Construct a new `ListFormatter` instance for And patterns from compiled data.
      *
-     * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
+     * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
      */
     static createUnitWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -170,7 +170,7 @@ export class ListFormatter {
     /**
      * Construct a new `ListFormatter` instance for And patterns
      *
-     * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
+     * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
      */
     static createUnitWithLengthAndProvider(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -193,7 +193,7 @@ export class ListFormatter {
     }
 
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.1.1/icu/list/struct.ListFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.format) for more information.
      */
     format(list) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
