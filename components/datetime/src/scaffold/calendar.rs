@@ -95,12 +95,12 @@ impl CldrCalendar for cal::Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-/// [`hijri::Rules`](cal::hijri::Rules)-specific formatting options.
+/// [`hijri::Rules`](cal::hijri::unstable_internal::Rules)-specific formatting options.
 ///
 /// See [`CldrCalendar`].
 ///
 /// The simplest implementation of this uses the same names
-/// as some provided [`hijri::Rules`](cal::hijri::Rules):
+/// as some provided [`hijri::Rules`](cal::hijri::unstable_internal::Rules):
 ///
 /// ```rust
 /// use icu::calendar::cal::hijri;

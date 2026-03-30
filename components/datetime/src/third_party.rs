@@ -91,7 +91,7 @@
 //! cannot be used directly with third-party types.
 //!
 //! While third-party types are implicitly Gregorian, ICU4X supports many other calendar
-//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`]
+//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
 //! requires a type that explicitly carries its calendar system, which third-party types
 //! do not. The following will not compile:
 //!
@@ -111,7 +111,7 @@
 //! # }
 //! ```
 //!
-//! Similarly, [`DateTimeFormatter::format_same_calendar`] will not compile because it
+//! Similarly, [`DateTimeFormatter::format_same_calendar`](crate::DateTimeFormatter::format_same_calendar) will not compile because it
 //! also requires the input type to explicitly carry its calendar system:
 //!
 //! ```compile_fail,E0277
@@ -209,7 +209,7 @@
 //! cannot be used directly with third-party types.
 //!
 //! While third-party types are implicitly Gregorian, ICU4X supports many other calendar
-//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`]
+//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
 //! requires a type that explicitly carries its calendar system, which third-party types
 //! do not. The following will not compile:
 //!
@@ -229,7 +229,7 @@
 //! # }
 //! ```
 //!
-//! Similarly, [`DateTimeFormatter::format_same_calendar`] will not compile because it
+//! Similarly, [`DateTimeFormatter::format_same_calendar`](crate::DateTimeFormatter::format_same_calendar) will not compile because it
 //! also requires the input type to explicitly carry its calendar system:
 //!
 //! ```compile_fail,E0277
@@ -327,7 +327,7 @@
 //! cannot be used directly with third-party types.
 //!
 //! While third-party types are implicitly Gregorian, ICU4X supports many other calendar
-//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`]
+//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
 //! requires a type that explicitly carries its calendar system, which third-party types
 //! do not. The following will not compile:
 //!
@@ -347,7 +347,7 @@
 //! # }
 //! ```
 //!
-//! Similarly, [`DateTimeFormatter::format_same_calendar`] will not compile because it
+//! Similarly, [`DateTimeFormatter::format_same_calendar`](crate::DateTimeFormatter::format_same_calendar) will not compile because it
 //! also requires the input type to explicitly carry its calendar system:
 //!
 //! ```compile_fail,E0277
