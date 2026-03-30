@@ -38,14 +38,7 @@
 //! let gb = RegionDisplayName::try_new(locale, region!("GB")).unwrap();
 //! assert_writeable_eq!(us, "United States");
 //! assert_writeable_eq!(gb, "United Kingdom");
-//! ```
-//!
-//! Currently, the data between the two modules is NOT shared, but we hope to
-//! make it shared in the future.
-//!
-//! We are not sure which design is better for users. If you have any feedback
-//! on the design of this component, please let us know at
-//! <https://github.com/unicode-org/icu4x/issues/7824>.
+//! 
 
 // TODO: expand documentation
 
@@ -69,7 +62,7 @@ pub mod multi {
     //! If you have any feedback, please let us know at
     //! <https://github.com/unicode-org/icu4x/issues/7825>.
     //!
-    //! See [`mod@super`] for a comparison of single and multi.
+    //! See [the parent module](mod@super) for a comparison of single and multi.
     use super::displaynames;
     pub use displaynames::LanguageDisplayNames;
     pub use displaynames::LocaleDisplayNamesFormatter;
@@ -84,7 +77,7 @@ pub mod single {
     //! This submodule is useful for applications that only need to display one or
     //! two specific names, such as the name of the current region.
     //!
-    //! See [`mod@super`] for a comparison of single and multi.
+    //! See [the parent module](mod@super) for a comparison of single and multi.
     use super::singular;
     pub use singular::RegionDisplayName;
     pub use singular::ScriptDisplayName;
