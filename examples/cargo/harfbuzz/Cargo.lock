@@ -10,9 +10,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "cc"
-version = "1.2.57"
+version = "1.2.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a0dd1ca384932ff3641c8718a02769f1698e7563dc6974ffd03346116310423"
+checksum = "e1e928d4b69e3077709075a938a05ffbedfa53a84c8f766efbf8220bb1ff60e1"
 dependencies = [
  "find-msvc-tools",
  "shlex",
@@ -158,7 +158,7 @@ checksum = "2b2b09c6c4711837cc213910511345490ee139c6dbb368800f775b6a53b373ec"
 
 [[package]]
 name = "icu_collections"
-version = "2.1.1"
+version = "2.2.0"
 dependencies = [
  "displaydoc",
  "potential_utf",
@@ -171,7 +171,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_core"
-version = "2.1.1"
+version = "2.2.0"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -183,7 +183,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "2.1.1"
+version = "2.2.0"
 dependencies = [
  "harfbuzz-traits",
  "icu_collections",
@@ -200,11 +200,11 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[package]]
 name = "icu_properties"
-version = "2.1.2"
+version = "2.2.0"
 dependencies = [
  "harfbuzz-traits",
  "icu_collections",
@@ -218,11 +218,11 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.1.2"
+version = "2.2.0"
 
 [[package]]
 name = "icu_provider"
-version = "2.1.1"
+version = "2.2.0"
 dependencies = [
  "displaydoc",
  "icu_locale_core",
@@ -242,7 +242,7 @@ checksum = "b5b646652bf6661599e1da8901b3b9522896f01e736bad5f723fe7a3a27f899d"
 
 [[package]]
 name = "litemap"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "serde_core",
 ]
@@ -255,7 +255,7 @@ checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
 
 [[package]]
 name = "potential_utf"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "serde_core",
  "zerovec",
@@ -351,7 +351,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.8.2"
+version = "0.8.3"
 dependencies = [
  "displaydoc",
  "serde_core",
@@ -421,7 +421,7 @@ version = "0.6.2"
 
 [[package]]
 name = "yoke"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "stable_deref_trait",
  "yoke-derive",
@@ -430,7 +430,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -440,14 +440,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -457,7 +457,7 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -469,7 +469,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.5"
+version = "0.11.6"
 dependencies = [
  "serde",
  "yoke",
@@ -479,7 +479,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.2"
+version = "0.11.3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -488,31 +488,31 @@ dependencies = [
 
 [[patch.unused]]
 name = "bies"
-version = "0.3.0-dev"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "crlify"
-version = "1.0.4"
+version = "1.0.5"
 
 [[patch.unused]]
 name = "databake"
-version = "0.2.0"
+version = "0.2.1"
 
 [[patch.unused]]
 name = "databake-derive"
-version = "0.2.0"
+version = "0.2.1"
 
 [[patch.unused]]
 name = "fixed_decimal"
-version = "0.7.1"
+version = "0.7.2"
 
 [[patch.unused]]
 name = "icu"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu4x-datagen"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
@@ -524,55 +524,55 @@ version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_calendar"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_calendar_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_capi"
-version = "2.1.2"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_casemap"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_casemap_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
-version = "0.6.0-dev"
+version = "0.6.0"
 
 [[patch.unused]]
 name = "icu_collator"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_collator_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_datetime"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_datetime_data"
-version = "2.1.2"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_decimal"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_decimal_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_experimental"
-version = "0.5.0-dev"
+version = "0.5.0"
 
 [[patch.unused]]
 name = "icu_experimental_data"
@@ -580,84 +580,84 @@ version = "0.4.1"
 
 [[patch.unused]]
 name = "icu_freertos"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_list"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_list_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_locale"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_locale_data"
-version = "2.1.2"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_pattern"
-version = "0.4.1"
+version = "0.4.2"
 
 [[patch.unused]]
 name = "icu_plurals"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_plurals_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_provider_adapters"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_provider_baked"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_provider_blob"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_provider_export"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_provider_fs"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_provider_registry"
-version = "2.1.2"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.1.2"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_segmenter"
-version = "2.1.2"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_segmenter_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_time"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "icu_time_data"
-version = "2.1.1"
+version = "2.2.0"
 
 [[patch.unused]]
 name = "ixdtf"
-version = "0.6.4"
+version = "0.6.5"
 
 [[patch.unused]]
 name = "tzif"
-version = "0.5.0-dev"
+version = "0.5.0"
