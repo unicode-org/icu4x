@@ -86,14 +86,18 @@
 //! # }
 //! ```
 //!
-//! One can also use [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
-//! to only link data for a single calendar:
+//! Note that [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
+//! cannot be used directly with third-party types.
 //!
-//! ```
+//! While third-party types are implicitly Gregorian, ICU4X supports many other calendar
+//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`]
+//! requires a type that explicitly carries its calendar system, which third-party types
+//! do not. The following will not compile:
+//!
+//! ```compile_fail,E0277
 //! # #[cfg(feature = "chrono_0_4")] {
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
-//! use writeable::assert_writeable_eq;
 //!
 //! let chrono_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 15).unwrap();
 //! let dtf = FixedCalendarDateTimeFormatter::try_new(
@@ -101,7 +105,8 @@
 //!     fieldsets::YMD::medium(),
 //! )
 //! .unwrap();
-//! assert_writeable_eq!(dtf.format(&chrono_date), "Jan 15, 2025");
+//! // NaiveDate does not implement InFixedCalendar
+//! dtf.format(&chrono_date);
 //! # }
 //! ```
 //!
@@ -179,14 +184,18 @@
 //! # }
 //! ```
 //!
-//! One can also use [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
-//! to only link data for a single calendar:
+//! Note that [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
+//! cannot be used directly with third-party types.
 //!
-//! ```
+//! While third-party types are implicitly Gregorian, ICU4X supports many other calendar
+//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`]
+//! requires a type that explicitly carries its calendar system, which third-party types
+//! do not. The following will not compile:
+//!
+//! ```compile_fail,E0277
 //! # #[cfg(feature = "jiff_0_2")] {
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
-//! use writeable::assert_writeable_eq;
 //!
 //! let jiff_date = jiff::civil::date(2025, 1, 15);
 //! let dtf = FixedCalendarDateTimeFormatter::try_new(
@@ -194,7 +203,8 @@
 //!     fieldsets::YMD::medium(),
 //! )
 //! .unwrap();
-//! assert_writeable_eq!(dtf.format(&jiff_date), "Jan 15, 2025");
+//! // civil::Date does not implement InFixedCalendar
+//! dtf.format(&jiff_date);
 //! # }
 //! ```
 //!
@@ -272,14 +282,18 @@
 //! # }
 //! ```
 //!
-//! One can also use [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
-//! to only link data for a single calendar:
+//! Note that [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
+//! cannot be used directly with third-party types.
 //!
-//! ```
+//! While third-party types are implicitly Gregorian, ICU4X supports many other calendar
+//! systems that users may prefer. To ensure correctness, [`FixedCalendarDateTimeFormatter`]
+//! requires a type that explicitly carries its calendar system, which third-party types
+//! do not. The following will not compile:
+//!
+//! ```compile_fail,E0277
 //! # #[cfg(feature = "time_0_3")] {
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
-//! use writeable::assert_writeable_eq;
 //!
 //! let time_date = time::Date::from_calendar_date(2025, time::Month::January, 15).unwrap();
 //! let dtf = FixedCalendarDateTimeFormatter::try_new(
@@ -287,6 +301,7 @@
 //!     fieldsets::YMD::medium(),
 //! )
 //! .unwrap();
-//! assert_writeable_eq!(dtf.format(&time_date), "Jan 15, 2025");
+//! // time::Date does not implement InFixedCalendar
+//! dtf.format(&time_date);
 //! # }
 //! ```

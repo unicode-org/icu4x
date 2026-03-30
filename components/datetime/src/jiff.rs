@@ -44,7 +44,6 @@ impl GetField<Nanosecond> for jiff::civil::Time {
 }
 
 impl UnstableSealed for jiff::civil::Date {}
-impl InFixedCalendar<Gregorian> for jiff::civil::Date {}
 impl GetField<()> for jiff::civil::Date {
     fn get_field(&self) {}
 }
@@ -105,7 +104,6 @@ impl GetField<Option<UtcOffset>> for jiff::tz::Offset {
 }
 
 impl UnstableSealed for jiff::civil::DateTime {}
-impl InFixedCalendar<Gregorian> for jiff::civil::DateTime {}
 impl GetField<()> for jiff::civil::DateTime {
     fn get_field(&self) {}
 }
@@ -189,7 +187,6 @@ impl GetField<Weekday> for jiff::civil::Weekday {
 }
 
 impl UnstableSealed for jiff::Zoned {}
-impl InFixedCalendar<Gregorian> for jiff::Zoned {}
 impl GetField<()> for jiff::Zoned {
     fn get_field(&self) {}
 }

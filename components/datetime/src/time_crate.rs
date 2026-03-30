@@ -39,7 +39,6 @@ impl GetField<Nanosecond> for time::Time {
 }
 
 impl UnstableSealed for time::Date {}
-impl InFixedCalendar<Gregorian> for time::Date {}
 impl GetField<()> for time::Date {
     fn get_field(&self) {}
 }
@@ -100,7 +99,6 @@ impl GetField<Option<UtcOffset>> for time::UtcOffset {
 }
 
 impl UnstableSealed for time::PrimitiveDateTime {}
-impl InFixedCalendar<Gregorian> for time::PrimitiveDateTime {}
 impl GetField<()> for time::PrimitiveDateTime {
     fn get_field(&self) {}
 }
@@ -184,7 +182,6 @@ impl GetField<Weekday> for time::Weekday {
 }
 
 impl UnstableSealed for time::OffsetDateTime {}
-impl InFixedCalendar<Gregorian> for time::OffsetDateTime {}
 impl GetField<()> for time::OffsetDateTime {
     fn get_field(&self) {}
 }

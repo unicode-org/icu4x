@@ -43,7 +43,6 @@ impl GetField<Nanosecond> for chrono::NaiveTime {
 }
 
 impl UnstableSealed for chrono::NaiveDate {}
-impl InFixedCalendar<Gregorian> for chrono::NaiveDate {}
 impl GetField<()> for chrono::NaiveDate {
     fn get_field(&self) {}
 }
@@ -104,7 +103,6 @@ impl GetField<Option<UtcOffset>> for chrono::FixedOffset {
 }
 
 impl UnstableSealed for chrono::NaiveDateTime {}
-impl InFixedCalendar<Gregorian> for chrono::NaiveDateTime {}
 impl GetField<()> for chrono::NaiveDateTime {
     fn get_field(&self) {}
 }
