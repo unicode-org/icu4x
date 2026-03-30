@@ -69,6 +69,23 @@
 //! # }
 //! ```
 //!
+//! Mismatched types and field sets will not compile:
+//!
+//! ```compile_fail,E0277
+//! # #[cfg(feature = "chrono_0_4")] {
+//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::locale::locale;
+//! let chrono_time = chrono::NaiveTime::from_hms_opt(16, 9, 35).unwrap();
+//! let dtf_date = DateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::YMD::medium(),
+//! )
+//! .unwrap();
+//! // NaiveTime does not have date fields required by YMD
+//! dtf_date.format(&chrono_time);
+//! # }
+//! ```
+//!
 //! # Jiff
 //!
 //! The following examples show how to use [`jiff`] types with ICU4X formatters.
@@ -126,6 +143,23 @@
 //! # }
 //! ```
 //!
+//! Mismatched types and field sets will not compile:
+//!
+//! ```compile_fail,E0277
+//! # #[cfg(feature = "jiff_0_2")] {
+//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::locale::locale;
+//! let jiff_date = jiff::civil::date(2025, 1, 15);
+//! let dtf_time = DateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::T::medium(),
+//! )
+//! .unwrap();
+//! // civil::Date does not have time fields required by T
+//! dtf_time.format(&jiff_date);
+//! # }
+//! ```
+//!
 //! # Time
 //!
 //! The following examples show how to use [`time`] types with ICU4X formatters.
@@ -180,5 +214,22 @@
 //! )
 //! .unwrap();
 //! assert_writeable_eq!(dtf_weekday.format(&time_weekday), "Wednesday");
+//! # }
+//! ```
+//!
+//! Mismatched types and field sets will not compile:
+//!
+//! ```compile_fail,E0277
+//! # #[cfg(feature = "time_0_3")] {
+//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::locale::locale;
+//! let time_weekday = time::Weekday::Wednesday;
+//! let dtf_date = DateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::YMD::medium(),
+//! )
+//! .unwrap();
+//! // Weekday does not have year/month/day fields required by YMD
+//! dtf_date.format(&time_weekday);
 //! # }
 //! ```
