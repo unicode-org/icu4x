@@ -18,7 +18,7 @@
 //!
 //! ```
 //! # #[cfg(feature = "chrono_0_4")] {
-//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
@@ -33,7 +33,7 @@
 //!
 //! // Format a chrono::NaiveTime using fieldsets::T
 //! let chrono_time = chrono::NaiveTime::from_hms_opt(16, 9, 35).unwrap();
-//! let dtf_time = DateTimeFormatter::try_new(
+//! let dtf_time = NoCalendarFormatter::try_new(
 //!     locale!("en-US").into(),
 //!     fieldsets::T::medium(),
 //! )
@@ -92,7 +92,7 @@
 //!
 //! ```
 //! # #[cfg(feature = "jiff_0_2")] {
-//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
@@ -107,7 +107,7 @@
 //!
 //! // Format a jiff::civil::Time using fieldsets::T
 //! let jiff_time = jiff::civil::time(16, 9, 35, 0);
-//! let dtf_time = DateTimeFormatter::try_new(
+//! let dtf_time = NoCalendarFormatter::try_new(
 //!     locale!("en-US").into(),
 //!     fieldsets::T::medium(),
 //! )
@@ -147,10 +147,10 @@
 //!
 //! ```compile_fail,E0277
 //! # #[cfg(feature = "jiff_0_2")] {
-//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::datetime::{fieldsets, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! let jiff_date = jiff::civil::date(2025, 1, 15);
-//! let dtf_time = DateTimeFormatter::try_new(
+//! let dtf_time = NoCalendarFormatter::try_new(
 //!     locale!("en-US").into(),
 //!     fieldsets::T::medium(),
 //! )
@@ -166,7 +166,7 @@
 //!
 //! ```
 //! # #[cfg(feature = "time_0_3")] {
-//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
@@ -181,7 +181,7 @@
 //!
 //! // Format a time::Time using fieldsets::T
 //! let time_time = time::Time::from_hms(16, 9, 35).unwrap();
-//! let dtf_time = DateTimeFormatter::try_new(
+//! let dtf_time = NoCalendarFormatter::try_new(
 //!     locale!("en-US").into(),
 //!     fieldsets::T::medium(),
 //! )
