@@ -29,7 +29,7 @@ define_preferences!(
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, RegionDisplayNames,
+///     DisplayNamesOptions, multi::RegionDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::region};
 ///
@@ -96,7 +96,7 @@ impl RegionDisplayNames {
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, ScriptDisplayNames,
+///     DisplayNamesOptions, multi::ScriptDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::script};
 ///
@@ -163,7 +163,7 @@ impl ScriptDisplayNames {
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, VariantDisplayNames,
+///     DisplayNamesOptions, multi::VariantDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::variant};
 ///
@@ -227,7 +227,7 @@ impl VariantDisplayNames {
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, LanguageDisplayNames,
+///     DisplayNamesOptions, multi::LanguageDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::language};
 ///
@@ -298,7 +298,7 @@ impl LanguageDisplayNames {
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, LocaleDisplayNamesFormatter,
+///     DisplayNamesOptions, multi::LocaleDisplayNamesFormatter,
 /// };
 /// use icu::locale::locale;
 ///

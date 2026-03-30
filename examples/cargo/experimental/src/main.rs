@@ -6,7 +6,7 @@
 //! 
 //! For more information, see the [index](..).
 
-use icu::experimental::displaynames::RegionDisplayNames;
+use icu::experimental::displaynames::multi::RegionDisplayNames;
 use icu::locale::{locale, subtags::region};
 
 fn main() {

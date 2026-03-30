@@ -19,15 +19,15 @@ pub mod ffi {
 
     /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::experimental::displaynames::LocaleDisplayNamesFormatter, Struct)]
+    #[diplomat::rust_link(icu::experimental::displaynames::multi::LocaleDisplayNamesFormatter, Struct)]
     pub struct LocaleDisplayNamesFormatter(
-        pub icu_experimental::displaynames::LocaleDisplayNamesFormatter,
+        pub icu_experimental::displaynames::multi::LocaleDisplayNamesFormatter,
     );
 
     /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::experimental::displaynames::RegionDisplayNames, Struct)]
-    pub struct RegionDisplayNames(pub icu_experimental::displaynames::RegionDisplayNames);
+    #[diplomat::rust_link(icu::experimental::displaynames::multi::RegionDisplayNames, Struct)]
+    pub struct RegionDisplayNames(pub icu_experimental::displaynames::multi::RegionDisplayNames);
 
     /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::experimental::displaynames::DisplayNamesOptions, Struct)]
@@ -78,7 +78,7 @@ pub mod ffi {
         ///
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
         #[diplomat::rust_link(
-            icu::experimental::displaynames::LocaleDisplayNamesFormatter::try_new,
+            icu::experimental::displaynames::multi::LocaleDisplayNamesFormatter::try_new,
             FnInStruct
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), constructor)]
@@ -93,7 +93,7 @@ pub mod ffi {
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
             Ok(Box::new(LocaleDisplayNamesFormatter(
-                icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new(
+                icu_experimental::displaynames::multi::LocaleDisplayNamesFormatter::try_new(
                     prefs, options,
                 )?,
             )))
@@ -119,7 +119,7 @@ pub mod ffi {
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
             Ok(Box::new(LocaleDisplayNamesFormatter(
-                icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider(provider.get()?, prefs,
+                icu_experimental::displaynames::multi::LocaleDisplayNamesFormatter::try_new_with_buffer_provider(provider.get()?, prefs,
                     options,
                 )?,
             )))
@@ -129,7 +129,7 @@ pub mod ffi {
         ///
         /// Returns the locale-specific display name of a locale.
         #[diplomat::rust_link(
-            icu::experimental::displaynames::LocaleDisplayNamesFormatter::of,
+            icu::experimental::displaynames::multi::LocaleDisplayNamesFormatter::of,
             FnInStruct
         )]
 
@@ -146,7 +146,7 @@ pub mod ffi {
         ///
         /// Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
         #[diplomat::rust_link(
-            icu::experimental::displaynames::RegionDisplayNames::try_new,
+            icu::experimental::displaynames::multi::RegionDisplayNames::try_new,
             FnInStruct
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), constructor)]
@@ -160,7 +160,7 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
             Ok(Box::new(RegionDisplayNames(
-                icu_experimental::displaynames::RegionDisplayNames::try_new(prefs, options)?,
+                icu_experimental::displaynames::multi::RegionDisplayNames::try_new(prefs, options)?,
             )))
         }
 
@@ -168,7 +168,7 @@ pub mod ffi {
         ///
         /// Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
         #[diplomat::rust_link(
-            icu::experimental::displaynames::RegionDisplayNames::try_new,
+            icu::experimental::displaynames::multi::RegionDisplayNames::try_new,
             FnInStruct
         )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
@@ -183,7 +183,7 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
             Ok(Box::new(RegionDisplayNames(
-                icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider(
+                icu_experimental::displaynames::multi::RegionDisplayNames::try_new_with_buffer_provider(
                     provider.get()?,
                     prefs,
                     options,
@@ -196,7 +196,7 @@ pub mod ffi {
         /// Returns the locale specific display name of a region.
         /// Note that the function returns an empty string in case the display name for a given
         /// region code is not found.
-        #[diplomat::rust_link(icu::experimental::displaynames::RegionDisplayNames::of, FnInStruct)]
+        #[diplomat::rust_link(icu::experimental::displaynames::multi::RegionDisplayNames::of, FnInStruct)]
         // Unstable, do not generate in demo:
         #[diplomat::attr(demo_gen, disable)]
         pub fn of(

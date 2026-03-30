@@ -68,7 +68,7 @@ where
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::ScriptDisplayName;
+/// use icu::experimental::displaynames::single::ScriptDisplayName;
 /// use icu::locale::{locale, subtags::script};
 /// use writeable::assert_writeable_eq;
 ///
@@ -114,7 +114,7 @@ impl ScriptDisplayName {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, ScriptDisplayName,
+        ///     DisplayNamesPreferences, single::ScriptDisplayName,
         /// };
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
@@ -181,7 +181,7 @@ writeable::impl_display_with_writeable!(ScriptDisplayName);
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::RegionDisplayName;
+/// use icu::experimental::displaynames::single::RegionDisplayName;
 /// use icu::locale::{locale, subtags::region};
 /// use writeable::assert_writeable_eq;
 ///
@@ -227,7 +227,7 @@ impl RegionDisplayName {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, RegionDisplayName,
+        ///     DisplayNamesPreferences, single::RegionDisplayName,
         /// };
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;

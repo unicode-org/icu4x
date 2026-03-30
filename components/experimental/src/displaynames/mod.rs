@@ -11,15 +11,23 @@ mod options;
 pub mod provider;
 mod singular;
 
+pub mod multi {
+    use super::displaynames;
+    pub use displaynames::LanguageDisplayNames;
+    pub use displaynames::LocaleDisplayNamesFormatter;
+    pub use displaynames::RegionDisplayNames;
+    pub use displaynames::ScriptDisplayNames;
+    pub use displaynames::VariantDisplayNames;
+}
+
+pub mod single {
+    use super::singular;
+    pub use singular::RegionDisplayName;
+    pub use singular::ScriptDisplayName;
+}
+
 pub use displaynames::DisplayNamesPreferences;
-pub use displaynames::LanguageDisplayNames;
-pub use displaynames::LocaleDisplayNamesFormatter;
-pub use displaynames::RegionDisplayNames;
-pub use displaynames::ScriptDisplayNames;
-pub use displaynames::VariantDisplayNames;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;
 pub use options::Style;
-pub use singular::RegionDisplayName;
-pub use singular::ScriptDisplayName;
