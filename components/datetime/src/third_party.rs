@@ -22,14 +22,15 @@
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! // Format a chrono::NaiveDate using fieldsets::YMD
+//! // Format a chrono::NaiveDate using fieldsets::YMD and the Buddhist calendar
 //! let chrono_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 15).unwrap();
 //! let dtf_date = DateTimeFormatter::try_new(
-//!     locale!("en-US").into(),
+//!     locale!("th-TH").into(),
 //!     fieldsets::YMD::medium(),
 //! )
 //! .unwrap();
-//! assert_writeable_eq!(dtf_date.format(&chrono_date), "Jan 15, 2025");
+//! // 2025 CE is 2568 BE
+//! assert_writeable_eq!(dtf_date.format(&chrono_date), "15 ม.ค. 2568");
 //!
 //! // Format a chrono::NaiveTime using fieldsets::T
 //! let chrono_time = chrono::NaiveTime::from_hms_opt(16, 9, 35).unwrap();
@@ -120,14 +121,15 @@
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! // Format a jiff::civil::Date using fieldsets::YMD
+//! // Format a jiff::civil::Date using fieldsets::YMD and the Buddhist calendar
 //! let jiff_date = jiff::civil::date(2025, 1, 15);
 //! let dtf_date = DateTimeFormatter::try_new(
-//!     locale!("en-US").into(),
+//!     locale!("th-TH").into(),
 //!     fieldsets::YMD::medium(),
 //! )
 //! .unwrap();
-//! assert_writeable_eq!(dtf_date.format(&jiff_date), "Jan 15, 2025");
+//! // 2025 CE is 2568 BE
+//! assert_writeable_eq!(dtf_date.format(&jiff_date), "15 ม.ค. 2568");
 //!
 //! // Format a jiff::civil::Time using fieldsets::T
 //! let jiff_time = jiff::civil::time(16, 9, 35, 0);
@@ -218,14 +220,15 @@
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! // Format a time::Date using fieldsets::YMD
+//! // Format a time::Date using fieldsets::YMD and the Buddhist calendar
 //! let time_date = time::Date::from_calendar_date(2025, time::Month::January, 15).unwrap();
 //! let dtf_date = DateTimeFormatter::try_new(
-//!     locale!("en-US").into(),
+//!     locale!("th-TH").into(),
 //!     fieldsets::YMD::medium(),
 //! )
 //! .unwrap();
-//! assert_writeable_eq!(dtf_date.format(&time_date), "Jan 15, 2025");
+//! // 2025 CE is 2568 BE
+//! assert_writeable_eq!(dtf_date.format(&time_date), "15 ม.ค. 2568");
 //!
 //! // Format a time::Time using fieldsets::T
 //! let time_time = time::Time::from_hms(16, 9, 35).unwrap();
