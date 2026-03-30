@@ -9,9 +9,13 @@
 //! 1. [`multi`]: Load multiple display names at once.
 //! 2. [`single`]: Load a single display name at a time.
 //!
-//! See the documentation for those submodules for more information.
+//! There are multiple use cases for this type, and we are not yet committed to either of
+//! these designs being the "primary" design. Please share feedback at
+//! <https://github.com/unicode-org/icu4x/issues/7824>.
 //!
-//! ### Comparison of Single and Multi
+//! Note: Currently, the data between the two modules is NOT being shared.
+//!
+//! ## Examples
 //!
 //! The [`multi`] module lets you load multiple names at once, whereas [`single`]
 //! loads one name at a time.
@@ -26,14 +30,14 @@
 //!
 //! // Multi: Load a formatter that can display many regions.
 //! let multi = RegionDisplayNames::try_new(locale, DisplayNamesOptions::default()).unwrap();
-//! assert_eq!(multi.of(region!("US")), Some("United States"));
-//! assert_eq!(multi.of(region!("GB")), Some("United Kingdom"));
+//! assert_writeable_eq!(multi.of(region!("US")).unwrap(), "United States");
+//! assert_writeable_eq!(multi.of(region!("GB")).unwrap(), "United Kingdom");
 //!
 //! // Single: Load only the region(s) we need.
 //! let us = RegionDisplayName::try_new(locale, region!("US")).unwrap();
 //! let gb = RegionDisplayName::try_new(locale, region!("GB")).unwrap();
-//! assert_eq!(us.to_string(), "United States");
-//! assert_eq!(gb.to_string(), "United Kingdom");
+//! assert_writeable_eq!(us, "United States");
+//! assert_writeable_eq!(gb, "United Kingdom");
 //! ```
 //!
 //! Currently, the data between the two modules is NOT shared, but we hope to
