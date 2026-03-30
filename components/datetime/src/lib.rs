@@ -43,8 +43,7 @@
 //! 4. [`UtcOffset`](icu_time::zone::UtcOffset)
 //! 5. [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 //! 6. [`ZonedDateTime`](icu_time::ZonedDateTime)
-//!
-//! And datetime types from third party crates; see [`third_party`].
+//! 7. And datetime types from third party crates; see [`input::third_party`].
 //!
 //! Not all inputs are valid for all field sets.
 //!
