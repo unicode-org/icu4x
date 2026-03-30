@@ -185,7 +185,6 @@ impl GetField<Weekday> for chrono::Weekday {
 }
 
 impl<Tz: chrono::TimeZone> UnstableSealed for chrono::DateTime<Tz> {}
-impl<Tz: chrono::TimeZone> InFixedCalendar<Gregorian> for chrono::DateTime<Tz> {}
 impl<Tz: chrono::TimeZone> GetField<()> for chrono::DateTime<Tz> {
     fn get_field(&self) {}
 }
@@ -395,7 +394,7 @@ fn chrono_fixed_calendar() {
     let chrono = chrono::DateTime::from_timestamp_nanos(1726011440123456789)
         .with_timezone(&"Europe/Paris".parse::<chrono_tz::Tz>().unwrap());
 
-    let ymdto = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+    let ymdto = DateTimeFormatter::try_new(
         locale!("fr").into(),
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::LocalizedOffsetShort),
     )
@@ -405,7 +404,7 @@ fn chrono_fixed_calendar() {
         "11 sept. 2024, 01:37:20 UTC+2"
     );
 
-    let ymdtz = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+    let ymdtz = DateTimeFormatter::try_new(
         locale!("fr").into(),
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
