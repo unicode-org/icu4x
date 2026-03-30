@@ -86,6 +86,25 @@
 //! # }
 //! ```
 //!
+//! One can also use [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
+//! to only link data for a single calendar:
+//!
+//! ```
+//! # #[cfg(feature = "chrono_0_4")] {
+//! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
+//! use icu::locale::locale;
+//! use writeable::assert_writeable_eq;
+//!
+//! let chrono_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 15).unwrap();
+//! let dtf = FixedCalendarDateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::YMD::medium(),
+//! )
+//! .unwrap();
+//! assert_writeable_eq!(dtf.format(&chrono_date), "Jan 15, 2025");
+//! # }
+//! ```
+//!
 //! # Jiff
 //!
 //! The following examples show how to use [`jiff`] types with ICU4X formatters.
@@ -160,6 +179,25 @@
 //! # }
 //! ```
 //!
+//! One can also use [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
+//! to only link data for a single calendar:
+//!
+//! ```
+//! # #[cfg(feature = "jiff_0_2")] {
+//! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
+//! use icu::locale::locale;
+//! use writeable::assert_writeable_eq;
+//!
+//! let jiff_date = jiff::civil::date(2025, 1, 15);
+//! let dtf = FixedCalendarDateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::YMD::medium(),
+//! )
+//! .unwrap();
+//! assert_writeable_eq!(dtf.format(&jiff_date), "Jan 15, 2025");
+//! # }
+//! ```
+//!
 //! # Time
 //!
 //! The following examples show how to use [`time`] types with ICU4X formatters.
@@ -231,5 +269,24 @@
 //! .unwrap();
 //! // Weekday does not have year/month/day fields required by YMD
 //! dtf_date.format(&time_weekday);
+//! # }
+//! ```
+//!
+//! One can also use [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
+//! to only link data for a single calendar:
+//!
+//! ```
+//! # #[cfg(feature = "time_0_3")] {
+//! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
+//! use icu::locale::locale;
+//! use writeable::assert_writeable_eq;
+//!
+//! let time_date = time::Date::from_calendar_date(2025, time::Month::January, 15).unwrap();
+//! let dtf = FixedCalendarDateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::YMD::medium(),
+//! )
+//! .unwrap();
+//! assert_writeable_eq!(dtf.format(&time_date), "Jan 15, 2025");
 //! # }
 //! ```
