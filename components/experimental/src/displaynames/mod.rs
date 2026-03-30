@@ -39,7 +39,7 @@
 //! let gb = RegionDisplayName::try_new(locale, region!("GB")).unwrap();
 //! assert_writeable_eq!(us, "United States");
 //! assert_writeable_eq!(gb, "United Kingdom");
-//! 
+//! ```
 
 // TODO: expand documentation
 
