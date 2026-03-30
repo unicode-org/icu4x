@@ -25,6 +25,7 @@
 //! use icu::experimental::displaynames::single::RegionDisplayName;
 //! use icu::experimental::displaynames::DisplayNamesOptions;
 //! use icu::locale::{locale, subtags::region};
+//! use writeable::assert_writeable_eq;
 //!
 //! let locale = locale!("en").into();
 //!
