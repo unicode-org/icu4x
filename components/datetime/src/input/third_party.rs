@@ -7,7 +7,8 @@
 //! ICU4X provides traits to allow using types from popular third-party datetime libraries
 //! directly with ICU4X formatters like [`DateTimeFormatter`](crate::DateTimeFormatter).
 //!
-//! To enable this support, the corresponding feature must be enabled:
+//! ✨ *To enable this support, the corresponding Cargo feature must be enabled:*
+//!
 //! - `chrono_0_4` for [chrono](https://crates.io/crates/chrono)
 //! - `jiff_0_2` for [jiff](https://crates.io/crates/jiff)
 //! - `time_0_3` for [time](https://crates.io/crates/time)
