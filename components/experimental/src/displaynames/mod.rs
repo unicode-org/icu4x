@@ -3,6 +3,25 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Display names for languages and regions.
+//!
+//! There are currently two designs for how to use this component:
+//!
+//! 1. [`multi`]: Load multiple display names at once.
+//! 2. [`single`]: Load a single display name at a time.
+//!
+//! See the documentation for those submodules for more information.
+//!
+//! ### Comparison of Single and Multi
+//!
+//! The [`multi`] module lets you load multiple names at once, whereas [`single`]
+//! loads one name at a time.
+//!
+//! Currently, the data between the two modules is NOT shared, but we hope to
+//! make it shared in the future.
+//!
+//! We are not sure which design is better for users. If you have any feedback
+//! on the design of this component, please let us know at
+//! <https://github.com/unicode-org/icu4x/issues/7824>.
 
 // TODO: expand documentation
 
@@ -12,6 +31,12 @@ pub mod provider;
 mod singular;
 
 pub mod multi {
+    //! Types for loading multiple display names at once.
+    //!
+    //! This submodule is useful for applications that need to display multiple names
+    //! of the same type, such as a list of regions or scripts.
+    //!
+    //! See [`mod@super`] for a comparison of single and multi.
     use super::displaynames;
     pub use displaynames::LanguageDisplayNames;
     pub use displaynames::LocaleDisplayNamesFormatter;
@@ -21,6 +46,12 @@ pub mod multi {
 }
 
 pub mod single {
+    //! Types for loading a single display name at a time.
+    //!
+    //! This submodule is useful for applications that only need to display one or
+    //! two specific names, such as the name of the current region.
+    //!
+    //! See [`mod@super`] for a comparison of single and multi.
     use super::singular;
     pub use singular::RegionDisplayName;
     pub use singular::ScriptDisplayName;
