@@ -22,7 +22,7 @@
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! // Format a chrono::NaiveDate using fieldsets::YMD and the Buddhist calendar
+//! // Format a chrono::NaiveDate using fieldsets::YMD and the Buddhist calendar (default in the `th-TH` locale)
 //! let chrono_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 15).unwrap();
 //! let dtf_date = DateTimeFormatter::try_new(
 //!     locale!("th-TH").into(),
@@ -140,7 +140,7 @@
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! // Format a jiff::civil::Date using fieldsets::YMD and the Buddhist calendar
+//! // Format a jiff::civil::Date using fieldsets::YMD and the Buddhist calendar (default in the `th-TH` locale)
 //! let jiff_date = jiff::civil::date(2025, 1, 15);
 //! let dtf_date = DateTimeFormatter::try_new(
 //!     locale!("th-TH").into(),
@@ -258,7 +258,7 @@
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! // Format a time::Date using fieldsets::YMD and the Buddhist calendar
+//! // Format a time::Date using fieldsets::YMD and the Buddhist calendar (default in the `th-TH` locale)
 //! let time_date = time::Date::from_calendar_date(2025, time::Month::January, 15).unwrap();
 //! let dtf_date = DateTimeFormatter::try_new(
 //!     locale!("th-TH").into(),
