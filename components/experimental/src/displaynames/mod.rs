@@ -16,6 +16,26 @@
 //! The [`multi`] module lets you load multiple names at once, whereas [`single`]
 //! loads one name at a time.
 //!
+//! ```
+//! use icu::experimental::displaynames::multi::RegionDisplayNames;
+//! use icu::experimental::displaynames::single::RegionDisplayName;
+//! use icu::experimental::displaynames::DisplayNamesOptions;
+//! use icu::locale::{locale, subtags::region};
+//!
+//! let locale = locale!("en").into();
+//!
+//! // Multi: Load a formatter that can display many regions.
+//! let multi = RegionDisplayNames::try_new(locale, DisplayNamesOptions::default()).unwrap();
+//! assert_eq!(multi.of(region!("US")), Some("United States"));
+//! assert_eq!(multi.of(region!("GB")), Some("United Kingdom"));
+//!
+//! // Single: Load only the region(s) we need.
+//! let us = RegionDisplayName::try_new(locale, region!("US")).unwrap();
+//! let gb = RegionDisplayName::try_new(locale, region!("GB")).unwrap();
+//! assert_eq!(us.to_string(), "United States");
+//! assert_eq!(gb.to_string(), "United Kingdom");
+//! ```
+//!
 //! Currently, the data between the two modules is NOT shared, but we hope to
 //! make it shared in the future.
 //!
