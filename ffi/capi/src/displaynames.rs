@@ -19,7 +19,10 @@ pub mod ffi {
 
     /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::experimental::displaynames::multi::LocaleDisplayNamesFormatter, Struct)]
+    #[diplomat::rust_link(
+        icu::experimental::displaynames::multi::LocaleDisplayNamesFormatter,
+        Struct
+    )]
     pub struct LocaleDisplayNamesFormatter(
         pub icu_experimental::displaynames::multi::LocaleDisplayNamesFormatter,
     );
@@ -196,7 +199,10 @@ pub mod ffi {
         /// Returns the locale specific display name of a region.
         /// Note that the function returns an empty string in case the display name for a given
         /// region code is not found.
-        #[diplomat::rust_link(icu::experimental::displaynames::multi::RegionDisplayNames::of, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::experimental::displaynames::multi::RegionDisplayNames::of,
+            FnInStruct
+        )]
         // Unstable, do not generate in demo:
         #[diplomat::attr(demo_gen, disable)]
         pub fn of(
