@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, InSameCalendar, UnstableSealed};
+use crate::scaffold::{ConvertCalendar, GetField, InFixedCalendar, UnstableSealed};
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
 use icu_calendar::{AnyCalendar, Date, Gregorian};
 use icu_time::zone::{UtcOffset, ZoneNameTimestamp};
@@ -314,60 +314,6 @@ impl ConvertCalendar for time::UtcOffset {
     }
 }
 
-impl InSameCalendar for time::Time {
-    fn check_any_calendar_kind(
-        &self,
-        _: icu_calendar::AnyCalendarKind,
-    ) -> Result<(), crate::MismatchedCalendarError> {
-        Ok(())
-    }
-}
-
-impl InSameCalendar for time::Date {
-    fn check_any_calendar_kind(
-        &self,
-        _: icu_calendar::AnyCalendarKind,
-    ) -> Result<(), crate::MismatchedCalendarError> {
-        Ok(())
-    }
-}
-
-impl InSameCalendar for time::PrimitiveDateTime {
-    fn check_any_calendar_kind(
-        &self,
-        _: icu_calendar::AnyCalendarKind,
-    ) -> Result<(), crate::MismatchedCalendarError> {
-        Ok(())
-    }
-}
-
-impl InSameCalendar for time::Weekday {
-    fn check_any_calendar_kind(
-        &self,
-        _: icu_calendar::AnyCalendarKind,
-    ) -> Result<(), crate::MismatchedCalendarError> {
-        Ok(())
-    }
-}
-
-impl InSameCalendar for time::OffsetDateTime {
-    fn check_any_calendar_kind(
-        &self,
-        _: icu_calendar::AnyCalendarKind,
-    ) -> Result<(), crate::MismatchedCalendarError> {
-        Ok(())
-    }
-}
-
-impl InSameCalendar for time::UtcOffset {
-    fn check_any_calendar_kind(
-        &self,
-        _: icu_calendar::AnyCalendarKind,
-    ) -> Result<(), crate::MismatchedCalendarError> {
-        Ok(())
-    }
-}
-
 #[test]
 fn time() {
     use crate::{fieldsets, DateTimeFormatter};
@@ -418,7 +364,7 @@ fn time() {
 
 #[test]
 fn time_fixed_calendar() {
-    use crate::{fieldsets, FixedCalendarDateTimeFormatter};
+    use crate::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -426,28 +372,20 @@ fn time_fixed_calendar() {
         .unwrap()
         .to_offset(time::UtcOffset::from_hms(2, 0, 0).unwrap());
 
-    let ymdto = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+    let ymdto = DateTimeFormatter::try_new(
         locale!("fr").into(),
         fieldsets::YMDT::medium().with_zone(fieldsets::zone::LocalizedOffsetShort),
     )
     .unwrap();
     assert_writeable_eq!(ymdto.format(&time), "11 sept. 2024, 01:37:20 UTC+2");
 
-    let ymdt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-        locale!("fr").into(),
-        fieldsets::YMDT::medium(),
-    )
-    .unwrap();
+    let ymdt = DateTimeFormatter::try_new(locale!("fr").into(), fieldsets::YMDT::medium()).unwrap();
     assert_writeable_eq!(
         ymdt.format(&time::PrimitiveDateTime::new(time.date(), time.time())),
         "11 sept. 2024, 01:37:20"
     );
 
-    let ymd = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-        locale!("fr").into(),
-        fieldsets::YMD::medium(),
-    )
-    .unwrap();
+    let ymd = DateTimeFormatter::try_new(locale!("fr").into(), fieldsets::YMD::medium()).unwrap();
     assert_writeable_eq!(ymd.format(&time.date()), "11 sept. 2024");
 
     let t = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(

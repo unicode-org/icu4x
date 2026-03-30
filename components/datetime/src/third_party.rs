@@ -111,6 +111,25 @@
 //! # }
 //! ```
 //!
+//! Similarly, [`DateTimeFormatter::format_same_calendar`] will not compile because it
+//! also requires the input type to explicitly carry its calendar system:
+//!
+//! ```compile_fail,E0277
+//! # #[cfg(feature = "chrono_0_4")] {
+//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::locale::locale;
+//!
+//! let chrono_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 15).unwrap();
+//! let dtf = DateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::YMD::medium(),
+//! )
+//! .unwrap();
+//! // NaiveDate does not implement InSameCalendar
+//! let _ = dtf.format_same_calendar(&chrono_date);
+//! # }
+//! ```
+//!
 //! # Jiff
 //!
 //! The following examples show how to use [`jiff`] types with ICU4X formatters.
@@ -210,6 +229,25 @@
 //! # }
 //! ```
 //!
+//! Similarly, [`DateTimeFormatter::format_same_calendar`] will not compile because it
+//! also requires the input type to explicitly carry its calendar system:
+//!
+//! ```compile_fail,E0277
+//! # #[cfg(feature = "jiff_0_2")] {
+//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::locale::locale;
+//!
+//! let jiff_date = jiff::civil::date(2025, 1, 15);
+//! let dtf = DateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::YMD::medium(),
+//! )
+//! .unwrap();
+//! // civil::Date does not implement InSameCalendar
+//! let _ = dtf.format_same_calendar(&jiff_date);
+//! # }
+//! ```
+//!
 //! # Time
 //!
 //! The following examples show how to use [`time`] types with ICU4X formatters.
@@ -306,5 +344,24 @@
 //! .unwrap();
 //! // time::Date does not implement InFixedCalendar
 //! dtf.format(&time_date);
+//! # }
+//! ```
+//!
+//! Similarly, [`DateTimeFormatter::format_same_calendar`] will not compile because it
+//! also requires the input type to explicitly carry its calendar system:
+//!
+//! ```compile_fail,E0277
+//! # #[cfg(feature = "time_0_3")] {
+//! use icu::datetime::{fieldsets, DateTimeFormatter};
+//! use icu::locale::locale;
+//!
+//! let time_date = time::Date::from_calendar_date(2025, time::Month::January, 15).unwrap();
+//! let dtf = DateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     fieldsets::YMD::medium(),
+//! )
+//! .unwrap();
+//! // time::Date does not implement InSameCalendar
+//! let _ = dtf.format_same_calendar(&time_date);
 //! # }
 //! ```
