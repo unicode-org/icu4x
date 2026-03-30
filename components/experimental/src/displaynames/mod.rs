@@ -9,8 +9,8 @@
 //! 1. [`multi`]: Load multiple display names at once.
 //! 2. [`single`]: Load a single display name at a time.
 //!
-//! There are multiple use cases for this type, and we are not yet committed to either of
-//! these designs being the "primary" design. Please share feedback at
+//! There are multiple use cases for this component, so we are not yet committed
+//! to either of these designs being the "primary" design. Please share feedback at
 //! <https://github.com/unicode-org/icu4x/issues/7824>.
 //!
 //! Note: Currently, the data between the two modules is NOT being shared.
