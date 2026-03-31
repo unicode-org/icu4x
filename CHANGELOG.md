@@ -71,6 +71,7 @@ Fully filled in up to 43d4d6f154
     - `icu_collator`
         - Document considerations related to lowering the collation strength from the default (unicode-org#6662)
         - (Optimization) Avoid tagging Hangul syllable in collation data (unicode-org#7540)
+        - Make skipping zeros in the numeric mode bugwards-compatible with ICU4C fixing a panic (unicode-org#7835)
     - `icu_datetime`
 
         - Add AM/PM getters on `FixedCalendarDateTimeNames` (unicode-org#7127)
@@ -355,7 +356,6 @@ Several crates have had patch releases in the 2.1 stream:
         - Make merge separator compare less than U+0000 on the identical strength (unicode-org#6814, unicode-org#6823)
         - Add Latin1 comparisons to the collator (unicode-org#6674)
         - Avoid double-validating `char`s (unicode-org#6924)
-        - Make skipping zeros in the numeric mode bugwards-compatible with ICU4C fixing a panic
     - `icu_collections`
         - Fix building without the `alloc` crate (unicode-org#6997)
         - Optimize `CodePointTrie` by hoisting fast path bound checks to constructor (unicode-org#6863)
