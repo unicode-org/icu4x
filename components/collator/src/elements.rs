@@ -2103,6 +2103,8 @@ where
                                         // a chunk to 254 digits on a previous round, the eventual
                                         // comparison result can be wrong, but that replicates an
                                         // ICU4C bug. Let's fix both as a follow-up.
+                                        //
+                                        // https://unicode-org.atlassian.net/browse/ICU-23351
                                         loop {
                                             let Some((first, tail)) = remaining.split_first()
                                             else {
