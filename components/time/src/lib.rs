@@ -25,7 +25,8 @@ extern crate alloc;
 
 pub mod provider;
 pub mod scaffold;
-pub mod third_party;
+#[path = "third_party.rs"]
+pub mod unstable_third_party;
 
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
