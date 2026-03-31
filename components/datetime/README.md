@@ -30,7 +30,7 @@ The formatters accept input types from the [`calendar`](icu_calendar) and
 4. [`UtcOffset`](icu_time::zone::UtcOffset)
 5. [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 6. [`ZonedDateTime`](icu_time::ZonedDateTime)
-7. And datetime types from third party crates; see [`input::third_party`].
+7. And datetime types from third party crates; see [`input::unstable_third_party`].
 
 Not all inputs are valid for all field sets.
 

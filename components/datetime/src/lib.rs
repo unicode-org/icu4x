@@ -43,7 +43,7 @@
 //! 4. [`UtcOffset`](icu_time::zone::UtcOffset)
 //! 5. [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 //! 6. [`ZonedDateTime`](icu_time::ZonedDateTime)
-//! 7. And datetime types from third party crates; see [`input::third_party`].
+//! 7. And datetime types from third party crates; see [`input::unstable_third_party`].
 //!
 //! Not all inputs are valid for all field sets.
 //!
@@ -170,7 +170,8 @@ pub mod preferences {
 ///
 /// This module contains re-exports from the [`icu_calendar`] and [`icu_time`] crates.
 pub mod input {
-    pub mod third_party;
+    #[path = "third_party.rs"]
+    pub mod unstable_third_party;
 
     pub use icu_calendar::Date;
     pub use icu_time::zone::UtcOffset;
