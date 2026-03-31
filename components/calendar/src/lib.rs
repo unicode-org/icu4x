@@ -98,9 +98,9 @@ mod date;
 // Public modules
 mod any_calendar;
 pub mod cal;
-pub mod third_party;
 pub mod options;
 pub mod provider;
+pub mod third_party;
 pub mod types;
 pub mod week;
 

@@ -23,9 +23,9 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
-pub mod third_party;
 pub mod provider;
 pub mod scaffold;
+pub mod third_party;
 
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
