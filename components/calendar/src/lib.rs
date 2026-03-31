@@ -98,6 +98,7 @@ mod date;
 // Public modules
 mod any_calendar;
 pub mod cal;
+pub mod input;
 pub mod options;
 pub mod provider;
 pub mod types;

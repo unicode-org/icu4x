@@ -23,6 +23,7 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+pub mod input;
 pub mod provider;
 pub mod scaffold;
 
