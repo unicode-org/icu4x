@@ -13,6 +13,11 @@
 //! - `unstable_jiff_0_2` for [jiff](https://crates.io/crates/jiff)
 //! - `unstable_time_0_3` for [time](https://crates.io/crates/time)
 //!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. Use with caution.
+//! </div>
+//!
 //! # Chrono
 //!
 //! The following examples show how to use [`chrono`] types with ICU4X formatters.
