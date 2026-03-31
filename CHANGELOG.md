@@ -1,9 +1,6 @@
 # Changelog
 
-## Unreleased
-
-Fully filled in up to 43d4d6f154
-
+## icu4x 2.2
 
 - Components
     - General
@@ -34,7 +31,7 @@ Fully filled in up to 43d4d6f154
         - Expose `LeapStatus` on `MonthInfo` (unicode-org#7667)
          - New method: `MonthInfo::leap_status()`
          - New enum: `LeapStatus`
-        - Integrate with `chrono`, `jiff`, and `time` (unicode-org#7617, unicode-org#7711)
+        - (Unstable) Integrate with `chrono`, `jiff`, and `time` (unicode-org#7617, unicode-org#7711)
          - New impls: `From<chrono::NaiveDate>`, `From<jiff::civil::Date>`, `From<time::Date>` for `Date<Gregorian>`
         - Replace `Date::day_of_week` by `Date::weekday` (unicode-org#7288)
             - New method: `Date::weekday()`
@@ -73,10 +70,9 @@ Fully filled in up to 43d4d6f154
         - (Optimization) Avoid tagging Hangul syllable in collation data (unicode-org#7540)
         - Make skipping zeros in the numeric mode bugwards-compatible with ICU4C fixing a panic (unicode-org#7835)
     - `icu_datetime`
-
         - Add AM/PM getters on `FixedCalendarDateTimeNames` (unicode-org#7127)
          - New methods: `FixedCalendarDateTimeNames::get_am()`, `FixedCalendarDateTimeNames::get_pm()`
-        - Integrate with `chrono`, `jiff`, and `time` (unicode-org#7617)
+        - (Unstable) Integrate with `chrono`, `jiff`, and `time` (unicode-org#7617)
          - New impls: Various scaffolding traits on `chrono::NaiveDate`, `jiff::civil::Date`, and `time::Date`, making them formattable.
         - Support formatting without era field (unicode-org#7606)
          - New variant: `YearStyle::NoEra`
@@ -108,6 +104,12 @@ Fully filled in up to 43d4d6f154
         - `dimension`
         - `displaynames`
             - Adds new data markers for display names using attributes for better slicing (unicode-org#7692)
+            - Add `RegionDisplayName` for loading a single display name (unicode-org#7697)
+             - New type: `RegionDisplayName`
+            - New type: `ScriptDisplayName` (unicode-org#7819)
+            - Split formatting types into `multi` and `single` modules; seeking feedback (unicode-org#7826)
+             - Moved to `displaynames::multi`: `LanguageDisplayNames`, `LocaleDisplayNamesFormatter`, `RegionDisplayNames`, `ScriptDisplayNames`, `VariantDisplayNames`
+             - Introduced in `displaynames::single`: `RegionDisplayName`, `ScriptDisplayName`
         - `duration`
             - Export more needed types (unicode-org#7784)
              - Newly public types: `ValidatedDurationFormatterOptions`, `DurationFormatterOptionsError`
