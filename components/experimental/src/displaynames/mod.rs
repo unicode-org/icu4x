@@ -41,8 +41,6 @@
 //! assert_writeable_eq!(gb, "United Kingdom");
 //! ```
 
-// TODO: expand documentation
-
 mod displaynames;
 mod options;
 pub mod provider;
@@ -53,15 +51,6 @@ pub mod multi {
     //!
     //! This submodule is useful for applications that need to display multiple names
     //! of the same type, such as a list of regions or scripts.
-    //!
-    //! ### Status
-    //!
-    //! Currently, this module has limited support. It supports regions and scripts,
-    //! but support for languages, locales, and variants is currently missing.
-    //! More features are on their way.
-    //!
-    //! If you have any feedback, please let us know at
-    //! <https://github.com/unicode-org/icu4x/issues/7825>.
     //!
     //! See [the parent module](mod@super) for a comparison of single and multi.
     use super::displaynames;
@@ -77,6 +66,15 @@ pub mod single {
     //!
     //! This submodule is useful for applications that only need to display one or
     //! two specific names, such as the name of the current region.
+    //!
+    //! ### Status
+    //!
+    //! Currently, this module has limited support. It supports regions and scripts,
+    //! but support for languages, locales, and variants is currently missing.
+    //! More features are on their way.
+    //!
+    //! If you have any feedback, please let us know at
+    //! <https://github.com/unicode-org/icu4x/issues/7825>.
     //!
     //! See [the parent module](mod@super) for a comparison of single and multi.
     use super::singular;
