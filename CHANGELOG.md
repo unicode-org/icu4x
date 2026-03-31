@@ -104,9 +104,9 @@
         - `dimension`
         - `displaynames`
             - Adds new data markers for display names using attributes for better slicing (unicode-org#7692)
-            - Add `RegionDisplayName` for loading a single display name (unicode-org#7697)
-             - New type: `RegionDisplayName`
-            - New type: `ScriptDisplayName` (unicode-org#7819)
+            - Add types for loading a single display name
+             - New type: `RegionDisplayName` (unicode-org#7697)
+              - New type: `ScriptDisplayName` (unicode-org#7819)
             - Split formatting types into `multi` and `single` modules; seeking feedback (unicode-org#7826)
              - Moved to `displaynames::multi`: `LanguageDisplayNames`, `LocaleDisplayNamesFormatter`, `RegionDisplayNames`, `ScriptDisplayNames`, `VariantDisplayNames`
              - Introduced in `displaynames::single`: `RegionDisplayName`, `ScriptDisplayName`
