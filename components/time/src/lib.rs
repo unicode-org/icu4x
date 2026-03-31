@@ -40,9 +40,9 @@ mod types;
 pub use types::ZonedTime;
 pub use types::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
 
-#[cfg(feature = "chrono_0_4")]
+#[cfg(feature = "unstable_chrono_0_4")]
 mod chrono;
-#[cfg(feature = "jiff_0_2")]
+#[cfg(feature = "unstable_jiff_0_2")]
 mod jiff;
-#[cfg(feature = "time_0_3")]
+#[cfg(feature = "unstable_time_0_3")]
 mod time_crate;

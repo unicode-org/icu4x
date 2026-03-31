@@ -121,14 +121,14 @@
 
 extern crate alloc;
 
-#[cfg(feature = "chrono_0_4")]
+#[cfg(feature = "unstable_chrono_0_4")]
 mod chrono;
 mod combo;
 mod error;
 mod external_loaders;
 pub mod fieldsets;
 mod format;
-#[cfg(feature = "jiff_0_2")]
+#[cfg(feature = "unstable_jiff_0_2")]
 mod jiff;
 mod neo;
 pub mod options;
@@ -138,7 +138,7 @@ pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;
-#[cfg(feature = "time_0_3")]
+#[cfg(feature = "unstable_time_0_3")]
 mod time_crate;
 pub mod unchecked;
 

@@ -9,16 +9,16 @@
 //!
 //! ✨ *To enable this support, the corresponding Cargo feature must be enabled:*
 //!
-//! - `chrono_0_4` for [chrono](https://crates.io/crates/chrono)
-//! - `jiff_0_2` for [jiff](https://crates.io/crates/jiff)
-//! - `time_0_3` for [time](https://crates.io/crates/time)
+//! - `unstable_chrono_0_4` for [chrono](https://crates.io/crates/chrono)
+//! - `unstable_jiff_0_2` for [jiff](https://crates.io/crates/jiff)
+//! - `unstable_time_0_3` for [time](https://crates.io/crates/time)
 //!
 //! # Chrono
 //!
 //! The following examples show how to use [`chrono`] types with ICU4X formatters.
 //!
 //! ```
-//! # #[cfg(feature = "chrono_0_4")] {
+//! # #[cfg(feature = "unstable_chrono_0_4")] {
 //! use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
@@ -74,7 +74,7 @@
 //! Mismatched types and field sets will not compile:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "chrono_0_4")] {
+//! # #[cfg(feature = "unstable_chrono_0_4")] {
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //! let chrono_time = chrono::NaiveTime::from_hms_opt(16, 9, 35).unwrap();
@@ -97,7 +97,7 @@
 //! do not. The following will not compile:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "chrono_0_4")] {
+//! # #[cfg(feature = "unstable_chrono_0_4")] {
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -116,7 +116,7 @@
 //! also requires the input type to explicitly carry its calendar system:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "chrono_0_4")] {
+//! # #[cfg(feature = "unstable_chrono_0_4")] {
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -136,7 +136,7 @@
 //! The following examples show how to use [`jiff`] types with ICU4X formatters.
 //!
 //! ```
-//! # #[cfg(feature = "jiff_0_2")] {
+//! # #[cfg(feature = "unstable_jiff_0_2")] {
 //! use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
@@ -192,7 +192,7 @@
 //! Mismatched types and field sets will not compile:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "jiff_0_2")] {
+//! # #[cfg(feature = "unstable_jiff_0_2")] {
 //! use icu::datetime::{fieldsets, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! let jiff_date = jiff::civil::date(2025, 1, 15);
@@ -215,7 +215,7 @@
 //! do not. The following will not compile:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "jiff_0_2")] {
+//! # #[cfg(feature = "unstable_jiff_0_2")] {
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -234,7 +234,7 @@
 //! also requires the input type to explicitly carry its calendar system:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "jiff_0_2")] {
+//! # #[cfg(feature = "unstable_jiff_0_2")] {
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -254,7 +254,7 @@
 //! The following examples show how to use [`time`] types with ICU4X formatters.
 //!
 //! ```
-//! # #[cfg(feature = "time_0_3")] {
+//! # #[cfg(feature = "unstable_time_0_3")] {
 //! use icu::datetime::{fieldsets, DateTimeFormatter, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
@@ -310,7 +310,7 @@
 //! Mismatched types and field sets will not compile:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "time_0_3")] {
+//! # #[cfg(feature = "unstable_time_0_3")] {
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //! let time_weekday = time::Weekday::Wednesday;
@@ -333,7 +333,7 @@
 //! do not. The following will not compile:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "time_0_3")] {
+//! # #[cfg(feature = "unstable_time_0_3")] {
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -352,7 +352,7 @@
 //! also requires the input type to explicitly carry its calendar system:
 //!
 //! ```compile_fail,E0277
-//! # #[cfg(feature = "time_0_3")] {
+//! # #[cfg(feature = "unstable_time_0_3")] {
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //!

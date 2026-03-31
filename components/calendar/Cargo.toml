@@ -66,9 +66,9 @@ serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]
 compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 unstable = []
-jiff_0_2 = ["dep:jiff"]
-chrono_0_4 = ["dep:chrono"]
-time_0_3 = ["dep:time"]
+unstable_jiff_0_2 = ["dep:jiff"]
+unstable_chrono_0_4 = ["dep:chrono"]
+unstable_time_0_3 = ["dep:time"]
 
 alloc = ["icu_locale_core/alloc", "tinystr/alloc", "serde?/alloc"]
 

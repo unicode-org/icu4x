@@ -105,15 +105,15 @@ pub mod week;
 
 mod calendar;
 mod calendar_arithmetic;
-#[cfg(feature = "chrono_0_4")]
+#[cfg(feature = "unstable_chrono_0_4")]
 mod chrono;
 mod duration;
 pub mod error;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
-#[cfg(feature = "jiff_0_2")]
+#[cfg(feature = "unstable_jiff_0_2")]
 mod jiff;
-#[cfg(feature = "time_0_3")]
+#[cfg(feature = "unstable_time_0_3")]
 mod time_crate;
 
 // Top-level types
