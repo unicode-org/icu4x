@@ -37,6 +37,7 @@
 //! let chrono_datetime = chrono_date.and_time(chrono_time);
 //! let icu_datetime = DateTime::<Gregorian>::from(chrono_datetime);
 //! assert_eq!(icu_datetime.date.era_year().year, 2025);
+//! assert_eq!(u8::from(icu_datetime.time.hour), 16);
 //!
 //! // Convert a chrono::FixedOffset into an ICU4X UtcOffset
 //! let chrono_offset = chrono::FixedOffset::east_opt(3600).unwrap();
@@ -45,7 +46,10 @@
 //!
 //! // Convert a chrono::DateTime<Tz> into an ICU4X ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>>
 //! let chrono_zoned = chrono_datetime.and_local_timezone(chrono::Utc).unwrap();
-//! let _icu_zoned = ZonedDateTime::<Gregorian, TimeZoneInfo<AtTime>>::from(&chrono_zoned);
+//! let icu_zoned = ZonedDateTime::<Gregorian, TimeZoneInfo<AtTime>>::from(&chrono_zoned);
+//! assert_eq!(icu_zoned.date.era_year().year, 2025);
+//! assert_eq!(u8::from(icu_zoned.time.hour), 16);
+//! assert_eq!(icu_zoned.zone.offset().unwrap().to_seconds(), 0);
 //! # }
 //! ```
 //!
@@ -68,6 +72,7 @@
 //! let jiff_datetime = jiff_date.at(16, 9, 35, 0);
 //! let icu_datetime = DateTime::<Gregorian>::from(jiff_datetime);
 //! assert_eq!(icu_datetime.date.era_year().year, 2025);
+//! assert_eq!(u8::from(icu_datetime.time.hour), 16);
 //!
 //! // Convert a jiff::tz::Offset into an ICU4X UtcOffset
 //! let jiff_offset = jiff::tz::offset(1);
@@ -77,7 +82,10 @@
 //! // Convert a jiff::Zoned into an ICU4X ZonedDateTime<Gregorian, TimeZoneInfo<AtTime>>
 //! # #[cfg(feature = "compiled_data")] {
 //! let jiff_zoned = jiff_datetime.to_zoned(jiff::tz::TimeZone::UTC).unwrap();
-//! let _icu_zoned = ZonedDateTime::<Gregorian, TimeZoneInfo<AtTime>>::from(&jiff_zoned);
+//! let icu_zoned = ZonedDateTime::<Gregorian, TimeZoneInfo<AtTime>>::from(&jiff_zoned);
+//! assert_eq!(icu_zoned.date.era_year().year, 2025);
+//! assert_eq!(u8::from(icu_zoned.time.hour), 16);
+//! assert_eq!(icu_zoned.zone.offset().unwrap().to_seconds(), 0);
 //! # }
 //! # }
 //! ```
@@ -101,6 +109,7 @@
 //! let time_datetime = time::PrimitiveDateTime::new(time_date, time_time);
 //! let icu_datetime = DateTime::<Gregorian>::from(time_datetime);
 //! assert_eq!(icu_datetime.date.era_year().year, 2025);
+//! assert_eq!(u8::from(icu_datetime.time.hour), 16);
 //!
 //! // Convert a time::UtcOffset into an ICU4X UtcOffset
 //! let time_offset = time::UtcOffset::from_hms(1, 0, 0).unwrap();
@@ -109,6 +118,9 @@
 //!
 //! // Convert a time::OffsetDateTime into an ICU4X ZonedDateTime<Gregorian, UtcOffset>
 //! let time_offset_dt = time_datetime.assume_utc();
-//! let _icu_zoned = ZonedDateTime::<Gregorian, UtcOffset>::from(&time_offset_dt);
+//! let icu_zoned = ZonedDateTime::<Gregorian, UtcOffset>::from(&time_offset_dt);
+//! assert_eq!(icu_zoned.date.era_year().year, 2025);
+//! assert_eq!(u8::from(icu_zoned.time.hour), 16);
+//! assert_eq!(icu_zoned.zone.to_seconds(), 0);
 //! # }
 //! ```
