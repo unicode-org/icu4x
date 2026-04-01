@@ -682,14 +682,14 @@ jobs:
       run: |
         mkdir bin
 
-        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--armv7-linux-androideabi" TARGET="armv7-linux-androideabi" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
-        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--aarch64-linux-android" TARGET="aarch64-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
-        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--i686-linux-android" TARGET="i686-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
-        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--x86_64-linux-android" TARGET="x86_64-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
-        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--armv7-unknown-linux-gnueabihf" TARGET="armv7-unknown-linux-gnueabihf" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
-        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--aarch64-unknown-linux-gnu" TARGET="aarch64-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
-        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--riscv64gc-unknown-linux-gnu" TARGET="riscv64gc-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
-        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}--x86_64-unknown-linux-gnu" TARGET="x86_64-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-linux-androideabi" TARGET="armv7-linux-androideabi" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-linux-android" TARGET="aarch64-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-linux-android" TARGET="i686-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-linux-android" TARGET="x86_64-linux-android" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-unknown-linux-gnueabihf" TARGET="armv7-unknown-linux-gnueabihf" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-unknown-linux-gnu" TARGET="aarch64-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-riscv64gc-unknown-linux-gnu" TARGET="riscv64gc-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
+        OUT="bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-unknown-linux-gnu" TARGET="x86_64-unknown-linux-gnu" TYPE="${{ matrix.compiletype }}" bash ffi/capi/build.sh
 
     - name: Build Linux data
       if: matrix.os == 'ubuntu-latest' && matrix.compiletype == 'static' && matrix.include_data == false
