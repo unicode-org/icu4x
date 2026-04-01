@@ -82,6 +82,8 @@
         - Don't expose CLDR's Hebrew month numbering during formatting (unicode-org#7728)
         - Add some support for `U` (cyclic year) datetime symbol (unicode-org#7328)
         - Add support for `Clock12` and `Clock24` hour cycles (unicode-org#7414)
+        - (Unstable) Add re-export of `ZonedTime` (unicode-org#7842)
+          - New re-export: `input::ZonedTime`
         - Fix error handling for `FieldSetBuilder` (unicode-org#7245)
         - Use appropriate date/time/zone glue patterns based on `appendItems` (unicode-org#7416,unicode-org#7755)
         - Optimize `Japanese` era storage, cutting down era name size by 20kb. (unicode-org#7323)
@@ -177,7 +179,7 @@
          - New methods on `LineSegmenterBorrowed` and `WordSegmenterBorrowed`: `with_lstm()` and `with_dictionary()`
         - (Experimental) Initial code for RAdaBoost word segmenter for Chinese and CNN word segmenter for Thai (unicode-org#7122, unicode-org#7217, unicode-org#7246, unicode-org#7344)
     - `icu_time`
-        - Add `ZonedTime` for representing and formatting times with zones (unicode-org#7532)
+        - (Unstable) Add `ZonedTime` for representing and formatting times with zones (unicode-org#7532)
          - New type: `ZonedTime`
         - Add constructor for `ZoneNameTimestamp` from a timestamp (unicode-org#7720)
          - New methods: `ZoneNameTimestamp::from_epoch_seconds()`
