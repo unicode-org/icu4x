@@ -12,6 +12,30 @@
 const version = 'icu%402.2.0';
 
 const fileHashes = <(String, String), String>{
+  ('armv7-linux-androideabi', 'dynamic-with_data'):
+      'a5d01b73c60ef347bc8db19d8f2d7d543f8c027ffcf47360fed7665e0d4eecd3',
+  ('armv7-linux-androideabi', 'static'):
+      'bc0f3709918590a79c24b0d93b1cac1389df4ba39efa8c33dc246ee645c40997',
+  ('armv7-linux-androideabi', 'static-with_data'):
+      '318748b5e2a8e9f8df28ff6037876a3f56d5c6113199797fde648c84f47d6ffe',
+  ('aarch64-linux-android', 'dynamic-with_data'):
+      '15012ad6682ac3371e472209a2179e8aa630e283a3a28d4493119366091d8009',
+  ('aarch64-linux-android', 'static'):
+      'd3623665dd6a887629595b38906d38f8228edaf33725f815f76a5cca0a8b2185',
+  ('aarch64-linux-android', 'static-with_data'):
+      '879c2e25a72aa3fd5c81cfd4d67e8a3e72714782d09a97f0e4318117e8df2d3e',
+  ('i686-linux-android', 'dynamic-with_data'):
+      'd8dc2a95c9e784859f5b754405f683c2016f2c27e719365d73be696f214981ab',
+  ('i686-linux-android', 'static'):
+      '0ec0f45a9155f03da10d757d22197bad27d36af2c5a6eb5219c6ab42c6b9b2ec',
+  ('i686-linux-android', 'static-with_data'):
+      '2a8e79f36ab9bae9bc7589f274915f4a6985dd57455e56f97556034505d6b89f',
+  ('x86_64-linux-android', 'dynamic-with_data'):
+      'f53f3f05d5d16a8c0203523cd48d9210929fba4baa900b6bc19b6062fbc28b96',
+  ('x86_64-linux-android', 'static'):
+      'adbab192cd6b9c2cc7d524c5c2c215bc2e9a687006a3732e62789bc83951b8c0',
+  ('x86_64-linux-android', 'static-with_data'):
+      '50400468f95279a4c035631ea299e8b85d4d9726e5499796d7438bcf9a8b80a1',
   ('aarch64-apple-ios', 'dynamic-with_data'):
       'd691cc713d6f19625590d0431929831c027072e9d51b86e10c604abdf02da8e8',
   ('aarch64-apple-ios', 'static'):
@@ -24,6 +48,30 @@ const fileHashes = <(String, String), String>{
       '4bdee9340182d61bed39b5aa2080798ae7723f6c5c7b544117878342059ac220',
   ('x86_64-apple-ios', 'static-with_data'):
       '9c0a6de3b4eb9336970d656c129c1e1ba33624e0ac2a3aadce3ee94e5554b24e',
+  ('armv7-unknown-linux-gnueabihf', 'dynamic-with_data'):
+      '7b904354659d2dfaff7e5b9bc543788edbab638909bdf008c0b98db780e2ebd9',
+  ('armv7-unknown-linux-gnueabihf', 'static'):
+      'e8184edf952a80557e09054df31c293d4563fb7429e2a838add70ea7de2f460a',
+  ('armv7-unknown-linux-gnueabihf', 'static-with_data'):
+      '012535b0b89051e6230f510ac5e0d342226af1e2e28be464a7e28bcd53571af9',
+  ('aarch64-unknown-linux-gnu', 'dynamic-with_data'):
+      '05c1829228e0a006ba2872b3f03c6585da9253e4e71708292a13c7fabaa544e2',
+  ('aarch64-unknown-linux-gnu', 'static'):
+      '73c0fff773a0bbbff5a6e2d6c95fc76a5666b8eff3d7b7278ca40e268987b260',
+  ('aarch64-unknown-linux-gnu', 'static-with_data'):
+      '259ad18a906967ad1967212bbc87aef8eac3d89943c33fcb390fc2373d86b0e3',
+  ('riscv64gc-unknown-linux-gnu', 'dynamic-with_data'):
+      '87213126e0ef8ef45ca1296d00d34a3ae65517185c06c589f3067895c173993b',
+  ('riscv64gc-unknown-linux-gnu', 'static'):
+      '623d30294ee3cc17b84d1c2105414f48d1be2ede210ae671c22452ba21e11f0e',
+  ('riscv64gc-unknown-linux-gnu', 'static-with_data'):
+      '79d69e5649790f9cf5b13836c3a118a5a5da57b6fb5e2dca24e987fe26d6d8ec',
+  ('x86_64-unknown-linux-gnu', 'dynamic-with_data'):
+      'ffb4e9585e8349fbf9841a18857423d4c92186f2d5e72b443a204b88fd2d5170',
+  ('x86_64-unknown-linux-gnu', 'static'):
+      'c5b211c64a1f55b1fb59c094874cc2277090c3624bfcf18d8336161daaf4e41a',
+  ('x86_64-unknown-linux-gnu', 'static-with_data'):
+      '6dc97957b2432987069fcc57c5e1c582bc5e36141d747e47a36b1cfbc8326a5b',
   ('aarch64-apple-darwin', 'dynamic-with_data'):
       'b60679c43ec98d884380dfc779781ba4a9fc61d54e3a832f1c65a3297abc903c',
   ('aarch64-apple-darwin', 'static'):
