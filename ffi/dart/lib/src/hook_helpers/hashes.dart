@@ -12,30 +12,44 @@
 const version = 'icu%402.2.0';
 
 const fileHashes = <(String, String), String>{
+  ('aarch64-apple-ios', 'dynamic-with_data'):
+      'd691cc713d6f19625590d0431929831c027072e9d51b86e10c604abdf02da8e8',
   ('aarch64-apple-ios', 'static'):
       '50e659bcf802ed73f518e8959d3451dd734336eb390f7e05a8be0200eb5c30ec',
   ('aarch64-apple-ios', 'static-with_data'):
       '5e119c961d86eed0679e6080be276e0865721525ae57e44ab7fb296c41020997',
+  ('x86_64-apple-ios', 'dynamic-with_data'):
+      'dc03b78e8eb92beb045558f8acba189bd9070a09472ef66066f37939f01f8b68',
   ('x86_64-apple-ios', 'static'):
       '4bdee9340182d61bed39b5aa2080798ae7723f6c5c7b544117878342059ac220',
   ('x86_64-apple-ios', 'static-with_data'):
       '9c0a6de3b4eb9336970d656c129c1e1ba33624e0ac2a3aadce3ee94e5554b24e',
+  ('aarch64-apple-darwin', 'dynamic-with_data'):
+      'b60679c43ec98d884380dfc779781ba4a9fc61d54e3a832f1c65a3297abc903c',
   ('aarch64-apple-darwin', 'static'):
       '809ddaa518cd03a62a74344c4d1d6536aff81c71f034718be3e05d3f67d650bd',
   ('aarch64-apple-darwin', 'static-with_data'):
       '718aa43464dd51a9fb104a83b63e93da9b5f05b53b4a6b7a5f801941551601d1',
+  ('x86_64-apple-darwin', 'dynamic-with_data'):
+      'd0c267d17f420345ce0ff43229746d405fa1a133498e2bea5c84fedf79c200d2',
   ('x86_64-apple-darwin', 'static'):
       'faa492aac7073ae83c7e20bf7b8887f704ff03676c86941199f7c6cf1c18da6d',
   ('x86_64-apple-darwin', 'static-with_data'):
       '7bfe1211dcb2d66868afc7714ad9393b796dfb161ea21cbfc05ffd48d1d87cd5',
+  ('aarch64-pc-windows-msvc', 'dynamic-with_data'):
+      'af27bf43bfb46f8dd8f08e8d5e8aab1dbf286d76cf4f01610dec61458731caac',
   ('aarch64-pc-windows-msvc', 'static'):
       '03354f918df26fcf2209753d5cdc845c4d7edc3a48fc7e65c8346be0d492437e',
   ('aarch64-pc-windows-msvc', 'static-with_data'):
       'ecde46a3c4f56bced645bdd37235e23b4c09412102a0c0c8001c8a738fdd2cde',
+  ('i686-pc-windows-msvc', 'dynamic-with_data'):
+      'af1cbe9e01452157355efa543aa98ff55beab0932be1346fc5316a23ba790e54',
   ('i686-pc-windows-msvc', 'static'):
       'd571e35d98b63764d4419b28c023f291c4504316a2820ff5fd36283dd8a08047',
   ('i686-pc-windows-msvc', 'static-with_data'):
       '570316b64b4f9907a5de07fd9912c9879a2b042f88b7d0450805736ecf60ad10',
+  ('x86_64-pc-windows-msvc', 'dynamic-with_data'):
+      '3716c85caf23f95a1a316d4bafa0d325099a2bf8a6bf5499505ed2772493cd91',
   ('x86_64-pc-windows-msvc', 'static'):
       'ed1e21aacb7c3c0a0016a5316fe6fdec3776b8f3e57549fe013948d6c0b869de',
   ('x86_64-pc-windows-msvc', 'static-with_data'):
