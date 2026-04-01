@@ -180,5 +180,7 @@ pub mod input {
     pub use icu_time::TimeZone;
     pub use icu_time::TimeZoneInfo;
     pub use icu_time::ZonedDateTime;
+
+    #[cfg(feature = "unstable")]
     pub use icu_time::ZonedTime;
 }
