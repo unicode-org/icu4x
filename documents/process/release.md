@@ -31,6 +31,11 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future. In case of unstable APIs, it is okay to leave things in the missing_apis file for now, see unicode-org#7181.
 * [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Ensure that landed PRs all have decent changelog entries (see [changelog.md](changelog.md))
+* [ ] Go through the last two months of open PRs. For PRs which affect the release (new features, optimizations, etc, as opposed to internal docs, tooling, etc), use your judgement to determine if (a) this PR has a chance of making it into the release and (b) if we should try to get it in. If so, comment and ask the authors/reviewers if they can try and get it in by the release timeline. If they say yes, add it to the milestone, likely with `milestone-non-blocking`. Some heuristics to apply to make this determination:
+  * If the PR is blocked on discussion, it is unlikely to make it into the release, unless the WG has already completed all release-relevant discussions.
+  * If the PR is a major feature, it is probably not worth trying to make it into the release, except perhaps as unstable.
+  * If the PR is a bugfix or a docs fix, we should try to get it into the release.
+  * If the PR is a small new API, we should try to get it into the release as long as it has already been noticed by the people who are likely to care about the new APIs. Consider pinging additional people.
 * [ ] Draft the text for the GitHub release and circulate to the WG at least 18 hours in advance of the release, but ideally sooner. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
 * [ ] Consider making earlier drafts of the changelog (see [changelog.md](changelog.md)), noting a Git commit that the changelog is accurate up to.
 
@@ -40,6 +45,7 @@ Once the release checklist is complete, the assigned release driver will perform
 
 * [ ] Land the changelog (see [changelog.md](changelog.md))
 * [ ] Go through the prerelease checklist again, ensuring that no problems were reintroduced in the PRs that landed since the opening of the checklist. (Things like doc prettification will likely need to be rerun!)
+* [ ] Quickly go through the list of open PRs to ensure that there are no new release-relevant PRs since the last time you checked this list.
 * [ ] Prepare a PR with updated versions
   * [ ] Remove all `-dev` prelease tags from `Cargo.toml`s
   * [ ] Update all ICU4X crate versions
