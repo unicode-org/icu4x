@@ -9,97 +9,35 @@
 //    dart tool/regenerate_hashes.dart <github tag>
 //
 
-const version = 'ffi-artifacts/2025-12-12';
+const version = 'icu%402.2.0';
 
 const fileHashes = <(String, String), String>{
-  ('armv7-linux-androideabi', 'dynamic'):
-      '1ab700bc8117ad01dadde08f4b80346124bf1b3bd46f25425dad33b960de8938',
-  ('armv7-linux-androideabi', 'static'):
-      '2e42da3d1f5edb2a5756902f60aeff5dd2e9ea4424b589014fc98e23149fd894',
-  ('armv7-linux-androideabi', 'static-with_data'):
-      '9ade02b05662684ebb0ce90cbdbc9c922efdd1a4b15a616b32133db5c73fabda',
-  ('aarch64-linux-android', 'dynamic'):
-      '0c63c5c26f091f8ff0a46bdddf99ce3af87f62d5c3e97fb4de000aa403b9ac04',
-  ('aarch64-linux-android', 'static'):
-      '7858236c303235a4e2319c066d7d1090013b9e0e2ceb2a6dc0280b99ce3d4f43',
-  ('aarch64-linux-android', 'static-with_data'):
-      '8f278d106e598fe0e4e43594a8a6baf41ef0e00fc935d7d2c6cb0bb74e007926',
-  ('i686-linux-android', 'dynamic'):
-      '12cf456051982bb259c2ecae4f679b6d58dd5ce3ab545152661626e5569f3d3b',
-  ('i686-linux-android', 'static'):
-      '4eb50247bf1790b5d400c659880cc756e8be20dbcb2aaee3e35c9f3759959692',
-  ('i686-linux-android', 'static-with_data'):
-      'd1ac0113932ffde7b3b148f74451f99863a0afe377b117a18b1a992c0378ec31',
-  ('x86_64-linux-android', 'dynamic'):
-      '3f3ed3e118b64362f1cbb429169b4b931f86f557a3698734af543ffa462d2666',
-  ('x86_64-linux-android', 'static'):
-      '43863577759a25d015c07b50efaa6f50e0c405d7901d542838b0212eab31d139',
-  ('x86_64-linux-android', 'static-with_data'):
-      'e6e20edee277d303db6f89be7aaf4d618dc1e7e6dd56420d32f68351a2f6212a',
-  ('aarch64-apple-ios', 'dynamic'):
-      'df8c3342a2e24b83ccfe199c2432272834552febe2f0f72f3cfbdfe1a2aef3c1',
   ('aarch64-apple-ios', 'static'):
-      'b478bfa5bc638a5848c8a42de194d9664b341df29c62f8f4a9b4797d72dc8fde',
+      '50e659bcf802ed73f518e8959d3451dd734336eb390f7e05a8be0200eb5c30ec',
   ('aarch64-apple-ios', 'static-with_data'):
-      '7246c9bb111f0066371ffeaf47c60afa5ff0814505e80c85b682c97d61228db1',
-  ('x86_64-apple-ios', 'dynamic'):
-      'c54b3cd96554458f30a88490ffd9d923c267f0eefb773cb9d17f5c2e7f774a1b',
+      '5e119c961d86eed0679e6080be276e0865721525ae57e44ab7fb296c41020997',
   ('x86_64-apple-ios', 'static'):
-      '963c1da4050f09a3e7e2a42ac147876cd270512ad7d015bb3b09f0f93997b46d',
+      '4bdee9340182d61bed39b5aa2080798ae7723f6c5c7b544117878342059ac220',
   ('x86_64-apple-ios', 'static-with_data'):
-      '2f279c8f59769c990fce5e07b0a0b5070c4690dcdfbc130df09f0707e1d4f470',
-  ('armv7-unknown-linux-gnueabihf', 'dynamic'):
-      '4ce07c40a7fbe5e1636da1780e2434c95b8c2defcb6e5047a66861c1d65454fa',
-  ('armv7-unknown-linux-gnueabihf', 'static'):
-      'ce90e23dc53e0f84207ed0c9815907dad93ec2489a9972afa115b7583329b3b5',
-  ('armv7-unknown-linux-gnueabihf', 'static-with_data'):
-      'a85f7bd13b7bd74bb0305f609d5d8d904a6349708705f0f05f4440858f56852f',
-  ('aarch64-unknown-linux-gnu', 'dynamic'):
-      '328940ed67979236022c484825838b9f4a44d83121b93247949047c8cf89d37e',
-  ('aarch64-unknown-linux-gnu', 'static'):
-      '2600e2f99b0e10f4312a4bf2cedcd30296c5835ac39d45f18aa190f4176dfe85',
-  ('aarch64-unknown-linux-gnu', 'static-with_data'):
-      'b5cf01f6d967a2a18d0858abb708e25ca965f4088207c1e74637eaa8870db3e9',
-  ('riscv64gc-unknown-linux-gnu', 'dynamic'):
-      '1c719ba18747c94b4afabb923bb55e7c92b9446b526ad6b2e973803dc14f25f2',
-  ('riscv64gc-unknown-linux-gnu', 'static'):
-      'd8339d585d2901e3ea0535d1be83b4df3edad6bf7d235f616c6fcfddc25e8090',
-  ('riscv64gc-unknown-linux-gnu', 'static-with_data'):
-      'ba2adf951cb8e84b11e383bca06365d59f54b675aa5f2d5d389c2b55c9ffa38e',
-  ('x86_64-unknown-linux-gnu', 'dynamic'):
-      'c8d054eb11239545ad769ebbf19faea7a4beff5416465bba96fe009168a3635c',
-  ('x86_64-unknown-linux-gnu', 'static'):
-      'f1dba33d5ef4543437b0b67f9711188adc7e162ec33f8e447bb1080fd2c0380e',
-  ('x86_64-unknown-linux-gnu', 'static-with_data'):
-      '22cec5823be588ba9d442a1f9173756df429239937508d400bc87d1ce8f0db89',
-  ('aarch64-apple-darwin', 'dynamic'):
-      '6d51e5f395e5dd93756b97473858acb23db79b5f4b18c740e49c875011ce643c',
+      '9c0a6de3b4eb9336970d656c129c1e1ba33624e0ac2a3aadce3ee94e5554b24e',
   ('aarch64-apple-darwin', 'static'):
-      'db1a190e74947bfab38230d239e7de1a7754d8dfb9ee89724c6a99cdb284343b',
+      '809ddaa518cd03a62a74344c4d1d6536aff81c71f034718be3e05d3f67d650bd',
   ('aarch64-apple-darwin', 'static-with_data'):
-      '09536e1cf5acf2e38220f5ed67fea64d57e73d58c6c16fc82015b63b7c0088ca',
-  ('x86_64-apple-darwin', 'dynamic'):
-      '220f95c11609b7ddc707af9a33eec4accdeb4a0f2ef9554b6147a17f6854769a',
+      '718aa43464dd51a9fb104a83b63e93da9b5f05b53b4a6b7a5f801941551601d1',
   ('x86_64-apple-darwin', 'static'):
-      '4698fad6f6b606ad50c48a14f062333b85742211470b97f2411584061b0adcda',
+      'faa492aac7073ae83c7e20bf7b8887f704ff03676c86941199f7c6cf1c18da6d',
   ('x86_64-apple-darwin', 'static-with_data'):
-      '5c3c4c8160b9a50cde68c863f814e8e089872d58228a47754e96cd70fa731920',
-  ('aarch64-pc-windows-msvc', 'dynamic'):
-      '2f1e6abdfe30c01dd7f7a26f242504cc59694513a011a3d27906997743ce765c',
+      '7bfe1211dcb2d66868afc7714ad9393b796dfb161ea21cbfc05ffd48d1d87cd5',
   ('aarch64-pc-windows-msvc', 'static'):
-      '2cf71d5bdfddca24127359b22aaa496a889c4fb29b11f4fbce11e2f24fee11c6',
+      '03354f918df26fcf2209753d5cdc845c4d7edc3a48fc7e65c8346be0d492437e',
   ('aarch64-pc-windows-msvc', 'static-with_data'):
-      '3616c59452929a64d4892f5974daff1425443b413af47fcd8bf39a52d08a19f8',
-  ('i686-pc-windows-msvc', 'dynamic'):
-      '47d3b83b9843d77f723df98a012c8c4a23d0f616080a952098ec6ad752a2d58a',
+      'ecde46a3c4f56bced645bdd37235e23b4c09412102a0c0c8001c8a738fdd2cde',
   ('i686-pc-windows-msvc', 'static'):
-      '4e8953e5bb53f2301310f72c5a2ef3dc3299dee343101dd51d07e8f5aced505a',
+      'd571e35d98b63764d4419b28c023f291c4504316a2820ff5fd36283dd8a08047',
   ('i686-pc-windows-msvc', 'static-with_data'):
-      'da8d6e03d62681635a40294fa7b3e16aaf24772e9a1952aa21be3c0ed60a0604',
-  ('x86_64-pc-windows-msvc', 'dynamic'):
-      '312a692844fff6c189e4c3006f93ea2eb32db92c72d47feb48e137988a521905',
+      '570316b64b4f9907a5de07fd9912c9879a2b042f88b7d0450805736ecf60ad10',
   ('x86_64-pc-windows-msvc', 'static'):
-      'd6bd1ecbe7b98e3801a7633d1a2a89751e95187f82d4221c6aa430f9f5f2563c',
+      'ed1e21aacb7c3c0a0016a5316fe6fdec3776b8f3e57549fe013948d6c0b869de',
   ('x86_64-pc-windows-msvc', 'static-with_data'):
-      '6376d5b25c02d028eb460500fc3fffe728f60a9e019822fa24df0f121cd21a22',
+      '5d6b87d8501ebf9a194c0ce41f5c40c7fee27bb0aa183c39ccd7d875d88ff4e9',
 };
