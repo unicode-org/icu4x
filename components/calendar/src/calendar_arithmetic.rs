@@ -1389,12 +1389,15 @@ mod tests {
 
     #[test]
     fn test_from_fields_consistent_years() {
-        let mut fields = DateFields::default();
-        fields.extended_year = Some(0);
-        fields.era_year = Some(0);
-        fields.era = Some(b"be");
-        fields.ordinal_month = Some(1);
-        fields.day = Some(1);
+        let fields = DateFields {
+            extended_year: Some(0),
+            era_year: Some(0),
+            era: Some(b"be"),
+            ordinal_month: Some(1),
+            day: Some(1),
+            ..Default::default()
+        };
+
         let date = Date::try_from_fields(fields, Default::default(), Buddhist).unwrap();
         assert_eq!(date.year().extended_year(), 0);
     }
