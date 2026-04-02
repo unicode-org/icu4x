@@ -1287,26 +1287,33 @@ impl<'a, C: DateFieldsResolver> SurpassesChecker<'a, C> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cal::Coptic;
+    use crate::cal::{coptic::CopticYear, Coptic};
 
     #[test]
     fn test_ord() {
+        let new_coptic = |coptic_year, month, day| {
+            ArithmeticDate::<Coptic>::new_unchecked(
+                CopticYear::from_coptic_anno_martyrum_year(coptic_year),
+                month,
+                day,
+            )
+        };
         let dates_in_order = [
-            ArithmeticDate::<Coptic>::new_unchecked(-10, 1, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(-10, 1, 2),
-            ArithmeticDate::<Coptic>::new_unchecked(-10, 2, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(-1, 1, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(-1, 1, 2),
-            ArithmeticDate::<Coptic>::new_unchecked(-1, 2, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(0, 1, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(0, 1, 2),
-            ArithmeticDate::<Coptic>::new_unchecked(0, 2, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(1, 1, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(1, 1, 2),
-            ArithmeticDate::<Coptic>::new_unchecked(1, 2, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(10, 1, 1),
-            ArithmeticDate::<Coptic>::new_unchecked(10, 1, 2),
-            ArithmeticDate::<Coptic>::new_unchecked(10, 2, 1),
+            new_coptic(-10, 1, 1),
+            new_coptic(-10, 1, 2),
+            new_coptic(-10, 2, 1),
+            new_coptic(-1, 1, 1),
+            new_coptic(-1, 1, 2),
+            new_coptic(-1, 2, 1),
+            new_coptic(0, 1, 1),
+            new_coptic(0, 1, 2),
+            new_coptic(0, 2, 1),
+            new_coptic(1, 1, 1),
+            new_coptic(1, 1, 2),
+            new_coptic(1, 2, 1),
+            new_coptic(10, 1, 1),
+            new_coptic(10, 1, 2),
+            new_coptic(10, 2, 1),
         ];
         for (i, i_date) in dates_in_order.iter().enumerate() {
             for (j, j_date) in dates_in_order.iter().enumerate() {

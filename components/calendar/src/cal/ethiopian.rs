@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::coptic::CopticDateInner;
+use crate::cal::coptic::{CopticDateInner, CopticYear};
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{
@@ -30,6 +30,15 @@ pub enum EthiopianEraStyle {
     AmeteMihret,
     /// Use the single Anno Mundi era, anchored at the date of Creation
     AmeteAlem,
+}
+
+impl EthiopianEraStyle {
+    pub(crate) fn coptic_year_offset(self) -> i32 {
+        match self {
+            Self::AmeteMihret => AMETE_MIHRET_OFFSET,
+            Self::AmeteAlem => AMETE_ALEM_OFFSET,
+        }
+    }
 }
 
 /// The [Ethiopian Calendar](https://en.wikipedia.org/wiki/Ethiopian_calendar)
@@ -84,7 +93,7 @@ pub struct EthiopianDateInner(CopticDateInner);
 
 impl DateFieldsResolver for Ethiopian {
     // Coptic year
-    type YearInfo = i32;
+    type YearInfo = CopticYear;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
         Coptic::days_in_provided_month(year, month)
@@ -117,12 +126,7 @@ impl DateFieldsResolver for Ethiopian {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        extended_year
-            + if self.0 == EthiopianEraStyle::AmeteMihret {
-                AMETE_MIHRET_OFFSET
-            } else {
-                AMETE_ALEM_OFFSET
-            }
+        CopticYear::from_ethiopian_year(extended_year, self.era_style())
     }
 
     #[inline]
@@ -219,17 +223,13 @@ impl Calendar for Ethiopian {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         let coptic_year = date.0 .0.year();
-        let extended_year = if self.0 == EthiopianEraStyle::AmeteAlem {
-            coptic_year - AMETE_ALEM_OFFSET
-        } else {
-            coptic_year - AMETE_MIHRET_OFFSET
-        };
+        let extended_year = coptic_year.to_ethiopian_year(self.0);
 
         if self.0 == EthiopianEraStyle::AmeteAlem || extended_year <= 0 {
             types::EraYear {
                 era: tinystr!(16, "aa"),
                 era_index: Some(0),
-                year: coptic_year - AMETE_ALEM_OFFSET,
+                year: coptic_year.to_ethiopian_year(EthiopianEraStyle::AmeteAlem),
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
@@ -237,7 +237,7 @@ impl Calendar for Ethiopian {
             types::EraYear {
                 era: tinystr!(16, "am"),
                 era_index: Some(1),
-                year: coptic_year - AMETE_MIHRET_OFFSET,
+                year: coptic_year.to_ethiopian_year(EthiopianEraStyle::AmeteMihret),
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }

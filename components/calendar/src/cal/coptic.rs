@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
+use crate::cal::EthiopianEraStyle;
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
     DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
@@ -51,18 +52,64 @@ pub struct Coptic;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
-impl DateFieldsResolver for Coptic {
-    type YearInfo = i32;
+#[derive(Debug, Copy, Clone)]
+pub(crate) struct CopticYear {
+    coptic_year: i32,
+}
 
-    fn days_in_provided_month(year: i32, month: u8) -> u8 {
+impl CopticYear {
+    pub(crate) fn from_ethiopian_year(extended_year: i32, era_style: EthiopianEraStyle) -> Self {
+        let coptic_year = extended_year + era_style.coptic_year_offset();
+        Self { coptic_year }
+    }
+    pub(crate) fn from_coptic_anno_martyrum_year(coptic_year: i32) -> Self {
+        Self { coptic_year }
+    }
+    pub(crate) fn to_ethiopian_year(self, era_style: EthiopianEraStyle) -> i32 {
+        self.coptic_year - era_style.coptic_year_offset()
+    }
+}
+
+impl PackWithMD for CopticYear {
+    type Packed = <i32 as PackWithMD>::Packed;
+    #[inline]
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        <i32 as PackWithMD>::pack(self.coptic_year, month, day)
+    }
+    #[inline]
+    fn unpack_day(packed: Self::Packed) -> u8 {
+        <i32 as PackWithMD>::unpack_day(packed)
+    }
+    #[inline]
+    fn unpack_month(packed: Self::Packed) -> u8 {
+        <i32 as PackWithMD>::unpack_month(packed)
+    }
+    #[inline]
+    fn unpack_year(packed: Self::Packed) -> Self {
+        let coptic_year = <i32 as PackWithMD>::unpack_year(packed);
+        Self { coptic_year }
+    }
+}
+
+impl ToExtendedYear for CopticYear {
+    fn to_extended_year(&self) -> i32 {
+        // FIXME: This needs the calendar
+        self.coptic_year
+    }
+}
+
+impl DateFieldsResolver for Coptic {
+    type YearInfo = CopticYear;
+
+    fn days_in_provided_month(year: CopticYear, month: u8) -> u8 {
         if month == 13 {
-            5 + calendrical_calculations::coptic::is_leap_year(year) as u8
+            5 + calendrical_calculations::coptic::is_leap_year(year.coptic_year) as u8
         } else {
             30
         }
     }
 
-    fn months_in_provided_year(_: i32) -> u8 {
+    fn months_in_provided_year(_: CopticYear) -> u8 {
         13
     }
 
@@ -85,7 +132,7 @@ impl DateFieldsResolver for Coptic {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        extended_year
+        CopticYear::from_coptic_anno_martyrum_year(extended_year)
     }
 
     #[inline]
@@ -98,7 +145,7 @@ impl DateFieldsResolver for Coptic {
     }
 
     fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
-        calendrical_calculations::coptic::fixed_from_coptic(year, month, day)
+        calendrical_calculations::coptic::fixed_from_coptic(year.coptic_year, month, day)
     }
 }
 
@@ -106,7 +153,7 @@ impl Coptic {
     pub(crate) fn reference_year_from_month_day(
         month: types::Month,
         day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
+    ) -> Result<CopticYear, EcmaReferenceYearError> {
         let (ordinal_month, false) = (month.number(), month.is_leap()) else {
             return Err(EcmaReferenceYearError::MonthNotInCalendar);
         };
@@ -121,7 +168,9 @@ impl Coptic {
         } else {
             1688
         };
-        Ok(anno_martyrum_year)
+        Ok(CopticYear::from_coptic_anno_martyrum_year(
+            anno_martyrum_year,
+        ))
     }
 }
 
@@ -150,11 +199,15 @@ impl Calendar for Coptic {
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         // by precondition the year cannot exceed i32, so the error case is unreachable
-        let (year, month, day) =
+        let (coptic_year, month, day) =
             calendrical_calculations::coptic::coptic_from_fixed(rd).unwrap_or((1, 1, 1));
 
         // date is in the valid RD range
-        CopticDateInner(ArithmeticDate::new_unchecked(year, month, day))
+        CopticDateInner(ArithmeticDate::new_unchecked(
+            CopticYear::from_coptic_anno_martyrum_year(coptic_year),
+            month,
+            day,
+        ))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -208,14 +261,14 @@ impl Calendar for Coptic {
         types::EraYear {
             era: tinystr!(16, "am"),
             era_index: Some(0),
-            year,
-            extended_year: year,
+            year: year.coptic_year, // era year: only one era
+            extended_year: year.coptic_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        date.0.year().rem_euclid(4) == 3
+        date.0.year().coptic_year.rem_euclid(4) == 3
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {

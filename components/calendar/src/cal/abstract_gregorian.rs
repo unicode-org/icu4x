@@ -57,15 +57,19 @@ impl AbstractGregorianYear {
 
 impl PackWithMD for AbstractGregorianYear {
     type Packed = <i32 as PackWithMD>::Packed;
+    #[inline]
     fn pack(self, month: u8, day: u8) -> Self::Packed {
         <i32 as PackWithMD>::pack(self.iso_year, month, day)
     }
+    #[inline]
     fn unpack_day(packed: Self::Packed) -> u8 {
         <i32 as PackWithMD>::unpack_day(packed)
     }
+    #[inline]
     fn unpack_month(packed: Self::Packed) -> u8 {
         <i32 as PackWithMD>::unpack_month(packed)
     }
+    #[inline]
     fn unpack_year(packed: Self::Packed) -> Self {
         let iso_year = <i32 as PackWithMD>::unpack_year(packed);
         Self { iso_year }
