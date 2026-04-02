@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD};
 use crate::error::{
     DateAddError, DateError, DateFromFieldsError, DateNewError, EcmaReferenceYearError,
     LunisolarDateError, MonthError, UnknownEraError,
@@ -13,6 +13,7 @@ use crate::AsCalendar;
 use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based;
 use calendrical_calculations::rata_die::RataDie;
+use core::cmp::Ordering;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
 
@@ -536,13 +537,21 @@ impl<R: Rules> PartialEq for ChineseDateInner<R> {
 }
 impl<R: Rules> Eq for ChineseDateInner<R> {}
 impl<R: Rules> PartialOrd for ChineseDateInner<R> {
-    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 impl<R: Rules> Ord for ChineseDateInner<R> {
-    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+    fn cmp(&self, other: &Self) -> Ordering {
         self.0.cmp(&other.0)
+    }
+}
+
+impl core::ops::Sub<EastAsianTraditionalYear> for EastAsianTraditionalYear {
+    type Output = i32;
+    #[inline]
+    fn sub(self, rhs: EastAsianTraditionalYear) -> Self::Output {
+        self.related_iso - rhs.related_iso
     }
 }
 
@@ -634,6 +643,11 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
         debug_assert!(crate::calendar_arithmetic::SAFE_YEAR_RANGE.contains(&extended_year));
         self.0.year(extended_year)
+    }
+
+    #[inline]
+    fn extended_from_year_info(&self, year_info: Self::YearInfo) -> i32 {
+        year_info.related_iso
     }
 
     #[inline]
@@ -888,9 +902,25 @@ pub struct EastAsianTraditionalYear {
     related_iso: i32,
 }
 
-impl ToExtendedYear for EastAsianTraditionalYear {
-    fn to_extended_year(&self) -> i32 {
-        self.related_iso
+impl PartialEq for EastAsianTraditionalYear {
+    fn eq(&self, other: &Self) -> bool {
+        self.related_iso == other.related_iso
+    }
+}
+impl Eq for EastAsianTraditionalYear {}
+impl core::hash::Hash for EastAsianTraditionalYear {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.related_iso.hash(state);
+    }
+}
+impl PartialOrd for EastAsianTraditionalYear {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for EastAsianTraditionalYear {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.related_iso.cmp(&other.related_iso)
     }
 }
 
@@ -934,6 +964,11 @@ impl EastAsianTraditionalYear {
             ),
             related_iso,
         })
+    }
+
+    #[cfg(test)]
+    pub(crate) fn related_iso(self) -> i32 {
+        self.related_iso
     }
 
     fn lookup(
@@ -1204,7 +1239,7 @@ mod test {
                 cal.year_containing_rd(*crate::calendar_arithmetic::VALID_RD_RANGE.start());
             let largest = cal.year_containing_rd(*crate::calendar_arithmetic::VALID_RD_RANGE.end());
 
-            for y in smallest.to_extended_year()..=largest.to_extended_year() {
+            for y in smallest.related_iso()..=largest.related_iso() {
                 if cal.year(y).packed.leap_month().is_none() {
                     gap += 1;
                 } else {
@@ -1216,12 +1251,9 @@ mod test {
                 }
             }
 
-            let total =
-                (largest.to_extended_year() - smallest.to_extended_year() + 1) * 12 + num_leap;
-            let approximated = EastAsianTraditional::<R>::min_months_from(
-                smallest,
-                (largest.to_extended_year() - smallest.to_extended_year()) + 1,
-            );
+            let total = (largest - smallest + 1) * 12 + num_leap;
+            let approximated =
+                EastAsianTraditional::<R>::min_months_from(smallest, (largest - smallest) + 1);
 
             println!(
                 "absolute error {}: {}",

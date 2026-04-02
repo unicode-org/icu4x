@@ -88,6 +88,11 @@ impl DateFieldsResolver for Indian {
     }
 
     #[inline]
+    fn extended_from_year_info(&self, year_info: Self::YearInfo) -> i32 {
+        year_info
+    }
+
+    #[inline]
     fn reference_year_from_month_day(
         &self,
         month: types::Month,

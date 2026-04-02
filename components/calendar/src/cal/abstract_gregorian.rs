@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{IsoDateInner, IsoEra};
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD};
 use crate::error::{
     DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
@@ -33,9 +33,17 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
     fn debug_name(&self) -> &'static str;
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct AbstractGregorianYear {
     iso_year: i32,
+}
+
+impl core::ops::Sub<AbstractGregorianYear> for AbstractGregorianYear {
+    type Output = i32;
+    #[inline]
+    fn sub(self, rhs: AbstractGregorianYear) -> Self::Output {
+        self.iso_year - rhs.iso_year
+    }
 }
 
 impl AbstractGregorianYear {
@@ -77,13 +85,6 @@ impl PackWithMD for AbstractGregorianYear {
     }
 }
 
-impl ToExtendedYear for AbstractGregorianYear {
-    fn to_extended_year(&self) -> i32 {
-        // FIXME! This needs the calendar
-        self.iso_year
-    }
-}
-
 pub(crate) const REFERENCE_YEAR: AbstractGregorianYear = AbstractGregorianYear { iso_year: 1972 };
 
 #[cfg(test)]
@@ -115,6 +116,11 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
         AbstractGregorianYear::from_extended_year::<Y>(extended_year)
+    }
+
+    #[inline]
+    fn extended_from_year_info(&self, year_info: Self::YearInfo) -> i32 {
+        year_info.to_extended_year::<Y>()
     }
 
     #[inline]

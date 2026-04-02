@@ -126,7 +126,12 @@ impl DateFieldsResolver for Ethiopian {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        CopticYear::from_ethiopian_year(extended_year, self.era_style())
+        CopticYear::from_ethiopian_year(extended_year, self.0)
+    }
+
+    #[inline]
+    fn extended_from_year_info(&self, year_info: Self::YearInfo) -> i32 {
+        year_info.to_ethiopian_year(self.0)
     }
 
     #[inline]

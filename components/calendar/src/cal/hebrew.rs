@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD};
 use crate::error::{
     DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, LunisolarDateError,
     MonthError, UnknownEraError,
@@ -15,6 +15,7 @@ use crate::{types, Calendar, Date};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 use calendrical_calculations::rata_die::RataDie;
+use core::cmp::Ordering;
 
 /// The [Hebrew Calendar](https://en.wikipedia.org/wiki/Hebrew_calendar)
 ///
@@ -67,7 +68,38 @@ impl Hebrew {
 #[derive(Copy, Clone, Debug)]
 pub(crate) struct HebrewYear {
     keviyah: Keviyah,
+    /// The Hebrew extended year
     value: i32,
+}
+
+impl PartialEq for HebrewYear {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value
+    }
+}
+impl Eq for HebrewYear {}
+impl core::hash::Hash for HebrewYear {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.value.hash(state);
+    }
+}
+impl PartialOrd for HebrewYear {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for HebrewYear {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.value.cmp(&other.value)
+    }
+}
+
+impl core::ops::Sub<HebrewYear> for HebrewYear {
+    type Output = i32;
+    #[inline]
+    fn sub(self, rhs: HebrewYear) -> Self::Output {
+        self.value - rhs.value
+    }
 }
 
 impl PackWithMD for HebrewYear {
@@ -92,12 +124,6 @@ impl PackWithMD for HebrewYear {
 
     fn unpack_day([_, b, c, d, e]: Self::Packed) -> u8 {
         i32::unpack_day([b, c, d, e])
-    }
-}
-
-impl ToExtendedYear for HebrewYear {
-    fn to_extended_year(&self) -> i32 {
-        self.value
     }
 }
 
@@ -177,6 +203,11 @@ impl DateFieldsResolver for Hebrew {
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
         HebrewYear::compute(extended_year)
+    }
+
+    #[inline]
+    fn extended_from_year_info(&self, year_info: Self::YearInfo) -> i32 {
+        year_info.value
     }
 
     fn reference_year_from_month_day(

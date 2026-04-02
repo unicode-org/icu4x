@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::EthiopianEraStyle;
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD};
 use crate::error::{
     DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
@@ -52,9 +52,16 @@ pub struct Coptic;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct CopticYear {
     coptic_year: i32,
+}
+
+impl core::ops::Sub<CopticYear> for CopticYear {
+    type Output = i32;
+    fn sub(self, rhs: CopticYear) -> Self::Output {
+        self.coptic_year - rhs.coptic_year
+    }
 }
 
 impl CopticYear {
@@ -88,13 +95,6 @@ impl PackWithMD for CopticYear {
     fn unpack_year(packed: Self::Packed) -> Self {
         let coptic_year = <i32 as PackWithMD>::unpack_year(packed);
         Self { coptic_year }
-    }
-}
-
-impl ToExtendedYear for CopticYear {
-    fn to_extended_year(&self) -> i32 {
-        // FIXME: This needs the calendar
-        self.coptic_year
     }
 }
 
@@ -133,6 +133,11 @@ impl DateFieldsResolver for Coptic {
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
         CopticYear::from_coptic_anno_martyrum_year(extended_year)
+    }
+
+    #[inline]
+    fn extended_from_year_info(&self, year_info: Self::YearInfo) -> i32 {
+        year_info.coptic_year
     }
 
     #[inline]

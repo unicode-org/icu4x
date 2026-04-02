@@ -5,7 +5,6 @@
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::PackWithMD;
-use crate::calendar_arithmetic::ToExtendedYear;
 use crate::error::{
     DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
 };
@@ -16,6 +15,7 @@ use crate::types::Month;
 use crate::{types, Calendar, Date};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::rata_die::RataDie;
+use core::cmp::Ordering;
 use core::fmt::Debug;
 use icu_locale_core::preferences::extensions::unicode::keywords::{
     CalendarAlgorithm, HijriCalendarAlgorithm,
@@ -511,15 +511,39 @@ impl Hijri<TabularAlgorithm> {
 ///
 /// Graduation tracking issue: [issue #6962](https://github.com/unicode-org/icu4x/issues/6962).
 /// </div>
-#[derive(Copy, Clone, Debug, Hash)]
+#[derive(Copy, Clone, Debug)]
 pub struct HijriYear {
     packed: PackedHijriYearData,
     extended_year: i32,
 }
 
-impl ToExtendedYear for HijriYear {
-    fn to_extended_year(&self) -> i32 {
-        self.extended_year
+impl PartialEq for HijriYear {
+    fn eq(&self, other: &Self) -> bool {
+        self.extended_year == other.extended_year
+    }
+}
+impl Eq for HijriYear {}
+impl core::hash::Hash for HijriYear {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.extended_year.hash(state);
+    }
+}
+impl PartialOrd for HijriYear {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for HijriYear {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.extended_year.cmp(&other.extended_year)
+    }
+}
+
+impl core::ops::Sub<HijriYear> for HijriYear {
+    type Output = i32;
+    #[inline]
+    fn sub(self, rhs: HijriYear) -> Self::Output {
+        self.extended_year - rhs.extended_year
     }
 }
 
@@ -859,12 +883,12 @@ impl<R: Rules> PartialEq for HijriDateInner<R> {
 }
 impl<R: Rules> Eq for HijriDateInner<R> {}
 impl<R: Rules> PartialOrd for HijriDateInner<R> {
-    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 impl<R: Rules> Ord for HijriDateInner<R> {
-    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+    fn cmp(&self, other: &Self) -> Ordering {
         self.0.cmp(&other.0)
     }
 }
@@ -894,6 +918,11 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
         debug_assert!(crate::calendar_arithmetic::SAFE_YEAR_RANGE.contains(&extended_year));
         self.0.year(extended_year)
+    }
+
+    #[inline]
+    fn extended_from_year_info(&self, year_info: Self::YearInfo) -> i32 {
+        year_info.extended_year
     }
 
     #[inline]
