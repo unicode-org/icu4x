@@ -1417,7 +1417,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.2.0"
+version = "2.2.1"
 dependencies = [
  "calendrical_calculations",
  "chrono",

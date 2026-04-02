@@ -1,5 +1,14 @@
 # Changelog
 
+
+## icu 2.2.x
+
+Several crates have had patch releases in the 2.2 stream:
+
+- Components
+    - (2.2.1) `icu_calendar`
+        - Fix extended year calculations in Gregorian-like and Coptic-like calendars (unicode-org#7849)
+
 ## icu4x 2.2
 
 - Components
@@ -128,7 +137,7 @@
     - `icu_locale`
         - Add docs discouraging direct conversion from `Locale` to `DataLocale` for locale fallback (unicode-org#7348)
     - `icu_locale_core`
-        - (Macro-breaking) The `struct_keyword!` macro was changed to operate on references for conversions. This API is mostly used internally by ICU4X. (unicode-orgunicode-org#7361)
+        - (Macro-breaking) The `struct_keyword!` macro was changed to operate on references for conversions. This API is mostly used internally by ICU4X. (unicode-org#7361)
         - Fix regional override `-u-rg` (unicode-org#7337) and regional subdivision `-u-sd` (unicode-org#7341) to fix region-priority data loading in other components
         - Add `From<&Value>` for struct preferences (unicode-org#7361)
             - New trait impls: `From<&Value>` on all structs under `icu_locale_core::preferences::extensions::unicode`
