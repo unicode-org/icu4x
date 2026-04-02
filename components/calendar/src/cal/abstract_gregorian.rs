@@ -44,6 +44,7 @@ impl AbstractGregorianYear {
             iso_year: extended_year + Y::EXTENDED_YEAR_OFFSET,
         }
     }
+    #[allow(unused)] // only in ixdtf, jiff, ...
     pub(crate) fn from_iso_year(iso_year: i32) -> Self {
         Self { iso_year }
     }
