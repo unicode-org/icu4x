@@ -288,7 +288,7 @@ Several crates have had patch releases in the 2.2 stream:
         - Fix UB in `TinyAsciiStr::from_utf8_lossy` and `from_utf16_lossy`: validate that the replacement byte is ASCII (unicode-org#7783)
     - `tzif`: No change `0.4.1 -> 0.5.0`
         - Mark `Error` as `#[non_exhaustive]`
-    - `writeable`: `0.6.2 -> 0.6.7`
+    - `writeable`: `0.6.2 -> 0.6.3`
         - Add `writeable::adapters::Concat` and `writeable::concat_writeable!` (unicode-org#6929)
     - `yoke`, `yoke_derive`: `0.8.1 -> 0.8.2`
         - Impl common traits (`Display`, `PartialEq`/`Eq`, `PartialOrd`/`Ord`) (#7400)
