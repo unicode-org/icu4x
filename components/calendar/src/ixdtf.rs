@@ -4,6 +4,7 @@
 
 use core::str::FromStr;
 
+use crate::cal::abstract_gregorian::AbstractGregorianYear;
 use crate::cal::iso::IsoDateInner;
 use crate::calendar_arithmetic::{ArithmeticDate, VALID_RD_RANGE};
 use crate::types::RataDie;
@@ -164,7 +165,7 @@ impl<A: AsCalendar> Date<A> {
         );
 
         Ok(IsoDateInner(ArithmeticDate::new_unchecked(
-            date_record.year,
+            AbstractGregorianYear::from_iso_year(date_record.year),
             date_record.month,
             date_record.day,
         )))

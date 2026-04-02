@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cal::abstract_gregorian::AbstractGregorianYear;
 use crate::cal::gregorian::GregorianDateInner;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::Date;
@@ -18,7 +19,11 @@ impl From<chrono::NaiveDate> for Date<Gregorian> {
 
         // chrono's MIN/MAX value are inside VALID_RD_RANGE
         Self::from_raw(
-            GregorianDateInner(ArithmeticDate::new_unchecked(y, m, d)),
+            GregorianDateInner(ArithmeticDate::new_unchecked(
+                AbstractGregorianYear::from_iso_year(y),
+                m,
+                d,
+            )),
             Gregorian,
         )
     }

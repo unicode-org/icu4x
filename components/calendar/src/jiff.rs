@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cal::abstract_gregorian::AbstractGregorianYear;
 use crate::cal::gregorian::GregorianDateInner;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::Date;
@@ -12,7 +13,7 @@ impl From<jiff::civil::Date> for Date<Gregorian> {
         // jiff's MIN/MAX value are inside VALID_RD_RANGE
         Self::from_raw(
             GregorianDateInner(ArithmeticDate::new_unchecked(
-                jiff.year() as i32,
+                AbstractGregorianYear::from_iso_year(jiff.year() as i32),
                 jiff.month() as u8,
                 jiff.day() as u8,
             )),
