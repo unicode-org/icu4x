@@ -183,7 +183,7 @@ impl PackWithMD for i32 {
 pub(crate) trait DateFieldsResolver: Calendar {
     /// This stores the year as either an i32, or a type containing more
     /// useful computational information.
-    type YearInfo: Copy + Debug + PartialEq + Hash + Ord + Sub<Output = i32> + PackWithMD;
+    type YearInfo: Copy + Debug + Hash + Ord + Sub<Output = i32> + PackWithMD;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8;
 
