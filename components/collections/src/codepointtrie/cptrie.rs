@@ -1873,12 +1873,12 @@ mod tests {
     }
 
     #[test]
-    #[allow(unused_unsafe)] // `unsafe` below is both necessary and unnecessary
     fn databake() {
         databake::test_bake!(
             CodePointTrie<'static, u32>,
             const,
             unsafe {
+                #[allow(unused_unsafe)]
                 crate::codepointtrie::CodePointTrie::from_parts_unstable_unchecked_v1(
                     crate::codepointtrie::CodePointTrieHeader {
                         high_start: 1u32,
