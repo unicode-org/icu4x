@@ -457,9 +457,9 @@ mod tests {
     /// Tests an invariant we rely on in our code
     #[test]
     fn test_last_transition_not_in_rule_year() {
-        for chrono in crate::tests::time_zones_to_test() {
-            let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
+        for zone in TZDB.iter() {
+            let iana = zone.name();
+            let zoneinfo64 = zone.simple();
 
             if let Some(rule) = zoneinfo64.final_rule(&TZDB.rules) {
                 let transition = zoneinfo64.transition_offset_at(zoneinfo64.transition_count() - 1);
@@ -469,7 +469,7 @@ mod tests {
 
                 assert!(
                     utc_year < rule.start_year,
-                    "last transition should not be in rule year: {utc_year} < {} ({iana})",
+                    "last transition should not be in rule year: {utc_year} < {} ({iana:?})",
                     rule.start_year
                 );
             }
@@ -479,9 +479,9 @@ mod tests {
     /// Tests an invariant we rely on in our code
     #[test]
     fn test_rule_stays_inside_year() {
-        for chrono in crate::tests::time_zones_to_test() {
-            let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
+        for zone in TZDB.iter() {
+            let iana = zone.name();
+            let zoneinfo64 = zone.simple();
 
             if let Some(rule) = zoneinfo64.final_rule(&TZDB.rules) {
                 let max_delta = core::cmp::max(
@@ -494,13 +494,13 @@ mod tests {
                     if date.month == 0 && date.day == 1 {
                         assert!(
                             seconds_of_day > max_delta,
-                            "rule at beginning should not cross year boundary {seconds_of_day} > Δ{max_delta} ({iana})"
+                            "rule at beginning should not cross year boundary {seconds_of_day} > Δ{max_delta} ({iana:?})"
                         );
                     }
                     if date.month == 11 && date.day == 31 {
                         assert!(
                             seconds_of_day + max_delta < SECONDS_IN_UTC_DAY as u32,
-                            "rule at end of year should not cross year boundary {seconds_of_day} + Δ{max_delta} < 24h ({iana})"
+                            "rule at end of year should not cross year boundary {seconds_of_day} + Δ{max_delta} < 24h ({iana:?})"
                         );
                     }
                 }
@@ -511,14 +511,14 @@ mod tests {
     /// Tests an invariant we rely on in our code
     #[test]
     fn test_rule_offset_positive() {
-        for chrono in crate::tests::time_zones_to_test() {
-            let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
+        for zone in TZDB.iter() {
+            let iana = zone.name();
+            let zoneinfo64 = zone.simple();
 
             if let Some(rule) = zoneinfo64.final_rule(&TZDB.rules) {
                 assert!(
                     rule.inner.additional_offset_secs > 0,
-                    "additional offset should be positive, is {} ({iana})",
+                    "additional offset should be positive, is {} ({iana:?})",
                     rule.inner.additional_offset_secs,
                 );
             }
@@ -527,29 +527,29 @@ mod tests {
 
     #[test]
     fn test_offset_before_rule_is_second_offset() {
-        for chrono in crate::tests::time_zones_to_test() {
-            let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
+        for zone in TZDB.iter() {
+            let iana = zone.name();
+            let zoneinfo64 = zone.simple();
 
             if let Some(rule) = zoneinfo64.final_rule(&TZDB.rules) {
                 let last_transition =
                     zoneinfo64.transition_offset_at(zoneinfo64.transition_count() - 1);
 
                 if rule.inner.end_before_start() {
-                    assert!(last_transition.rule_applies, "{iana}, {zoneinfo64:?}");
+                    assert!(last_transition.rule_applies, "{iana:?}, {zoneinfo64:?}");
 
                     assert_eq!(
                         last_transition.offset,
                         UtcOffset(rule.standard_offset_seconds + rule.inner.additional_offset_secs),
-                        "{iana}, {zoneinfo64:?}"
+                        "{iana:?}, {zoneinfo64:?}"
                     );
                 } else {
-                    assert!(!last_transition.rule_applies, "{iana}, {zoneinfo64:?}");
+                    assert!(!last_transition.rule_applies, "{iana:?}, {zoneinfo64:?}");
 
                     assert_eq!(
                         last_transition.offset,
                         UtcOffset(rule.standard_offset_seconds),
-                        "{iana}, {zoneinfo64:?}"
+                        "{iana:?}, {zoneinfo64:?}"
                     );
                 }
             }
