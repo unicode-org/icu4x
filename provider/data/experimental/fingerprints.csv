@@ -1,4 +1,4 @@
-currency/displayname/v1, <lookup>, 196055B, 31491 identifiers
+currency/displayname/v1, <lookup>, 196089B, 31494 identifiers
 currency/displayname/v1, <total>, 1450110B, 800739B, 28234 unique payloads
 currency/displayname/v1, af/AED, 57B, 34B, 15625d9aef7c43a7
 currency/displayname/v1, af/AFN, 39B, 16B, 644fb8a68951d6d7
@@ -30647,6 +30647,9 @@ currency/displayname/v1, zh-HK/XOF, 51B, 28B, cbc1a84beb35bdb9
 currency/displayname/v1, zh-HK/YER, 36B, 13B, ccdc5f8501379ea0
 currency/displayname/v1, zh-HK/ZMW, 42B, 19B, bcfc50a874631380
 currency/displayname/v1, zh-HK/ZWG, 39B, 16B, a512fb6c92c947ff
+currency/displayname/v1, zh-Hans-HK/KYD, -> yue-Hans/KYD
+currency/displayname/v1, zh-Hans-HK/XAG, -> yue-Hans/XAG
+currency/displayname/v1, zh-Hans-MO/XAG, -> yue-Hans/XAG
 currency/displayname/v1, zh-Hant/ADP, -> yue/ADP
 currency/displayname/v1, zh-Hant/AED, -> yue/AED
 currency/displayname/v1, zh-Hant/AFA, -> yue-Hans/AFA
@@ -31491,8 +31494,8 @@ currency/displayname/v1, zu/ZAR, 44B, 21B, 3ee33af014eb8505
 currency/displayname/v1, zu/ZMK, 54B, 31B, abe05b241d692995
 currency/displayname/v1, zu/ZMW, 40B, 17B, 15b95ba727a96fd5
 currency/displayname/v1, zu/ZWG, -> ceb/ZWG
-currency/essentials/v1, <lookup>, 1761B, 353 identifiers
-currency/essentials/v1, <total>, 379308B, 340991B, 309 unique payloads
+currency/essentials/v1, <lookup>, 1775B, 355 identifiers
+currency/essentials/v1, <total>, 381600B, 343035B, 311 unique payloads
 currency/essentials/v1, af, 1111B, 987B, 7696b773dd86e22a
 currency/essentials/v1, af-NA, 1111B, 987B, ef78bd2710e13aa
 currency/essentials/v1, ak, 1129B, 1005B, b35651a617ebfc8d
@@ -31842,11 +31845,13 @@ currency/essentials/v1, yue, 1128B, 1004B, 97c985adb067cb1e
 currency/essentials/v1, yue-Hans, -> yue
 currency/essentials/v1, zh, 1134B, 1010B, 5b7c0805cec1d45
 currency/essentials/v1, zh-HK, 1118B, 994B, abd11063e4d95484
+currency/essentials/v1, zh-Hans-HK, 1140B, 1016B, 972ca110d06bf8bf
+currency/essentials/v1, zh-Hans-MO, 1152B, 1028B, dc93865f8c4dd286
 currency/essentials/v1, zh-Hant, 1118B, 994B, 56e7b2e3ca6c39a6
 currency/essentials/v1, zh-MO, 1130B, 1006B, ac6b2721cd8211ab
 currency/essentials/v1, zh-SG, 1140B, 1016B, cb031887a5672c37
 currency/essentials/v1, zu, 1120B, 996B, 79c38b12a3a72c47
-currency/extended/data/v1, <lookup>, 195592B, 31411 identifiers
+currency/extended/data/v1, <lookup>, 195647B, 31417 identifiers
 currency/extended/data/v1, <total>, 2052140B, 1387737B, 28938 unique payloads
 currency/extended/data/v1, af/AED, 35B, 12B, 9f377f898487c846
 currency/extended/data/v1, af/AFN, 40B, 17B, d8d8501e300b89cf
@@ -62412,6 +62417,12 @@ currency/extended/data/v1, zh-HK/XCD, 40B, 17B, 9a0ad22b87564278
 currency/extended/data/v1, zh-HK/YER, 37B, 14B, 1eb0cf6ef6650051
 currency/extended/data/v1, zh-HK/ZMW, 43B, 20B, 99ac4db6e2a96772
 currency/extended/data/v1, zh-HK/ZWG, 40B, 17B, e5edfecdb1447bc9
+currency/extended/data/v1, zh-Hans-HK/KYD, -> yue-Hans/KYD
+currency/extended/data/v1, zh-Hans-HK/NIO, -> yue-Hans/NIC
+currency/extended/data/v1, zh-Hans-HK/XAG, -> yue-Hans/XAG
+currency/extended/data/v1, zh-Hans-MO/ANG, 46B, 23B, 29da27f2e063461
+currency/extended/data/v1, zh-Hans-MO/NIO, -> yue-Hans/NIC
+currency/extended/data/v1, zh-Hans-MO/XAG, -> yue-Hans/XAG
 currency/extended/data/v1, zh-Hant/ADP, -> yue/ADP
 currency/extended/data/v1, zh-Hant/AED, -> yue/AED
 currency/extended/data/v1, zh-Hant/AFA, -> yue-Hans/AFA
@@ -62782,7 +62793,7 @@ currency/extended/data/v1, zh-MO/YER, -> zh-HK/YER
 currency/extended/data/v1, zh-MO/ZMW, -> zh-HK/ZMW
 currency/extended/data/v1, zh-MO/ZWG, -> zh-HK/ZWG
 currency/extended/data/v1, zh-MY/MYR, -> yue-Hans/MYR
-currency/extended/data/v1, zh-SG/ANG, 46B, 23B, 29da27f2e063461
+currency/extended/data/v1, zh-SG/ANG, -> zh-Hans-MO/ANG
 currency/extended/data/v1, zh-SG/NIO, -> yue-Hans/NIC
 currency/extended/data/v1, zh-SG/XAG, -> yue-Hans/XAG
 currency/extended/data/v1, zh/ADP, 43B, 20B, 1a0ea5898a4dff78
@@ -63260,7 +63271,7 @@ currency/extended/data/v1, zu/ZMK, 55B, 32B, 556373753497cd9f
 currency/extended/data/v1, zu/ZMW, 41B, 18B, 5df40b65221c99b7
 currency/extended/data/v1, zu/ZWG, -> en/ZWG
 currency/fractions/v1, <singleton>, 406B, 358B, 9586200a5c88484d
-currency/patterns/data/v1, <lookup>, 95B, 14 identifiers
+currency/patterns/data/v1, <lookup>, 110B, 16 identifiers
 currency/patterns/data/v1, <total>, 248B, 64B, 8 unique payloads
 currency/patterns/data/v1, blo, 28B, 5B, 62a8398982cad180
 currency/patterns/data/v1, ceb, 35B, 12B, 85f1d997c41484
@@ -63275,6 +63286,8 @@ currency/patterns/data/v1, to, -> blo
 currency/patterns/data/v1, und, 28B, 5B, acf42eb327773b71
 currency/patterns/data/v1, vec, 30B, 7B, 76f8ae707c86f2b2
 currency/patterns/data/v1, zh, -> ja
+currency/patterns/data/v1, zh-Hans-HK, -> und
+currency/patterns/data/v1, zh-Hans-MO, -> und
 currency/patterns/data/v1, zh-SG, -> und
 digital/duration/data/v1, <lookup>, 105B, 17 identifiers
 digital/duration/data/v1, <total>, 198B, 54B, 6 unique payloads
@@ -63295,8 +63308,8 @@ digital/duration/data/v1, sr-Latn, -> da
 digital/duration/data/v1, su, -> da
 digital/duration/data/v1, tk, 33B, 9B, 52bd330c6674d78
 digital/duration/data/v1, und, 33B, 9B, 5031d069e9fdd05c
-language/display/names/v1, <lookup>, 1125B, 225 identifiers
-language/display/names/v1, <total>, 1641458B, 1603211B, 210 unique payloads
+language/display/names/v1, <lookup>, 1135B, 226 identifiers
+language/display/names/v1, <total>, 1653227B, 1614798B, 211 unique payloads
 language/display/names/v1, af, 5998B, 5816B, 8bcde749945f4f7b
 language/display/names/v1, ak, 2644B, 2462B, 8fc8691607186bc3
 language/display/names/v1, am, 9875B, 9693B, 20c10ad428e31dcc
@@ -63473,6 +63486,7 @@ language/display/names/v1, so, 6033B, 5851B, cb82abb9eeadbd53
 language/display/names/v1, sq, 7345B, 7163B, 5392cca23e8bbdef
 language/display/names/v1, sr, 11726B, 11544B, d6457f1cef04ff2b
 language/display/names/v1, sr-BA, 11761B, 11579B, 7ce6c49f1e2e550e
+language/display/names/v1, sr-Cyrl-ME, 11769B, 11587B, d866ea8db96eb209
 language/display/names/v1, sr-Latn, 7518B, 7336B, bb7b61f6138697f1
 language/display/names/v1, sr-Latn-BA, 7539B, 7357B, a81b23bb21b5131
 language/display/names/v1, sr-Latn-XK, 7535B, 7353B, 5f8d69b52f3fe537
@@ -63737,7 +63751,7 @@ locale/display/names/v1, zh-HK, 839B, 657B, 2ff4e4e25b712021
 locale/display/names/v1, zh-Hant, 452B, 269B, a29ee7ed91614ee1
 locale/display/names/v1, zh-MO, -> zh-HK
 locale/display/names/v1, zu, 903B, 721B, f41fadad6c4fafe2
-locale/names/language/long/v1, <lookup>, 379315B, 70200 identifiers
+locale/names/language/long/v1, <lookup>, 379407B, 70213 identifiers
 locale/names/language/long/v1, <total>, 2032964B, 874225B, 50380 unique payloads
 locale/names/language/long/v1, af/aa, 28B, 5B, 301aac73d82fc83c
 locale/names/language/long/v1, af/ab, 32B, 9B, 7b3a06c954a74386
@@ -118767,6 +118781,19 @@ locale/names/language/long/v1, sr-BA/nso, -> bs-Cyrl/nso
 locale/names/language/long/v1, sr-BA/ojb, 65B, 42B, a375de9c1e87e5b6
 locale/names/language/long/v1, sr-BA/se, -> bs-Cyrl/se
 locale/names/language/long/v1, sr-BA/ttm, 51B, 28B, 1943ccd1c8cf0b6
+locale/names/language/long/v1, sr-Cyrl-ME/arn, -> be/arn
+locale/names/language/long/v1, sr-Cyrl-ME/be, -> bs-Cyrl/be
+locale/names/language/long/v1, sr-Cyrl-ME/bm, -> sr-BA/bm
+locale/names/language/long/v1, sr-Cyrl-ME/bn, -> sr-BA/bn
+locale/names/language/long/v1, sr-Cyrl-ME/ff, -> bs-Cyrl/ff
+locale/names/language/long/v1, sr-Cyrl-ME/ht, -> bs-Cyrl/ht
+locale/names/language/long/v1, sr-Cyrl-ME/lo, -> mk/lo
+locale/names/language/long/v1, sr-Cyrl-ME/moh, 34B, 11B, ea4017584164d30e
+locale/names/language/long/v1, sr-Cyrl-ME/nqo, -> ba/nqo
+locale/names/language/long/v1, sr-Cyrl-ME/shi, 45B, 22B, 9e7794b306b7fd23
+locale/names/language/long/v1, sr-Cyrl-ME/xh, 38B, 15B, f54543cf6078ccdf
+locale/names/language/long/v1, sr-Cyrl-ME/zgh, 80B, 57B, 5f3fda38d0be2975
+locale/names/language/long/v1, sr-Cyrl-ME/zu, 38B, 15B, 2843a13105f25043
 locale/names/language/long/v1, sr-Latn-BA/be, -> bs/be
 locale/names/language/long/v1, sr-Latn-BA/bm, 34B, 11B, 7e515e5dfec0f114
 locale/names/language/long/v1, sr-Latn-BA/bn, -> fo/bn
@@ -119377,13 +119404,13 @@ locale/names/language/long/v1, sr-XK/ff, -> bs-Cyrl/ff
 locale/names/language/long/v1, sr-XK/gsw, 59B, 36B, 24267ce2de900d3e
 locale/names/language/long/v1, sr-XK/ht, -> bs-Cyrl/ht
 locale/names/language/long/v1, sr-XK/lo, -> mk/lo
-locale/names/language/long/v1, sr-XK/moh, 34B, 11B, ea4017584164d30e
+locale/names/language/long/v1, sr-XK/moh, -> sr-Cyrl-ME/moh
 locale/names/language/long/v1, sr-XK/nqo, -> ba/nqo
-locale/names/language/long/v1, sr-XK/shi, 45B, 22B, 9e7794b306b7fd23
+locale/names/language/long/v1, sr-XK/shi, -> sr-Cyrl-ME/shi
 locale/names/language/long/v1, sr-XK/si, -> bg/si
-locale/names/language/long/v1, sr-XK/xh, 38B, 15B, f54543cf6078ccdf
-locale/names/language/long/v1, sr-XK/zgh, 80B, 57B, 5f3fda38d0be2975
-locale/names/language/long/v1, sr-XK/zu, 38B, 15B, 2843a13105f25043
+locale/names/language/long/v1, sr-XK/xh, -> sr-Cyrl-ME/xh
+locale/names/language/long/v1, sr-XK/zgh, -> sr-Cyrl-ME/zgh
+locale/names/language/long/v1, sr-XK/zu, -> sr-Cyrl-ME/zu
 locale/names/language/long/v1, sr/aa, -> bg/aa
 locale/names/language/long/v1, sr/ab, 38B, 15B, cfc37a1363f7bd1e
 locale/names/language/long/v1, sr/ace, 36B, 13B, de7082acdef26bd4
@@ -134382,8 +134409,8 @@ locale/names/language/short/v1, zh/en-US, 36B, 13B, 6de82d5b1c1374e7
 locale/names/language/short/v1, zu/az, 34B, 11B, 5585cd96681bd4e
 locale/names/language/short/v1, zu/en-GB, 36B, 13B, ae988c72f4e55540
 locale/names/language/short/v1, zu/en-US, 38B, 15B, 3ef68c907754ac26
-locale/names/region/long/v1, <lookup>, 232109B, 43462 identifiers
-locale/names/region/long/v1, <total>, 1274068B, 607866B, 28966 unique payloads
+locale/names/region/long/v1, <lookup>, 232184B, 43473 identifiers
+locale/names/region/long/v1, <total>, 1274222B, 607974B, 28968 unique payloads
 locale/names/region/long/v1, af/001, 31B, 8B, 1f3b12f44fb35b80
 locale/names/region/long/v1, af/002, 30B, 7B, 7e750e246b4a52f6
 locale/names/region/long/v1, af/003, 37B, 14B, 5adc439f092bbb5f
@@ -168041,6 +168068,17 @@ locale/names/region/long/v1, sr-BA/UM, 56B, 33B, 14c9a983087d541d
 locale/names/region/long/v1, sr-BA/VC, -> bs-Cyrl/VC
 locale/names/region/long/v1, sr-BA/VG, -> bs-Cyrl/VG
 locale/names/region/long/v1, sr-BA/VI, -> bs-Cyrl/VI
+locale/names/region/long/v1, sr-Cyrl-ME/BY, -> bs-Cyrl/BY
+locale/names/region/long/v1, sr-Cyrl-ME/CG, -> bs-Cyrl/CG
+locale/names/region/long/v1, sr-Cyrl-ME/CZ, -> sr-BA/CZ
+locale/names/region/long/v1, sr-Cyrl-ME/DE, -> bs-Cyrl/DE
+locale/names/region/long/v1, sr-Cyrl-ME/KN, -> bs-Cyrl/KN
+locale/names/region/long/v1, sr-Cyrl-ME/PM, 61B, 38B, a558a03424d5e84e
+locale/names/region/long/v1, sr-Cyrl-ME/RE, -> sr-BA/RE
+locale/names/region/long/v1, sr-Cyrl-ME/UM, -> bs-Cyrl/UM
+locale/names/region/long/v1, sr-Cyrl-ME/VC, -> bs-Cyrl/VC
+locale/names/region/long/v1, sr-Cyrl-ME/VG, 78B, 55B, 46f6331b286eb46c
+locale/names/region/long/v1, sr-Cyrl-ME/VI, 76B, 53B, 156832668bce316a
 locale/names/region/long/v1, sr-Latn-BA/001, 30B, 7B, 8a3760e107d571b3
 locale/names/region/long/v1, sr-Latn-BA/003, -> hr/003
 locale/names/region/long/v1, sr-Latn-BA/015, -> bs/015
@@ -168400,7 +168438,7 @@ locale/names/region/long/v1, sr-XK/CZ, -> sr-BA/CZ
 locale/names/region/long/v1, sr-XK/HK, 47B, 24B, 22981822d8d41bd3
 locale/names/region/long/v1, sr-XK/KN, -> bs-Cyrl/KN
 locale/names/region/long/v1, sr-XK/MO, 41B, 18B, f17b553fba7322e
-locale/names/region/long/v1, sr-XK/PM, 61B, 38B, a558a03424d5e84e
+locale/names/region/long/v1, sr-XK/PM, -> sr-Cyrl-ME/PM
 locale/names/region/long/v1, sr-XK/RE, -> sr-BA/RE
 locale/names/region/long/v1, sr-XK/UM, -> bs-Cyrl/UM
 locale/names/region/long/v1, sr-XK/VC, -> bs-Cyrl/VC
@@ -200729,7 +200767,7 @@ long/quarter/relative/v1, zh-HK, -> yue
 long/quarter/relative/v1, zh-Hant, 150B, 58B, d59b866b6d433a86
 long/quarter/relative/v1, zh-MO, -> yue
 long/quarter/relative/v1, zu, 216B, 124B, 2bb5fc60aa84671e
-long/second/relative/v1, <lookup>, 731B, 147 identifiers
+long/second/relative/v1, <lookup>, 745B, 149 identifiers
 long/second/relative/v1, <total>, 26305B, 12781B, 147 unique payloads
 long/second/relative/v1, af, 172B, 80B, 4dd46208b533e754
 long/second/relative/v1, ak, 136B, 44B, e17c11340757586f
@@ -200875,8 +200913,10 @@ long/second/relative/v1, yrl, 187B, 95B, f3f002774f3f726
 long/second/relative/v1, yue, 123B, 31B, 142ee42320145f32
 long/second/relative/v1, yue-Hans, 123B, 31B, 1c7e6ec7d37c79ef
 long/second/relative/v1, zh, 127B, 35B, f95f0d60bb3747cd
+long/second/relative/v1, zh-Hans-HK, 121B, 29B, bf95180a1513cfac
+long/second/relative/v1, zh-Hans-MO, -> zh-Hans-HK
 long/second/relative/v1, zh-Hant, 123B, 31B, ee67e4628185839e
-long/second/relative/v1, zh-SG, 121B, 29B, bf95180a1513cfac
+long/second/relative/v1, zh-SG, -> zh-Hans-HK
 long/second/relative/v1, zu, 206B, 114B, 9ba4b66c90f4710c
 long/week/relative/v1, <lookup>, 797B, 161 identifiers
 long/week/relative/v1, <total>, 37078B, 22362B, 160 unique payloads
@@ -202717,8 +202757,8 @@ person/names/format/v1, zh-HK, 2111B, 1977B, 26ce814bf675c4e6
 person/names/format/v1, zh-Hant, 2067B, 1933B, 638eb45f7ff8b878
 person/names/format/v1, zh-MO, -> zh-HK
 person/names/format/v1, zu, 2688B, 2554B, 9d7c9c9bf30f4ca8
-region/display/names/v1, <lookup>, 1123B, 224 identifiers
-region/display/names/v1, <total>, 1162567B, 1143806B, 208 unique payloads
+region/display/names/v1, <lookup>, 1133B, 225 identifiers
+region/display/names/v1, <total>, 1170415B, 1151564B, 209 unique payloads
 region/display/names/v1, af, 4738B, 4648B, f842de50fd844c95
 region/display/names/v1, ak, 4645B, 4555B, 45667abb4f4d1d05
 region/display/names/v1, am, 7146B, 7056B, 3a661955fc593d7c
@@ -202894,6 +202934,7 @@ region/display/names/v1, so, 5054B, 4964B, e2d801092024bf1a
 region/display/names/v1, sq, 4712B, 4622B, 1379e3a68204ec7c
 region/display/names/v1, sr, 7825B, 7735B, 51ff1222232e7f9d
 region/display/names/v1, sr-BA, 7837B, 7747B, 9f4df7172ee7bfc6
+region/display/names/v1, sr-Cyrl-ME, 7848B, 7758B, c55101f22443305a
 region/display/names/v1, sr-Latn, 4867B, 4777B, 26c25dcff3c8617e
 region/display/names/v1, sr-Latn-BA, 4874B, 4784B, a4a67fb4d34a4382
 region/display/names/v1, sr-Latn-XK, 4854B, 4764B, 872ad93945f94de0
@@ -205214,7 +205255,7 @@ unit/ids/v1, und/week-person, 2B, 2B, f3063024e8cdd789
 unit/ids/v1, und/yard, 2B, 2B, 45c353942c1c7a6b
 unit/ids/v1, und/year, 2B, 2B, a7eca90793b8bfd
 unit/ids/v1, und/year-person, 2B, 2B, f31a481ab840dad
-units/display/names/v1, <lookup>, 551094B, 51832 identifiers
+units/display/names/v1, <lookup>, 551244B, 51842 identifiers
 units/display/names/v1, <total>, 1509220B, 855453B, 28438 unique payloads
 units/display/names/v1, af/long-acre, 31B, 8B, 26d2679ef0c0f09
 units/display/names/v1, af/long-acre-foot, 36B, 13B, bd275c70aa07eac6
@@ -255657,6 +255698,16 @@ units/display/names/v1, zh-HK/short-steradian, -> zh-HK/narrow-steradian
 units/display/names/v1, zh-HK/short-tesla, -> zh-HK/narrow-tesla
 units/display/names/v1, zh-HK/short-weber, -> zh-HK/narrow-weber
 units/display/names/v1, zh-HK/short-week, -> zh-HK/long-week
+units/display/names/v1, zh-Hans-HK/long-kelvin, 35B, 12B, 7e2e7f06cd61494c
+units/display/names/v1, zh-Hans-HK/long-second, -> zh-HK/narrow-second
+units/display/names/v1, zh-Hans-HK/narrow-karat, 29B, 6B, 824bc73fcb2b021b
+units/display/names/v1, zh-Hans-HK/narrow-kelvin, -> fil/short-kelvin
+units/display/names/v1, zh-Hans-HK/short-kelvin, -> fil/short-kelvin
+units/display/names/v1, zh-Hans-MO/long-kelvin, -> zh-Hans-HK/long-kelvin
+units/display/names/v1, zh-Hans-MO/long-second, -> zh-HK/narrow-second
+units/display/names/v1, zh-Hans-MO/narrow-karat, -> zh-Hans-HK/narrow-karat
+units/display/names/v1, zh-Hans-MO/narrow-kelvin, -> fil/short-kelvin
+units/display/names/v1, zh-Hans-MO/short-kelvin, -> fil/short-kelvin
 units/display/names/v1, zh-Hant/long-acre, -> yue/long-acre
 units/display/names/v1, zh-Hant/long-acre-foot, 39B, 16B, 7318f4d094b47654
 units/display/names/v1, zh-Hant/long-ampere, -> yue-Hans/long-ampere
@@ -256355,9 +256406,9 @@ units/display/names/v1, zh-MO/short-steradian, -> zh-HK/narrow-steradian
 units/display/names/v1, zh-MO/short-tesla, -> zh-HK/narrow-tesla
 units/display/names/v1, zh-MO/short-weber, -> zh-HK/narrow-weber
 units/display/names/v1, zh-MO/short-week, -> zh-HK/long-week
-units/display/names/v1, zh-SG/long-kelvin, 35B, 12B, 7e2e7f06cd61494c
+units/display/names/v1, zh-SG/long-kelvin, -> zh-Hans-HK/long-kelvin
 units/display/names/v1, zh-SG/long-second, -> zh-HK/narrow-second
-units/display/names/v1, zh-SG/narrow-karat, 29B, 6B, 824bc73fcb2b021b
+units/display/names/v1, zh-SG/narrow-karat, -> zh-Hans-HK/narrow-karat
 units/display/names/v1, zh-SG/narrow-kelvin, -> fil/short-kelvin
 units/display/names/v1, zh-SG/short-kelvin, -> fil/short-kelvin
 units/display/names/v1, zh/long-acre, 32B, 9B, 84e21809486c14f
@@ -257048,7 +257099,7 @@ units/display/names/v1, zu/short-minute, 35B, 12B, 30f7c6d0c898f3d5
 units/display/names/v1, zu/short-month, 48B, 25B, 2f5433c2f8bcea4a
 units/display/names/v1, zu/short-second, 44B, 21B, c2121f7ad8c84d53
 units/display/names/v1, zu/short-week, 44B, 21B, 8e27c022e8c32044
-units/essentials/v1, <lookup>, 2461B, 255 identifiers
+units/essentials/v1, <lookup>, 2485B, 257 identifiers
 units/essentials/v1, <total>, 115757B, 96465B, 212 unique payloads
 units/essentials/v1, af/long, 495B, 404B, 49fb4f74aab9d305
 units/essentials/v1, ak/long, 458B, 367B, 1a771d40091a5bb1
@@ -257294,13 +257345,15 @@ units/essentials/v1, yue/short, -> yue/narrow
 units/essentials/v1, zh-HK/long, 614B, 523B, ba1742e98a66c850
 units/essentials/v1, zh-HK/narrow, 598B, 507B, b6d835e154c944f7
 units/essentials/v1, zh-HK/short, -> zh-HK/narrow
+units/essentials/v1, zh-Hans-HK/long, 417B, 326B, 802f6acbf13a22f4
+units/essentials/v1, zh-Hans-MO/long, -> zh-Hans-HK/long
 units/essentials/v1, zh-Hant/long, 604B, 513B, 2de1e16b95854416
 units/essentials/v1, zh-Hant/narrow, 504B, 413B, 8a0b63024437e4c4
 units/essentials/v1, zh-Hant/short, -> zh-Hant/narrow
 units/essentials/v1, zh-MO/long, -> zh-HK/long
 units/essentials/v1, zh-MO/narrow, -> zh-HK/narrow
 units/essentials/v1, zh-MO/short, -> zh-HK/narrow
-units/essentials/v1, zh-SG/long, 417B, 326B, 802f6acbf13a22f4
+units/essentials/v1, zh-SG/long, -> zh-Hans-HK/long
 units/essentials/v1, zh/long, 419B, 328B, 162bb2ddf0424f5
 units/essentials/v1, zu/long, 472B, 381B, 9d8d26c99e1c6c2d
 units/essentials/v1, zu/narrow, 368B, 277B, 91d5c729f7a05ce9
@@ -262391,7 +262444,7 @@ units/names/area/outlier/v1, zh/short-dunam, -> zh/long-dunam
 units/names/area/outlier/v1, zh/short-square-yard, -> zh/long-square-yard
 units/names/area/outlier/v1, zu/narrow-dunam, -> en/narrow-dunam
 units/names/area/outlier/v1, zu/narrow-square-yard, -> ast/narrow-square-yard
-units/names/duration/core/v1, <lookup>, 25143B, 2267 identifiers
+units/names/duration/core/v1, <lookup>, 25183B, 2269 identifiers
 units/names/duration/core/v1, <total>, 58398B, 28613B, 1295 unique payloads
 units/names/duration/core/v1, af/long-day, 39B, 16B, 8abdad94f5763059
 units/names/duration/core/v1, af/long-hour, 30B, 7B, 89e6381276e15646
@@ -264596,6 +264649,8 @@ units/names/duration/core/v1, zh-HK/narrow-minute, 29B, 6B, 631531245b79a311
 units/names/duration/core/v1, zh-HK/narrow-second, 29B, 6B, d4b98f9f5f0bd97b
 units/names/duration/core/v1, zh-HK/short-day, -> ja/long-day
 units/names/duration/core/v1, zh-HK/short-nanosecond, -> zh-HK/long-nanosecond
+units/names/duration/core/v1, zh-Hans-HK/long-second, -> zh-HK/narrow-second
+units/names/duration/core/v1, zh-Hans-MO/long-second, -> zh-HK/narrow-second
 units/names/duration/core/v1, zh-Hant/long-day, -> yue-Hans/long-day
 units/names/duration/core/v1, zh-Hant/long-hour, -> yue/long-hour
 units/names/duration/core/v1, zh-Hant/long-microsecond, -> yue-Hans/long-microsecond
@@ -267289,7 +267344,7 @@ units/names/duration/outlier/v1, zu/narrow-century, -> cy/narrow-century
 units/names/duration/outlier/v1, zu/narrow-decade, 38B, 15B, 9d0ea0c4c4e528f6
 units/names/duration/outlier/v1, zu/short-month, 48B, 25B, 2f5433c2f8bcea4a
 units/names/duration/outlier/v1, zu/short-week, 44B, 21B, 8e27c022e8c32044
-units/names/length/core/v1, <lookup>, 34003B, 2363 identifiers
+units/names/length/core/v1, <lookup>, 34216B, 2375 identifiers
 units/names/length/core/v1, <total>, 26262B, 13589B, 551 unique payloads
 units/names/length/core/v1, af/long-centimeter, 37B, 14B, 54ace9385dab43c4
 units/names/length/core/v1, af/long-kilometer, 36B, 13B, 1081910357af9b3f
@@ -268632,8 +268687,14 @@ units/names/length/core/v1, kok/long-inch, 44B, 21B, e93dbe692228fac
 units/names/length/core/v1, kok/narrow-foot, 50B, 27B, 5fbd61c1a9f74e05
 units/names/length/core/v1, kok/narrow-inch, 36B, 13B, 4c9019f0e8f4a1af
 units/names/length/core/v1, kok/short-foot, -> kok/long-foot
-units/names/length/core/v1, ku-SY/long-kilometer, 37B, 14B, c3a048aebe20af7f
-units/names/length/core/v1, ku-SY/long-millimeter, 38B, 15B, c79795ad0adec917
+units/names/length/core/v1, ku-Latn-IQ/long-kilometer, 37B, 14B, c3a048aebe20af7f
+units/names/length/core/v1, ku-Latn-IQ/long-millimeter, 38B, 15B, c79795ad0adec917
+units/names/length/core/v1, ku-Latn-IQ/narrow-kilometer, -> af/narrow-kilometer
+units/names/length/core/v1, ku-Latn-IQ/narrow-millimeter, -> ceb/narrow-millimeter
+units/names/length/core/v1, ku-Latn-IQ/short-kilometer, -> af/narrow-kilometer
+units/names/length/core/v1, ku-Latn-IQ/short-millimeter, -> af/narrow-millimeter
+units/names/length/core/v1, ku-SY/long-kilometer, -> ku-Latn-IQ/long-kilometer
+units/names/length/core/v1, ku-SY/long-millimeter, -> ku-Latn-IQ/long-millimeter
 units/names/length/core/v1, ku-SY/narrow-kilometer, -> af/narrow-kilometer
 units/names/length/core/v1, ku-SY/narrow-millimeter, -> ceb/narrow-millimeter
 units/names/length/core/v1, ku-SY/short-kilometer, -> af/narrow-kilometer
@@ -269579,6 +269640,12 @@ units/names/length/core/v1, yue-Hans/short-centimeter, -> yue-Hans/long-centimet
 units/names/length/core/v1, yue-Hans/short-kilometer, -> yue-Hans/long-kilometer
 units/names/length/core/v1, yue-Hans/short-meter, -> yue-Hans/long-meter
 units/names/length/core/v1, yue-Hans/short-millimeter, -> yue-Hans/long-millimeter
+units/names/length/core/v1, yue-Hant-CN/long-kilometer, -> yue-Hans/long-kilometer
+units/names/length/core/v1, yue-Hant-CN/long-millimeter, -> yue-Hans/long-millimeter
+units/names/length/core/v1, yue-Hant-CN/narrow-kilometer, -> yue-Hans/long-kilometer
+units/names/length/core/v1, yue-Hant-CN/narrow-millimeter, -> yue-Hans/long-millimeter
+units/names/length/core/v1, yue-Hant-CN/short-kilometer, -> yue-Hans/long-kilometer
+units/names/length/core/v1, yue-Hant-CN/short-millimeter, -> yue-Hans/long-millimeter
 units/names/length/core/v1, yue-MO/long-kilometer, -> yue-Hans/long-kilometer
 units/names/length/core/v1, yue-MO/long-millimeter, -> yue-Hans/long-millimeter
 units/names/length/core/v1, yue-MO/narrow-kilometer, -> yue-Hans/long-kilometer
@@ -269654,7 +269721,7 @@ units/names/length/core/v1, zu/short-centimeter, -> af/narrow-centimeter
 units/names/length/core/v1, zu/short-kilometer, -> af/narrow-kilometer
 units/names/length/core/v1, zu/short-meter, -> af/narrow-meter
 units/names/length/core/v1, zu/short-millimeter, -> af/narrow-millimeter
-units/names/length/extended/v1, <lookup>, 25972B, 2397 identifiers
+units/names/length/extended/v1, <lookup>, 26077B, 2403 identifiers
 units/names/length/extended/v1, <total>, 44724B, 23502B, 923 unique payloads
 units/names/length/extended/v1, af/long-foot, 31B, 8B, ae1bcbe8ac225cbe
 units/names/length/extended/v1, af/long-inch, 31B, 8B, 694287d2122fac4b
@@ -271996,6 +272063,12 @@ units/names/length/extended/v1, zh-HK/narrow-millimeter, 32B, 9B, e5812ab96b06a5
 units/names/length/extended/v1, zh-HK/short-kilometer, -> yue/long-kilometer
 units/names/length/extended/v1, zh-HK/short-mile, -> zh-HK/long-mile
 units/names/length/extended/v1, zh-HK/short-millimeter, -> yue/long-millimeter
+units/names/length/extended/v1, zh-Hans-HK/long-kilometer, -> zh-HK/narrow-kilometer
+units/names/length/extended/v1, zh-Hans-HK/long-millimeter, -> zh-HK/narrow-millimeter
+units/names/length/extended/v1, zh-Hans-HK/narrow-kilometer, -> zh-HK/narrow-kilometer
+units/names/length/extended/v1, zh-Hans-HK/narrow-millimeter, -> zh-HK/narrow-millimeter
+units/names/length/extended/v1, zh-Hans-HK/short-kilometer, -> zh-HK/narrow-kilometer
+units/names/length/extended/v1, zh-Hans-HK/short-millimeter, -> zh-HK/narrow-millimeter
 units/names/length/extended/v1, zh-Hant-MY/long-kilometer, -> yue/long-kilometer
 units/names/length/extended/v1, zh-Hant-MY/long-millimeter, 33B, 10B, ce47c1550a8927bd
 units/names/length/extended/v1, zh-Hant-MY/narrow-kilometer, -> zh-HK/narrow-kilometer
@@ -275346,8 +275419,8 @@ units/names/length/outlier/v1, zu/narrow-earth-radius, -> af/narrow-earth-radius
 units/names/length/outlier/v1, zu/narrow-micrometer, -> af/narrow-micrometer
 units/names/length/outlier/v1, zu/narrow-nanometer, -> ast/narrow-nanometer
 units/names/length/outlier/v1, zu/narrow-picometer, -> ast/narrow-picometer
-units/names/mass/core/v1, <lookup>, 32765B, 3079 identifiers
-units/names/mass/core/v1, <total>, 43720B, 23552B, 877 unique payloads
+units/names/mass/core/v1, <lookup>, 33003B, 3101 identifiers
+units/names/mass/core/v1, <total>, 43752B, 23561B, 878 unique payloads
 units/names/mass/core/v1, af/long-gram, 31B, 8B, c11661349c8cc967
 units/names/mass/core/v1, af/long-kilogram, 35B, 12B, 7d70621fefe1b717
 units/names/mass/core/v1, af/long-microgram, 36B, 13B, a4531d1b38f7be5
@@ -278331,24 +278404,42 @@ units/names/mass/core/v1, yue-Hans/short-microgram, -> yue-Hans/long-microgram
 units/names/mass/core/v1, yue-Hans/short-milligram, -> yue-Hans/long-milligram
 units/names/mass/core/v1, yue-Hans/short-ton, -> yue-Hans/long-ton
 units/names/mass/core/v1, yue-Hans/short-tonne, -> yue-Hans/long-tonne
+units/names/mass/core/v1, yue-Hant-CN/long-gram, -> yue-Hans/long-gram
+units/names/mass/core/v1, yue-Hant-CN/long-kilogram, -> yue-Hans/long-kilogram
+units/names/mass/core/v1, yue-Hant-CN/long-microgram, -> yue-Hans/long-microgram
+units/names/mass/core/v1, yue-Hant-CN/long-milligram, -> yue-Hans/long-milligram
+units/names/mass/core/v1, yue-Hant-CN/long-ton, 33B, 10B, cb72c7d9451bbcf2
+units/names/mass/core/v1, yue-Hant-CN/long-tonne, 33B, 10B, 7113f34d8cc8b26e
+units/names/mass/core/v1, yue-Hant-CN/narrow-gram, -> yue-Hans/long-gram
+units/names/mass/core/v1, yue-Hant-CN/narrow-kilogram, -> yue-Hans/long-kilogram
+units/names/mass/core/v1, yue-Hant-CN/narrow-microgram, -> yue-Hans/long-microgram
+units/names/mass/core/v1, yue-Hant-CN/narrow-milligram, -> yue-Hans/long-milligram
+units/names/mass/core/v1, yue-Hant-CN/narrow-ton, -> yue-Hant-CN/long-ton
+units/names/mass/core/v1, yue-Hant-CN/narrow-tonne, -> yue-Hant-CN/long-tonne
+units/names/mass/core/v1, yue-Hant-CN/short-gram, -> yue-Hans/long-gram
+units/names/mass/core/v1, yue-Hant-CN/short-kilogram, -> yue-Hans/long-kilogram
+units/names/mass/core/v1, yue-Hant-CN/short-microgram, -> yue-Hans/long-microgram
+units/names/mass/core/v1, yue-Hant-CN/short-milligram, -> yue-Hans/long-milligram
+units/names/mass/core/v1, yue-Hant-CN/short-ton, -> yue-Hant-CN/long-ton
+units/names/mass/core/v1, yue-Hant-CN/short-tonne, -> yue-Hant-CN/long-tonne
 units/names/mass/core/v1, yue-MO/long-gram, -> yue-Hans/long-gram
 units/names/mass/core/v1, yue-MO/long-kilogram, -> yue-Hans/long-kilogram
 units/names/mass/core/v1, yue-MO/long-microgram, -> yue-Hans/long-microgram
 units/names/mass/core/v1, yue-MO/long-milligram, -> yue-Hans/long-milligram
-units/names/mass/core/v1, yue-MO/long-ton, 33B, 10B, cb72c7d9451bbcf2
-units/names/mass/core/v1, yue-MO/long-tonne, 33B, 10B, 7113f34d8cc8b26e
+units/names/mass/core/v1, yue-MO/long-ton, -> yue-Hant-CN/long-ton
+units/names/mass/core/v1, yue-MO/long-tonne, -> yue-Hant-CN/long-tonne
 units/names/mass/core/v1, yue-MO/narrow-gram, -> yue-Hans/long-gram
 units/names/mass/core/v1, yue-MO/narrow-kilogram, -> yue-Hans/long-kilogram
 units/names/mass/core/v1, yue-MO/narrow-microgram, -> yue-Hans/long-microgram
 units/names/mass/core/v1, yue-MO/narrow-milligram, -> yue-Hans/long-milligram
-units/names/mass/core/v1, yue-MO/narrow-ton, -> yue-MO/long-ton
-units/names/mass/core/v1, yue-MO/narrow-tonne, -> yue-MO/long-tonne
+units/names/mass/core/v1, yue-MO/narrow-ton, -> yue-Hant-CN/long-ton
+units/names/mass/core/v1, yue-MO/narrow-tonne, -> yue-Hant-CN/long-tonne
 units/names/mass/core/v1, yue-MO/short-gram, -> yue-Hans/long-gram
 units/names/mass/core/v1, yue-MO/short-kilogram, -> yue-Hans/long-kilogram
 units/names/mass/core/v1, yue-MO/short-microgram, -> yue-Hans/long-microgram
 units/names/mass/core/v1, yue-MO/short-milligram, -> yue-Hans/long-milligram
-units/names/mass/core/v1, yue-MO/short-ton, -> yue-MO/long-ton
-units/names/mass/core/v1, yue-MO/short-tonne, -> yue-MO/long-tonne
+units/names/mass/core/v1, yue-MO/short-ton, -> yue-Hant-CN/long-ton
+units/names/mass/core/v1, yue-MO/short-tonne, -> yue-Hant-CN/long-tonne
 units/names/mass/core/v1, yue/long-ounce, 33B, 10B, 351fce112ee89026
 units/names/mass/core/v1, yue/long-pound, 30B, 7B, 7905ceacabd4039e
 units/names/mass/core/v1, yue/narrow-ounce, -> yue/long-ounce
@@ -278376,12 +278467,16 @@ units/names/mass/core/v1, zh-HK/narrow-ounce, -> yue/long-ounce
 units/names/mass/core/v1, zh-HK/narrow-pound, 29B, 6B, 64d12cebe85ae721
 units/names/mass/core/v1, zh-HK/short-ounce, -> yue/long-ounce
 units/names/mass/core/v1, zh-HK/short-pound, -> yue/long-pound
+units/names/mass/core/v1, zh-Hans-HK/long-ounce, 32B, 9B, 77231ad4aa7b1ca2
+units/names/mass/core/v1, zh-Hans-HK/long-pound, -> zh-HK/narrow-pound
+units/names/mass/core/v1, zh-Hans-HK/narrow-ounce, -> chr/narrow-ounce
+units/names/mass/core/v1, zh-Hans-HK/narrow-pound, -> chr/narrow-pound
 units/names/mass/core/v1, zh-Hant/long-gram, -> yue-Hans/long-gram
 units/names/mass/core/v1, zh-Hant/long-kilogram, -> yue-Hans/long-kilogram
 units/names/mass/core/v1, zh-Hant/long-microgram, -> yue-Hans/long-microgram
 units/names/mass/core/v1, zh-Hant/long-milligram, -> yue-Hans/long-milligram
 units/names/mass/core/v1, zh-Hant/long-ton, 33B, 10B, 7d973ba59a771f0d
-units/names/mass/core/v1, zh-Hant/long-tonne, -> yue-MO/long-tonne
+units/names/mass/core/v1, zh-Hant/long-tonne, -> yue-Hant-CN/long-tonne
 units/names/mass/core/v1, zh-Hant/narrow-gram, 29B, 6B, 8a24760bb1c65db0
 units/names/mass/core/v1, zh-Hant/narrow-kilogram, 32B, 9B, e85c7a1b2a90bf21
 units/names/mass/core/v1, zh-Hant/narrow-microgram, 32B, 9B, 7e46ef0f595b6423
@@ -278393,7 +278488,7 @@ units/names/mass/core/v1, zh-Hant/short-kilogram, -> yue-Hans/long-kilogram
 units/names/mass/core/v1, zh-Hant/short-microgram, -> yue-Hans/long-microgram
 units/names/mass/core/v1, zh-Hant/short-milligram, -> yue-Hans/long-milligram
 units/names/mass/core/v1, zh-Hant/short-ton, -> zh-Hant/long-ton
-units/names/mass/core/v1, zh-Hant/short-tonne, -> yue-MO/long-tonne
+units/names/mass/core/v1, zh-Hant/short-tonne, -> yue-Hant-CN/long-tonne
 units/names/mass/core/v1, zh/long-gram, -> zh-Hant/narrow-gram
 units/names/mass/core/v1, zh/long-kilogram, 32B, 9B, 911fa198b6c16394
 units/names/mass/core/v1, zh/long-microgram, -> zh-Hant/narrow-microgram
@@ -278427,8 +278522,8 @@ units/names/mass/core/v1, zu/short-kilogram, -> af/short-kilogram
 units/names/mass/core/v1, zu/short-microgram, -> af/short-microgram
 units/names/mass/core/v1, zu/short-milligram, -> af/short-milligram
 units/names/mass/core/v1, zu/short-tonne, -> af/short-tonne
-units/names/mass/extended/v1, <lookup>, 16575B, 1426 identifiers
-units/names/mass/extended/v1, <total>, 19639B, 9680B, 433 unique payloads
+units/names/mass/extended/v1, <lookup>, 16789B, 1445 identifiers
+units/names/mass/extended/v1, <total>, 19732B, 9704B, 436 unique payloads
 units/names/mass/extended/v1, af/long-ounce, 40B, 17B, 5ff6a265a9a3440f
 units/names/mass/extended/v1, af/long-pound, 31B, 8B, 47a463513daff398
 units/names/mass/extended/v1, af/long-stone, 32B, 9B, bb29576eb69a8a0b
@@ -279777,6 +279872,12 @@ units/names/mass/extended/v1, yue-Hans/narrow-stone, -> yue-Hans/long-stone
 units/names/mass/extended/v1, yue-Hans/short-ounce, -> yue-Hans/long-ounce
 units/names/mass/extended/v1, yue-Hans/short-pound, -> yue-Hans/long-pound
 units/names/mass/extended/v1, yue-Hans/short-stone, -> yue-Hans/long-stone
+units/names/mass/extended/v1, yue-Hant-CN/long-ounce, -> yue-Hans/long-ounce
+units/names/mass/extended/v1, yue-Hant-CN/long-pound, -> yue-Hans/long-pound
+units/names/mass/extended/v1, yue-Hant-CN/narrow-ounce, -> yue-Hans/long-ounce
+units/names/mass/extended/v1, yue-Hant-CN/narrow-pound, -> yue-Hans/long-pound
+units/names/mass/extended/v1, yue-Hant-CN/short-ounce, -> yue-Hans/long-ounce
+units/names/mass/extended/v1, yue-Hant-CN/short-pound, -> yue-Hans/long-pound
 units/names/mass/extended/v1, yue-MO/long-ounce, -> yue-Hans/long-ounce
 units/names/mass/extended/v1, yue-MO/long-pound, -> yue-Hans/long-pound
 units/names/mass/extended/v1, yue-MO/narrow-ounce, -> yue-Hans/long-ounce
@@ -279828,6 +279929,19 @@ units/names/mass/extended/v1, zh-HK/short-microgram, -> yue/long-microgram
 units/names/mass/extended/v1, zh-HK/short-milligram, -> yue/long-milligram
 units/names/mass/extended/v1, zh-HK/short-ton, -> zh-HK/long-ton
 units/names/mass/extended/v1, zh-HK/short-tonne, -> yue/long-tonne
+units/names/mass/extended/v1, zh-Hans-HK/long-gram, -> zh-HK/narrow-gram
+units/names/mass/extended/v1, zh-Hans-HK/long-kilogram, 32B, 9B, 911fa198b6c16394
+units/names/mass/extended/v1, zh-Hans-HK/long-microgram, -> zh-HK/narrow-microgram
+units/names/mass/extended/v1, zh-Hans-HK/long-milligram, -> zh-HK/narrow-milligram
+units/names/mass/extended/v1, zh-Hans-HK/long-ton, 29B, 6B, 8e96e0ade821377c
+units/names/mass/extended/v1, zh-Hans-HK/long-tonne, 32B, 9B, 5060579942314fd0
+units/names/mass/extended/v1, zh-Hans-HK/narrow-gram, -> chr/narrow-gram
+units/names/mass/extended/v1, zh-Hans-HK/narrow-kilogram, -> chr/narrow-kilogram
+units/names/mass/extended/v1, zh-Hans-HK/narrow-microgram, -> chr/narrow-microgram
+units/names/mass/extended/v1, zh-Hans-HK/narrow-milligram, -> chr/narrow-milligram
+units/names/mass/extended/v1, zh-Hans-HK/narrow-ton, -> en-HK/narrow-ton
+units/names/mass/extended/v1, zh-Hans-HK/narrow-tonne, -> chr/narrow-tonne
+units/names/mass/extended/v1, zh-Hans-HK/short-ton, -> en-HK/short-ton
 units/names/mass/extended/v1, zh-Hant/long-ounce, 33B, 10B, a0f5122e5e805e11
 units/names/mass/extended/v1, zh-Hant/long-pound, -> yue-Hans/long-pound
 units/names/mass/extended/v1, zh-Hant/long-stone, -> yue-Hans/long-stone
