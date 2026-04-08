@@ -45,7 +45,10 @@ impl LocaleFallbackerWithConfig<'_> {
             }
         }
         // 2. Remove the script if it is implied by the other subtags
-        if locale.script.is_some() || self.config.priority == LocaleFallbackPriority::Script {
+        if locale.script.is_some()
+            || locale.region.is_some()
+            || self.config.priority == LocaleFallbackPriority::Script
+        {
             *default_script = locale
                 .region
                 .and_then(|region| {
@@ -106,16 +109,18 @@ impl LocaleFallbackIteratorInner<'_> {
             return;
         }
         // 7. Remove region
-        if let Some(region) = locale.region {
-            // 6. Add the script subtag if necessary
-            if locale.script.is_none() {
-                let language = locale.language;
-                if let Some(script) = self.likely_subtags.language_region.get_copied(&(
-                    language.to_tinystr().to_unvalidated(),
-                    region.to_tinystr().to_unvalidated(),
-                )) {
-                    locale.script = Some(script);
-                }
+        if let Some(_region) = locale.region {
+            // note: self.backup_region is not used right now
+            // 6. Add or remove the script subtag if necessary
+            let language_implied_script = self
+                .likely_subtags
+                .language
+                .get_copied(&locale.language.to_tinystr().to_unvalidated())
+                .map(|(s, _r)| s);
+            if language_implied_script != self.max_script {
+                locale.script = self.max_script;
+            } else {
+                locale.script = None;
             }
             locale.region = None;
             locale.variant = self.backup_variant.take();
@@ -183,6 +188,8 @@ impl LocaleFallbackIteratorInner<'_> {
                 .map(|(s, _r)| s);
             if language_implied_script != self.max_script {
                 locale.script = self.max_script;
+            } else {
+                locale.script = None;
             }
             locale.region = None;
             locale.variant = self.backup_variant.take();
@@ -328,6 +335,13 @@ mod tests {
             expected_region_chain: &["sr-ME", "und-ME"],
         },
         TestCase {
+            input: "sr-Cyrl-ME",
+            requires_data: true,
+            expected_language_chain: &["sr-Cyrl-ME", "sr"],
+            expected_script_chain: &["sr-Cyrl-ME", "sr", "und-Cyrl"],
+            expected_region_chain: &["sr-Cyrl-ME", "und-ME"],
+        },
+        TestCase {
             input: "sr-ME-fonipa",
             requires_data: true,
             expected_language_chain: &["sr-ME-fonipa", "sr-ME", "sr-Latn-fonipa", "sr-Latn"],
@@ -415,11 +429,25 @@ mod tests {
             expected_region_chain: &["zh-CN", "und-CN"],
         },
         TestCase {
+            input: "zh-Hant-CN",
+            requires_data: true,
+            expected_language_chain: &["zh-Hant-CN", "zh-Hant"],
+            expected_script_chain: &["zh-Hant-CN", "zh-Hant", "und-Hant", "und-Hani"],
+            expected_region_chain: &["zh-Hant-CN", "und-CN"],
+        },
+        TestCase {
             input: "zh-TW",
             requires_data: true,
             expected_language_chain: &["zh-TW", "zh-Hant"],
             expected_script_chain: &["zh-TW", "zh-Hant", "und-Hant", "und-Hani"],
             expected_region_chain: &["zh-TW", "und-TW"],
+        },
+        TestCase {
+            input: "zh-Hans-TW",
+            requires_data: true,
+            expected_language_chain: &["zh-Hans-TW", "zh"],
+            expected_script_chain: &["zh-Hans-TW", "zh", "und-Hans", "und-Hani"],
+            expected_region_chain: &["zh-Hans-TW", "und-TW"],
         },
         TestCase {
             input: "yue-HK",
