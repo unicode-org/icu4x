@@ -788,9 +788,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.15.0"
+version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "640d5943a101226437e9ad4ef2b4181d0ff053a86e77cc18ae73e8c729766ac3"
+checksum = "970ac38ad677632efcee6d517e783958da9bc78ec206d8d5e35b459ffc5e4864"
 dependencies = [
  "log",
 ]
