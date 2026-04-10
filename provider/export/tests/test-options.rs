@@ -380,6 +380,8 @@ fn explicit_hybrid() {
         "ru",         // ancestor of ru-Cyrl-RU
         "ru-Cyrl-RU", // explicit locale, even though it is not normalized
         // "sr", // not reachable from sr-ME
+        // "sr-Cyrl-ME", // not in the sr-ME family
+        // "sr-Cyrl-RO", // not in the sr-ME family
         "sr-Latn", // ancestor of sr-ME
         "sr-ME",   // explicit locale not in supported locales
         "tlh-001", // Earth Klingon, inheriting from Klingon inheriting from und
@@ -432,6 +434,7 @@ fn explicit_runtime() {
         "sr",
         "sr-Cyrl-ME",
         // "sr-Cyrl-RO", (same as 'sr')
+        // "sr-Latn", (is not included in the 'sr' family)
         // "tlh-001", (same as 'und', not retained since it is not a base language)
         "und",
     ];
