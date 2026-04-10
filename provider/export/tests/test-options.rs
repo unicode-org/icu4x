@@ -42,6 +42,10 @@ impl TestingProvider {
             (("ja", ""), "8df59f98704d3b0c"),
             (("ru", ""), "8f773f51e85a65c1"),
             (("sr", ""), "3ec76252c7ed8d8c"),
+            // Note: Both sr-ME and sr-RO are Latn locales.
+            // We will set one equal to sr and the other different.
+            (("sr-Cyrl-ME", ""), "9b2814eab238196e"),
+            (("sr-Cyrl-RO", ""), "3ec76252c7ed8d8c"),
             (("sr-Latn", ""), "3ec76252c7ed8d8c"),
             (("th", ""), "8df59f98704d3b0c"),
             (("th", "thai"), "db1d187d375ccfd2"),
@@ -139,7 +143,8 @@ fn all_preferred() {
         "ja",
         "ru",
         "sr",
-        // "sr-Cyrl", (normalizes to 'sr')
+        "sr-Cyrl-ME",
+        "sr-Cyrl-RO",
         "sr-Latn",
         "th",
         "th/thai",
@@ -182,7 +187,8 @@ fn all_hybrid() {
         "ja",
         "ru",
         "sr",
-        // "sr-Cyrl", (normalizes to 'sr')
+        "sr-Cyrl-ME",
+        "sr-Cyrl-RO",
         "sr-Latn",
         "th",
         "th/thai",
@@ -226,6 +232,8 @@ fn all_runtime() {
         // "ja", (same as 'und')
         "ru",
         "sr",
+        "sr-Cyrl-ME",
+        // Note: 'sr-Cyrl-RO' inherits from sr
         // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
         "sr-Latn",
         // "th", (same as 'und')
@@ -269,7 +277,10 @@ fn all_runtime_retain_base() {
         "fr",
         "ja", // (same as 'und', but retained)
         "ru",
-        "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
+        "sr",
+        "sr-Cyrl-ME",
+        // Note: 'sr-Cyrl-RO' inherits from sr
+        // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
         "sr-Latn",
         "th", // (same as 'und', but retained)
         "th/thai",
@@ -387,7 +398,7 @@ fn explicit_runtime() {
         langid!("ar-SA"),
         langid!("en-GB"),
         langid!("es"),
-        langid!("sr-ME"),
+        langid!("sr"),
         langid!("ru-Cyrl-RU"),
         langid!("tlh-001"), // Klingon, not in supported list
     ];
@@ -418,8 +429,9 @@ fn explicit_runtime() {
         "es-AR",
         "ru",
         // "ru-Cyrl-RU", (same as 'ru')
-        "sr-Latn",
-        // "sr-ME", (same as 'sr-Latn')
+        "sr",
+        "sr-Cyrl-ME",
+        // "sr-Cyrl-RO", (same as 'sr')
         // "tlh-001", (same as 'und', not retained since it is not a base language)
         "und",
     ];
