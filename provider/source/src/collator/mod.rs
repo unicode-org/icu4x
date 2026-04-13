@@ -9,7 +9,10 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
-use icu::locale::subtags::{language, script};
+use icu::locale::{
+    locale,
+    subtags::{language, script},
+};
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
@@ -30,9 +33,10 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
             .replace("posix", "POSIX")
     };
 
-    // und-Hant -> zh_stroke
-    // und-Hans -> zh_pinyin
-    // und-Hani/x -> zh_x
+    // und_Hant -> zh_stroke
+    // und_Hans -> zh_pinyin
+    // und_Hani/x -> zh_x
+    // sr_Cyrl_ME -> sr_Latn
 
     if s == "und_Hant" {
         return "zh_stroke".into();
@@ -40,6 +44,8 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
         return "zh_pinyin".into();
     } else if s == "und_Hani" {
         s = "zh".into();
+    } else if s == "sr_Cyrl_ME" {
+        s = "sr_Latn".into();
     }
 
     s.push('_');
@@ -53,7 +59,7 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     s
 }
 
-fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
+fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
     let (mut language, mut variant) = file_name.rsplit_once('_').unwrap();
     if language == "root" {
         language = "und";
@@ -72,17 +78,25 @@ fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
             // Pinyin is stored in both und-Hans and und-Hani/pinyin
             r.push(DataIdentifierCow::from_borrowed_and_owned(
                 Default::default(),
-                "und-Hans".parse().unwrap(),
+                locale!("und-Hans").into(),
             ));
         } else if variant == "stroke" {
             // Stroke is stored in both und-Hans and und-Hani/stroke
             r.push(DataIdentifierCow::from_borrowed_and_owned(
                 Default::default(),
-                "und-Hant".parse().unwrap(),
+                locale!("und-Hant").into(),
             ));
         }
     } else if variant == "standard" {
         variant = "";
+    }
+
+    if language == "sr_Latn" {
+        // sr-Cyrl-ME falls back to sr-ME, which falls back to sr-Latn.
+        r.push(DataIdentifierCow::from_borrowed_and_owned(
+            Default::default(),
+            locale!("sr-Cyrl-ME").into(),
+        ));
     }
 
     let marker_attributes = match variant {
@@ -97,6 +111,35 @@ fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
 
     r.push(DataIdentifierCow::from_owned(marker_attributes, locale));
     r
+}
+
+#[test]
+fn test_all_fallback_overrides_handled() {
+    let provider = SourceDataProvider::new_testing();
+    let required_overrides = provider
+        .cldr()
+        .unwrap()
+        .core()
+        .read_and_parse::<super::cldr_serde::parent_locales::Resource>(
+            "supplemental/parentLocales.json",
+        )
+        .unwrap()
+        .supplemental
+        .parent_locales
+        .collations
+        .keys()
+        .collect::<Vec<_>>();
+
+    let handled_overrides = [
+        "sr-Cyrl-ME",
+        "yue",
+        "yue-CN",
+        "yue-Hans",
+        "yue-Hans-CN",
+        "yue-Hant",
+    ];
+
+    assert_eq!(required_overrides, handled_overrides);
 }
 
 impl SourceDataProvider {
@@ -130,7 +173,7 @@ impl SourceDataProvider {
                     file_name
                 })
             })
-            .flat_map(|s| file_name_to_id(&s))
+            .flat_map(|s| file_name_to_ids(&s))
             .collect())
     }
 }
