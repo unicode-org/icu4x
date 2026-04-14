@@ -323,12 +323,48 @@ icu_provider::data_struct!(
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationJamo<'data> {
     /// `CollationElement32`s (as `u32`s) for the Hangul Jamo Unicode Block.
     /// The length must be equal to the size of the block (256).
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub ce32s: ZeroVec<'data, u32>,
+}
+
+impl<'data> CollationJamo<'data> {
+    pub(crate) fn as_array(
+        &'data self,
+    ) -> &'data [<u32 as AsULE>::ULE; crate::elements::JAMO_COUNT] {
+        #[allow(clippy::unwrap_used)] // by invariant
+        self.ce32s.as_ule_slice().try_into().unwrap()
+    }
+}
+
+// TODO: redesign Korean search collation handling
+
+#[cfg(feature = "compiled_data")]
+const _: () = assert!(
+    Baked::SINGLETON_COLLATION_JAMO_V1.ce32s.as_slice().len() == crate::elements::JAMO_COUNT
+);
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for CollationJamo<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(serde::Deserialize)]
+        struct Raw<'data> {
+            #[cfg_attr(feature = "serde", serde(borrow))]
+            ce32s: ZeroVec<'data, u32>,
+        }
+
+        let Raw { ce32s } = Raw::deserialize(deserializer)?;
+
+        if ce32s.len() != crate::elements::JAMO_COUNT {
+            return Err(serde::de::Error::custom("invalid"));
+        }
+
+        Ok(Self { ce32s })
+    }
 }
 
 icu_provider::data_struct!(
@@ -554,7 +590,6 @@ impl CollationMetadata {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationSpecialPrimaries<'data> {
     /// The primaries corresponding to `MaxVariable`
     /// character classes packed so that each fits in
@@ -564,10 +599,40 @@ pub struct CollationSpecialPrimaries<'data> {
     /// This is potentially followed by 256 bits
     /// (packed in 16 u16s) to classify every possible
     /// byte into compressible or non-compressible.
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub last_primaries: ZeroVec<'data, u16>,
     /// The high 8 bits of the numeric primary
     pub numeric_primary: u8,
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(serde::Deserialize)]
+        struct Raw<'data> {
+            #[cfg_attr(feature = "serde", serde(borrow))]
+            last_primaries: ZeroVec<'data, u16>,
+            numeric_primary: u8,
+        }
+
+        let Raw {
+            last_primaries,
+            numeric_primary,
+        } = Raw::deserialize(deserializer)?;
+
+        // `variant_count` isn't stable yet:
+        // https://github.com/rust-lang/rust/issues/73662
+        if last_primaries.len() <= (MaxVariable::Currency as usize) {
+            return Err(serde::de::Error::custom("invalid"));
+        }
+
+        Ok(Self {
+            last_primaries,
+            numeric_primary,
+        })
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]

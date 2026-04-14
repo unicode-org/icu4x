@@ -21,7 +21,7 @@ use crate::elements::FALLBACK_CE32;
 use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
     char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
-    HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, JAMO_COUNT, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
+    HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
     NO_CE_QUATERNARY, NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT,
     QUATERNARY_MASK,
 };
@@ -43,7 +43,7 @@ use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
-use core::convert::{Infallible, TryFrom};
+use core::convert::Infallible;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
@@ -55,7 +55,6 @@ use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
-use zerovec::ule::AsULE;
 
 // Special sort key bytes for all levels.
 const LEVEL_SEPARATOR_BYTE: u8 = 1;
@@ -649,16 +648,6 @@ impl Collator {
         let locale_dependent =
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
 
-        // TODO: redesign Korean search collation handling
-        if jamo.get().ce32s.len() != JAMO_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
-        }
-
-        // `variant_count` isn't stable yet:
-        // https://github.com/rust-lang/rust/issues/73662
-        if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
-        }
         let special_primaries = special_primaries.map_project(|csp, _| {
             let compressible_bytes = (csp.last_primaries.len()
                 == MaxVariable::Currency as usize + 16)
@@ -758,25 +747,6 @@ impl CollatorBorrowed<'static> {
         let locale_dependent =
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
 
-        // TODO: redesign Korean search collation handling
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1
-                .ce32s
-                .as_slice()
-                .len()
-                == JAMO_COUNT
-        );
-
-        // `variant_count` isn't stable yet:
-        // https://github.com/rust-lang/rust/issues/73662
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-                .last_primaries
-                .as_slice()
-                .len()
-                > (MaxVariable::Currency as usize)
-        );
-
         let special_primaries = const {
             &CollationSpecialPrimariesValidated {
                 last_primaries: zerovec::ZeroSlice::from_ule_slice(
@@ -791,7 +761,7 @@ impl CollatorBorrowed<'static> {
                 numeric_primary: crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
                     .numeric_primary,
                 compressible_bytes: {
-                    const C: &[<u16 as AsULE>::ULE] =
+                    const C: &[<u16 as zerovec::ule::AsULE>::ULE] =
                         crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
                             .last_primaries
                             .as_slice()
@@ -874,27 +844,7 @@ impl CollatorBorrowed<'static> {
     }
 }
 
-macro_rules! collation_elements {
-    ($self:expr, $chars:expr, $tailoring:expr, $numeric_primary:expr) => {{
-        let jamo = <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from($self.jamo.ce32s.as_ule_slice());
-
-        let jamo = jamo.unwrap();
-
-        CollationElements::new(
-            $chars,
-            $self.root,
-            $tailoring,
-            jamo,
-            &$self.diacritics.secondaries,
-            $self.decompositions,
-            $self.tables,
-            $numeric_primary,
-            $self.lithuanian_dot_above,
-        )
-    }};
-}
-
-impl CollatorBorrowed<'_> {
+impl<'a> CollatorBorrowed<'a> {
     /// The resolved options showing how the default options, the requested options,
     /// and the options from locale data were combined.
     pub fn resolved_options(&self) -> ResolvedCollatorOptions {
@@ -971,7 +921,7 @@ impl CollatorBorrowed<'_> {
     );
 
     #[inline(always)]
-    fn tailoring_or_root(&self) -> &CollationData<'_> {
+    fn tailoring_or_root(&self) -> &'a CollationData<'a> {
         if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {
@@ -1052,8 +1002,29 @@ impl CollatorBorrowed<'_> {
 
         let tailoring = self.tailoring_or_root();
         let numeric_primary = self.numeric_primary();
-        let mut left = collation_elements!(self, left_chars, tailoring, numeric_primary);
-        let mut right = collation_elements!(self, right_chars, tailoring, numeric_primary);
+        let jamo = self.jamo.as_array();
+        let mut left = CollationElements::new(
+            left_chars,
+            self.root,
+            tailoring,
+            jamo,
+            &self.diacritics.secondaries,
+            self.decompositions,
+            self.tables,
+            numeric_primary,
+            self.lithuanian_dot_above,
+        );
+        let mut right = CollationElements::new(
+            right_chars,
+            self.root,
+            tailoring,
+            jamo,
+            &self.diacritics.secondaries,
+            self.decompositions,
+            self.tables,
+            numeric_primary,
+            self.lithuanian_dot_above,
+        );
 
         // Start identical prefix
 
@@ -1921,8 +1892,17 @@ impl CollatorBorrowed<'_> {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
         let levels = self.sort_key_levels();
 
-        let mut iter =
-            collation_elements!(self, iter, self.tailoring_or_root(), self.numeric_primary());
+        let mut iter = CollationElements::new(
+            iter,
+            self.root,
+            self.tailoring_or_root(),
+            self.jamo.as_array(),
+            &self.diacritics.secondaries,
+            self.decompositions,
+            self.tables,
+            self.numeric_primary(),
+            self.lithuanian_dot_above,
+        );
         iter.init();
         let variable_top = self.variable_top();
 
