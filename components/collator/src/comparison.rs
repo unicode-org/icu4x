@@ -723,6 +723,48 @@ impl CollatorBorrowed<'static> {
         })
     }
 
+    /// This creates a root collator using baked data only.
+    ///
+    /// ✨ *Enabled with the `unstable` and `compiled_data` Cargo features.*
+    #[cfg(feature = "compiled_data")]
+    #[cfg(feature = "unstable")]
+    pub const fn new_root(options: CollatorOptions) -> Self {
+        let decompositions = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1;
+        let tables = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1;
+        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
+        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
+        let special_primaries = const {
+            &crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1.const_validated()
+        };
+
+        const METADATA: CollationMetadata = *crate::provider::Baked::COLLATION_METADATA_V1_UND;
+        const _: () = assert!(!METADATA.tailored());
+        let tailoring = None;
+        const _: () = assert!(!METADATA.tailored_diacritics());
+        const _: () = assert!(
+            crate::provider::Baked::COLLATION_DIACRITICS_V1_UND
+                .secondaries
+                .as_slice()
+                .len()
+                == OPTIMIZED_DIACRITICS_MAX_COUNT
+        );
+        let diacritics = crate::provider::Baked::COLLATION_DIACRITICS_V1_UND;
+        const _: () = assert!(!METADATA.reordering());
+        let reordering = None;
+
+        Self {
+            special_primaries,
+            root,
+            tailoring,
+            jamo,
+            diacritics,
+            options: options.resolve(METADATA, None, None),
+            reordering,
+            decompositions,
+            tables,
+        }
+    }
+
     /// Cheaply converts a [`CollatorBorrowed<'static>`] into a [`Collator`].
     ///
     /// Note: Due to branching and indirection, using [`Collator`] might inhibit some

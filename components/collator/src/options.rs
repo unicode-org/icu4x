@@ -523,7 +523,7 @@ impl CollatorOptionsBitField {
     }
 
     /// This is the BCP47 key `ks`. See the enum for examples.
-    fn set_strength(&mut self, strength: Option<Strength>) {
+    const fn set_strength(&mut self, strength: Option<Strength>) {
         self.0 &= !CollatorOptionsBitField::STRENGTH_MASK;
         if let Some(strength) = strength {
             self.0 |= CollatorOptionsBitField::EXPLICIT_STRENGTH_MASK;
@@ -548,7 +548,7 @@ impl CollatorOptionsBitField {
 
     /// The maximum character class that `AlternateHandling::Shifted`
     /// applies to. See the enum for examples.
-    fn set_max_variable(&mut self, max_variable: Option<MaxVariable>) {
+    const fn set_max_variable(&mut self, max_variable: Option<MaxVariable>) {
         self.0 &= !CollatorOptionsBitField::MAX_VARIABLE_MASK;
         if let Some(max_variable) = max_variable {
             self.0 |= CollatorOptionsBitField::EXPLICIT_MAX_VARIABLE_MASK;
@@ -570,11 +570,11 @@ impl CollatorOptionsBitField {
 
     /// Whether certain characters are moved from the primary level to
     /// the quaternary level. See the enum for examples.
-    fn set_alternate_handling(&mut self, alternate_handling: Option<AlternateHandling>) {
+    const fn set_alternate_handling(&mut self, alternate_handling: Option<AlternateHandling>) {
         self.0 &= !CollatorOptionsBitField::ALTERNATE_HANDLING_MASK;
         if let Some(alternate_handling) = alternate_handling {
             self.0 |= CollatorOptionsBitField::EXPLICIT_ALTERNATE_HANDLING_MASK;
-            if alternate_handling == AlternateHandling::Shifted {
+            if matches!(alternate_handling, AlternateHandling::Shifted) {
                 self.0 |= CollatorOptionsBitField::ALTERNATE_HANDLING_MASK;
             }
         } else {
@@ -595,7 +595,7 @@ impl CollatorOptionsBitField {
     /// "case".
     ///
     /// See [the ICU guide](https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel).
-    fn set_case_level(&mut self, case_level: Option<bool>) {
+    const fn set_case_level(&mut self, case_level: Option<bool>) {
         self.0 &= !CollatorOptionsBitField::CASE_LEVEL_MASK;
         if let Some(case_level) = case_level {
             self.0 |= CollatorOptionsBitField::EXPLICIT_CASE_LEVEL_MASK;
@@ -607,7 +607,7 @@ impl CollatorOptionsBitField {
         }
     }
 
-    fn set_case_level_from_enum(&mut self, case_level: Option<CaseLevel>) {
+    const fn set_case_level_from_enum(&mut self, case_level: Option<CaseLevel>) {
         match case_level {
             Some(CaseLevel::On) => {
                 self.set_case_level(Some(true));
@@ -635,7 +635,7 @@ impl CollatorOptionsBitField {
     /// level.
     ///
     /// See [the ICU guide](https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel).
-    fn set_case_first(&mut self, case_first: Option<CollationCaseFirst>) {
+    const fn set_case_first(&mut self, case_first: Option<CollationCaseFirst>) {
         self.0 &=
             !(CollatorOptionsBitField::CASE_FIRST_MASK | CollatorOptionsBitField::UPPER_FIRST_MASK);
         if let Some(case_first) = case_first {
@@ -650,7 +650,7 @@ impl CollatorOptionsBitField {
                     self.0 |= CollatorOptionsBitField::UPPER_FIRST_MASK;
                 }
                 _ => {
-                    debug_assert!(false, "unknown variant `{case_first:?}`");
+                    debug_assert!(false, "unknown variant");
                 }
             }
         } else {
@@ -666,7 +666,7 @@ impl CollatorOptionsBitField {
 
     /// Whether second level compares the last accent difference
     /// instead of the first accent difference.
-    fn set_backward_second_level(&mut self, backward_second_level: Option<bool>) {
+    const fn set_backward_second_level(&mut self, backward_second_level: Option<bool>) {
         self.0 &= !CollatorOptionsBitField::BACKWARD_SECOND_LEVEL_MASK;
         if let Some(backward_second_level) = backward_second_level {
             self.0 |= CollatorOptionsBitField::EXPLICIT_BACKWARD_SECOND_LEVEL_MASK;
@@ -686,7 +686,7 @@ impl CollatorOptionsBitField {
 
     /// Whether sequences of decimal digits are compared according
     /// to their numeric value.
-    fn set_numeric(&mut self, numeric: Option<bool>) {
+    const fn set_numeric(&mut self, numeric: Option<bool>) {
         self.0 &= !CollatorOptionsBitField::NUMERIC_MASK;
         if let Some(numeric) = numeric {
             self.0 |= CollatorOptionsBitField::EXPLICIT_NUMERIC_MASK;
@@ -698,7 +698,7 @@ impl CollatorOptionsBitField {
         }
     }
 
-    fn set_numeric_from_enum(&mut self, numeric: Option<CollationNumericOrdering>) {
+    const fn set_numeric_from_enum(&mut self, numeric: Option<CollationNumericOrdering>) {
         match numeric {
             Some(CollationNumericOrdering::True) => {
                 self.set_numeric(Some(true));
@@ -707,7 +707,7 @@ impl CollatorOptionsBitField {
                 self.set_numeric(Some(false));
             }
             Some(_) => {
-                debug_assert!(false, "unknown variant `{numeric:?}`");
+                debug_assert!(false, "unknown variant");
                 self.set_numeric(Some(false));
             }
             None => self.set_numeric(None),
@@ -738,7 +738,7 @@ impl CollatorOptionsBitField {
         (self.0 & CollatorOptionsBitField::LITHUANIAN_DOT_ABOVE_MASK) != 0
     }
 
-    fn set_lithuanian_dot_above(&mut self, lithuanian_dot_above: bool) {
+    const fn set_lithuanian_dot_above(&mut self, lithuanian_dot_above: bool) {
         self.0 &= !CollatorOptionsBitField::LITHUANIAN_DOT_ABOVE_MASK;
         if lithuanian_dot_above {
             self.0 |= CollatorOptionsBitField::LITHUANIAN_DOT_ABOVE_MASK;
@@ -749,7 +749,7 @@ impl CollatorOptionsBitField {
     /// set the value from `other`. Values taken from `other`
     /// are marked as explicitly set if they were explicitly
     /// set in `other`.
-    fn set_defaults(&mut self, other: CollatorOptionsBitField) {
+    const fn set_defaults(&mut self, other: CollatorOptionsBitField) {
         if self.0 & CollatorOptionsBitField::EXPLICIT_STRENGTH_MASK == 0 {
             self.0 &= !CollatorOptionsBitField::STRENGTH_MASK;
             self.0 |= other.0 & CollatorOptionsBitField::STRENGTH_MASK;
@@ -792,7 +792,7 @@ impl CollatorOptionsBitField {
 }
 
 impl CollatorOptions {
-    pub(crate) fn resolve(
+    pub(crate) const fn resolve(
         self,
         metadata: CollationMetadata,
         case_first: Option<CollationCaseFirst>,
