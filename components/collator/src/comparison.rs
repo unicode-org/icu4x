@@ -38,8 +38,8 @@ use crate::provider::CollationMetadataV1;
 use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
 use crate::provider::CollationRootV1;
+use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
-use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::Infallible;
@@ -49,7 +49,6 @@ use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
 use icu_normalizer::DecomposingNormalizerBorrowed;
 use icu_normalizer::Decomposition;
-use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
@@ -524,7 +523,7 @@ impl LocaleSpecificDataHolder {
 /// Compares strings according to culturally-relevant ordering.
 #[derive(Debug)]
 pub struct Collator {
-    special_primaries: DataPayload<ErasedMarker<CollationSpecialPrimariesValidated<'static>>>,
+    special_primaries: DataPayload<CollationSpecialPrimariesV1>,
     root: DataPayload<CollationRootV1>,
     tailoring: Option<DataPayload<CollationTailoringV1>>,
     jamo: DataPayload<CollationJamoV1>,
@@ -588,45 +587,18 @@ impl Collator {
             + DataProvider<NormalizerNfdTablesV1>
             + ?Sized,
     {
-        Self::try_new_unstable_internal(
-            provider,
-            provider.load(Default::default())?.payload,
-            provider.load(Default::default())?.payload,
-            provider.load(Default::default())?.payload,
-            provider.load(Default::default())?.payload,
-            provider.load(Default::default())?.payload,
-            prefs,
-            options,
-        )
-    }
+        let root = provider.load(Default::default())?.payload;
+        let decompositions = provider.load(Default::default())?.payload;
+        let tables = provider.load(Default::default())?.payload;
+        let jamo = provider.load(Default::default())?.payload;
+        let special_primaries = provider.load(Default::default())?.payload;
 
-    #[expect(clippy::too_many_arguments)]
-    fn try_new_unstable_internal<D>(
-        provider: &D,
-        root: DataPayload<CollationRootV1>,
-        decompositions: DataPayload<NormalizerNfdDataV1>,
-        tables: DataPayload<NormalizerNfdTablesV1>,
-        jamo: DataPayload<CollationJamoV1>,
-        special_primaries: DataPayload<CollationSpecialPrimariesV1>,
-        prefs: CollatorPreferences,
-        options: CollatorOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: DataProvider<CollationRootV1>
-            + DataProvider<CollationTailoringV1>
-            + DataProvider<CollationDiacriticsV1>
-            + DataProvider<CollationMetadataV1>
-            + DataProvider<CollationReorderingV1>
-            + ?Sized,
-    {
         let LocaleSpecificDataHolder {
             tailoring,
             diacritics,
             reordering,
             metadata,
         } = LocaleSpecificDataHolder::try_new_unstable(provider, prefs)?;
-
-        let special_primaries = special_primaries.map_project(|csp, _| csp.validated());
 
         Ok(Collator {
             special_primaries,
@@ -672,7 +644,7 @@ macro_rules! compare {
 /// borrowed version.
 #[derive(Debug)]
 pub struct CollatorBorrowed<'a> {
-    special_primaries: &'a CollationSpecialPrimariesValidated<'a>,
+    special_primaries: &'a CollationSpecialPrimaries<'a>,
     root: &'a CollationData<'a>,
     tailoring: Option<&'a CollationData<'a>>,
     jamo: &'a CollationJamo<'a>,
@@ -696,10 +668,7 @@ impl CollatorBorrowed<'static> {
         let tables = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1;
         let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
         let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
-
-        let special_primaries = const {
-            &crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1.const_validated()
-        };
+        let special_primaries = crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
 
         let locale_dependent = LocaleSpecificDataHolder::try_new_unstable(provider, prefs)?;
         #[expect(clippy::unwrap_used)] // baked provider
@@ -733,9 +702,7 @@ impl CollatorBorrowed<'static> {
         let tables = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1;
         let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
         let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
-        let special_primaries = const {
-            &crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1.const_validated()
-        };
+        let special_primaries = crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
 
         const METADATA: CollationMetadata = *crate::provider::Baked::COLLATION_METADATA_V1_UND;
         const _: () = assert!(!METADATA.tailored());

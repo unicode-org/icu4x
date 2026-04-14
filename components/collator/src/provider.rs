@@ -592,20 +592,22 @@ impl CollationMetadata {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 pub struct CollationSpecialPrimaries<'data> {
     /// The primaries corresponding to `MaxVariable`
     /// character classes packed so that each fits in
     /// 16 bits. Length must match the number of enum
     /// variants in `MaxVariable`, currently 4.
-    ///
-    /// This is potentially followed by 256 bits
-    /// (packed in 16 u16s) to classify every possible
-    /// byte into compressible or non-compressible.
     pub last_primaries: ZeroVec<'data, u16>,
     /// The high 8 bits of the numeric primary
     pub numeric_primary: u8,
+    /// 256 bits (packed in 16 u16s) to classify every possible
+    /// byte into compressible or non-compressible.
+    ///
+    /// In the serde encoding, this is appended to `last_primaries`,
+    /// or might be missing.
+    pub compressible_bytes: ZeroVec<'data, u16>,
 }
 
 #[cfg(feature = "serde")]
@@ -617,119 +619,80 @@ impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
         #[derive(serde::Deserialize)]
         struct Raw<'data> {
             #[cfg_attr(feature = "serde", serde(borrow))]
-            last_primaries: ZeroVec<'data, u16>,
+            concatenated: &'data ZeroSlice<u16>,
             numeric_primary: u8,
         }
 
         let Raw {
-            last_primaries,
+            concatenated,
             numeric_primary,
         } = Raw::deserialize(deserializer)?;
 
-        // `variant_count` isn't stable yet:
-        // https://github.com/rust-lang/rust/issues/73662
-        if last_primaries.len() <= (MaxVariable::Currency as usize) {
+        let Some((l, c)) = concatenated
+            .as_ule_slice()
+            // `variant_count` isn't stable yet:
+            // https://github.com/rust-lang/rust/issues/73662
+            .split_at_checked(MaxVariable::Currency as usize + 1)
+        else {
             return Err(serde::de::Error::custom("invalid"));
+        };
+
+        let last_primaries = ZeroSlice::from_ule_slice(l).as_zerovec();
+        let mut compressible_bytes = ZeroSlice::from_ule_slice(c).as_zerovec();
+
+        if c.len() != 16 {
+            compressible_bytes = zerovec::zerovec!(
+                u16; <u16 as AsULE>::ULE::from_unsigned; [
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b1111_1111_1111_1110,
+                0b1111_1111_1111_1111,
+                0b0000_0000_0000_0001,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0000_0000_0000_0000,
+                0b0100_0000_0000_0000,
+            ]);
         }
 
         Ok(Self {
             last_primaries,
             numeric_primary,
+            compressible_bytes,
         })
     }
 }
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub(crate) struct CollationSpecialPrimariesValidated<'data> {
-    /// The primaries corresponding to `MaxVariable`
-    /// character classes packed so that each fits in
-    /// 16 bits. Length must match the number of enum
-    /// variants in `MaxVariable`, currently 4.
-    pub last_primaries: ZeroVec<'data, u16>,
-    /// The high 8 bits of the numeric primary
-    pub numeric_primary: u8,
-    /// 256 bits (packed in 16 u16s) to classify every possible
-    /// byte into compressible or non-compressible.
-    pub compressible_bytes: &'data [<u16 as AsULE>::ULE; 16],
-}
-
-impl<'a> CollationSpecialPrimaries<'a> {
-    const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b1111_1111_1111_1110),
-        <u16 as AsULE>::ULE::from_unsigned(0b1111_1111_1111_1111),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0001),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
-        <u16 as AsULE>::ULE::from_unsigned(0b0100_0000_0000_0000),
-    ];
-
-    pub(crate) fn validated(self) -> CollationSpecialPrimariesValidated<'a> {
-        let (last_primaries, compressible_bytes) =
-            if let Some(borrowed) = self.last_primaries.as_maybe_borrowed() {
-                let (l, c) = borrowed
-                    .as_ule_slice()
-                    // by invariant
-                    .split_at(MaxVariable::Currency as usize + 1);
-                (
-                    l,
-                    c.try_into()
-                        .unwrap_or(Self::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK),
-                )
-            } else {
-                (
-                    self.last_primaries.as_slice().as_ule_slice(),
-                    Self::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK,
-                )
-            };
-
-        let last_primaries_truncate_len = last_primaries.len();
-        CollationSpecialPrimariesValidated {
-            last_primaries: self.last_primaries.truncated(last_primaries_truncate_len),
-            numeric_primary: self.numeric_primary,
-            compressible_bytes,
+#[cfg(feature = "datagen")]
+impl serde::Serialize for CollationSpecialPrimaries<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        #[derive(serde::Serialize)]
+        struct Raw {
+            #[serde(rename = "last_primaries")]
+            concatenated: ZeroVec<'static, u16>,
+            numeric_primary: u8,
         }
-    }
 
-    #[cfg(feature = "compiled_data")]
-    pub(crate) const fn const_validated(&'static self) -> CollationSpecialPrimariesValidated<'a> {
-        let borrowed = self.last_primaries.as_slice();
-        let (last_primaries, compressible_bytes) = borrowed
-            .as_ule_slice()
-            // by invariant
-            .split_at(MaxVariable::Currency as usize + 1);
-        // TODO: use c.as_array() on MSRV 1.93
-        let compressible_bytes = if compressible_bytes.len() == 16 {
-            unsafe { &*(compressible_bytes.as_ptr() as *const [<u16 as AsULE>::ULE; 16]) }
-        } else {
-            Self::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK
-        };
-
-        CollationSpecialPrimariesValidated {
-            last_primaries: ZeroSlice::from_ule_slice(last_primaries).as_zerovec(),
+        Raw {
+            concatenated: self
+                .last_primaries
+                .iter()
+                .chain(self.compressible_bytes.iter())
+                .collect(),
             numeric_primary: self.numeric_primary,
-            compressible_bytes,
         }
+        .serialize(serializer)
     }
-}
-
-#[test]
-fn compressible_bytes() {
-    assert_eq!(
-        Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-            .clone()
-            .validated(),
-        Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1.const_validated(),
-    );
 }
 
 icu_provider::data_struct!(
@@ -737,7 +700,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-impl CollationSpecialPrimariesValidated<'_> {
+impl CollationSpecialPrimaries<'_> {
     #[expect(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.
@@ -749,11 +712,10 @@ impl CollationSpecialPrimariesValidated<'_> {
 
     #[allow(dead_code)]
     pub(crate) fn is_compressible(&self, b: u8) -> bool {
-        // Indexing slicing OK by construction and pasting this
-        // into Compiler Explorer shows that the panic
-        // is optimized away.
-        #[expect(clippy::indexing_slicing)]
-        let field = u16::from_unaligned(self.compressible_bytes[usize::from(b >> 4)]);
+        let field = self
+            .compressible_bytes
+            .get(usize::from(b >> 4))
+            .unwrap_or_default();
         let mask = 1 << (b & 0b1111);
         (field & mask) != 0
     }

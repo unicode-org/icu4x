@@ -378,13 +378,9 @@ impl collator_serde::CollationSpecialPrimaries {
         }
 
         Ok(CollationSpecialPrimaries {
-            last_primaries: self
-                .last_primaries
-                .iter()
-                .copied()
-                .chain(packed_compressible_bytes)
-                .collect(),
+            last_primaries: self.last_primaries.iter().copied().collect(),
             numeric_primary: self.numeric_primary,
+            compressible_bytes: packed_compressible_bytes.into_iter().collect(),
         })
     }
 }

@@ -181,7 +181,7 @@ collation/reordering/v1, und-Hans, -> und-Hani/pinyin
 collation/reordering/v1, und-Hant, -> und-Hani/stroke
 collation/reordering/v1, ur, -> ar
 collation/root/v1, <singleton>, 131040B, 130923B, 787ce37ea65e1e9
-collation/special/primaries/v1, <singleton>, 72B, 42B, 46181a77c61fe445
+collation/special/primaries/v1, <singleton>, 96B, 42B, 46181a77c61fe445
 collation/tailoring/v1, <lookup>, 608B, 102 identifiers
 collation/tailoring/v1, <total>, 920210B, 908458B, 93 unique payloads
 collation/tailoring/v1, af, 1004B, 877B, 8e3ca7ba0c0efe4b
