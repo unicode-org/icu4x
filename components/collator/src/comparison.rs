@@ -533,7 +533,6 @@ pub struct Collator {
     reordering: Option<DataPayload<CollationReorderingV1>>,
     decompositions: DataPayload<NormalizerNfdDataV1>,
     tables: DataPayload<NormalizerNfdTablesV1>,
-    lithuanian_dot_above: bool,
 }
 
 impl Collator {
@@ -549,7 +548,6 @@ impl Collator {
             reordering: self.reordering.as_ref().map(|s| s.get()),
             decompositions: self.decompositions.get(),
             tables: self.tables.get(),
-            lithuanian_dot_above: self.lithuanian_dot_above,
         }
     }
 
@@ -640,7 +638,6 @@ impl Collator {
             reordering,
             decompositions,
             tables,
-            lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }
 }
@@ -684,7 +681,6 @@ pub struct CollatorBorrowed<'a> {
     reordering: Option<&'a CollationReordering<'a>>,
     decompositions: &'a DecompositionData<'a>,
     tables: &'a DecompositionTables<'a>,
-    lithuanian_dot_above: bool,
 }
 
 impl CollatorBorrowed<'static> {
@@ -724,7 +720,6 @@ impl CollatorBorrowed<'static> {
             reordering,
             decompositions,
             tables,
-            lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }
 
@@ -753,7 +748,6 @@ impl CollatorBorrowed<'static> {
             },
             decompositions: DataPayload::from_static_ref(self.decompositions),
             tables: DataPayload::from_static_ref(self.tables),
-            lithuanian_dot_above: self.lithuanian_dot_above,
         }
     }
 }
@@ -917,6 +911,7 @@ impl<'a> CollatorBorrowed<'a> {
         let tailoring = self.tailoring_or_root();
         let numeric_primary = self.numeric_primary();
         let jamo = self.jamo.as_array();
+        let lithuanian_dot_above = self.options.lithuanian_dot_above();
         let mut left = CollationElements::new(
             left_chars,
             self.root,
@@ -926,7 +921,7 @@ impl<'a> CollatorBorrowed<'a> {
             self.decompositions,
             self.tables,
             numeric_primary,
-            self.lithuanian_dot_above,
+            lithuanian_dot_above,
         );
         let mut right = CollationElements::new(
             right_chars,
@@ -937,7 +932,7 @@ impl<'a> CollatorBorrowed<'a> {
             self.decompositions,
             self.tables,
             numeric_primary,
-            self.lithuanian_dot_above,
+            lithuanian_dot_above,
         );
 
         // Start identical prefix
@@ -1815,7 +1810,7 @@ impl<'a> CollatorBorrowed<'a> {
             self.decompositions,
             self.tables,
             self.numeric_primary(),
-            self.lithuanian_dot_above,
+            self.options.lithuanian_dot_above(),
         );
         iter.init();
         let variable_top = self.variable_top();

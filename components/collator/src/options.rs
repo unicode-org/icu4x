@@ -485,6 +485,8 @@ impl CollatorOptionsBitField {
     const BACKWARD_SECOND_LEVEL_MASK: u32 = 1 << 11;
     /// Bit    12 : Numeric
     const NUMERIC_MASK: u32 = 1 << 12;
+    /// Bit    13 : Lithuanian dot above
+    const LITHUANIAN_DOT_ABOVE_MASK: u32 = 1 << 13;
 
     /// Whether strength is explicitly set.
     const EXPLICIT_STRENGTH_MASK: u32 = 1 << 31;
@@ -732,6 +734,17 @@ impl CollatorOptionsBitField {
         (self.0 & CollatorOptionsBitField::UPPER_FIRST_MASK) != 0
     }
 
+    pub fn lithuanian_dot_above(self) -> bool {
+        (self.0 & CollatorOptionsBitField::LITHUANIAN_DOT_ABOVE_MASK) != 0
+    }
+
+    fn set_lithuanian_dot_above(&mut self, lithuanian_dot_above: bool) {
+        self.0 &= !CollatorOptionsBitField::LITHUANIAN_DOT_ABOVE_MASK;
+        if lithuanian_dot_above {
+            self.0 |= CollatorOptionsBitField::LITHUANIAN_DOT_ABOVE_MASK;
+        }
+    }
+
     /// For options left as defaults in this `CollatorOptions`,
     /// set the value from `other`. Values taken from `other`
     /// are marked as explicitly set if they were explicitly
@@ -804,6 +817,7 @@ impl CollatorOptions {
         merged_options.set_case_level_from_enum(self.case_level);
         merged_options.set_case_first(case_first);
         merged_options.set_numeric_from_enum(numeric_ordering);
+        merged_options.set_lithuanian_dot_above(metadata.lithuanian_dot_above());
         merged_options.set_defaults(altered_defaults);
         merged_options
     }
