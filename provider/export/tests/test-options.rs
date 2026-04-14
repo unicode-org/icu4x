@@ -280,7 +280,7 @@ fn all_runtime_retain_base() {
         "sr",
         "sr-Cyrl-ME",
         // Note: 'sr-Cyrl-RO' inherits from sr
-        // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
+        // Note: 'sr' and 'sr-Latn' have the same data, but they don't inherit
         "sr-Latn",
         "th", // (same as 'und', but retained)
         "th/thai",
