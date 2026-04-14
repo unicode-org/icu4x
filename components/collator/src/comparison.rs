@@ -26,9 +26,7 @@ use crate::elements::{
     QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
-use crate::options::{
-    AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength,
-};
+use crate::options::{AlternateHandling, CollatorOptions, ResolvedCollatorOptions, Strength};
 use crate::preferences::{CollationCaseFirst, CollationNumericOrdering, CollationType};
 use crate::provider::CollationData;
 use crate::provider::CollationDiacritics;
@@ -648,28 +646,7 @@ impl Collator {
         let locale_dependent =
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
 
-        let special_primaries = special_primaries.map_project(|csp, _| {
-            let compressible_bytes = (csp.last_primaries.len()
-                == MaxVariable::Currency as usize + 16)
-                .then(|| {
-                    csp.last_primaries
-                        .as_maybe_borrowed()?
-                        .as_ule_slice()
-                        .get((MaxVariable::Currency as usize)..)?
-                        .try_into()
-                        .ok()
-                })
-                .flatten()
-                .unwrap_or(
-                    CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK,
-                );
-
-            CollationSpecialPrimariesValidated {
-                last_primaries: csp.last_primaries.truncated(MaxVariable::Currency as usize),
-                numeric_primary: csp.numeric_primary,
-                compressible_bytes,
-            }
-        });
+        let special_primaries = special_primaries.map_project(|csp, _| csp.validated());
 
         Ok(Collator {
             special_primaries,
@@ -748,50 +725,7 @@ impl CollatorBorrowed<'static> {
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
 
         let special_primaries = const {
-            &CollationSpecialPrimariesValidated {
-                last_primaries: zerovec::ZeroSlice::from_ule_slice(
-                    crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-                        .last_primaries
-                        .as_slice()
-                        .as_ule_slice()
-                        .split_at(MaxVariable::Currency as usize)
-                        .0,
-                )
-                .as_zerovec(),
-                numeric_primary: crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-                    .numeric_primary,
-                compressible_bytes: {
-                    const C: &[<u16 as zerovec::ule::AsULE>::ULE] =
-                        crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-                            .last_primaries
-                            .as_slice()
-                            .as_ule_slice();
-                    if C.len() == MaxVariable::Currency as usize + 16 {
-                        let i = MaxVariable::Currency as usize;
-                        #[allow(clippy::indexing_slicing)] // protected, const
-                        &[
-                            C[i],
-                            C[i + 1],
-                            C[i + 2],
-                            C[i + 3],
-                            C[i + 4],
-                            C[i + 5],
-                            C[i + 6],
-                            C[i + 7],
-                            C[i + 8],
-                            C[i + 9],
-                            C[i + 10],
-                            C[i + 11],
-                            C[i + 12],
-                            C[i + 13],
-                            C[i + 14],
-                            C[i + 15],
-                        ]
-                    } else {
-                        CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK
-                    }
-                },
-            }
+            &crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1.const_validated()
         };
 
         // Attribute belongs closer to `unwrap`, but

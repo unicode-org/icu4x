@@ -649,8 +649,8 @@ pub(crate) struct CollationSpecialPrimariesValidated<'data> {
     pub compressible_bytes: &'data [<u16 as AsULE>::ULE; 16],
 }
 
-impl CollationSpecialPrimariesValidated<'static> {
-    pub(crate) const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
+impl<'a> CollationSpecialPrimaries<'a> {
+    const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
         <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
         <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
         <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
@@ -668,6 +668,64 @@ impl CollationSpecialPrimariesValidated<'static> {
         <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
         <u16 as AsULE>::ULE::from_unsigned(0b0100_0000_0000_0000),
     ];
+
+    pub(crate) fn validated(self) -> CollationSpecialPrimariesValidated<'a> {
+        let (last_primaries, compressible_bytes) =
+            if let Some(borrowed) = self.last_primaries.as_maybe_borrowed() {
+                let (l, c) = borrowed
+                    .as_ule_slice()
+                    // by invariant
+                    .split_at(MaxVariable::Currency as usize + 1);
+                (
+                    l,
+                    c.try_into()
+                        .unwrap_or(Self::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK),
+                )
+            } else {
+                (
+                    self.last_primaries.as_slice().as_ule_slice(),
+                    Self::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK,
+                )
+            };
+
+        let last_primaries_truncate_len = last_primaries.len();
+        CollationSpecialPrimariesValidated {
+            last_primaries: self.last_primaries.truncated(last_primaries_truncate_len),
+            numeric_primary: self.numeric_primary,
+            compressible_bytes,
+        }
+    }
+
+    #[cfg(feature = "compiled_data")]
+    pub(crate) const fn const_validated(&'static self) -> CollationSpecialPrimariesValidated<'a> {
+        let borrowed = self.last_primaries.as_slice();
+        let (last_primaries, compressible_bytes) = borrowed
+            .as_ule_slice()
+            // by invariant
+            .split_at(MaxVariable::Currency as usize + 1);
+        // TODO: use c.as_array() on MSRV 1.93
+        let compressible_bytes = if compressible_bytes.len() == 16 {
+            unsafe { &*(compressible_bytes.as_ptr() as *const [<u16 as AsULE>::ULE; 16]) }
+        } else {
+            Self::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK
+        };
+
+        CollationSpecialPrimariesValidated {
+            last_primaries: ZeroSlice::from_ule_slice(last_primaries).as_zerovec(),
+            numeric_primary: self.numeric_primary,
+            compressible_bytes,
+        }
+    }
+}
+
+#[test]
+fn compressible_bytes() {
+    assert_eq!(
+        Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+            .clone()
+            .validated(),
+        Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1.const_validated(),
+    );
 }
 
 icu_provider::data_struct!(
