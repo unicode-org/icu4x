@@ -13,6 +13,7 @@ use alloc::boxed::Box;
 /// `Outer` is `repr(transparent)` and has one non-zero-sized field
 /// of type `Inner`.
 #[cfg(feature = "alloc")]
+#[inline(always)]
 pub unsafe fn cast_transparent_box<Outer, Inner>(inner: Box<Inner>) -> Box<Outer> {
     // Safety:
     //
