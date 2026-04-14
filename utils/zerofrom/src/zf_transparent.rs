@@ -10,11 +10,13 @@ use alloc::boxed::Box;
 ///
 /// # Safety
 ///
-/// `Outer` is `repr(transparent)` and has one non-zero-sized field
-/// of type `Inner`.
+/// `Outer` is `repr(transparent)` and has one non-zero-sized field of type `Inner`.
+///
+/// Suggestion: explicitly setting the generic parameters to two types satisfying this invariant
+/// makes the fn safe to call.
 #[cfg(feature = "alloc")]
 #[inline(always)]
-pub unsafe fn cast_transparent_box<Outer, Inner>(inner: Box<Inner>) -> Box<Outer> {
+pub unsafe fn cast_transparent_box<Inner, Outer>(inner: Box<Inner>) -> Box<Outer> {
     // Safety:
     //
     // - Both boxes have the same allocator (the global allocator).
@@ -82,7 +84,7 @@ macro_rules! transparent {
 		$(
 			impl<'zf> $crate::ZeroFrom<'zf, $inner_zf> for &'zf $outer {
 				fn zero_from(inner: &'zf $inner) -> Self {
-					unsafe { core::mem::transmute(inner) }
+					unsafe { core::mem::transmute::<&$inner, &$outer>(inner) }
 				}
 			}
 		)?
@@ -90,21 +92,20 @@ macro_rules! transparent {
 			$(
 				$(#[$meta_ref])*
 				$vis_ref fn $fn_ref(inner: &$inner_ref) -> &Self {
-					unsafe { core::mem::transmute(inner) }
+					unsafe { core::mem::transmute::<&$inner, &$outer>(inner) }
 				}
 			)?
 			$(
 				$(#[$meta_slice])*
 				$vis_slice fn $fn_slice(inner: &[$inner_slice]) -> &[Self] {
-					unsafe { core::mem::transmute(inner) }
+					unsafe { core::mem::transmute::<&[$inner], &[$outer]>(inner) }
 				}
 			)?
 			$(
 				$(#[$meta_box])*
 				$vis_box fn $fn_box(inner: $crate::internal::Box<$inner_box>) -> $crate::internal::Box<Self> {
 					// Safety: $outer is repr(transparent) over $inner.
-					// TODO: Enforce that $inner is the same as $inner_box
-					unsafe { $crate::internal::cast_transparent_box(inner) }
+					unsafe { $crate::internal::cast_transparent_box::<$inner, $outer>(inner) }
 				}
 			)?
 			$(
@@ -116,3 +117,41 @@ macro_rules! transparent {
 		})?
 	};
 }
+
+/// Additional tests for failure modes.
+///
+/// ```compile_fail,E0053
+/// zerofrom::transparent! {
+///     #[repr(transparent)]
+///     pub struct Foo(String);
+///     // Wrong types in these positions!
+///     impl ZeroFrom<&Foo> for &String;
+/// };
+/// ```
+///
+/// ```compile_fail,E0308
+/// zerofrom::transparent! {
+///     #[repr(transparent)]
+///     pub struct Foo(String);
+///     impl {
+///         @ref
+///         // Wrong type in this position!
+///         pub fn from(&Foo) -> &Self;
+///     }
+/// };
+/// ```
+///
+/// ```compile_fail,E0308
+/// zerofrom::transparent! {
+///     #[repr(transparent)]
+///     pub struct Foo(String);
+///     impl {
+///         @slice
+///         // Wrong type in this position!
+///         pub fn from(&[Foo]) -> &[Self];
+///     }
+/// };
+/// ```
+///
+/// TODO: Rc
+mod _tests {}
