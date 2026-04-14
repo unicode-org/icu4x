@@ -40,4 +40,5 @@ pub use crate::zero_from::ZeroFrom;
 pub mod internal {
     pub use alloc::boxed::Box;
     pub use alloc::rc::Rc;
+    pub use crate::zf_transparent::cast_transparent_box;
 }
