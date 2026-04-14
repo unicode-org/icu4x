@@ -124,6 +124,14 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                     result.extend(seg.segment_str(slice).map(|n| offset + n));
                 }
                 None => {
+                    // When a space-only Unknown chunk sits between SA segments,
+                    // the preceding dict/LSTM segmenter will have placed a break
+                    // at the end of the SA chunk (right before the space). To avoid
+                    // a double-break (before AND after space), remove that preceding
+                    // break and only keep the break after the space(s).
+                    if slice.bytes().all(|b| b == b' ') && result.last() == Some(&offset) {
+                        result.pop();
+                    }
                     result.push(offset + slice.len());
                 }
             }
@@ -147,6 +155,9 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                     result.extend(seg.segment_utf16(slice).map(|n| offset + n));
                 }
                 None => {
+                    if slice.iter().all(|&c| c == 0x0020) && result.last() == Some(&offset) {
+                        result.pop();
+                    }
                     result.push(offset + slice.len());
                 }
             }

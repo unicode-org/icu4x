@@ -1022,32 +1022,14 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
             // UAX14 doesn't have Thai etc, so use another way.
             if self.options.word_option != LineBreakWordOption::BreakAll
+                && Y::use_complex_breaking(self, left_codepoint)
+                && Y::use_complex_breaking(self, right_codepoint)
             {
-                // Extended to handle SA-SPACE(s)-SA sequences
-                let should_use_complex = if Y::use_complex_breaking(self, left_codepoint) {
-                    if Y::use_complex_breaking(self, right_codepoint) {
-                        true  // SA × SA
-                    } else if right_prop == SP {
-                        // SA × SP - check if SA continues after space(s)
-                        self.peek_past_spaces_for_sa()
-                    } else {
-                        false
-                    }
-                } else {
-                    false
-                };
-
-                if should_use_complex {
-                    let result = Y::line_handle_complex_language(self, left_codepoint);
-                    if result.is_some() { 
-                        return result;
-                    }
+                let result = Y::line_handle_complex_language(self, left_codepoint);
+                if result.is_some() {
+                    return result;
                 }
-            }
-
-            // Suppress UAX#14 breaks at SA × SP when SA continues after space(s)
-            if left_prop == SA && right_prop == SP && self.peek_past_spaces_for_sa() {
-                continue;
+                // I may have to fetch text until non-SA character?.
             }
 
             // If break_state is equals or grater than 0, it is alias of property.
@@ -1228,31 +1210,6 @@ impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
             _ => false,
         }
     }
-
-    /// Helper: Check if spaces are followed by SA (complex script) characters.
-    /// Peeks past all consecutive SP (space) characters to see if SA continues.
-    /// Returns true if SA is found after space(s), false otherwise.
-    /// Restores iterator position before returning.
-    fn peek_past_spaces_for_sa(&mut self) -> bool {
-        let temp_iter = self.iter.clone();
-        let temp_pos = self.current_pos_data;
-        self.advance_iter();
-
-        let mut has_sa = false;
-        while let Some(c) = self.get_current_codepoint() {
-            let p = self.get_linebreak_property(c);
-            if p == SP {
-                self.advance_iter();
-            } else {
-                has_sa = p == SA;
-                break;
-            }
-        }
-
-        self.iter = temp_iter;
-        self.current_pos_data = temp_pos;
-        has_sa
-    }
 }
 
 impl LineBreakType for Utf8 {
@@ -1334,6 +1291,11 @@ where
     let start_point = iter.current_pos_data;
     let mut s = String::new();
     s.push(left_codepoint);
+    // Track whether collection stopped at a space (not followed by SA). In that
+    // case the dict/LSTM's end-of-chunk break falls right before the space,
+    // violating UAX#14 LB7 (× SP). We drop it so the main loop handles the SP
+    // transition naturally (LB7 suppresses break before SP, LB18 breaks after).
+    let mut stopped_at_space = false;
     loop {
         debug_assert!(!iter.is_eof());
         s.push(iter.get_current_codepoint()?);
@@ -1345,6 +1307,7 @@ where
             } else if current_codepoint == ' ' && peek_past_spaces_for_sa(iter) {
                 continue;
             } else {
+                stopped_at_space = current_codepoint == ' ';
                 break;
             }
         } else {
@@ -1356,7 +1319,10 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = iter.complex.complex_language_segment_str(&s);
+    let mut breaks = iter.complex.complex_language_segment_str(&s);
+    if stopped_at_space {
+        breaks.pop();
+    }
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -1418,16 +1384,46 @@ impl LineBreakType for Utf16 {
         iterator: &mut LineBreakIterator<Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
+        /// Helper: Check if spaces are followed by more SA characters.
+        fn peek_past_spaces_for_sa(iter: &mut LineBreakIterator<'_, '_, Utf16>) -> bool {
+            let temp_iter = iter.iter.clone();
+            let temp_pos = iter.current_pos_data;
+
+            let mut has_sa = false;
+            while let Some(c) = iter.get_current_codepoint() {
+                if c == 0x0020 {
+                    iter.advance_iter();
+                } else {
+                    has_sa = Utf16::use_complex_breaking(iter, c);
+                    break;
+                }
+            }
+
+            iter.iter = temp_iter;
+            iter.current_pos_data = temp_pos;
+            has_sa
+        }
+
         // word segmenter doesn't define break rules for some languages such as Thai.
         let start_iter = iterator.iter.clone();
         let start_point = iterator.current_pos_data;
         let mut s = vec![left_codepoint as u16];
+        // See line_handle_complex_language_utf8 for rationale.
+        let mut stopped_at_space = false;
         loop {
             debug_assert!(!iterator.is_eof());
             s.push(iterator.get_current_codepoint()? as u16);
             iterator.advance_iter();
             if let Some(current_codepoint) = iterator.get_current_codepoint() {
-                if !Self::use_complex_breaking(iterator, current_codepoint) {
+                // Continue collecting if SA, or if space(s) followed by SA
+                if Self::use_complex_breaking(iterator, current_codepoint) {
+                    continue;
+                } else if current_codepoint == 0x0020
+                    && peek_past_spaces_for_sa(iterator)
+                {
+                    continue;
+                } else {
+                    stopped_at_space = current_codepoint == 0x0020;
                     break;
                 }
             } else {
@@ -1439,7 +1435,10 @@ impl LineBreakType for Utf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = iterator.complex.complex_language_segment_utf16(&s);
+        let mut breaks = iterator.complex.complex_language_segment_utf16(&s);
+        if stopped_at_space {
+            breaks.pop();
+        }
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iterator.result_cache.first()?;
@@ -1862,5 +1861,81 @@ mod tests {
         let segmenter = LineSegmenter::new_auto(Default::default());
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
+    }
+
+    /// Helper: assert no double-breaks (adjacent break positions) except at
+    /// the mandatory start-of-text position 0, and that UTF-8 and UTF-16
+    /// produce the same number of break segments.
+    fn assert_no_double_breaks_and_utf_consistency(test_str: &str, label: &str) {
+        let segmenter = LineSegmenter::new_auto(Default::default());
+
+        let check = |breaks: &[usize], encoding: &str| {
+            // Skip the first break (position 0, start-of-text marker). Any
+            // break immediately after it is a legitimate break after leading
+            // content (e.g. leading space via LB18).
+            for pair in breaks.windows(2).skip(1) {
+                assert!(
+                    pair[1] - pair[0] > 1,
+                    "{label}: double-break in {encoding} at positions {} and {}. All breaks: {breaks:?}",
+                    pair[0],
+                    pair[1],
+                );
+            }
+        };
+
+        let utf8_breaks: Vec<usize> = segmenter.segment_str(test_str).collect();
+        check(&utf8_breaks, "UTF-8");
+
+        let utf16: Vec<u16> = test_str.encode_utf16().collect();
+        let utf16_breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        check(&utf16_breaks, "UTF-16");
+
+        assert_eq!(
+            utf8_breaks.len(),
+            utf16_breaks.len(),
+            "{label}: UTF-8/UTF-16 break count mismatch.\n  UTF-8:  {utf8_breaks:?}\n  UTF-16: {utf16_breaks:?}"
+        );
+    }
+
+    #[test]
+    fn khmer_line_break_with_spaces() {
+        // Single space between Khmer words (issue #7218)
+        assert_no_double_breaks_and_utf_consistency("ខ្មែរ ភាសា ខ្មែរ", "Khmer single space");
+        // Multiple consecutive spaces
+        assert_no_double_breaks_and_utf_consistency("ខ្មែរ  ភាសា", "Khmer double space");
+        // Leading/trailing spaces
+        assert_no_double_breaks_and_utf_consistency(" ខ្មែរ ", "Khmer leading/trailing space");
+    }
+
+    #[test]
+    fn thai_line_break_with_spaces() {
+        // Space between Thai words
+        assert_no_double_breaks_and_utf_consistency("ภาษา ไทย", "Thai single space");
+        assert_no_double_breaks_and_utf_consistency("ภาษา  ไทย", "Thai double space");
+    }
+
+    #[test]
+    #[cfg(feature = "lstm")]
+    fn lao_line_break_with_spaces() {
+        // Space between Lao words
+        assert_no_double_breaks_and_utf_consistency("ກ່ຽວກັບ ສິດຂອງ", "Lao single space");
+    }
+
+    #[test]
+    fn english_line_break_regression() {
+        // English text should be unaffected by SA-space changes
+        let segmenter = LineSegmenter::new_auto(Default::default());
+        let text = "hello world foo bar";
+        let utf8_breaks: Vec<usize> = segmenter.segment_str(text).collect();
+        let utf16: Vec<u16> = text.encode_utf16().collect();
+        let utf16_breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        // For ASCII, byte offsets and u16 offsets are the same
+        assert_eq!(utf8_breaks, utf16_breaks, "English UTF-8/UTF-16 mismatch");
+    }
+
+    #[test]
+    fn mixed_khmer_english_line_break() {
+        // Khmer mixed with English
+        assert_no_double_breaks_and_utf_consistency("ខ្មែរ hello ភាសា", "Khmer-English mixed");
     }
 }

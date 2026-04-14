@@ -109,11 +109,14 @@ fn word_line_th_wikipedia_auto() {
     );
 
     let breakpoints_line_utf8 = segmenter_line_auto.segment_str(text).collect::<Vec<_>>();
+    // Note: positions 27, 220, and 281 are bytes immediately before spaces between
+    // Thai text and other scripts/punctuation. The line segmenter should break
+    // only AFTER the space, not before it (UAX#14 LB7: × SP).
     assert_eq!(
         breakpoints_line_utf8,
         [
-            0, 9, 18, 27, 28, 38, 47, 49, 53, 60, 68, 73, 82, 84, 87, 90, 95, 104, 113, 115, 121,
-            133, 148, 166, 175, 187, 193, 205, 220, 221, 227, 239, 272, 281, 282, 290, 297
+            0, 9, 18, 28, 38, 47, 49, 53, 60, 68, 73, 82, 84, 87, 90, 95, 104, 113, 115, 121, 133,
+            148, 166, 175, 187, 193, 205, 221, 227, 239, 272, 282, 290, 297
         ]
     );
 
