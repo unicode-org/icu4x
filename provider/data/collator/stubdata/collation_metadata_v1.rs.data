@@ -3,9 +3,16 @@
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 ///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 48B for the lookup data structure (3 data identifiers)
+/// * 4B[^1] for the actual data (1 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
 /// This macro requires the following crates:
 /// * `icu`
 /// * `icu_provider`
+/// * `icu_provider/baked`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_collation_metadata_v1 {
@@ -13,9 +20,20 @@ macro_rules! __impl_collation_metadata_v1 {
         #[clippy::msrv = "1.86"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.86"]
+        impl $provider {
+            pub const COLLATION_METADATA_V1_UND: &<icu::collator::provider::CollationMetadataV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &icu::collator::provider::CollationMetadata { bits: 1u32 };
+            pub const COLLATION_METADATA_V1_UND_EMOJI: &<icu::collator::provider::CollationMetadataV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = Self::COLLATION_METADATA_V1_UND;
+            pub const COLLATION_METADATA_V1_UND_EOR: &<icu::collator::provider::CollationMetadataV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = Self::COLLATION_METADATA_V1_UND;
+            const DATA_COLLATION_METADATA_V1: icu_provider::baked::zerotrie::DataRef<icu::collator::provider::CollationMetadataV1> = unsafe { icu_provider::baked::zerotrie::DataRef::from_trie_and_refs_unchecked(icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"und\x80\x1Ee\xC2mo\x04oji\x80r\x80" }, &[Self::COLLATION_METADATA_V1_UND]) };
+        }
+        #[clippy::msrv = "1.86"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationMetadataV1>, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::collator::provider::CollationMetadataV1 as icu_provider::DataMarker>::INFO, req))
+                let mut req = req;
+                req.id.locale = Default::default();
+                let metadata = icu_provider::DataResponseMetadata::default();
+                let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_COLLATION_METADATA_V1, req.id, req.metadata.attributes_prefix_match) else { return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::collator::provider::CollationMetadataV1 as icu_provider::DataMarker>::INFO, req)) };
+                Ok(icu_provider::DataResponse { payload, metadata })
             }
         }
     };
@@ -24,33 +42,13 @@ macro_rules! __impl_collation_metadata_v1 {
         #[clippy::msrv = "1.86"]
         impl icu_provider::IterableDataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                Ok(Default::default())
+                Ok(icu_provider::baked::DataStore::iter(&Self::DATA_COLLATION_METADATA_V1).collect())
             }
         }
     };
-    ($ provider : ty , DRY) => {
-        __impl_collation_metadata_v1!($provider);
-        #[clippy::msrv = "1.86"]
-        impl icu_provider::DryDataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::collator::provider::CollationMetadataV1 as icu_provider::DataMarker>::INFO, req))
-            }
-        }
-    };
+    ($ provider : ty , DRY) => {};
     ($ provider : ty , DRY , ITER) => {
-        __impl_collation_metadata_v1!($provider);
-        #[clippy::msrv = "1.86"]
-        impl icu_provider::DryDataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::collator::provider::CollationMetadataV1 as icu_provider::DataMarker>::INFO, req))
-            }
-        }
-        #[clippy::msrv = "1.86"]
-        impl icu_provider::IterableDataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                Ok(Default::default())
-            }
-        }
+        __impl_collation_metadata_v1!($provider, ITER);
     };
 }
 #[doc(inline)]

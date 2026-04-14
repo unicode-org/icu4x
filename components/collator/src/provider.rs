@@ -50,7 +50,7 @@ use crate::options::MaxVariable;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
-#[allow(unused_imports)]
+#[allow(unused_imports, missing_docs)]
 const _: () = {
     use icu_collator_data::*;
     pub mod icu {
@@ -98,6 +98,8 @@ icu_provider::data_marker!(
     fallback_config = SCRIPT_FALLBACK,
     #[cfg(feature = "datagen")]
     attributes_domain = "collator",
+    #[cfg(feature = "datagen")]
+    expose_baked_consts = true,
 );
 icu_provider::data_marker!(
     /// Data marker for collation jamo data.
@@ -123,6 +125,8 @@ icu_provider::data_marker!(
     fallback_config = SCRIPT_FALLBACK,
     #[cfg(feature = "datagen")]
     attributes_domain = "collator",
+    #[cfg(feature = "datagen")]
+    expose_baked_consts = true,
 );
 icu_provider::data_marker!(
     /// Data marker for collcation special primaries data.
