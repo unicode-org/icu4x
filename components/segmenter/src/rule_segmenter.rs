@@ -334,10 +334,6 @@ impl RuleBreakType for Utf16 {
     type CharType = u32;
 
     fn char_len(ch: Self::CharType) -> usize {
-        if ch >= 0x10000 {
-            2
-        } else {
-            1
-        }
+        if ch >= 0x10000 { 2 } else { 1 }
     }
 }

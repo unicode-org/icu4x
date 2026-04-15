@@ -5,18 +5,18 @@
 //! Parsing for `TimeZoneAnnotations` and `KeyValueAnnotations`.
 
 use crate::{
-    assert_syntax,
+    ParseError, ParserResult, assert_syntax,
     encoding::EncodingType,
     parsers::{
+        Cursor,
         grammar::{
             is_a_key_char, is_a_key_leading_char, is_annotation_close,
             is_annotation_key_value_separator, is_annotation_open, is_annotation_value_component,
             is_critical_flag, is_hyphen,
         },
-        timezone, Cursor,
+        timezone,
     },
     records::{Annotation, TimeZoneAnnotation},
-    ParseError, ParserResult,
 };
 
 /// Strictly a parsing intermediary for the checking the common annotation backing.

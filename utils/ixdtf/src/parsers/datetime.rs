@@ -5,16 +5,15 @@
 //! Parsing for `Date`, `DateTime`, and `MonthDay`.
 
 use crate::{
-    assert_syntax,
+    ParseError, ParserResult, assert_syntax,
     encoding::EncodingType,
     parsers::{
-        annotations,
+        Cursor, IxdtfParseRecord, annotations,
         grammar::{is_annotation_open, is_date_time_separator, is_hyphen, is_utc_designator},
         time::parse_time_record,
-        timezone, Cursor, IxdtfParseRecord,
+        timezone,
     },
     records::{Annotation, DateRecord, TimeRecord, UtcOffsetRecordOrZ},
-    ParseError, ParserResult,
 };
 
 use super::grammar::is_ascii_sign;

@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ule::AsULE;
 use crate::ZeroVec;
+use crate::ule::AsULE;
 use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
@@ -730,7 +730,10 @@ mod test {
         let result = zm2d.try_append(&3, "ccc", "CCC");
         assert!(result.is_none());
 
-        assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3]), joiner: ZeroVec([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
+        assert_eq!(
+            format!("{zm2d:?}"),
+            "ZeroMap2d { keys0: ZeroVec([3]), joiner: ZeroVec([1]), keys1: [\"ccc\"], values: [\"CCC\"] }"
+        );
         assert_eq!(zm2d.get0(&0), None);
         assert_eq!(zm2d.get0(&3).unwrap().get1(""), None);
         assert_eq!(zm2d.get_2d(&3, "ccc"), Some("CCC"));
@@ -739,7 +742,10 @@ mod test {
         let result = zm2d.try_append(&3, "eee", "EEE");
         assert!(result.is_none());
 
-        assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3]), joiner: ZeroVec([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
+        assert_eq!(
+            format!("{zm2d:?}"),
+            "ZeroMap2d { keys0: ZeroVec([3]), joiner: ZeroVec([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }"
+        );
         assert_eq!(zm2d.get0(&0), None);
         assert_eq!(zm2d.get0(&3).unwrap().get1(""), None);
         assert_eq!(zm2d.get_2d(&3, "ccc"), Some("CCC"));
@@ -763,7 +769,10 @@ mod test {
         let result = zm2d.try_append(&9, "yyy", "YYY");
         assert!(result.is_none());
 
-        assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3, 5, 7, 9]), joiner: ZeroVec([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
+        assert_eq!(
+            format!("{zm2d:?}"),
+            "ZeroMap2d { keys0: ZeroVec([3, 5, 7, 9]), joiner: ZeroVec([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }"
+        );
         assert_eq!(zm2d.get0(&0), None);
         assert_eq!(zm2d.get0(&3).unwrap().get1(""), None);
         assert_eq!(zm2d.get_2d(&3, "ccc"), Some("CCC"));
@@ -794,7 +803,10 @@ mod test {
         zm2d.insert(&6, "mmm", "MM1");
         zm2d.insert(&6, "nnn", "NNN");
 
-        assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3, 5, 6, 7, 9]), joiner: ZeroVec([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
+        assert_eq!(
+            format!("{zm2d:?}"),
+            "ZeroMap2d { keys0: ZeroVec([3, 5, 6, 7, 9]), joiner: ZeroVec([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }"
+        );
         assert_eq!(zm2d.get0(&0), None);
         assert_eq!(zm2d.get0(&3).unwrap().get1(""), None);
         assert_eq!(zm2d.get_2d(&3, "ccc"), Some("CCC"));
@@ -834,7 +846,10 @@ mod test {
         let result = zm2d.remove(&9, "yyy"); // last element
         assert_eq!(result.as_deref(), Some("YYY"));
 
-        assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3, 6, 7]), joiner: ZeroVec([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }");
+        assert_eq!(
+            format!("{zm2d:?}"),
+            "ZeroMap2d { keys0: ZeroVec([3, 6, 7]), joiner: ZeroVec([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }"
+        );
     }
 
     #[test]
@@ -864,7 +879,7 @@ mod test {
                 // This code runs for every (key0, key1) pair in order
                 let expected = btreemap_iter.next().unwrap();
                 assert_eq!(
-                    (expected.0 .0, expected.0 .1, expected.1),
+                    (expected.0.0, expected.0.1, expected.1),
                     (*cursor.key0(), key1.as_unsigned_int() as i32, &value.get())
                 );
             }

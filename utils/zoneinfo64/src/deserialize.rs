@@ -7,8 +7,8 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 use resb::binary::BinaryDeserializerError;
-use serde::de::*;
 use serde::Deserialize;
+use serde::de::*;
 
 /// Deserialize a [`ZoneInfo64`]
 pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryDeserializerError> {
@@ -90,7 +90,7 @@ pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryD
                     _ => {
                         return Err(BinaryDeserializerError::unknown(
                             "inconsisent finalRule, finalRaw, finalYear",
-                        ))
+                        ));
                     }
                 };
 

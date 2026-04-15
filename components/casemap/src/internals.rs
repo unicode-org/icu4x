@@ -677,7 +677,7 @@ pub enum CaseMapLocale {
 
 impl CaseMapLocale {
     pub const fn from_langid(langid: &LanguageIdentifier) -> Self {
-        use icu_locale_core::subtags::{language, Language};
+        use icu_locale_core::subtags::{Language, language};
         const TR: Language = language!("tr");
         const AZ: Language = language!("az");
         const LT: Language = language!("lt");

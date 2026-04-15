@@ -15,7 +15,7 @@ use icu_benchmark_macros::println;
 
 use std::env;
 
-use icu::locale::{subtags, LanguageIdentifier};
+use icu::locale::{LanguageIdentifier, subtags};
 
 const DEFAULT_INPUT: &str =
     "de, en-us, zh-hant, sr-cyrl, fr-ca, es-cl, pl, en-latn-us, ca-valencia, und-arab";

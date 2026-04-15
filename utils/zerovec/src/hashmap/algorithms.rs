@@ -116,7 +116,7 @@ pub fn compute_displacements(
     while start < len {
         // Bucket span with the same first level hash
         // start is always within bounds of `bucket_flatten`
-        let g = bucket_flatten[start].0 .0;
+        let g = bucket_flatten[start].0.0;
         // g is always within bounds of `bucket_sizes`
         let end = start + bucket_sizes[g];
         // start, end - 1 are always within bounds of `bucket_sizes`

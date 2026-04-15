@@ -3,14 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use litemap::LiteMap;
-use rkyv::archived_root;
-use rkyv::check_archived_root;
-use rkyv::ser::serializers::AllocSerializer;
-use rkyv::ser::Serializer;
-use rkyv::util::AlignedBytes;
-use rkyv::util::AlignedVec;
 use rkyv::Deserialize;
 use rkyv::Infallible;
+use rkyv::archived_root;
+use rkyv::check_archived_root;
+use rkyv::ser::Serializer;
+use rkyv::ser::serializers::AllocSerializer;
+use rkyv::util::AlignedBytes;
+use rkyv::util::AlignedVec;
 
 const DATA: [(&str, &str); 11] = [
     ("ar", "Arabic"),

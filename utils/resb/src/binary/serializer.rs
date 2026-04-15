@@ -13,8 +13,8 @@ use std::{
 use crate::bundle::{Key, Resource, ResourceBundle};
 
 use super::{
-    header::{BinHeader, BinReprInfo},
     BinIndex, CharsetFamily, Endianness, FormatVersion, ResDescriptor, ResourceReprType,
+    header::{BinHeader, BinReprInfo},
 };
 
 const DATA_FORMAT: &[u8; 4] = b"ResB";
@@ -847,7 +847,7 @@ impl Serializer {
             _ => {
                 return Err(BinarySerializerError::unexpected(
                     "expected resource to have been processed already",
-                ))
+                ));
             }
         };
 

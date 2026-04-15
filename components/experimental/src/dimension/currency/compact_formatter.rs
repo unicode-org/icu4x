@@ -15,7 +15,7 @@ use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-use super::{options::CurrencyFormatterOptions, CurrencyCode};
+use super::{CurrencyCode, options::CurrencyFormatterOptions};
 
 extern crate alloc;
 

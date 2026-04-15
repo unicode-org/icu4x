@@ -27,9 +27,9 @@ pub mod tuple;
 pub mod tuplevar;
 pub mod vartuple;
 pub use chars::CharULE;
+pub use encode::EncodeAsVarULE;
 #[cfg(feature = "alloc")]
 pub use encode::encode_varule_to_box;
-pub use encode::EncodeAsVarULE;
 pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};

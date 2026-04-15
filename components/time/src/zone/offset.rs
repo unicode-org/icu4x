@@ -4,10 +4,10 @@
 
 use core::str::FromStr;
 
+use crate::TimeZone;
 #[cfg(feature = "alloc")]
 use crate::provider::legacy::TimezoneVariantsOffsetsV1;
 use crate::provider::{TimezonePeriods, TimezonePeriodsV1};
-use crate::TimeZone;
 use icu_provider::prelude::*;
 
 use displaydoc::Display;

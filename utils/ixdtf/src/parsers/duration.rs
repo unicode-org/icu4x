@@ -5,19 +5,18 @@
 //! This module implements logic for Duration parsing.
 
 use crate::{
-    assert_syntax,
+    ParseError, ParserResult, assert_syntax,
     encoding::EncodingType,
     parsers::{
+        Cursor,
         grammar::{
             is_ascii_sign, is_day_designator, is_duration_designator, is_hour_designator,
             is_minute_designator, is_month_designator, is_second_designator, is_time_designator,
             is_week_designator, is_year_designator,
         },
         time::parse_fraction,
-        Cursor,
     },
     records::{DateDurationRecord, DurationParseRecord, Fraction, TimeDurationRecord},
-    ParseError, ParserResult,
 };
 
 pub(crate) fn parse_duration<T: EncodingType>(
@@ -121,7 +120,7 @@ pub(crate) fn parse_date_duration<T: EncodingType>(
             Some(_) | None => {
                 return Err(ParseError::AbruptEnd {
                     location: "DateDurationDesignator",
-                })
+                });
             }
         }
     }
@@ -200,7 +199,7 @@ pub(crate) fn parse_time_duration<T: EncodingType>(
             Some(_) | None => {
                 return Err(ParseError::AbruptEnd {
                     location: "TimeDurationDesignator",
-                })
+                });
             }
         }
 

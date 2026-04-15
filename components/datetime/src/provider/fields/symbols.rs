@@ -2,17 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DateTimeFormatterPreferences;
 use crate::options::SubsecondDigits;
 #[cfg(feature = "datagen")]
 use crate::provider::fields::FieldLength;
-use crate::DateTimeFormatterPreferences;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
-use icu_locale_core::subtags::region;
 use icu_locale_core::subtags::Region;
+use icu_locale_core::subtags::region;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, UleError, ULE};
+use zerovec::ule::{AsULE, ULE, UleError};
 
 /// An error relating to the field symbol for a date pattern field.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]

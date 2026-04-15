@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::ParseError;
 use crate::asciibyte::AsciiByte;
 use crate::int_ops::{Aligned4, Aligned8};
-use crate::ParseError;
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 use core::borrow::Borrow;
@@ -295,11 +295,7 @@ impl<const N: usize> TinyAsciiStr<N> {
             bytes[i..N].fill(AsciiByte::B0);
         }
         let s = Self { bytes };
-        if x != 0 {
-            Err(s)
-        } else {
-            Ok(s)
-        }
+        if x != 0 { Err(s) } else { Ok(s) }
     }
 
     #[inline]
@@ -889,10 +885,10 @@ impl<const N: usize> PartialEq<TinyAsciiStr<N>> for String {
 #[cfg(test)]
 mod test {
     use super::*;
+    use rand::SeedableRng;
     use rand::distr::Distribution;
     use rand::distr::StandardUniform;
     use rand::rngs::SmallRng;
-    use rand::SeedableRng;
 
     const STRINGS: [&str; 26] = [
         "Latn",

@@ -9,7 +9,7 @@ use icu_benchmark_macros::println;
 use icu::collections::codepointinvlist::CodePointInversionList;
 use icu::experimental::transliterate::provider::Baked;
 use icu::experimental::transliterate::{Transliterator, TransliteratorBuilder};
-use icu::properties::{props::BidiClass, CodePointMapData};
+use icu::properties::{CodePointMapData, props::BidiClass};
 
 fn main() {
     println!(

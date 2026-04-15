@@ -5,7 +5,7 @@
 use core::fmt::Display;
 
 use fixed_decimal::Decimal;
-use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
+use icu_decimal::{DecimalFormatter, options::DecimalFormatterOptions};
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 use writeable::Writeable;
@@ -14,7 +14,7 @@ use crate::dimension::provider::currency::{
     extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
 };
 
-use super::{formatter::CurrencyFormatterPreferences, CurrencyCode};
+use super::{CurrencyCode, formatter::CurrencyFormatterPreferences};
 
 extern crate alloc;
 

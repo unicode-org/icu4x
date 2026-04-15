@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Offset, Transition, EPOCH, SECONDS_IN_UTC_DAY};
+use super::{EPOCH, Offset, SECONDS_IN_UTC_DAY, Transition};
 use crate::UtcOffset;
 use calendrical_calculations::gregorian;
 use calendrical_calculations::rata_die::RataDie;
@@ -451,8 +451,8 @@ impl Rule<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::tests::TZDB;
     use crate::PossibleOffset;
+    use crate::tests::TZDB;
 
     /// Tests an invariant we rely on in our code
     #[test]

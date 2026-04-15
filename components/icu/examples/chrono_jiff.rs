@@ -5,7 +5,7 @@
 use core::str::FromStr;
 
 use icu::{
-    datetime::{fieldsets, DateTimeFormatter},
+    datetime::{DateTimeFormatter, fieldsets},
     locale::locale,
 };
 

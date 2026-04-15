@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::numbers::NumberPattern;
 use crate::cldr_serde::numbers::NumberPatternItem;
-use crate::IterableDataProviderCached;
-use crate::SourceDataProvider;
 
 use std::borrow::Cow;
 
@@ -24,8 +24,8 @@ use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::PatternItemCow;
 
 use icu::experimental::dimension::provider::currency::ule::MAX_PLACEHOLDER_INDEX;
-use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu::properties::CodePointMapData;
+use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::DataProvider;
 
 use icu::experimental::dimension::provider::currency::essentials::*;

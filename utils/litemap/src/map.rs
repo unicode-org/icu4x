@@ -837,11 +837,7 @@ where
                 _key_type: PhantomData,
                 _value_type: PhantomData,
             };
-            if ret.is_empty() {
-                None
-            } else {
-                Some(ret)
-            }
+            if ret.is_empty() { None } else { Some(ret) }
         }
     }
 }

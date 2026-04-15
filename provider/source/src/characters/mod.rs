@@ -5,9 +5,9 @@
 use core::ops::Deref;
 use std::collections::HashSet;
 
-use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu::locale::provider::*;
 use icu_provider::prelude::*;

@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
+    VarZeroVec, ZeroMap, ZeroSlice, ZeroVec,
     map::ZeroMapKV,
     ule::{AsULE, VarULE},
     vecs::VarZeroVecFormat,
-    VarZeroVec, ZeroMap, ZeroSlice, ZeroVec,
 };
 use alloc::{borrow::Cow, format};
 use schemars::JsonSchema;

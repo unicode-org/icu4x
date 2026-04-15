@@ -3,14 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::{
-    types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
     AsCalendar, Calendar, Date,
+    types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
 };
 #[cfg(feature = "unstable")]
 use icu_time::ZonedTime;
 use icu_time::{
-    zone::{models::TimeZoneModel, UtcOffset, ZoneNameTimestamp},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
+    zone::{UtcOffset, ZoneNameTimestamp, models::TimeZoneModel},
 };
 
 use super::UnstableSealed;

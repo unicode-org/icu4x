@@ -3,15 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::abstract_gregorian::{
-    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+    AbstractGregorian, GregorianYears, impl_with_abstract_gregorian,
 };
 use crate::cal::gregorian::CeBce;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::{DateError, UnknownEraError};
 use crate::provider::{CalendarJapaneseModernV1, EraStartDate, PackedEra};
-use crate::{types, AsCalendar, Date};
+use crate::{AsCalendar, Date, types};
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyAsciiStr};
+use tinystr::{TinyAsciiStr, tinystr};
 
 /// The [Japanese Calendar] (with modern eras only)
 ///

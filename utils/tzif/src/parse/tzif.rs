@@ -13,7 +13,7 @@ use crate::data::tzif::{
 use combine::parser::byte::byte;
 use combine::parser::byte::num::{be_i32, be_i64, be_u32};
 use combine::{
-    any, between, choice, count_min_max, one_of, skip_count, value, ParseError, Parser, Stream,
+    ParseError, Parser, Stream, any, between, choice, count_min_max, one_of, skip_count, value,
 };
 
 /// Parses the four-byte ASCII \[RFC20\] sequence `"TZif"` (0x54 0x5A 0x69 0x42),
@@ -944,7 +944,7 @@ mod test {
                 leapcnt: 0,
                 timecnt: 0,
                 typecnt: 1,
-                charcnt:1,
+                charcnt: 1,
             }
         );
     }

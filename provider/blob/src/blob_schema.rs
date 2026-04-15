@@ -86,7 +86,9 @@ impl<'de> Deserialize<'de> for NeverSchema {
         D: serde::Deserializer<'de>,
     {
         use serde::de::Error;
-        Err(D::Error::custom("Attempted to read 1.0 blob format from ICU4X 2.0: please run ICU4X 2.0 datagen to generate a new file."))
+        Err(D::Error::custom(
+            "Attempted to read 1.0 blob format from ICU4X 2.0: please run ICU4X 2.0 datagen to generate a new file.",
+        ))
     }
 }
 /// Version 3 of the ICU4X data blob schema.

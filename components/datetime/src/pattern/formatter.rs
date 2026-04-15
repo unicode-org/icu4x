@@ -4,8 +4,8 @@
 
 use super::names::RawDateTimeNamesBorrowed;
 use super::pattern::DateTimePatternBorrowed;
-use crate::format::datetime::try_write_pattern_items;
 use crate::format::DateTimeInputUnchecked;
+use crate::format::datetime::try_write_pattern_items;
 use crate::pattern::FormattedDateTimePatternError;
 use crate::scaffold::*;
 use crate::scaffold::{
@@ -260,7 +260,7 @@ mod tests {
     use crate::provider::fields::Field;
 
     use super::super::*;
-    use icu_calendar::{cal::KoreanTraditional, Date, Gregorian};
+    use icu_calendar::{Date, Gregorian, cal::KoreanTraditional};
     use icu_locale_core::locale;
     use icu_time::{DateTime, Time};
     use writeable::assert_try_writeable_eq;

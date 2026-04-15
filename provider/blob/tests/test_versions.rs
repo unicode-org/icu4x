@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale::subtags::{region, script, Language};
+use icu_locale::subtags::{Language, region, script};
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
-use icu_provider_blob::export::*;
 use icu_provider_blob::BlobDataProvider;
+use icu_provider_blob::export::*;
 use std::collections::BTreeSet;
 
 const BLOB_V3: &[u8] = include_bytes!("data/v3.postcard");
@@ -69,39 +69,45 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1>, test_prefix
             DataMarkerAttributes::from_str_or_panic("reve").to_owned(),
             "ja".parse().unwrap(),
         );
-        assert!(blob_provider
-            .load(DataRequest {
-                id: id.as_borrowed(),
-                ..Default::default()
-            })
-            .is_err());
+        assert!(
+            blob_provider
+                .load(DataRequest {
+                    id: id.as_borrowed(),
+                    ..Default::default()
+                })
+                .is_err()
+        );
 
-        assert!(blob_provider
-            .load(DataRequest {
-                id: id.as_borrowed(),
-                metadata: {
-                    let mut metadata = DataRequestMetadata::default();
-                    metadata.attributes_prefix_match = true;
-                    metadata
-                }
-            })
-            .is_ok());
+        assert!(
+            blob_provider
+                .load(DataRequest {
+                    id: id.as_borrowed(),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.attributes_prefix_match = true;
+                        metadata
+                    }
+                })
+                .is_ok()
+        );
 
         let id = DataIdentifierCow::from_owned(
             DataMarkerAttributes::from_str_or_panic("non-existent").to_owned(),
             "ja".parse().unwrap(),
         );
 
-        assert!(blob_provider
-            .load(DataRequest {
-                id: id.as_borrowed(),
-                metadata: {
-                    let mut metadata = DataRequestMetadata::default();
-                    metadata.attributes_prefix_match = true;
-                    metadata
-                }
-            })
-            .is_err());
+        assert!(
+            blob_provider
+                .load(DataRequest {
+                    id: id.as_borrowed(),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.attributes_prefix_match = true;
+                        metadata
+                    }
+                })
+                .is_err()
+        );
     }
 }
 

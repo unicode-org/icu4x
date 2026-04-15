@@ -81,7 +81,7 @@
 //! assert_eq!(without_time.format(&datetime).to_string(), "Jan 15");
 //! ```
 
-use crate::fieldsets::{builder, Combo};
+use crate::fieldsets::{Combo, builder};
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
 use crate::{fieldsets, provider};

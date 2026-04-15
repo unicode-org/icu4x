@@ -9,13 +9,13 @@ use alloc::string::String;
 use alloc::vec::Vec;
 
 use crate::{
+    ParseError,
     encoding::Utf16,
     parsers::IxdtfParser,
     records::{
         Annotation, DateRecord, Fraction, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
         TimeZoneRecord, UtcOffsetRecordOrZ,
     },
-    ParseError,
 };
 
 #[test]

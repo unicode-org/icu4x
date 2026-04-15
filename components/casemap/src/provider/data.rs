@@ -8,7 +8,7 @@
 use alloc::collections::BTreeMap;
 use core::num::TryFromIntError;
 use icu_collections::codepointtrie::TrieValue;
-use zerovec::ule::{AsULE, RawBytesULE, UleError, ULE};
+use zerovec::ule::{AsULE, RawBytesULE, ULE, UleError};
 
 /// The case of a Unicode character
 ///

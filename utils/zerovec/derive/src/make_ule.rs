@@ -8,7 +8,7 @@ use quote::quote;
 use crate::utils::{self, FieldInfo, ZeroVecAttrs};
 use std::collections::HashSet;
 use syn::spanned::Spanned;
-use syn::{parse_quote, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields, Ident, Lit};
+use syn::{Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields, Ident, Lit, parse_quote};
 
 pub fn make_ule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()

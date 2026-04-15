@@ -21,13 +21,13 @@
 use std::str::FromStr;
 
 use icu_locale_core::{
-    extensions::unicode::{self, key, Unicode, Value},
+    Locale,
+    extensions::unicode::{self, Unicode, Value, key},
     preferences::extensions::unicode::keywords::{
         CalendarAlgorithm, CollationType, FirstDay, HourCycle, MeasurementSystem,
         MeasurementUnitOverride,
     },
     subtags::{Language, Region},
-    Locale,
 };
 
 use crate::error::HostInfoError;

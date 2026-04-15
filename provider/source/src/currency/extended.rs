@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu::experimental::dimension::provider::currency::extended::*;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;

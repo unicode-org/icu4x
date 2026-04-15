@@ -6,7 +6,7 @@ use core::fmt::Display;
 
 use fixed_decimal::Decimal;
 use icu_decimal::{
-    options::DecimalFormatterOptions, DecimalFormatter, DecimalFormatterPreferences,
+    DecimalFormatter, DecimalFormatterPreferences, options::DecimalFormatterOptions,
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
@@ -14,8 +14,8 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 use super::super::provider::currency::essentials::CurrencyEssentialsV1;
-use super::options::CurrencyFormatterOptions;
 use super::CurrencyCode;
+use super::options::CurrencyFormatterOptions;
 
 extern crate alloc;
 

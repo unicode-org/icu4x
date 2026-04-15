@@ -7,7 +7,7 @@ use rand::SeedableRng;
 use rand_distr::{Distribution, Triangular};
 use rand_pcg::Lcg64Xsh32;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 
 use fixed_decimal::Decimal;
 

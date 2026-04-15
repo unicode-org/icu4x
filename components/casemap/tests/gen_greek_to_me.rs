@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_casemap::CaseMapper;
 use icu_casemap::greek_to_me::{
     self, GreekDiacritics, GreekPrecomposedLetterData, GreekVowel, PackedGreekPrecomposedLetterData,
 };
-use icu_casemap::CaseMapper;
 use icu_locale_core::LanguageIdentifier;
 use icu_normalizer::DecomposingNormalizerBorrowed;
 use icu_properties::{
-    props::{GeneralCategory, GeneralCategoryGroup, Script},
     CodePointMapData,
+    props::{GeneralCategory, GeneralCategoryGroup, Script},
 };
 use std::collections::BTreeMap;
 use std::fmt::Write;
@@ -45,7 +45,9 @@ fn main() {
                             {
                                 diacritics.accented = true;
                             } else {
-                                panic!("Found character {ch} that has diacritics but is not a Greek vowel");
+                                panic!(
+                                    "Found character {ch} that has diacritics but is not a Greek vowel"
+                                );
                             }
                         }
                         // dialytika: [:toNFD=/[\u0308]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
@@ -55,7 +57,9 @@ fn main() {
                             {
                                 diacritics.dialytika = true;
                             } else {
-                                panic!("Found character {ch} that has diacritics but is not a Greek vowel");
+                                panic!(
+                                    "Found character {ch} that has diacritics but is not a Greek vowel"
+                                );
                             }
                         }
                         // precomposed_ypogegrammeni [:toNFD=/[\u0345]/:]&[:Grek:]&[:L:] (from the JSPs: toNFD is an extension).
@@ -65,14 +69,18 @@ fn main() {
                             {
                                 diacritics.ypogegrammeni = true;
                             } else {
-                                panic!("Found character {ch} that has diacritics but is not a Greek vowel");
+                                panic!(
+                                    "Found character {ch} that has diacritics but is not a Greek vowel"
+                                );
                             }
                         }
                         greek_to_me::diacritics!(BREATHING_AND_LENGTH)
                         | greek_to_me::diacritics!(ACCENTS) => {
                             // Rho takes breathing marks but other consonants should not
                             if let Some(GreekPrecomposedLetterData::Consonant(false)) = data {
-                                panic!("Found character {ch} that has diacritics but is not a Greek vowel");
+                                panic!(
+                                    "Found character {ch} that has diacritics but is not a Greek vowel"
+                                );
                             }
                         }
                         // Ignore all small letters
@@ -197,6 +205,8 @@ pub(crate) fn match_extras(ch: char) -> Option<u8> {{
 ========================================================"#
         );
 
-        panic!("Found mismatch between generated Greek specialcasing data and checked-in data. Please check in the updated file shown above.");
+        panic!(
+            "Found mismatch between generated Greek specialcasing data and checked-in data. Please check in the updated file shown above."
+        );
     }
 }

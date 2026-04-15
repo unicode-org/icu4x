@@ -24,9 +24,9 @@
 //! ```
 
 use displaydoc::Display;
-use icu_locale_core::extensions::unicode::{key, value, Keywords, Unicode, Value};
 use icu_locale_core::extensions::Extensions;
-use icu_locale_core::{langid, LanguageIdentifier, Locale, ParseError};
+use icu_locale_core::extensions::unicode::{Keywords, Unicode, Value, key, value};
+use icu_locale_core::{LanguageIdentifier, Locale, ParseError, langid};
 
 #[derive(Display, Debug, PartialEq)]
 /// An error while parsing a Windows locale identifier

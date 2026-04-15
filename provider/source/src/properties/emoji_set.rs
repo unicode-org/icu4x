@@ -93,7 +93,7 @@ expand!((
 
 #[test]
 fn test_basic() {
-    use icu::properties::{props::BasicEmoji, EmojiSetData};
+    use icu::properties::{EmojiSetData, props::BasicEmoji};
 
     let provider = SourceDataProvider::new_testing();
 

@@ -21,19 +21,19 @@
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
-use zerovec::{zeroslice, ZeroSlice};
+use zerovec::ule::AsULE;
+use zerovec::{ZeroSlice, zeroslice};
 
 use crate::elements::CollationElement;
 use crate::elements::CollationElement32;
-use crate::elements::Tag;
 use crate::elements::EMPTY_U16;
 use crate::elements::FFFD_CE;
+use crate::elements::FFFD_CE_VALUE;
 use crate::elements::FFFD_CE32;
 use crate::elements::FFFD_CE32_VALUE;
-use crate::elements::FFFD_CE_VALUE;
 use crate::elements::NO_CE_PRIMARY;
+use crate::elements::Tag;
 use crate::preferences::CollationCaseFirst;
 
 use crate::options::MaxVariable;

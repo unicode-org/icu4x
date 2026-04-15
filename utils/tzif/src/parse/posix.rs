@@ -8,7 +8,7 @@ use crate::data::posix::{
 };
 use crate::data::time::{Hours, Minutes, Seconds};
 use combine::parser::byte::{byte, digit};
-use combine::{between, choice, many, many1, optional, satisfy, value, ParseError, Parser, Stream};
+use combine::{ParseError, Parser, Stream, between, choice, many, many1, optional, satisfy, value};
 
 /// Parses a byte that not a digit, a comma, a plus nor a minus signs.
 fn alphabetic_zone_variant_name_value<Input>() -> impl Parser<Input, Output = u8>

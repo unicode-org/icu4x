@@ -17,11 +17,11 @@ use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
+use zerovec::ZeroSlice;
+use zerovec::ZeroVec;
 use zerovec::ule::AsULE;
 #[cfg(feature = "alloc")]
 use zerovec::ule::UleError;
-use zerovec::ZeroSlice;
-use zerovec::ZeroVec;
 
 /// The type of trie represents whether the trie has an optimization that
 /// would make it smaller or faster.

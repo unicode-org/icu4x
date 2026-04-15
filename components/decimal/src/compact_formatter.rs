@@ -4,14 +4,14 @@
 
 use core::fmt::Display;
 
-use crate::input::Decimal;
 use crate::Cow;
+use crate::input::Decimal;
 use crate::{
+    DecimalFormatter,
     error::CompactExponentError,
     options::CompactDecimalFormatterOptions,
     preferences::{CompactDecimalFormatterPreferences, DecimalFormatterPreferences},
     provider::*,
-    DecimalFormatter,
 };
 #[cfg(feature = "alloc")]
 use alloc::string::String;

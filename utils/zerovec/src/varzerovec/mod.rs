@@ -23,7 +23,7 @@ pub use crate::{VarZeroSlice, VarZeroVec};
 #[doc(hidden)]
 pub use components::VarZeroVecComponents;
 
-pub use components::{Index16, Index32, Index8, VarZeroSliceIter, VarZeroVecFormat};
+pub use components::{Index8, Index16, Index32, VarZeroSliceIter, VarZeroVecFormat};
 
 #[cfg(feature = "alloc")]
 pub use owned::VarZeroVecOwned;

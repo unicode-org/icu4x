@@ -4,11 +4,11 @@
 
 use core_foundation::{
     array::CFArray,
-    base::{kCFAllocatorDefault, CFGetTypeID, CFTypeRef, TCFType},
+    base::{CFGetTypeID, CFTypeRef, TCFType, kCFAllocatorDefault},
     dictionary::{
         CFDictionaryGetCount, CFDictionaryGetKeysAndValues, CFDictionaryGetTypeID, CFDictionaryRef,
     },
-    number::{kCFNumberSInt32Type, CFNumberGetTypeID, CFNumberGetValue},
+    number::{CFNumberGetTypeID, CFNumberGetValue, kCFNumberSInt32Type},
     string::{CFString, CFStringGetMaximumSizeForEncoding},
 };
 use core_foundation_sys::{
@@ -16,11 +16,11 @@ use core_foundation_sys::{
     calendar::{CFCalendarCopyCurrent, CFCalendarGetIdentifier},
     date_formatter::CFDateFormatterCreateDateFormatFromTemplate,
     locale::{
-        kCFLocaleCountryCode, kCFLocaleMeasurementSystem, CFLocaleCopyCurrent,
-        CFLocaleCopyPreferredLanguages, CFLocaleGetValue, CFLocaleRef,
+        CFLocaleCopyCurrent, CFLocaleCopyPreferredLanguages, CFLocaleGetValue, CFLocaleRef,
+        kCFLocaleCountryCode, kCFLocaleMeasurementSystem,
     },
-    preferences::{kCFPreferencesAnyHost, kCFPreferencesCurrentUser, CFPreferencesCopyValue},
-    string::{kCFStringEncodingUTF8, CFStringGetCString, CFStringGetCStringPtr, CFStringRef},
+    preferences::{CFPreferencesCopyValue, kCFPreferencesAnyHost, kCFPreferencesCurrentUser},
+    string::{CFStringGetCString, CFStringGetCStringPtr, CFStringRef, kCFStringEncodingUTF8},
 };
 use icu_locale_core::{
     extensions::unicode,
@@ -479,7 +479,7 @@ fn cfstring_to_string(cf_string: CFStringRef) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::backends::{macos::MacOSHostInfoBackend, RawHostInfoBackend};
+    use crate::backends::{RawHostInfoBackend, macos::MacOSHostInfoBackend};
     use icu_locale_core::Locale;
 
     #[test]

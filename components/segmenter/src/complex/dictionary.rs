@@ -5,7 +5,7 @@
 use crate::grapheme::*;
 use crate::indices::Utf16Indices;
 use crate::provider::*;
-use crate::scaffold::{Utf16, Utf8};
+use crate::scaffold::{Utf8, Utf16};
 use core::str::CharIndices;
 use icu_collections::char16trie::{Char16Trie, TrieResult};
 
@@ -116,11 +116,7 @@ impl DictionaryType for u32 {
     }
 
     fn char_len(c: u32) -> usize {
-        if c >= 0x10000 {
-            2
-        } else {
-            1
-        }
+        if c >= 0x10000 { 2 } else { 1 }
     }
 }
 

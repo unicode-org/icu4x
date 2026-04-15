@@ -6,13 +6,13 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::duration::DateDuration;
 use crate::error::{
-    range_check, DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError,
-    LunisolarDateError, MonthError, UnknownEraError,
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, LunisolarDateError,
+    MonthError, UnknownEraError, range_check,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions, DateDurationUnit};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateFields, Month};
-use crate::{types, Calendar, DateError, RangeError};
+use crate::{Calendar, DateError, RangeError, types};
 use core::cmp::Ordering;
 use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
@@ -432,7 +432,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 }
                 None => match missing_fields_strategy {
                     MissingFieldsStrategy::Reject => {
-                        return Err(DateFromFieldsError::NotEnoughFields)
+                        return Err(DateFromFieldsError::NotEnoughFields);
                     }
                     MissingFieldsStrategy::Ecma => {
                         let (m, d) = match (fields.month, fields.month_code, fields.ordinal_month) {
@@ -944,11 +944,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 Ok(d) => d,
                 Err(_) => {
                     debug_assert!(false, "rata die diff out of i32 range");
-                    if diff > 0 {
-                        i32::MAX
-                    } else {
-                        i32::MIN
-                    }
+                    if diff > 0 { i32::MAX } else { i32::MIN }
                 }
             };
             if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
@@ -1284,8 +1280,8 @@ impl<'a, C: DateFieldsResolver> SurpassesChecker<'a, C> {
 mod tests {
     use super::*;
     use crate::{
-        cal::{coptic::CopticYear, *},
         Date,
+        cal::{coptic::CopticYear, *},
     };
 
     #[test]
@@ -1375,12 +1371,16 @@ mod tests {
         ];
 
         // Valid RDs can represent all valid years
-        assert!(lowest_years
-            .iter()
-            .all(|y| y <= CONSTRUCTOR_YEAR_RANGE.start()));
-        assert!(highest_years
-            .iter()
-            .all(|y| y >= CONSTRUCTOR_YEAR_RANGE.end()));
+        assert!(
+            lowest_years
+                .iter()
+                .all(|y| y <= CONSTRUCTOR_YEAR_RANGE.start())
+        );
+        assert!(
+            highest_years
+                .iter()
+                .all(|y| y >= CONSTRUCTOR_YEAR_RANGE.end())
+        );
 
         // All years are 21-bits
         assert!(-lowest_years.iter().copied().min().unwrap() < 1 << 20);

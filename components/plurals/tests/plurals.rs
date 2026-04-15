@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::{langid, locale};
-use icu_plurals::{provider::PluralsCardinalV1, PluralCategory, PluralRules};
+use icu_plurals::{PluralCategory, PluralRules, provider::PluralsCardinalV1};
 use icu_provider::prelude::*;
 
 #[test]

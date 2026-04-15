@@ -244,8 +244,8 @@ impl LocaleFallbackIteratorInner<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::preferences::LocalePreferences;
     use icu_locale_core::Locale;
+    use icu_locale_core::preferences::LocalePreferences;
     use writeable::Writeable;
 
     struct TestCase {

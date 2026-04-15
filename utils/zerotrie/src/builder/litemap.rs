@@ -5,10 +5,10 @@
 //! Impls for functions gated on the "litemap" feature.
 
 use super::konst::*;
+use crate::ZeroTrie;
 use crate::builder::slice_indices::ByteSliceWithIndices;
 use crate::error::ZeroTrieBuildError;
 use crate::zerotrie::ZeroTrieSimpleAscii;
-use crate::ZeroTrie;
 use alloc::vec::Vec;
 use core::borrow::Borrow;
 use litemap::LiteMap;

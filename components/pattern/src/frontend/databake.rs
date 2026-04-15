@@ -8,7 +8,7 @@ use crate::DoublePlaceholder;
 use crate::SinglePlaceholder;
 
 use super::*;
-use ::databake::{quote, Bake, BakeSize, CrateEnv, TokenStream};
+use ::databake::{Bake, BakeSize, CrateEnv, TokenStream, quote};
 
 impl<B> Bake for &Pattern<B>
 where

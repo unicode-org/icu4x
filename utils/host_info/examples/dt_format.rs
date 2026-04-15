@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::Date;
-use icu_datetime::{fieldsets, input::Time, DateTimeFormatter};
+use icu_datetime::{DateTimeFormatter, fieldsets, input::Time};
 use icu_time::DateTime;
 
 fn main() {

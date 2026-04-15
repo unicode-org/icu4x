@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::abstract_gregorian::{
-    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+    AbstractGregorian, GregorianYears, impl_with_abstract_gregorian,
 };
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
-use crate::{types, Date, RangeError};
+use crate::{Date, RangeError, types};
 use tinystr::tinystr;
 
 impl_with_abstract_gregorian!(Gregorian, GregorianDateInner, CeBce, _x, CeBce);

@@ -4,8 +4,8 @@
 
 use crate::{
     backends::{
-        shared::posix::{raw_locale_categories, LocaleCategory},
         HostInfoBackend, RawHostInfoBackend,
+        shared::posix::{LocaleCategory, raw_locale_categories},
     },
     error::HostInfoError,
 };

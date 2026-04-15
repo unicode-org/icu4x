@@ -10,7 +10,7 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 icu_benchmark_macros::instrument!();
 
-use icu_locale_core::subtags::{language, Language};
+use icu_locale_core::subtags::{Language, language};
 use litemap::LiteMap;
 
 const DATA: [(Language, &str); 11] = [

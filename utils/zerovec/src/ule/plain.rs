@@ -6,8 +6,8 @@
 //! ULE implementation for Plain Old Data types, including all sized integers.
 
 use super::*;
-use crate::impl_ule_from_array;
 use crate::ZeroSlice;
+use crate::impl_ule_from_array;
 use core::num::{NonZeroI8, NonZeroU8};
 
 /// A u8 array of little-endian data with infallible conversions to and from &[u8].

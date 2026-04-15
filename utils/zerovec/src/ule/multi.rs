@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::varzerovec::lengthless::VarZeroLengthlessSlice;
-use crate::vecs::VarZeroVecFormat;
 #[cfg(doc)]
 use crate::VarZeroSlice;
+use crate::varzerovec::lengthless::VarZeroLengthlessSlice;
+use crate::vecs::VarZeroVecFormat;
 use core::fmt;
 
 /// This type is used by the custom derive to represent multiple [`VarULE`]

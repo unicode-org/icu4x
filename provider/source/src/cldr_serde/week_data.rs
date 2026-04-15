@@ -7,7 +7,7 @@
 //! Sample file:
 //! `<https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json>`
 
-use icu::locale::{subtags::region, subtags::Region};
+use icu::locale::{subtags::Region, subtags::region};
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 

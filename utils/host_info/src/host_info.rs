@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::{
+    Locale,
     extensions::unicode::Unicode,
     preferences::extensions::unicode::keywords::{
         CalendarAlgorithm, CollationType, FirstDay, HourCycle, MeasurementSystem,
         MeasurementUnitOverride,
     },
     subtags::{Language, Region},
-    Locale,
 };
 
 use crate::{

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 use rand::SeedableRng;
 use rand_distr::{Distribution, LogNormal};
 use rand_pcg::Lcg64Xsh32;
@@ -12,8 +12,8 @@ use std::fmt;
 mod samples;
 use samples::*;
 
-use zerovec::ule::*;
 use zerovec::ZeroVec;
+use zerovec::ule::*;
 
 #[repr(align(8))]
 #[derive(Default)]

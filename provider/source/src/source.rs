@@ -189,7 +189,7 @@ impl AbstractFs {
                             retry -= 1;
                         }
                         Err(e) => {
-                            return Err(DataError::custom("Download").with_display_context(&e))
+                            return Err(DataError::custom("Download").with_display_context(&e));
                         }
                     }
                 };

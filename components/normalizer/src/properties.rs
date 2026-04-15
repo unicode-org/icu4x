@@ -11,6 +11,19 @@
 //! want access to the raw canonical composition operation e.g. for use in a
 //! glyph-availability-guided custom normalizer.
 
+use crate::BACKWARD_COMBINING_MARKER;
+use crate::CanonicalCombiningClass;
+use crate::FDFA_MARKER;
+use crate::HANGUL_L_BASE;
+use crate::HANGUL_N_COUNT;
+use crate::HANGUL_S_BASE;
+use crate::HANGUL_S_COUNT;
+use crate::HANGUL_T_BASE;
+use crate::HANGUL_T_COUNT;
+use crate::HANGUL_V_BASE;
+use crate::HIGH_ZEROS_MASK;
+use crate::LOW_ZEROS_MASK;
+use crate::NON_ROUND_TRIP_MARKER;
 use crate::char_from_u16;
 use crate::char_from_u32;
 use crate::in_inclusive_range;
@@ -23,19 +36,6 @@ use crate::provider::NormalizerNfdDataV1;
 use crate::provider::NormalizerNfdSupplementV1;
 use crate::provider::NormalizerNfdTablesV1;
 use crate::trie_value_has_ccc;
-use crate::CanonicalCombiningClass;
-use crate::BACKWARD_COMBINING_MARKER;
-use crate::FDFA_MARKER;
-use crate::HANGUL_L_BASE;
-use crate::HANGUL_N_COUNT;
-use crate::HANGUL_S_BASE;
-use crate::HANGUL_S_COUNT;
-use crate::HANGUL_T_BASE;
-use crate::HANGUL_T_COUNT;
-use crate::HANGUL_V_BASE;
-use crate::HIGH_ZEROS_MASK;
-use crate::LOW_ZEROS_MASK;
-use crate::NON_ROUND_TRIP_MARKER;
 use icu_provider::prelude::*;
 
 /// Borrowed version of the raw canonical composition operation.

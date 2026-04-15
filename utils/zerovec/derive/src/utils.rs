@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
@@ -375,7 +375,9 @@ pub fn extract_attributes_common(
         } else {
             return Err(Error::new(
                 ident.span(),
-                format!("Found unknown derive attribute for #[{name}]: #[zerovec::skip_derive({ident})]"),
+                format!(
+                    "Found unknown derive attribute for #[{name}]: #[zerovec::skip_derive({ident})]"
+                ),
             ));
         }
     }

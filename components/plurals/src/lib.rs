@@ -91,10 +91,10 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 pub use options::*;
-use provider::rules::runtime::test_rule;
 use provider::PluralRulesData;
 use provider::PluralsCardinalV1;
 use provider::PluralsOrdinalV1;
+use provider::rules::runtime::test_rule;
 
 #[cfg(feature = "unstable")]
 use provider::PluralsRangesV1;
@@ -126,7 +126,7 @@ use provider::UnvalidatedPluralRange;
 #[repr(u8)]
 #[zerovec::make_ule(PluralCategoryULE)]
 #[allow(clippy::exhaustive_enums)] // this type is mostly stable. new categories may potentially be added in the future,
-                                   // but at a cadence slower than the ICU4X release cycle
+// but at a cadence slower than the ICU4X release cycle
 pub enum PluralCategory {
     /// CLDR "zero" plural category. Used in Arabic and Latvian, among others.
     ///
@@ -582,10 +582,12 @@ impl PluralRulesWithRanges<PluralRules> {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<PluralsRangesV1>
-              + DataProvider<PluralsCardinalV1>
-              + DataProvider<PluralsOrdinalV1>
-              + ?Sized),
+        provider: &(
+             impl DataProvider<PluralsRangesV1>
+             + DataProvider<PluralsCardinalV1>
+             + DataProvider<PluralsOrdinalV1>
+             + ?Sized
+         ),
         prefs: PluralRulesPreferences,
         options: PluralRulesOptions,
     ) -> Result<Self, DataError> {

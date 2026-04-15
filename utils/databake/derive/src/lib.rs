@@ -21,10 +21,10 @@ use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::{
+    Data, DeriveInput, Ident, Path, PathSegment, Token, Visibility,
     parse::{Parse, ParseStream},
     parse_macro_input,
     punctuated::Punctuated,
-    Data, DeriveInput, Ident, Path, PathSegment, Token, Visibility,
 };
 use synstructure::{AddBounds, Structure};
 

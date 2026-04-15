@@ -18,7 +18,7 @@
 //! Proc macros for generating `ULE`, `VarULE` impls and types for the `zerovec` crate
 
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, DeriveInput, Ident};
+use syn::{DeriveInput, Ident, parse_macro_input};
 mod make_ule;
 mod make_varule;
 pub(crate) mod ule;

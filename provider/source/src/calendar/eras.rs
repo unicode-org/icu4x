@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
-use crate::SourceDataProvider;
 use icu::calendar::provider::*;
 use icu::calendar::{AnyCalendar, Date};
 use icu_provider::prelude::*;
@@ -160,8 +160,8 @@ pub fn ethiopic_and_ethioaa_are_compatible() {
 
 #[test]
 fn test_calendar_eras() {
-    use icu::calendar::types::YearInput;
     use icu::calendar::Iso;
+    use icu::calendar::types::YearInput;
     use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
     use icu::datetime::preferences::CalendarAlgorithm;
     use icu::locale::extensions::unicode::Value;

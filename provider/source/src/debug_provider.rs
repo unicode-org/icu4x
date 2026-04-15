@@ -17,7 +17,7 @@ where
 {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<M>, DataError> {
         // Note: would use TypeId::of but it isn't yet stable as a const fn
-        use core::any::{type_name, Any, TypeId};
+        use core::any::{Any, TypeId, type_name};
         use icu::datetime::provider::names::*;
         let type_id = TypeId::of::<M::DataStruct>();
         let data: Box<dyn Any> = if type_id == TypeId::of::<YearNames>() {

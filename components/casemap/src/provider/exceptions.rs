@@ -19,8 +19,8 @@ use core::fmt;
 #[cfg(any(feature = "serde", feature = "datagen"))]
 use core::ops::Range;
 use core::ptr;
-use zerovec::ule::AsULE;
 use zerovec::VarZeroVec;
+use zerovec::ule::AsULE;
 
 const SURROGATES_START: u32 = 0xD800;
 const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;

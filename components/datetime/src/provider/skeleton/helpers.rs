@@ -11,9 +11,9 @@ use icu_plurals::PluralElements;
 use crate::{
     options::SubsecondDigits,
     provider::{
-        fields::{self, components, Field, FieldLength, FieldSymbol},
-        pattern::{naively_apply_hour_cycle, runtime, PatternItem, TimeGranularity},
-        skeleton::{reference, FullLongMediumShort, GenericLengthPatterns},
+        fields::{self, Field, FieldLength, FieldSymbol, components},
+        pattern::{PatternItem, TimeGranularity, naively_apply_hour_cycle, runtime},
+        skeleton::{FullLongMediumShort, GenericLengthPatterns, reference},
     },
 };
 

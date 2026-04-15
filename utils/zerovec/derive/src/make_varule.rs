@@ -5,11 +5,11 @@
 use crate::utils::{self, FieldInfo};
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{
-    parse_quote, Data, DeriveInput, Error, Field, Fields, GenericArgument, Ident, Lifetime,
-    PathArguments, Type, TypePath,
+    Data, DeriveInput, Error, Field, Fields, GenericArgument, Ident, Lifetime, PathArguments, Type,
+    TypePath, parse_quote,
 };
 
 pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2 {
@@ -728,8 +728,7 @@ impl<'a> UnsizedFieldKind<'a> {
         ty: &'a Type,
         custom_varule_ident: Option<Ident>,
     ) -> Result<UnsizedFieldKind<'a>, String> {
-        static PATH_TYPE_IDENTITY_ERROR: &str =
-            "Can only automatically detect corresponding VarULE types for path types \
+        static PATH_TYPE_IDENTITY_ERROR: &str = "Can only automatically detect corresponding VarULE types for path types \
             that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec";
         static PATH_TYPE_GENERICS_ERROR: &str =
             "Can only automatically detect corresponding VarULE types for path \
@@ -870,10 +869,14 @@ impl<'a> OwnULETy<'a> {
                 if typath.path.is_ident("str") {
                     Ok(OwnULETy::Str)
                 } else {
-                    Err(format!("Cannot automatically detect corresponding VarULE type for non-str path type inside a {context}"))
+                    Err(format!(
+                        "Cannot automatically detect corresponding VarULE type for non-str path type inside a {context}"
+                    ))
                 }
             }
-            _ => Err(format!("Cannot automatically detect corresponding VarULE type for non-slice/path type inside a {context}")),
+            _ => Err(format!(
+                "Cannot automatically detect corresponding VarULE type for non-slice/path type inside a {context}"
+            )),
         }
     }
 

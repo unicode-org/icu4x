@@ -5,9 +5,9 @@
 use std::borrow::Cow;
 use std::collections::HashSet;
 
-use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 
 use icu::experimental::dimension::provider::percent::*;
 use icu_pattern::DoublePlaceholder;
@@ -15,8 +15,8 @@ use icu_pattern::DoublePlaceholderPattern;
 use icu_pattern::Pattern;
 use icu_pattern::SinglePlaceholder;
 use icu_pattern::SinglePlaceholderPattern;
-use icu_provider::prelude::*;
 use icu_provider::DataProvider;
+use icu_provider::prelude::*;
 use zerovec::VarZeroCow;
 
 impl DataProvider<PercentEssentialsV1> for SourceDataProvider {

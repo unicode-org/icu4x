@@ -4,7 +4,7 @@
 
 #![allow(dead_code)]
 
-use libc::{setlocale, LC_ALL};
+use libc::{LC_ALL, setlocale};
 use std::{collections::HashMap, ffi::CStr, ptr, str::FromStr};
 
 use crate::error::HostInfoError;
@@ -148,11 +148,7 @@ fn parse_setlocale_snapshot() -> Option<HashMap<LocaleCategory, String>> {
         }
     }
 
-    if map.is_empty() {
-        None
-    } else {
-        Some(map)
-    }
+    if map.is_empty() { None } else { Some(map) }
 }
 
 // --- public ---

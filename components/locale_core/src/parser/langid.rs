@@ -3,15 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub use super::errors::ParseError;
-use crate::extensions::unicode::{Attribute, Key, Value};
+#[cfg(feature = "alloc")]
+use crate::LanguageIdentifier;
 use crate::extensions::ExtensionType;
+use crate::extensions::unicode::{Attribute, Key, Value};
 use crate::parser::SubtagIterator;
 #[cfg(feature = "alloc")]
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags;
 use crate::subtags::Subtag;
-#[cfg(feature = "alloc")]
-use crate::LanguageIdentifier;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum ParserMode {

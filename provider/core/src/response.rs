@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::buf::BufferMarker;
 use crate::DataError;
 use crate::DataLocale;
 use crate::DynamicDataMarker;
+use crate::buf::BufferMarker;
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
 use core::fmt::Debug;
@@ -1114,5 +1114,8 @@ fn test_debug() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234) }, payload: HelloWorld { message: \"Hello World\" } }", format!("{resp:?}"));
+    assert_eq!(
+        "DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234) }, payload: HelloWorld { message: \"Hello World\" } }",
+        format!("{resp:?}")
+    );
 }

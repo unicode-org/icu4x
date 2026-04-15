@@ -13,8 +13,8 @@ use icu_calendar::{
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
+use icu_time::{Hour, Minute, Nanosecond, Second, TimeZone, zone::UtcOffset};
 use icu_time::{scaffold::IntoOption, zone::ZoneNameTimestamp};
-use icu_time::{zone::UtcOffset, Hour, Minute, Nanosecond, Second, TimeZone};
 
 // TODO(#4340): Add DecimalFormatter optional bindings here
 

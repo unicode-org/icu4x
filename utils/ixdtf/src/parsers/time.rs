@@ -7,18 +7,17 @@
 use core::num::NonZeroU8;
 
 use crate::{
-    assert_syntax,
+    ParseError, ParserResult, assert_syntax,
     encoding::EncodingType,
     parsers::{
+        Cursor,
         datetime::{parse_month_day, parse_year_month},
         grammar::{
             is_annotation_open, is_decimal_separator, is_time_designator, is_time_separator,
             is_utc_designator,
         },
-        Cursor,
     },
     records::{Annotation, Fraction, IxdtfParseRecord, TimeRecord},
-    ParseError, ParserResult,
 };
 
 use super::{annotations, grammar::is_ascii_sign, timezone};

@@ -8,12 +8,12 @@
 //! [`ZeroTrie`]: crate::ZeroTrie
 
 use crate::ZeroTrieSimpleAscii;
+use zerovec::ZeroSlice;
+use zerovec::ule::EncodeAsVarULE;
 use zerovec::ule::tuplevar::Tuple3VarULE;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::vartuple::VarTupleULE;
-use zerovec::ule::EncodeAsVarULE;
 use zerovec::vecs::Index32;
-use zerovec::ZeroSlice;
 
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;

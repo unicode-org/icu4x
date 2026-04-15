@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{read_u16, BinaryDeserializerError, CharsetFamily, Endianness, FormatVersion};
+use super::{BinaryDeserializerError, CharsetFamily, Endianness, FormatVersion, read_u16};
 
 /// The `BinHeader` struct represents the in-memory layout of a binary resource
 /// bundle header.
@@ -77,7 +77,7 @@ impl TryFrom<&[u8]> for BinHeader {
             _ => {
                 return Err(BinaryDeserializerError::invalid_data(
                     "magic word does not match",
-                ))
+                ));
             }
         }
 

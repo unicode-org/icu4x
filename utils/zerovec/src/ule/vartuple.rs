@@ -55,7 +55,7 @@ use zerofrom::ZeroFrom;
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, boxed::Box};
 
-use super::{AsULE, EncodeAsVarULE, UleError, VarULE, ULE};
+use super::{AsULE, EncodeAsVarULE, ULE, UleError, VarULE};
 
 /// A sized type that can be converted to a [`VarTupleULE`].
 ///

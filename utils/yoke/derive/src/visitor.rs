@@ -11,8 +11,8 @@
 use std::collections::HashSet;
 use syn::ext::IdentExt as _;
 use syn::visit::{
-    visit_bound_lifetimes, visit_generic_param, visit_lifetime, visit_type, visit_type_path,
-    visit_where_clause, Visit,
+    Visit, visit_bound_lifetimes, visit_generic_param, visit_lifetime, visit_type, visit_type_path,
+    visit_where_clause,
 };
 use syn::{GenericParam, Ident, Lifetime, Type, TypePath, WhereClause};
 
@@ -167,9 +167,9 @@ pub fn check_where_clause_for_bound_lts(where_clause: &WhereClause) -> usize {
 mod tests {
     use proc_macro2::Span;
     use std::collections::HashSet;
-    use syn::{parse_quote, Ident};
+    use syn::{Ident, parse_quote};
 
-    use super::{check_type_for_parameters, CheckResult};
+    use super::{CheckResult, check_type_for_parameters};
 
     fn a_ident() -> Ident {
         Ident::new("a", Span::call_site())

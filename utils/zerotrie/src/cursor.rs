@@ -7,9 +7,9 @@
 //! For examples, see the `.cursor()` functions
 //! and the `Cursor` types in this module.
 
-use crate::reader;
 use crate::ZeroAsciiIgnoreCaseTrie;
 use crate::ZeroTrieSimpleAscii;
+use crate::reader;
 
 use core::fmt;
 

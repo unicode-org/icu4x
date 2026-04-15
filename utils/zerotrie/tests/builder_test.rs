@@ -36,10 +36,12 @@ where
         assert_eq!(trie.get(s.as_bytes()), None);
     }
     // Check that the iterator returns items in the same order as the LiteMap
-    assert!(items
-        .iter()
-        .map(|(s, v)| (String::from_utf8(s.to_vec()).unwrap(), *v))
-        .eq(trie.iter()));
+    assert!(
+        items
+            .iter()
+            .map(|(s, v)| (String::from_utf8(s.to_vec()).unwrap(), *v))
+            .eq(trie.iter())
+    );
     // Check that the const builder works
     let const_trie = ZeroTrieSimpleAscii::try_from_litemap_with_const_builder(items).unwrap();
     assert_eq!(trie.as_bytes(), const_trie.as_bytes());

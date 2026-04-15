@@ -5,8 +5,8 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-use icu_calendar::cal::{hijri, Hijri};
 use icu_calendar::Date;
+use icu_calendar::cal::{Hijri, hijri};
 
 #[derive(Clone, Copy, Debug)]
 struct IranSighting;
@@ -134,7 +134,7 @@ fn test_conversion() {
 #[test]
 #[ignore]
 fn test_format() {
-    use icu_datetime::{fieldsets, FixedCalendarDateTimeFormatter};
+    use icu_datetime::{FixedCalendarDateTimeFormatter, fieldsets};
     use icu_locale::locale;
 
     let formatter =
