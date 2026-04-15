@@ -13,7 +13,6 @@ use icu::experimental::dimension::provider::units::categorized_display_names::{
     UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use std::collections::HashSet;
@@ -72,21 +71,6 @@ impl SourceDataProvider {
         let numbers = self.cldr()?.numbers();
         let locales = numbers.list_locales()?;
         for locale in locales {
-            // Try to fill the lang_id with all the missing data to find the region.
-            let mut lang_id = LanguageIdentifier::from(locale.language);
-            let _ = self
-                .cldr()?
-                .extended_locale_expander()?
-                .maximize(&mut lang_id);
-            let region = match lang_id.region {
-                Some(region) => region.to_string(),
-                None => {
-                    return Err(DataErrorKind::InvalidRequest
-                        .into_error()
-                        .with_debug_context(&lang_id))
-                }
-            };
-
             // Load and parse the unit constants from the supplemental data file.
             let preferences: &cldr_serde::units::preferences::Resource = self
                 .cldr()?
@@ -124,7 +108,7 @@ impl SourceDataProvider {
                     if cldr_serde::units::preferences::Supplemental::unit_type(
                         category,
                         unit,
-                        &region,
+                        &self.cldr()?.extract_or_infer_region(&locale)?.to_string(),
                         &categorized_units_list,
                     ) != unit_type
                     {

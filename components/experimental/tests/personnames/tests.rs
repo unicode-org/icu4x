@@ -11,7 +11,7 @@ use icu_locale_core::locale;
 use litemap::LiteMap;
 use PersonNamesFormatterError::ParseError;
 
-pub struct TestingProvider;
+struct TestingProvider;
 
 const _: () = {
     pub use icu_experimental_data::*;
@@ -68,40 +68,40 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
     );
 
     // has_name_field_kind tests
-    assert!(person_name.has_name_field_kind(&NameFieldKind::Given));
-    assert!(!person_name.has_name_field_kind(&NameFieldKind::Surname2));
+    assert!(person_name.has_name_field_kind(NameFieldKind::Given));
+    assert!(!person_name.has_name_field_kind(NameFieldKind::Surname2));
 
     // has_name_field
-    assert!(person_name.has_name_field(&NameField {
+    assert!(person_name.has_name_field(NameField {
         kind: NameFieldKind::Given,
         modifier: FieldModifierSet::default(),
     }));
-    assert!(!person_name.has_name_field(&NameField {
+    assert!(!person_name.has_name_field(NameField {
         kind: NameFieldKind::Surname2,
         modifier: FieldModifierSet::default(),
     }));
-    assert!(!person_name.has_name_field(&NameField {
+    assert!(!person_name.has_name_field(NameField {
         kind: NameFieldKind::Surname,
         modifier: FieldModifierSet::style(FieldCapsStyle::AllCaps),
     }));
 
     // get
     assert_eq!(
-        person_name.get(&NameField {
+        person_name.get(NameField {
             kind: NameFieldKind::Given,
             modifier: FieldModifierSet::default(),
         }),
         "Henry"
     );
     assert_eq!(
-        person_name.get(&NameField {
+        person_name.get(NameField {
             kind: NameFieldKind::Surname,
             modifier: FieldModifierSet::default(),
         }),
         "Jekyll"
     );
     assert_eq!(
-        person_name.get(&NameField {
+        person_name.get(NameField {
             kind: NameFieldKind::Surname,
             modifier: FieldModifierSet::formality(FieldFormality::Informal),
         }),

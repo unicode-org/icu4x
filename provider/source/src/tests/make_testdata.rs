@@ -10,6 +10,7 @@ use icu_provider::prelude::*;
 use icu_provider_export::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
+use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::sync::Mutex;
 
@@ -61,8 +62,8 @@ fn make_testdata() {
             .iter()
             .cloned()
             .map(Into::into)
-            .map(DataLocaleFamily::with_descendants),
-        DeduplicationStrategy::None.into(),
+            .map(DataLocaleFamily::single),
+        DeduplicationStrategy::RetainBaseLanguages.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
     .with_segmenter_models([
@@ -79,6 +80,55 @@ fn make_testdata() {
     .with_marker_attributes_filter("currency", |attrs| {
         matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
     })
+    .with_marker_attributes_filter("locale_names_region", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "419" // part of dialect name
+            | "FR" // standard
+            | "CG" | "MM" // nested parens
+            | "HK" // has alt name
+        )
+    })
+    .with_marker_attributes_filter("locale_names_language", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "fr" // standard
+            | "zh" // has short menu name
+            | "en-GB" // has short name
+            | "zh-Hant" // has long menu name but not short menu name
+            | "de-CH" // has dialect name
+            | "ku" // has menu attributes
+        )
+    })
+    .with_marker_attributes_filter("locale_names_script", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "Latn" // standard
+            | "Hans" | "Hant" // for contrast
+            | "Cans" // has short script name
+        )
+    })
+    .with_marker_attributes_filter("locale_names_variant", |attrs| {
+        matches!(attrs.as_str(), "POSIX")
+    })
+    .with_marker_attributes_filter("numbering_system", |attrs| {
+        matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")
+    })
+    .with_marker_attributes_filter("transliterator", |attrs| {
+        matches!(
+            attrs.as_str(),
+            "de-t-de-d0-ascii"
+                | "el-latn-t-s0-ascii"
+                | "el-latn-t-el-m0-bgn"
+                | "und-arab-t-und-beng"
+                | "und-latn-t-s0-ascii"
+                | "und-t-d0-publish"
+                | "und-t-s0-publish"
+                | "und-t-und-latn-d0-ascii"
+                | "und-x-bengali-interind"
+                | "und-x-interind-arabic"
+        )
+    })
     .export(&provider, exporter)
     .unwrap();
 }
@@ -86,7 +136,7 @@ fn make_testdata() {
 struct ZeroCopyCheckExporter {
     zero_copy_violations: Mutex<BTreeSet<DataMarkerInfo>>,
     zero_copy_transient_violations: Mutex<BTreeSet<DataMarkerInfo>>,
-    rountrip_errors: Mutex<BTreeSet<(DataMarkerInfo, String)>>,
+    rountrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
 }
 
 // Types in this list cannot be zero-copy deserialized.
@@ -136,7 +186,7 @@ impl DataExporter for ZeroCopyCheckExporter {
         let payload_after;
 
         macro_rules! cb {
-            ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+            ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
                 ((allocated, deallocated), payload_after) = match marker {
                     k if k == icu_provider::hello_world::HelloWorldV1::INFO => {
                         let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
@@ -161,16 +211,20 @@ impl DataExporter for ZeroCopyCheckExporter {
         icu_provider_registry::registry!(cb);
 
         if payload_before != &payload_after {
-            self.rountrip_errors.lock().expect("poison").insert((
-                marker,
-                id.locale.to_string()
-                    + if id.marker_attributes.is_empty() {
-                        ""
-                    } else {
-                        "-x"
-                    }
-                    + id.marker_attributes.as_str(),
-            ));
+            self.rountrip_errors
+                .lock()
+                .expect("poison")
+                .entry(marker)
+                .or_default()
+                .insert(
+                    id.locale.to_string()
+                        + if id.marker_attributes.is_empty() {
+                            ""
+                        } else {
+                            "-x"
+                        }
+                        + id.marker_attributes.as_str(),
+                );
         }
 
         if deallocated != allocated {
@@ -195,10 +249,13 @@ impl DataExporter for ZeroCopyCheckExporter {
     }
 
     fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
-        assert_eq!(
-            self.rountrip_errors.get_mut().expect("poison"),
-            &mut BTreeSet::default()
-        );
+        let rountrip_errors = self.rountrip_errors.get_mut().expect("poison");
+        // These serialize to a different variant for stability
+        rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesMonthChineseV1::INFO);
+        rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesMonthDangiV1::INFO);
+        rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesMonthHebrewV1::INFO);
+        rountrip_errors.remove(&icu::datetime::provider::names::DatetimeNamesYearJapaneseV1::INFO);
+        assert_eq!(rountrip_errors, &mut BTreeMap::default());
 
         let violations = self
             .zero_copy_violations

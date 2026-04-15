@@ -38,11 +38,15 @@ pub(crate) struct EraData {
     pub(crate) start: Option<EraStartDate>,
     #[serde(rename = "_end", default, deserialize_with = "parse_era_start_date")]
     pub(crate) end: Option<EraStartDate>,
-    #[serde(rename = "_code")]
-    pub(crate) code: Option<String>,
-    #[serde(rename = "_aliases")]
-    pub(crate) aliases: Option<String>,
-    /// EraYear::era_index
+    #[serde(rename = "_code", default)]
+    pub(crate) code: String,
+    #[serde(rename = "_aliases", default)]
+    pub(crate) aliases: String,
+    /// The offset from the arithmetic start of the era to when it was started
+    /// to be used. CLDR doesn't track this, we manually set this for Meiji.
+    #[serde(default)]
+    pub(crate) offset: i32,
+    /// `EraYear::era_index`
     #[serde(skip)]
     pub(crate) icu4x_era_index: Option<u8>,
 }
@@ -62,18 +66,18 @@ fn parse_era_start_date<'de, D: Deserializer<'de>>(
     let mut split = s.split('-');
     let year = split
         .next()
-        .ok_or(D::Error::custom("EraStartData format"))?
+        .ok_or_else(|| D::Error::custom("EraStartData format"))?
         .parse::<i32>()
         .map_err(|_| D::Error::custom("EraStartData format"))?
         * sign;
     let month = split
         .next()
-        .ok_or(D::Error::custom("EraStartData format"))?
+        .ok_or_else(|| D::Error::custom("EraStartData format"))?
         .parse()
         .map_err(|_| D::Error::custom("EraStartData format"))?;
     let day = split
         .next()
-        .ok_or(D::Error::custom("EraStartData format"))?
+        .ok_or_else(|| D::Error::custom("EraStartData format"))?
         .parse()
         .map_err(|_| D::Error::custom("EraStartData format"))?;
 

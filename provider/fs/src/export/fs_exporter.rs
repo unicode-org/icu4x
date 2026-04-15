@@ -15,20 +15,15 @@ use std::path::PathBuf;
 
 /// Choices of what to do if [`FilesystemExporter`] tries to write to a pre-existing directory.
 #[non_exhaustive]
-#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize, Default)]
 pub enum OverwriteOption {
     /// If the directory doesn't exist, create it.
     /// If it does exist, remove it safely (`rmdir`) and re-create it.
+    #[default]
     CheckEmpty,
     /// If the directory doesn't exist, create it.
     /// If it does exist, remove it aggressively (`rm -rf`) and re-create it.
     RemoveAndReplace,
-}
-
-impl Default for OverwriteOption {
-    fn default() -> Self {
-        Self::CheckEmpty
-    }
 }
 
 /// Options bag for initializing a [`FilesystemExporter`].

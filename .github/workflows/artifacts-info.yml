@@ -40,5 +40,8 @@ jobs:
         echo "📖 Dart docs"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/dartdoc/index.html"
         echo
+        echo "📖 Kotlin docs"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/kdoc/icu4x/org.unicode.icu4x/index.html"
+        echo
         echo "The links will be available after the following job completes:"
         echo "${{ github.event.pull_request.head.repo.html_url }}/actions/workflows/artifacts-build.yml"

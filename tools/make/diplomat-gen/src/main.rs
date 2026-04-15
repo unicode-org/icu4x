@@ -80,23 +80,23 @@ fn main() -> std::io::Result<()> {
             .collect(),
     );
 
+    let include = root.join(match lang.as_str() {
+        "c" => "ffi/capi/bindings/c",
+        "cpp" => "ffi/capi/bindings/cpp/icu4x",
+        "dart" => "ffi/dart/lib/src/bindings",
+        "demo_gen" => "tools/web-demo/gen",
+        "js" => "ffi/npm/lib",
+        "kotlin" => "ffi/mvn/src/main/kotlin",
+        l => unreachable!("{l:?}"),
+    });
+
+    std::fs::remove_dir_all(&include)?;
+    std::fs::create_dir_all(&include)?;
+
     diplomat_tool::gen(
         &root.join("ffi/capi/src/lib.rs"),
         lang.as_str(),
-        &{
-            let mut include = if lang != "demo_gen" {
-                root.join("ffi/capi/bindings").join(&lang)
-            } else {
-                root.join("tools/web-demo/gen")
-            };
-
-            std::fs::remove_dir_all(&include)?;
-            if lang == "cpp" {
-                include = include.join("icu4x");
-            }
-            std::fs::create_dir_all(&include)?;
-            include
-        },
+        &include,
         &docs_url_gen,
         library_config,
         false,

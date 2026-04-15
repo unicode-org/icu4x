@@ -15,6 +15,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
+    use icu_locale_core::locale;
 
     use writeable::Writeable;
 
@@ -62,7 +63,7 @@ pub mod ffi {
     pub struct CaseMapper(pub icu_casemap::CaseMapper);
 
     impl CaseMapper {
-        /// Construct a new CaseMapper instance using compiled data.
+        /// Construct a new `CaseMapper` instance using compiled data.
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::new, FnInStruct, hidden)]
         #[diplomat::attr(auto, constructor)]
@@ -71,7 +72,7 @@ pub mod ffi {
             Box::new(CaseMapper(icu_casemap::CaseMapper::new().static_to_owned()))
         }
 
-        /// Construct a new CaseMapper instance using a particular data source.
+        /// Construct a new `CaseMapper` instance using a particular data source.
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
@@ -110,7 +111,7 @@ pub mod ffi {
                 .write_to(write);
         }
 
-        /// Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+        /// Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a `CaseMapper` object)
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::lowercase, FnInStruct)]
         #[diplomat::rust_link(
             icu::casemap::CaseMapperBorrowed::lowercase_to_string,
@@ -125,7 +126,7 @@ pub mod ffi {
                 .write_to(write);
         }
 
-        /// Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+        /// Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a `CaseMapper` object)
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::uppercase, FnInStruct)]
         #[diplomat::rust_link(
             icu::casemap::CaseMapperBorrowed::uppercase_to_string,
@@ -169,6 +170,35 @@ pub mod ffi {
                 .write_to(write);
         }
 
+        /// Returns the full titlecase mapping of the given string, performing head adjustment without
+        /// loading additional data, using compiled data (avoids having to allocate a `CaseMapper` object).
+        ///
+        /// (if head adjustment is enabled in the options)
+        ///
+        /// The `v1` refers to the version of the options struct, which may change as we add more options
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::titlecase_segment_with_only_case_data_to_string,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::titlecase_segment_with_only_case_data_to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_only_case_compiled_data")]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
+        pub fn titlecase_segment_with_only_case_compiled_data_v1(
+            s: &str,
+            locale: &Locale,
+            options: TitlecaseOptionsV1,
+            write: &mut DiplomatWrite,
+        ) {
+            let _infallible = icu_casemap::CaseMapper::new()
+                .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
+                .write_to(write);
+        }
+
         /// Case-folds the characters in the given string
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::fold, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::fold_string, FnInStruct, hidden)]
@@ -193,7 +223,7 @@ pub mod ffi {
         /// In other words, this adds all characters that this casemaps to, as
         /// well as all characters that may casemap to this one.
         ///
-        /// Note that since CodePointSetBuilder does not contain strings, this will
+        /// Note that since `CodePointSetBuilder` does not contain strings, this will
         /// ignore string mappings.
         ///
         /// Identical to the similarly named method on `CaseMapCloser`, use that if you
@@ -224,7 +254,7 @@ pub mod ffi {
                 .map(|ch| self.0.as_borrowed().simple_lowercase(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
-        /// Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /// Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_lowercase, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
@@ -246,7 +276,7 @@ pub mod ffi {
                 .unwrap_or(ch)
         }
 
-        /// Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /// Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_uppercase, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
@@ -268,7 +298,7 @@ pub mod ffi {
                 .unwrap_or(ch)
         }
 
-        /// Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /// Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_titlecase, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
@@ -289,7 +319,7 @@ pub mod ffi {
                 .unwrap_or(ch)
         }
 
-        /// Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /// Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_fold, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
@@ -310,7 +340,7 @@ pub mod ffi {
                 .unwrap_or(ch)
         }
 
-        /// Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        /// Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a `CaseMapper` object)
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_fold_turkic, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
@@ -327,7 +357,7 @@ pub mod ffi {
     pub struct CaseMapCloser(pub icu_casemap::CaseMapCloser<icu_casemap::CaseMapper>);
 
     impl CaseMapCloser {
-        /// Construct a new CaseMapCloser instance using compiled data.
+        /// Construct a new `CaseMapCloser` instance using compiled data.
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloserBorrowed::new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
@@ -338,7 +368,7 @@ pub mod ffi {
                 icu_casemap::CaseMapCloser::new().static_to_owned(),
             )))
         }
-        /// Construct a new CaseMapCloser instance using a particular data source.
+        /// Construct a new `CaseMapCloser` instance using a particular data source.
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
@@ -437,7 +467,7 @@ pub mod ffi {
                 .titlecase_segment(s, &locale.0.id, options.into())
                 .write_to(write);
         }
-        /// Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+        /// Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a `TitlecaseMapper` object)
         ///
         /// The `v1` refers to the version of the options struct, which may change as we add more options
         #[diplomat::rust_link(icu::casemap::TitlecaseMapperBorrowed::titlecase_segment, FnInStruct)]
@@ -458,6 +488,53 @@ pub mod ffi {
             let _infallible = icu_casemap::TitlecaseMapper::new()
                 .titlecase_segment(s, &locale.0.id, options.into())
                 .write_to(write);
+        }
+    }
+
+    /// A type that provides access to preconstructred Locales, to avoid
+    /// needing to parse user locales when the code knows what locale it wants.
+    ///
+    /// In most cases, you should be taking a locale from the user, but in some
+    /// limited cases you may be parsing from a limited set of locales and not
+    /// wish to pull in full-fledged parsing code.
+    ///
+    /// This type is for locales that have special meaning to `CaseMapper`,
+    /// since it only cares about a small set of locales and locale parsing takes
+    /// up a relatively large amount of binary size in the context of casemapping.
+    #[diplomat::attr(not(cpp), disable)]
+    #[diplomat::opaque]
+    pub struct CaseMapLocales;
+
+    impl CaseMapLocales {
+        /// Returns a borrowed "az" [`Locale`], without allocating.
+        pub fn az() -> &'static Locale {
+            static AZ: Locale = Locale(locale!("az"));
+            &AZ
+        }
+        /// Returns a borrowed "el" [`Locale`], without allocating.
+        pub fn el() -> &'static Locale {
+            static EL: Locale = Locale(locale!("el"));
+            &EL
+        }
+        /// Returns a borrowed "hy" [`Locale`], without allocating.
+        pub fn hy() -> &'static Locale {
+            static HY: Locale = Locale(locale!("hy"));
+            &HY
+        }
+        /// Returns a borrowed "lt" [`Locale`], without allocating.
+        pub fn lt() -> &'static Locale {
+            static LT: Locale = Locale(locale!("lt"));
+            &LT
+        }
+        /// Returns a borrowed "nl" [`Locale`], without allocating.
+        pub fn nl() -> &'static Locale {
+            static NL: Locale = Locale(locale!("nl"));
+            &NL
+        }
+        /// Returns a borrowed "tr" [`Locale`], without allocating.
+        pub fn tr() -> &'static Locale {
+            static TR: Locale = Locale(locale!("tr"));
+            &TR
         }
     }
 }

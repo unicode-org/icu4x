@@ -9,8 +9,9 @@ use crate::scaffold::*;
 use icu_calendar::types::{DayOfYear, RataDie};
 use icu_calendar::{AsCalendar, Calendar};
 use icu_time::scaffold::IntoOption;
+use icu_time::zone::models::{AtTime, Base};
 use icu_time::zone::ZoneNameTimestamp;
-use icu_time::{Hour, Minute, Nanosecond, Second};
+use icu_time::{Hour, Minute, Nanosecond, Second, TimeZoneInfo};
 
 use icu_calendar::Date;
 use icu_time::{zone::UtcOffset, Time, TimeZone};
@@ -35,10 +36,10 @@ pub struct DateTimeInputUnchecked {
     /// The day-of-month, required for field sets with days (`D`).
     pub(crate) day_of_month: Option<DayOfMonth>,
     /// The weekday, required for field sets with weekdays (`E`).
-    pub(crate) iso_weekday: Option<Weekday>,
+    pub(crate) weekday: Option<Weekday>,
     /// The day-of-year, required for field sets with weeks.
     pub(crate) day_of_year: Option<DayOfYear>,
-    /// The RataDie of the day
+    /// The [`RataDie`] of the day
     pub(crate) rata_die: Option<RataDie>,
     /// The hour, required for field sets with times (`T`).
     pub(crate) hour: Option<Hour>,
@@ -71,7 +72,7 @@ impl DateTimeInputUnchecked {
         self.year = Some(date_in_calendar.year());
         self.month = Some(date_in_calendar.month());
         self.day_of_month = Some(date_in_calendar.day_of_month());
-        self.iso_weekday = Some(date_in_calendar.day_of_week());
+        self.weekday = Some(date_in_calendar.weekday());
         self.day_of_year = Some(date_in_calendar.day_of_year());
     }
 
@@ -86,6 +87,19 @@ impl DateTimeInputUnchecked {
     /// Sets the time zone UTC offset.
     pub fn set_time_zone_utc_offset(&mut self, utc_offset: UtcOffset) {
         self.zone_offset = Some(utc_offset);
+    }
+
+    /// Sets all fields from a [`TimeZoneInfo<Base>`] input.
+    pub fn set_time_zone_info_base_fields(&mut self, info: TimeZoneInfo<Base>) {
+        self.zone_id = Some(info.id());
+        self.zone_offset = self.zone_offset.or_else(|| info.offset());
+    }
+
+    /// Sets all fields from a [`TimeZoneInfo<AtTime>`] input.
+    pub fn set_time_zone_info_at_time_fields(&mut self, info: TimeZoneInfo<AtTime>) {
+        self.zone_id = Some(info.id());
+        self.zone_offset = self.zone_offset.or_else(|| info.offset());
+        self.zone_name_timestamp = Some(info.zone_name_timestamp());
     }
 
     /// Sets the time zone ID.
@@ -127,7 +141,7 @@ impl DateTimeInputUnchecked {
             year: GetField::<D::YearInput>::get_field(input).into_option(),
             month: GetField::<D::MonthInput>::get_field(input).into_option(),
             day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into_option(),
-            iso_weekday: GetField::<D::DayOfWeekInput>::get_field(input).into_option(),
+            weekday: GetField::<D::DayOfWeekInput>::get_field(input).into_option(),
             day_of_year: GetField::<D::DayOfYearInput>::get_field(input).into_option(),
             rata_die: GetField::<D::RataDieInput>::get_field(input).into_option(),
             hour: GetField::<T::HourInput>::get_field(input).into_option(),

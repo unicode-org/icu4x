@@ -3,6 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::displaynames::{
+    ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING,
+    MENU_CORE_SUBSTRING, MENU_EXTENSION_SUBSTRING,
+};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 
@@ -11,6 +15,7 @@ use icu::locale::subtags::Language;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::VarZeroCow;
 
 impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LanguageDisplayNamesV1>, DataError> {
@@ -43,52 +48,31 @@ impl DataProvider<LocaleDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<LanguageDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .displaynames()
-            .list_locales()?
-            .filter(|locale| {
-                // The directory might exist without languages.json
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(locale, "languages.json")
-                    .unwrap_or_default()
-            })
-            .map(DataIdentifierCow::from_locale)
-            .collect())
-    }
-}
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LanguageDisplayNamesV1, "languages.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "languages.json");
 
-impl IterableDataProviderCached<LocaleDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .displaynames()
-            .list_locales()?
-            .filter(|locale| {
-                // The directory might exist without languages.json
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(locale, "languages.json")
-                    .unwrap_or_default()
-            })
-            .map(DataIdentifierCow::from_locale)
-            .collect())
-    }
-}
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageLongV1,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    None::<&str>,
+);
 
-/// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
-const ALT_SUBSTRING: &str = "-alt-";
-/// Substring used to denote short display names data variants for a given language. For example: "az-alt-short".
-const ALT_SHORT_SUBSTRING: &str = "-alt-short";
-/// Substring used to denote long display names data variants for a given language. For example: "az-alt-long".
-const ALT_LONG_SUBSTRING: &str = "-alt-long";
-/// Substring used to denote menu display names data variants for a given language. For example: "az-alt-menu".
-const ALT_MENU_SUBSTRING: &str = "-alt-menu";
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageShortV1,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    Some(ALT_SHORT_SUBSTRING),
+);
+
+crate::displaynames::impl_displaynames_menu_v1!(
+    LocaleNamesLanguageMenuLongV1,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+);
 
 impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
@@ -302,5 +286,60 @@ mod tests {
                 .unwrap(),
             "Swiss High German"
         );
+    }
+
+    #[test]
+    fn test_locale_names_language_long() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageLongV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("aa").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Afar");
+    }
+
+    #[test]
+    fn test_locale_names_language_short() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("en-GB").unwrap(),
+                    &langid!("en").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "UK English");
+    }
+
+    #[test]
+    fn test_locale_names_language_menu_long() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageMenuLongV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("ku").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(data.get().core(), "Kurdish");
+        assert_eq!(data.get().extension(), "Kurmanji");
     }
 }

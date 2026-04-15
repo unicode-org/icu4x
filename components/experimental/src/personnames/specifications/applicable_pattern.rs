@@ -9,7 +9,7 @@ use crate::personnames::specifications::PersonNamePattern;
 
 pub fn find_best_applicable_pattern<'lt>(
     applicable_pattern: &'lt [PersonNamePattern<'lt>],
-    available_name_fields: &'lt [&NameField],
+    available_name_fields: &'lt [NameField],
 ) -> Result<&'lt PersonNamePattern<'lt>, PersonNamesFormatterError> {
     let (_, _, max_applicable_pattern) =
         applicable_pattern
@@ -30,11 +30,11 @@ pub fn find_best_applicable_pattern<'lt>(
                 }
                 (*used_field_count, *missing_field_count, Some(element))
             });
-    max_applicable_pattern
-        .map(Ok)
-        .unwrap_or(Err(PersonNamesFormatterError::ParseError(String::from(
+    max_applicable_pattern.map(Ok).unwrap_or_else(|| {
+        Err(PersonNamesFormatterError::ParseError(String::from(
             "Invalid Person name pattern",
-        ))))
+        )))
+    })
 }
 
 #[cfg(test)]
@@ -70,7 +70,7 @@ mod tests {
             kind: NameFieldKind::Given,
             modifier: Default::default(),
         };
-        let name_fields = vec![&title, &surname, &given, &given2];
+        let name_fields = vec![title, surname, given, given2];
         let result = super::find_best_applicable_pattern(tested_patterns, &name_fields)?;
         let expect = &tested_patterns[0];
         assert_eq!(result, expect);
@@ -107,7 +107,7 @@ mod tests {
             kind: NameFieldKind::Given2,
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
-        let name_fields = vec![&surname, &given, &given_initial, &given2, &given2_initial];
+        let name_fields = vec![surname, given, given_initial, given2, given2_initial];
         let result = super::find_best_applicable_pattern(tested_patterns, &name_fields)?;
         let expect = &tested_patterns[1];
         assert_eq!(result, expect);

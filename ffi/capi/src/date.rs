@@ -8,15 +8,15 @@ use ffi::IsoWeekOfYear;
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
-    use alloc::sync::Arc;
     use core::fmt::Write;
-    #[cfg(feature = "unstable")]
     use diplomat_runtime::DiplomatOption;
     use icu_calendar::Iso;
 
     use crate::unstable::calendar::ffi::Calendar;
-    #[cfg(feature = "unstable")]
-    use crate::unstable::errors::ffi::CalendarDateFromFieldsError;
+    use crate::unstable::errors::ffi::{
+        CalendarDateAddError, CalendarDateFromFieldsError, CalendarMismatchedCalendarError,
+        DateDurationParseError,
+    };
     use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
 
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
@@ -31,6 +31,79 @@ pub mod ffi {
         Saturday,
         Sunday,
     }
+
+    #[diplomat::enum_convert(icu_calendar::options::DateDurationUnit, needs_wildcard)]
+    #[diplomat::rust_link(icu::calendar::options::DateDurationUnit, Enum)]
+    #[non_exhaustive]
+    pub enum DateDurationUnit {
+        Years,
+        Months,
+        Weeks,
+        Days,
+    }
+
+    #[diplomat::rust_link(icu::calendar::types::DateDuration, Struct)]
+    pub struct DateDuration {
+        pub is_negative: bool,
+        pub years: u32,
+        pub months: u32,
+        pub weeks: u32,
+        pub days: u32,
+    }
+
+    impl DateDuration {
+        /// Creates a new [`DateDuration`] from an ISO 8601 string.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::calendar::types::DateDuration::try_from_utf8,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::from_str, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(v: &DiplomatStr) -> Result<DateDuration, DateDurationParseError> {
+            Ok(icu_calendar::types::DateDuration::try_from_utf8(v)?.into())
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of years.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_years, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_years(years: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_years(years).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of months.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_months, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_months(months: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_months(months).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of weeks.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_weeks, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_weeks(weeks: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_weeks(weeks).into()
+        }
+
+        /// Returns a new [`DateDuration`] representing a number of days.
+        #[diplomat::rust_link(icu::calendar::types::DateDuration::for_days, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn for_days(days: i32) -> DateDuration {
+            icu_calendar::types::DateDuration::for_days(days).into()
+        }
+    }
+
+    #[diplomat::rust_link(icu::calendar::options::DateAddOptions, Struct)]
+    pub struct DateAddOptions {
+        pub overflow: DiplomatOption<DateOverflow>,
+    }
+
+    #[diplomat::rust_link(icu::calendar::options::DateDifferenceOptions, Struct)]
+    pub struct DateDifferenceOptions {
+        pub largest_unit: DiplomatOption<DateDurationUnit>,
+    }
+
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     /// An ICU4X Date object capable of containing a ISO-8601 date
@@ -81,7 +154,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::to_any, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn to_any(&self) -> Box<Date> {
-            Box::new(Date(self.0.to_any().into_atomic_ref_counted()))
+            Box::new(Date(self.0.to_any()))
         }
 
         /// Returns this date's Rata Die
@@ -109,11 +182,23 @@ pub mod ffi {
         }
 
         /// Returns the day in the week for this day
+        ///
+        /// This is *not* the day of the week, an ordinal number that is locale
+        /// dependent.
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
+        #[deprecated(note = "use `weekday`")]
         pub fn day_of_week(&self) -> Weekday {
-            self.0.day_of_week().into()
+            self.weekday()
+        }
+
+        /// Returns the day in the week for this day
+        #[diplomat::rust_link(icu::calendar::Date::weekday, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
+        pub fn weekday(&self) -> Weekday {
+            self.0.weekday().into()
         }
 
         /// Returns the week number in this year, using week data
@@ -136,11 +221,11 @@ pub mod ffi {
         /// Returns the year number in the current era for this date
         ///
         /// For calendars without an era, returns the extended year
-        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum)]
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn year(&self) -> i32 {
-            self.0.extended_year()
+            self.0.year().extended_year()
         }
 
         /// Returns if the year is a leap year for this date
@@ -174,19 +259,40 @@ pub mod ffi {
         pub fn days_in_year(&self) -> u16 {
             self.0.days_in_year()
         }
+
+        /// Returns a new [`IsoDate`] with the given duration added to it.
+        #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_add_with_options, FnInStruct, hidden)]
+        pub fn try_add_with_options(
+            &self,
+            duration: DateDuration,
+            options: DateAddOptions,
+        ) -> Result<Box<IsoDate>, CalendarDateAddError> {
+            Ok(Box::new(IsoDate(self.0.try_added_with_options(
+                duration.into(),
+                options.into(),
+            )?)))
+        }
+
+        /// Calculating the duration between `other - self`
+        #[diplomat::rust_link(icu::calendar::Date::try_until_with_options, FnInStruct)]
+        pub fn until_with_options(
+            &self,
+            other: &IsoDate,
+            options: DateDifferenceOptions,
+        ) -> DateDuration {
+            let Ok(duration) = self.0.try_until_with_options(&other.0, options.into());
+            duration.into()
+        }
     }
 
-    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::calendar::options::DateFromFieldsOptions, Struct)]
-    #[cfg(feature = "unstable")]
     pub struct DateFromFieldsOptions {
         pub overflow: DiplomatOption<DateOverflow>,
         pub missing_fields_strategy: DiplomatOption<DateMissingFieldsStrategy>,
     }
 
-    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::calendar::types::DateFields, Struct)]
-    #[cfg(feature = "unstable")]
     pub struct DateFields<'a> {
         pub era: DiplomatOption<&'a DiplomatStr>,
         pub era_year: DiplomatOption<i32>,
@@ -196,21 +302,17 @@ pub mod ffi {
         pub day: DiplomatOption<u8>,
     }
 
-    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::enum_convert(icu_calendar::options::Overflow, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::options::Overflow, Enum)]
     #[non_exhaustive]
-    #[cfg(feature = "unstable")]
     pub enum DateOverflow {
         Constrain,
         Reject,
     }
 
-    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::enum_convert(icu_calendar::options::MissingFieldsStrategy, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::options::MissingFieldsStrategy, Enum)]
     #[non_exhaustive]
-    #[cfg(feature = "unstable")]
     pub enum DateMissingFieldsStrategy {
         Reject,
         Ecma,
@@ -220,7 +322,7 @@ pub mod ffi {
     #[diplomat::transparent_convert]
     /// An ICU4X Date object capable of containing a date for any calendar.
     #[diplomat::rust_link(icu::calendar::Date, Struct)]
-    pub struct Date(pub icu_calendar::Date<Arc<icu_calendar::AnyCalendar>>);
+    pub struct Date(pub icu_calendar::Date<icu_calendar::AnyCalendar>);
 
     impl Date {
         /// Creates a new [`Date`] representing the ISO date
@@ -241,11 +343,8 @@ pub mod ffi {
         }
 
         /// Creates a new [`Date`] from the given fields, which are interpreted in the given calendar system.
-        ///
-        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::Date::try_from_fields, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        #[cfg(feature = "unstable")]
         pub fn from_fields_in_calendar(
             fields: DateFields,
             options: DateFromFieldsOptions,
@@ -262,9 +361,13 @@ pub mod ffi {
         /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
         ///
         /// An empty era code will treat the year as an extended year
-        #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::Month::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::Month::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::Month::leap, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::Month::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInput, Enum, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,
@@ -273,15 +376,19 @@ pub mod ffi {
             day: u8,
             calendar: &Calendar,
         ) -> Result<Box<Date>, CalendarError> {
-            let era = if !era_code.is_empty() {
-                Some(core::str::from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?)
+            use icu_calendar::types::YearInput;
+            let input_year = if !era_code.is_empty() {
+                YearInput::EraYear(
+                    core::str::from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?,
+                    year,
+                )
             } else {
-                None
+                YearInput::Extended(year)
             };
-            let month = icu_calendar::types::Month::try_from_utf8(month_code)?.code();
+            let month = icu_calendar::types::Month::try_from_utf8(month_code)?;
             let cal = calendar.0.clone();
-            Ok(Box::new(Date(icu_calendar::Date::try_new_from_codes(
-                era, year, month, day, cal,
+            Ok(Box::new(Date(icu_calendar::Date::try_new(
+                input_year, month, day, cal,
             )?)))
         }
 
@@ -322,7 +429,7 @@ pub mod ffi {
         /// Converts this date to ISO
         #[diplomat::rust_link(icu::calendar::Date::to_iso, FnInStruct)]
         pub fn to_iso(&self) -> Box<IsoDate> {
-            Box::new(IsoDate(self.0.to_iso()))
+            Box::new(IsoDate(self.0.to_calendar(Iso)))
         }
 
         /// Returns this date's Rata Die
@@ -347,16 +454,29 @@ pub mod ffi {
         }
 
         /// Returns the day in the week for this day
+        ///
+        /// This is *not* the day of the week, an ordinal number that is locale
+        /// dependent.
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
+        #[deprecated(note = "use `weekday`")]
         pub fn day_of_week(&self) -> Weekday {
-            self.0.day_of_week().into()
+            self.weekday()
+        }
+
+        /// Returns the day in the week for this day
+        #[diplomat::rust_link(icu::calendar::Date::weekday, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
+        pub fn weekday(&self) -> Weekday {
+            self.0.weekday().into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year
         ///
         /// Note that for lunar calendars this may not lead to the same month
-        /// having the same ordinal month across years; use month_code if you care
+        /// having the same ordinal month across years; use `month_code` if you care
         /// about month identity.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::ordinal, StructField)]
@@ -378,9 +498,10 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(icu::calendar::types::Month, Struct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::to_input, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            let code = self.0.month().value.code();
+            let code = self.0.month().to_input().code();
             let _infallible = write.write_str(&code.0);
         }
 
@@ -404,7 +525,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, getter)]
         pub fn month_is_leap(&self) -> bool {
-            self.0.month().is_leap()
+            self.0.month().to_input().is_leap()
         }
 
         /// Returns the year number in the current era for this date
@@ -431,11 +552,11 @@ pub mod ffi {
         /// This year number can be used when you need a simple numeric representation
         /// of the year, and can be meaningfully compared with extended years from other
         /// eras or used in arithmetic.
-        #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
-            self.0.extended_year()
+            self.0.year().extended_year()
         }
 
         /// Returns the era for this date, or an empty string
@@ -469,12 +590,51 @@ pub mod ffi {
             self.0.days_in_year()
         }
 
+        /// Returns if the year is a leap year for this date
+        #[diplomat::rust_link(icu::calendar::Date::is_in_leap_year, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn is_in_leap_year(&self) -> bool {
+            self.0.is_in_leap_year()
+        }
+
         /// Returns the [`Calendar`] object backing this date
         #[diplomat::rust_link(icu::calendar::Date::calendar, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::calendar_wrapper, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn calendar(&self) -> Box<Calendar> {
-            Box::new(Calendar(self.0.calendar_wrapper().clone()))
+            Box::new(Calendar(self.0.calendar().clone()))
+        }
+
+        /// Returns a new [`Date`] with the given duration added to it.
+        #[diplomat::rust_link(icu::calendar::Date::try_added_with_options, FnInStruct)]
+        pub fn try_add_with_options(
+            &self,
+            duration: DateDuration,
+            options: DateAddOptions,
+        ) -> Result<Box<Date>, CalendarDateAddError> {
+            // This is a cheap clone: DateInner is Copy, and AnyCalendar
+            // while not Copy does not contain any types with destructors.
+            //
+            // It *may* add calendars with non-cheap clones in the future, but that will
+            // be weighted against the performance of this FFI code.
+            Ok(Box::new(Date(self.0.clone().try_added_with_options(
+                duration.into(),
+                options.into(),
+            )?)))
+        }
+
+        /// Calculating the duration between `other - self`
+        #[diplomat::rust_link(icu::calendar::Date::try_until_with_options, FnInStruct)]
+        pub fn try_until_with_options(
+            &self,
+            other: &Date,
+            options: DateDifferenceOptions,
+        ) -> Result<DateDuration, CalendarMismatchedCalendarError> {
+            Ok(self
+                .0
+                .try_until_with_options(&other.0, options.into())
+                .map_err(|_| CalendarMismatchedCalendarError)?
+                .into())
         }
     }
 
@@ -499,7 +659,6 @@ impl From<icu_calendar::types::IsoWeekOfYear> for IsoWeekOfYear {
     }
 }
 
-#[cfg(feature = "unstable")]
 impl From<ffi::DateFromFieldsOptions> for icu_calendar::options::DateFromFieldsOptions {
     fn from(other: ffi::DateFromFieldsOptions) -> Self {
         let mut options = Self::default();
@@ -511,7 +670,6 @@ impl From<ffi::DateFromFieldsOptions> for icu_calendar::options::DateFromFieldsO
     }
 }
 
-#[cfg(feature = "unstable")]
 impl<'a> From<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
     fn from(other: ffi::DateFields<'a>) -> Self {
         let mut fields = Self::default();
@@ -523,5 +681,45 @@ impl<'a> From<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
         fields.day = other.day.into();
 
         fields
+    }
+}
+
+impl From<icu_calendar::types::DateDuration> for ffi::DateDuration {
+    fn from(other: icu_calendar::types::DateDuration) -> Self {
+        Self {
+            is_negative: other.is_negative,
+            years: other.years,
+            months: other.months,
+            weeks: other.weeks,
+            days: other.days,
+        }
+    }
+}
+
+impl From<ffi::DateDuration> for icu_calendar::types::DateDuration {
+    fn from(other: ffi::DateDuration) -> Self {
+        Self {
+            is_negative: other.is_negative,
+            years: other.years,
+            months: other.months,
+            weeks: other.weeks,
+            days: other.days,
+        }
+    }
+}
+
+impl From<ffi::DateAddOptions> for icu_calendar::options::DateAddOptions {
+    fn from(other: ffi::DateAddOptions) -> Self {
+        let mut options = Self::default();
+        options.overflow = other.overflow.into_converted_option();
+        options
+    }
+}
+
+impl From<ffi::DateDifferenceOptions> for icu_calendar::options::DateDifferenceOptions {
+    fn from(other: ffi::DateDifferenceOptions) -> Self {
+        let mut options = Self::default();
+        options.largest_unit = other.largest_unit.into_converted_option();
+        options
     }
 }

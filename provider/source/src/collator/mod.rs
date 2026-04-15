@@ -9,7 +9,12 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
-use icu::locale::subtags::{language, script};
+use icu::locale::{
+    locale,
+    subtags::{language, script},
+};
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -28,9 +33,10 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
             .replace("posix", "POSIX")
     };
 
-    // und-Hant -> zh_stroke
-    // und-Hans -> zh_pinyin
-    // und-Hani/x -> zh_x
+    // und_Hant -> zh_stroke
+    // und_Hans -> zh_pinyin
+    // und_Hani/x -> zh_x
+    // sr_Cyrl_ME -> sr_Latn
 
     if s == "und_Hant" {
         return "zh_stroke".into();
@@ -38,6 +44,8 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
         return "zh_pinyin".into();
     } else if s == "und_Hani" {
         s = "zh".into();
+    } else if s == "sr_Cyrl_ME" {
+        s = "sr_Latn".into();
     }
 
     s.push('_');
@@ -51,7 +59,7 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     s
 }
 
-fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
+fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
     let (mut language, mut variant) = file_name.rsplit_once('_').unwrap();
     if language == "root" {
         language = "und";
@@ -70,17 +78,25 @@ fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
             // Pinyin is stored in both und-Hans and und-Hani/pinyin
             r.push(DataIdentifierCow::from_borrowed_and_owned(
                 Default::default(),
-                "und-Hans".parse().unwrap(),
+                locale!("und-Hans").into(),
             ));
         } else if variant == "stroke" {
             // Stroke is stored in both und-Hans and und-Hani/stroke
             r.push(DataIdentifierCow::from_borrowed_and_owned(
                 Default::default(),
-                "und-Hant".parse().unwrap(),
+                locale!("und-Hant").into(),
             ));
         }
     } else if variant == "standard" {
         variant = "";
+    }
+
+    if language == "sr_Latn" {
+        // sr-Cyrl-ME falls back to sr-ME, which falls back to sr-Latn.
+        r.push(DataIdentifierCow::from_borrowed_and_owned(
+            Default::default(),
+            locale!("sr-Cyrl-ME").into(),
+        ));
     }
 
     let marker_attributes = match variant {
@@ -95,6 +111,35 @@ fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
 
     r.push(DataIdentifierCow::from_owned(marker_attributes, locale));
     r
+}
+
+#[test]
+fn test_all_fallback_overrides_handled() {
+    let provider = SourceDataProvider::new_testing();
+    let required_overrides = provider
+        .cldr()
+        .unwrap()
+        .core()
+        .read_and_parse::<super::cldr_serde::parent_locales::Resource>(
+            "supplemental/parentLocales.json",
+        )
+        .unwrap()
+        .supplemental
+        .parent_locales
+        .collations
+        .keys()
+        .collect::<Vec<_>>();
+
+    let handled_overrides = [
+        "sr-Cyrl-ME",
+        "yue",
+        "yue-CN",
+        "yue-Hans",
+        "yue-Hans-CN",
+        "yue-Hant",
+    ];
+
+    assert_eq!(required_overrides, handled_overrides);
 }
 
 impl SourceDataProvider {
@@ -128,7 +173,7 @@ impl SourceDataProvider {
                     file_name
                 })
             })
-            .flat_map(|s| file_name_to_id(&s))
+            .flat_map(|s| file_name_to_ids(&s))
             .collect())
     }
 }
@@ -138,12 +183,20 @@ macro_rules! collation_provider {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    self.check_req::<$marker>(req)?;
+                    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+                    return Err(DataError::custom(
+                        "icu_provider_source must be built with use_icu4c or use_wasm to build collation data",
+                    )
+                    .with_req($marker::INFO, req));
+                    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                    {
+                        self.check_req::<$marker>(req)?;
 
-                    Ok(DataResponse {
-                        metadata: Default::default(),
-                        payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, $suffix).and_then(TryInto::try_into).map_err(|e| e.with_req(<$marker>::INFO, req))?),
-                    })
+                        Ok(DataResponse {
+                            metadata: Default::default(),
+                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, $suffix).and_then(TryInto::try_into).map_err(|e| e.with_req(<$marker>::INFO, req))?),
+                        })
+                    }
                 }
             }
 
@@ -213,13 +266,47 @@ impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
     }
 }
 
+fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
+    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+    {
+        let _ = trie;
+        unreachable!("Should have errored out earlier");
+    }
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    {
+        let mut builder = CodePointTrieBuilder::new(
+            trie.get('\u{10FFFF}'),
+            trie.get32(u32::MAX),
+            icu::collections::codepointtrie::TrieType::Small,
+        );
+
+        for i in 0..0xAC00 {
+            builder.set_value(i, trie.get32(i));
+        }
+        for _ in 0xAC00..0xD7A4 {
+            // Use the default value for Hangul syllables. We are not
+            // relying on the collation data to catch Hangul syllables.
+            // Furthermore, having non-default values in this range is
+            // bad for tailorings whose characters of interest are
+            // below the fast-access boundary for the small trie type.
+        }
+        for i in 0xD7A4..=(char::MAX as u32) {
+            builder.set_value(i, trie.get32(i));
+        }
+
+        builder.build()
+    }
+}
+
 impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationData<'static>, Self::Error> {
         Ok(CollationData {
-            trie: CodePointTrie::<u32>::try_from(&self.trie)
-                .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
+            trie: rebuild_data(
+                CodePointTrie::<u32>::try_from(&self.trie)
+                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
+            ),
             contexts: ZeroVec::alloc_from_slice(&self.contexts),
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
             ces: self.ces.iter().map(|i| *i as u64).collect(),

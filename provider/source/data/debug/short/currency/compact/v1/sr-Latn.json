@@ -1,112 +1,81 @@
 {
-  "compact_patterns": [
-    [
-      [
-        3,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "0 hilj'.' ¤"
-    ],
-    [
-      [
-        4,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "00 hilj'.' ¤"
-    ],
-    [
-      [
-        5,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "000 hilj'.' ¤"
-    ],
-    [
-      [
-        6,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "0 mil'.' ¤"
-    ],
-    [
-      [
-        7,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "00 mil'.' ¤"
-    ],
-    [
-      [
-        8,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "000 mil'.' ¤"
-    ],
-    [
-      [
-        9,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "0 mlrd'.' ¤"
-    ],
-    [
-      [
-        10,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "00 mlrd'.' ¤"
-    ],
-    [
-      [
-        11,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "000 mlrd'.' ¤"
-    ],
-    [
-      [
-        12,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "0 bil'.' ¤"
-    ],
-    [
-      [
-        13,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "00 bil'.' ¤"
-    ],
-    [
-      [
-        14,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "000 bil'.' ¤"
-    ]
-  ]
+  "standard": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " hilj. "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " mil. "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " mlrd. "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " bil. "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "alpha_next_to_number": []
 }

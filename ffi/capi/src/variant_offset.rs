@@ -20,6 +20,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculatorBorrowed, Struct, hidden)]
     #[diplomat::opaque]
     #[deprecated(note = "this API is a bad approximation of a time zone database")]
+    #[diplomat::attr(dart, disable)]
     #[allow(deprecated)]
     pub struct VariantOffsetsCalculator(pub icu_time::zone::VariantOffsetsCalculator);
 
@@ -180,16 +181,6 @@ pub mod ffi {
             icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_from_time_zone_and_name_timestamp,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso,
-            FnInStruct,
-            hidden
-        )]
-        #[diplomat::rust_link(
-            icu::time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset,
-            FnInStruct,
-            hidden
-        )]
         pub fn compute_offsets_from_time_zone_and_timestamp(
             &self,
             time_zone: &TimeZone,
@@ -202,12 +193,7 @@ pub mod ffi {
                 .as_borrowed()
                 .compute_offsets_from_time_zone_and_name_timestamp(
                     time_zone.0,
-                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
-                        icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-                            timestamp,
-                            icu_time::zone::UtcOffset::zero(),
-                        ),
-                    ),
+                    icu_time::zone::ZoneNameTimestamp::from_epoch_seconds(timestamp / 1000),
                 )?;
 
             Some(VariantOffsets {

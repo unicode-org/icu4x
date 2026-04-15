@@ -1,0 +1,134 @@
+[
+  {
+    "sized": 3,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " millier"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " mille"
+          }
+        ]
+      ],
+      "explicit_one": [
+        0,
+        [
+          {
+            "Literal": "mille"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 4,
+    "variable": {
+      "other": [
+        1,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " mille"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " million"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " millions"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milliard"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milliards"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " billion"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " billions"
+          }
+        ]
+      ]
+    }
+  }
+]

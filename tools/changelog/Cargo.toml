@@ -1,0 +1,27 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "changelog"
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+categories.workspace = true
+keywords.workspace = true
+include.workspace = true
+publish = false
+
+[dependencies]
+clap = { workspace = true, features = ["derive"]}
+indexmap = { workspace = true, features = ["serde"] }
+regex.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+
+[lints]
+workspace = true

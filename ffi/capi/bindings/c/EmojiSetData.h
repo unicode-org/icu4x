@@ -26,6 +26,10 @@ EmojiSetData* icu4x_EmojiSetData_create_basic_mv1(void);
 typedef struct icu4x_EmojiSetData_create_basic_with_provider_mv1_result {union {EmojiSetData* ok; DataError err;}; bool is_ok;} icu4x_EmojiSetData_create_basic_with_provider_mv1_result;
 icu4x_EmojiSetData_create_basic_with_provider_mv1_result icu4x_EmojiSetData_create_basic_with_provider_mv1(const DataProvider* provider);
 
+bool icu4x_EmojiSetData_basic_emoji_for_char_mv1(char32_t ch);
+
+bool icu4x_EmojiSetData_basic_emoji_for_str_mv1(DiplomatStringView s);
+
 void icu4x_EmojiSetData_destroy_mv1(EmojiSetData* self);
 
 

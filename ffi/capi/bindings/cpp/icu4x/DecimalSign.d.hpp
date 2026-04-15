@@ -28,13 +28,22 @@ namespace icu4x {
 /**
  * The sign of a Decimal, as shown in formatting.
  *
- * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.Sign.html) for more information.
+ * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.Sign.html) for more information.
  */
 class DecimalSign {
 public:
     enum Value {
+        /**
+         * No sign (implicitly positive, e.g., 1729).
+         */
         None = 0,
+        /**
+         * A negative sign, e.g., -1729.
+         */
         Negative = 1,
+        /**
+         * An explicit positive sign, e.g., +1729.
+         */
         Positive = 2,
     };
 

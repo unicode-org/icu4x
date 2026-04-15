@@ -6,9 +6,10 @@
 name = "icu_properties"
 description = "Definitions for Unicode properties"
 version.workspace = true
+categories.workspace = true
+keywords = ["character-properties", "unicode"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
@@ -18,6 +19,9 @@ rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+max_combination_size = 3
 
 [dependencies]
 icu_collections = { workspace = true }
@@ -44,3 +48,9 @@ unicode_bidi = ["dep:unicode-bidi"]
 harfbuzz_traits = ["dep:harfbuzz-traits"]
 compiled_data = ["dep:icu_properties_data", "icu_provider/baked"]
 alloc = ["zerovec/alloc", "icu_collections/alloc", "serde?/alloc"]
+
+[package.metadata.cargo-semver-checks.lints]
+workspace = true
+
+[lints]
+workspace = true

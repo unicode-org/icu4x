@@ -163,7 +163,7 @@ where
     P0: ExportableProvider,
     F: Fn(DataIdentifierBorrowed) -> bool + Sync,
 {
-    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> BTreeSet<DataMarkerInfo> {
         // The predicate only takes DataIdentifier, not DataMarker, so we are not impacted
         self.inner.supported_markers()
     }

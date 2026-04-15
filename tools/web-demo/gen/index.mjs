@@ -442,42 +442,6 @@ let termini = Object.assign({
         ]
     },
 
-    "Date.dayOfWeek": {
-        func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).dayOfWeek,
-        // For avoiding webpacking minifying issues:
-        funcName: "Date.dayOfWeek",
-        expr: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => "icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).dayOfWeek".replace(/([\( ])selfIsoYear([,\) \n])/, '$1' + selfIsoYear + '$2').replace(/([\( ])selfIsoMonth([,\) \n])/, '$1' + selfIsoMonth + '$2').replace(/([\( ])selfIsoDay([,\) \n])/, '$1' + selfIsoDay + '$2').replace(/([\( ])selfCalendarKind([,\) \n])/, '$1' + selfCalendarKind + '$2'),
-        display: displayOptionalEnum,
-        parameters: [
-            
-            {
-                name: "self_isoYear",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_isoMonth",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_isoDay",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_calendar_kind",
-                type: "CalendarKind",
-                typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
-            }
-            
-        ]
-    },
-
     "Date.ordinalMonth": {
         func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).ordinalMonth,
         // For avoiding webpacking minifying issues:
@@ -829,6 +793,42 @@ let termini = Object.assign({
         ]
     },
 
+    "Date.isInLeapYear": {
+        func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).isInLeapYear,
+        // For avoiding webpacking minifying issues:
+        funcName: "Date.isInLeapYear",
+        expr: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => "icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).isInLeapYear".replace(/([\( ])selfIsoYear([,\) \n])/, '$1' + selfIsoYear + '$2').replace(/([\( ])selfIsoMonth([,\) \n])/, '$1' + selfIsoMonth + '$2').replace(/([\( ])selfIsoDay([,\) \n])/, '$1' + selfIsoDay + '$2').replace(/([\( ])selfCalendarKind([,\) \n])/, '$1' + selfCalendarKind + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "self_isoYear",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "self_isoMonth",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "self_isoDay",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "self_calendar_kind",
+                type: "CalendarKind",
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
+            }
+            
+        ]
+    },
+
     "DateFormatter.formatIso": {
         func: (selfLocaleName, selfLength, selfAlignment, selfYearStyle, isoDateYear, isoDateMonth, isoDateDay) => icu.DateFormatter.createYmd(icu.Locale.fromString(selfLocaleName), selfLength, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay)),
         // For avoiding webpacking minifying issues:
@@ -860,7 +860,7 @@ let termini = Object.assign({
                 name: "self_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -915,7 +915,7 @@ let termini = Object.assign({
                 name: "self_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -977,7 +977,7 @@ let termini = Object.assign({
                 name: "self_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -1063,7 +1063,7 @@ let termini = Object.assign({
                 name: "self_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -1421,6 +1421,83 @@ let termini = Object.assign({
         ]
     },
 
+    "Locale.variants": {
+        func: (selfName) => icu.Locale.fromString(selfName).variants(),
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.variants",
+        expr: (selfName) => "icu.Locale.fromString(selfName).variants()".replace(/([\( ])selfName([,\) \n])/, '$1' + selfName + '$2'),
+        parameters: [
+            
+            {
+                name: "self_name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.variantCount": {
+        func: (selfName) => icu.Locale.fromString(selfName).variantCount,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.variantCount",
+        expr: (selfName) => "icu.Locale.fromString(selfName).variantCount".replace(/([\( ])selfName([,\) \n])/, '$1' + selfName + '$2'),
+        parameters: [
+            
+            {
+                name: "self_name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.variantAt": {
+        func: (selfName, index) => icu.Locale.fromString(selfName).variantAt(index),
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.variantAt",
+        expr: (selfName, index) => "icu.Locale.fromString(selfName).variantAt(index)".replace(/([\( ])selfName([,\) \n])/, '$1' + selfName + '$2').replace(/([\( ])index([,\) \n])/, '$1' + index + '$2'),
+        parameters: [
+            
+            {
+                name: "self_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "index",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "Locale.hasVariant": {
+        func: (selfName, s) => icu.Locale.fromString(selfName).hasVariant(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.hasVariant",
+        expr: (selfName, s) => "icu.Locale.fromString(selfName).hasVariant(s)".replace(/([\( ])selfName([,\) \n])/, '$1' + selfName + '$2').replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "self_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "Locale.normalize": {
         func: (s) => icu.Locale.normalize(s),
         // For avoiding webpacking minifying issues:
@@ -1699,6 +1776,35 @@ let termini = Object.assign({
         ]
     },
 
+    "PluralRulesWithRanges.categoryForRange": {
+        func: (selfLocaleName, startXV, endXV) => icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).categoryForRange(icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(startXV)), icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(endXV))),
+        // For avoiding webpacking minifying issues:
+        funcName: "PluralRulesWithRanges.categoryForRange",
+        expr: (selfLocaleName, startXV, endXV) => "icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).categoryForRange(icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(startXV)), icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(endXV)))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])startXV([,\) \n])/, '$1' + startXV + '$2').replace(/([\( ])endXV([,\) \n])/, '$1' + endXV + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "start_x_v",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "end_x_v",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "EmojiSetData.containsStr": {
         func: (s) => icu.EmojiSetData.createBasic().containsStr(s),
         // For avoiding webpacking minifying issues:
@@ -1728,6 +1834,40 @@ let termini = Object.assign({
                 name: "cp",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "EmojiSetData.basicEmojiForChar": {
+        func: (ch) => icu.EmojiSetData.basicEmojiForChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "EmojiSetData.basicEmojiForChar",
+        expr: (ch) => "icu.EmojiSetData.basicEmojiForChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "EmojiSetData.basicEmojiForStr": {
+        func: (s) => icu.EmojiSetData.basicEmojiForStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "EmojiSetData.basicEmojiForStr",
+        expr: (s) => "icu.EmojiSetData.basicEmojiForStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1834,15 +1974,15 @@ let termini = Object.assign({
     },
 
     "TimeZone.isUnknown": {
-        func: (selfId) => icu.TimeZone.createFromBcp47(selfId).isUnknown(),
+        func: (selfIanaId) => icu.TimeZone.createFromIanaId(selfIanaId).isUnknown(),
         // For avoiding webpacking minifying issues:
         funcName: "TimeZone.isUnknown",
-        expr: (selfId) => "icu.TimeZone.createFromBcp47(selfId).isUnknown()".replace(/([\( ])selfId([,\) \n])/, '$1' + selfId + '$2'),
+        expr: (selfIanaId) => "icu.TimeZone.createFromIanaId(selfIanaId).isUnknown()".replace(/([\( ])selfIanaId([,\) \n])/, '$1' + selfIanaId + '$2'),
         display: displayBool,
         parameters: [
             
             {
-                name: "self_id",
+                name: "self_ianaId",
                 type: "string",
                 typeUse: "string"
             }
@@ -1851,10 +1991,10 @@ let termini = Object.assign({
     },
 
     "TimeZoneFormatter.format": {
-        func: (selfLocaleName, zoneIdId, zoneOffsetOffset, zoneVariant) => icu.TimeZoneFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName)).format(new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
+        func: (selfLocaleName, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => icu.TimeZoneFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName)).format(new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
         // For avoiding webpacking minifying issues:
         funcName: "TimeZoneFormatter.format",
-        expr: (selfLocaleName, zoneIdId, zoneOffsetOffset, zoneVariant) => "icu.TimeZoneFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName)).format(new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])zoneIdId([,\) \n])/, '$1' + zoneIdId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
+        expr: (selfLocaleName, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => "icu.TimeZoneFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName)).format(new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])zoneIdIanaId([,\) \n])/, '$1' + zoneIdIanaId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
         parameters: [
             
             {
@@ -1864,7 +2004,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "zone_id_id",
+                name: "zone_id_ianaId",
                 type: "string",
                 typeUse: "string"
             },
@@ -2025,10 +2165,10 @@ let termini = Object.assign({
     },
 
     "ZonedDateFormatter.formatIso": {
-        func: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdId, zoneOffsetOffset, zoneVariant) => icu.ZonedDateFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateFormatter.createYmd(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
+        func: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => icu.ZonedDateFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateFormatter.createYmd(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
         // For avoiding webpacking minifying issues:
         funcName: "ZonedDateFormatter.formatIso",
-        expr: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdId, zoneOffsetOffset, zoneVariant) => "icu.ZonedDateFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateFormatter.createYmd(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfFormatterLocaleName([,\) \n])/, '$1' + selfFormatterLocaleName + '$2').replace(/([\( ])selfFormatterLength([,\) \n])/, '$1' + selfFormatterLength + '$2').replace(/([\( ])selfFormatterAlignment([,\) \n])/, '$1' + selfFormatterAlignment + '$2').replace(/([\( ])selfFormatterYearStyle([,\) \n])/, '$1' + selfFormatterYearStyle + '$2').replace(/([\( ])isoDateYear([,\) \n])/, '$1' + isoDateYear + '$2').replace(/([\( ])isoDateMonth([,\) \n])/, '$1' + isoDateMonth + '$2').replace(/([\( ])isoDateDay([,\) \n])/, '$1' + isoDateDay + '$2').replace(/([\( ])zoneIdId([,\) \n])/, '$1' + zoneIdId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
+        expr: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => "icu.ZonedDateFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateFormatter.createYmd(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfFormatterLocaleName([,\) \n])/, '$1' + selfFormatterLocaleName + '$2').replace(/([\( ])selfFormatterLength([,\) \n])/, '$1' + selfFormatterLength + '$2').replace(/([\( ])selfFormatterAlignment([,\) \n])/, '$1' + selfFormatterAlignment + '$2').replace(/([\( ])selfFormatterYearStyle([,\) \n])/, '$1' + selfFormatterYearStyle + '$2').replace(/([\( ])isoDateYear([,\) \n])/, '$1' + isoDateYear + '$2').replace(/([\( ])isoDateMonth([,\) \n])/, '$1' + isoDateMonth + '$2').replace(/([\( ])isoDateDay([,\) \n])/, '$1' + isoDateDay + '$2').replace(/([\( ])zoneIdIanaId([,\) \n])/, '$1' + zoneIdIanaId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
         parameters: [
             
             {
@@ -2061,7 +2201,7 @@ let termini = Object.assign({
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -2083,7 +2223,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "zone_id_id",
+                name: "zone_id_ianaId",
                 type: "string",
                 typeUse: "string"
             },
@@ -2105,10 +2245,10 @@ let termini = Object.assign({
     },
 
     "ZonedDateFormatterGregorian.formatIso": {
-        func: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdId, zoneOffsetOffset, zoneVariant) => icu.ZonedDateFormatterGregorian.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateFormatterGregorian.createYmd(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
+        func: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => icu.ZonedDateFormatterGregorian.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateFormatterGregorian.createYmd(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
         // For avoiding webpacking minifying issues:
         funcName: "ZonedDateFormatterGregorian.formatIso",
-        expr: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdId, zoneOffsetOffset, zoneVariant) => "icu.ZonedDateFormatterGregorian.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateFormatterGregorian.createYmd(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfFormatterLocaleName([,\) \n])/, '$1' + selfFormatterLocaleName + '$2').replace(/([\( ])selfFormatterLength([,\) \n])/, '$1' + selfFormatterLength + '$2').replace(/([\( ])selfFormatterAlignment([,\) \n])/, '$1' + selfFormatterAlignment + '$2').replace(/([\( ])selfFormatterYearStyle([,\) \n])/, '$1' + selfFormatterYearStyle + '$2').replace(/([\( ])isoDateYear([,\) \n])/, '$1' + isoDateYear + '$2').replace(/([\( ])isoDateMonth([,\) \n])/, '$1' + isoDateMonth + '$2').replace(/([\( ])isoDateDay([,\) \n])/, '$1' + isoDateDay + '$2').replace(/([\( ])zoneIdId([,\) \n])/, '$1' + zoneIdId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
+        expr: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => "icu.ZonedDateFormatterGregorian.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateFormatterGregorian.createYmd(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfFormatterLocaleName([,\) \n])/, '$1' + selfFormatterLocaleName + '$2').replace(/([\( ])selfFormatterLength([,\) \n])/, '$1' + selfFormatterLength + '$2').replace(/([\( ])selfFormatterAlignment([,\) \n])/, '$1' + selfFormatterAlignment + '$2').replace(/([\( ])selfFormatterYearStyle([,\) \n])/, '$1' + selfFormatterYearStyle + '$2').replace(/([\( ])isoDateYear([,\) \n])/, '$1' + isoDateYear + '$2').replace(/([\( ])isoDateMonth([,\) \n])/, '$1' + isoDateMonth + '$2').replace(/([\( ])isoDateDay([,\) \n])/, '$1' + isoDateDay + '$2').replace(/([\( ])zoneIdIanaId([,\) \n])/, '$1' + zoneIdIanaId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
         parameters: [
             
             {
@@ -2141,7 +2281,7 @@ let termini = Object.assign({
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -2163,7 +2303,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "zone_id_id",
+                name: "zone_id_ianaId",
                 type: "string",
                 typeUse: "string"
             },
@@ -2185,10 +2325,10 @@ let termini = Object.assign({
     },
 
     "ZonedDateTimeFormatter.formatIso": {
-        func: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) => icu.ZonedDateTimeFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateTimeFormatter.createYmdt(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
+        func: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => icu.ZonedDateTimeFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateTimeFormatter.createYmdt(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
         // For avoiding webpacking minifying issues:
         funcName: "ZonedDateTimeFormatter.formatIso",
-        expr: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) => "icu.ZonedDateTimeFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateTimeFormatter.createYmdt(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfFormatterLocaleName([,\) \n])/, '$1' + selfFormatterLocaleName + '$2').replace(/([\( ])selfFormatterLength([,\) \n])/, '$1' + selfFormatterLength + '$2').replace(/([\( ])selfFormatterTimePrecision([,\) \n])/, '$1' + selfFormatterTimePrecision + '$2').replace(/([\( ])selfFormatterAlignment([,\) \n])/, '$1' + selfFormatterAlignment + '$2').replace(/([\( ])selfFormatterYearStyle([,\) \n])/, '$1' + selfFormatterYearStyle + '$2').replace(/([\( ])isoDateYear([,\) \n])/, '$1' + isoDateYear + '$2').replace(/([\( ])isoDateMonth([,\) \n])/, '$1' + isoDateMonth + '$2').replace(/([\( ])isoDateDay([,\) \n])/, '$1' + isoDateDay + '$2').replace(/([\( ])timeHour([,\) \n])/, '$1' + timeHour + '$2').replace(/([\( ])timeMinute([,\) \n])/, '$1' + timeMinute + '$2').replace(/([\( ])timeSecond([,\) \n])/, '$1' + timeSecond + '$2').replace(/([\( ])timeSubsecond([,\) \n])/, '$1' + timeSubsecond + '$2').replace(/([\( ])zoneIdId([,\) \n])/, '$1' + zoneIdId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
+        expr: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => "icu.ZonedDateTimeFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateTimeFormatter.createYmdt(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfFormatterLocaleName([,\) \n])/, '$1' + selfFormatterLocaleName + '$2').replace(/([\( ])selfFormatterLength([,\) \n])/, '$1' + selfFormatterLength + '$2').replace(/([\( ])selfFormatterTimePrecision([,\) \n])/, '$1' + selfFormatterTimePrecision + '$2').replace(/([\( ])selfFormatterAlignment([,\) \n])/, '$1' + selfFormatterAlignment + '$2').replace(/([\( ])selfFormatterYearStyle([,\) \n])/, '$1' + selfFormatterYearStyle + '$2').replace(/([\( ])isoDateYear([,\) \n])/, '$1' + isoDateYear + '$2').replace(/([\( ])isoDateMonth([,\) \n])/, '$1' + isoDateMonth + '$2').replace(/([\( ])isoDateDay([,\) \n])/, '$1' + isoDateDay + '$2').replace(/([\( ])timeHour([,\) \n])/, '$1' + timeHour + '$2').replace(/([\( ])timeMinute([,\) \n])/, '$1' + timeMinute + '$2').replace(/([\( ])timeSecond([,\) \n])/, '$1' + timeSecond + '$2').replace(/([\( ])timeSubsecond([,\) \n])/, '$1' + timeSubsecond + '$2').replace(/([\( ])zoneIdIanaId([,\) \n])/, '$1' + zoneIdIanaId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
         parameters: [
             
             {
@@ -2228,7 +2368,7 @@ let termini = Object.assign({
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -2274,7 +2414,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "zone_id_id",
+                name: "zone_id_ianaId",
                 type: "string",
                 typeUse: "string"
             },
@@ -2296,10 +2436,10 @@ let termini = Object.assign({
     },
 
     "ZonedDateTimeFormatterGregorian.formatIso": {
-        func: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) => icu.ZonedDateTimeFormatterGregorian.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateTimeFormatterGregorian.createYmdt(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
+        func: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => icu.ZonedDateTimeFormatterGregorian.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateTimeFormatterGregorian.createYmdt(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
         // For avoiding webpacking minifying issues:
         funcName: "ZonedDateTimeFormatterGregorian.formatIso",
-        expr: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) => "icu.ZonedDateTimeFormatterGregorian.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateTimeFormatterGregorian.createYmdt(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfFormatterLocaleName([,\) \n])/, '$1' + selfFormatterLocaleName + '$2').replace(/([\( ])selfFormatterLength([,\) \n])/, '$1' + selfFormatterLength + '$2').replace(/([\( ])selfFormatterTimePrecision([,\) \n])/, '$1' + selfFormatterTimePrecision + '$2').replace(/([\( ])selfFormatterAlignment([,\) \n])/, '$1' + selfFormatterAlignment + '$2').replace(/([\( ])selfFormatterYearStyle([,\) \n])/, '$1' + selfFormatterYearStyle + '$2').replace(/([\( ])isoDateYear([,\) \n])/, '$1' + isoDateYear + '$2').replace(/([\( ])isoDateMonth([,\) \n])/, '$1' + isoDateMonth + '$2').replace(/([\( ])isoDateDay([,\) \n])/, '$1' + isoDateDay + '$2').replace(/([\( ])timeHour([,\) \n])/, '$1' + timeHour + '$2').replace(/([\( ])timeMinute([,\) \n])/, '$1' + timeMinute + '$2').replace(/([\( ])timeSecond([,\) \n])/, '$1' + timeSecond + '$2').replace(/([\( ])timeSubsecond([,\) \n])/, '$1' + timeSubsecond + '$2').replace(/([\( ])zoneIdId([,\) \n])/, '$1' + zoneIdId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
+        expr: (selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => "icu.ZonedDateTimeFormatterGregorian.createSpecificLong(icu.Locale.fromString(selfLocaleName), icu.DateTimeFormatterGregorian.createYmdt(icu.Locale.fromString(selfFormatterLocaleName), selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle)).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfFormatterLocaleName([,\) \n])/, '$1' + selfFormatterLocaleName + '$2').replace(/([\( ])selfFormatterLength([,\) \n])/, '$1' + selfFormatterLength + '$2').replace(/([\( ])selfFormatterTimePrecision([,\) \n])/, '$1' + selfFormatterTimePrecision + '$2').replace(/([\( ])selfFormatterAlignment([,\) \n])/, '$1' + selfFormatterAlignment + '$2').replace(/([\( ])selfFormatterYearStyle([,\) \n])/, '$1' + selfFormatterYearStyle + '$2').replace(/([\( ])isoDateYear([,\) \n])/, '$1' + isoDateYear + '$2').replace(/([\( ])isoDateMonth([,\) \n])/, '$1' + isoDateMonth + '$2').replace(/([\( ])isoDateDay([,\) \n])/, '$1' + isoDateDay + '$2').replace(/([\( ])timeHour([,\) \n])/, '$1' + timeHour + '$2').replace(/([\( ])timeMinute([,\) \n])/, '$1' + timeMinute + '$2').replace(/([\( ])timeSecond([,\) \n])/, '$1' + timeSecond + '$2').replace(/([\( ])timeSubsecond([,\) \n])/, '$1' + timeSubsecond + '$2').replace(/([\( ])zoneIdIanaId([,\) \n])/, '$1' + zoneIdIanaId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
         parameters: [
             
             {
@@ -2339,7 +2479,7 @@ let termini = Object.assign({
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator",
-                values: ["Auto", "Full", "WithEra"]
+                values: ["Auto", "Full", "WithEra", "NoEra"]
             },
             
             {
@@ -2385,7 +2525,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "zone_id_id",
+                name: "zone_id_ianaId",
                 type: "string",
                 typeUse: "string"
             },
@@ -2407,10 +2547,10 @@ let termini = Object.assign({
     },
 
     "ZonedTimeFormatter.format": {
-        func: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) => icu.ZonedTimeFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment).format(new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
+        func: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => icu.ZonedTimeFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment).format(new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant)),
         // For avoiding webpacking minifying issues:
         funcName: "ZonedTimeFormatter.format",
-        expr: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) => "icu.ZonedTimeFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment).format(new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromBcp47(zoneIdId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfLength([,\) \n])/, '$1' + selfLength + '$2').replace(/([\( ])selfTimePrecision([,\) \n])/, '$1' + selfTimePrecision + '$2').replace(/([\( ])selfAlignment([,\) \n])/, '$1' + selfAlignment + '$2').replace(/([\( ])timeHour([,\) \n])/, '$1' + timeHour + '$2').replace(/([\( ])timeMinute([,\) \n])/, '$1' + timeMinute + '$2').replace(/([\( ])timeSecond([,\) \n])/, '$1' + timeSecond + '$2').replace(/([\( ])timeSubsecond([,\) \n])/, '$1' + timeSubsecond + '$2').replace(/([\( ])zoneIdId([,\) \n])/, '$1' + zoneIdId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
+        expr: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdIanaId, zoneOffsetOffset, zoneVariant) => "icu.ZonedTimeFormatter.createSpecificLong(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment).format(new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond), new icu.TimeZoneInfo(icu.TimeZone.createFromIanaId(zoneIdIanaId), icu.UtcOffset.fromString(zoneOffsetOffset), zoneVariant))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfLength([,\) \n])/, '$1' + selfLength + '$2').replace(/([\( ])selfTimePrecision([,\) \n])/, '$1' + selfTimePrecision + '$2').replace(/([\( ])selfAlignment([,\) \n])/, '$1' + selfAlignment + '$2').replace(/([\( ])timeHour([,\) \n])/, '$1' + timeHour + '$2').replace(/([\( ])timeMinute([,\) \n])/, '$1' + timeMinute + '$2').replace(/([\( ])timeSecond([,\) \n])/, '$1' + timeSecond + '$2').replace(/([\( ])timeSubsecond([,\) \n])/, '$1' + timeSubsecond + '$2').replace(/([\( ])zoneIdIanaId([,\) \n])/, '$1' + zoneIdIanaId + '$2').replace(/([\( ])zoneOffsetOffset([,\) \n])/, '$1' + zoneOffsetOffset + '$2').replace(/([\( ])zoneVariant([,\) \n])/, '$1' + zoneVariant + '$2'),
         parameters: [
             
             {
@@ -2465,7 +2605,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "zone_id_id",
+                name: "zone_id_ianaId",
                 type: "string",
                 typeUse: "string"
             },
@@ -2554,6 +2694,23 @@ let termini = Object.assign({
         ]
     },
 
+    "BidiClass.tryFromStr": {
+        func: (s) => icu.BidiClass.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "BidiClass.tryFromStr",
+        expr: (s) => "icu.BidiClass.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "CanonicalCombiningClass.forChar": {
         func: (ch) => icu.CanonicalCombiningClass.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2566,6 +2723,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "CanonicalCombiningClass.tryFromStr": {
+        func: (s) => icu.CanonicalCombiningClass.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "CanonicalCombiningClass.tryFromStr",
+        expr: (s) => "icu.CanonicalCombiningClass.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2588,6 +2762,23 @@ let termini = Object.assign({
         ]
     },
 
+    "EastAsianWidth.tryFromStr": {
+        func: (s) => icu.EastAsianWidth.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "EastAsianWidth.tryFromStr",
+        expr: (s) => "icu.EastAsianWidth.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "GeneralCategory.forChar": {
         func: (ch) => icu.GeneralCategory.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2600,6 +2791,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "GeneralCategory.tryFromStr": {
+        func: (s) => icu.GeneralCategory.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "GeneralCategory.tryFromStr",
+        expr: (s) => "icu.GeneralCategory.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2622,6 +2830,23 @@ let termini = Object.assign({
         ]
     },
 
+    "GraphemeClusterBreak.tryFromStr": {
+        func: (s) => icu.GraphemeClusterBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "GraphemeClusterBreak.tryFromStr",
+        expr: (s) => "icu.GraphemeClusterBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "HangulSyllableType.forChar": {
         func: (ch) => icu.HangulSyllableType.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2634,6 +2859,57 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "HangulSyllableType.tryFromStr": {
+        func: (s) => icu.HangulSyllableType.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "HangulSyllableType.tryFromStr",
+        expr: (s) => "icu.HangulSyllableType.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "IndicConjunctBreak.forChar": {
+        func: (ch) => icu.IndicConjunctBreak.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "IndicConjunctBreak.forChar",
+        expr: (ch) => "icu.IndicConjunctBreak.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "IndicConjunctBreak.tryFromStr": {
+        func: (s) => icu.IndicConjunctBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "IndicConjunctBreak.tryFromStr",
+        expr: (s) => "icu.IndicConjunctBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2656,6 +2932,57 @@ let termini = Object.assign({
         ]
     },
 
+    "IndicSyllabicCategory.tryFromStr": {
+        func: (s) => icu.IndicSyllabicCategory.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "IndicSyllabicCategory.tryFromStr",
+        expr: (s) => "icu.IndicSyllabicCategory.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "JoiningGroup.forChar": {
+        func: (ch) => icu.JoiningGroup.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "JoiningGroup.forChar",
+        expr: (ch) => "icu.JoiningGroup.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "JoiningGroup.tryFromStr": {
+        func: (s) => icu.JoiningGroup.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "JoiningGroup.tryFromStr",
+        expr: (s) => "icu.JoiningGroup.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "JoiningType.forChar": {
         func: (ch) => icu.JoiningType.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2668,6 +2995,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "JoiningType.tryFromStr": {
+        func: (s) => icu.JoiningType.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "JoiningType.tryFromStr",
+        expr: (s) => "icu.JoiningType.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2690,6 +3034,57 @@ let termini = Object.assign({
         ]
     },
 
+    "LineBreak.tryFromStr": {
+        func: (s) => icu.LineBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "LineBreak.tryFromStr",
+        expr: (s) => "icu.LineBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "NumericType.forChar": {
+        func: (ch) => icu.NumericType.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "NumericType.forChar",
+        expr: (ch) => "icu.NumericType.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "NumericType.tryFromStr": {
+        func: (s) => icu.NumericType.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "NumericType.tryFromStr",
+        expr: (s) => "icu.NumericType.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "Script.forChar": {
         func: (ch) => icu.Script.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2702,6 +3097,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "Script.tryFromStr": {
+        func: (s) => icu.Script.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "Script.tryFromStr",
+        expr: (s) => "icu.Script.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2724,6 +3136,23 @@ let termini = Object.assign({
         ]
     },
 
+    "SentenceBreak.tryFromStr": {
+        func: (s) => icu.SentenceBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "SentenceBreak.tryFromStr",
+        expr: (s) => "icu.SentenceBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "VerticalOrientation.forChar": {
         func: (ch) => icu.VerticalOrientation.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2741,6 +3170,23 @@ let termini = Object.assign({
         ]
     },
 
+    "VerticalOrientation.tryFromStr": {
+        func: (s) => icu.VerticalOrientation.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "VerticalOrientation.tryFromStr",
+        expr: (s) => "icu.VerticalOrientation.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "WordBreak.forChar": {
         func: (ch) => icu.WordBreak.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2753,6 +3199,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "WordBreak.tryFromStr": {
+        func: (s) => icu.WordBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "WordBreak.tryFromStr",
+        expr: (s) => "icu.WordBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]

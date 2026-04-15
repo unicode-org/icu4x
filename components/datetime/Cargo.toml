@@ -5,9 +5,10 @@
 [package]
 name = "icu_datetime"
 description = "Human-readable formatting of dates, times, and time zones in hundreds of locales"
+categories.workspace = true
+keywords = ["unicode", "formatting", "date", "time"]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
@@ -39,6 +40,10 @@ zerotrie = { workspace = true, features = ["alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
 smallvec = { workspace = true, optional = true }
 
+jiff = { workspace = true, optional = true }
+chrono = { workspace = true, optional = true }
+time = { workspace = true, optional = true }
+
 icu_datetime_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
@@ -50,6 +55,9 @@ icu_calendar = { path = "../calendar", features = ["ixdtf", "unstable"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
+ureq = { workspace = true }
+chrono-tz = { workspace = true }
+jiff = { workspace = true, features = ["std", "tzdb-bundle-always"] }
 
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
@@ -87,36 +95,37 @@ datagen = [
     "serde",
 ]
 logging = ["icu_calendar/logging"]
-experimental = []
+unstable = ["icu_time/unstable"]
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
+unstable_jiff_0_2 = ["dep:jiff", "icu_time/unstable_jiff_0_2", "icu_calendar/unstable_jiff_0_2"]
+unstable_chrono_0_4 = ["dep:chrono", "icu_time/unstable_chrono_0_4", "icu_calendar/unstable_chrono_0_4"]
+unstable_time_0_3 = ["dep:time", "icu_time/unstable_time_0_3", "icu_calendar/unstable_time_0_3"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
-
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
+max_combination_size = 3
 
 [[bench]]
 name = "datetime"
 harness = false
-required-features = ["compiled_data", "serde", "experimental"]
+required-features = ["compiled_data", "serde", "unstable"]
 
 [[bench]]
 name = "pattern"
 harness = false
-required-features = ["serde", "experimental"]
+required-features = ["serde", "unstable"]
 
 [[test]]
 name = "datetime"
-required-features = ["experimental", "compiled_data", "serde"]
+required-features = ["unstable", "compiled_data", "serde"]
 
 [[test]]
 name = "resolved_components"
-required-features = ["experimental", "compiled_data"]
+required-features = ["unstable", "compiled_data"]
 
 [[test]]
 name = "simple_test"
@@ -124,7 +133,10 @@ required-features = ["compiled_data"]
 
 [[test]]
 name = "skeleton_serialization"
-required-features = ["experimental"]
+required-features = ["unstable"]
 
 [package.metadata.cargo-semver-checks.lints]
+workspace = true
+
+[lints]
 workspace = true

@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::abstract_gregorian::{
+    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
-use crate::{types, Date, DateError, RangeError};
+use crate::{types, Date, RangeError};
 use tinystr::tinystr;
 
 /// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)
@@ -22,7 +24,7 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Iso;
 
-impl_with_abstract_gregorian!(crate::cal::Iso, IsoDateInner, IsoEra, _x, IsoEra);
+impl_with_abstract_gregorian!(Iso, IsoDateInner, IsoEra, _x, IsoEra);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct IsoEra;
@@ -55,7 +57,10 @@ impl GregorianYears for IsoEra {
 }
 
 impl Date<Iso> {
-    /// Construct a new ISO date from integers.
+    /// Construct a new ISO [`Date`].
+    ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -68,7 +73,8 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
-        ArithmeticDate::new_gregorian::<IsoEra>(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(IsoEra))
+            .map(ArithmeticDate::cast)
             .map(IsoDateInner)
             .map(|i| Date::from_raw(i, Iso))
     }
@@ -85,7 +91,7 @@ impl Iso {
 mod test {
     use super::*;
     use crate::{
-        calendar_arithmetic::{VALID_RD_RANGE, VALID_YEAR_RANGE},
+        calendar_arithmetic::{CONSTRUCTOR_YEAR_RANGE, VALID_RD_RANGE},
         types::{DateDuration, RataDie, Weekday},
     };
 
@@ -103,43 +109,43 @@ mod test {
         let cases = [
             // Clamping RD
             TestCase {
-                year: -1005513,
+                year: -999999,
                 month: 1,
-                day: 3,
+                day: 1,
                 rd: *VALID_RD_RANGE.start() - 100000,
                 invalid_ymd: true,
                 clamping_rd: true,
             },
             // Lowest allowed RD
             TestCase {
-                year: -1005513,
+                year: -999999,
                 month: 1,
-                day: 3,
+                day: 1,
                 rd: *VALID_RD_RANGE.start(),
                 invalid_ymd: true,
                 clamping_rd: false,
             },
             // Lowest allowed YMD
             TestCase {
-                year: *VALID_YEAR_RANGE.start(),
+                year: *CONSTRUCTOR_YEAR_RANGE.start(),
                 month: 1,
                 day: 1,
-                rd: RataDie::new(-365242865),
+                rd: RataDie::new(-3652424),
                 invalid_ymd: false,
                 clamping_rd: false,
             },
             // Highest allowed YMD
             TestCase {
-                year: *VALID_YEAR_RANGE.end(),
+                year: *CONSTRUCTOR_YEAR_RANGE.end(),
                 month: 12,
                 day: 31,
-                rd: RataDie::new(365242500),
+                rd: RataDie::new(3652059),
                 invalid_ymd: false,
                 clamping_rd: false,
             },
             // Highest allowed RD
             TestCase {
-                year: 1001911,
+                year: 999999,
                 month: 12,
                 day: 31,
                 rd: *VALID_RD_RANGE.end(),
@@ -148,7 +154,7 @@ mod test {
             },
             // Clamping RD
             TestCase {
-                year: 1001911,
+                year: 999999,
                 month: 12,
                 day: 31,
                 rd: *VALID_RD_RANGE.end() + 100000,
@@ -162,9 +168,9 @@ mod test {
             let date_from_ymd = Date::try_new_iso(case.year, case.month, case.day);
 
             if !case.clamping_rd {
-                assert_eq!(date_from_rd.to_rata_die(), case.rd);
+                assert_eq!(date_from_rd.to_rata_die(), case.rd, "{:?}", case);
             } else {
-                assert_ne!(date_from_rd.to_rata_die(), case.rd);
+                assert_ne!(date_from_rd.to_rata_die(), case.rd, "{:?}", case);
             }
 
             if !case.invalid_ymd {
@@ -175,8 +181,8 @@ mod test {
                     Err(RangeError {
                         field: "year",
                         value: case.year,
-                        min: *VALID_YEAR_RANGE.start(),
-                        max: *VALID_YEAR_RANGE.end()
+                        min: *CONSTRUCTOR_YEAR_RANGE.start(),
+                        max: *CONSTRUCTOR_YEAR_RANGE.end()
                     }),
                     "{case:?}"
                 )
@@ -194,20 +200,20 @@ mod test {
     }
 
     #[test]
-    fn test_day_of_week() {
+    fn test_weekday() {
         // June 23, 2021 is a Wednesday
         assert_eq!(
-            Date::try_new_iso(2021, 6, 23).unwrap().day_of_week(),
+            Date::try_new_iso(2021, 6, 23).unwrap().weekday(),
             Weekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::try_new_iso(1983, 2, 2).unwrap().day_of_week(),
+            Date::try_new_iso(1983, 2, 2).unwrap().weekday(),
             Weekday::Wednesday,
         );
         // Jan 21, 2021 was a Tuesday
         assert_eq!(
-            Date::try_new_iso(2020, 1, 21).unwrap().day_of_week(),
+            Date::try_new_iso(2020, 1, 21).unwrap().weekday(),
             Weekday::Tuesday,
         );
     }

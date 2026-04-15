@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(dead_code)]
+
 use std::collections::BTreeMap;
 
 use elsa::sync::FrozenMap;
@@ -11,7 +13,7 @@ use icu_provider_export::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 
 #[derive(Default)]
-pub struct TestingExporter(FrozenMap<DataIdentifierCow<'static>, Vec<u8>>);
+pub(crate) struct TestingExporter(FrozenMap<DataIdentifierCow<'static>, Vec<u8>>);
 
 impl DataExporter for &mut TestingExporter {
     fn put_payload(

@@ -257,8 +257,10 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
 #[cfg(test)]
 #[cfg(feature = "compiled_data")]
 mod tests {
+    use crate::provider::fields::Field;
+
     use super::super::*;
-    use icu_calendar::{Date, Gregorian};
+    use icu_calendar::{cal::KoreanTraditional, Date, Gregorian};
     use icu_locale_core::locale;
     use icu_time::{DateTime, Time};
     use writeable::assert_try_writeable_eq;
@@ -605,5 +607,47 @@ mod tests {
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
+    }
+
+    #[test]
+    fn test_cyclic_year() {
+        use crate::provider::fields::{FieldLength, FieldSymbol, Year};
+
+        let locale = locale!("uk").into();
+        let pattern: DateTimePattern = "UUUU".parse().unwrap();
+
+        let names: FixedCalendarDateTimeNames<Gregorian> =
+            FixedCalendarDateTimeNames::try_new(locale).unwrap();
+        let datetime = DateTime {
+            date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+            time: Time::try_new(13, 41, 28, 0).unwrap(),
+        };
+
+        assert_try_writeable_eq!(
+            names.with_pattern_unchecked(&pattern).format(&datetime),
+            "2023",
+            Err(FormattedDateTimePatternError::UnsupportedField(ErrorField(
+                Field {
+                    symbol: FieldSymbol::Year(Year::Cyclic),
+                    length: FieldLength::Four
+                }
+            ))),
+        );
+
+        let mut names: FixedCalendarDateTimeNames<KoreanTraditional> =
+            FixedCalendarDateTimeNames::try_new(locale).unwrap();
+        names
+            .load_year_names(&crate::provider::Baked, YearNameLength::Wide)
+            .unwrap();
+        let datetime = DateTime {
+            date: datetime.date.to_calendar(KoreanTraditional::new()),
+            time: datetime.time,
+        };
+
+        assert_try_writeable_eq!(
+            names.with_pattern_unchecked(&pattern).format(&datetime),
+            "gui-mao",
+            Ok(()),
+        );
     }
 }

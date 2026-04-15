@@ -85,7 +85,7 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "general_category_group")]
         #[cfg(feature = "compiled_data")]
         pub fn create_general_category_group(
-            group: crate::unstable::properties_enums::ffi::GeneralCategoryGroup,
+            group: crate::unstable::properties_gcg::ffi::GeneralCategoryGroup,
         ) -> Box<CodePointSetData> {
             let data = icu_properties::CodePointMapData::<GeneralCategory>::new().static_to_owned();
 

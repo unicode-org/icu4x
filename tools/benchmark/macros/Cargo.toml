@@ -22,3 +22,6 @@ benchmark_memory = ["dep:dhat"]
 
 # Enables `dlmalloc` in example files to bypass the system allocator.
 rust_global_allocator = ["dep:dlmalloc"]
+
+[lints]
+workspace = true

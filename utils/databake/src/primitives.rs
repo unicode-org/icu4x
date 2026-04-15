@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use super::*;
 
@@ -65,7 +65,7 @@ where
     T: BakeSize,
 {
     fn borrows_size(&self) -> usize {
-        core::mem::size_of_val::<T>(*self) + (*self).borrows_size()
+        size_of_val::<T>(*self) + (*self).borrows_size()
     }
 }
 
@@ -80,7 +80,7 @@ where
     T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        if core::mem::size_of::<T>() == core::mem::size_of::<u8>()
+        if size_of::<T>() == size_of::<u8>()
             && core::any::type_name::<T>() == core::any::type_name::<u8>()
         {
             // Safety: self.as_ptr()'s allocation is at least self.len() bytes long,
@@ -102,7 +102,7 @@ where
     T: BakeSize,
 {
     fn borrows_size(&self) -> usize {
-        std::mem::size_of_val(*self) + self.iter().map(BakeSize::borrows_size).sum::<usize>()
+        size_of_val(*self) + self.iter().map(BakeSize::borrows_size).sum::<usize>()
     }
 }
 
@@ -137,7 +137,7 @@ where
     T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        if core::mem::size_of::<T>() == core::mem::size_of::<u8>()
+        if size_of::<T>() == size_of::<u8>()
             && core::any::type_name::<T>() == core::any::type_name::<u8>()
         {
             // Safety: self.as_ptr()'s allocation is at least self.len() bytes long,

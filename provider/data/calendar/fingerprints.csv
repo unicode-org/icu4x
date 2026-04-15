@@ -1,4 +1,3 @@
-calendar/japanese/extended/v1, <singleton>, 5238B, 5216B, e80e648736f019
 calendar/japanese/modern/v1, <singleton>, 134B, 111B, ec96742e22e8fc30
 calendar/week/v1, <lookup>, 295B, 73 identifiers
 calendar/week/v1, <total>, 20B, 20B, 10 unique payloads

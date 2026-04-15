@@ -12,7 +12,10 @@ use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
 };
-use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
+use crate::provider::{
+    packed_pattern::{ErasedPackedPatterns, PackedSkeletonVariant},
+    semantic_skeletons::{marker_attrs, DatetimePatternsGlueV1, GluePattern},
+};
 use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
 use icu_provider::prelude::*;
@@ -49,7 +52,7 @@ impl RawPreferences {
     #[inline]
     pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Self {
         Self {
-            hour_cycle: prefs.hour_cycle.map(fields::Hour::from_hour_cycle),
+            hour_cycle: fields::Hour::from_prefs(prefs),
         }
     }
 }
@@ -102,10 +105,12 @@ pub(crate) struct ItemsAndOptions<'a> {
 }
 
 impl ItemsAndOptions<'_> {
-    fn new_empty() -> Self {
+    const fn new_empty() -> Self {
         Self {
             items: ZeroSlice::new_empty(),
-            ..Default::default()
+            alignment: None,
+            hour_cycle: None,
+            subsecond_digits: None,
         }
     }
 }
@@ -180,26 +185,41 @@ impl DatePatternSelectionData {
     ) -> Option<DatePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let year_style = options.year_style.unwrap_or_default();
-        let variant = match (
-            year_style,
-            input
-                .year
-                .map(|y| {
-                    y.era()
-                        .map(|e| e.ambiguity)
-                        .unwrap_or(YearAmbiguity::EraRequired)
-                })
-                .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
-        ) {
-            (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
-                PackedSkeletonVariant::Variant1
-            }
-            (YearStyle::Full, _) | (_, YearAmbiguity::CenturyRequired) => {
+        let ambiguity = input
+            .year
+            .as_ref()
+            .map(|y| {
+                y.era()
+                    .map(|e| e.ambiguity)
+                    .unwrap_or(YearAmbiguity::EraRequired)
+            })
+            .unwrap_or(YearAmbiguity::EraAndCenturyRequired);
+
+        let variant = match (year_style, ambiguity) {
+            (YearStyle::WithEra, _) => PackedSkeletonVariant::Variant1,
+
+            (
+                YearStyle::Full,
+                YearAmbiguity::EraAndCenturyRequired | YearAmbiguity::EraRequired,
+            ) => PackedSkeletonVariant::Variant1,
+            (YearStyle::Full, YearAmbiguity::CenturyRequired | YearAmbiguity::Unambiguous) => {
                 PackedSkeletonVariant::Variant0
             }
-            (YearStyle::Auto, YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired) => {
-                PackedSkeletonVariant::Standard
+
+            (
+                YearStyle::Auto | YearStyle::NoEra,
+                YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired,
+            ) => PackedSkeletonVariant::Standard,
+
+            (YearStyle::Auto, YearAmbiguity::CenturyRequired) => PackedSkeletonVariant::Variant0,
+            (YearStyle::Auto, YearAmbiguity::EraAndCenturyRequired) => {
+                PackedSkeletonVariant::Variant1
             }
+
+            (
+                YearStyle::NoEra,
+                YearAmbiguity::CenturyRequired | YearAmbiguity::EraAndCenturyRequired,
+            ) => PackedSkeletonVariant::Variant0,
         };
         Some(DatePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),
@@ -717,15 +737,15 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
                     Err(1) => self
                         .date_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     Err(0) => self
                         .time_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     Err(2) => self
                         .zone_pattern()
                         .map(|p| p.items_and_options())
-                        .unwrap_or(ItemsAndOptions::new_empty()),
+                        .unwrap_or(const { ItemsAndOptions::new_empty() }),
                     _ => ItemsAndOptions::new_empty(),
                 },
             )

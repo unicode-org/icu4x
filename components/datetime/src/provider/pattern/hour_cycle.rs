@@ -8,7 +8,6 @@ use super::{reference, PatternItem};
 use crate::provider::fields;
 #[cfg(feature = "datagen")]
 use crate::provider::{
-    self,
     pattern::runtime::Pattern,
     skeleton::{self, reference::Skeleton},
 };
@@ -26,9 +25,9 @@ use icu_provider::prelude::*;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum CoarseHourCycle {
-    /// Can either be fields::Hour::H11 or fields::Hour::H12
+    /// Can either be [`fields::Hour::H11`] or [`fields::Hour::H12`]
     H11H12,
-    /// fields::Hour::H23
+    /// [`fields::Hour::H23`]
     H23,
 }
 
@@ -66,7 +65,7 @@ impl CoarseHourCycle {
     #[cfg(feature = "datagen")]
     pub fn apply_on_pattern<'data>(
         &self,
-        date_time: &provider::skeleton::GenericLengthPatterns<'data>,
+        date_time: &skeleton::GenericLengthPatterns<'data>,
         skeletons: &alloc::collections::BTreeMap<Skeleton, PluralElements<Pattern<'data>>>,
         pattern_str: &str,
         mut pattern: reference::Pattern,
@@ -99,7 +98,7 @@ impl CoarseHourCycle {
             }
         }
 
-        let skeleton = skeleton::reference::Skeleton::from(&pattern);
+        let skeleton = Skeleton::from(&pattern);
 
         match skeleton::create_best_pattern_for_fields(
             skeletons,
@@ -134,10 +133,7 @@ impl CoarseHourCycle {
 /// and between h23 and h24. This function is naive as it is assumed that this application of
 /// the hour cycle will not change between h1x to h2x.
 #[cfg(feature = "datagen")]
-pub(crate) fn naively_apply_preferences(
-    pattern: &mut runtime::Pattern,
-    hour_cycle: Option<HourCycle>,
-) {
+pub(crate) fn naively_apply_hour_cycle(pattern: &mut Pattern, hour_cycle: Option<HourCycle>) {
     // If there is a preference overriding the hour cycle, apply it now.
     if let Some(hour_cycle) = hour_cycle {
         runtime::helpers::maybe_replace_first(pattern, |item| {
@@ -146,7 +142,12 @@ pub(crate) fn naively_apply_preferences(
                 length,
             }) = item
             {
-                let candidate_field = fields::Hour::from_hour_cycle(hour_cycle);
+                let candidate_field = match hour_cycle {
+                    HourCycle::H11 => fields::Hour::H11,
+                    HourCycle::H12 => fields::Hour::H12,
+                    HourCycle::H23 => fields::Hour::H23,
+                    _ => unreachable!(),
+                };
                 if *current_hour != candidate_field {
                     Some(PatternItem::from((
                         fields::FieldSymbol::Hour(candidate_field),

@@ -10,7 +10,7 @@ fn test_calendar_resolution() {
     use std::collections::BTreeMap;
 
     use icu::{
-        calendar::{preferences::CalendarAlgorithm, AnyCalendarKind},
+        calendar::preferences::{CalendarAlgorithm, CalendarPreferences},
         locale::{
             extensions::unicode::Value,
             subtags::{Language, Region},
@@ -38,8 +38,11 @@ fn test_calendar_resolution() {
         .supplemental
         .calendar_preference_data
     {
-        let mut region_preferences =
-            LanguageIdentifier::from((Language::UNKNOWN, None, Some(region))).into();
+        let mut region_preferences = CalendarPreferences::from(&LanguageIdentifier::from((
+            Language::UNKNOWN,
+            None,
+            Some(region),
+        )));
 
         let algorithms = algorithms
             .iter()
@@ -50,8 +53,8 @@ fn test_calendar_resolution() {
             .collect::<Vec<_>>();
 
         assert_eq!(
-            AnyCalendarKind::new(region_preferences),
-            AnyCalendarKind::try_from(algorithms[0]).unwrap(),
+            region_preferences.resolved_algorithm(),
+            algorithms[0],
             "{region:?}",
         );
 
@@ -61,8 +64,8 @@ fn test_calendar_resolution() {
         {
             region_preferences.calendar_algorithm = Some(CalendarAlgorithm::Hijri(None));
             assert_eq!(
-                AnyCalendarKind::new(region_preferences),
-                AnyCalendarKind::try_from(preferred_islamic_algorithm).unwrap(),
+                region_preferences.resolved_algorithm(),
+                preferred_islamic_algorithm,
                 "{region:?}",
             );
         }

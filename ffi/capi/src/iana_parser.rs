@@ -59,7 +59,7 @@ pub mod ffi {
         }
     }
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::time::zone::iana::TimeZoneIter, Struct)]
     pub struct TimeZoneIterator<'a>(icu_time::zone::iana::TimeZoneIter<'a>);
 
@@ -160,7 +160,7 @@ pub mod ffi {
         canonical: DiplomatUtf8StrSlice<'a>,
     }
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::time::zone::iana::TimeZoneAndCanonicalIter, Struct)]
     pub struct TimeZoneAndCanonicalIterator<'a>(icu_time::zone::iana::TimeZoneAndCanonicalIter<'a>);
 
@@ -188,7 +188,7 @@ pub mod ffi {
         normalized: DiplomatUtf8StrSlice<'a>,
     }
 
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::rust_link(icu::time::zone::iana::TimeZoneAndCanonicalAndNormalizedIter, Struct)]
     pub struct TimeZoneAndCanonicalAndNormalizedIterator<'a>(
         icu_time::zone::iana::TimeZoneAndCanonicalAndNormalizedIter<'a>,

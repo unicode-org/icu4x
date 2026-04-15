@@ -13,8 +13,12 @@ repository.workspace = true
 homepage.workspace = true
 license.workspace = true
 categories.workspace = true
+keywords = []
 include.workspace = true
 
 [dev-dependencies]
-icu = { path = "../../components/icu", features = ["experimental"] }
+icu = { path = "../../components/icu", features = ["unstable"] }
 icu_provider = { workspace = true }
+
+[lints]
+workspace = true

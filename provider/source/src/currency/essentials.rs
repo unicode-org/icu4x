@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::decimal::decimal_pattern::DecimalPattern;
+use crate::cldr_serde::numbers::NumberPattern;
+use crate::cldr_serde::numbers::NumberPatternItem;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 
@@ -15,7 +16,6 @@ use tinystr::TinyAsciiStr;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::str::FromStr;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
@@ -34,13 +34,13 @@ use icu_provider::prelude::*;
 /// Returns the pattern selection for a currency.
 /// For example:
 ///    if the pattern is ¤#,##0.00 and the symbol is EGP,
-///    this means the return value will be PatternSelection::StandardAlphaNextToNumber
+///    this means the return value will be `PatternSelection::StandardAlphaNextToNumber`
 ///    because the character closes to the number is a letter.
 /// NOTE:
-///   placeholder_value must not be empty.
+///   `placeholder_value` must not be empty.
 fn currency_pattern_selection(
     provider: &SourceDataProvider,
-    pattern: &str,
+    pattern: &NumberPattern,
     placeholder_value: &str,
 ) -> Result<PatternSelection, DataError> {
     if placeholder_value.is_empty() {
@@ -48,12 +48,30 @@ fn currency_pattern_selection(
     }
 
     // TODO(#6064): Handle the negative sub pattern.
-    let pattern = pattern.split(';').next().unwrap();
+    let pattern = &pattern.positive;
 
-    let currency_sign = '¤';
-    let currency_sign_index = pattern.find(currency_sign).unwrap();
-    let first_num_index = pattern.find(['0', '#']).unwrap();
-    let last_num_index = pattern.rfind(['0', '#']).unwrap();
+    let currency_sign_index = pattern
+        .iter()
+        .position(|i| matches!(i, NumberPatternItem::Currency))
+        .unwrap();
+    let first_num_index = pattern
+        .iter()
+        .position(|i| {
+            matches!(
+                i,
+                NumberPatternItem::MandatoryDigit | NumberPatternItem::OptionalDigit
+            )
+        })
+        .unwrap();
+    let last_num_index = pattern
+        .iter()
+        .rposition(|i| {
+            matches!(
+                i,
+                NumberPatternItem::MandatoryDigit | NumberPatternItem::OptionalDigit
+            )
+        })
+        .unwrap();
 
     let letters_set = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?
         .as_borrowed()
@@ -130,10 +148,10 @@ fn extract_currency_essentials<'data>(
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
     let standard = &currency_formats.standard;
-    let standard_alpha_next_to_number = match &currency_formats.standard_alpha_next_to_number {
-        Some(standard_alpha_next_to_number) => standard_alpha_next_to_number,
-        None => "",
-    };
+    let standard_alpha_next_to_number = currency_formats
+        .standard_alpha_next_to_number
+        .as_ref()
+        .unwrap_or(standard);
 
     let mut currency_patterns_map =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
@@ -190,17 +208,14 @@ fn extract_currency_essentials<'data>(
 
         let determine_pattern_selection =
             |placeholder_index: Option<PlaceholderValue>| -> Result<PatternSelection, DataError> {
-                if standard_alpha_next_to_number.is_empty() {
-                    Ok(PatternSelection::Standard)
-                } else {
-                    let placeholder_value = match placeholder_index {
-                        Some(PlaceholderValue::Index(index)) => {
-                            placeholders.get(index as usize).unwrap()
-                        }
+                currency_pattern_selection(
+                    provider,
+                    standard,
+                    match placeholder_index {
+                        Some(PlaceholderValue::Index(index)) => placeholders[index as usize],
                         Some(PlaceholderValue::ISO) | None => iso.as_str(),
-                    };
-                    currency_pattern_selection(provider, standard, placeholder_value)
-                }
+                    },
+                )
             };
 
         let short_pattern_selection: PatternSelection =
@@ -255,45 +270,32 @@ fn extract_currency_essentials<'data>(
 
     /// Create a `DoublePlaceholderPattern` from a string pattern.
     fn create_pattern<'data>(
-        pattern: &str,
-    ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
-        if pattern.is_empty() {
-            return Ok(None);
-        }
-
-        let decimal_pattern = DecimalPattern::from_str(pattern).map_err(|e| {
-            DataError::custom("Could not parse the pattern").with_display_context(&e)
-        })?;
-
+        pattern: &NumberPattern,
+    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
         // TODO(#4677): Handle the negative sub pattern.
-        let pattern_items = decimal_pattern
-            .positive
-            .to_pattern_items()
-            .into_iter()
-            .flat_map(|item| match item {
-                PatternItemCow::Placeholder(_) => vec![item],
-                PatternItemCow::Literal(s) if s.contains('¤') => {
-                    itertools::Itertools::intersperse(
-                        s.split('¤')
-                            .map(|s| PatternItemCow::Literal(s.to_string().into())),
-                        PatternItemCow::Placeholder(DoublePlaceholderKey::Place1),
-                    )
-                    .collect()
-                }
-                PatternItemCow::Literal(s) => vec![PatternItemCow::Literal(s)],
-            });
+        // TODO: this is wrong - the currency pattern does not necessarily match the decimal pattern with a currency
+        // sign and some literals tacked on.
+        let pattern_items = pattern.positive.iter().flat_map(|item| match item {
+            NumberPatternItem::Currency => {
+                Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
+            }
+            NumberPatternItem::Literal(s) => Some(PatternItemCow::Literal(Cow::Borrowed(s))),
+            NumberPatternItem::DecimalSeparator => {
+                Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
+            }
+            _ => None,
+        });
 
         DoublePlaceholderPattern::try_from_items(pattern_items.into_iter())
             .map_err(|e| {
                 DataError::custom("Could not parse standard pattern").with_display_context(&e)
             })
             .map(Cow::Owned)
-            .map(Some)
     }
 
     Ok(CurrencyEssentials {
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
-        standard_pattern: create_pattern(standard.as_str())?,
+        standard_pattern: create_pattern(standard)?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
         placeholders: VarZeroVec::from(&placeholders),
         default_pattern_config,
@@ -356,19 +358,10 @@ fn test_basic() {
 
     let en_payload = en.payload.get();
 
-    assert_writeable_eq!(
-        en_payload
-            .standard_pattern
-            .as_ref()
-            .unwrap()
-            .interpolate((3, "$")),
-        "$3"
-    );
+    assert_writeable_eq!(en_payload.standard_pattern.interpolate((3, "$")), "$3");
     assert_writeable_eq!(
         en_payload
             .standard_alpha_next_to_number_pattern
-            .as_ref()
-            .unwrap()
             .interpolate((3, "$")),
         "$\u{a0}3"
     );
@@ -399,19 +392,9 @@ fn test_basic() {
 
     let ar_eg_payload = ar_eg.payload.get();
     assert_writeable_eq!(
-        ar_eg_payload
-            .standard_pattern
-            .as_ref()
-            .unwrap()
-            .interpolate((3, "$")),
+        ar_eg_payload.standard_pattern.interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
-    // TODO(#6064)
-    assert!(ar_eg
-        .payload
-        .get()
-        .standard_alpha_next_to_number_pattern
-        .is_some());
 
     let (ar_eg_egp_short, ar_eg_egp_narrow) = get_placeholders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),

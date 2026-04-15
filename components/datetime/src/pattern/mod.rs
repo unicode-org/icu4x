@@ -74,6 +74,7 @@ pub(crate) enum MonthPlaceholderValue<'a> {
     PlainString(&'a str),
     Numeric,
     NumericPattern(&'a SinglePlaceholderPattern),
+    StringPattern(&'a str, &'a SinglePlaceholderPattern),
 }
 
 /// Error returned from [`FixedCalendarDateTimeNames`]'s pattern load methods.
@@ -110,7 +111,7 @@ pub enum PatternLoadError {
 
 impl core::error::Error for PatternLoadError {}
 
-/// Error returned from constructors that map from AnyCalendar to a formatter.
+/// Error returned from constructors that map from [`AnyCalendar`](icu_calendar::AnyCalendar) to a formatter.
 #[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
 #[displaydoc("The calendar {kind:?} is not supported in DateTimeFormatter")]
 #[non_exhaustive]

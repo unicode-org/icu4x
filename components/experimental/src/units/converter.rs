@@ -101,7 +101,7 @@ where
     }
 }
 
-/// ProportionalConverter is responsible for converting between two units that are proportionally related.
+/// `ProportionalConverter` is responsible for converting between two units that are proportionally related.
 /// For example: 1- `meter` to `foot`.
 ///              2- `square-meter` to `square-foot`.
 ///

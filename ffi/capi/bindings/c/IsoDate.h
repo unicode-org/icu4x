@@ -8,8 +8,12 @@
 #include "diplomat_runtime.h"
 
 #include "Calendar.d.h"
+#include "CalendarDateAddError.d.h"
 #include "CalendarError.d.h"
 #include "Date.d.h"
+#include "DateAddOptions.d.h"
+#include "DateDifferenceOptions.d.h"
+#include "DateDuration.d.h"
 #include "IsoWeekOfYear.d.h"
 #include "Rfc9557ParseError.d.h"
 #include "Weekday.d.h"
@@ -41,6 +45,8 @@ uint8_t icu4x_IsoDate_day_of_month_mv1(const IsoDate* self);
 
 Weekday icu4x_IsoDate_day_of_week_mv1(const IsoDate* self);
 
+Weekday icu4x_IsoDate_weekday_mv1(const IsoDate* self);
+
 IsoWeekOfYear icu4x_IsoDate_week_of_year_mv1(const IsoDate* self);
 
 uint8_t icu4x_IsoDate_month_mv1(const IsoDate* self);
@@ -54,6 +60,11 @@ uint8_t icu4x_IsoDate_months_in_year_mv1(const IsoDate* self);
 uint8_t icu4x_IsoDate_days_in_month_mv1(const IsoDate* self);
 
 uint16_t icu4x_IsoDate_days_in_year_mv1(const IsoDate* self);
+
+typedef struct icu4x_IsoDate_try_add_with_options_mv1_result {union {IsoDate* ok; CalendarDateAddError err;}; bool is_ok;} icu4x_IsoDate_try_add_with_options_mv1_result;
+icu4x_IsoDate_try_add_with_options_mv1_result icu4x_IsoDate_try_add_with_options_mv1(const IsoDate* self, DateDuration duration, DateAddOptions options);
+
+DateDuration icu4x_IsoDate_until_with_options_mv1(const IsoDate* self, const IsoDate* other, DateDifferenceOptions options);
 
 void icu4x_IsoDate_destroy_mv1(IsoDate* self);
 

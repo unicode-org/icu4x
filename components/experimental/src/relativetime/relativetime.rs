@@ -84,13 +84,12 @@ pub mod preferences {
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
-///     locale!("es").into(),
-///     RelativeTimeFormatterOptions {
-///         numeric: Numeric::Auto,
-///     },
-/// )
-/// .expect("locale should be present");
+/// let mut options = RelativeTimeFormatterOptions::default();
+/// options.numeric = Numeric::Auto;
+///
+/// let relative_time_formatter =
+///     RelativeTimeFormatter::try_new_short_day(locale!("es").into(), options)
+///         .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(Decimal::from(0u8)),
@@ -134,6 +133,7 @@ pub mod preferences {
 ///     "১৫ বছর পূর্বে"
 /// );
 /// ```
+#[derive(Debug)]
 pub struct RelativeTimeFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) rt: DataPayload<ErasedMarker<RelativeTimePatternData<'static>>>,

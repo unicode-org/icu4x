@@ -19,12 +19,13 @@ impl From<Display> for PercentFormatterOptions {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Default, Debug, Eq, PartialEq, Clone, Copy)]
 #[non_exhaustive]
 pub enum Display {
     /// Format the Percent to display with the standard formatting for the locale.
     ///
     /// For example 123 -> 123% in en-US.
+    #[default]
     Standard,
     /// Format the Percent to display as an approximate value.
     ///
@@ -34,10 +35,4 @@ pub enum Display {
     ///
     /// For example 123 -> +123% in en-US.
     ExplicitSign,
-}
-
-impl Default for Display {
-    fn default() -> Self {
-        Self::Standard
-    }
 }

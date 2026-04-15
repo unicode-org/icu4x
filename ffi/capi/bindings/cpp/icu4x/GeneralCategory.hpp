@@ -29,10 +29,13 @@ namespace capi {
 
     uint8_t icu4x_GeneralCategory_to_integer_value_mv1(icu4x::capi::GeneralCategory self);
 
-    icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategory_to_group_mv1(icu4x::capi::GeneralCategory self);
-
     typedef struct icu4x_GeneralCategory_from_integer_value_mv1_result {union {icu4x::capi::GeneralCategory ok; }; bool is_ok;} icu4x_GeneralCategory_from_integer_value_mv1_result;
     icu4x_GeneralCategory_from_integer_value_mv1_result icu4x_GeneralCategory_from_integer_value_mv1(uint8_t other);
+
+    typedef struct icu4x_GeneralCategory_try_from_str_mv1_result {union {icu4x::capi::GeneralCategory ok; }; bool is_ok;} icu4x_GeneralCategory_try_from_str_mv1_result;
+    icu4x_GeneralCategory_try_from_str_mv1_result icu4x_GeneralCategory_try_from_str_mv1(icu4x::diplomat::capi::DiplomatStringView s);
+
+    icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategory_to_group_mv1(icu4x::capi::GeneralCategory self);
 
     } // extern "C"
 } // namespace capi
@@ -100,13 +103,18 @@ inline uint8_t icu4x::GeneralCategory::to_integer_value() const {
     return result;
 }
 
-inline icu4x::GeneralCategoryGroup icu4x::GeneralCategory::to_group() const {
-    auto result = icu4x::capi::icu4x_GeneralCategory_to_group_mv1(this->AsFFI());
-    return icu4x::GeneralCategoryGroup::FromFFI(result);
-}
-
 inline std::optional<icu4x::GeneralCategory> icu4x::GeneralCategory::from_integer_value(uint8_t other) {
     auto result = icu4x::capi::icu4x_GeneralCategory_from_integer_value_mv1(other);
     return result.is_ok ? std::optional<icu4x::GeneralCategory>(icu4x::GeneralCategory::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline std::optional<icu4x::GeneralCategory> icu4x::GeneralCategory::try_from_str(std::string_view s) {
+    auto result = icu4x::capi::icu4x_GeneralCategory_try_from_str_mv1({s.data(), s.size()});
+    return result.is_ok ? std::optional<icu4x::GeneralCategory>(icu4x::GeneralCategory::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline icu4x::GeneralCategoryGroup icu4x::GeneralCategory::to_group() const {
+    auto result = icu4x::capi::icu4x_GeneralCategory_to_group_mv1(this->AsFFI());
+    return icu4x::GeneralCategoryGroup::FromFFI(result);
 }
 #endif // ICU4X_GeneralCategory_HPP

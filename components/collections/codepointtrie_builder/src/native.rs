@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// When both `wasm` and `icu4c` features are set, we still want the icu4c portion to be built, we just
+// don't want it to bother the linker. In that case, we leave this unused, and silence the warning
+#![allow(unused)]
+
 use crate::CodePointTrieBuilder;
-use crate::CodePointTrieBuilderData;
 
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
@@ -11,7 +14,9 @@ use icu_collections::codepointtrie::{CodePointTrie, CodePointTrieHeader};
 
 use zerovec::ZeroVec;
 
-use core::{mem, slice};
+use core::marker::PhantomData;
+use core::ops::RangeInclusive;
+use core::slice;
 
 enum UMutableCPTrie {}
 
@@ -55,6 +60,14 @@ extern "C" {
         value: u32,
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
+    #[cfg_attr(icu4c_enable_renaming, link_name = concat!("umutablecptrie_setRange_", env!("ICU4C_RENAME_VERSION")))]
+    fn umutablecptrie_setRange(
+        trie: *const UMutableCPTrie,
+        start: u32,
+        end: u32,
+        value: u32,
+        error_code: &mut u32,
+    ) -> *const UMutableCPTrie;
     #[cfg_attr(
         icu4c_enable_renaming,
         link_name = concat!("umutablecptrie_buildImmutable_", env!("ICU4C_RENAME_VERSION"))
@@ -72,120 +85,144 @@ extern "C" {
     fn umutablecptrie_close(builder: *const UMutableCPTrie);
 }
 
-// When both `wasm` and `icu4c` features are set, we still want the icu4c portion to be built, we just
-// don't want it to bother the linker. In that case, we leave this unused, and silence the warning
-#[allow(unused)]
-pub(crate) fn run_native<T>(cpt_builder: &CodePointTrieBuilder<T>) -> CodePointTrie<'static, T>
-where
-    T: TrieValue,
-{
-    let mut error = 0;
-    let builder = unsafe {
+#[derive(Debug)]
+pub(crate) struct Builder<T: TrieValue> {
+    builder: *const UMutableCPTrie,
+    _p: PhantomData<T>,
+}
+
+impl<T: TrieValue> Builder<T> {
+    pub(crate) fn create(default_value: T, error_value: T) -> Self {
+        let mut error = 0;
+
+        let builder = unsafe {
+            // safety: we're passing a valid error pointer
+            // leak-safety: we clean up `builder` except in panicky codepaths
+            umutablecptrie_open(default_value.to_u32(), error_value.to_u32(), &mut error)
+        };
+
+        if error != 0 {
+            panic!("cpt builder returned error code {error}");
+        }
+
+        Self {
+            builder,
+            _p: PhantomData,
+        }
+    }
+
+    pub(crate) fn set_value(&mut self, cp: u32, value: T) {
+        let mut error = 0;
+
+        unsafe {
+            // safety: builder is a valid UMutableCPTrie
+            // safety: we're passing a valid error pointer
+            umutablecptrie_set(self.builder, cp, value.to_u32(), &mut error);
+        }
+        if error != 0 {
+            panic!("cpt builder returned error code {error}");
+        }
+    }
+
+    pub(crate) fn set_range_value(&mut self, cps: RangeInclusive<u32>, value: T) {
+        let mut error = 0;
+
+        unsafe {
+            // safety: builder is a valid UMutableCPTrie
+            // safety: we're passing a valid error pointer
+            umutablecptrie_setRange(
+                self.builder,
+                *cps.start(),
+                *cps.end(),
+                value.to_u32(),
+                &mut error,
+            );
+        }
+
+        if error != 0 {
+            panic!("cpt builder returned error code {error}");
+        }
+    }
+
+    pub(crate) fn build(mut self, trie_type: TrieType, width: u32) -> CodePointTrie<'static, T> {
+        let mut error = 0;
+
+        // safety: `builder` is a valid UMutableCPTrie
         // safety: we're passing a valid error pointer
-        // leak-safety: we clean up `builder` except in panicky codepaths
-        umutablecptrie_open(
-            cpt_builder.default_value.to_u32(),
-            cpt_builder.error_value.to_u32(),
-            &mut error,
-        )
-    };
-
-    if error != 0 {
-        panic!("cpt builder returned error code {error}");
-    }
-
-    let CodePointTrieBuilderData::ValuesByCodePoint(values) = cpt_builder.data;
-
-    for (cp, value) in values.iter().enumerate() {
-        let value = value.to_u32();
-        if value != cpt_builder.default_value.to_u32() {
-            unsafe {
-                // safety: builder is a valid UMutableCPTrie
-                // safety: we're passing a valid error pointer
-                umutablecptrie_set(builder, cp as u32, value, &mut error);
-            }
-            if error != 0 {
-                panic!("cpt builder returned error code {error}");
-            }
+        // leak-safety: we clean up `built` except in panicky codepaths
+        let built = unsafe {
+            umutablecptrie_buildImmutable(self.builder, trie_type as u32, width, &mut error)
+        };
+        if error != 0 {
+            panic!("cpt builder returned error code {error}");
         }
-    }
+        unsafe {
+            // safety: builder is a valid UMutableCPTrie
+            // safety: we don't use builder after this
+            umutablecptrie_close(self.builder);
+        }
 
-    let (trie_type, width) =
-        crate::common::args_for_build_immutable::<T::ULE>(cpt_builder.trie_type);
+        // safety: this is is a valid trie returned by umutablecptrie_buildImmutable (which did not evaluate to an error)
+        let trie = unsafe { &*built };
 
-    // safety: `builder` is a valid UMutableCPTrie
-    // safety: we're passing a valid error pointer
-    // leak-safety: we clean up `built` except in panicky codepaths
-    let built = unsafe { umutablecptrie_buildImmutable(builder, trie_type, width, &mut error) };
-    if error != 0 {
-        panic!("cpt builder returned error code {error}");
-    }
-    unsafe {
-        // safety: builder is a valid UMutableCPTrie
-        // safety: we don't use builder after this
-        umutablecptrie_close(builder);
-    }
-
-    // safety: this is is a valid trie returned by umutablecptrie_buildImmutable (which did not evaluate to an error)
-    let trie = unsafe { &*built };
-
-    let header = CodePointTrieHeader {
-        high_start: trie.highStart,
-        shifted12_high_start: trie.shifted12HighStart,
-        index3_null_offset: trie.index3NullOffset,
-        data_null_offset: trie
-            .dataNullOffset
-            .try_into()
-            .expect("Found negative or out of range dataNullOffset"),
-        null_value: trie.nullValue,
-        trie_type: TrieType::try_from(trie.type_ as u8).expect("Found out of range TrieType"),
-    };
-
-    // safety: we expect ICU4C to give us a valid slice (index, indexLength). The pointer types
-    // are already strongly typed, giving the right slice type.
-    let index_slice = unsafe {
-        slice::from_raw_parts(
-            trie.index,
-            trie.indexLength
+        let header = CodePointTrieHeader {
+            high_start: trie.highStart,
+            shifted12_high_start: trie.shifted12HighStart,
+            index3_null_offset: trie.index3NullOffset,
+            data_null_offset: trie
+                .dataNullOffset
                 .try_into()
-                .expect("got negative number for length"),
-        )
-    };
-    let index_vec = ZeroVec::alloc_from_slice(index_slice);
-    let data_length = trie
-        .dataLength
-        .try_into()
-        .expect("got negative number for length");
-    // safety: based on the trie width used we expect (ptr, dataLength) to be valid for the correct
-    // ptr type. The ptr types are already strongly typed, giving the right slice type.
-    let data_vec: Result<Vec<T>, _> = unsafe {
-        match mem::size_of::<T::ULE>() {
-            1 => slice::from_raw_parts(trie.data.ptr8, data_length)
-                .iter()
-                .map(|x| TrieValue::try_from_u32((*x).into()))
-                .collect(),
-            2 => slice::from_raw_parts(trie.data.ptr16, data_length)
-                .iter()
-                .map(|x| TrieValue::try_from_u32((*x).into()))
-                .collect(),
-            3 | 4 => slice::from_raw_parts(trie.data.ptr32, data_length)
-                .iter()
-                .map(|x| TrieValue::try_from_u32(*x))
-                .collect(),
-            other => panic!("Don't know how to make trie with width {other}"),
+                .expect("Found negative or out of range dataNullOffset"),
+            null_value: trie.nullValue,
+            trie_type: TrieType::try_from(trie.type_ as u8).expect("Found out of range TrieType"),
+        };
+
+        // safety: we expect ICU4C to give us a valid slice (index, indexLength). The pointer types
+        // are already strongly typed, giving the right slice type.
+        let index_slice = unsafe {
+            slice::from_raw_parts(
+                trie.index,
+                trie.indexLength
+                    .try_into()
+                    .expect("got negative number for length"),
+            )
+        };
+        let index_vec = ZeroVec::alloc_from_slice(index_slice);
+        let data_length = trie
+            .dataLength
+            .try_into()
+            .expect("got negative number for length");
+        // safety: based on the trie width used we expect (ptr, dataLength) to be valid for the correct
+        // ptr type. The ptr types are already strongly typed, giving the right slice type.
+        let data_vec: Result<Vec<T>, _> = unsafe {
+            match size_of::<T::ULE>() {
+                1 => slice::from_raw_parts(trie.data.ptr8, data_length)
+                    .iter()
+                    .map(|x| TrieValue::try_from_u32((*x).into()))
+                    .collect(),
+                2 => slice::from_raw_parts(trie.data.ptr16, data_length)
+                    .iter()
+                    .map(|x| TrieValue::try_from_u32((*x).into()))
+                    .collect(),
+                3 | 4 => slice::from_raw_parts(trie.data.ptr32, data_length)
+                    .iter()
+                    .map(|x| TrieValue::try_from_u32(*x))
+                    .collect(),
+                other => panic!("Don't know how to make trie with width {other}"),
+            }
+        };
+        let data_vec = ZeroVec::alloc_from_slice(
+            &data_vec
+                .map_err(|s| s.to_string())
+                .expect("Failed to parse as TrieValue"),
+        );
+        let built_trie =
+            CodePointTrie::try_new(header, index_vec, data_vec).expect("Failed to construct");
+        unsafe {
+            // safety: `built` is a valid UCPTrie
+            // safety: `built` isn't used after this
+            ucptrie_close(built);
         }
-    };
-    let data_vec = ZeroVec::alloc_from_slice(
-        &data_vec
-            .map_err(|s| s.to_string())
-            .expect("Failed to parse as TrieValue"),
-    );
-    let built_trie =
-        CodePointTrie::try_new(header, index_vec, data_vec).expect("Failed to construct");
-    unsafe {
-        // safety: `built` is a valid UCPTrie
-        // safety: `built` isn't used after this
-        ucptrie_close(built);
+        built_trie
     }
-    built_trie
 }

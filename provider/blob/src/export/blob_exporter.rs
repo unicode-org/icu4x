@@ -47,7 +47,7 @@ impl<'w> BlobExporter<'w> {
     /// Creates a version 1 [`BlobExporter`] that writes to the given I/O stream.
     ///
     /// Version 1 is needed if the blob may be consumed by ICU4X versions 1.0 through 1.3. If
-    /// targeting only ICU4X 1.4 and above, see [BlobExporter::new_with_sink()].
+    /// targeting only ICU4X 1.4 and above, see [`BlobExporter::new_with_sink()`].
     pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
             resources: Default::default(),
@@ -88,7 +88,7 @@ impl DataExporter for BlobExporter<'_> {
             .entry({
                 let mut key = id.locale.to_string();
                 if !id.marker_attributes.is_empty() {
-                    key.push(crate::blob_schema::REQUEST_SEPARATOR);
+                    key.push(REQUEST_SEPARATOR);
                     key.push_str(id.marker_attributes);
                 }
                 key.into_bytes()

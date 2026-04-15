@@ -4,7 +4,7 @@
 
 use crate::duration::options::*;
 
-/// Validated options for [DurationFormatter](DurationFormatter).
+/// Validated options for [`DurationFormatter`](crate::duration::DurationFormatter).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ValidatedDurationFormatterOptions {
     /// The style that will be applied to units
@@ -63,18 +63,18 @@ pub struct ValidatedDurationFormatterOptions {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, displaydoc::Display)]
 pub enum DurationFormatterOptionsError {
-    /// A unit field is set to [`FieldDisplay::Always`] and the style is set to [`FieldStyle::Fractional`].
+    /// A unit field is set to [`FieldDisplay::Always`] and the style is set to `Fractional`.
     #[displaydoc("A unit field is set to Always and the style is set to Fractional")]
     DisplayAlwaysFractional,
 
-    /// A previous unit's style is [`FieldStyle::Fractional`], but the following unit's style is not [`FieldStyle::Fractional`].
+    /// A previous unit's style is `Fractional`, but the following unit's style is not `Fractional`.
     #[displaydoc(
         "A previous unit's style is Fractional, but the following unit's style is not Fractional"
     )]
     PreviousFractional,
 
-    /// A previous unit's style is set to [`FieldStyle::Numeric`] or [`FieldStyle::TwoDigit`] and the following unit's style is not
-    /// [`FieldStyle::Fractional`], [`FieldStyle::Numeric`], or [`FieldStyle::TwoDigit`].
+    /// A previous unit's style is set to `Numeric` or `TwoDigit` and the following unit's style is not
+    /// `Fractional`, `Numeric`, or `TwoDigit`.
     #[displaydoc("A previous unit's style is set to Numeric or TwoDigit and the following unit's style is not Fractional, Numeric, or TwoDigit")]
     PreviousNumeric,
 
@@ -86,6 +86,11 @@ pub enum DurationFormatterOptionsError {
 impl core::error::Error for DurationFormatterOptionsError {}
 
 impl ValidatedDurationFormatterOptions {
+    /// Constructs a [`ValidatedDurationFormatterOptions`] from an unvalidated
+    /// [`DurationFormatterOptions`] by checking for invariants and resolving various implied
+    /// field values.
+    ///
+    /// Follows <https://tc39.es/proposal-intl-duration-format/#sec-getdurationunitoptions>
     pub fn validate(
         value: DurationFormatterOptions,
     ) -> Result<Self, DurationFormatterOptionsError> {
@@ -211,7 +216,7 @@ impl ValidatedDurationFormatterOptions {
 
     /// Iterates over all unit fields of the struct, returning a tuple of the unit,
     /// and mutable references to its style and the visibility.
-    /// See also: [iter_units](ValidatedDurationFormatterOptions::iter_units).
+    /// See also: [`iter_units`](ValidatedDurationFormatterOptions::iter_units).
     #[allow(dead_code)]
     pub(crate) fn iter_mut_units(&mut self) -> [(Unit, &mut FieldStyle, &mut FieldDisplay); 10] {
         [
@@ -242,7 +247,7 @@ impl ValidatedDurationFormatterOptions {
 
     /// Iterates over all unit fields of the struct, returning a tuple of the unit,
     /// and references to its style and the visibility.
-    /// See also: [iter_mut_units](ValidatedDurationFormatterOptions::iter_mut_units).
+    /// See also: [`iter_mut_units`](ValidatedDurationFormatterOptions::iter_mut_units).
     pub(crate) fn iter_units(&self) -> [(Unit, FieldStyle, FieldDisplay); 10] {
         [
             (Unit::Year, self.year, self.year_visibility),
@@ -388,7 +393,7 @@ impl TryFrom<ValidatedDurationFormatterOptionsBuilder> for ValidatedDurationForm
     }
 }
 
-/// An enum to specify the unit being used. Used with FieldStyle and FieldDisplay to indicate the field unit.
+/// An enum to specify the unit being used. Used with [`FieldStyle`] and [`FieldDisplay`] to indicate the field unit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Unit {
     Year,
@@ -405,7 +410,7 @@ pub(crate) enum Unit {
 
 impl Unit {
     /// Returns the default digital style for the unit.
-    pub(crate) fn digital_default(&self) -> FieldStyle {
+    pub(crate) fn digital_default(self) -> FieldStyle {
         match self {
             Unit::Year => YearStyle::Short.into(),
             Unit::Month => MonthStyle::Short.into(),
@@ -420,7 +425,7 @@ impl Unit {
         }
     }
 
-    pub(crate) const fn as_unit_formatter_name(&self) -> &'static str {
+    pub(crate) const fn as_unit_formatter_name(self) -> &'static str {
         match self {
             Unit::Year => "year",
             Unit::Month => "month",

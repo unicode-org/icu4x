@@ -10,6 +10,10 @@ analyzer:
   language:
     strict-casts: true
     strict-inference: true
+  errors:
+    # this lint is overzealous (fixing would break semver)
+    # in 3.10, which breaks our perfect pub.dev score
+    deprecated_member_use_from_same_package: false
 
 linter:
   rules:

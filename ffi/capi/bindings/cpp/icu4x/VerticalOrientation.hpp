@@ -31,6 +31,9 @@ namespace capi {
     typedef struct icu4x_VerticalOrientation_from_integer_value_mv1_result {union {icu4x::capi::VerticalOrientation ok; }; bool is_ok;} icu4x_VerticalOrientation_from_integer_value_mv1_result;
     icu4x_VerticalOrientation_from_integer_value_mv1_result icu4x_VerticalOrientation_from_integer_value_mv1(uint8_t other);
 
+    typedef struct icu4x_VerticalOrientation_try_from_str_mv1_result {union {icu4x::capi::VerticalOrientation ok; }; bool is_ok;} icu4x_VerticalOrientation_try_from_str_mv1_result;
+    icu4x_VerticalOrientation_try_from_str_mv1_result icu4x_VerticalOrientation_try_from_str_mv1(icu4x::diplomat::capi::DiplomatStringView s);
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -73,6 +76,11 @@ inline uint8_t icu4x::VerticalOrientation::to_integer_value() const {
 
 inline std::optional<icu4x::VerticalOrientation> icu4x::VerticalOrientation::from_integer_value(uint8_t other) {
     auto result = icu4x::capi::icu4x_VerticalOrientation_from_integer_value_mv1(other);
+    return result.is_ok ? std::optional<icu4x::VerticalOrientation>(icu4x::VerticalOrientation::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline std::optional<icu4x::VerticalOrientation> icu4x::VerticalOrientation::try_from_str(std::string_view s) {
+    auto result = icu4x::capi::icu4x_VerticalOrientation_try_from_str_mv1({s.data(), s.size()});
     return result.is_ok ? std::optional<icu4x::VerticalOrientation>(icu4x::VerticalOrientation::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // ICU4X_VerticalOrientation_HPP

@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    backends::{shared::posix::PosixLocale, HostInfoBackend, RawHostInfoBackend},
+    backends::{HostInfoBackend, RawHostInfoBackend},
     error::HostInfoError,
+    locale::PosixLocale,
 };
 use icu_locale_core::{preferences::extensions::unicode::keywords::HourCycle, Locale};
 
@@ -13,7 +14,7 @@ pub struct LinuxHostInfoBackend;
 impl HostInfoBackend for LinuxHostInfoBackend {
     #[cfg(feature = "datetime")]
     fn datetime_preferences() -> Result<icu_datetime::DateTimeFormatterPreferences, HostInfoError> {
-        use crate::posix::{raw_locale_categories, LocaleCategory};
+        use crate::backends::shared::posix::{raw_locale_categories, LocaleCategory};
 
         let mut categories = raw_locale_categories()?;
 
@@ -24,12 +25,10 @@ impl HostInfoBackend for LinuxHostInfoBackend {
                     locale = loc;
                 }
             }
-        } else {
-            if let Some(lc_all) = categories.remove(&LocaleCategory::All) {
-                if let Ok(loc) = PosixLocale::try_from_str(&lc_all) {
-                    if let Ok(loc) = Locale::try_from(loc) {
-                        locale = loc;
-                    }
+        } else if let Some(lc_all) = categories.remove(&LocaleCategory::All) {
+            if let Ok(loc) = PosixLocale::try_from_str(&lc_all) {
+                if let Ok(loc) = Locale::try_from(loc) {
+                    locale = loc;
                 }
             }
         }
@@ -53,7 +52,7 @@ impl HostInfoBackend for LinuxHostInfoBackend {
     }
 
     fn hour_cycle() -> Result<Option<HourCycle>, HostInfoError> {
-        #[cfg(feature = "gnome")]
+        #[cfg(icu4x_gio_available)]
         if let Some(hc) = gnome_clock_format_hc() {
             return Ok(Some(hc));
         }
@@ -88,7 +87,7 @@ impl RawHostInfoBackend for LinuxHostInfoBackend {
     }
 }
 
-#[cfg(feature = "gnome")]
+#[cfg(icu4x_gio_available)]
 fn gnome_clock_format_hc() -> Option<HourCycle> {
     use gio::prelude::*;
     let s = gio::Settings::new("org.gnome.desktop.interface");

@@ -1,0 +1,121 @@
+[
+  {
+    "sized": 3,
+    "variable": {
+      "few": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " hiljade"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " hiljada"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milion"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " miliona"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milijarda"
+          }
+        ]
+      ],
+      "few": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milijarde"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milijardi"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " bilion"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " biliona"
+          }
+        ]
+      ]
+    }
+  }
+]

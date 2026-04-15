@@ -184,7 +184,6 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "rawpointer",
     "regex",
     "regex-syntax",
-    "ryu",
     "serde-aux",
     "serde_json",
     "serde_spanned",
@@ -198,6 +197,7 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "toml",
     "twox-hash",
     "winnow",
+    "zmij",
 ];
 
 /// Dependencies needed by datagen (not counting `log` and `rayon` deps)

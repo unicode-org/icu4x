@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+// #![cfg_attr(
+//     not(test),
+//     deny(
+//         clippy::indexing_slicing,
+//         clippy::unwrap_used,
+//         clippy::expect_used,
+//         clippy::panic,
+//     )
+// )]
+#![warn(missing_docs)]
+
 //! The command line interface for ICU4X datagen.
 //!
 //! ```bash
@@ -27,6 +40,7 @@
 )]
 
 use clap::{Parser, ValueEnum};
+use displaydoc::Display;
 use eyre::WrapErr;
 use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1;
@@ -35,9 +49,63 @@ use icu_provider_export::prelude::*;
 use icu_provider_export::ExportMetadata;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
+use regex::Regex;
 use simple_logger::SimpleLogger;
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::str::FromStr;
+
+#[derive(Clone)]
+struct Filter {
+    domain: String,
+    regex: Regex,
+    inverted: bool,
+}
+
+#[derive(Debug, Display)]
+enum FilterError {
+    #[displaydoc("no filter found. specify one after an =")]
+    NoFilter,
+    #[displaydoc("opening / delimiter for regex not found")]
+    NoOpeningSlash,
+    #[displaydoc("closing / delimiter for regex not found")]
+    NoClosingSlash,
+    #[displaydoc("{0}")]
+    Regex(regex::Error),
+}
+
+impl From<regex::Error> for FilterError {
+    fn from(value: regex::Error) -> Self {
+        FilterError::Regex(value)
+    }
+}
+
+impl std::error::Error for FilterError {}
+
+impl FromStr for Filter {
+    type Err = FilterError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (domain, regex) = s.split_once('=').ok_or(FilterError::NoFilter)?;
+
+        let (regex, inverted) = regex
+            .strip_prefix('-')
+            .map(|regex| (regex, true))
+            .unwrap_or((regex, false));
+
+        let regex = regex.strip_prefix('/').ok_or(FilterError::NoOpeningSlash)?;
+        let regex = regex.strip_suffix('/').ok_or(FilterError::NoClosingSlash)?;
+
+        // add an implicit `^(?:)$` around the regex
+        let regex = format!("^(?:{})$", regex);
+        let regex = Regex::new(&regex)?;
+
+        Ok(Filter {
+            domain: domain.to_owned(),
+            regex,
+            inverted,
+        })
+    }
+}
 
 #[derive(Parser)]
 #[command(name = "icu4x-datagen")]
@@ -104,6 +172,26 @@ struct Cli {
     #[cfg(feature = "provider")]
     icuexport_root: Option<PathBuf>,
 
+    #[arg(long, value_name = "TAG", default_value = "17.0.0")]
+    #[arg(
+        help = "Download versioned UCD from unicode.org (`https://www.unicode.org/Public/{tag}/`). \
+                  Use 'latest' for the latest version verified to work with this version of the binary, \
+                  and 'latest-tag' for the literal tag 'latest' on unicode.org."
+    )]
+    #[cfg_attr(not(feature = "networking"), arg(hide = true))]
+    #[cfg(feature = "provider")]
+    ucd_tag: String,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(help = "Path to a local Unihan.zip file or directory.")]
+    #[cfg(feature = "provider")]
+    unihan_root: Option<PathBuf>,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(help = "Path to a local UCD root directory containing security/IdentifierStatus.txt.")]
+    #[cfg(feature = "provider")]
+    ucd_root: Option<PathBuf>,
+
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
@@ -142,7 +230,8 @@ struct Cli {
     #[arg(
         help = "Whether to optimize CodePointTrie data structures for size (\"small\") or speed (\"fast\").\n\
                   Using \"fast\" mode increases performance of CJK text processing and segmentation. For more\n\
-                  information, see the TrieType enum."
+                  information, see the TrieType enum. The tries for the core (UAX #15 but not UAX #46)\n\
+                  normalization forms use the fast trie type regardless of this setting."
     )]
     #[cfg(feature = "provider")]
     trie_type: TrieType,
@@ -168,6 +257,10 @@ struct Cli {
     #[arg(long, value_name = "BINARY")]
     #[arg(help = "Analyzes the binary and only includes markers that are used by the binary.")]
     markers_for_bin: Option<PathBuf>,
+
+    #[arg(long, value_name = "FILTER")]
+    #[arg(help = "Filter attributes on markers for a domain. Accepts form `domain=/regex/`.")]
+    attribute_filter: Vec<Filter>,
 
     #[arg(long, short, num_args = 0..)]
     #[cfg_attr(feature = "provider", arg(default_value = "recommended"))]
@@ -289,14 +382,18 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
+    run(cli)
+}
+
+fn run(cli: Cli) -> eyre::Result<()> {
     let markers = if !cli.markers.is_empty() {
         match cli.markers.as_slice() {
             [x] if x == "none" => Default::default(),
             [x] if x == "all" => {
-                #[cfg(feature = "experimental")]
-                log::info!("The icu4x-datagen crate has been built with the `experimental` feature, so `--markers all` includes experimental markers");
-                #[cfg(not(feature = "experimental"))]
-                log::info!("The icu4x-datagen crate has been built without the `experimental` feature, so `--markers all` does not include experimental markers");
+                #[cfg(feature = "unstable")]
+                log::info!("The icu4x-datagen crate has been built with the `unstable` feature, so `--markers all` includes unstable markers");
+                #[cfg(not(feature = "unstable"))]
+                log::info!("The icu4x-datagen crate has been built without the `unstable` feature, so `--markers all` does not include unstable markers");
                 all_markers()
             }
             markers => markers
@@ -304,7 +401,7 @@ fn main() -> eyre::Result<()> {
                 .map(|k| match marker_lookup().get(k.as_str()) {
                     Some(Some(marker)) => Ok(*marker),
                     Some(None) => {
-                        eyre::bail!("Marker {k:?} requires `experimental` Cargo feature")
+                        eyre::bail!("Marker {k:?} requires `unstable` Cargo feature")
                     }
                     None => eyre::bail!("Unknown marker {k:?}"),
                 })
@@ -340,16 +437,22 @@ fn main() -> eyre::Result<()> {
     fn missing_data_message<T>(e: DataError) -> Result<T, eyre::Report> {
         #[cfg(feature = "provider")]
         if SourceDataProvider::is_missing_cldr_error(e) {
-            eyre::bail!("CLDR data is required for this invocation, set --cldr-path or --cldr-tag");
+            eyre::bail!("CLDR data is required for this invocation, set --cldr-root or --cldr-tag");
         } else if SourceDataProvider::is_missing_icuexport_error(e) {
             eyre::bail!(
-                "ICU data is required for this invocation, set --icuexport-path or --icuexport-tag"
+                "ICU data is required for this invocation, set --icuexport-root or --icuexport-tag"
             );
         } else if SourceDataProvider::is_missing_segmenter_lstm_error(e) {
-            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segementer-lstm-path or --segementer-lstm-tag");
+            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segmenter-lstm-root or --segmenter-lstm-tag");
+        } else if SourceDataProvider::is_missing_unihan_error(e) {
+            eyre::bail!(
+                "Unihan data is required for this invocation, set --unihan-root or --ucd-tag"
+            );
+        } else if SourceDataProvider::is_missing_ucd_error(e) {
+            eyre::bail!("UCD data is required for this invocation, set --ucd-root or --ucd-tag");
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
             eyre::bail!(
-                "Timezone data is required for this invocation, set --tzdb-path or --tzdb-tag"
+                "Timezone data is required for this invocation, set --tzdb-root or --tzdb-tag"
             );
         }
 
@@ -367,7 +470,7 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => {
-            let provider = icu_provider_blob::BlobDataProvider::try_new_from_blob(
+            let provider = BlobDataProvider::try_new_from_blob(
                 std::fs::read(cli.input_blob.unwrap())?.into(),
             )?;
             let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
@@ -422,6 +525,30 @@ fn main() -> eyre::Result<()> {
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_segmenter_lstm_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => p,
+            };
+
+            p = match (cli.unihan_root, cli.ucd_tag.as_str()) {
+                (Some(path), _) => p.with_unihan(&path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG),
+                #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_unihan_for_tag("latest"),
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_unihan_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => p,
+            };
+
+            p = match (cli.ucd_root, cli.ucd_tag.as_str()) {
+                (Some(path), _) => p.with_ucd(&path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => p.with_ucd_for_tag(SourceDataProvider::TESTED_UCD_TAG),
+                #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_ucd_for_tag("latest"),
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_ucd_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => p,
             };
@@ -528,6 +655,23 @@ fn main() -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
+    let attribute_filters = cli.attribute_filter.into_iter().fold(
+        HashMap::<_, Vec<(Regex, bool)>>::new(),
+        |mut map, filter| {
+            map.entry(filter.domain)
+                .or_default()
+                .push((filter.regex, filter.inverted));
+            map
+        },
+    );
+    for (domain, filters) in attribute_filters {
+        driver = driver.with_marker_attributes_filter(&domain, move |attr| {
+            filters
+                .iter()
+                .all(|(regex, inverted)| regex.is_match(attr) ^ inverted)
+        })
+    }
+
     let metadata: Result<ExportMetadata, DataError> = match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
         Format::Fs => {
@@ -601,14 +745,14 @@ fn main() -> eyre::Result<()> {
 }
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn all_markers() -> Vec<DataMarkerInfo> {
             vec![
                 $(
                     <$marker_ty>::INFO,
                 )+
                 $(
-                    #[cfg(feature = "experimental")]
+                    #[cfg(feature = "unstable")]
                     <$emarker_ty>::INFO,
                 )+
             ]
@@ -618,7 +762,7 @@ macro_rules! cb {
             use std::sync::OnceLock;
             static LOOKUP: OnceLock<HashMap<String, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
-                [
+                vec![
                     (stringify!(icu_provider::hello_world::HelloWorldV1).replace(' ', ""), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     (stringify!(HelloWorldV1).into(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
@@ -626,13 +770,13 @@ macro_rules! cb {
                         (stringify!($marker).into(), Some(<$marker_ty>::INFO)),
                     )+
                     $(
-                        #[cfg(feature = "experimental")]
+                        #[cfg(feature = "unstable")]
                         (stringify!($emarker_ty).replace(' ', ""), Some(<$emarker_ty>::INFO)),
-                        #[cfg(feature = "experimental")]
+                        #[cfg(feature = "unstable")]
                         (stringify!($emarker).into(), Some(<$emarker_ty>::INFO)),
-                        #[cfg(not(feature = "experimental"))]
+                        #[cfg(not(feature = "unstable"))]
                         (stringify!($emarker_ty).replace(' ', ""), None),
-                        #[cfg(not(feature = "experimental"))]
+                        #[cfg(not(feature = "unstable"))]
                         (stringify!($emarker).into(), None),
                     )+
 
@@ -659,7 +803,7 @@ macro_rules! cb {
                     $marker_ty,
                 )+
                 $(
-                    #[cfg(feature = "experimental")]
+                    #[cfg(feature = "unstable")]
                     $emarker_ty,
                 )+
             ]
@@ -678,7 +822,7 @@ use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;
 
 #[cfg(feature = "blob_input")]
-struct ReexportableBlobDataProvider(icu_provider_blob::BlobDataProvider);
+struct ReexportableBlobDataProvider(BlobDataProvider);
 
 #[cfg(feature = "blob_input")]
 impl<M: DataMarker> DataProvider<M> for ReexportableBlobDataProvider
@@ -700,4 +844,39 @@ where
     fn iter_ids(&self) -> Result<std::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         self.0.iter_ids_for_marker(M::INFO)
     }
+}
+
+#[test]
+fn test_attributes_regex() {
+    let out = std::env::temp_dir().join("icu4x-datagen_test_attributes_regex_out");
+    let _ = std::fs::remove_dir_all(&out);
+
+    let mut args = Cli::parse_from([
+        "bin",
+        "--markers",
+        "HelloWorldV1",
+        "--locales",
+        "full",
+        "--format",
+        "fs",
+        "--attribute-filter",
+        "hello=/r.*?|.*?case/",
+        "--attribute-filter",
+        "hello=-/lowercase/",
+        "--attribute-filter",
+        "hello=-/.*3/",
+    ]);
+
+    args.output = Some(out.clone());
+
+    run(args).unwrap();
+
+    assert!(std::fs::exists(out.join("hello/world/v1/reverse")).unwrap());
+
+    assert!(std::fs::exists(out.join("hello/world/v1/rotate1")).unwrap());
+    assert!(std::fs::exists(out.join("hello/world/v1/rotate2")).unwrap());
+    assert!(!std::fs::exists(out.join("hello/world/v1/rotate3")).unwrap());
+
+    assert!(std::fs::exists(out.join("hello/world/v1/uppercase")).unwrap());
+    assert!(!std::fs::exists(out.join("hello/world/v1/lowercase")).unwrap());
 }

@@ -5,11 +5,15 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
-use crate::error::{DateError, DateFromFieldsError};
+use crate::error::{DateAddError, DateError, DateFromFieldsError, DateNewError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
-use crate::{types, Iso};
+use crate::types::{self, Month, YearInput};
+use crate::Iso;
 use core::fmt;
+
+#[cfg(doc)]
+use crate::Date;
 
 /// A calendar implementation
 ///
@@ -29,37 +33,77 @@ use core::fmt;
 pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The internal type used to represent dates
     ///
-    /// Equality and ordering should observe normal calendar semantics.
+    /// Using the [`Eq`] or [`PartialOrd`] implementations requires
+    /// the associated calendars to have passed [`Self::check_date_compatibility`].
     type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
-    /// The type of YearInfo returned by the date
+    /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
-    /// The type of error returned by `until`
-    type DifferenceError;
+    /// The error that is returned by [`Self::check_date_compatibility`].
+    ///
+    /// Set this to [`core::convert::Infallible`] if the type is a singleton or
+    /// the parameterization does not affect date semantics.
+    type DateCompatibilityError: fmt::Debug;
 
     /// Construct a date from era/month codes and fields
     ///
     /// The year is the [extended year](crate::Date::extended_year) if no era is provided
+    ///
+    /// This is used by the deprecated [`Date::try_new_from_codes()`]. Implementors
+    /// should rely on the default impl which adapts this to using [`Self::new_date()`].
     #[expect(clippy::wrong_self_convention)]
+    #[deprecated(since = "2.2.0", note = "use `new_date`")]
     fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateError>;
+    ) -> Result<Self::DateInner, DateError> {
+        let input_year = match era {
+            Some(e) => YearInput::EraYear(e, year),
+            None => year.into(),
+        };
+        let month = match Month::try_from_utf8(month_code.0.as_bytes()) {
+            Ok(m) => m,
+            Err(_) => return Err(DateError::UnknownMonthCode(month_code)),
+        };
+        let result = self.new_date(input_year, month, day);
+
+        match result {
+            Ok(date) => Ok(date),
+            Err(codes_error) => Err(match codes_error {
+                DateNewError::InvalidDay { max } => DateError::Range {
+                    field: "day",
+                    value: day as i32,
+                    min: 1,
+                    max: max as i32,
+                },
+                DateNewError::MonthNotInCalendar | DateNewError::MonthNotInYear => {
+                    DateError::UnknownMonthCode(month_code)
+                }
+                DateNewError::InvalidEra => DateError::UnknownEra,
+                DateNewError::InvalidYear => DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: -9999,
+                    max: 9999,
+                },
+            }),
+        }
+    }
+
+    /// Construct a date from a [`YearInput`], [`Month`], and a day.
+    ///
+    /// This is used by [`Date::try_new()`].
+    fn new_date(
+        &self,
+        year: YearInput,
+        month: Month,
+        day: u8,
+    ) -> Result<Self::DateInner, DateNewError>;
 
     /// Construct a date from a bag of date fields.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
-    ///
-    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
-    /// </div>
-    ///
-    /// ✨ *Enabled with the `unstable` Cargo feature.*
     #[expect(clippy::wrong_self_convention)]
-    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: types::DateFields,
@@ -88,12 +132,12 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Construct the date from a [`RataDie`]
     ///
-    /// Precondition: RataDie needs to be in the [`VALID_RD_RANGE`](crate::VALID_RD_RANGE)
+    /// Precondition: `rd` needs to be in the `VALID_RD_RANGE`
     #[expect(clippy::wrong_self_convention)]
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner;
     /// Obtain a [`RataDie`] from this date
     ///
-    /// The result is guaranteed to be in [`VALID_RD_RANGE`](crate::VALID_RD_RANGE)
+    /// The result is guaranteed to be in `VALID_RD_RANGE`
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie;
 
     /// Count the number of months in a given year, specified by providing a date
@@ -123,43 +167,28 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
     /// Add `duration` to `date`
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
-    ///
-    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
-    /// </div>
-    ///
-    /// ✨ *Enabled with the `unstable` Cargo feature.*
-    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError>;
+    ) -> Result<Self::DateInner, DateAddError>;
 
-    /// Calculate `date2 - date` as a duration
+    /// Calculate `date2 - date` as a duration.
     ///
-    /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
-    /// differ on data, the data for the first calendar is used, and `date2` may be converted if necessary.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
-    ///
-    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
-    /// </div>
-    ///
-    /// ✨ *Enabled with the `unstable` Cargo feature.*
-    #[cfg(feature = "unstable")]
+    /// This requires the associated calendars to have passed [`Self::check_date_compatibility`].
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError>;
+    ) -> types::DateDuration;
+
+    /// Returns whether [`Self::DateInner`] represents the same date in both calendars.
+    ///
+    /// This is checked by [`Date::try_until_with_options`](crate::Date::try_until_with_options),
+    /// `impl PartialEq for Date<C>`, `impl PartialOrd for Date<C>`, and `impl Ord for Date<C>`.
+    fn check_date_compatibility(&self, other: &Self) -> Result<(), Self::DateCompatibilityError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

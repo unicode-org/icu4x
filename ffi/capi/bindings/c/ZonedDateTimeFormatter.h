@@ -8,8 +8,10 @@
 #include "diplomat_runtime.h"
 
 #include "DataProvider.d.h"
+#include "Date.d.h"
 #include "DateTimeFormatter.d.h"
 #include "DateTimeFormatterLoadError.d.h"
+#include "DateTimeMismatchedCalendarError.d.h"
 #include "DateTimeWriteError.d.h"
 #include "IsoDate.d.h"
 #include "Locale.d.h"
@@ -73,6 +75,9 @@ icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1_result icu4x
 
 typedef struct icu4x_ZonedDateTimeFormatter_format_iso_mv1_result {union { DateTimeWriteError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_iso_mv1_result;
 icu4x_ZonedDateTimeFormatter_format_iso_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_mv1(const ZonedDateTimeFormatter* self, const IsoDate* iso_date, const Time* time, const TimeZoneInfo* zone, DiplomatWrite* write);
+
+typedef struct icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1_result {union { DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1_result;
+icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1_result icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(const ZonedDateTimeFormatter* self, const Date* date, const Time* time, const TimeZoneInfo* zone, DiplomatWrite* write);
 
 void icu4x_ZonedDateTimeFormatter_destroy_mv1(ZonedDateTimeFormatter* self);
 

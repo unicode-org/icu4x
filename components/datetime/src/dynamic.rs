@@ -14,17 +14,21 @@
 //! sets in a single enumeration. [`CompositeDateTimeFieldSet`] is a good
 //! choice when you don't need to format time zones.
 //!
+//! The bigger the dynamic field set type, the bigger the required input type. For example,
+//! `CompositeFieldSet` requires a `ZonedDateTime` input, since the dynamic field set could
+//! include time zone fields.
+//!
 //! Summary of all the types:
 //!
-//! | Type | Supported Field Sets |
-//! |---|---|
-//! | [`DateFieldSet`] | Date |
-//! | [`CalendarPeriodFieldSet`] | Calendar Period |
-//! | [`TimeFieldSet`] | Time |
-//! | [`ZoneFieldSet`] | Zone |
-//! | [`DateAndTimeFieldSet`] | Date + Time |
-//! | [`CompositeDateTimeFieldSet`] | Date, Calendar Period, Time, Date + Time |
-//! | [`CompositeFieldSet`] | All |
+//! | Type | Supported Field Sets | Supported Input Types |
+//! |---|---|---|
+//! | [`DateFieldSet`] | Date | [`Date`], [`DateTime`], [`ZonedDateTime`] |
+//! | [`CalendarPeriodFieldSet`] | Calendar Period | [`Date`], [`DateTime`], [`ZonedDateTime`] |
+//! | [`TimeFieldSet`] | Time | [`Time`], [`DateTime`], [`ZonedTime`], [`ZonedDateTime`] |
+//! | [`ZoneFieldSet`] | Zone | [`TimeZoneInfo`], [`ZonedTime`], [`ZonedDateTime`] |
+//! | [`DateAndTimeFieldSet`] | Date + Time | [`DateTime`], [`ZonedDateTime`] |
+//! | [`CompositeDateTimeFieldSet`] | Date, Calendar Period, Time, Date + Time | [`DateTime`], [`ZonedDateTime`] |
+//! | [`CompositeFieldSet`] | All | [`ZonedDateTime`] |
 //!
 //! # Examples
 //!
@@ -83,6 +87,9 @@ use crate::scaffold::GetField;
 use crate::{fieldsets, provider};
 use icu_provider::prelude::*;
 
+#[cfg(doc)]
+use crate::input::*;
+
 /// An enumeration over all possible date field sets.
 ///
 /// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
@@ -98,16 +105,16 @@ pub enum DateFieldSet {
     /// The year, month, and day of the month, as in
     /// “January 1st, 2000”.
     YMD(fieldsets::YMD),
-    /// The day of the month and day of the week, as in
+    /// The day of the month and weekday, as in
     /// “Saturday 1st”.
     DE(fieldsets::DE),
-    /// The month, day of the month, and day of the week, as in
+    /// The month, day of the month, and weekday, as in
     /// “Saturday, January 1st”.
     MDE(fieldsets::MDE),
-    /// The year, month, day of the month, and day of the week, as in
+    /// The year, month, day of the month, and weekday, as in
     /// “Saturday, January 1st, 2000”.
     YMDE(fieldsets::YMDE),
-    /// The day of the week alone, as in
+    /// The weekday alone, as in
     /// “Saturday”.
     E(fieldsets::E),
 }
@@ -199,16 +206,16 @@ pub enum DateAndTimeFieldSet {
     /// The year, month, and day of the month with time of day, as in
     /// “January 1st, 2000 at 10:31 AM”.
     YMDT(fieldsets::YMDT),
-    /// The day of the month and day of the week with time of day, as in
+    /// The day of the month and weekday with time of day, as in
     /// “Saturday 1st at 10:31 AM”.
     DET(fieldsets::DET),
-    /// The month, day of the month, and day of the week with time of day, as in
+    /// The month, day of the month, and weekday with time of day, as in
     /// “Saturday, January 1st at 10:31 AM”.
     MDET(fieldsets::MDET),
-    /// The year, month, day of the month, and day of the week with time of day, as in
+    /// The year, month, day of the month, and weekday with time of day, as in
     /// “Saturday, January 1st, 2000 at 10:31 AM”.
     YMDET(fieldsets::YMDET),
-    /// The day of the week alone with time of day, as in
+    /// The weekday alone with time of day, as in
     /// “Saturday at 10:31 AM”.
     ET(fieldsets::ET),
 }

@@ -4,8 +4,8 @@
 
 [package]
 name = "crlify"
-version = "1.0.4"
-keywords = ["io", "crlf", "windows", "line", "ending"]
+version = "1.0.5"
+keywords = ["text-processing", "line-endings", "io", "crlf", "windows"]
 description = "A std::io::Write wrapper that replaces \n with \r\n on Windows."
 documentation = "https://docs.rs/litemap"
 
@@ -18,3 +18,6 @@ rust-version = "1.82"
 
 [package.metadata.workspaces]
 independent = true
+
+[lints]
+workspace = true

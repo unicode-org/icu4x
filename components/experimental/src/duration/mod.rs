@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Duration formatting
+#![allow(clippy::unwrap_used)] // todo
 
-#![warn(missing_docs)]
+//! Duration formatting
 
 mod duration;
 mod format;
@@ -18,3 +18,4 @@ pub use duration::{Duration, DurationSign};
 pub use format::FormattedDuration;
 pub use formatter::DurationFormatter;
 pub use formatter::DurationFormatterPreferences;
+pub use validated_options::{DurationFormatterOptionsError, ValidatedDurationFormatterOptions};

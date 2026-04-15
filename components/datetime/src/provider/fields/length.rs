@@ -55,11 +55,11 @@ pub enum FieldLength {
     ///
     /// Text: Short format.
     Six,
-    /// FieldLength::One (numeric), but overridden with a different numbering system
+    /// [`FieldLength::One`] (numeric), but overridden with a different numbering system
     NumericOverride(FieldNumericOverrides),
 }
 
-/// First index used for numeric overrides in compact FieldLength representation
+/// First index used for numeric overrides in compact [`FieldLength`] representation
 ///
 /// Currently 17 due to decision in <https://unicode-org.atlassian.net/browse/CLDR-17217>,
 /// may become 16 if the `> 16` is updated to a ` >= 16`

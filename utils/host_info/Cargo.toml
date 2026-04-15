@@ -5,6 +5,8 @@
 [package]
 name = "icu_host_info"
 version = "0.1.0"
+categories = ["internationalization"]
+keywords = ["system", "locale", "internationalization", "localization"]
 publish = false
 
 rust-version = "1.83"
@@ -13,7 +15,6 @@ edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
 license = "Unicode-3.0"
-categories = ["internationalization"]
 include = [
     "data/**/*",
     "src/**/*",
@@ -32,8 +33,8 @@ icu_locale_core = { version = "2.1.0", path = "../../components/locale_core", fe
 icu_datetime = { version = "2.1.0", path = "../../components/datetime", optional = true }
 libc = "0.2.175"
 
-[target.'cfg(target_os = "linux")'.dependencies]
-gio = { version = "0.21.2", optional = true }
+[target.'cfg(all(target_os = "linux", icu4x_gio_available))'.dependencies]
+gio = { version = "0.21.2" }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 core-foundation-sys = { version = "0.8.6" }
@@ -61,7 +62,6 @@ icu_time = { version = "2.1.0", path = "../../components/time", features = ["com
 [features]
 default = []
 datetime = ["dep:icu_datetime"]
-gnome = ["dep:gio"]
 
 [[example]]
 name = "dt_format"
@@ -69,3 +69,6 @@ required-features = ["datetime"]
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_gio_available)'] }

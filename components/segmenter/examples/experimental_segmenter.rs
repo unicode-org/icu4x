@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+
 #[path = "../tests/adaboost/main.rs"]
 mod adaboost;
 
@@ -98,6 +101,7 @@ fn main() {
     let args = std::env::args().collect::<Vec<String>>();
     if args.len() == 1 || args[1] == "--help" {
         println!("Usage: experimental_segmenter <model> [<locale>] <text>");
+        return;
     }
     match args[1].as_str() {
         "adaboost" => main_adaboost(&args[2..]),

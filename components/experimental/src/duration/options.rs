@@ -62,6 +62,7 @@ pub struct DurationFormatterOptions {
 
 /// Options for configuring the number of fractional digits to display.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum FractionalDigits {
     /// Show as many fractional digits as necessary to display the whole duration,
     /// omitting trailing zeroes after the decimal point.

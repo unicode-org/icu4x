@@ -30,28 +30,36 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies. A helpful snippet is `find . -name Cargo.lock | while read lockfile; do cd $(dirname $lockfile); cargo update; done`, though it is best run from `examples/` since you may have other lockfiles in target/cargo-semver-checks directories.
 * [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future. In case of unstable APIs, it is okay to leave things in the missing_apis file for now, see unicode-org#7181.
 * [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
-* [ ] Get all contributors to complete the changelog (see below)
+* [ ] Ensure that landed PRs all have decent changelog entries (see [changelog.md](changelog.md))
+* [ ] Go through the last two months of open PRs. For PRs which affect the release (new features, optimizations, etc, as opposed to internal docs, tooling, etc), use your judgement to determine if (a) this PR has a chance of making it into the release and (b) if we should try to get it in. If so, comment and ask the authors/reviewers if they can try and get it in by the release timeline. If they say yes, add it to the milestone, likely with `milestone-non-blocking`. Some heuristics to apply to make this determination:
+  * If the PR is blocked on discussion, it is unlikely to make it into the release, unless the WG has already completed all release-relevant discussions.
+  * If the PR is a major feature, it is probably not worth trying to make it into the release, except perhaps as unstable.
+  * If the PR is a bugfix or a docs fix, we should try to get it into the release.
+  * If the PR is a small new API, we should try to get it into the release as long as it has already been noticed by the people who are likely to care about the new APIs. Consider pinging additional people.
 * [ ] Draft the text for the GitHub release and circulate to the WG at least 18 hours in advance of the release, but ideally sooner. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
-* [ ] Consider making earlier drafts of the changelog (see below), noting a Git commit that the changelog is accurate up to.
+* [ ] Consider making earlier drafts of the changelog (see [changelog.md](changelog.md)), noting a Git commit that the changelog is accurate up to.
 
 ## Release steps
 
 Once the release checklist is complete, the assigned release driver will perform the following steps, in order:
 
-* [ ] Land the changelog (see below)
+* [ ] Land the changelog (see [changelog.md](changelog.md))
 * [ ] Go through the prerelease checklist again, ensuring that no problems were reintroduced in the PRs that landed since the opening of the checklist. (Things like doc prettification will likely need to be rerun!)
+* [ ] Quickly go through the list of open PRs to ensure that there are no new release-relevant PRs since the last time you checked this list.
 * [ ] Prepare a PR with updated versions
   * [ ] Remove all `-dev` prelease tags from `Cargo.toml`s
   * [ ] Update all ICU4X crate versions
     * [ ] Update the workspace version to the new version
     * [ ] Some `icu_*` crates do not follow the ICU4X versioning scheme: `icu_codepointtrie_builder`, `icu_pattern`, and `icu_experimental`. Be sure to give them an appropriate version based on the changelog. Major releases are always paired with a `0.x.0` release of `icu_experimental`.
+    * [ ] Reset baked data versions: Make sure all non-experimental entries in `COMPONENTS` in `tools/make/bakeddata/src/main.rs` use `REPO_VERSION` and not some override.
+      * [ ] Make sure `experimental` is using the version for `icu_experimental` chosen above.
     * [ ] Find all ICU4X component/provider crates that have an overridden version in their `Cargo.toml` and reset it to `version.workspace = true`.
     * [ ] Update all ICU4X `~` dependencies in the toplevel `Cargo.toml`'s `workspace.dependencies`.
     * [ ] Update `icu_locale_core`, `icu_provider`, and `icu_pattern`'s non-`~` dependency in `Cargo.toml`'s `workspace.dependencies`
       * Note: These are in a different section and easy to miss!
   * [ ] Update all relevant utils versions
     * [ ] The changelog should already mention the new versions of each util crate that needs to be published. Use those, and double-check that they are accurate.
-    * [ ] For utils that have had substantiative changes (new APIs, etc), update them in `workspace.dependencies`. When unsure, just update.
+    * [ ] For utils that have had substantiative changes (new APIs, etc), update them in `workspace.dependencies`. When unsure, just update. See "Updating the dependency specification of a util" below for more information.
 * [ ] Get this PR reviewed and checked in.
 * [ ] Perform the release.
   * The best way to do this is to use `cargo workspaces publish --from-git --no-remove-dev-deps`.
@@ -68,7 +76,7 @@ Once the release checklist is complete, the assigned release driver will perform
 * [ ] Update and publish FFI packages
   * [ ] Dart
     * [ ] update version in `ffi/dart/pubspec.yaml`
-    * [ ] update the artifacts tag in `ffi/dart/lib/src/hook_helpers/version.dart` to the tag created above, and run `regenerate_hashes.dart`
+    * [ ] update the artifacts tag in `ffi/dart/lib/src/hook_helpers/hashes.dart` to the tag created above, and run `regenerate_hashes.dart`
     * [ ] get this checked in, then `cd ffi/dart && dart pub publish`
   * [ ] JS
     * [ ] update version in `icu4x/ffi/npm/package.json`
@@ -105,9 +113,9 @@ The ICU4X TC may decide to make a patch release of an ICU4X component on an old 
 
 Our `utils/` crates do not follow the same versioning scheme as the rest of ICU4X, and may experience more frequent releases.
 
-While code may compile using our local path dependencies, when publishing we must ensure that it will pull in the correct published version of a utils crate.
+In general, if you ever cut a new release of a `utils/` crate, all `icu4x` crates depending on new behavior should have their `Cargo.toml` updated to the latest version, by updating the version specification in the workspace `Cargo.toml`'s `workspace.dependencies` section. However, there are times when you don't have to, see below.
 
-In general, if you ever cut a new release of a `utils/` crate, all `icu4x` crates depending on new behavior should have their `Cargo.toml` updated to the latest version. Typically, it is more convenient to update _all_ crates that depend on the utility, not just the ones that require the new behavior. If your new release introduces behavior that is not relied upon by any of our crates (e.g. some error formatting code was improved), it is fine to cut a release of the crate
+While code may compile using our local path dependencies, when publishing we must ensure that it will pull in the correct published version of a utils crate.
 
 When cutting new ICU4X releases, make sure all utilities with changes have had a new release containing those changes. To do so, go through the `utils/` folder and check the history of each crate since the last version bump. Bear in mind that some folders like `yoke/` contain multiple crates (`yoke/derive/`), and to keep derive-crates' versions in sync with their crates.
 
@@ -119,16 +127,35 @@ For non breaking changes, perform a non-breaking version bump (`x.y.z` to `x.y.z
 
 This can all be done in a separate PR to chunk out the work but there should be no changes to utils between this PR landing and the overall ICU4X version bump. After landing the PR, as usual, `cargo publish` should be run on the updated utils.
 
-## Writing a changelog
+### Updating the dependency specification of a util
 
-In general, the *Unreleased* section of the changelog should be updated with each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. Before the release, rename the *Unreleased* section to the appropriate version.
+We share dependency specifications for all workspace crates in the `[workspace.dependencies]` section of Cargo.toml.
 
-When making a release, it is important to include version changes for all util and other non-ICU4X-versioned crates. If a util crate is not changed, it should have an entry saying `utilname: No change`
+It is a _nice-to-have_ feature that updating ICU4X does not require one to update _every_ util. This reduces impact especially to people who need to audit new dependencies or vendor code, allowing more flexibility on ICU4X updates.
 
-Out-of-cycle changelogs should use a single entry for each individual crate released, e.g. something like this:
+However, this carries risks. We do not currently CI for `mininal-versions` (See [#2966](https://github.com/unicode-org/icu4x/issues/2966)), which means that a commit may inadvertently introduce a dependency on a newly introduced feature, which we then miss when we perform a release.
 
-```markdown
-- `databake`: 0.1.5
-  - Fixed [#3356](https://github.com/unicode-org/icu4x/pull/3356), adding `allow` for clippy false-positives
+
+To allow for this, we follow the rule that EVERY `[workspace.dependencies]` entry that diverges from its current version MUST have a `# Current version:` comment after it, like so:
+
+```toml
+databake = { version = "0.2.0", path = "utils/databake", default-features = false } # Current version: 0.2.1
 ```
+
+This MUST be kept up to date when releases are performed.
+
+By default, when a util is being released, its `workspace.dependencies` should be updated. The following is a set of heuristics for when this rule does and doesn't need to be followed, applied in order.
+
+Firstly, if before the release the util was already diverging, you SHOULD update to at least the already-released version. For example, if ICU4X 2.2 depends on `databake = 0.2.0` and releases `databake@0.2.1`, ICU4X 2.3 should update `workspace.dependencies` to _at least_ `databake = 0.2.1`. This simplifies things when it comes to the subsequent heuristics: one doesn't have to go trawl through multiple versions worth of history. There is a decent benefit for an ICU4X release to not require an update of all utils to *newly released* versions, but that benefit is less for util versions that have been published for a few months. We encourage users who need audits and vendoring to perform periodic rolling updates of their dependencies to reduce impact of ICU4X releases.
+
+You MUST update if any part of ICU4X or ICU4X utils depends on APIs or behavior in the new version.
+
+You MAY choose to not update when the changes are only:
+ - Code style
+ - Docs updates
+ - Minor optimizations
+
+You SHOULD update for soundness fixes.
+
+You SHOULD update for major bug fixes.
 

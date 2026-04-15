@@ -20,10 +20,19 @@ namespace capi {
 
     icu4x::capi::IndicSyllabicCategory icu4x_IndicSyllabicCategory_for_char_mv1(char32_t ch);
 
+    typedef struct icu4x_IndicSyllabicCategory_long_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_IndicSyllabicCategory_long_name_mv1_result;
+    icu4x_IndicSyllabicCategory_long_name_mv1_result icu4x_IndicSyllabicCategory_long_name_mv1(icu4x::capi::IndicSyllabicCategory self);
+
+    typedef struct icu4x_IndicSyllabicCategory_short_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_IndicSyllabicCategory_short_name_mv1_result;
+    icu4x_IndicSyllabicCategory_short_name_mv1_result icu4x_IndicSyllabicCategory_short_name_mv1(icu4x::capi::IndicSyllabicCategory self);
+
     uint8_t icu4x_IndicSyllabicCategory_to_integer_value_mv1(icu4x::capi::IndicSyllabicCategory self);
 
     typedef struct icu4x_IndicSyllabicCategory_from_integer_value_mv1_result {union {icu4x::capi::IndicSyllabicCategory ok; }; bool is_ok;} icu4x_IndicSyllabicCategory_from_integer_value_mv1_result;
     icu4x_IndicSyllabicCategory_from_integer_value_mv1_result icu4x_IndicSyllabicCategory_from_integer_value_mv1(uint8_t other);
+
+    typedef struct icu4x_IndicSyllabicCategory_try_from_str_mv1_result {union {icu4x::capi::IndicSyllabicCategory ok; }; bool is_ok;} icu4x_IndicSyllabicCategory_try_from_str_mv1_result;
+    icu4x_IndicSyllabicCategory_try_from_str_mv1_result icu4x_IndicSyllabicCategory_try_from_str_mv1(icu4x::diplomat::capi::DiplomatStringView s);
 
     } // extern "C"
 } // namespace capi
@@ -50,8 +59,8 @@ inline icu4x::IndicSyllabicCategory icu4x::IndicSyllabicCategory::FromFFI(icu4x:
         case icu4x::capi::IndicSyllabicCategory_ConsonantPlaceholder:
         case icu4x::capi::IndicSyllabicCategory_ConsonantPrecedingRepha:
         case icu4x::capi::IndicSyllabicCategory_ConsonantPrefixed:
-        case icu4x::capi::IndicSyllabicCategory_ConsonantSucceedingRepha:
         case icu4x::capi::IndicSyllabicCategory_ConsonantSubjoined:
+        case icu4x::capi::IndicSyllabicCategory_ConsonantSucceedingRepha:
         case icu4x::capi::IndicSyllabicCategory_ConsonantWithStacker:
         case icu4x::capi::IndicSyllabicCategory_GeminationMark:
         case icu4x::capi::IndicSyllabicCategory_InvisibleStacker:
@@ -83,6 +92,16 @@ inline icu4x::IndicSyllabicCategory icu4x::IndicSyllabicCategory::for_char(char3
     return icu4x::IndicSyllabicCategory::FromFFI(result);
 }
 
+inline std::optional<std::string_view> icu4x::IndicSyllabicCategory::long_name() const {
+    auto result = icu4x::capi::icu4x_IndicSyllabicCategory_long_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+}
+
+inline std::optional<std::string_view> icu4x::IndicSyllabicCategory::short_name() const {
+    auto result = icu4x::capi::icu4x_IndicSyllabicCategory_short_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+}
+
 inline uint8_t icu4x::IndicSyllabicCategory::to_integer_value() const {
     auto result = icu4x::capi::icu4x_IndicSyllabicCategory_to_integer_value_mv1(this->AsFFI());
     return result;
@@ -90,6 +109,11 @@ inline uint8_t icu4x::IndicSyllabicCategory::to_integer_value() const {
 
 inline std::optional<icu4x::IndicSyllabicCategory> icu4x::IndicSyllabicCategory::from_integer_value(uint8_t other) {
     auto result = icu4x::capi::icu4x_IndicSyllabicCategory_from_integer_value_mv1(other);
+    return result.is_ok ? std::optional<icu4x::IndicSyllabicCategory>(icu4x::IndicSyllabicCategory::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline std::optional<icu4x::IndicSyllabicCategory> icu4x::IndicSyllabicCategory::try_from_str(std::string_view s) {
+    auto result = icu4x::capi::icu4x_IndicSyllabicCategory_try_from_str_mv1({s.data(), s.size()});
     return result.is_ok ? std::optional<icu4x::IndicSyllabicCategory>(icu4x::IndicSyllabicCategory::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // ICU4X_IndicSyllabicCategory_HPP

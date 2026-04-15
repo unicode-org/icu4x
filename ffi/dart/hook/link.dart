@@ -6,11 +6,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:code_assets/code_assets.dart'
-    show HookConfigCodeConfig, LinkInputCodeAssets, OS;
-import 'package:collection/collection.dart' show IterableExtension;
-import 'package:hooks/hooks.dart' show LinkInput;
-import 'package:hooks/hooks.dart' show link;
-import 'package:icu4x/src/hook_helpers/shared.dart' show assetId, package;
+    show CodeAsset, HookConfigCodeConfig, LinkInputCodeAssets, OS;
+import 'package:hooks/hooks.dart' show LinkInput, link;
 import 'package:logging/logging.dart' show Level, Logger;
 import 'package:native_toolchain_c/native_toolchain_c.dart'
     show CLinker, LinkerOptions;
@@ -20,17 +17,23 @@ import 'package:record_use/record_use.dart' as record_use;
 Future<void> main(List<String> args) async {
   await link(args, (input, output) async {
     print('Start linking');
-    final staticLib = input.assets.code.firstWhereOrNull(
-      (asset) => asset.id == 'package:$package/$assetId',
-    );
-
-    if (staticLib == null) {
+    final CodeAsset staticLib;
+    try {
+      staticLib = input.assets.code.firstWhere(
+        (asset) => asset.id == 'package:icu4x/src/bindings/lib.g.dart',
+      );
+    } catch (e) {
       // No static lib built, so assume a dynamic one was already bundled.
       return;
     }
 
     final usedSymbols = input.usages
-        ?.constantsOf(_diplomatFfiUseIdentifier)
+        ?.constantsOf(
+          record_use.Identifier(
+            importUri: staticLib.id,
+            name: '_DiplomatFfiUse',
+          ),
+        )
         .map((instance) => instance['symbol'] as String);
 
     print('''
@@ -41,8 +44,8 @@ Future<void> main(List<String> args) async {
 
     await CLinker.library(
       name: 'icu4x',
-      packageName: 'icu4x',
-      assetName: assetId,
+      packageName: input.packageName,
+      assetName: 'src/bindings/lib.g.dart',
       sources: [staticLib.file!.toFilePath()],
       libraries:
           // On Windows, icu4x.lib is lacking /DEFAULTLIB directives to advise
@@ -61,11 +64,6 @@ Future<void> main(List<String> args) async {
     );
   });
 }
-
-const _diplomatFfiUseIdentifier = record_use.Identifier(
-  importUri: 'package:icu4x/src/bindings/lib.g.dart',
-  name: '_DiplomatFfiUse',
-);
 
 extension on LinkInput {
   record_use.RecordedUsages? get usages {

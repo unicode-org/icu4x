@@ -50,10 +50,6 @@ pub(crate) mod internal {
             &raw_frac_part[2..]
         };
 
-        dbg!("--> frac={}, fracf={}", &frac_part, &raw_frac_part);
-        dbg!("int_part='{}'; frac_part='{}'", &int_part, &frac_part);
-        dbg!("opts={:?}", opts);
-
         // Limit the min and max display digits first by individual field.
         let display_integer_digits = max(int_part.len(), opts.minimum_integer_digits as usize);
         let display_fraction_digits = max(
@@ -69,13 +65,6 @@ pub(crate) mod internal {
         );
 
         let significant_digits_in_fraction = clamp_diff(total_significant_digits, int_part.len());
-        dbg!(
-            "did={}; dfd={}; sd={}; rsd={}",
-            display_integer_digits,
-            display_fraction_digits,
-            total_significant_digits,
-            significant_digits_in_fraction
-        );
 
         // Integer fragment.
         let leading_zeros = clamp_diff(display_integer_digits, int_part.len());
@@ -101,19 +90,14 @@ pub(crate) mod internal {
             // Take at most the number of fraction digits we're required to display.
             .take(display_fraction_digits);
         // "001234.500"
-        let nstr = i.chain(dd).chain(f).collect::<String>();
-        dbg!("nstr={}", &nstr);
-        nstr
+        i.chain(dd).chain(f).collect::<String>()
     }
 
     /// Converts the number to format into the operands representation.
     pub fn to_icu4x_operands(n: f64, opts: Options) -> PluralOperands {
-        dbg!("n={}", n);
         let nstr = fixed_format(n, &opts);
         #[expect(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let ret = PluralOperands::from(&Decimal::from_str(&nstr).unwrap());
-        dbg!("ret={:?}\n---\n", &ret);
-        ret
+        PluralOperands::from(&Decimal::from_str(&nstr).unwrap())
     }
 
     /// Expresses the [`PluralCategory`] as a `str`.

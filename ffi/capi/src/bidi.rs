@@ -116,7 +116,7 @@ pub mod ffi {
             )))
         }
 
-        /// Check if a Level returned by level_at is an RTL level.
+        /// Check if a Level returned by `level_at` is an RTL level.
         ///
         /// Invalid levels (numbers greater than 125) will be assumed LTR
         #[diplomat::rust_link(unicode_bidi::level::Level::is_rtl, FnInStruct)]
@@ -126,7 +126,7 @@ pub mod ffi {
                 .is_rtl()
         }
 
-        /// Check if a Level returned by level_at is an LTR level.
+        /// Check if a Level returned by `level_at` is an LTR level.
         ///
         /// Invalid levels (numbers greater than 125) will be assumed LTR
         #[diplomat::rust_link(unicode_bidi::level::Level::is_ltr, FnInStruct)]
@@ -228,7 +228,7 @@ pub mod ffi {
     }
 
     /// Bidi information for a single processed paragraph
-    #[diplomat::opaque]
+    #[diplomat::opaque_mut]
     #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct BidiParagraph<'info>(pub unicode_bidi::Paragraph<'info, 'info>);
 

@@ -258,6 +258,34 @@ void main() {
       ),
       'Mi., 15.07.1446 AH, 14:32:12 Koordinierte Weltzeit',
     );
+    expect(
+      ZonedDateTimeFormatter.specificLong(
+        locale,
+        DateTimeFormatter.ymdet(locale),
+      ).formatSameCalendar(
+        zonedDateTimeIso.date.toCalendar(Calendar(CalendarKind.hijriUmmAlQura)),
+        zonedDateTimeIso.time,
+        TimeZoneInfo.utc(),
+      ),
+      'Mi., 15.07.1446 AH, 14:32:12 Koordinierte Weltzeit',
+    );
+    expect(
+      () =>
+          ZonedDateTimeFormatter.specificLong(
+            locale,
+            DateTimeFormatter.ymdet(locale),
+          ).formatSameCalendar(
+            zonedDateTimeBuddhist.date,
+            zonedDateTimeBuddhist.time,
+            TimeZoneInfo.utc(),
+          ),
+      throwsA(
+        DateTimeMismatchedCalendarError(
+          thisKind: CalendarKind.hijriUmmAlQura,
+          dateKind: CalendarKind.buddhist,
+        ),
+      ),
+    );
 
     expect(
       ZonedDateTimeFormatter.specificShort(
@@ -290,10 +318,9 @@ void main() {
       ).formatIso(
         zonedDateTimeIso.date,
         zonedDateTimeIso.time,
-        TimeZoneInfo(
-          TimeZone.fromBcp47('uslax'),
-          offset: UtcOffset.fromSeconds(-420),
-        ),
+        IanaParser()
+            .parse('America/Los_Angeles')
+            .withOffset(UtcOffset.fromSeconds(-420)),
       ),
       '15.07., 14:32:12 GMT-00:07',
     );

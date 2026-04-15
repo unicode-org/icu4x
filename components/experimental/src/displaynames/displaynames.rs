@@ -25,11 +25,11 @@ define_preferences!(
 
 /// Lookup of the locale-specific display names by region code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, RegionDisplayNames,
+///     DisplayNamesOptions, multi::RegionDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::region};
 ///
@@ -40,7 +40,7 @@ define_preferences!(
 ///
 /// assert_eq!(display_name.of(region!("AE")), Some("United Arab Emirates"));
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct RegionDisplayNames {
     options: DisplayNamesOptions,
     region_data: DataPayload<RegionDisplayNamesV1>,
@@ -92,11 +92,11 @@ impl RegionDisplayNames {
 
 /// Lookup of the locale-specific display names by script code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, ScriptDisplayNames,
+///     DisplayNamesOptions, multi::ScriptDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::script};
 ///
@@ -107,7 +107,7 @@ impl RegionDisplayNames {
 ///
 /// assert_eq!(display_name.of(script!("Maya")), Some("Mayan hieroglyphs"));
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct ScriptDisplayNames {
     options: DisplayNamesOptions,
     script_data: DataPayload<ScriptDisplayNamesV1>,
@@ -159,11 +159,11 @@ impl ScriptDisplayNames {
 
 /// Lookup of the locale-specific display names by variant.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, VariantDisplayNames,
+///     DisplayNamesOptions, multi::VariantDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::variant};
 ///
@@ -174,7 +174,7 @@ impl ScriptDisplayNames {
 ///
 /// assert_eq!(display_name.of(variant!("POSIX")), Some("Computer"));
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct VariantDisplayNames {
     #[allow(dead_code)] //TODO: Add DisplayNamesOptions support for Variants.
     options: DisplayNamesOptions,
@@ -223,11 +223,11 @@ impl VariantDisplayNames {
 
 /// Lookup of the locale-specific display names by language code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, LanguageDisplayNames,
+///     DisplayNamesOptions, multi::LanguageDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::language};
 ///
@@ -238,7 +238,7 @@ impl VariantDisplayNames {
 ///
 /// assert_eq!(display_name.of(language!("de")), Some("German"));
 /// ```
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct LanguageDisplayNames {
     options: DisplayNamesOptions,
     language_data: DataPayload<LanguageDisplayNamesV1>,
@@ -294,11 +294,11 @@ impl LanguageDisplayNames {
 
 /// Format a locale as a display string.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, LocaleDisplayNamesFormatter,
+///     DisplayNamesOptions, multi::LocaleDisplayNamesFormatter,
 /// };
 /// use icu::locale::locale;
 ///
@@ -313,6 +313,7 @@ impl LanguageDisplayNames {
 /// assert_eq!(display_name.of(&locale!("xx-YY")), "xx (YY)");
 /// assert_eq!(display_name.of(&locale!("xx")), "xx");
 /// ```
+#[derive(Debug)]
 pub struct LocaleDisplayNamesFormatter {
     options: DisplayNamesOptions,
     // patterns: DataPayload<LocaleDisplayNamesPatternsV1>,

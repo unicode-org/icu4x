@@ -10,8 +10,9 @@ use super::{
 use crate::error::ErrorField;
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
-use crate::provider::neo::{marker_attrs, *};
+use crate::provider::names::*;
 use crate::provider::pattern::PatternItem;
+use crate::provider::semantic_skeletons::marker_attrs;
 use crate::provider::time_zones::tz;
 use crate::size_test_macro::size_test;
 use crate::FixedCalendarDateTimeFormatter;
@@ -19,12 +20,13 @@ use crate::{external_loaders::*, DateTimeFormatterPreferences};
 use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::types::{EraYear, MonthInfo};
+use icu_calendar::types::{EraYear, LeapStatus, MonthInfo};
 use icu_calendar::AnyCalendar;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_decimal::DecimalFormatter;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 
 /// Choices for loading year names.
@@ -91,6 +93,9 @@ impl YearNameLength {
 }
 
 /// Choices for loading month names.
+///
+/// This enum covers both the length (abbreviated, wide, or narrow)
+/// and the formatting context (format or standalone).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum MonthNameLength {
@@ -169,6 +174,9 @@ impl MonthNameLength {
 }
 
 /// Choices for loading weekday names.
+///
+/// This enum covers both the length (abbreviated, wide, narrow, or short)
+/// and the formatting context (format or standalone).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum WeekdayNameLength {
@@ -232,7 +240,7 @@ impl WeekdayNameLength {
         let field_symbol = field_symbol.to_format_symbol();
         // UTS 35 says that "E..EEE" are all Abbreviated
         // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+        let field_length = if matches!(field_symbol, Weekday::Format) {
             field_length.numeric_to_abbr()
         } else {
             field_length
@@ -617,7 +625,7 @@ pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDa
     _calendar: PhantomData<C>,
 }
 
-/// Extra metadata associated with DateTimeNames but not DateTimeFormatter.
+/// Extra metadata associated with [`FixedCalendarDateTimeNames`] but not [`DateTimeFormatter`].
 #[derive(Debug, Clone)]
 pub(crate) struct DateTimeNamesMetadata {
     zone_checksum: Option<u64>,
@@ -631,7 +639,7 @@ impl DateTimeNamesMetadata {
             zone_checksum: None,
         }
     }
-    /// If mz_periods is already populated, we can't load anything else because
+    /// If `mz_periods` is already populated, we can't load anything else because
     /// we can't verify the checksum. Set a blank checksum in this case.
     #[inline]
     pub(crate) fn new_from_previous<M: DateTimeNamesMarker>(names: &RawDateTimeNames<M>) -> Self {
@@ -1073,9 +1081,8 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         calendar: AnyCalendar,
     ) -> Result<Self, UnsupportedCalendarError> {
-        let kind = calendar.kind();
         let calendar = FormattableAnyCalendar::try_from_any_calendar(calendar)
-            .ok_or(UnsupportedCalendarError { kind })?;
+            .map_err(|c| UnsupportedCalendarError { kind: c.kind() })?;
         Ok(Self {
             inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
             calendar,
@@ -1131,10 +1138,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         formatter: DateTimeFormatter<FSet>,
     ) -> Self {
         let metadata = DateTimeNamesMetadata::new_from_previous(&formatter.names);
-        Self::from_parts(
-            prefs,
-            (formatter.calendar.into_tagged(), formatter.names, metadata),
-        )
+        Self::from_parts(prefs, (formatter.calendar, formatter.names, metadata))
     }
 
     fn from_parts(
@@ -1353,7 +1357,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         length: YearNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1>,
     {
         self.load_year_names(&crate::provider::Baked, length)
     }
@@ -1419,7 +1423,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         length: MonthNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1>,
     {
         self.load_month_names(&crate::provider::Baked, length)
     }
@@ -2658,6 +2662,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// For example, this can transform a formatter for [`DateFieldSet`] to one for
     /// [`CompositeDateTimeFieldSet`].
     ///
+    /// To learn why this function is useful, see [`DateTimeFormatter::cast_into_fset`].
+    ///
     /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
     /// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
     ///
@@ -2731,11 +2737,111 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 }
 
+#[cfg(feature = "unstable")]
+impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet>
+where
+    FSet::DayPeriodNames: NamesContainer<
+        DayPeriodNamesV1,
+        DayPeriodNameLength,
+        Container = DataPayloadWithVariables<DayPeriodNamesV1, DayPeriodNameLength>,
+    >,
+{
+    /// Gets the "AM" day period symbol for the specified length if the data is loaded.
+    ///
+    /// Returns `Some` if the data for the specified length is loaded, or `None` if not loaded.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::{
+    ///     DayPeriodNameLength, FixedCalendarDateTimeNames,
+    /// };
+    /// use icu::locale::locale;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into())
+    ///         .unwrap();
+    ///
+    /// // Before loading data, the getter returns None:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Abbreviated), None);
+    ///
+    /// // Load the day period names:
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
+    ///
+    /// // Now we can get the AM symbol for the loaded length:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Abbreviated), Some("AM"));
+    ///
+    /// // But other lengths are not loaded:
+    /// assert_eq!(names.get_am(DayPeriodNameLength::Wide), None);
+    /// ```
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+    /// </div>
+    pub fn get_am(&self, length: DayPeriodNameLength) -> Option<&str> {
+        let borrowed = self.inner.as_borrowed();
+        borrowed
+            .dayperiod_names
+            .get_with_variables(length)
+            .and_then(|names| names.am())
+    }
+
+    /// Gets the "PM" day period symbol for the specified length if the data is loaded.
+    ///
+    /// Returns `Some` if the data for the specified length is loaded, or `None` if not loaded.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::{
+    ///     DayPeriodNameLength, FixedCalendarDateTimeNames,
+    /// };
+    /// use icu::locale::locale;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into())
+    ///         .unwrap();
+    ///
+    /// // Before loading data, the getter returns None:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Wide), None);
+    ///
+    /// // Load the day period names:
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Wide)
+    ///     .unwrap();
+    ///
+    /// // Now we can get the PM symbol for the loaded length:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Wide), Some("PM"));
+    ///
+    /// // But other lengths are not loaded:
+    /// assert_eq!(names.get_pm(DayPeriodNameLength::Abbreviated), None);
+    /// ```
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+    /// </div>
+    pub fn get_pm(&self, length: DayPeriodNameLength) -> Option<&str> {
+        let borrowed = self.inner.as_borrowed();
+        borrowed
+            .dayperiod_names
+            .get_with_variables(length)
+            .and_then(|names| names.pm())
+    }
+}
+
 impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     /// Maps a [`FixedCalendarDateTimeNames`] of a specific `FSet` to a more general `FSet`.
     ///
     /// For example, this can transform a formatter for [`DateFieldSet`] to one for
     /// [`CompositeDateTimeFieldSet`].
+    ///
+    /// To learn why this function is useful, see [`DateTimeFormatter::cast_into_fset`].
     ///
     /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
     /// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
@@ -3328,6 +3434,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     }
 
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    #[allow(clippy::unnecessary_wraps)] // consistency
     pub(crate) fn load_time_zone_field_V(
         &mut self,
         _prefs: DateTimeFormatterPreferences,
@@ -3375,6 +3482,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     }
 
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    #[allow(clippy::unnecessary_wraps)] // consistency
     pub(crate) fn load_time_zone_field_X(
         &mut self,
         _prefs: DateTimeFormatterPreferences,
@@ -3668,37 +3776,66 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
         let month_index = usize::from(month.number() - 1);
-        let name = match month_names {
+        match month_names {
             MonthNames::Linear(linear) => {
-                if month.is_formatting_leap() {
+                if month.leap_status() != LeapStatus::Normal {
                     None
                 } else {
-                    linear.get(month_index)
+                    linear
+                        .get(month_index)
+                        .map(MonthPlaceholderValue::PlainString)
                 }
             }
+            #[cfg(feature = "serde")]
             MonthNames::LeapLinear(leap_linear) => {
                 let num_months = leap_linear.len() / 2;
-                if month.is_formatting_leap() {
+                if month.leap_status() == LeapStatus::Leap {
+                    leap_linear.get(month_index + num_months)
+                } else if month.leap_status() == LeapStatus::Base && month.number() < month.ordinal
+                {
+                    // Detects Hebrew (base after leap) vs Chinese (base before leap).
+                    // In Hebrew, we use leap names for LeapBase months.
                     leap_linear.get(month_index + num_months)
                 } else if month_index < num_months {
                     leap_linear.get(month_index)
                 } else {
                     None
                 }
-                .filter(|s| !s.is_empty())
+                .map(MonthPlaceholderValue::PlainString)
             }
             MonthNames::LeapNumeric(leap_numeric) => {
-                if month.is_formatting_leap() {
-                    return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric));
+                if month.leap_status() != LeapStatus::Normal {
+                    Some(MonthPlaceholderValue::NumericPattern(leap_numeric))
                 } else {
-                    return Ok(MonthPlaceholderValue::Numeric);
+                    Some(MonthPlaceholderValue::Numeric)
                 }
             }
-        };
+            MonthNames::LeapPattern(data) => if month_index < data.len() - 2 {
+                data.get(month_index)
+            } else {
+                None
+            }
+            .and_then(|normal_name| {
+                Some(match month.leap_status() {
+                    LeapStatus::Normal => MonthPlaceholderValue::PlainString(normal_name),
+                    LeapStatus::Leap => MonthPlaceholderValue::StringPattern(
+                        normal_name,
+                        SinglePlaceholderPattern::from_ref_store(&data[data.len() - 2]).ok()?,
+                    ),
+                    LeapStatus::Base => MonthPlaceholderValue::StringPattern(
+                        normal_name,
+                        SinglePlaceholderPattern::from_ref_store(&data[data.len() - 1]).ok()?,
+                    ),
+                    _ => {
+                        debug_assert!(false, "unhandled LeapStatus");
+                        MonthPlaceholderValue::PlainString(normal_name)
+                    }
+                })
+            }),
+        }
         // Note: Always return `false` for the second argument since neo MonthNames
         // knows how to handle leap months and we don't need the fallback logic
-        name.map(MonthPlaceholderValue::PlainString)
-            .ok_or(GetNameForMonthError::InvalidMonthCode)
+        .ok_or(GetNameForMonthError::InvalidMonthCode)
     }
 
     pub(crate) fn get_name_for_weekday(
@@ -3736,18 +3873,21 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(year_name_length)
             .ok_or(GetNameForEraError::NotLoaded)?;
 
-        match (year_names, era_year.era_index) {
-            (YearNames::VariableEras(era_names), None) => {
-                crate::provider::neo::get_year_name_from_map(
-                    era_names,
-                    era_year.era.as_str().into(),
-                )
-                .ok_or(GetNameForEraError::InvalidEraCode)
+        match year_names {
+            #[cfg(feature = "serde")]
+            YearNames::VariableEras(era_names) => {
+                get_year_name_from_map(era_names, era_year.era.as_str().into())
+                    .ok_or(GetNameForEraError::InvalidEraCode)
             }
-            (YearNames::FixedEras(era_names), Some(index)) => era_names
-                .get(index as usize)
+            YearNames::FixedEras(era_names) => era_names
+                .get(if let Some(i) = era_year.era_index {
+                    i as usize
+                } else {
+                    debug_assert!(false, "missing era index");
+                    usize::MAX
+                })
                 .ok_or(GetNameForEraError::InvalidEraCode),
-            _ => Err(GetNameForEraError::InvalidEraCode),
+            YearNames::Cyclic(_) => Err(GetNameForEraError::InvalidEraCode),
         }
     }
 

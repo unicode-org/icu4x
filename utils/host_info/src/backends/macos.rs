@@ -259,7 +259,7 @@ impl RawHostInfoBackend for MacOSHostInfoBackend {
                     None
                 }
             }
-            Ok(cfnum_i32(vals[0]).and_then(|n| match n {
+            Ok(vals.first().and_then(|&n| match cfnum_i32(n)? {
                 1 => Some("sun".to_string()),
                 2 => Some("mon".to_string()),
                 3 => Some("tue".to_string()),
@@ -330,8 +330,7 @@ impl RawHostInfoBackend for MacOSHostInfoBackend {
             // 3b) Try BCP47 U-extension with "co"
             // Look for "-u-" then scan for "-co-<value>"
             let lower = input.to_ascii_lowercase();
-            if let Some(u_pos) = lower.find("-u-") {
-                let tail = &lower[u_pos + 3..]; // after "-u-"
+            if let Some((_, tail)) = lower.split_once("-u-") {
                 let mut it = tail.split('-');
                 while let Some(k) = it.next() {
                     if k == "co" {

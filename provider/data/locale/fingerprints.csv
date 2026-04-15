@@ -318,7 +318,7 @@ locale/exemplar/characters/index/v1, zh, -> af
 locale/exemplar/characters/index/v1, zh-Hant, 1340B, 1287B, 974910b31430c6ca
 locale/exemplar/characters/index/v1, zu, -> af
 locale/exemplar/characters/main/v1, <lookup>, 896B, 181 identifiers
-locale/exemplar/characters/main/v1, <total>, 74305B, 65358B, 166 unique payloads
+locale/exemplar/characters/main/v1, <total>, 74297B, 65350B, 166 unique payloads
 locale/exemplar/characters/main/v1, af, 98B, 44B, d73fc42a75b51bdd
 locale/exemplar/characters/main/v1, ak, 104B, 50B, 75856fb4a06dafbb
 locale/exemplar/characters/main/v1, am, 176B, 122B, a95d77a59cc8ebc4
@@ -432,7 +432,7 @@ locale/exemplar/characters/main/v1, nso, 98B, 44B, 830ba530ef6f3e0c
 locale/exemplar/characters/main/v1, oc, 104B, 50B, 9e2d851f40f2907a
 locale/exemplar/characters/main/v1, om, -> en
 locale/exemplar/characters/main/v1, or, 161B, 107B, 3f04cf8b47e24f7
-locale/exemplar/characters/main/v1, pa, 196B, 142B, bc7ba0bebc793acb
+locale/exemplar/characters/main/v1, pa, 188B, 134B, ee0414fa01b72999
 locale/exemplar/characters/main/v1, pcm, 156B, 102B, 5d165e4b5005e50
 locale/exemplar/characters/main/v1, pl, 134B, 80B, bdb3daa02d955a6c
 locale/exemplar/characters/main/v1, pms, 143B, 89B, f171f8d5c8a667f7

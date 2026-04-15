@@ -24,7 +24,7 @@ args = [
     "test",
     "-p=icu_provider_source",
     "--no-default-features",
-    "--features=use_wasm,experimental",
+    "--features=use_wasm,unstable",
     "--",
     "--nocapture",
     "make_testdata",

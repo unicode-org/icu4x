@@ -26,10 +26,10 @@ impl PersonNamePattern<'_> {}
 
 impl PersonNamePattern<'_> {
     #[cfg(test)]
-    fn get_field(&self, lookup_name_field: &NameField) -> Option<Cow<'_, str>> {
+    fn get_field(&self, lookup_name_field: NameField) -> Option<Cow<'_, str>> {
         self.name_fields
             .iter()
-            .find(|(k, _)| k == lookup_name_field)
+            .find(|&&(k, _)| k == lookup_name_field)
             .map(|(_, v)| v.clone())
     }
 
@@ -40,12 +40,14 @@ impl PersonNamePattern<'_> {
         })
     }
 
-    fn contains_key(&self, lookup_name_field: &NameField) -> bool {
-        self.name_fields.iter().any(|(k, _)| k == lookup_name_field)
+    fn contains_key(&self, lookup_name_field: NameField) -> bool {
+        self.name_fields
+            .iter()
+            .any(|&(k, _)| k == lookup_name_field)
     }
 
     /// Returns the how many fields can be matched using the current build pattern.
-    pub fn match_info(&self, available_name_fields: &[&NameField]) -> (usize, usize) {
+    pub fn match_info(&self, available_name_fields: &[NameField]) -> (usize, usize) {
         let available_fields = available_name_fields.iter().fold(0, |count, &name_field| {
             if self.contains_key(name_field) {
                 count + 1
@@ -53,7 +55,7 @@ impl PersonNamePattern<'_> {
                 count
             }
         });
-        let missing_fields = self.name_fields.iter().fold(0, |count, (name_field, _)| {
+        let missing_fields = self.name_fields.iter().fold(0, |count, &(name_field, _)| {
             if available_name_fields.contains(&name_field) {
                 count
             } else {
@@ -66,7 +68,7 @@ impl PersonNamePattern<'_> {
     fn fetch_pattern_data_replacement<'lt>(
         &'lt self,
         person_name: &'lt dyn PersonName,
-        requested_name_field: &'lt NameField,
+        requested_name_field: NameField,
         initial_pattern: &'lt str,
         initial_sequence_pattern: &'lt str,
     ) -> Vec<String> {
@@ -78,7 +80,7 @@ impl PersonNamePattern<'_> {
 
         effective_name_field
             .iter()
-            .flat_map(|field| {
+            .flat_map(|&field| {
                 specifications::derive_missing_surname(
                     &available_name_field,
                     field,
@@ -88,7 +90,7 @@ impl PersonNamePattern<'_> {
             .map(|field| {
                 specifications::derive_missing_initials(
                     person_name,
-                    &field,
+                    field,
                     initial_pattern,
                     initial_sequence_pattern,
                 )
@@ -104,7 +106,7 @@ impl PersonNamePattern<'_> {
     ) -> String {
         self.name_fields
             .iter()
-            .flat_map(|(k, v)| {
+            .flat_map(|&(k, ref v)| {
                 let p_name = self
                     .fetch_pattern_data_replacement(
                         person_name,
@@ -259,7 +261,7 @@ mod tests {
         let person_name_pattern = to_person_name_pattern(pattern)?;
         let nb_captures = person_name_pattern.name_fields.len();
         let trailing_end = person_name_pattern
-            .get_field(&NameField {
+            .get_field(NameField {
                 kind: NameFieldKind::Credentials,
                 modifier: Default::default(),
             })
@@ -270,14 +272,14 @@ mod tests {
             "should be a empty at the end space matched"
         );
         let trailing_comma = person_name_pattern
-            .get_field(&NameField {
+            .get_field(NameField {
                 kind: NameFieldKind::Generation,
                 modifier: Default::default(),
             })
             .unwrap();
         assert_eq!(trailing_comma, ", ", "should be a comma after generation");
         let trailing_space = person_name_pattern
-            .get_field(&NameField {
+            .get_field(NameField {
                 kind: NameFieldKind::Title,
                 modifier: Default::default(),
             })
@@ -294,7 +296,7 @@ mod tests {
 
         assert_eq!(captures, 3, "{captures}");
         assert!(
-            person_name_pattern.contains_key(&NameField {
+            person_name_pattern.contains_key(NameField {
                 kind: NameFieldKind::Surname,
                 modifier: FieldModifierSet::new(
                     FieldCapsStyle::AllCaps,
@@ -306,7 +308,7 @@ mod tests {
             "didn't properly match surname-monogram-allCaps"
         );
         assert!(
-            person_name_pattern.contains_key(&NameField {
+            person_name_pattern.contains_key(NameField {
                 kind: NameFieldKind::Given,
                 modifier: FieldModifierSet::new(
                     FieldCapsStyle::AllCaps,
@@ -318,7 +320,7 @@ mod tests {
             "didn't properly match given-monogram-allCaps"
         );
         assert!(
-            person_name_pattern.contains_key(&NameField {
+            person_name_pattern.contains_key(NameField {
                 kind: NameFieldKind::Given2,
                 modifier: FieldModifierSet::new(
                     FieldCapsStyle::AllCaps,
@@ -331,7 +333,7 @@ mod tests {
         );
 
         let trailing = person_name_pattern
-            .get_field(&NameField {
+            .get_field(NameField {
                 kind: NameFieldKind::Given2,
                 modifier: FieldModifierSet::new(
                     FieldCapsStyle::AllCaps,

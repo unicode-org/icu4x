@@ -6,6 +6,8 @@ use icu_calendar::{
     types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
     AsCalendar, Calendar, Date,
 };
+#[cfg(feature = "unstable")]
+use icu_time::ZonedTime;
 use icu_time::{
     zone::{models::TimeZoneModel, UtcOffset, ZoneNameTimestamp},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
@@ -62,7 +64,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfMonth> for Date<A> 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Weekday> for Date<A> {
     #[inline]
     fn get_field(&self) -> Weekday {
-        self.day_of_week()
+        self.weekday()
     }
 }
 
@@ -136,7 +138,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfMonth> for DateTime
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Weekday> for DateTime<A> {
     #[inline]
     fn get_field(&self) -> Weekday {
-        self.date.day_of_week()
+        self.date.weekday()
     }
 }
 
@@ -208,7 +210,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfMonth> for Zoned
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Weekday> for ZonedDateTime<A, Z> {
     #[inline]
     fn get_field(&self) -> Weekday {
-        self.date.day_of_week()
+        self.date.weekday()
     }
 }
 
@@ -286,6 +288,67 @@ where
     }
 }
 
+#[cfg(feature = "unstable")]
+impl<Z> UnstableSealed for ZonedTime<Z> {}
+
+#[cfg(feature = "unstable")]
+impl<Z> GetField<Hour> for ZonedTime<Z> {
+    fn get_field(&self) -> Hour {
+        self.time.hour
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<Z> GetField<Minute> for ZonedTime<Z> {
+    fn get_field(&self) -> Minute {
+        self.time.minute
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<Z> GetField<Second> for ZonedTime<Z> {
+    fn get_field(&self) -> Second {
+        self.time.second
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<Z> GetField<Nanosecond> for ZonedTime<Z> {
+    fn get_field(&self) -> Nanosecond {
+        self.time.subsecond
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<Z> GetField<Option<UtcOffset>> for ZonedTime<Z>
+where
+    Z: GetField<Option<UtcOffset>>,
+{
+    fn get_field(&self) -> Option<UtcOffset> {
+        self.zone.get_field()
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<Z> GetField<TimeZone> for ZonedTime<Z>
+where
+    Z: GetField<TimeZone>,
+{
+    fn get_field(&self) -> TimeZone {
+        self.zone.get_field()
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<Z> GetField<ZoneNameTimestamp> for ZonedTime<Z>
+where
+    Z: GetField<ZoneNameTimestamp>,
+{
+    fn get_field(&self) -> ZoneNameTimestamp {
+        self.zone.get_field()
+    }
+}
+
 impl UnstableSealed for UtcOffset {}
 
 impl GetField<Option<UtcOffset>> for UtcOffset {
@@ -327,6 +390,8 @@ where
     }
 }
 
+impl UnstableSealed for Weekday {}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for Date<A> {
     #[inline]
     fn get_field(&self) {}
@@ -347,12 +412,23 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<()> for ZonedDateTime
     fn get_field(&self) {}
 }
 
+// Required for the `AllInputMarkers` trait bound
+#[cfg(feature = "unstable")]
+impl<Z> GetField<()> for ZonedTime<Z> {
+    fn get_field(&self) {}
+}
+
 impl GetField<()> for UtcOffset {
     #[inline]
     fn get_field(&self) {}
 }
 
 impl<O: TimeZoneModel> GetField<()> for TimeZoneInfo<O> {
+    #[inline]
+    fn get_field(&self) {}
+}
+
+impl GetField<()> for Weekday {
     #[inline]
     fn get_field(&self) {}
 }

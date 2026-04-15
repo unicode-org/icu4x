@@ -4,10 +4,10 @@
 
 use icu_calendar::cal::Hebrew;
 use icu_calendar::Date;
+use icu_datetime::fieldsets;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
-use icu_datetime::fieldsets::{self, YMD};
 use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
 use icu_time::{DateTime, Time};
@@ -177,14 +177,17 @@ fn overlap_patterns() {
 
 #[test]
 fn hebrew_months() {
-    let datetime = DateTime {
-        date: Date::try_new_iso(2011, 4, 3).unwrap().to_calendar(Hebrew),
-        time: Time::try_new(14, 15, 7, 0).unwrap(),
-    };
     let formatter =
-        FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), YMD::medium()).unwrap();
+        FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), fieldsets::YMD::medium())
+            .unwrap();
 
-    let formatted_datetime = formatter.format(&datetime);
+    let formatted_datetime =
+        formatter.format(&Date::try_new_iso(2011, 3, 4).unwrap().to_calendar(Hebrew));
+
+    assert_writeable_eq!(formatted_datetime, "28 Adar I 5771");
+
+    let formatted_datetime =
+        formatter.format(&Date::try_new_iso(2011, 4, 3).unwrap().to_calendar(Hebrew));
 
     assert_writeable_eq!(formatted_datetime, "28 Adar II 5771");
 }
@@ -215,4 +218,46 @@ fn test_5387() {
     assert_writeable_eq!(formatter_auto.format(&datetime), "Fri 2:15:16\u{202f}PM");
     assert_writeable_eq!(formatter_h12.format(&datetime), "Fri, 2:15:16\u{202f}PM");
     assert_writeable_eq!(formatter_h24.format(&datetime), "Fri, 14:15:16");
+}
+
+#[test]
+fn test_vancouver_2026() {
+    use icu_datetime::{fieldsets, DateTimeFormatter};
+    use icu_time::zone::{TimeZone, UtcOffset};
+    use icu_time::ZonedDateTime;
+
+    let date = Date::try_new_gregorian(2026, 12, 1).unwrap();
+    let time = Time::try_new(12, 0, 0, 0).unwrap();
+
+    let fmt = DateTimeFormatter::try_new(
+        locale!("en-US").into(),
+        fieldsets::YMD::long()
+            .with_time_hm()
+            .with_zone(fieldsets::zone::SpecificShort),
+    )
+    .unwrap();
+
+    // Vancouver is in PST (UTC-8) normally.
+    {
+        let offset = UtcOffset::from_seconds_unchecked(-8 * 3600);
+        let zone = TimeZone::from_iana_id("America/Vancouver")
+            .with_offset(Some(offset))
+            .at_date_time(DateTime { date, time });
+
+        let zdt = ZonedDateTime { date, time, zone };
+
+        assert_writeable_eq!(fmt.format(&zdt), "December 1, 2026 at 12:00\u{202f}PM PST");
+    }
+
+    // Vancouver might change to permanent DST (UTC-7).
+    {
+        let offset = UtcOffset::from_seconds_unchecked(-7 * 3600);
+        let zone = TimeZone::from_iana_id("America/Vancouver")
+            .with_offset(Some(offset))
+            .at_date_time(DateTime { date, time });
+
+        let zdt = ZonedDateTime { date, time, zone };
+
+        assert_writeable_eq!(fmt.format(&zdt), "December 1, 2026 at 12:00\u{202f}PM PDT");
+    }
 }
