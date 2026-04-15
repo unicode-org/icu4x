@@ -6,7 +6,7 @@
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::collections::codepointtrie;
-use icu::segmenter::provider::{SegmenterUnihanRadicalV1, UnihanIrgData};
+use icu::segmenter::provider::radical::{SegmenterUnihanRadicalV1, UnihanIrgData};
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
@@ -60,7 +60,7 @@ impl IterableDataProviderCached<SegmenterUnihanRadicalV1> for SourceDataProvider
 #[cfg(test)]
 mod tests {
     use crate::SourceDataProvider;
-    use icu::segmenter::provider::SegmenterUnihanRadicalV1;
+    use icu::segmenter::provider::radical::SegmenterUnihanRadicalV1;
     use icu_provider::prelude::*;
 
     #[test]

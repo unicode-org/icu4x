@@ -4,7 +4,7 @@
 
 #![allow(dead_code)]
 
-use icu_segmenter::provider::{Baked, UnihanIrgData};
+use icu_segmenter::provider::{radical::UnihanIrgData, Baked};
 use std::collections::HashMap;
 
 fn load_irg_from_baked() -> &'static UnihanIrgData<'static> {

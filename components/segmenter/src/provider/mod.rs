@@ -16,9 +16,9 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 mod lstm;
-mod radical;
 pub use lstm::*;
-pub use radical::*;
+#[cfg(feature = "unstable")]
+pub mod radical;
 
 use crate::options::WordType;
 use icu_collections::codepointtrie::CodePointTrie;
@@ -139,7 +139,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterDictionaryAutoV1::INFO,
     SegmenterDictionaryExtendedV1::INFO,
     SegmenterLstmAutoV1::INFO,
-    SegmenterUnihanRadicalV1::INFO,
+    #[cfg(feature = "unstable")]
+    radical::SegmenterUnihanRadicalV1::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
