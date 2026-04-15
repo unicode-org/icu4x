@@ -9,7 +9,7 @@ version = "0.6.3"
 keywords = ["formatting", "write", "string", "no-std"]
 
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 include.workspace = true
 license.workspace = true
 repository.workspace = true

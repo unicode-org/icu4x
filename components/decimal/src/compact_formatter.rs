@@ -347,7 +347,7 @@ impl CompactDecimalFormatter {
     ///     "999K"
     /// );
     /// ```
-    pub fn format(&self, value: &Decimal) -> impl Writeable + Display + '_ {
+    pub fn format(&self, value: &Decimal) -> impl Writeable + Display + '_ + use<'_> {
         let (compact_pattern, significand) = self
             .compact_data
             .get()

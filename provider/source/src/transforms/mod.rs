@@ -19,7 +19,7 @@ impl CldrCache {
             .get_or_init(|| {
                 fn invent_bcp47(transform: &str) -> Locale {
                     let transform = transform.to_ascii_lowercase();
-                    let r = ["und", "x"]
+                    ["und", "x"]
                         .into_iter()
                         .chain(
                             transform
@@ -28,8 +28,7 @@ impl CldrCache {
                         )
                         .join("-")
                         .parse()
-                        .unwrap();
-                    r
+                        .unwrap()
                 }
 
                 let mut provider = RuleCollection::default();

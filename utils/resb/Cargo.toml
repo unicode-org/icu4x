@@ -10,9 +10,9 @@ categories.workspace = true
 keywords = ["binary-format", "localization"]
 
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 include.workspace = true
-license = { workspace = true }
+license.workspace = true
 repository.workspace = true
 rust-version = "1.82"
 

@@ -218,7 +218,7 @@ impl<'a> ScriptExtensionsSet<'a> {
     ///     [Script::Tamil, Script::Grantha]
     /// );
     /// ```
-    pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + 'a {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + 'a + use<'a> {
         ZeroSlice::iter(self.values)
     }
 

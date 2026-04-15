@@ -228,7 +228,7 @@ mod date_skeleton_consistency_tests {
             match (item, strategy) {
                 (
                     PatternItem::Field(
-                        ref mut field @ Field {
+                        field @ Field {
                             symbol: FieldSymbol::Era,
                             length: FieldLength::Three,
                         },
@@ -241,7 +241,7 @@ mod date_skeleton_consistency_tests {
                 // Ignore differences between 'y' and 'yy'?
                 (
                     PatternItem::Field(
-                        ref mut field @ Field {
+                        field @ Field {
                             length: FieldLength::Two,
                             ..
                         },
@@ -254,7 +254,7 @@ mod date_skeleton_consistency_tests {
                 // TODO(#5892): For now, ignore differences between 'ccc', 'cccc', and 'EEE'
                 (
                     PatternItem::Field(
-                        ref mut field @ Field {
+                        field @ Field {
                             symbol: FieldSymbol::Weekday(fields::Weekday::StandAlone),
                             length: FieldLength::Four,
                         },
@@ -268,7 +268,7 @@ mod date_skeleton_consistency_tests {
                 // Ignore differences between 'MMM' and 'MMMM'?
                 (
                     PatternItem::Field(
-                        ref mut field @ Field {
+                        field @ Field {
                             length: FieldLength::Four,
                             ..
                         },

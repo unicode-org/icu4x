@@ -763,7 +763,7 @@ impl<'a> ItemsAndOptions<'a> {
         self.items.iter().map(move |mut pattern_item| {
             #[expect(clippy::single_match)] // need `ref mut`, which doesn't work in `if let`?
             match &mut pattern_item {
-                PatternItem::Field(ref mut field) => {
+                PatternItem::Field(field) => {
                     let alignment = self.alignment.unwrap_or_default();
                     if matches!(alignment, Alignment::Column)
                         && field.length == FieldLength::One

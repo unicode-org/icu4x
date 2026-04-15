@@ -6,8 +6,12 @@
 name = "icu_benchmark_memory"
 version = "0.0.0"
 publish = false
-edition = "2021"
+edition.workspace = true
 
 [dependencies]
 serde_json = { workspace = true }
 clap = { workspace = true, features = ["derive"] }
+
+[package.metadata.cargo-all-features]
+# Unpublished internal tool; skip
+skip_package = true

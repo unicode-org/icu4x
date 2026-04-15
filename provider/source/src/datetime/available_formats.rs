@@ -28,7 +28,8 @@ impl cldr_serde::ca::AvailableFormats {
                 .insert(plural_category, pattern_str.to_string());
         }
 
-        let skeletons = patterns
+        // TODO(#308): Support numbering system variations. We currently throw them away.
+        patterns
             .iter()
             .filter_map(|(skeleton_str, patterns)| {
                 let skeleton = match Skeleton::try_from(skeleton_str.as_str()) {
@@ -50,10 +51,7 @@ impl cldr_serde::ca::AvailableFormats {
 
                 Some((skeleton, patterns))
             })
-            .collect();
-
-        // TODO(#308): Support numbering system variations. We currently throw them away.
-        skeletons
+            .collect()
     }
 }
 

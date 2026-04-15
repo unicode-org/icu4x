@@ -127,7 +127,7 @@ impl ParseError {
     ///     r"[\N← error: unimplemented"
     /// );
     /// ```
-    pub fn fmt_with_source(&self, source: &str) -> impl Display {
+    pub fn fmt_with_source(&self, source: &str) -> impl Display + use<> {
         let ParseError { offset, kind } = *self;
 
         if kind == ParseErrorKind::Eof {

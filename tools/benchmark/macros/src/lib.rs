@@ -57,7 +57,7 @@ macro_rules! println {
 macro_rules! instrument {
     () => {
         const _: () = {
-            #[no_mangle]
+            #[unsafe(no_mangle)]
             fn main(_argc: isize, _argv: *const *const u8) -> isize {
                 self::main();
                 0
@@ -77,7 +77,7 @@ macro_rules! instrument {
         static ALLOCATOR: dhat::Alloc = dhat::Alloc;
 
         const _: () = {
-            #[no_mangle]
+            #[unsafe(no_mangle)]
             fn main(_argc: isize, _argv: *const *const u8) -> isize {
                 // The dhat instance will be alive for the life of the main function, and when dropped,
                 // it will output heap usage information.
@@ -100,7 +100,7 @@ macro_rules! instrument {
         static ALLOCATOR: GlobalDlmalloc = GlobalDlmalloc;
 
         const _: () = {
-            #[no_mangle]
+            #[unsafe(no_mangle)]
             fn main(_argc: isize, _argv: *const *const u8) -> isize {
                 self::main();
                 0

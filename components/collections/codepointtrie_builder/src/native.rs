@@ -46,7 +46,7 @@ pub union UCPTrieData {
     pub ptr8: *const u8,
 }
 
-extern "C" {
+unsafe extern "C" {
     #[cfg_attr(icu4c_enable_renaming, link_name = concat!("umutablecptrie_open_", env!("ICU4C_RENAME_VERSION")))]
     fn umutablecptrie_open(
         initial_value: u32,

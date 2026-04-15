@@ -33,7 +33,7 @@ pub mod ffi {
                 None => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
-                Some(ref buffer_provider) => Ok(buffer_provider),
+                Some(buffer_provider) => Ok(buffer_provider),
             }
         }
 

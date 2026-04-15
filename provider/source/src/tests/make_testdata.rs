@@ -318,13 +318,17 @@ unsafe impl GlobalAlloc for MeasuringAllocator {
         if Self::ACTIVE.with(|f| f.get()) {
             Self::TOTAL_ALLOCATED.with(|c| c.set(c.get() + layout.size() as u64));
         }
-        System.alloc(layout)
+
+        // Safety: By our safety invariant.
+        unsafe { System.alloc(layout) }
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
         if Self::ACTIVE.with(|f| f.get()) {
             Self::TOTAL_DEALLOCATED.with(|c| c.set(c.get() + layout.size() as u64));
         }
-        System.dealloc(ptr, layout)
+
+        // Safety: By our safety invariant.
+        unsafe { System.dealloc(ptr, layout) }
     }
 }

@@ -29,7 +29,7 @@ mod real {
         loop {}
     }
 
-    #[no_mangle]
+    #[unsafe(no_mangle)]
     pub extern "C" fn _start() -> ! {
         // don't care
         loop {}

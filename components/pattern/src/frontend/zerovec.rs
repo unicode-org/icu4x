@@ -46,7 +46,9 @@ where
     }
 
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        let store = S::from_bytes_unchecked(bytes);
+        // Safety: validate_bytes succeeded, so S::parse_bytes succeeded,
+        // so S::validate_bytes succeeded, so S::from_bytes_unchecked is safe.
+        let store = unsafe { S::from_bytes_unchecked(bytes) };
         Self::from_ref_store_unchecked(store)
     }
 }

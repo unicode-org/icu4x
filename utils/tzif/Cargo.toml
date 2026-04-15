@@ -10,7 +10,7 @@ keywords = ["timezone", "time-zone", "posix", "iana"]
 categories = ["date-and-time", "parser-implementations"]
 
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 license.workspace = true
 repository.workspace = true
 rust-version = "1.82"

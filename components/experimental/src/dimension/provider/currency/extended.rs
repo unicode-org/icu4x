@@ -59,7 +59,9 @@ impl<'data> CurrencyExtendedData<'data> {
                 elements: alloc::borrow::Cow::Borrowed(
                     // Safety: this function's safety invariant guarantees that the bytes
                     // represent a valid `PluralElementsPackedULE`
-                    icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(bytes),
+                    unsafe {
+                        icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(bytes)
+                    },
                 ),
             },
         }

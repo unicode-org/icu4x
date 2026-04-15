@@ -6,7 +6,7 @@
 name = "md-tests"
 version = "0.0.0"
 publish = false
-edition = "2021"
+edition.workspace = true
 
 [dev-dependencies]
 icu = { workspace = true, features = ["compiled_data", "serde"] }

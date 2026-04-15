@@ -37,7 +37,7 @@ impl crate::IterableDataProviderCached<LocaleAliasesV1> for SourceDataProvider {
 // Sort rules following algorithm in Preprocessing, step 5 of Appendix C:
 //   - the size of the union of all field value sets, with largest size first
 //   - alphabetically by each field
-fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
+fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord + use<> {
     let mut union_size = langid.variants.len() as i8;
     if !langid.language.is_unknown() {
         union_size += 1;
