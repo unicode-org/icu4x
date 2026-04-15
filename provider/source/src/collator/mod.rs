@@ -44,8 +44,6 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
         return "zh_pinyin".into();
     } else if s == "und_Hani" {
         s = "zh".into();
-    } else if s == "sr_Cyrl_ME" {
-        s = "sr_Latn".into();
     }
 
     s.push('_');
@@ -91,14 +89,6 @@ fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
         variant = "";
     }
 
-    if language == "sr_Latn" {
-        // sr-Cyrl-ME falls back to sr-ME, which falls back to sr-Latn.
-        r.push(DataIdentifierCow::from_borrowed_and_owned(
-            Default::default(),
-            locale!("sr-Cyrl-ME").into(),
-        ));
-    }
-
     let marker_attributes = match variant {
         "traditional" => DataMarkerAttributes::from_str_or_panic("trad").to_owned(),
         "phonebook" => DataMarkerAttributes::from_str_or_panic("phonebk").to_owned(),
@@ -131,6 +121,7 @@ fn test_all_fallback_overrides_handled() {
         .collect::<Vec<_>>();
 
     let handled_overrides = [
+        // We ignore this one, see https://unicode-org.atlassian.net/browse/CLDR-19386
         "sr-Cyrl-ME",
         "yue",
         "yue-CN",
