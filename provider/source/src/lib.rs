@@ -36,7 +36,7 @@ use icu::calendar::{Date, Iso};
 use icu::time::zone::UtcOffset;
 use icu::time::Time;
 use icu_provider::prelude::*;
-use source::{AbstractFs, SerdeCache, TzdbCache, UnihanCache};
+use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::path::Path;
@@ -99,7 +99,7 @@ pub struct SourceDataProvider {
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
-    unihan_paths: Option<Arc<UnihanCache>>,
+    unihan_paths: Option<Arc<AbstractFs>>,
     ucd_paths: Option<Arc<AbstractFs>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
@@ -228,10 +228,7 @@ impl SourceDataProvider {
     /// (see [Unicode Character Database](https://www.unicode.org/ucd/)).
     pub fn with_unihan(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
-            unihan_paths: Some(Arc::new(UnihanCache {
-                root: AbstractFs::new(root)?,
-                irg_cache: Default::default(),
-            })),
+            unihan_paths: Some(Arc::new(AbstractFs::new(root)?)),
             ..self
         })
     }
@@ -323,12 +320,9 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_unihan_for_tag(self, tag: &str) -> Self {
         Self {
-            unihan_paths: Some(Arc::new(UnihanCache {
-                root: AbstractFs::new_from_url(format!(
-                    "https://www.unicode.org/Public/{tag}/ucd/Unihan.zip"
-                )),
-                irg_cache: Default::default(),
-            })),
+            unihan_paths: Some(Arc::new(AbstractFs::new_from_url(format!(
+                "https://www.unicode.org/Public/{tag}/ucd/Unihan.zip"
+            )))),
             ..self
         }
     }
@@ -440,7 +434,7 @@ impl SourceDataProvider {
     }
 
     #[allow(dead_code)]
-    fn unihan(&self) -> Result<&UnihanCache, DataError> {
+    fn unihan(&self) -> Result<&AbstractFs, DataError> {
         self.unihan_paths
             .as_deref()
             .ok_or(Self::MISSING_UNIHAN_ERROR)

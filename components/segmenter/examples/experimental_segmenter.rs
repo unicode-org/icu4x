@@ -13,15 +13,13 @@ mod cnn;
 
 use adaboost::Predictor;
 use cnn::{CnnSegmenter, RawCnnData};
-use icu_segmenter::provider::Baked;
 use icu_segmenter::{options::WordBreakOptions, WordSegmenter, WordSegmenterBorrowed};
 use std::time::Instant;
 
 const REPETITIONS: usize = 1000;
 
 fn main_radaboost(args: &[String]) {
-    let irg = Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1;
-    let segmenter = Predictor::for_test(irg);
+    let segmenter = Predictor::for_test();
     let s = &args[0];
     let start_time = Instant::now();
     for _ in 0..REPETITIONS {
@@ -42,8 +40,7 @@ fn main_radaboost(args: &[String]) {
 }
 
 fn main_thadaboost(args: &[String]) {
-    let irg = Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1;
-    let segmenter = Predictor::for_test_thai(irg);
+    let segmenter = Predictor::for_test_thai();
     let s = &args[0];
     let start_time = Instant::now();
     for _ in 0..REPETITIONS {

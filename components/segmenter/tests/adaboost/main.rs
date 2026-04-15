@@ -4,38 +4,37 @@
 
 #![allow(dead_code)]
 
-use icu_segmenter::provider::{radical::UnihanIrgData, Baked};
+use icu_segmenter::provider::{radical::UnihanRadicalsData, Baked};
 use std::collections::HashMap;
-
-fn load_irg_from_baked() -> &'static UnihanIrgData<'static> {
-    Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1
-}
 
 static MODEL_FOR_TEST: &str = include_str!("model.json");
 static MODEL_FOR_TEST_THAI: &str = include_str!("model_thai.json");
 
-pub(crate) fn get_radical(irg: &UnihanIrgData<'_>, ch: char) -> u8 {
-    irg.trie.get(ch)
+pub(crate) fn get_radical(radicals: &UnihanRadicalsData<'_>, ch: char) -> u8 {
+    radicals.trie.get(ch)
 }
 
 pub(crate) struct Predictor<'a> {
     pub(crate) model: HashMap<String, HashMap<String, i16>>,
-    irg: &'a UnihanIrgData<'a>,
+    radicals: &'a UnihanRadicalsData<'a>,
 }
 
 impl<'a> Predictor<'a> {
-    pub(crate) fn from_json(json: &str, irg: &'a UnihanIrgData<'a>) -> Self {
+    pub(crate) fn from_json(json: &str, radicals: &'a UnihanRadicalsData<'a>) -> Self {
         let model: HashMap<String, HashMap<String, i16>> =
             serde_json::from_str(json).unwrap_or_default();
-        Self { model, irg }
+        Self { model, radicals }
     }
 
-    pub(crate) fn for_test(irg: &'a UnihanIrgData<'a>) -> Self {
-        Self::from_json(MODEL_FOR_TEST, irg)
+    pub(crate) fn for_test() -> Self {
+        Self::from_json(MODEL_FOR_TEST, Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1)
     }
 
-    pub(crate) fn for_test_thai(irg: &'a UnihanIrgData<'a>) -> Self {
-        Self::from_json(MODEL_FOR_TEST_THAI, irg)
+    pub(crate) fn for_test_thai() -> Self {
+        Self::from_json(
+            MODEL_FOR_TEST_THAI,
+            Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1,
+        )
     }
 
     pub(crate) fn predict(&self, sentence: &str) -> Vec<i16> {
@@ -52,7 +51,7 @@ impl<'a> Predictor<'a> {
 
             let mut score: i16 = 4;
 
-            let rad4 = get_radical(self.irg, c);
+            let rad4 = get_radical(self.radicals, c);
             if rad4 != 0 {
                 if let Some(map) = self.model.get("RSRID") {
                     let key = format!("{}:{}", c_prev, rad4);
@@ -60,7 +59,7 @@ impl<'a> Predictor<'a> {
                 }
             }
 
-            let rad3 = get_radical(self.irg, c_prev);
+            let rad3 = get_radical(self.radicals, c_prev);
             if rad3 != 0 {
                 if let Some(map) = self.model.get("LSRID") {
                     let key = format!("{}:{}", rad3, c);
@@ -262,8 +261,7 @@ fn python_test_output_thai() -> Vec<i16> {
 
 #[test]
 fn main() {
-    let irg = load_irg_from_baked();
-    let predictor = Predictor::for_test(irg);
+    let predictor = Predictor::for_test();
 
     let sentence =
         "根据最新的财报数据显示，该公司的市盈率已经达到了历史最低点，但是其核心竞争力依然保持稳定增长的态势。"
@@ -278,9 +276,8 @@ fn main() {
 fn rust_matches_python_probs() {
     let python = python_test_output();
     let python_thai = python_test_output_thai();
-    let irg = load_irg_from_baked();
-    let predictor = Predictor::for_test(irg);
-    let predictor_thai = Predictor::for_test_thai(irg);
+    let predictor = Predictor::for_test();
+    let predictor_thai = Predictor::for_test_thai();
 
     let sentence =
         "根据最新的财报数据显示，该公司的市盈率已经达到了历史最低点，但是其核心竞争力依然保持稳定增长的态势。"

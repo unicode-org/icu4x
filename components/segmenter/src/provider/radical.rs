@@ -7,19 +7,19 @@
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 
-/// Data for Unihan IRG sources (Radicals).
+/// Data for Unihan radicals.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider::radical))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct UnihanIrgData<'data> {
+pub struct UnihanRadicalsData<'data> {
     /// Trie mapping code points to their IRG source radical ID (u8).
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u8>,
 }
 
 icu_provider::data_struct!(
-    UnihanIrgData<'_>,
+    UnihanRadicalsData<'_>,
     #[cfg(feature = "datagen")]
 );
 
@@ -27,6 +27,6 @@ icu_provider::data_marker!(
     /// Marker for the singleton trie mapping code points to their Unihan IRG source radical IDs.
     SegmenterUnihanRadicalV1,
     "segmenter/unihan/radical/v1",
-    UnihanIrgData<'static>,
+    UnihanRadicalsData<'static>,
     is_singleton = true
 );
