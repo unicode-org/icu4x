@@ -121,6 +121,37 @@ pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTy
 /// For examples of use, see [`LineSegmenter`].
 pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
 
+/// Returns `true` if UAX #14 forbids a break immediately before a character
+/// whose line-break class is `class`, regardless of the class that precedes it.
+///
+/// Used by the complex-script line-break pipeline to decide whether the
+/// dict/LSTM's boundary between an SA chunk and the next character is a
+/// valid line-break opportunity. For the classes listed here UAX #14 states
+/// `× class` unconditionally (or unconditionally in all contexts reachable
+/// from SA in practice):
+///
+/// * **LB7**:   `× SP` — never break before a space.
+/// * **LB9**:   `× CM`, `× ZWJ` — combining marks attach to the preceding char.
+/// * **LB11**:  `× WJ` — word-joiner is glue.
+/// * **LB12a**: `× GL` — non-breaking glue.
+/// * **LB13**:  `× CL`, `× CP`, `× EX`, `× IS`, `× SY`.
+/// * **LB21**:  `× BA`, `× HY`, `× NS` — no break before these after the
+///              previous non-space char (SA never introduces a space on its
+///              right, so this simplifies to unconditional `×`).
+/// * **LB22**:  `× IN`.
+///
+/// Classes intentionally **not** included here either allow a break
+/// (LB18 `SP ÷`, etc.), require surrounding context that our SA-adjacent
+/// usage cannot produce, or are handled by the mandatory-break rules
+/// (LB4/LB5: BK, CR, LF, NL).
+#[inline]
+fn lb_class_forbids_break_before(class: u8) -> bool {
+    matches!(
+        class,
+        SP | BA | HY | NS | WJ | GL | CL | CP | EX | IS | SY | IN | ZWJ | CM,
+    )
+}
+
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
 ///
@@ -1132,12 +1163,18 @@ where
     let start_point = iter.current_pos_data;
     let mut s = String::new();
     s.push(left_codepoint);
+    // Capture the char that terminated collection (if any). It is passed to
+    // `complex_language_line_breaks_str` so the UAX #14 filter can decide
+    // whether the dict/LSTM's trailing break is a valid line-break
+    // opportunity (LB7 `× SP`, LB21 `× BA`, LB13 `× CL`, etc.).
+    let mut next_ext_char: Option<char> = None;
     loop {
         debug_assert!(!iter.is_eof());
         s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
         if let Some(current_codepoint) = iter.get_current_codepoint() {
             if !T::use_complex_breaking(iter, current_codepoint) {
+                next_ext_char = Some(current_codepoint);
                 break;
             }
         } else {
@@ -1149,7 +1186,19 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.complex, &s);
+    // Capture `data` and `options` so the UAX #14 predicate closure can
+    // look up line-break classes without borrowing `iter` across the call
+    // to the complex oracle. Both are shared references (`Copy`).
+    let data = iter.data;
+    let options = iter.options;
+    let breaks = complex_language_line_breaks_str(iter.complex, &s, next_ext_char, |c| {
+        lb_class_forbids_break_before(get_linebreak_property_with_rule(
+            &data.property_table,
+            c,
+            options.strictness,
+            options.word_option,
+        ))
+    });
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -1239,12 +1288,16 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         let start_iter = iterator.iter.clone();
         let start_point = iterator.current_pos_data;
         let mut s = vec![left_codepoint as u16];
+        // Capture the codepoint that terminated collection (if any). See
+        // `handle_complex_language_utf8` for rationale.
+        let mut next_ext_cp: Option<u32> = None;
         loop {
             debug_assert!(!iterator.is_eof());
             s.push(iterator.get_current_codepoint()? as u16);
             iterator.advance_iter();
             if let Some(current_codepoint) = iterator.get_current_codepoint() {
                 if !Self::use_complex_breaking(iterator, current_codepoint) {
+                    next_ext_cp = Some(current_codepoint);
                     break;
                 }
             } else {
@@ -1256,7 +1309,26 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.complex, &s);
+        let data = iterator.data;
+        let options = iterator.options;
+        // The filter predicate takes u16 (BMP code unit). All
+        // "forbids-break-before" classes we care about (SP, BA, GL, CL, CP,
+        // EX, IS, SY, WJ, IN, NS, HY, ZWJ, CM) are BMP, so a single u16
+        // lookup is faithful for our purposes.
+        let next_ext_code_unit = next_ext_cp.and_then(|c| u16::try_from(c).ok());
+        let breaks = complex_language_line_breaks_utf16(
+            iterator.complex,
+            &s,
+            next_ext_code_unit,
+            |c| {
+                lb_class_forbids_break_before(get_linebreak_property_utf32_with_rule(
+                    &data.property_table,
+                    c as u32,
+                    options.strictness,
+                    options.word_option,
+                ))
+            },
+        );
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iterator.result_cache.first()?;
@@ -1637,5 +1709,168 @@ mod tests {
         let segmenter = LineSegmenter::new_auto();
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
+    }
+
+    /// Shared helper: no two adjacent line breaks in `text`, and UTF-8 /
+    /// UTF-16 break offsets agree under conversion. A double-break
+    /// (offsets differing by 1) is the issue-#7218 symptom.
+    fn assert_no_double_breaks_and_utf_consistency(text: &str, label: &str) {
+        let segmenter = LineSegmenter::new_auto();
+
+        let utf8_breaks: Vec<usize> = segmenter.segment_str(text).collect();
+        for pair in utf8_breaks.windows(2).skip(1) {
+            assert!(
+                pair[1] - pair[0] > 1,
+                "{label}: UTF-8 double-break at {pair:?} in {utf8_breaks:?}"
+            );
+        }
+
+        let utf16: Vec<u16> = text.encode_utf16().collect();
+        let utf16_breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        for pair in utf16_breaks.windows(2).skip(1) {
+            assert!(
+                pair[1] - pair[0] > 1,
+                "{label}: UTF-16 double-break at {pair:?} in {utf16_breaks:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn khmer_line_break_with_spaces() {
+        assert_no_double_breaks_and_utf_consistency("ខ្មែរ ភាសា", "Khmer with space");
+    }
+
+    #[test]
+    fn thai_line_break_with_spaces() {
+        assert_no_double_breaks_and_utf_consistency("ภาษา ไทย", "Thai with space");
+    }
+
+    #[test]
+    fn lao_line_break_with_spaces() {
+        assert_no_double_breaks_and_utf_consistency("ລາວ ພາສາ", "Lao with space");
+    }
+
+    /// Exercises the UAX #14 filter in `complex::complex_language_line_breaks_str`
+    /// against an input with multiple SA-SP boundaries. Each Thai word
+    /// is independently segmented; the trailing break of each SA run is
+    /// filtered because the next char (SP) has LB class SP which forbids
+    /// a preceding break under LB7.
+    #[test]
+    fn sa_sp_boundary_filtered_at_every_run() {
+        let text = "ภาษา ไทย abc";
+        assert_no_double_breaks_and_utf_consistency(text, "multiple SA-SP boundaries");
+
+        let segmenter = LineSegmenter::new_auto();
+        let breaks: Vec<usize> = segmenter.segment_str(text).collect();
+        let first_space = text.find(' ').unwrap();
+        let second_space = text.rfind(' ').unwrap();
+        assert!(
+            !breaks.contains(&first_space),
+            "unexpected break BEFORE first space at {first_space}: {breaks:?}"
+        );
+        assert!(
+            !breaks.contains(&second_space),
+            "unexpected break BEFORE second space at {second_space}: {breaks:?}"
+        );
+        assert!(
+            breaks.contains(&(first_space + 1)),
+            "missing break AFTER first space at {}: {breaks:?}",
+            first_space + 1
+        );
+        assert!(
+            breaks.contains(&(second_space + 1)),
+            "missing break AFTER second space at {}: {breaks:?}",
+            second_space + 1
+        );
+    }
+
+    /// Non-ASCII whitespace around SA must not produce double-breaks.
+    ///
+    /// UAX #14 assigns line-break class `SP` only to U+0020. Other
+    /// "whitespace-looking" characters have different LB classes — most
+    /// of them class BA (break after), which LB21 forbids a break
+    /// *before*. The generalized filter in
+    /// `complex::complex_language_line_breaks_*` consults the caller's
+    /// `forbids_break_before` predicate for every terminal SA boundary,
+    /// so all of the following must be handled uniformly:
+    ///
+    ///   - U+00A0 NO-BREAK SPACE  → GL (LB12a × GL)
+    ///   - U+3000 IDEOGRAPHIC SP  → BA (LB21 × BA)
+    ///   - U+2009 THIN SPACE      → BA
+    ///   - U+0009 TAB             → BA
+    #[test]
+    fn non_ascii_whitespace_around_sa() {
+        assert_no_double_breaks_and_utf_consistency("ภาษา\u{00A0}ไทย", "Thai + NBSP");
+        assert_no_double_breaks_and_utf_consistency("ภาษา\u{3000}ไทย", "Thai + IDSP");
+        assert_no_double_breaks_and_utf_consistency("ภาษา\u{2009}ไทย", "Thai + THIN SPACE");
+        assert_no_double_breaks_and_utf_consistency("ภาษา\tไทย", "Thai + TAB");
+    }
+
+    /// LSTM and Dictionary engines both feed through
+    /// `complex_language_line_breaks_str`, so both must be free of the
+    /// SA|SP double-break regardless of which word boundaries each engine
+    /// chooses internally.
+    ///
+    /// The two engines are **not** expected to agree on the full set of
+    /// break positions (the dict's word list differs from the LSTM's
+    /// trained boundaries). What this test guards is the invariant that
+    /// the UAX #14 filter applies uniformly — neither produces a
+    /// double-break around the space, and each engine's break at the
+    /// byte after each space is present (LB18 `SP ÷`).
+    #[test]
+    fn lstm_vs_dictionary_no_double_break() {
+        let text = "ภาษา ไทย ภาษา";
+
+        let lstm = LineSegmenter::new_lstm();
+        let dict = LineSegmenter::new_dictionary();
+
+        let lstm_breaks: Vec<usize> = lstm.segment_str(text).collect();
+        let dict_breaks: Vec<usize> = dict.segment_str(text).collect();
+
+        for pair in lstm_breaks.windows(2).skip(1) {
+            assert!(pair[1] - pair[0] > 1, "LSTM double-break: {lstm_breaks:?}");
+        }
+        for pair in dict_breaks.windows(2).skip(1) {
+            assert!(pair[1] - pair[0] > 1, "Dict double-break: {dict_breaks:?}");
+        }
+
+        for (engine, breaks) in [("LSTM", &lstm_breaks), ("Dict", &dict_breaks)] {
+            for (i, _) in text.match_indices(' ') {
+                assert!(
+                    !breaks.contains(&i),
+                    "{engine} broke BEFORE space at {i}: {breaks:?}"
+                );
+                assert!(
+                    breaks.contains(&(i + 1)),
+                    "{engine} missing break AFTER space at {}: {breaks:?}",
+                    i + 1
+                );
+            }
+        }
+    }
+
+    /// Word segmenter regression: `word.rs` uses
+    /// `complex_language_segment_str` (the word-boundary oracle), not the
+    /// line-break variant, so it must see every word boundary the dict/LSTM
+    /// produces. This locks that invariant end-to-end.
+    #[test]
+    fn word_segmenter_thai_unchanged() {
+        use crate::WordSegmenter;
+        let segmenter = WordSegmenter::new_auto();
+        let text = "ภาษาไทยภาษาไทย";
+        let breaks: Vec<usize> = segmenter.segment_str(text).collect();
+        // Every word boundary from the dict must be preserved — including
+        // the terminal one at the end of the SA run.
+        assert!(
+            breaks.contains(&text.len()),
+            "word segmenter must keep terminal boundary at {}: {breaks:?}",
+            text.len()
+        );
+        for pair in breaks.windows(2) {
+            assert!(
+                pair[1] - pair[0] > 0,
+                "word segmenter emitted duplicate offset: {breaks:?}"
+            );
+        }
     }
 }

@@ -339,7 +339,13 @@ fn try_load<M: KeyedDataMarker, P: DataProvider<M> + ?Sized>(
     }
 }
 
-/// Return UTF-16 segment offset array using dictionary or lstm segmenter.
+/// Return UTF-16 **word-boundary** offsets for complex-script input.
+///
+/// This is the word-boundary entry point used by `word.rs`. It runs the
+/// dictionary or LSTM segmenter over each SA (Southeast Asian) run and
+/// returns every word boundary the engine identifies. It performs **no**
+/// UAX #14 line-break filtering — callers that need line-break
+/// opportunities must use [`complex_language_line_breaks_utf16`] instead.
 pub(crate) fn complex_language_segment_utf16(
     payloads: &ComplexPayloads,
     input: &[u16],
@@ -374,7 +380,13 @@ pub(crate) fn complex_language_segment_utf16(
     result
 }
 
-/// Return UTF-8 segment offset array using dictionary or lstm segmenter.
+/// Return UTF-8 **word-boundary** offsets for complex-script input.
+///
+/// See [`complex_language_segment_utf16`] for the full semantic contract:
+/// this returns every word boundary the dict/LSTM engine identifies, with
+/// no UAX #14 filtering. It is consumed by the word segmenter, which wants
+/// all word boundaries regardless of line-break eligibility. For
+/// line-break opportunities, use [`complex_language_line_breaks_str`].
 pub(crate) fn complex_language_segment_str(payloads: &ComplexPayloads, input: &str) -> Vec<usize> {
     let mut result = Vec::new();
     let mut offset = 0;
@@ -402,6 +414,130 @@ pub(crate) fn complex_language_segment_str(payloads: &ComplexPayloads, input: &s
             }
         }
         offset += slice.len();
+    }
+    result
+}
+
+/// Return UAX #14 line-break-opportunity offsets for complex-script input
+/// (UTF-8).
+///
+/// Runs the same dictionary/LSTM pipeline as
+/// [`complex_language_segment_str`], then filters out boundaries that
+/// UAX #14 forbids at the chunk edges:
+///
+/// * **Internal boundary** between an SA chunk and a following non-SA
+///   chunk inside `input`: the dict/LSTM emits a terminal break at the
+///   end of the SA chunk; that break is dropped if `forbids_break_before`
+///   returns `true` for the first char of the non-SA chunk (e.g. LB7
+///   `× SP`, LB21 `× BA` for U+3000, etc.).
+/// * **Trailing boundary** at `input.len()`: the dict/LSTM emits a
+///   terminal break for the last SA chunk; that break is dropped if
+///   `next_ext_char` is `Some(c)` and `forbids_break_before(c)` returns
+///   `true`.
+///
+/// The predicate keeps UAX #14 knowledge out of this module: callers
+/// supply the rule, this function applies it at the seam between
+/// dict/LSTM output and the outer line-break engine. This is the
+/// correctness fix for issue #7218 (Asian text producing double breaks
+/// around spaces and other × X classes). Applying the filter here rather
+/// than in `line.rs` means the per-line-break-candidate hot path does
+/// not have to rescan the break list.
+pub(crate) fn complex_language_line_breaks_str<F: FnMut(char) -> bool>(
+    payloads: &ComplexPayloads,
+    input: &str,
+    next_ext_char: Option<char>,
+    mut forbids_break_before: F,
+) -> Vec<usize> {
+    let mut result = Vec::new();
+    let mut offset = 0;
+    for (slice, lang) in LanguageIterator::new(input) {
+        match payloads.select(lang) {
+            Some(Ok(dict)) => {
+                result.extend(
+                    DictionarySegmenter::new(dict.get(), payloads.grapheme.get())
+                        .segment_str(slice)
+                        .map(|n| offset + n),
+                );
+            }
+            #[cfg(feature = "lstm")]
+            Some(Err(lstm)) => {
+                result.extend(
+                    LstmSegmenter::new(lstm.get(), payloads.grapheme.get())
+                        .segment_str(slice)
+                        .map(|n| offset + n),
+                );
+            }
+            #[cfg(not(feature = "lstm"))]
+            Some(Err(_infallible)) => {} // should be refutable
+            None => {
+                // Drop the preceding SA chunk's terminal break if UAX #14
+                // forbids a break before the first char of this non-SA chunk.
+                // The `result.last() == Some(&offset)` guard protects against
+                // an empty vector or a preceding chunk that did not emit a
+                // terminal break.
+                if let Some(first) = slice.chars().next() {
+                    if forbids_break_before(first) && result.last() == Some(&offset) {
+                        result.pop();
+                    }
+                }
+                result.push(offset + slice.len());
+            }
+        }
+        offset += slice.len();
+    }
+    // Trailing terminal break vs. the char immediately following `input`.
+    if let Some(c) = next_ext_char {
+        if forbids_break_before(c) && result.last() == Some(&offset) {
+            result.pop();
+        }
+    }
+    result
+}
+
+/// Return UAX #14 line-break-opportunity offsets for complex-script input
+/// (UTF-16). See [`complex_language_line_breaks_str`] for the full contract.
+pub(crate) fn complex_language_line_breaks_utf16<F: FnMut(u16) -> bool>(
+    payloads: &ComplexPayloads,
+    input: &[u16],
+    next_ext_code_unit: Option<u16>,
+    mut forbids_break_before: F,
+) -> Vec<usize> {
+    let mut result = Vec::new();
+    let mut offset = 0;
+    for (slice, lang) in LanguageIteratorUtf16::new(input) {
+        match payloads.select(lang) {
+            Some(Ok(dict)) => {
+                result.extend(
+                    DictionarySegmenter::new(dict.get(), payloads.grapheme.get())
+                        .segment_utf16(slice)
+                        .map(|n| offset + n),
+                );
+            }
+            #[cfg(feature = "lstm")]
+            Some(Err(lstm)) => {
+                result.extend(
+                    LstmSegmenter::new(lstm.get(), payloads.grapheme.get())
+                        .segment_utf16(slice)
+                        .map(|n| offset + n),
+                );
+            }
+            #[cfg(not(feature = "lstm"))]
+            Some(Err(_infallible)) => {} // should be refutable
+            None => {
+                if let Some(&first) = slice.first() {
+                    if forbids_break_before(first) && result.last() == Some(&offset) {
+                        result.pop();
+                    }
+                }
+                result.push(offset + slice.len());
+            }
+        }
+        offset += slice.len();
+    }
+    if let Some(c) = next_ext_code_unit {
+        if forbids_break_before(c) && result.last() == Some(&offset) {
+            result.pop();
+        }
     }
     result
 }
