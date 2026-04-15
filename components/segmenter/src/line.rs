@@ -137,15 +137,15 @@ const ZWJ: u8 = 54;
 /// `× class` unconditionally (or unconditionally in all contexts reachable
 /// from SA in practice):
 ///
-/// * **LB7**:  `× SP` — never break before a space.
-/// * **LB9**:  `× CM`, `× ZWJ` — combining marks attach to the preceding char.
-/// * **LB11**: `× WJ` — word-joiner is glue.
-/// * **LB12a**:`× GL` — non-breaking glue.
-/// * **LB13**: `× CL`, `× CP`, `× EX`, `× IS`, `× SY`.
-/// * **LB21**: `× BA`, `× HY`, `× NS` — no break before these after the
-///             previous non-space char (SA never introduces a space on its
-///             right, so this simplifies to unconditional `×`).
-/// * **LB22**: `× IN`.
+/// * **`LB7`**:  `× SP` — never break before a space.
+/// * **`LB9`**:  `× CM`, `× ZWJ` — combining marks attach to the preceding char.
+/// * **`LB11`**: `× WJ` — word-joiner is glue.
+/// * **`LB12a`**:`× GL` — non-breaking glue.
+/// * **`LB13`**: `× CL`, `× CP`, `× EX`, `× IS`, `× SY`.
+/// * **`LB21`**: `× BA`, `× HY`, `× NS` — no break before these after the
+///   previous non-space char (SA never introduces a space on its
+///   right, so this simplifies to unconditional `×`).
+/// * **`LB22`**: `× IN`.
 ///
 /// Classes intentionally **not** included here either allow a break
 /// (LB18 `SP ÷`, etc.), require surrounding context that our SA-adjacent
@@ -1329,17 +1329,15 @@ where
     // `ResolvedLineBreakOptions` derives `Copy`).
     let data = iter.data;
     let options = iter.options;
-    let breaks = iter.complex.complex_language_line_breaks_str(
-        &s,
-        next_ext_char,
-        |c| {
+    let breaks = iter
+        .complex
+        .complex_language_line_breaks_str(&s, next_ext_char, |c| {
             lb_class_forbids_break_before(data.get_linebreak_property_utf32_with_rule(
                 c as u32,
                 options.strictness,
                 options.word_option,
             ))
-        },
-    );
+        });
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -1433,17 +1431,16 @@ impl LineBreakType for Utf16 {
         // EX, IS, SY, WJ, IN, NS, HY, ZWJ, CM) are BMP, so a single u16
         // lookup is faithful for our purposes.
         let next_ext_code_unit = next_ext_cp.and_then(|c| u16::try_from(c).ok());
-        let breaks = iterator.complex.complex_language_line_breaks_utf16(
-            &s,
-            next_ext_code_unit,
-            |c| {
-                lb_class_forbids_break_before(data.get_linebreak_property_utf32_with_rule(
-                    c as u32,
-                    options.strictness,
-                    options.word_option,
-                ))
-            },
-        );
+        let breaks =
+            iterator
+                .complex
+                .complex_language_line_breaks_utf16(&s, next_ext_code_unit, |c| {
+                    lb_class_forbids_break_before(data.get_linebreak_property_utf32_with_rule(
+                        c as u32,
+                        options.strictness,
+                        options.word_option,
+                    ))
+                });
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iterator.result_cache.first()?;
@@ -1993,8 +1990,8 @@ mod tests {
     /// `forbids_break_before` predicate for every terminal SA boundary,
     /// so all of the following must be handled uniformly:
     ///
-    ///   - U+00A0 NO-BREAK SPACE  → GL (LB12a × GL)
-    ///   - U+3000 IDEOGRAPHIC SP  → BA (LB21 × BA)
+    ///   - U+00A0 NO-BREAK SPACE  → GL (`LB12a` × GL)
+    ///   - U+3000 IDEOGRAPHIC SP  → BA (`LB21` × BA)
     ///   - U+2009 THIN SPACE      → BA
     ///   - U+0009 TAB             → BA
     #[test]
