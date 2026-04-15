@@ -109,14 +109,17 @@ fn word_line_th_wikipedia_auto() {
     );
 
     let breakpoints_line_utf8 = segmenter_line_auto.segment_str(text).collect::<Vec<_>>();
-    // Note: positions 27, 220, and 281 are bytes immediately before spaces between
-    // Thai text and other scripts/punctuation. The line segmenter should break
-    // only AFTER the space, not before it (UAX#14 LB7: × SP).
+    // Post-fix (issue #7218): the dict/LSTM terminal break immediately
+    // before each ASCII space — previously emitted at offsets 47, 82, and
+    // 113 in addition to 27, 220, 281 — is now filtered out by
+    // `complex::complex_language_line_breaks_str` under UAX #14 LB7
+    // (`× SP`), leaving only the `÷ SP` break after each space. The
+    // expected list below reflects that corrected behavior.
     assert_eq!(
         breakpoints_line_utf8,
         [
-            0, 9, 18, 28, 38, 47, 49, 53, 60, 68, 73, 82, 84, 87, 90, 95, 104, 113, 115, 121, 133,
-            148, 166, 175, 187, 193, 205, 221, 227, 239, 272, 282, 290, 297
+            0, 9, 18, 28, 38, 49, 53, 60, 68, 73, 84, 87, 90, 95, 104, 115, 121, 133, 148, 166,
+            175, 187, 193, 205, 221, 227, 239, 272, 282, 290, 297
         ]
     );
 
