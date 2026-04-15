@@ -109,6 +109,18 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
             Language::Unknown => None,
         }
     }
+    /// Return word-boundary offsets for complex-script input.
+    ///
+    /// This is the **word-boundary** entry point: every position returned is
+    /// a valid word boundary as determined by the dictionary or LSTM for the
+    /// relevant script. It performs **no** line-break filtering — adjacent
+    /// UAX #14 rules (LB7 `× SP`, LB21 `× BA`, LB13 `× CL`, etc.) are not
+    /// consulted here. Callers that need UAX #14-valid line-break
+    /// opportunities must use
+    /// [`Self::complex_language_line_breaks_str`] instead.
+    ///
+    /// Used by `word::handle_complex_language_utf8`, which wants every
+    /// word boundary regardless of UAX #14 break eligibility.
     pub(crate) fn complex_language_segment_str(&self, input: &str) -> Vec<usize> {
         let mut result = Vec::new();
         let mut offset = 0;
@@ -124,14 +136,6 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                     result.extend(seg.segment_str(slice).map(|n| offset + n));
                 }
                 None => {
-                    // When a space-only Unknown chunk sits between SA segments,
-                    // the preceding dict/LSTM segmenter will have placed a break
-                    // at the end of the SA chunk (right before the space). To avoid
-                    // a double-break (before AND after space), remove that preceding
-                    // break and only keep the break after the space(s).
-                    if slice.bytes().all(|b| b == b' ') && result.last() == Some(&offset) {
-                        result.pop();
-                    }
                     result.push(offset + slice.len());
                 }
             }
@@ -139,7 +143,75 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         }
         result
     }
-    /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
+
+    /// Return UAX #14 line-break-opportunity offsets for complex-script input.
+    ///
+    /// Runs the same dictionary/LSTM pipeline as
+    /// [`Self::complex_language_segment_str`], then filters out boundaries
+    /// that UAX #14 forbids at the chunk edges:
+    ///
+    /// * **Internal boundary** between an SA chunk and a following non-SA
+    ///   chunk inside `input`. The dict/LSTM emits a terminal break at the
+    ///   end of the SA chunk; that break is dropped if
+    ///   `forbids_break_before` returns `true` for the first char of the
+    ///   non-SA chunk (e.g. LB7 `× SP`).
+    /// * **Trailing boundary** at `input.len()`. The dict/LSTM emits a
+    ///   terminal break for the last SA chunk; that break is dropped if
+    ///   `next_ext_char` is `Some(c)` and `forbids_break_before(c)` returns
+    ///   `true` (e.g. LB21 `× BA` before U+3000 IDEOGRAPHIC SPACE).
+    ///
+    /// The predicate keeps UAX #14 knowledge out of this module: callers
+    /// supply the rule, we apply it at the seam between dict/LSTM output
+    /// and the outer line-break engine.
+    pub(crate) fn complex_language_line_breaks_str(
+        &self,
+        input: &str,
+        next_ext_char: Option<char>,
+        mut forbids_break_before: impl FnMut(char) -> bool,
+    ) -> Vec<usize> {
+        let mut result = Vec::new();
+        let mut offset = 0;
+        for (slice, lang) in LanguageIterator::new(input) {
+            match self.select(lang) {
+                Some(DictOrLstmBorrowed::Dict(dict)) => {
+                    let seg = DictionarySegmenter::new(dict, self.grapheme);
+                    result.extend(seg.segment_str(slice).map(|n| offset + n));
+                }
+                #[cfg(feature = "lstm")]
+                Some(DictOrLstmBorrowed::Lstm(lstm)) => {
+                    let seg = LstmSegmenter::new(lstm, self.grapheme);
+                    result.extend(seg.segment_str(slice).map(|n| offset + n));
+                }
+                None => {
+                    // Drop the preceding SA chunk's terminal break if UAX #14
+                    // forbids a break before the first char of this non-SA
+                    // chunk. The `result.last() == Some(&offset)` guard
+                    // protects against an empty vector or a preceding chunk
+                    // that did not emit a terminal break.
+                    if let Some(first) = slice.chars().next() {
+                        if forbids_break_before(first) && result.last() == Some(&offset) {
+                            result.pop();
+                        }
+                    }
+                    result.push(offset + slice.len());
+                }
+            }
+            offset += slice.len();
+        }
+        // Trailing terminal break vs. the char immediately following `input`.
+        if let Some(c) = next_ext_char {
+            if forbids_break_before(c) && result.last() == Some(&offset) {
+                result.pop();
+            }
+        }
+        result
+    }
+
+    /// Return word-boundary offsets for complex-script input (UTF-16).
+    ///
+    /// See [`Self::complex_language_segment_str`] for the semantic contract:
+    /// word boundaries only, no UAX #14 filtering. For line-break
+    /// opportunities, use [`Self::complex_language_line_breaks_utf16`].
     pub(crate) fn complex_language_segment_utf16(&self, input: &[u16]) -> Vec<usize> {
         let mut result = Vec::new();
         let mut offset = 0;
@@ -155,13 +227,51 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                     result.extend(seg.segment_utf16(slice).map(|n| offset + n));
                 }
                 None => {
-                    if slice.iter().all(|&c| c == 0x0020) && result.last() == Some(&offset) {
-                        result.pop();
+                    result.push(offset + slice.len());
+                }
+            }
+            offset += slice.len();
+        }
+        result
+    }
+
+    /// Return UAX #14 line-break-opportunity offsets for complex-script
+    /// input (UTF-16). See [`Self::complex_language_line_breaks_str`] for
+    /// the full contract.
+    pub(crate) fn complex_language_line_breaks_utf16(
+        &self,
+        input: &[u16],
+        next_ext_code_unit: Option<u16>,
+        mut forbids_break_before: impl FnMut(u16) -> bool,
+    ) -> Vec<usize> {
+        let mut result = Vec::new();
+        let mut offset = 0;
+        for (slice, lang) in LanguageIteratorUtf16::new(input) {
+            match self.select(lang) {
+                Some(DictOrLstmBorrowed::Dict(dict)) => {
+                    let seg = DictionarySegmenter::new(dict, self.grapheme);
+                    result.extend(seg.segment_utf16(slice).map(|n| offset + n));
+                }
+                #[cfg(feature = "lstm")]
+                Some(DictOrLstmBorrowed::Lstm(lstm)) => {
+                    let seg = LstmSegmenter::new(lstm, self.grapheme);
+                    result.extend(seg.segment_utf16(slice).map(|n| offset + n));
+                }
+                None => {
+                    if let Some(&first) = slice.first() {
+                        if forbids_break_before(first) && result.last() == Some(&offset) {
+                            result.pop();
+                        }
                     }
                     result.push(offset + slice.len());
                 }
             }
             offset += slice.len();
+        }
+        if let Some(c) = next_ext_code_unit {
+            if forbids_break_before(c) && result.last() == Some(&offset) {
+                result.pop();
+            }
         }
         result
     }
