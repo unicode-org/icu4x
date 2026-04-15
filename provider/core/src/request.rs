@@ -323,8 +323,10 @@ impl DataMarkerAttributes {
             return Err(AttributeParseError);
         };
 
-        // SAFETY: `Self` has the same layout as `str`
-        Ok(unsafe { core::mem::transmute::<Box<str>, Box<Self>>(s.into_boxed_str()) })
+        let boxed = s.into_boxed_str();
+        // Safety: Box::into_raw fulfils Box::from_raw's requirements, as DataMarkerAttributes is
+        // repr(transparent) over str
+        Ok(unsafe { Box::from_raw(Box::into_raw(boxed) as *mut Self) })
     }
 
     /// Creates a borrowed [`DataMarkerAttributes`] from a borrowed string.
@@ -355,8 +357,10 @@ impl DataMarkerAttributes {
 impl ToOwned for DataMarkerAttributes {
     type Owned = Box<Self>;
     fn to_owned(&self) -> Self::Owned {
-        // SAFETY: `Self` has the same layout as `str`
-        unsafe { core::mem::transmute::<Box<str>, Box<Self>>(self.as_str().to_boxed()) }
+        let boxed = self.as_str().to_boxed();
+        // Safety: Box::into_raw fulfils Box::from_raw's requirements, as DataMarkerAttributes is
+        // repr(transparent) over str
+        unsafe { Box::from_raw(Box::into_raw(boxed) as *mut Self) }
     }
 }
 
