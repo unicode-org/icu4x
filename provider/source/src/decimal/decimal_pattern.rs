@@ -156,10 +156,8 @@ impl DecimalSubPattern {
             let mut seen_optional = false;
             for item in fraction_items {
                 match item {
-                    NumberPatternItem::MandatoryDigit => {
-                        if seen_optional {
-                            return Err(DataError::custom("MandatoryAfterOptional"));
-                        }
+                    NumberPatternItem::MandatoryDigit if seen_optional => {
+                        return Err(DataError::custom("MandatoryAfterOptional"));
                     }
                     NumberPatternItem::OptionalDigit => {
                         seen_optional = true;

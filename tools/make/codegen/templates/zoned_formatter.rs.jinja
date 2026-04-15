@@ -165,6 +165,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter{{ ctor.suffix_rust() }}(
                     {%- if ctor.is_with_provider() %}
                     &provider,

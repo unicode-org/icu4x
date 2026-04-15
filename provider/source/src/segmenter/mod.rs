@@ -379,35 +379,33 @@ fn generate_rule_break_data(
                     {
                         for cp in 0..(CODEPOINT_TABLE_LEN as u32) {
                             match lb.get32(cp) {
-                                LineBreak::OpenPunctuation => {
-                                    if (p.name == "OP_OP30"
+                                LineBreak::OpenPunctuation
+                                    if ((p.name == "OP_OP30"
                                         && (eaw.get32(cp) != EastAsianWidth::Fullwidth
                                             && eaw.get32(cp) != EastAsianWidth::Halfwidth
                                             && eaw.get32(cp) != EastAsianWidth::Wide))
                                         || (p.name == "OP_EA"
                                             && (eaw.get32(cp) == EastAsianWidth::Fullwidth
                                                 || eaw.get32(cp) == EastAsianWidth::Halfwidth
-                                                || eaw.get32(cp) == EastAsianWidth::Wide))
-                                    {
+                                                || eaw.get32(cp) == EastAsianWidth::Wide)))
+                                    => {
                                         properties_trie.set_value(cp, property_index);
                                     }
-                                }
 
-                                LineBreak::CloseParenthesis => {
+                                LineBreak::CloseParenthesis
                                     // CP_EA is unused on the latest spec.
                                     if p.name == "CP_EA"
                                         && (eaw.get32(cp) == EastAsianWidth::Fullwidth
                                             || eaw.get32(cp) == EastAsianWidth::Halfwidth
                                             || eaw.get32(cp) == EastAsianWidth::Wide)
-                                    {
+                                    => {
                                         properties_trie.set_value(cp, property_index);
                                     }
-                                }
 
-                                LineBreak::Ideographic => {
+                                LineBreak::Ideographic
                                     if p.name == "ID_CN"
                                         && gc.get32(cp) == GeneralCategory::Unassigned
-                                    {
+                                    => {
                                         if let Some(c) = char::from_u32(cp) {
                                             if extended_pictographic.contains(c) {
                                                 properties_trie.set_value(cp, property_index);
@@ -431,25 +429,21 @@ fn generate_rule_break_data(
                                             }
                                         }
                                     }
-                                }
 
-                                LineBreak::PostfixNumeric => {
-                                    if p.name == "PO_EAW" && is_cjk_fullwidth(eaw, cp) {
+                                LineBreak::PostfixNumeric
+                                    if p.name == "PO_EAW" && is_cjk_fullwidth(eaw, cp) => {
                                         properties_trie.set_value(cp, property_index);
                                     }
-                                }
 
-                                LineBreak::PrefixNumeric => {
-                                    if p.name == "PR_EAW" && is_cjk_fullwidth(eaw, cp) {
+                                LineBreak::PrefixNumeric
+                                    if p.name == "PR_EAW" && is_cjk_fullwidth(eaw, cp) => {
                                         properties_trie.set_value(cp, property_index);
                                     }
-                                }
 
-                                LineBreak::Alphabetic => {
-                                    if p.name == "AL_DOTTED_CIRCLE" && cp == 0x25CC {
+                                LineBreak::Alphabetic
+                                    if p.name == "AL_DOTTED_CIRCLE" && cp == 0x25CC => {
                                         properties_trie.set_value(cp, property_index);
                                     }
-                                }
 
                                 LineBreak::Quotation => {
                                     if p.name == "QU_PI"
@@ -676,28 +670,26 @@ fn generate_rule_break_data_override(
         if p.left.is_none() && p.right.is_none() {
             // If any values aren't set, this is builtin type.
             match &*segmenter.segmenter_type {
-                "word" => {
+                "word"
                     // UAX29 defines the colon as MidLetter, but ICU4C's
                     // English data doesn't.
                     // See https://unicode-org.atlassian.net/browse/ICU-22112
                     //
                     // TODO: We have to consider this definition from CLDR instead.
-                    if p.name == "MidLetter" {
+                    if p.name == "MidLetter" => {
                         properties_trie.set_value(0x003a, property_index);
                         properties_trie.set_value(0xfe55, property_index);
                         properties_trie.set_value(0xff1a, property_index);
                     }
-                }
-                "sentence" => {
+                "sentence"
                     // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
                     // Greek data does.
                     //
                     // TODO: We have to consider this definition from CLDR instead.
-                    if p.name == "STerm" {
+                    if p.name == "STerm" => {
                         properties_trie.set_value(0x003b, property_index);
                         properties_trie.set_value(0x037e, property_index);
                     }
-                }
                 _ => {}
             }
         }

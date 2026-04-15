@@ -993,10 +993,10 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
             // CSS line-break property handling
             match self.options.strictness {
-                LineBreakStrictness::Normal => {
-                    if self.is_break_by_normal(right_codepoint) && !after_zwj {
-                        return self.get_current_position();
-                    }
+                LineBreakStrictness::Normal
+                    if self.is_break_by_normal(right_codepoint) && !after_zwj =>
+                {
+                    return self.get_current_position();
                 }
                 LineBreakStrictness::Loose => {
                     if let Some(breakable) = is_break_utf32_by_loose(

@@ -867,7 +867,7 @@ mod tests {
     #[test]
     fn test_transition_against_jiff() {
         for (iana, require_offset_change) in
-            jiff_tzdb_2025b::available().cartesian_product([true, false].into_iter())
+            jiff_tzdb_2025b::available().cartesian_product([true, false])
         {
             let transitions = transitions(iana, require_offset_change);
 

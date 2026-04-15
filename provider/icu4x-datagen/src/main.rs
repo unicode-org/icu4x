@@ -587,7 +587,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 .collect::<Option<Vec<_>>>()
             {
                 preprocessed_locales = Some(PreprocessedLocales::Locales(
-                    p.locales_for_coverage_levels(locale_subsets.into_iter())?
+                    p.locales_for_coverage_levels(locale_subsets)?
                         .into_iter()
                         .collect(),
                 ));
