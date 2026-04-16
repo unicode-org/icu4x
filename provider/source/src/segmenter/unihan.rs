@@ -7,6 +7,8 @@
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use crate::AbstractFs;
 use crate::{IterableDataProviderCached, SourceDataProvider};
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::collections::codepointtrie;
 use icu::segmenter::provider::radical::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -17,22 +19,26 @@ use std::collections::HashSet;
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn build_unihan_radicals_data(
     unihan: &AbstractFs,
-    identifier_status: &AbstractFs,
+    ucd: &AbstractFs,
     trie_type: crate::TrieType,
 ) -> Result<UnihanRadicalsData<'static>, DataError> {
-    let identifier_status = identifier_status.read_to_string("security/IdentifierStatus.txt")?;
-    let identifier_status = identifier_status
-        .lines()
-        .filter(|line| !line.starts_with('#') && !line.trim().is_empty())
-        .map(|line| {
-            let field = line.split(';').next().unwrap().trim();
-            let (start, end) = field.split_once("..").unwrap_or((field, field));
-            (
-                u32::from_str_radix(start, 16).expect("Invalid IdentifierStatus codepoint format"),
-                u32::from_str_radix(end, 16).expect("Invalid IdentifierStatus codepoint format"),
-            )
-        })
-        .collect::<Vec<_>>();
+    let identifier_status = ucd.read_to_string("security/IdentifierStatus.txt")?;
+    let mut id_builder = CodePointInversionListBuilder::new();
+    for line in identifier_status.lines() {
+        if line.starts_with('#') || line.trim().is_empty() {
+            continue;
+        }
+
+        let field = line.split(';').next().unwrap().trim();
+        let (start, end) = field.split_once("..").unwrap_or((field, field));
+
+        let start =
+            u32::from_str_radix(start, 16).expect("Invalid IdentifierStatus codepoint format");
+        let end = u32::from_str_radix(end, 16).expect("Invalid IdentifierStatus codepoint format");
+
+        id_builder.add_range32(start..=end);
+    }
+    let identifier_status = id_builder.build();
 
     let raw_content = unihan.read_to_string("Unihan_IRGSources.txt")?;
     let mut builder = CodePointTrieBuilder::new(
@@ -57,8 +63,7 @@ fn build_unihan_radicals_data(
             .and_then(|hex| u32::from_str_radix(hex, 16).ok())
             .expect("Invalid Unihan codepoint format");
 
-        let codepoint_idx = identifier_status.partition_point(|(start, _)| *start <= codepoint);
-        if codepoint_idx == 0 || identifier_status[codepoint_idx - 1].1 < codepoint {
+        if !identifier_status.contains32(codepoint) {
             continue;
         }
 
