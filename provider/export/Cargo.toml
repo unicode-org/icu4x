@@ -5,6 +5,8 @@
 [package]
 name = "icu_provider_export"
 description = "Generate data for ICU4X DataProvider"
+categories.workspace = true
+keywords = []
 license = "Unicode-3.0"
 include = [
     "src/**/*",
@@ -19,7 +21,6 @@ include = [
 ]
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
@@ -28,6 +29,9 @@ version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+max_combination_size = 3
 
 [dependencies]
 

@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface DecimalParseErrorLib: Library {
 }
-/** Additional information: [1](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.ParseError.html)
+/** Additional information: [1](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.ParseError.html)
 */
 enum class DecimalParseError {
     Unknown,

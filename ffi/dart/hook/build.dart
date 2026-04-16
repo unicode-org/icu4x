@@ -117,7 +117,7 @@ final class FetchMode extends BuildMode {
     final rustTarget = _asRustTarget(input.config.code);
     final libraryType = input.config.buildStatic
         ? 'static-with_data'
-        : 'dynamic';
+        : 'dynamic-with_data';
     print('Fetching pre-built binary for $version, $rustTarget, $libraryType');
     final dylibRemoteUri = Uri.parse(
       'https://github.com/unicode-org/icu4x/releases/'

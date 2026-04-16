@@ -31,7 +31,7 @@ use smallvec::SmallVec;
 /// </div>
 #[derive(Debug, Eq, PartialEq, Clone, Ord, PartialOrd)]
 // TODO(#876): Use ZeroVec instead of SmallVec
-pub struct Skeleton(pub(crate) SmallVec<[fields::Field; 5]>);
+pub struct Skeleton(pub(crate) SmallVec<[Field; 5]>);
 
 impl Skeleton {
     pub(crate) fn fields_iter(&self) -> impl Iterator<Item = &Field> {
@@ -43,25 +43,25 @@ impl Skeleton {
     }
 
     /// Return the underlying fields as a slice.
-    pub fn as_slice(&self) -> &[fields::Field] {
+    pub fn as_slice(&self) -> &[Field] {
         self.0.as_slice()
     }
 }
 
-impl From<SmallVec<[fields::Field; 5]>> for Skeleton {
-    fn from(fields: SmallVec<[fields::Field; 5]>) -> Self {
+impl From<SmallVec<[Field; 5]>> for Skeleton {
+    fn from(fields: SmallVec<[Field; 5]>) -> Self {
         Self(fields)
     }
 }
 
-impl From<Vec<fields::Field>> for Skeleton {
-    fn from(fields: Vec<fields::Field>) -> Self {
+impl From<Vec<Field>> for Skeleton {
+    fn from(fields: Vec<Field>) -> Self {
         Self(fields.into())
     }
 }
 
-impl From<&[fields::Field]> for Skeleton {
-    fn from(fields: &[fields::Field]) -> Self {
+impl From<&[Field]> for Skeleton {
+    fn from(fields: &[Field]) -> Self {
         Self(fields.into())
     }
 }
@@ -75,7 +75,7 @@ impl From<&[fields::Field]> for Skeleton {
 /// be exposed as a public API for end users.
 impl From<&Pattern> for Skeleton {
     fn from(pattern: &Pattern) -> Self {
-        let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
+        let mut fields: SmallVec<[Field; 5]> = SmallVec::new();
         for item in pattern.items() {
             if let crate::provider::pattern::PatternItem::Field(field) = item {
                 let mut field = *field;
@@ -127,11 +127,11 @@ impl From<&Pattern> for Skeleton {
 /// Parse a string into a list of fields. This trait implementation validates the input string to
 /// verify that fields are correct. If the fields are out of order, this returns an error that
 /// contains the fields, which gives the callee a chance to sort the fields with the
-/// `From<SmallVec<[fields::Field; 5]>> for Skeleton` trait.
+/// `From<SmallVec<[Field; 5]>> for Skeleton` trait.
 impl TryFrom<&str> for Skeleton {
     type Error = SkeletonError;
     fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {
-        let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
+        let mut fields: SmallVec<[Field; 5]> = SmallVec::new();
 
         let mut iter = skeleton_string.chars().peekable();
         while let Some(ch) = iter.next() {

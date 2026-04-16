@@ -22,7 +22,7 @@ use criterion::{
 };
 use icu_calendar::{
     options::{DateAddOptions, Overflow},
-    types, AsCalendar, Calendar, Date, Iso,
+    types, AsCalendar, Calendar, Date,
 };
 
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
@@ -48,7 +48,7 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     let _ = black_box(date.day_of_month());
 
     // Conversion to ISO.
-    let _ = black_box(date.to_calendar(Iso));
+    let _ = black_box(date.to_calendar(icu::calendar::cal::Iso));
 }
 
 fn bench_calendar<C: Clone + Calendar>(
@@ -152,7 +152,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/chinese_cached",
         &fxs,
         icu::calendar::cal::ChineseTraditional::new(),
-        |y, m, d, c| Date::try_new_from_codes(None, y, types::Month::new(m).code(), d, c).unwrap(),
+        |y, m, d, _| Date::try_new_chinese_traditional(y, types::Month::new(m), d).unwrap(),
     );
 
     bench_calendar(
@@ -160,7 +160,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/dangi_cached",
         &fxs,
         icu::calendar::cal::KoreanTraditional::new(),
-        |y, m, d, c| Date::try_new_from_codes(None, y, types::Month::new(m).code(), d, c).unwrap(),
+        |y, m, d, _| Date::try_new_korean_traditional(y, types::Month::new(m), d).unwrap(),
     );
 
     bench_calendar(
@@ -168,7 +168,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/hebrew",
         &fxs,
         icu::calendar::cal::Hebrew,
-        |y, m, d, c| Date::try_new_from_codes(None, y, types::Month::new(m).code(), d, c).unwrap(),
+        |y, m, d, _c| Date::try_new_hebrew_v2(y, types::Month::new(m), d).unwrap(),
     );
 
     bench_calendar(
@@ -209,6 +209,7 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d, c| Date::try_new_hijri_with_calendar(y, m, d, c).unwrap(),
     );
 
+    #[allow(deprecated)]
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",

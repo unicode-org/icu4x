@@ -14,7 +14,7 @@ internal interface BidiClassLib: Library {
     fun icu4x_BidiClass_from_integer_value_mv1(other: FFIUint8): OptionInt
     fun icu4x_BidiClass_try_from_str_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
+/** See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiClass.html) for more information.
 */
 enum class BidiClass {
     LeftToRight,
@@ -58,7 +58,7 @@ enum class BidiClass {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
         */
         fun forChar(ch: Int): BidiClass {
             
@@ -67,9 +67,9 @@ enum class BidiClass {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
-        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#method.from_icu4c_value) for more information.
+        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiClass.html#method.from_icu4c_value) for more information.
         */
         fun fromIntegerValue(other: UByte): BidiClass? {
             
@@ -81,18 +81,22 @@ enum class BidiClass {
         @JvmStatic
         
         fun tryFromStr(s: String): BidiClass? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_BidiClass_try_from_str_mv1(sSlice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return BidiClass.fromNative(intermediateOption)
+            val returnVal = lib.icu4x_BidiClass_try_from_str_mv1(sSliceMemory.slice);
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return BidiClass.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     
     /** Get the "long" name of this property value (returns empty if property value is unknown)
     *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
     */
     fun longName(): String? {
         
@@ -105,7 +109,7 @@ enum class BidiClass {
     
     /** Get the "short" name of this property value (returns empty if property value is unknown)
     *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
     */
     fun shortName(): String? {
         
@@ -116,9 +120,9 @@ enum class BidiClass {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
-    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#method.to_icu4c_value) for more information.
+    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiClass.html#method.to_icu4c_value) for more information.
     */
     fun toIntegerValue(): UByte {
         

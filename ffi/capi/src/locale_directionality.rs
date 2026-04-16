@@ -29,7 +29,7 @@ pub mod ffi {
     pub struct LocaleDirectionality(pub icu_locale::LocaleDirectionality);
 
     impl LocaleDirectionality {
-        /// Construct a new LocaleDirectionality instance using compiled data.
+        /// Construct a new `LocaleDirectionality` instance using compiled data.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_common, FnInStruct)]
         #[diplomat::attr(supports = constructors, constructor)]
         #[cfg(feature = "compiled_data")]
@@ -39,7 +39,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new LocaleDirectionality instance using a particular data source.
+        /// Construct a new `LocaleDirectionality` instance using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_common, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
@@ -52,7 +52,7 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Construct a new LocaleDirectionality instance using compiled data.
+        /// Construct a new `LocaleDirectionality` instance using compiled data.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_extended, FnInStruct)]
         #[diplomat::rust_link(
             icu::locale::LocaleDirectionality::new_with_expander,
@@ -67,7 +67,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new LocaleDirectionality instance using a particular data source.
+        /// Construct a new `LocaleDirectionality` instance using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_extended, FnInStruct)]
         #[diplomat::rust_link(
             icu::locale::LocaleDirectionality::new_with_expander,

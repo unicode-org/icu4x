@@ -19,7 +19,7 @@ pub mod ffi {
     use crate::unstable::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
         date_time_formatter::ffi::{DateTimeFormatter, DateTimeFormatterGregorian},
-        date::ffi::IsoDate,
+        date::ffi::{Date, IsoDate},
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
@@ -34,7 +34,6 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct ZonedDateTimeFormatter(
         pub  icu_datetime::DateTimeFormatter<
             icu_datetime::fieldsets::enums::ZonedDateAndTimeFieldSet
@@ -67,6 +66,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -102,6 +102,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -133,6 +134,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -168,6 +170,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -199,6 +202,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -234,6 +238,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -265,6 +270,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -300,6 +306,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -331,6 +338,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -366,6 +374,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -397,6 +406,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -432,6 +442,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -463,6 +474,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -498,6 +510,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -529,6 +542,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -564,6 +578,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -585,23 +600,9 @@ pub mod ffi {
             let date_in_calendar = iso_date.0.to_calendar(self.0.calendar());
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             input.set_time_fields(time.0);
-            input.set_time_zone_id(zone.id);
-            if let Some(offset) = zone.offset {
-                input.set_time_zone_utc_offset(offset);
-            }
-            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
-                input.set_time_zone_name_timestamp(zone_name_timestamp);
-            }
-            else {
-                #[allow(deprecated)] // clean up in 3.0
-                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
-                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: iso_date.0,
-                        time: time.0,
-                    })
-                ).zone_name_timestamp());
-            }
-            let _infallible = self
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(Some(iso_date.0), Some(time.0)));
+
+            self
                 .0
                 .format_unchecked(input)
                 .try_write_to(write)
@@ -609,12 +610,39 @@ pub mod ffi {
                 .transpose()?;
             Ok(())
         }
+        
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        #[diplomat::attr(demo_gen, disable)] // confusing, as Date is constructed from ISO
+        pub fn format_same_calendar(
+            &self,
+            date: &Date,
+            time: &Time,
+            zone: &TimeZoneInfo,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), crate::unstable::errors::ffi::DateTimeMismatchedCalendarError> {
+            let date_borrowed = date.0.as_borrowed();
+            // Check that the date's calendar matches the formatter's calendar
+            use icu_datetime::scaffold::InSameCalendar;
+            date_borrowed.check_any_calendar_kind(self.0.calendar().kind()).map_err(crate::unstable::errors::ffi::DateTimeMismatchedCalendarError::from)?;
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
+            input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
+            input.set_time_fields(time.0);
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(Some(date.0.clone()), Some(time.0)));
+
+            let _ = self
+                .0
+                .format_unchecked(input)
+                .try_write_to(write);
+
+            Ok(())
+        }
     }
     
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct ZonedDateTimeFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
@@ -647,6 +675,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -681,6 +710,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -711,6 +741,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -745,6 +776,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -775,6 +807,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -809,6 +842,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -839,6 +873,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -873,6 +908,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -903,6 +939,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -937,6 +974,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -967,6 +1005,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -1001,6 +1040,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -1031,6 +1071,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -1065,6 +1106,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -1095,6 +1137,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter(
                     field_set
                 ),
@@ -1129,6 +1172,7 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
+                #[allow(clippy::result_large_err)] // probably not an issue in a closure?
                 |names, field_set| names.try_into_formatter_with_buffer_provider(
                     &provider,
                     field_set
@@ -1150,28 +1194,42 @@ pub mod ffi {
             let date_in_calendar = iso_date.0.to_calendar(Gregorian);
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             input.set_time_fields(time.0);
-            input.set_time_zone_id(zone.id);
-            if let Some(offset) = zone.offset {
-                input.set_time_zone_utc_offset(offset);
-            }
-            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
-                input.set_time_zone_name_timestamp(zone_name_timestamp);
-            }
-            else {
-                #[allow(deprecated)] // clean up in 3.0
-                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
-                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: iso_date.0,
-                        time: time.0,
-                    })
-                ).zone_name_timestamp());
-            }
-            let _infallible = self
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(Some(iso_date.0), Some(time.0)));
+
+            self
                 .0
                 .format_unchecked(input)
                 .try_write_to(write)
                 .ok()
                 .transpose()?;
+            Ok(())
+        }
+        
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format_same_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        #[diplomat::attr(demo_gen, disable)] // confusing, as Date is constructed from ISO
+        pub fn format_same_calendar(
+            &self,
+            date: &Date,
+            time: &Time,
+            zone: &TimeZoneInfo,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), crate::unstable::errors::ffi::DateTimeMismatchedCalendarError> {
+            let date_borrowed = date.0.as_borrowed();
+            // Check that the date's calendar matches the formatter's calendar
+            use icu_datetime::scaffold::InSameCalendar;
+            date_borrowed.check_any_calendar_kind(icu_calendar::AnyCalendarKind::Gregorian).map_err(crate::unstable::errors::ffi::DateTimeMismatchedCalendarError::from)?;
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
+            input.set_date_fields_unchecked(date_borrowed); // calendar check on previous lines
+            input.set_time_fields(time.0);
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(Some(date.0.clone()), Some(time.0)));
+
+            let _ = self
+                .0
+                .format_unchecked(input)
+                .try_write_to(write);
+
             Ok(())
         }
     }

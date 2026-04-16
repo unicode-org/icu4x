@@ -18,6 +18,7 @@ namespace capi {
       YearStyle_Auto = 0,
       YearStyle_Full = 1,
       YearStyle_WithEra = 2,
+      YearStyle_NoEra = 3,
     };
 
     typedef struct YearStyle_option {union { YearStyle ok; }; bool is_ok; } YearStyle_option;
@@ -26,7 +27,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/2.1.1/icu/datetime/options/enum.YearStyle.html) for more information.
+ * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/2.2.0/icu/datetime/options/enum.YearStyle.html) for more information.
  */
 class YearStyle {
 public:
@@ -34,6 +35,7 @@ public:
         Auto = 0,
         Full = 1,
         WithEra = 2,
+        NoEra = 3,
     };
 
     YearStyle(): value(Value::Auto) {}

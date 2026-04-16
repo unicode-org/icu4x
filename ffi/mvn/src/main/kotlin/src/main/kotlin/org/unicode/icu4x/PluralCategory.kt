@@ -9,7 +9,7 @@ import com.sun.jna.Structure
 internal interface PluralCategoryLib: Library {
     fun icu4x_PluralCategory_get_for_cldr_string_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/2.1.1/icu/plurals/enum.PluralCategory.html) for more information.
+/** See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/2.2.0/icu/plurals/enum.PluralCategory.html) for more information.
 */
 enum class PluralCategory {
     Zero,
@@ -39,17 +39,21 @@ enum class PluralCategory {
         /** Construct from a string in the format
         *[specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         *
-        *See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/2.1.1/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
+        *See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/2.2.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
         *
-        *See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/2.1.1/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
+        *See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/2.2.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
         */
         fun getForCldrString(s: String): PluralCategory? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_PluralCategory_get_for_cldr_string_mv1(sSlice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return PluralCategory.fromNative(intermediateOption)
+            val returnVal = lib.icu4x_PluralCategory_get_for_cldr_string_mv1(sSliceMemory.slice);
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return PluralCategory.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
 }

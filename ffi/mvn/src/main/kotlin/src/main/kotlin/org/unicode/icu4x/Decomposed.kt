@@ -66,7 +66,7 @@ internal class OptionDecomposedNative constructor(): Structure(), Structure.ByVa
 *`second` will be NUL when the decomposition expands to a single character
 *(which may or may not be the original one)
 *
-*See the [Rust documentation for `Decomposed`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/enum.Decomposed.html) for more information.
+*See the [Rust documentation for `Decomposed`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/enum.Decomposed.html) for more information.
 */
 class Decomposed (var first: Int, var second: Int) {
     companion object {

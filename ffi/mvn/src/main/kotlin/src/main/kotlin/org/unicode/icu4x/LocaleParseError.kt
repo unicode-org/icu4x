@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface LocaleParseErrorLib: Library {
 }
-/** Additional information: [1](https://docs.rs/icu/2.1.1/icu/locale/enum.ParseError.html)
+/** Additional information: [1](https://docs.rs/icu/2.2.0/icu/locale/enum.ParseError.html)
 */
 enum class LocaleParseError {
     Unknown,

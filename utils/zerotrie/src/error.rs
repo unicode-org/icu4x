@@ -33,13 +33,17 @@ pub enum ZeroTrieBuildError {
     ///
     /// // Delimiter in a prefix
     /// data.entry("aa/bb").or_default().insert("CCC", 1);
-    /// let err = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap_err();
+    /// let err =
+    ///     ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/')
+    ///         .unwrap_err();
     /// assert_eq!(err, ZeroTrieBuildError::IllegalDelimiter);
     ///
     /// // Delimiter in a suffix
     /// data.clear();
     /// data.entry("aaa").or_default().insert("BB/CC", 1);
-    /// let err = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap_err();
+    /// let err =
+    ///     ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/')
+    ///         .unwrap_err();
     /// assert_eq!(err, ZeroTrieBuildError::IllegalDelimiter);
     /// ```
     #[displaydoc("Delimiter is contained in one or more strings")]

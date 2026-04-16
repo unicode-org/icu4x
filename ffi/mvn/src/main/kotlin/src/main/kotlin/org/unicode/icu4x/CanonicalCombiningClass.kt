@@ -14,7 +14,7 @@ internal interface CanonicalCombiningClassLib: Library {
     fun icu4x_CanonicalCombiningClass_from_integer_value_mv1(other: FFIUint8): OptionInt
     fun icu4x_CanonicalCombiningClass_try_from_str_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+/** See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
 */
 enum class CanonicalCombiningClass(val inner: Int) {
     NotReordered(0),
@@ -153,7 +153,7 @@ enum class CanonicalCombiningClass(val inner: Int) {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
         */
         fun forChar(ch: Int): CanonicalCombiningClass {
             
@@ -162,9 +162,9 @@ enum class CanonicalCombiningClass(val inner: Int) {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
-        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.
+        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.
         */
         fun fromIntegerValue(other: UByte): CanonicalCombiningClass? {
             
@@ -176,18 +176,22 @@ enum class CanonicalCombiningClass(val inner: Int) {
         @JvmStatic
         
         fun tryFromStr(s: String): CanonicalCombiningClass? {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_CanonicalCombiningClass_try_from_str_mv1(sSlice);
-            
-            val intermediateOption = returnVal.option() ?: return null
-            return CanonicalCombiningClass.fromNative(intermediateOption)
+            val returnVal = lib.icu4x_CanonicalCombiningClass_try_from_str_mv1(sSliceMemory.slice);
+            try {
+                
+                val intermediateOption = returnVal.option() ?: return null
+                return CanonicalCombiningClass.fromNative(intermediateOption)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     
     /** Get the "long" name of this property value (returns empty if property value is unknown)
     *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
     */
     fun longName(): String? {
         
@@ -200,7 +204,7 @@ enum class CanonicalCombiningClass(val inner: Int) {
     
     /** Get the "short" name of this property value (returns empty if property value is unknown)
     *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
     */
     fun shortName(): String? {
         
@@ -211,9 +215,9 @@ enum class CanonicalCombiningClass(val inner: Int) {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
-    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
+    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
     */
     fun toIntegerValue(): UByte {
         

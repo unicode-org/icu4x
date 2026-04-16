@@ -14,21 +14,31 @@ internal interface GeneralCategoryNameToGroupMapperLib: Library {
 }
 /** A type capable of looking up General Category Group values from a string name.
 *
-*See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParser.html) for more information.
+*See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyParser.html) for more information.
 *
-*See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+*See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
 */
 class GeneralCategoryNameToGroupMapper internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class GeneralCategoryNameToGroupMapperCleaner(val handle: Pointer, val lib: GeneralCategoryNameToGroupMapperLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class GeneralCategoryNameToGroupMapperCleaner(val handle: Pointer, val lib: GeneralCategoryNameToGroupMapperLib) : Runnable {
         override fun run() {
             lib.icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, GeneralCategoryNameToGroupMapper.GeneralCategoryNameToGroupMapperCleaner(handle, GeneralCategoryNameToGroupMapper.lib));
     }
 
     companion object {
@@ -38,34 +48,33 @@ class GeneralCategoryNameToGroupMapper internal constructor (
         
         /** Create a name-to-mask mapper for the `General_Category` property, using compiled data.
         *
-        *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+        *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
         */
         fun create(): GeneralCategoryNameToGroupMapper {
             
             val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = GeneralCategoryNameToGroupMapper(handle, selfEdges)
-            CLEANER.register(returnOpaque, GeneralCategoryNameToGroupMapper.GeneralCategoryNameToGroupMapperCleaner(handle, GeneralCategoryNameToGroupMapper.lib));
+            val returnOpaque = GeneralCategoryNameToGroupMapper(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
         
         /** Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
         *
-        *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+        *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<GeneralCategoryNameToGroupMapper> {
             
             val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = GeneralCategoryNameToGroupMapper(handle, selfEdges)
-                CLEANER.register(returnOpaque, GeneralCategoryNameToGroupMapper.GeneralCategoryNameToGroupMapperCleaner(handle, GeneralCategoryNameToGroupMapper.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = GeneralCategoryNameToGroupMapper(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -74,32 +83,36 @@ class GeneralCategoryNameToGroupMapper internal constructor (
     *
     *Returns 0 if the name is unknown for this property
     *
-    *See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
+    *See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
     */
     fun getStrict(name: String): GeneralCategoryGroup {
-        val (nameMem, nameSlice) = PrimitiveArrayTools.borrowUtf8(name)
+        val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
         
-        val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(handle, nameSlice);
-        
-        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
-        if (nameMem != null) nameMem.close()
-        return returnStruct
+        val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(handle, nameSliceMemory.slice);
+        try {
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
+            return returnStruct
+        } finally {
+            nameSliceMemory.close()
+        }
     }
     
     /** Get the mask value matching the given name, using loose matching
     *
     *Returns 0 if the name is unknown for this property
     *
-    *See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
+    *See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
     */
     fun getLoose(name: String): GeneralCategoryGroup {
-        val (nameMem, nameSlice) = PrimitiveArrayTools.borrowUtf8(name)
+        val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
         
-        val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(handle, nameSlice);
-        
-        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
-        if (nameMem != null) nameMem.close()
-        return returnStruct
+        val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(handle, nameSliceMemory.slice);
+        try {
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
+            return returnStruct
+        } finally {
+            nameSliceMemory.close()
+        }
     }
 
 }

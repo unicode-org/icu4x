@@ -25,6 +25,8 @@ extern crate alloc;
 
 pub mod provider;
 pub mod scaffold;
+#[path = "third_party.rs"]
+pub mod unstable_third_party;
 
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
@@ -36,4 +38,13 @@ pub mod zone;
 pub use zone::{TimeZone, TimeZoneInfo};
 
 mod types;
+#[cfg(feature = "unstable")]
+pub use types::ZonedTime;
 pub use types::{DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
+
+#[cfg(feature = "unstable_chrono_0_4")]
+mod chrono;
+#[cfg(feature = "unstable_jiff_0_2")]
+mod jiff;
+#[cfg(feature = "unstable_time_0_3")]
+mod time_crate;

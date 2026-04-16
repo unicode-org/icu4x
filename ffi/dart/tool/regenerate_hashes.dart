@@ -35,7 +35,11 @@ Future<void> main(List<String> args) async {
     'i686-pc-windows-msvc',
     'x86_64-pc-windows-msvc',
   ]) {
-    for (final libraryType in ['dynamic', 'static', 'static-with_data']) {
+    for (final libraryType in [
+      'dynamic-with_data',
+      'static',
+      'static-with_data',
+    ]) {
       print('Checking hash for $rustTarget');
       final uri = Uri.parse(
         'https://github.com/unicode-org/icu4x/releases/'

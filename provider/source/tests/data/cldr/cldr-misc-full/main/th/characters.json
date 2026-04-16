@@ -21,6 +21,12 @@
           "word-initial": "… {0}",
           "word-medial": "{0} … {1}"
         },
+        "nestedBracketReplacement": {
+          "(": "[",
+          "（": "［",
+          ")": "]",
+          "）": "］"
+        },
         "moreInformation": "?",
         "lenient-scope-date": {
           "-": "[\\-‑./]",

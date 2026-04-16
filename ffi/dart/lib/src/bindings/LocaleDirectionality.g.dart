@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html) for more information.
+/// See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleDirectionality.html) for more information.
 final class LocaleDirectionality implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -24,17 +24,17 @@ final class LocaleDirectionality implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_LocaleDirectionality_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleDirectionality_destroy_mv1));
 
-  /// Construct a new LocaleDirectionality instance using compiled data.
+  /// Construct a new `LocaleDirectionality` instance using compiled data.
   ///
-  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
+  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
   factory LocaleDirectionality() {
     final result = _icu4x_LocaleDirectionality_create_common_mv1();
     return LocaleDirectionality._fromFfi(result, []);
   }
 
-  /// Construct a new LocaleDirectionality instance using a particular data source.
+  /// Construct a new `LocaleDirectionality` instance using a particular data source.
   ///
-  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
+  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LocaleDirectionality.withProvider(DataProvider provider) {
@@ -45,17 +45,17 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new LocaleDirectionality instance using compiled data.
+  /// Construct a new `LocaleDirectionality` instance using compiled data.
   ///
-  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
+  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
   factory LocaleDirectionality.extended() {
     final result = _icu4x_LocaleDirectionality_create_extended_mv1();
     return LocaleDirectionality._fromFfi(result, []);
   }
 
-  /// Construct a new LocaleDirectionality instance using a particular data source.
+  /// Construct a new `LocaleDirectionality` instance using a particular data source.
   ///
-  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
+  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LocaleDirectionality.extendedWithProvider(DataProvider provider) {
@@ -66,19 +66,19 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleDirectionality.html#method.get) for more information.
   LocaleDirection operator [](Locale locale) {
     final result = _icu4x_LocaleDirectionality_get_mv1(_ffi, locale._ffi);
     return LocaleDirection.values[result];
   }
 
-  /// See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.is_left_to_right) for more information.
+  /// See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleDirectionality.html#method.is_left_to_right) for more information.
   bool isLeftToRight(Locale locale) {
     final result = _icu4x_LocaleDirectionality_is_left_to_right_mv1(_ffi, locale._ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/2.1.1/icu/locale/struct.LocaleDirectionality.html#method.is_right_to_left) for more information.
+  /// See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/2.2.0/icu/locale/struct.LocaleDirectionality.html#method.is_right_to_left) for more information.
   bool isRightToLeft(Locale locale) {
     final result = _icu4x_LocaleDirectionality_is_right_to_left_mv1(_ffi, locale._ffi);
     return result;

@@ -24,22 +24,34 @@ internal interface IsoDateLib: Library {
     fun icu4x_IsoDate_months_in_year_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_days_in_month_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_days_in_year_mv1(handle: Pointer): FFIUint16
+    fun icu4x_IsoDate_try_add_with_options_mv1(handle: Pointer, duration: DateDurationNative, options: DateAddOptionsNative): ResultPointerInt
+    fun icu4x_IsoDate_until_with_options_mv1(handle: Pointer, other: Pointer, options: DateDifferenceOptionsNative): DateDurationNative
 }
 /** An ICU4X Date object capable of containing a ISO-8601 date
 *
-*See the [Rust documentation for `Date`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html) for more information.
+*See the [Rust documentation for `Date`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html) for more information.
 */
 class IsoDate internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class IsoDateCleaner(val handle: Pointer, val lib: IsoDateLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class IsoDateCleaner(val handle: Pointer, val lib: IsoDateLib) : Runnable {
         override fun run() {
             lib.icu4x_IsoDate_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
     }
 
     companion object {
@@ -49,88 +61,88 @@ class IsoDate internal constructor (
         
         /** Creates a new [IsoDate] from the specified date.
         *
-        *See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
+        *See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
         */
         fun create(year: Int, month: UByte, day: UByte): Result<IsoDate> {
             
             val returnVal = lib.icu4x_IsoDate_create_mv1(year, FFIUint8(month), FFIUint8(day));
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = IsoDate(handle, selfEdges)
-                CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = IsoDate(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return CalendarErrorError(CalendarError.fromNative(returnVal.union.err)).err()
+                return CalendarErrorError(CalendarError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** Creates a new [IsoDate] from the given Rata Die
         *
-        *See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+        *See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
         */
         fun fromRataDie(rd: Long): IsoDate {
             
             val returnVal = lib.icu4x_IsoDate_from_rata_die_mv1(rd);
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = IsoDate(handle, selfEdges)
-            CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
+            val returnOpaque = IsoDate(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
         
         /** Creates a new [IsoDate] from an IXDTF string.
         *
-        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_from_str) for more information.
+        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
         */
         fun fromString(v: String): Result<IsoDate> {
-            val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+            val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
-            val returnVal = lib.icu4x_IsoDate_from_string_mv1(vSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = IsoDate(handle, selfEdges)
-                CLEANER.register(returnOpaque, IsoDate.IsoDateCleaner(handle, IsoDate.lib));
-                if (vMem != null) vMem.close()
-                return returnOpaque.ok()
-            } else {
-                return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_IsoDate_from_string_mv1(vSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = IsoDate(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return Rfc9557ParseErrorError(Rfc9557ParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                vSliceMemory.close()
             }
         }
     }
     
     /** Convert this date to one in a different calendar
     *
-    *See the [Rust documentation for `to_calendar`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+    *See the [Rust documentation for `to_calendar`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.to_calendar) for more information.
     */
     fun toCalendar(calendar: Calendar): Date {
         
         val returnVal = lib.icu4x_IsoDate_to_calendar_mv1(handle, calendar.handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Date(handle, selfEdges)
-        CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+        val returnOpaque = Date(handle, selfEdges, true)
         return returnOpaque
     }
     
-    /** See the [Rust documentation for `to_any`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.to_any) for more information.
+    /** See the [Rust documentation for `to_any`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.to_any) for more information.
     */
     fun toAny(): Date {
         
         val returnVal = lib.icu4x_IsoDate_to_any_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Date(handle, selfEdges)
-        CLEANER.register(returnOpaque, Date.DateCleaner(handle, Date.lib));
+        val returnOpaque = Date(handle, selfEdges, true)
         return returnOpaque
     }
     
     /** Returns this date's Rata Die
     *
-    *See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+    *See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
     */
     fun toRataDie(): Long {
         
@@ -140,7 +152,7 @@ class IsoDate internal constructor (
     
     /** Returns the 1-indexed day in the year for this date
     *
-    *See the [Rust documentation for `day_of_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_year) for more information.
+    *See the [Rust documentation for `day_of_year`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.day_of_year) for more information.
     */
     fun dayOfYear(): UShort {
         
@@ -150,7 +162,7 @@ class IsoDate internal constructor (
     
     /** Returns the 1-indexed day in the month for this date
     *
-    *See the [Rust documentation for `day_of_month`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+    *See the [Rust documentation for `day_of_month`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.day_of_month) for more information.
     */
     fun dayOfMonth(): UByte {
         
@@ -163,7 +175,7 @@ class IsoDate internal constructor (
     *This is *not* the day of the week, an ordinal number that is locale
     *dependent.
     *
-    *See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+    *See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.day_of_week) for more information.
     */
     fun dayOfWeek(): Weekday {
         
@@ -173,7 +185,7 @@ class IsoDate internal constructor (
     
     /** Returns the day in the week for this day
     *
-    *See the [Rust documentation for `weekday`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.weekday) for more information.
+    *See the [Rust documentation for `weekday`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.weekday) for more information.
     */
     fun weekday(): Weekday {
         
@@ -183,21 +195,20 @@ class IsoDate internal constructor (
     
     /** Returns the week number in this year, using week data
     *
-    *See the [Rust documentation for `week_of_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.week_of_year) for more information.
+    *See the [Rust documentation for `week_of_year`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.week_of_year) for more information.
     */
     fun weekOfYear(): IsoWeekOfYear {
         
         val returnVal = lib.icu4x_IsoDate_week_of_year_mv1(handle);
-        
         val returnStruct = IsoWeekOfYear.fromNative(returnVal)
         return returnStruct
     }
     
     /** Returns 1-indexed number of the month of this date in its year
     *
-    *See the [Rust documentation for `ordinal`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+    *See the [Rust documentation for `ordinal`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
     *
-    *Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.month)
+    *Additional information: [1](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.month)
     */
     fun month(): UByte {
         
@@ -209,7 +220,7 @@ class IsoDate internal constructor (
     *
     *For calendars without an era, returns the extended year
     *
-    *See the [Rust documentation for `year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.year) for more information.
+    *See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.2.0/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
     */
     fun year(): Int {
         
@@ -219,7 +230,7 @@ class IsoDate internal constructor (
     
     /** Returns if the year is a leap year for this date
     *
-    *See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+    *See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
     */
     fun isInLeapYear(): Boolean {
         
@@ -229,7 +240,7 @@ class IsoDate internal constructor (
     
     /** Returns the number of months in the year represented by this date
     *
-    *See the [Rust documentation for `months_in_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+    *See the [Rust documentation for `months_in_year`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.months_in_year) for more information.
     */
     fun monthsInYear(): UByte {
         
@@ -239,7 +250,7 @@ class IsoDate internal constructor (
     
     /** Returns the number of days in the month represented by this date
     *
-    *See the [Rust documentation for `days_in_month`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+    *See the [Rust documentation for `days_in_month`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.days_in_month) for more information.
     */
     fun daysInMonth(): UByte {
         
@@ -249,12 +260,41 @@ class IsoDate internal constructor (
     
     /** Returns the number of days in the year represented by this date
     *
-    *See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+    *See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.days_in_year) for more information.
     */
     fun daysInYear(): UShort {
         
         val returnVal = lib.icu4x_IsoDate_days_in_year_mv1(handle);
         return (returnVal.toUShort())
+    }
+    
+    /** Returns a new [IsoDate] with the given duration added to it.
+    *
+    *See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
+    */
+    fun tryAddWithOptions(duration: DateDuration, options: DateAddOptions): Result<IsoDate> {
+        
+        val returnVal = lib.icu4x_IsoDate_try_add_with_options_mv1(handle, duration.toNative(), options.toNative());
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
+            val selfEdges: List<Any> = listOf()
+            val handle = nativeOkVal 
+            val returnOpaque = IsoDate(handle, selfEdges, true)
+            return returnOpaque.ok()
+        } else {
+            return CalendarDateAddErrorError(CalendarDateAddError.fromNative(returnVal.getNativeErr()!!)).err()
+        }
+    }
+    
+    /** Calculating the duration between `other - self`
+    *
+    *See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.2.0/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+    */
+    fun untilWithOptions(other: IsoDate, options: DateDifferenceOptions): DateDuration {
+        
+        val returnVal = lib.icu4x_IsoDate_until_with_options_mv1(handle, other.handle, options.toNative());
+        val returnStruct = DateDuration.fromNative(returnVal)
+        return returnStruct
     }
 
 }

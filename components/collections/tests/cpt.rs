@@ -239,8 +239,8 @@ enum ValueWidthEnum {
     Bits8 = 2,
 }
 
-/// Test .get() on CodePointTrie by iterating through each range in
-/// check_ranges and assert that the associated
+/// Test .`get()` on [`CodePointTrie`] by iterating through each range in
+/// `check_ranges` and assert that the associated
 /// value matches the trie value for each code point in the range.
 fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
     assert_eq!(
@@ -263,11 +263,11 @@ fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &
     }
 }
 
-/// Test `.get_range()` / `.iter_ranges()` on CodePointTrie by calling
+/// Test `.get_range()` / `.iter_ranges()` on [`CodePointTrie`] by calling
 /// `.iter_ranges()` on the trie.
 ///
 /// `.iter_ranges()` returns an iterator that produces values
-/// by calls to .get_range, and this checks if it matches the values in check_ranges.
+/// by calls to .`get_range`, and this checks if it matches the values in `check_ranges`.
 fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
     trie: &CodePointTrie<T>,
     check_ranges: &[u32],
@@ -310,7 +310,7 @@ fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
     assert!(trie_ranges.next().is_none(), "CodePointTrie iter_ranges() produces more ranges than the check_ranges field in testdata has");
 }
 
-/// Run above tests that verify the validity of CodePointTrie methods
+/// Run above tests that verify the validity of [`CodePointTrie`] methods
 fn run_trie_tests<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
     check_trie(trie, check_ranges);
     test_check_ranges_get_ranges(trie, check_ranges);

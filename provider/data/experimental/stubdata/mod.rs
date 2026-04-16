@@ -3,9 +3,11 @@ include!("short_day_relative_v1.rs.data");
 include!("long_second_relative_v1.rs.data");
 include!("person_names_format_v1.rs.data");
 include!("percent_essentials_v1.rs.data");
+include!("locale_names_variant_long_v1.rs.data");
 include!("units_names_mass_outlier_v1.rs.data");
 include!("short_quarter_relative_v1.rs.data");
 include!("short_week_relative_v1.rs.data");
+include!("locale_names_script_short_v1.rs.data");
 include!("locale_display_names_v1.rs.data");
 include!("units_names_duration_extended_v1.rs.data");
 include!("currency_displayname_v1.rs.data");
@@ -13,11 +15,13 @@ include!("long_minute_relative_v1.rs.data");
 include!("currency_patterns_data_v1.rs.data");
 include!("long_quarter_relative_v1.rs.data");
 include!("short_month_relative_v1.rs.data");
+include!("locale_names_script_long_v1.rs.data");
+include!("locale_names_variant_short_v1.rs.data");
+include!("locale_names_language_short_v1.rs.data");
 include!("currency_extended_data_v1.rs.data");
 include!("units_names_volume_extended_v1.rs.data");
-include!("short_compact_decimal_format_data_v1.rs.data");
 include!("narrow_hour_relative_v1.rs.data");
-include!("long_compact_decimal_format_data_v1.rs.data");
+include!("locale_names_language_long_v1.rs.data");
 include!("narrow_week_relative_v1.rs.data");
 include!("narrow_second_relative_v1.rs.data");
 include!("units_names_area_extended_v1.rs.data");
@@ -46,15 +50,18 @@ include!("long_hour_relative_v1.rs.data");
 include!("units_names_length_outlier_v1.rs.data");
 include!("short_second_relative_v1.rs.data");
 include!("variant_display_names_v1.rs.data");
+include!("locale_names_language_menu_long_v1.rs.data");
 include!("narrow_month_relative_v1.rs.data");
 include!("narrow_day_relative_v1.rs.data");
 include!("transliterator_rules_v1.rs.data");
 include!("units_names_duration_outlier_v1.rs.data");
 include!("narrow_quarter_relative_v1.rs.data");
+include!("locale_names_region_long_v1.rs.data");
 include!("units_names_volume_core_v1.rs.data");
 include!("script_display_names_v1.rs.data");
 include!("narrow_minute_relative_v1.rs.data");
 include!("digital_duration_data_v1.rs.data");
+include!("locale_names_region_short_v1.rs.data");
 include!("units_names_duration_core_v1.rs.data");
 include!("currency_fractions_v1.rs.data");
 include!("units_info_v1.rs.data");
@@ -74,7 +81,7 @@ include!("narrow_year_relative_v1.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.83"]
+        #[clippy::msrv = "1.86"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
@@ -97,9 +104,11 @@ macro_rules! impl_data_provider {
         impl_long_second_relative_v1!($provider);
         impl_person_names_format_v1!($provider);
         impl_percent_essentials_v1!($provider);
+        impl_locale_names_variant_long_v1!($provider);
         impl_units_names_mass_outlier_v1!($provider);
         impl_short_quarter_relative_v1!($provider);
         impl_short_week_relative_v1!($provider);
+        impl_locale_names_script_short_v1!($provider);
         impl_locale_display_names_v1!($provider);
         impl_units_names_duration_extended_v1!($provider);
         impl_currency_displayname_v1!($provider);
@@ -107,11 +116,13 @@ macro_rules! impl_data_provider {
         impl_currency_patterns_data_v1!($provider);
         impl_long_quarter_relative_v1!($provider);
         impl_short_month_relative_v1!($provider);
+        impl_locale_names_script_long_v1!($provider);
+        impl_locale_names_variant_short_v1!($provider);
+        impl_locale_names_language_short_v1!($provider);
         impl_currency_extended_data_v1!($provider);
         impl_units_names_volume_extended_v1!($provider);
-        impl_short_compact_decimal_format_data_v1!($provider);
         impl_narrow_hour_relative_v1!($provider);
-        impl_long_compact_decimal_format_data_v1!($provider);
+        impl_locale_names_language_long_v1!($provider);
         impl_narrow_week_relative_v1!($provider);
         impl_narrow_second_relative_v1!($provider);
         impl_units_names_area_extended_v1!($provider);
@@ -140,15 +151,18 @@ macro_rules! impl_data_provider {
         impl_units_names_length_outlier_v1!($provider);
         impl_short_second_relative_v1!($provider);
         impl_variant_display_names_v1!($provider);
+        impl_locale_names_language_menu_long_v1!($provider);
         impl_narrow_month_relative_v1!($provider);
         impl_narrow_day_relative_v1!($provider);
         impl_transliterator_rules_v1!($provider);
         impl_units_names_duration_outlier_v1!($provider);
         impl_narrow_quarter_relative_v1!($provider);
+        impl_locale_names_region_long_v1!($provider);
         impl_units_names_volume_core_v1!($provider);
         impl_script_display_names_v1!($provider);
         impl_narrow_minute_relative_v1!($provider);
         impl_digital_duration_data_v1!($provider);
+        impl_locale_names_region_short_v1!($provider);
         impl_units_names_duration_core_v1!($provider);
         impl_currency_fractions_v1!($provider);
         impl_units_info_v1!($provider);

@@ -4,6 +4,11 @@
 
 //! Data structs and markers for semantic skeletons.
 
+use crate::provider::packed_pattern::PackedPatterns;
+use crate::provider::pattern::runtime;
+use crate::size_test_macro::size_test;
+use icu_provider::prelude::*;
+
 /// Helpers involving the data marker attributes used for date names.
 ///
 /// <div class="stab unstable">
@@ -298,3 +303,101 @@ pub mod marker_attrs {
 //     SingleDate(runtime::Pattern<'data>),
 //     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
 // }
+
+size_test!(GluePattern, glue_pattern_v1_size, 24);
+
+/// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
+#[doc = glue_pattern_v1_size!()]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::semantic_skeletons))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct GluePattern<'data> {
+    /// The pattern
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub pattern: runtime::GenericPattern<'data>,
+}
+
+icu_provider::data_struct!(
+    GluePattern<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+icu_provider::data_marker!(
+    /// `DatetimePatternsGlueV1`
+    DatetimePatternsGlueV1,
+    GluePattern<'static>
+);
+
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateBuddhistV1`
+    DatetimePatternsDateBuddhistV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateChineseV1`
+    DatetimePatternsDateChineseV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateCopticV1`
+    DatetimePatternsDateCopticV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateDangiV1`
+    DatetimePatternsDateDangiV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateEthiopianV1`
+    DatetimePatternsDateEthiopianV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateGregorianV1`
+    DatetimePatternsDateGregorianV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateHebrewV1`
+    DatetimePatternsDateHebrewV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateIndianV1`
+    DatetimePatternsDateIndianV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateHijriV1`
+    DatetimePatternsDateHijriV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateJapaneseV1`
+    DatetimePatternsDateJapaneseV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDatePersianV1`
+    DatetimePatternsDatePersianV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsDateRocV1`
+    DatetimePatternsDateRocV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsTimeV1`
+    DatetimePatternsTimeV1,
+    PackedPatterns<'static>
+);

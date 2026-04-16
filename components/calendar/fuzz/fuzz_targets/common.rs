@@ -4,7 +4,7 @@
 
 use arbitrary::Arbitrary;
 use icu_calendar::{Date, AnyCalendar};
-use icu_calendar::types::{DateFields, MonthCode};
+use icu_calendar::types::{DateFields, Month};
 use icu_calendar::options::*;
 
 
@@ -28,8 +28,6 @@ impl Ymd {
             Some(Overflow::Reject)
         };
 
-        let code: MonthCode;
-
         let mut fields = DateFields::default();
         fields.extended_year = Some(self.year);
         fields.day = Some(self.day);
@@ -38,12 +36,10 @@ impl Ymd {
                 fields.ordinal_month = Some(self.month);
             }
             MonthInterpretation::CodeNormal => {
-                code = Month::new(self.month).code();
-                fields.month_code = Some(code.0.as_bytes());
+                fields.month = Some(Month::new(self.month));
             }
             MonthInterpretation::CodeLeap => {
-                code = Month::leap(self.month).code();
-                fields.month_code = Some(code.0.as_bytes());
+                fields.month = Some(Month::leap(self.month));
             }
         };
 
@@ -70,9 +66,6 @@ pub enum AnyCalendarKind {
     Hebrew,
     Indian,
     HijriTabularTypeIIFriday,
-    // Not needed by Temporal and has some bugs
-    // https://github.com/unicode-org/icu4x/issues/7049#issuecomment-3384358307
-    // HijriSimulatedMecca,
     HijriTabularTypeIIThursday,
     HijriUmmAlQura,
     Iso,
@@ -95,11 +88,10 @@ impl From<AnyCalendarKind> for icu_calendar::AnyCalendarKind {
             AnyCalendarKind::Hebrew => Self::Hebrew,
             AnyCalendarKind::Indian => Self::Indian,
             AnyCalendarKind::HijriTabularTypeIIFriday => Self::HijriTabularTypeIIFriday,
-            // AnyCalendarKind::HijriSimulatedMecca => Self::HijriSimulatedMecca,
             AnyCalendarKind::HijriTabularTypeIIThursday => Self::HijriTabularTypeIIThursday,
             AnyCalendarKind::HijriUmmAlQura => Self::HijriUmmAlQura,
             AnyCalendarKind::Iso => Self::Iso,
-            AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => Self::Japanese,
+            AnyCalendarKind::Japanese => Self::Japanese,
             AnyCalendarKind::Persian => Self::Persian,
             AnyCalendarKind::Roc => Self::Roc,
         }

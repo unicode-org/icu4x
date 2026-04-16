@@ -17,7 +17,6 @@
 
 //! Custom derives for `ZeroFrom` from the `zerofrom` crate.
 
-use core::mem;
 use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
@@ -39,7 +38,7 @@ mod visitor;
 /// for types with a lifetime parameter.
 ///
 /// Apply the `#[zerofrom(clone)]` attribute to a field if it doesn't implement
-/// Copy or ZeroFrom; this data will be cloned when the struct is zero_from'ed.
+/// [`Copy`] or [`ZeroFrom`]; this data will be cloned when the struct is zero-from'ed.
 ///
 /// Apply the `#[zerofrom(maybe_borrow(T, U, V))]` attribute to the struct to indicate
 /// that certain type parameters may themselves contain borrows (by default
@@ -243,7 +242,7 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             for typaram_c in &mut typarams_c {
                 if let Some(Some(replacement)) = generics_env.get(typaram_c) {
                     // we use mem::replace here so we can be really clear about the C vs the T type
-                    let typaram_t = mem::replace(typaram_c, replacement.clone());
+                    let typaram_t = core::mem::replace(typaram_c, replacement.clone());
                     zf_bounds
                         .push(parse_quote!(#typaram_c: zerofrom::ZeroFrom<'zf_inner, #typaram_t>));
                     tybounds.push(parse_quote!(#typaram_c));

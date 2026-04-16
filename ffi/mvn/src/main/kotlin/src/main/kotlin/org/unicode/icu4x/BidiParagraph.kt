@@ -23,12 +23,22 @@ class BidiParagraph internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val infoEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class BidiParagraphCleaner(val handle: Pointer, val lib: BidiParagraphLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class BidiParagraphCleaner(val handle: Pointer, val lib: BidiParagraphLib) : Runnable {
         override fun run() {
             lib.icu4x_BidiParagraph_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, BidiParagraph.BidiParagraphCleaner(handle, BidiParagraph.lib));
     }
 
     companion object {

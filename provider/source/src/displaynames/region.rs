@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::displaynames::{ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use core::convert::TryFrom;
@@ -10,6 +11,7 @@ use icu::experimental::displaynames::provider::*;
 use icu::locale::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::VarZeroCow;
 
 impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<RegionDisplayNamesV1>, DataError> {
@@ -29,29 +31,23 @@ impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<RegionDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .displaynames()
-            .list_locales()?
-            .filter(|locale| {
-                // The directory might exist without territories.json
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(locale, "territories.json")
-                    .unwrap_or_default()
-            })
-            .map(DataIdentifierCow::from_locale)
-            .collect())
-    }
-}
+crate::displaynames::impl_displaynames_legacy_iter_v1!(RegionDisplayNamesV1, "territories.json");
 
-/// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
-const ALT_SUBSTRING: &str = "-alt-";
-/// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
-const SHORT_SUBSTRING: &str = "-alt-short";
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesRegionLongV1,
+    cldr_serde::displaynames::region::Resource,
+    "territories.json",
+    regions,
+    None::<&str>,
+);
+
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesRegionShortV1,
+    cldr_serde::displaynames::region::Resource,
+    "territories.json",
+    regions,
+    Some(ALT_SHORT_SUBSTRING),
+);
 
 impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
     type Error = icu::locale::ParseError;
@@ -59,7 +55,7 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
         for (region, value) in other.main.value.localedisplaynames.regions.iter() {
-            if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
+            if let Some(region) = region.strip_suffix(ALT_SHORT_SUBSTRING) {
                 short_names.insert(Region::try_from_str(region)?.to_tinystr(), value.as_str());
             } else if !region.contains(ALT_SUBSTRING) {
                 names.insert(Region::try_from_str(region)?.to_tinystr(), value.as_str());
@@ -126,5 +122,23 @@ mod tests {
                 .unwrap(),
             "Bosnia"
         );
+    }
+
+    #[test]
+    fn test_locale_names_region_short() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesRegionShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("BA").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Bosnia");
     }
 }

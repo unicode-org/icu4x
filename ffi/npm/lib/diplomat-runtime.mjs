@@ -268,16 +268,16 @@ export class DiplomatBuf {
      * Create an array view of the buffer. This gives us the `set` method which correctly handles untyped values
      */
     const destination =
-        rustType === "u8" || rustType === "boolean" ? new Uint8Array(wasm.memory.buffer, ptr, byteLength) :
-        rustType === "i8" ? new Int8Array(wasm.memory.buffer, ptr, byteLength) :
-            rustType === "u16" ? new Uint16Array(wasm.memory.buffer, ptr, byteLength) :
-            rustType === "i16" ? new Int16Array(wasm.memory.buffer, ptr, byteLength) :
-                rustType === "i32" ? new Int32Array(wasm.memory.buffer, ptr, byteLength) :
-                rustType === "u64" ? new BigUint64Array(wasm.memory.buffer, ptr, byteLength) :
-                    rustType === "i64" ? new BigInt64Array(wasm.memory.buffer, ptr, byteLength) :
-                    rustType === "f32" ? new Float32Array(wasm.memory.buffer, ptr, byteLength) :
-                        rustType === "f64" ? new Float64Array(wasm.memory.buffer, ptr, byteLength) :
-                        new Uint32Array(wasm.memory.buffer, ptr, byteLength);
+        rustType === "u8" || rustType === "boolean" ? new Uint8Array(wasm.memory.buffer, ptr, list.length) :
+        rustType === "i8" ? new Int8Array(wasm.memory.buffer, ptr, list.length) :
+            rustType === "u16" ? new Uint16Array(wasm.memory.buffer, ptr, list.length) :
+            rustType === "i16" ? new Int16Array(wasm.memory.buffer, ptr, list.length) :
+                rustType === "i32" ? new Int32Array(wasm.memory.buffer, ptr, list.length) :
+                rustType === "u64" ? new BigUint64Array(wasm.memory.buffer, ptr, list.length) :
+                    rustType === "i64" ? new BigInt64Array(wasm.memory.buffer, ptr, list.length) :
+                    rustType === "f32" ? new Float32Array(wasm.memory.buffer, ptr, list.length) :
+                        rustType === "f64" ? new Float64Array(wasm.memory.buffer, ptr, list.length) :
+                        new Uint32Array(wasm.memory.buffer, ptr, list.length);
     destination.set(list);
 
     return new DiplomatBuf(ptr, list.length, () => wasm.diplomat_free(ptr, byteLength, elementSize));

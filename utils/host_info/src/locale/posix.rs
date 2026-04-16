@@ -7,13 +7,16 @@
 //!
 //! # Usage example
 //! ```
-//! use icu_locale_core::{Locale, locale};
 //! use icu_host_info::locale::{posix::PosixParseError, PosixLocale};
+//! use icu_locale_core::{locale, Locale};
 //!
 //! # fn main() -> Result<(), PosixParseError> {
 //! let posix_locale = PosixLocale::try_from_str("en_US.utf8@euro").unwrap();
 //!
-//! assert_eq!(Locale::try_from(posix_locale), Ok(locale!("en-US-u-cu-eur")));
+//! assert_eq!(
+//!     Locale::try_from(posix_locale),
+//!     Ok(locale!("en-US-u-cu-eur"))
+//! );
 //! # Ok(())
 //! # }
 //! ```

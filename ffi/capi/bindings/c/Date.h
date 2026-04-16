@@ -8,8 +8,12 @@
 #include "diplomat_runtime.h"
 
 #include "Calendar.d.h"
+#include "CalendarDateAddError.d.h"
 #include "CalendarDateFromFieldsError.d.h"
 #include "CalendarError.d.h"
+#include "DateAddOptions.d.h"
+#include "DateDifferenceOptions.d.h"
+#include "DateDuration.d.h"
 #include "DateFields.d.h"
 #include "DateFromFieldsOptions.d.h"
 #include "IsoDate.d.h"
@@ -72,7 +76,15 @@ uint8_t icu4x_Date_days_in_month_mv1(const Date* self);
 
 uint16_t icu4x_Date_days_in_year_mv1(const Date* self);
 
+bool icu4x_Date_is_in_leap_year_mv1(const Date* self);
+
 Calendar* icu4x_Date_calendar_mv1(const Date* self);
+
+typedef struct icu4x_Date_try_add_with_options_mv1_result {union {Date* ok; CalendarDateAddError err;}; bool is_ok;} icu4x_Date_try_add_with_options_mv1_result;
+icu4x_Date_try_add_with_options_mv1_result icu4x_Date_try_add_with_options_mv1(const Date* self, DateDuration duration, DateAddOptions options);
+
+typedef struct icu4x_Date_try_until_with_options_mv1_result {union {DateDuration ok; }; bool is_ok;} icu4x_Date_try_until_with_options_mv1_result;
+icu4x_Date_try_until_with_options_mv1_result icu4x_Date_try_until_with_options_mv1(const Date* self, const Date* other, DateDifferenceOptions options);
 
 void icu4x_Date_destroy_mv1(Date* self);
 

@@ -370,7 +370,7 @@ pub struct CollationReordering<'data> {
     /// their lead bytes modified by the signed offset (-0xff..+0xff)
     /// stored in the lower 16 bits.
     ///
-    /// CollationData::makeReorderRanges() writes a full list where the
+    /// `CollationData::makeReorderRanges()` writes a full list where the
     /// first range (at least for terminators and separators) has a 0
     /// offset. The last range has a non-zero offset. minHighNoReorder
     /// is set to the limit of that last range.
@@ -470,7 +470,11 @@ impl CollationMetadata {
         // Safety: the possible numeric values for `MaxVariable` are from 0 to 3, inclusive,
         // and it is repr(u8). MAX_VARIABLE_MASK here ensures our values have most 2 bits, which produces
         // the same range.
-        unsafe { core::mem::transmute((self.bits & CollationMetadata::MAX_VARIABLE_MASK) as u8) }
+        unsafe {
+            core::mem::transmute::<u8, MaxVariable>(
+                (self.bits & CollationMetadata::MAX_VARIABLE_MASK) as u8,
+            )
+        }
     }
 
     #[inline(always)]

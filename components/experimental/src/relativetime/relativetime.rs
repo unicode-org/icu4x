@@ -87,11 +87,9 @@ pub mod preferences {
 /// let mut options = RelativeTimeFormatterOptions::default();
 /// options.numeric = Numeric::Auto;
 ///
-/// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
-///     locale!("es").into(),
-///     options,
-/// )
-/// .expect("locale should be present");
+/// let relative_time_formatter =
+///     RelativeTimeFormatter::try_new_short_day(locale!("es").into(), options)
+///         .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(Decimal::from(0u8)),

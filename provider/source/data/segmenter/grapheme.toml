@@ -2,8 +2,8 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-# These grapheme boundary rules are based on UAX #29, Unicode Version 16.0.0.
-# https://www.unicode.org/reports/tr29/tr29-45.html
+# These grapheme boundary rules are based on UAX #29, Unicode Version 17.0.0.
+# https://www.unicode.org/reports/tr29/tr29-47.html
 
 segmenter_type = "grapheme"
 

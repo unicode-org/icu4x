@@ -19,16 +19,12 @@
 pub(crate) mod compat;
 pub mod fields;
 pub mod names;
-pub(crate) mod packed_pattern;
+pub mod packed_pattern;
 pub mod pattern;
 pub mod semantic_skeletons;
 #[cfg(feature = "datagen")]
 pub mod skeleton;
 pub mod time_zones;
-
-pub use packed_pattern::*;
-
-pub(crate) type ErasedPackedPatterns = icu_provider::marker::ErasedMarker<PackedPatterns<'static>>;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -109,20 +105,17 @@ const _: () = {
 };
 
 #[cfg(feature = "compiled_data")]
-impl icu_provider::DataProvider<icu_time::provider::TimezonePeriodsV1> for Baked {
+impl DataProvider<icu_time::provider::TimezonePeriodsV1> for Baked {
     #[inline]
     fn load(
         &self,
-        req: icu_provider::DataRequest,
-    ) -> Result<
-        icu_provider::DataResponse<icu_time::provider::TimezonePeriodsV1>,
-        icu_provider::DataError,
-    > {
+        req: DataRequest,
+    ) -> Result<DataResponse<icu_time::provider::TimezonePeriodsV1>, DataError> {
         icu_time::provider::Baked.load(req)
     }
 }
 
-#[cfg(feature = "datagen")]
+#[cfg(any(feature = "datagen", feature = "compiled_data"))]
 use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
@@ -140,8 +133,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::TimezoneNamesEssentialsV1::INFO,
     names::DatetimeNamesWeekdayV1::INFO,
     names::DatetimeNamesDayperiodV1::INFO,
-    names::DatetimePatternsGlueV1::INFO,
-    DatetimePatternsTimeV1::INFO,
     names::DatetimeNamesYearBuddhistV1::INFO,
     names::DatetimeNamesYearChineseV1::INFO,
     names::DatetimeNamesYearCopticV1::INFO,
@@ -166,16 +157,18 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     names::DatetimeNamesMonthJapaneseV1::INFO,
     names::DatetimeNamesMonthPersianV1::INFO,
     names::DatetimeNamesMonthRocV1::INFO,
-    DatetimePatternsDateBuddhistV1::INFO,
-    DatetimePatternsDateChineseV1::INFO,
-    DatetimePatternsDateCopticV1::INFO,
-    DatetimePatternsDateDangiV1::INFO,
-    DatetimePatternsDateEthiopianV1::INFO,
-    DatetimePatternsDateGregorianV1::INFO,
-    DatetimePatternsDateHebrewV1::INFO,
-    DatetimePatternsDateIndianV1::INFO,
-    DatetimePatternsDateHijriV1::INFO,
-    DatetimePatternsDateJapaneseV1::INFO,
-    DatetimePatternsDatePersianV1::INFO,
-    DatetimePatternsDateRocV1::INFO,
+    semantic_skeletons::DatetimePatternsGlueV1::INFO,
+    semantic_skeletons::DatetimePatternsTimeV1::INFO,
+    semantic_skeletons::DatetimePatternsDateBuddhistV1::INFO,
+    semantic_skeletons::DatetimePatternsDateChineseV1::INFO,
+    semantic_skeletons::DatetimePatternsDateCopticV1::INFO,
+    semantic_skeletons::DatetimePatternsDateDangiV1::INFO,
+    semantic_skeletons::DatetimePatternsDateEthiopianV1::INFO,
+    semantic_skeletons::DatetimePatternsDateGregorianV1::INFO,
+    semantic_skeletons::DatetimePatternsDateHebrewV1::INFO,
+    semantic_skeletons::DatetimePatternsDateIndianV1::INFO,
+    semantic_skeletons::DatetimePatternsDateHijriV1::INFO,
+    semantic_skeletons::DatetimePatternsDateJapaneseV1::INFO,
+    semantic_skeletons::DatetimePatternsDatePersianV1::INFO,
+    semantic_skeletons::DatetimePatternsDateRocV1::INFO,
 ];

@@ -21,7 +21,7 @@
 //! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64, UtcOffset};
 //!
 //! // Needs to be u32-aligned
-//! let resb = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
+//! let resb = resb::include_bytes_as_u32!("./data/2026a.res");
 //! // Then we parse the data
 //! let zoneinfo = ZoneInfo64::try_from_u32s(resb)
 //!     .expect("Error processing resource bundle file");
@@ -34,7 +34,14 @@
 //!
 //! // Calculate possible offsets at 2025-11-02T01:00:00
 //! // This is during a DST switchover and is ambiguous
-//! let PossibleOffset::Ambiguous { before, after, transition } = pacific.for_date_time(2025, 11, 2, 1, 0, 0) else { panic!() };
+//! let PossibleOffset::Ambiguous {
+//!     before,
+//!     after,
+//!     transition,
+//! } = pacific.for_date_time(2025, 11, 2, 1, 0, 0)
+//! else {
+//!     panic!()
+//! };
 //! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
 //! assert_eq!(before.offset, offset_seven);
 //! assert!(before.rule_applies);
@@ -46,6 +53,7 @@
 extern crate alloc;
 
 use alloc::boxed::Box;
+use alloc::string::String;
 use alloc::vec::Vec;
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt::Debug;
@@ -63,14 +71,13 @@ mod deserialize;
 
 /// A bundled zoneinfo64.res that can be used for testing. No guarantee is made
 /// as to the version in use; though we will try to keep it up to date.
-pub const ZONEINFO64_RES_FOR_TESTING: &[u32] = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
+pub const ZONEINFO64_RES_FOR_TESTING: &[u32] = resb::include_bytes_as_u32!("./data/2026a.res");
 
 const EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
 /// An offset from UTC time (stored to seconds precision)
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
-#[non_exhaustive] // newtype
 pub struct UtcOffset(i32);
 
 impl UtcOffset {
@@ -86,7 +93,7 @@ impl UtcOffset {
 }
 
 #[derive(Debug)]
-/// The primary type containing parsed ZoneInfo64 data
+/// The primary type containing parsed [`ZoneInfo64`] data
 pub struct ZoneInfo64<'a> {
     // Invariant: non-empty
     zones: Vec<TzZone<'a>>,
@@ -107,21 +114,21 @@ enum TzZone<'a> {
 
 #[derive(Clone)]
 struct TzZoneData<'a> {
-    /// Transitions before the epoch of i32::MIN
+    /// Transitions before the epoch of `i32::MIN`
     trans_pre32: &'a [(i32, i32)],
     /// Transitions with epoch values that can fit in an i32
     trans: &'a [i32],
-    /// Transitions after the epoch of i32::MAX
+    /// Transitions after the epoch of `i32::MAX`
     trans_post32: &'a [(i32, i32)],
-    /// Map to offset from transitions. Treat [trans_pre32, trans, trans_post32]
+    /// Map to offset from transitions. Treat [`trans_pre32`, trans, `trans_post32`]
     /// as a single array and use its corresponding index into this to get the index
-    /// in type_offsets. The index in type_offsets is the *new* offset after the
+    /// in `type_offsets`. The index in `type_offsets` is the *new* offset after the
     /// matching transition
     type_map: &'a [u8],
     /// Offsets. First entry is standard time, second entry is offset from standard time (if any)
     type_offsets: &'a [(i32, i32)],
     /// An index into the Rules table,
-    /// its standard_offset_seconds, and its starting year.
+    /// its `standard_offset_seconds`, and its starting year.
     final_rule_offset_year: Option<(u32, i32, i32)>,
     #[allow(dead_code)]
     links: &'a [u32],
@@ -171,22 +178,7 @@ impl Debug for TzZoneData<'_> {
 impl<'a> ZoneInfo64<'a> {
     /// Parse this object from 4-byte aligned data
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
-        crate::deserialize::deserialize(resb)
-    }
-    #[cfg(test)]
-    fn is_alias(&self, iana: &str) -> bool {
-        let Some(idx) = self
-            .names
-            .binary_search_by(|&n| n.chars().cmp(iana.chars()))
-            .ok()
-        else {
-            return false;
-        };
-
-        #[expect(clippy::indexing_slicing)] // zones and names have the same length
-        let zone = &self.zones[idx];
-
-        matches!(zone, &TzZone::Int(_))
+        deserialize::deserialize(resb)
     }
     #[cfg(test)]
     fn iter(&'a self) -> impl Iterator<Item = Zone<'a>> {
@@ -265,10 +257,7 @@ impl Debug for Zone<'_> {
         f.debug_struct("Zone")
             .field("simple", self.simple())
             .field("rule", &self.simple().final_rule(&self.info.rules))
-            .field(
-                "name",
-                &self.name().chars().collect::<alloc::string::String>(),
-            )
+            .field("name", &self.name().chars().collect::<String>())
             .field("region", &self.region())
             .finish()
     }
@@ -720,21 +709,32 @@ impl<'a> Zone<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono_tz::Tz;
     use itertools::Itertools;
+    use jiff::ToSpan;
     use std::{str::FromStr, sync::LazyLock};
 
+    // We test on 2025b as that's the latest version that is available in both chrono and jiff.
+    // The goal here is not to assert up-to-date TZDB data, but to test that zoneinfo64, chrono,
+    // and jiff agree.
     pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
-        ZoneInfo64::try_from_u32s(ZONEINFO64_RES_FOR_TESTING)
+        ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/2025b.res"))
             .expect("Error processing resource bundle file")
     });
+
+    const _: () = assert!(matches!(
+        chrono_tz_2025b::IANA_TZDB_VERSION.as_bytes(),
+        b"2025b"
+    ));
+    const _: () = assert!(matches!(
+        jiff_tzdb_2025b::VERSION.unwrap().as_bytes(),
+        b"2025b"
+    ));
 
     /// Tests an invariant we rely on in our code
     #[test]
     fn test_monotonic_transition_times() {
-        for chrono in time_zones_to_test() {
-            let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
+        for zone in TZDB.iter() {
+            let zoneinfo64 = zone.simple();
 
             for (prev, curr) in (-1..zoneinfo64.transition_count())
                 .map(|idx| zoneinfo64.transition_offset_at(idx))
@@ -742,7 +742,8 @@ mod tests {
             {
                 assert!(
                     prev.since < curr.since,
-                    "{iana}: Transition times should be strictly increasing ({prev:?}, {curr:?})"
+                    "{:?}: Transition times should be strictly increasing ({prev:?}, {curr:?})",
+                    zone.name()
                 );
             }
         }
@@ -751,9 +752,8 @@ mod tests {
     /// Tests an invariant we rely on in our code
     #[test]
     fn test_transition_local_times_do_not_overlap() {
-        for chrono in time_zones_to_test() {
-            let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
+        for zone in TZDB.iter() {
+            let zoneinfo64 = zone.simple();
 
             for (prev, curr) in (-1..zoneinfo64.transition_count())
                 .map(|idx| zoneinfo64.transition_offset_at(idx))
@@ -764,17 +764,11 @@ mod tests {
 
                 assert!(
                     prev_wall < curr_wall,
-                    "{iana}: Transitions should not be so close as to create a ambiguity ({prev:?}, {curr:?}"
+                    "{:?}: Transitions should not be so close as to create a ambiguity ({prev:?}, {curr:?}",
+                    zone.name()
                 );
             }
         }
-    }
-
-    pub(crate) fn time_zones_to_test() -> impl Iterator<Item = Tz> {
-        chrono_tz::TZ_VARIANTS
-            .iter()
-            .copied()
-            .filter(|tz| !TZDB.is_alias(tz.name()))
     }
 
     fn has_rearguard_diff(iana: &str) -> bool {
@@ -783,7 +777,9 @@ mod tests {
             "Africa/Casablanca"
                 | "Africa/El_Aaiun"
                 | "Africa/Windhoek"
+                | "Eire"
                 | "Europe/Dublin"
+                | "Europe/Bratislava"
                 | "Europe/Prague"
         )
     }
@@ -792,11 +788,10 @@ mod tests {
     fn test_against_chrono() {
         use chrono::Offset;
         use chrono::TimeZone;
-        use chrono_tz::OffsetComponents;
+        use chrono_tz_2025b::OffsetComponents;
 
-        for chrono in time_zones_to_test() {
+        for chrono in chrono_tz_2025b::TZ_VARIANTS {
             let iana = chrono.name();
-
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
             for seconds_since_epoch in transitions(iana, false)
@@ -841,61 +836,42 @@ mod tests {
     }
 
     fn transitions(iana: &str, require_offset_change: bool) -> Vec<Transition> {
-        let tz = jiff::tz::TimeZone::get(iana).unwrap();
-        let mut transitions = tz
-            // Chrono only evaluates rules until 2100
-            .preceding(jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap())
-            .map(|t| Transition {
-                since: t.timestamp().as_second(),
-                offset: UtcOffset(t.offset().seconds()),
-                rule_applies: t.dst().is_dst(),
+        let max = jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap();
+        let tz = jiff::tz::TimeZone::tzif(iana, jiff_tzdb_2025b::get(iana).unwrap().1).unwrap();
+        tz.following(jiff::Timestamp::MIN)
+            // Evaluate rules until 2100
+            .take_while(|t| t.timestamp() < max)
+            .filter_map(|t| {
+                let before = tz.to_offset_info(t.timestamp() - 1.second());
+                (if require_offset_change {
+                    t.offset() != before.offset()
+                } else {
+                    before.offset() != t.offset()
+                    || before.dst() != t.dst()
+                    // This is a super weird transition in Europe/Paris that would be removed by
+                    // our rule, but we want to keep it because it's in zoneinfo64.
+                    // 1944-04-03T01:00:00Z, (1.0, 1.0)
+                    // 1944-08-24T22:00:00Z, (0.0, 2.0) <- same offset and also DST
+                    // 1944-10-07T23:00:00Z, (0.0, 1.0)
+                    || t.timestamp().as_second() == -800071200
+                })
+                .then_some(Transition {
+                    since: t.timestamp().as_second(),
+                    offset: UtcOffset(t.offset().seconds()),
+                    rule_applies: t.dst().is_dst(),
+                })
             })
-            .collect::<Vec<_>>();
-
-        transitions.reverse();
-
-        // jiff returns transitions also if only the name changes, we don't
-        transitions.retain(|t| {
-            let before = tz.to_offset_info(jiff::Timestamp::from_second(t.since - 1).unwrap());
-            if require_offset_change {
-                before.offset().seconds() != t.offset.0
-            } else {
-                before.offset().seconds() != t.offset.0
-                || before.dst().is_dst() != t.rule_applies
-                // This is a super weird transition that would be removed by our rule,
-                // but we want to keep it because it's in zoneinfo64.
-                // 1944-04-03T01:00:00Z, (1.0, 1.0)
-                // 1944-08-24T22:00:00Z, (0.0, 2.0) <- same offset and also DST
-                // 1944-10-07T23:00:00Z, (0.0, 1.0)
-                || (iana == "Europe/Paris" && t.since == -800071200)
-            }
-        });
-
-        transitions
+            .collect()
     }
 
     #[test]
     fn test_transition_against_jiff() {
-        for (zone, require_offset_change) in
-            time_zones_to_test().cartesian_product([true, false].into_iter())
+        for (iana, require_offset_change) in
+            jiff_tzdb_2025b::available().cartesian_product([true, false])
         {
-            let iana = zone.name();
             let transitions = transitions(iana, require_offset_change);
 
             if has_rearguard_diff(iana) || transitions.is_empty() {
-                continue;
-            }
-
-            // TODO: investigate why these zones don't work with jiff/tzdb-bundle-always
-            if matches!(
-                iana,
-                "America/Ciudad_Juarez"
-                    | "America/Indiana/Petersburg"
-                    | "America/Indiana/Vincennes"
-                    | "America/Indiana/Winamac"
-                    | "America/Metlakatla"
-                    | "America/North_Dakota/Beulah"
-            ) {
                 continue;
             }
 
@@ -920,7 +896,7 @@ mod tests {
 
                 assert_eq!(
                     zoneinfo64.prev_transition(curr.since - 1, true, require_offset_change),
-                    Some(prev)
+                    Some(prev),
                 );
                 assert_eq!(
                     zoneinfo64.prev_transition(curr.since - 1, false, require_offset_change),
@@ -933,7 +909,7 @@ mod tests {
 
                 assert_eq!(
                     zoneinfo64.prev_transition(curr.since, false, require_offset_change),
-                    Some(curr)
+                    Some(curr),
                 );
                 assert_eq!(
                     zoneinfo64.prev_transition(curr.since + 1, true, require_offset_change),

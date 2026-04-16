@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use self::allowlist::*;
-use std::collections::BTreeSet;
+use serde::Deserialize;
+use std::collections::{BTreeSet, HashSet};
 use std::process::{self, Command};
 use std::str;
 
@@ -132,7 +133,127 @@ fn test_dep_list(
     }
 }
 
+#[derive(Deserialize)]
+struct CargoMetadata {
+    packages: Vec<Package>,
+    workspace_members: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct Package {
+    name: String,
+    id: String,
+    manifest_path: String,
+    dependencies: Vec<CargoDepInfo>,
+}
+
+#[derive(Deserialize)]
+struct CargoDepInfo {
+    name: String,
+    #[serde(default)]
+    optional: bool,
+}
+
+fn check_implicit_features() {
+    println!("implicit features check ....");
+
+    let output = Command::new("cargo")
+        .args(["metadata", "--format-version", "1", "--no-deps"])
+        .output()
+        .expect("`cargo metadata` run failed");
+
+    let metadata: CargoMetadata = serde_json::from_slice(&output.stdout).expect("parsing failed");
+
+    let workspace_ids: HashSet<_> = metadata.workspace_members.iter().collect();
+
+    let mut errors_count = 0;
+
+    for package in &metadata.packages {
+        if !workspace_ids.contains(&package.id) {
+            continue;
+        }
+
+        // collect optional dependencies
+        let optional_deps: Vec<_> = package
+            .dependencies
+            .iter()
+            .filter(|d| d.optional)
+            .map(|d| d.name.as_str())
+            .collect();
+
+        if optional_deps.is_empty() {
+            continue;
+        }
+
+        // read the source Cargo.toml to get explicitly defined features
+        let cargo_toml_content = match std::fs::read_to_string(&package.manifest_path) {
+            Ok(content) => content,
+            Err(e) => {
+                eprintln!("Warning: Could not read {}: {}", package.manifest_path, e);
+                continue;
+            }
+        };
+
+        let cargo_toml: toml::Value = match toml::from_str(&cargo_toml_content) {
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("Warning: Could not parse {}: {}", package.manifest_path, e);
+                continue;
+            }
+        };
+
+        // Get features explicitly defined in source Cargo.toml
+        let source_features: HashSet<String> = cargo_toml
+            .get("features")
+            .and_then(|f| f.as_table())
+            .map(|t| t.keys().cloned().collect())
+            .unwrap_or_default();
+
+        for dep in optional_deps {
+            // check if a feature with this dep's name exists in the source Cargo.toml
+            // also check if any explicit feature references this dep via dep: syntax
+            let has_explicit_feature = source_features.contains(dep);
+
+            // check if any source feature references dep:<name>
+            let dep_ref = format!("dep:{}", dep);
+            let referenced_in_source = cargo_toml
+                .get("features")
+                .and_then(|f| f.as_table())
+                .map(|features| {
+                    features.values().any(|vals| {
+                        vals.as_array()
+                            .map(|arr| arr.iter().any(|v| v.as_str() == Some(&dep_ref)))
+                            .unwrap_or(false)
+                    })
+                })
+                .unwrap_or(false);
+
+            // if the dep is not explicitly referenced in the source Cargo.toml, it's implicit
+            if !has_explicit_feature && !referenced_in_source {
+                if errors_count == 0 {
+                    eprintln!("\nfound implicit features...");
+                }
+                eprintln!(
+                    "Implicit feature in `{}`: optional dependency `{}` is not explicitly referenced in [features].\n\
+                     \tFix: Add `{} = [\"dep:{}\"]` to [features] or reference it via `dep:{}` in an existing feature.",
+                    package.name, dep, dep, dep, dep
+                );
+                errors_count += 1;
+            }
+        }
+    }
+
+    if errors_count > 0 {
+        eprintln!("\ntotal: {} implicit feature(s) found.", errors_count);
+        process::exit(1);
+    }
+
+    println!("no implicit features found.");
+}
+
 fn main() {
+    check_implicit_features();
+
     let basic_runtime: BTreeSet<_> = BASIC_RUNTIME_DEPS.iter().copied().collect();
     let basic_build: BTreeSet<_> = BASIC_BUILD_DEPS.iter().copied().collect();
     let basic: BTreeSet<_> = basic_runtime.union(&basic_build).copied().collect();
@@ -174,14 +295,14 @@ fn main() {
     test_dep_list(
         "icu",
         "normal",
-        "--features compiled_data,experimental",
+        "--features compiled_data,unstable",
         &[&basic, &data, &experimental_data, &experimental],
         "`EXTRA_EXPERIMENTAL_DEPS`",
     );
     test_dep_list(
         "icu",
         "normal",
-        "--features compiled_data,experimental,icu_segmenter/lstm",
+        "--features compiled_data,unstable,icu_segmenter/lstm",
         &[&basic, &data, &experimental, &experimental_data, &lstm],
         "`EXTRA_LSTM_DEPS`",
     );
@@ -195,14 +316,14 @@ fn main() {
     test_dep_list(
         "icu",
         "normal",
-        "--features serde,experimental",
+        "--features serde,unstable",
         &[&basic, &serde, &experimental],
         "`EXTRA_EXPERIMENTAL_DEPS`",
     );
     test_dep_list(
         "icu",
         "normal",
-        "--features serde,experimental,icu_segmenter/lstm",
+        "--features serde,unstable,icu_segmenter/lstm",
         &[&basic, &serde, &experimental, &lstm],
         "`EXTRA_LSTM_DEPS`",
     );

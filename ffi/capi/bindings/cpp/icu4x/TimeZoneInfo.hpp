@@ -11,6 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
+#include "Date.hpp"
 #include "IsoDate.hpp"
 #include "IsoDateTime.hpp"
 #include "Time.hpp"
@@ -33,6 +34,8 @@ namespace capi {
 
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_iso_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time);
 
+    icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::Date* date, const icu4x::capi::Time* time);
+
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_timestamp_mv1(const icu4x::capi::TimeZoneInfo* self, int64_t timestamp);
 
     typedef struct icu4x_TimeZoneInfo_zone_name_date_time_mv1_result {union {icu4x::capi::IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_zone_name_date_time_mv1_result;
@@ -43,7 +46,7 @@ namespace capi {
     icu4x::capi::UtcOffset* icu4x_TimeZoneInfo_offset_mv1(const icu4x::capi::TimeZoneInfo* self);
 
     typedef struct icu4x_TimeZoneInfo_infer_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_infer_variant_mv1_result;
-    icu4x_TimeZoneInfo_infer_variant_mv1_result icu4x_TimeZoneInfo_infer_variant_mv1(icu4x::capi::TimeZoneInfo* self, const icu4x::capi::VariantOffsetsCalculator* _offset_calculator);
+    icu4x_TimeZoneInfo_infer_variant_mv1_result icu4x_TimeZoneInfo_infer_variant_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::VariantOffsetsCalculator* _offset_calculator);
 
     typedef struct icu4x_TimeZoneInfo_variant_mv1_result {union {icu4x::capi::TimeZoneVariant ok; }; bool is_ok;} icu4x_TimeZoneInfo_variant_mv1_result;
     icu4x_TimeZoneInfo_variant_mv1_result icu4x_TimeZoneInfo_variant_mv1(const icu4x::capi::TimeZoneInfo* self);
@@ -78,6 +81,13 @@ inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_date_time_is
     return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
+inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_date_time(const icu4x::Date& date, const icu4x::Time& time) const {
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_at_date_time_mv1(this->AsFFI(),
+        date.AsFFI(),
+        time.AsFFI());
+    return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+}
+
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_timestamp(int64_t timestamp) const {
     auto result = icu4x::capi::icu4x_TimeZoneInfo_at_timestamp_mv1(this->AsFFI(),
         timestamp);
@@ -100,7 +110,7 @@ inline std::unique_ptr<icu4x::UtcOffset> icu4x::TimeZoneInfo::offset() const {
     return std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(result));
 }
 
-inline std::optional<std::monostate> icu4x::TimeZoneInfo::infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator) {
+inline std::optional<std::monostate> icu4x::TimeZoneInfo::infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator) const {
     auto result = icu4x::capi::icu4x_TimeZoneInfo_infer_variant_mv1(this->AsFFI(),
         _offset_calculator.AsFFI());
     return result.is_ok ? std::optional<std::monostate>() : std::nullopt;

@@ -25,11 +25,11 @@ use super::single_unit_vec::SingleUnitVec;
 pub struct InvalidUnitError;
 
 impl MeasureUnit {
-    /// Parses a CLDR unit identifier and returns a MeasureUnit.
+    /// Parses a CLDR unit identifier and returns a [`MeasureUnit`].
     /// Examples include: `meter`, `foot`, `meter-per-second`, `meter-per-square-second`, `meter-per-square-second-per-second`, etc.
     /// Returns:
-    ///    - Ok(MeasureUnit) if the identifier is valid.
-    ///    - Err(InvalidUnitError) if the identifier is invalid.
+    ///    - `Ok(MeasureUnit)` if the identifier is valid.
+    ///    - `Err(InvalidUnitError)` if the identifier is invalid.
     #[inline]
     pub fn try_from_str(s: &str) -> Result<MeasureUnit, InvalidUnitError> {
         Self::try_from_utf8(s.as_bytes())
@@ -179,7 +179,7 @@ impl MeasureUnit {
     ///
     /// # Returns
     /// - `(SiPrefix, &[u8])`: If the prefix is successfully found, where `prefix` is the prefix and `remaining_part` is the slice without the prefix.
-    /// - `(SiPrefix, &[u8])`: If the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
+    /// - `(SiPrefix, &[u8])`: If the prefix is not found, the function will return `(SiPrefix { power: 0, base: Base::Decimal }, part)`.
     fn si_prefix(part: &[u8]) -> (SiPrefix, &[u8]) {
         let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
         if part_without_si_prefix.len() == part.len() {

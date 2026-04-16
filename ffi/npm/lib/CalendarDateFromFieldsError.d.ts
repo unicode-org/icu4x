@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/error/enum.DateFromFieldsError.html)
+ * Additional information: [1](https://docs.rs/icu/2.2.0/icu/calendar/error/enum.DateFromFieldsError.html)
  */
 export class CalendarDateFromFieldsError {
 
@@ -17,14 +17,17 @@ export class CalendarDateFromFieldsError {
     get ffiValue(): number;
 
     static Unknown : CalendarDateFromFieldsError;
-    static OutOfRange : CalendarDateFromFieldsError;
-    static UnknownEra : CalendarDateFromFieldsError;
+    static InvalidDay : CalendarDateFromFieldsError;
+    static InvalidOrdinalMonth : CalendarDateFromFieldsError;
+    static InvalidEra : CalendarDateFromFieldsError;
     static MonthCodeInvalidSyntax : CalendarDateFromFieldsError;
-    static MonthCodeNotInCalendar : CalendarDateFromFieldsError;
-    static MonthCodeNotInYear : CalendarDateFromFieldsError;
+    static MonthNotInCalendar : CalendarDateFromFieldsError;
+    static MonthNotInYear : CalendarDateFromFieldsError;
     static InconsistentYear : CalendarDateFromFieldsError;
     static InconsistentMonth : CalendarDateFromFieldsError;
     static NotEnoughFields : CalendarDateFromFieldsError;
+    static TooManyFields : CalendarDateFromFieldsError;
+    static Overflow : CalendarDateFromFieldsError;
 
 
     constructor(value: CalendarDateFromFieldsError | string );

@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface TransformResultLib: Library {
 }
-/** See the [Rust documentation for `TransformResult`](https://docs.rs/icu/2.1.1/icu/locale/enum.TransformResult.html) for more information.
+/** See the [Rust documentation for `TransformResult`](https://docs.rs/icu/2.2.0/icu/locale/enum.TransformResult.html) for more information.
 */
 enum class TransformResult {
     Modified,

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod data;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub(crate) mod info;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub(crate) mod preferences;

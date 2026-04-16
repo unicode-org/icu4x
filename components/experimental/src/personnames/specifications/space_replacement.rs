@@ -6,8 +6,7 @@ use icu_locale_core::Locale;
 
 const DEFAULT_FOREIGN_SPACE_REPLACEMENT: &str = " ";
 
-///
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#setting-the-spacereplacement
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#setting-the-spacereplacement>
 pub fn space_replacement<'lt>(
     formatting_locale: &Locale,
     person_name_locale: &Locale,

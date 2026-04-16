@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface CollatorAlternateHandlingLib: Library {
 }
-/** See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/2.1.1/icu/collator/options/enum.AlternateHandling.html) for more information.
+/** See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/2.2.0/icu/collator/options/enum.AlternateHandling.html) for more information.
 */
 enum class CollatorAlternateHandling {
     NonIgnorable,

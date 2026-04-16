@@ -12,8 +12,10 @@
 #include <optional>
 #include <cstdlib>
 #include "DataProvider.hpp"
+#include "Date.hpp"
 #include "DateTimeFormatter.hpp"
 #include "DateTimeFormatterLoadError.hpp"
+#include "DateTimeMismatchedCalendarError.hpp"
 #include "DateTimeWriteError.hpp"
 #include "IsoDate.hpp"
 #include "Locale.hpp"
@@ -76,6 +78,9 @@ namespace capi {
 
     typedef struct icu4x_ZonedDateTimeFormatter_format_iso_mv1_result {union { icu4x::capi::DateTimeWriteError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_iso_mv1_result;
     icu4x_ZonedDateTimeFormatter_format_iso_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::IsoDate* iso_date, const icu4x::capi::Time* time, const icu4x::capi::TimeZoneInfo* zone, icu4x::diplomat::capi::DiplomatWrite* write);
+
+    typedef struct icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1_result {union { icu4x::capi::DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1_result;
+    icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1_result icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::Date* date, const icu4x::capi::Time* time, const icu4x::capi::TimeZoneInfo* zone, icu4x::diplomat::capi::DiplomatWrite* write);
 
     void icu4x_ZonedDateTimeFormatter_destroy_mv1(ZonedDateTimeFormatter* self);
 
@@ -206,6 +211,27 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DateTimeWriteError> icu4x:
         zone.AsFFI(),
         &write);
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DateTimeWriteError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DateTimeWriteError>(icu4x::diplomat::Err<icu4x::DateTimeWriteError>(icu4x::DateTimeWriteError::FromFFI(result.err)));
+}
+
+inline icu4x::diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> icu4x::ZonedDateTimeFormatter::format_same_calendar(const icu4x::Date& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const {
+    std::string output;
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
+    auto result = icu4x::capi::icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(this->AsFFI(),
+        date.AsFFI(),
+        time.AsFFI(),
+        zone.AsFFI(),
+        &write);
+    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError>(icu4x::diplomat::Err<icu4x::DateTimeMismatchedCalendarError>(icu4x::DateTimeMismatchedCalendarError::FromFFI(result.err)));
+}
+template<typename W>
+inline icu4x::diplomat::result<std::monostate, icu4x::DateTimeMismatchedCalendarError> icu4x::ZonedDateTimeFormatter::format_same_calendar_write(const icu4x::Date& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone, W& writeable) const {
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
+    auto result = icu4x::capi::icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(this->AsFFI(),
+        date.AsFFI(),
+        time.AsFFI(),
+        zone.AsFFI(),
+        &write);
+    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DateTimeMismatchedCalendarError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DateTimeMismatchedCalendarError>(icu4x::diplomat::Err<icu4x::DateTimeMismatchedCalendarError>(icu4x::DateTimeMismatchedCalendarError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::ZonedDateTimeFormatter* icu4x::ZonedDateTimeFormatter::AsFFI() const {

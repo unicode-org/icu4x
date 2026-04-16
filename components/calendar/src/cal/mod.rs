@@ -38,6 +38,7 @@ pub use hebrew::Hebrew;
 pub use hijri_internal::Hijri;
 /// Customizations for the [`Hijri`] calendar.
 pub mod hijri {
+    #[allow(deprecated)]
     pub use super::hijri_internal::{
         AstronomicalSimulation, TabularAlgorithm, TabularAlgorithmEpoch, TabularAlgorithmLeapYears,
         UmmAlQura,
@@ -72,6 +73,7 @@ pub use hijri::{
 };
 /// Deprecated
 #[deprecated]
+#[allow(deprecated)]
 pub type HijriSimulated = Hijri<hijri::AstronomicalSimulation>;
 /// Deprecated
 #[deprecated]
@@ -86,7 +88,7 @@ pub type Dangi = KoreanTraditional;
 #[deprecated(since = "2.1.0", note = "use `ChineseTraditional`")]
 pub type Chinese = ChineseTraditional;
 
-pub use crate::any_calendar::{AnyCalendar, AnyCalendarDifferenceError, AnyCalendarKind};
+pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};
 
 /// Internal scaffolding types
 #[cfg_attr(not(feature = "unstable"), doc(hidden))]

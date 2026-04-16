@@ -8,16 +8,16 @@ use zerovec::{
     ule::{AsULE, RawBytesULE},
 };
 
-/// Marker value indicating None for cash_digits and cash_rounding fields.
+/// Marker value indicating `None` for `cash_digits` and `cash_rounding` fields.
 const NONE_MARKER: u8 = 15;
 
-/// ULE type for FractionInfo - packed into 4 bytes.
+/// ULE type for [`FractionInfo`] - packed into 4 bytes.
 ///
 /// Data layout:
-/// - Byte 0, bits 0-3: digits (lower nibble)
-/// - Byte 0, bits 4-7: rounding (upper nibble)
-/// - Byte 1, bits 0-3: cash_digits (lower nibble, 15 = None)
-/// - Byte 1, bits 4-7: cash_rounding (upper nibble, 15 = None)
+/// - Byte 0, bits 0-3: `digits` (lower nibble)
+/// - Byte 0, bits 4-7: `rounding` (upper nibble)
+/// - Byte 1, bits 0-3: `cash_digits` (lower nibble, 15 = None)
+/// - Byte 1, bits 4-7: `cash_rounding` (upper nibble, 15 = None)
 type FractionInfoULE = RawBytesULE<2>;
 
 impl AsULE for FractionInfo {

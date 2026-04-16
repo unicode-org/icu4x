@@ -78,10 +78,10 @@ pub mod provider;
 
 // Need to expose it for datagen, but we don't
 // have a reason to make it fully public, so hiding docs for now.
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 mod raw_operands;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 pub use raw_operands::RawPluralOperands;
 
 use core::cmp::{Ord, PartialOrd};
@@ -96,9 +96,9 @@ use provider::PluralRulesData;
 use provider::PluralsCardinalV1;
 use provider::PluralsOrdinalV1;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use provider::PluralsRangesV1;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 use provider::UnvalidatedPluralRange;
 
 /// The plural categories are used to format messages with numeric placeholders, expressed as decimal numbers.
@@ -218,11 +218,11 @@ impl PluralCategory {
         .copied()
     }
 
-    /// Returns the PluralCategory corresponding to given TR35 string.
+    /// Returns the [`PluralCategory`] corresponding to given TR35 string.
     pub fn get_for_cldr_string(category: &str) -> Option<PluralCategory> {
         Self::get_for_cldr_bytes(category.as_bytes())
     }
-    /// Returns the PluralCategory corresponding to given TR35 string as bytes
+    /// Returns the [`PluralCategory`] corresponding to given TR35 string as bytes
     pub fn get_for_cldr_bytes(category: &[u8]) -> Option<PluralCategory> {
         match category {
             b"zero" => Some(PluralCategory::Zero),
@@ -522,10 +522,10 @@ impl PluralRules {
 /// A [`PluralRules`] that also has the ability to retrieve an appropriate [`Plural Category`] for a
 /// range.
 ///
-/// ✨ *Enabled with the `experimental` Cargo feature.*
+/// ✨ *Enabled with the `unstable` Cargo feature.*
 ///
 /// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/4140">#4140</a>
 /// </div>
@@ -553,14 +553,14 @@ impl PluralRules {
 /// ```
 ///
 /// [`Plural Category`]: PluralCategory
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 #[derive(Debug)]
 pub struct PluralRulesWithRanges<R> {
     rules: R,
     ranges: DataPayload<PluralsRangesV1>,
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl PluralRulesWithRanges<PluralRules> {
     icu_provider::gen_buffer_data_constructors!(
 
@@ -670,7 +670,7 @@ impl PluralRulesWithRanges<PluralRules> {
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unstable")]
 impl<R> PluralRulesWithRanges<R>
 where
     R: AsRef<PluralRules>,

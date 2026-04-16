@@ -20,14 +20,13 @@
 //! This module is published as its own crate ([`icu_experimental`](https://docs.rs/icu_experimental/latest/icu_experimental/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
-//! It will usually undergo a major SemVer bump for every ICU4X release. Components in this
+//! It will usually undergo a major `SemVer` bump for every ICU4X release. Components in this
 //! crate will eventually stabilize and move to their own top-level components.
 
 #![allow(clippy::module_inception)]
 
 extern crate alloc;
 
-pub mod compactdecimal;
 pub mod dimension;
 pub mod displaynames;
 pub mod duration;
@@ -54,13 +53,12 @@ pub mod provider {
         pub mod icu {
             pub use crate as experimental;
             pub use icu_collections as collections;
+            pub use icu_decimal as decimal;
             pub use icu_locale as locale;
             pub use icu_plurals as plurals;
         }
         make_provider!(Baked);
 
-        impl_long_compact_decimal_format_data_v1!(Baked);
-        impl_short_compact_decimal_format_data_v1!(Baked);
         impl_short_currency_compact_v1!(Baked);
         impl_currency_essentials_v1!(Baked);
         impl_currency_displayname_v1!(Baked);
@@ -90,6 +88,15 @@ pub mod provider {
         impl_region_display_names_v1!(Baked);
         impl_script_display_names_v1!(Baked);
         impl_variant_display_names_v1!(Baked);
+        impl_locale_names_region_long_v1!(Baked);
+        impl_locale_names_region_short_v1!(Baked);
+        impl_locale_names_language_long_v1!(Baked);
+        impl_locale_names_language_short_v1!(Baked);
+        impl_locale_names_language_menu_long_v1!(Baked);
+        impl_locale_names_script_long_v1!(Baked);
+        impl_locale_names_script_short_v1!(Baked);
+        impl_locale_names_variant_long_v1!(Baked);
+        impl_locale_names_variant_short_v1!(Baked);
         impl_percent_essentials_v1!(Baked);
         impl_person_names_format_v1!(Baked);
         impl_long_day_relative_v1!(Baked);
@@ -127,10 +134,6 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const MARKERS: &[DataMarkerInfo] = &[
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
         super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
         super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
         super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
@@ -161,6 +164,15 @@ pub mod provider {
         super::displaynames::provider::RegionDisplayNamesV1::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1::INFO,
         super::displaynames::provider::VariantDisplayNamesV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionLongV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionShortV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageLongV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageShortV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMenuLongV1::INFO,
+        super::displaynames::provider::LocaleNamesScriptLongV1::INFO,
+        super::displaynames::provider::LocaleNamesScriptShortV1::INFO,
+        super::displaynames::provider::LocaleNamesVariantLongV1::INFO,
+        super::displaynames::provider::LocaleNamesVariantShortV1::INFO,
         super::measure::provider::UnitIdsV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
         super::relativetime::provider::LongDayRelativeV1::INFO,

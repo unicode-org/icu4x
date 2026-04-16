@@ -9,7 +9,7 @@ internal interface SentenceBreakIteratorUtf16Lib: Library {
     fun icu4x_SentenceBreakIteratorUtf16_destroy_mv1(handle: Pointer)
     fun icu4x_SentenceBreakIteratorUtf16_next_mv1(handle: Pointer): Int
 }
-/** See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
+/** See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
 */
 class SentenceBreakIteratorUtf16 internal constructor (
     internal val handle: Pointer,
@@ -17,12 +17,22 @@ class SentenceBreakIteratorUtf16 internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class SentenceBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: SentenceBreakIteratorUtf16Lib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class SentenceBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: SentenceBreakIteratorUtf16Lib) : Runnable {
         override fun run() {
             lib.icu4x_SentenceBreakIteratorUtf16_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, SentenceBreakIteratorUtf16.SentenceBreakIteratorUtf16Cleaner(handle, SentenceBreakIteratorUtf16.lib));
     }
 
     companion object {
@@ -33,7 +43,7 @@ class SentenceBreakIteratorUtf16 internal constructor (
     /** Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
     *out of range of a 32-bit signed integer.
     *
-    *See the [Rust documentation for `next`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.SentenceBreakIterator.html#method.next) for more information.
+    *See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.SentenceBreakIterator.html#method.next) for more information.
     */
     fun next(): Int {
         

@@ -18,7 +18,7 @@ pub mod ffi {
     use crate::unstable::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
         date_time_formatter::ffi::{DateTimeFormatter, DateTimeFormatterGregorian},
-        date::ffi::IsoDate,
+        date::ffi::{Date, IsoDate},
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
@@ -33,7 +33,6 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::NoCalendarFormatter, Typedef)]
-    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct TimeZoneFormatter(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             (),
@@ -476,17 +475,9 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
-            input.set_time_zone_id(zone.id);
-            if let Some(offset) = zone.offset {
-                input.set_time_zone_utc_offset(offset);
-            }
-            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
-                input.set_time_zone_name_timestamp(zone_name_timestamp);
-            }
-            else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
-            }
-            let _infallible = self
+            input.set_time_zone_info_at_time_fields(zone.as_rust_at_time(None::<icu_calendar::Date<icu_calendar::AnyCalendar>>, None));
+
+            self
                 .0
                 .format_unchecked(input)
                 .try_write_to(write)
@@ -494,6 +485,7 @@ pub mod ffi {
                 .transpose()?;
             Ok(())
         }
+        
     }
     
 }

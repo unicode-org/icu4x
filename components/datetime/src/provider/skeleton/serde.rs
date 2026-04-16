@@ -92,7 +92,7 @@ pub mod runtime {
         where
             E: de::Error,
         {
-            let reference_deserializer = super::reference::DeserializeSkeletonUTS35String;
+            let reference_deserializer = reference::DeserializeSkeletonUTS35String;
             let skeleton = reference_deserializer.visit_str(skeleton_string)?;
 
             Ok(skeleton.into())

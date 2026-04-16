@@ -11,7 +11,7 @@ internal interface WordBreakIteratorUtf8Lib: Library {
     fun icu4x_WordBreakIteratorUtf8_word_type_mv1(handle: Pointer): Int
     fun icu4x_WordBreakIteratorUtf8_is_word_like_mv1(handle: Pointer): Byte
 }
-/** See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.WordBreakIterator.html) for more information.
+/** See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.WordBreakIterator.html) for more information.
 */
 class WordBreakIteratorUtf8 internal constructor (
     internal val handle: Pointer,
@@ -19,12 +19,22 @@ class WordBreakIteratorUtf8 internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class WordBreakIteratorUtf8Cleaner(val handle: Pointer, val lib: WordBreakIteratorUtf8Lib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class WordBreakIteratorUtf8Cleaner(val handle: Pointer, val lib: WordBreakIteratorUtf8Lib) : Runnable {
         override fun run() {
             lib.icu4x_WordBreakIteratorUtf8_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, WordBreakIteratorUtf8.WordBreakIteratorUtf8Cleaner(handle, WordBreakIteratorUtf8.lib));
     }
 
     companion object {
@@ -35,7 +45,7 @@ class WordBreakIteratorUtf8 internal constructor (
     /** Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
     *out of range of a 32-bit signed integer.
     *
-    *See the [Rust documentation for `next`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.WordBreakIterator.html#method.next) for more information.
+    *See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.next) for more information.
     */
     fun next(): Int {
         
@@ -45,7 +55,7 @@ class WordBreakIteratorUtf8 internal constructor (
     
     /** Return the status value of break boundary.
     *
-    *See the [Rust documentation for `word_type`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.WordBreakIterator.html#method.word_type) for more information.
+    *See the [Rust documentation for `word_type`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.word_type) for more information.
     */
     fun wordType(): SegmenterWordType {
         
@@ -55,7 +65,7 @@ class WordBreakIteratorUtf8 internal constructor (
     
     /** Return true when break boundary is word-like such as letter/number/CJK
     *
-    *See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.WordBreakIterator.html#method.is_word_like) for more information.
+    *See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.is_word_like) for more information.
     */
     fun isWordLike(): Boolean {
         

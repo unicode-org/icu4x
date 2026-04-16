@@ -16,25 +16,35 @@ internal interface EmojiSetDataLib: Library {
 }
 /** An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
 *
-*See the [Rust documentation for `properties`](https://docs.rs/icu/2.1.1/icu/properties/index.html) for more information.
+*See the [Rust documentation for `properties`](https://docs.rs/icu/2.2.0/icu/properties/index.html) for more information.
 *
-*See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/2.1.1/icu/properties/struct.EmojiSetData.html) for more information.
+*See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/2.2.0/icu/properties/struct.EmojiSetData.html) for more information.
 *
-*See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/properties/struct.EmojiSetData.html#method.new) for more information.
+*See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/properties/struct.EmojiSetData.html#method.new) for more information.
 *
-*See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/2.1.1/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
+*See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/2.2.0/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
 */
 class EmojiSetData internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class EmojiSetDataCleaner(val handle: Pointer, val lib: EmojiSetDataLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class EmojiSetDataCleaner(val handle: Pointer, val lib: EmojiSetDataLib) : Runnable {
         override fun run() {
             lib.icu4x_EmojiSetData_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, EmojiSetData.EmojiSetDataCleaner(handle, EmojiSetData.lib));
     }
 
     companion object {
@@ -44,41 +54,40 @@ class EmojiSetData internal constructor (
         
         /** Create a map for the `Basic_Emoji` property, using compiled data.
         *
-        *See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BasicEmoji.html) for more information.
+        *See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BasicEmoji.html) for more information.
         */
         fun createBasic(): EmojiSetData {
             
             val returnVal = lib.icu4x_EmojiSetData_create_basic_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = EmojiSetData(handle, selfEdges)
-            CLEANER.register(returnOpaque, EmojiSetData.EmojiSetDataCleaner(handle, EmojiSetData.lib));
+            val returnOpaque = EmojiSetData(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
         
         /** Create a map for the `Basic_Emoji` property, using a particular data source.
         *
-        *See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BasicEmoji.html) for more information.
+        *See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BasicEmoji.html) for more information.
         */
         fun createBasicWithProvider(provider: DataProvider): Result<EmojiSetData> {
             
             val returnVal = lib.icu4x_EmojiSetData_create_basic_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = EmojiSetData(handle, selfEdges)
-                CLEANER.register(returnOpaque, EmojiSetData.EmojiSetDataCleaner(handle, EmojiSetData.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = EmojiSetData(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** Get the `Basic_Emoji` value for a given character, using compiled data
         *
-        *See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
+        *See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
         */
         fun basicEmojiForChar(ch: Int): Boolean {
             
@@ -89,30 +98,38 @@ class EmojiSetData internal constructor (
         
         /** Get the `Basic_Emoji` value for a given character, using compiled data
         *
-        *See the [Rust documentation for `for_str`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
+        *See the [Rust documentation for `for_str`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
         */
         fun basicEmojiForStr(s: String): Boolean {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
-            val returnVal = lib.icu4x_EmojiSetData_basic_emoji_for_str_mv1(sSlice);
-            return (returnVal > 0)
+            val returnVal = lib.icu4x_EmojiSetData_basic_emoji_for_str_mv1(sSliceMemory.slice);
+            try {
+                return (returnVal > 0)
+            } finally {
+                sSliceMemory.close()
+            }
         }
     }
     
     /** Checks whether the string is in the set.
     *
-    *See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.1.1/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
+    *See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.2.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
     */
     fun contains(s: String): Boolean {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_EmojiSetData_contains_str_mv1(handle, sSlice);
-        return (returnVal > 0)
+        val returnVal = lib.icu4x_EmojiSetData_contains_str_mv1(handle, sSliceMemory.slice);
+        try {
+            return (returnVal > 0)
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Checks whether the code point is in the set.
     *
-    *See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
+    *See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
     */
     fun contains(cp: Int): Boolean {
         

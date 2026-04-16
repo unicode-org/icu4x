@@ -31,7 +31,7 @@ pub mod ffi {
     pub struct ListFormatter(pub icu_list::ListFormatter);
 
     impl ListFormatter {
-        /// Construct a new ListFormatter instance for And patterns from compiled data.
+        /// Construct a new `ListFormatter` instance for And patterns from compiled data.
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and, FnInStruct)]
         #[diplomat::rust_link(icu::list::options::ListFormatterOptions, Struct, hidden)]
         #[diplomat::rust_link(
@@ -58,7 +58,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a new ListFormatter instance for And patterns
+        /// Construct a new `ListFormatter` instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
@@ -78,7 +78,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a new ListFormatter instance for And patterns from compiled data.
+        /// Construct a new `ListFormatter` instance for And patterns from compiled data.
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_or, FnInStruct)]
         #[diplomat::rust_link(icu::list::options::ListFormatterOptions, Struct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length")]
@@ -94,7 +94,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a new ListFormatter instance for And patterns
+        /// Construct a new `ListFormatter` instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_or, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
@@ -114,7 +114,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a new ListFormatter instance for And patterns from compiled data.
+        /// Construct a new `ListFormatter` instance for And patterns from compiled data.
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length")]
         #[cfg(feature = "compiled_data")]
@@ -129,7 +129,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a new ListFormatter instance for And patterns
+        /// Construct a new `ListFormatter` instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]

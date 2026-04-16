@@ -151,7 +151,7 @@ where
     P1: ExportableProvider,
     F: ForkByErrorPredicate + Sync,
 {
-    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> BTreeSet<DataMarkerInfo> {
         let mut markers = self.0.supported_markers();
         markers.extend(self.1.supported_markers());
         markers
@@ -321,7 +321,7 @@ where
     P: ExportableProvider,
     F: ForkByErrorPredicate + Sync,
 {
-    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> BTreeSet<DataMarkerInfo> {
         self.providers
             .iter()
             .flat_map(|p| p.supported_markers())

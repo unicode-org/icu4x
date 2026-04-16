@@ -12,7 +12,7 @@ internal interface LocaleFallbackIteratorLib: Library {
 typealias LocaleFallbackIteratorIteratorItem = Locale?
 /** An iterator over the locale under fallback.
 *
-*See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/2.1.1/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
+*See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
 */
 class LocaleFallbackIterator internal constructor (
     internal val handle: Pointer,
@@ -20,12 +20,22 @@ class LocaleFallbackIterator internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 ): Iterator<Locale?> {
 
-    internal class LocaleFallbackIteratorCleaner(val handle: Pointer, val lib: LocaleFallbackIteratorLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleFallbackIteratorCleaner(val handle: Pointer, val lib: LocaleFallbackIteratorLib) : Runnable {
         override fun run() {
             lib.icu4x_LocaleFallbackIterator_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LocaleFallbackIterator.LocaleFallbackIteratorCleaner(handle, LocaleFallbackIterator.lib));
     }
 
     companion object {
@@ -38,8 +48,7 @@ class LocaleFallbackIterator internal constructor (
         val returnVal = lib.icu4x_LocaleFallbackIterator_next_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal ?: return null
-        val returnOpaque = Locale(handle, selfEdges)
-        CLEANER.register(returnOpaque, Locale.LocaleCleaner(handle, Locale.lib));
+        val returnOpaque = Locale(handle, selfEdges, true)
         return returnOpaque
     }
 

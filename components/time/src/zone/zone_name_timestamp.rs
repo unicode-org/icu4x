@@ -4,9 +4,11 @@
 
 use core::fmt;
 
-use icu_calendar::Iso;
+use icu_calendar::types::RataDie;
+use icu_calendar::{AsCalendar, Iso};
 use zerovec::ule::AsULE;
 
+use crate::Time;
 use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 
 /// The moment in time for resolving a time zone name.
@@ -24,78 +26,52 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 ///
 /// # Examples
 ///
-/// The region of Metlakatla (Alaska) switched between Pacific Time and
-/// Alaska Time multiple times between 2010 and 2025.
+/// The region of Metlakatla (Alaska) used to be on Pacific Time but is now
+/// on Alaska Time.
 ///
 /// ```
 /// use icu::calendar::Iso;
 /// use icu::datetime::fieldsets::zone::GenericLong;
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::TimeZone;
 /// use icu::time::zone::ZoneNameTimestamp;
 /// use icu::time::ZonedDateTime;
 /// use writeable::assert_writeable_eq;
 ///
-/// let metlakatla = IanaParser::new().parse("America/Metlakatla");
+/// let metlakatla = TimeZone::from_iana_id("America/Metlakatla");
 ///
 /// let zone_formatter =
 ///     NoCalendarFormatter::try_new(locale!("en-US").into(), GenericLong)
 ///         .unwrap();
 ///
-/// let time_zone_info_2010 = metlakatla
+/// let time_zone_info_past = metlakatla
 ///     .without_offset()
-///     .with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso(
-///         ZonedDateTime::try_offset_only_from_str("2010-01-01T00:00Z", Iso)
-///             .unwrap(),
-///     ));
-/// let time_zone_info_2025 = metlakatla
+///     .with_zone_name_timestamp(ZoneNameTimestamp::far_in_past());
+/// let time_zone_info_future = metlakatla
 ///     .without_offset()
-///     .with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso(
-///         ZonedDateTime::try_offset_only_from_str("2025-01-01T00:00Z", Iso)
-///             .unwrap(),
-///     ));
+///     .with_zone_name_timestamp(ZoneNameTimestamp::far_in_future());
 ///
 /// // Check the display names:
-/// let name_2010 = zone_formatter.format(&time_zone_info_2010);
-/// let name_2025 = zone_formatter.format(&time_zone_info_2025);
+/// let name_past = zone_formatter.format(&time_zone_info_past);
+/// let name_future = zone_formatter.format(&time_zone_info_future);
 ///
-/// assert_writeable_eq!(name_2010, "Pacific Time");
-/// assert_writeable_eq!(name_2025, "Alaska Time");
+/// assert_writeable_eq!(name_past, "Pacific Time");
+/// assert_writeable_eq!(name_future, "Alaska Time");
 /// ```
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ZoneNameTimestamp(u32);
+
+const RD_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
 impl ZoneNameTimestamp {
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
     ///
     /// This will always return a [`ZonedDateTime`] with [`UtcOffset::zero()`]
-    pub fn to_zoned_date_time_iso(self) -> ZonedDateTime<Iso, UtcOffset> {
-        ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-            match self.0 as i64 * 15 * 60 * 1000 {
-                // See `from_zoned_date_time_iso`
-                63593100000 => 63593070000,
-                307622700000 => 307622400000,
-                576042300000 => 576041460000,
-                576044100000 => 576043260000,
-                594180900000 => 594180060000,
-                607491900000 => 607491060000,
-                1601741700000 => 1601740860000,
-                1633191300000 => 1633190460000,
-                1664640900000 => 1664640060000,
-                ms => ms,
-            },
-            UtcOffset::zero(),
-        )
-    }
-
-    /// Creates an instance of [`ZoneNameTimestamp`] from a zoned datetime.
-    ///
-    /// The datetime might be clamped and might lose precision.
     ///
     /// # Examples
     ///
-    /// ZonedDateTime does _not_ necessarily roundtrip:
+    /// [`ZonedDateTime`] does _not_ necessarily roundtrip:
     ///
     /// ```
     /// use icu::calendar::Date;
@@ -108,7 +84,7 @@ impl ZoneNameTimestamp {
     ///     zone: UtcOffset::zero(),
     /// };
     ///
-    /// let zone_name_timestamp = ZoneNameTimestamp::from_zoned_date_time_iso(zoned_date_time);
+    /// let zone_name_timestamp = ZoneNameTimestamp::from_zoned_date_time(zoned_date_time);
     ///
     /// let recovered_zoned_date_time = zone_name_timestamp.to_zoned_date_time_iso();
     ///
@@ -122,25 +98,78 @@ impl ZoneNameTimestamp {
     /// assert_eq!(recovered_zoned_date_time.time.second.number(), 0); // always zero
     /// assert_eq!(recovered_zoned_date_time.time.subsecond.number(), 0); // always zero
     /// ```
+    pub fn to_zoned_date_time_iso(self) -> ZonedDateTime<Iso, UtcOffset> {
+        ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+            self.epoch_seconds() * 1000,
+            UtcOffset::zero(),
+        )
+    }
+
+    /// Creates an instance of [`ZoneNameTimestamp`] from a [`ZonedDateTime`] with an explicit [`UtcOffset`].
+    pub fn from_zoned_date_time<C: AsCalendar>(
+        zoned_date_time: ZonedDateTime<C, UtcOffset>,
+    ) -> Self {
+        Self::from_rd_time_zone(
+            zoned_date_time.date.to_rata_die(),
+            zoned_date_time.time,
+            zoned_date_time.zone,
+        )
+    }
+
+    /// Use [`Self::from_zoned_date_time`].
+    #[deprecated(since = "2.2.0", note = "use `Self::from_zoned_date_time`")]
     pub fn from_zoned_date_time_iso(zoned_date_time: ZonedDateTime<Iso, UtcOffset>) -> Self {
-        let ms = match zoned_date_time.to_epoch_milliseconds_utc() {
+        Self::from_zoned_date_time(zoned_date_time)
+    }
+
+    pub(crate) fn from_rd_time_zone(rd: RataDie, time: Time, zone: UtcOffset) -> Self {
+        Self::from_epoch_seconds(
+            (rd - RD_EPOCH) * 24 * 60 * 60 + time.seconds_since_midnight() as i64
+                - zone.to_seconds() as i64,
+        )
+    }
+
+    /// Creates an instance of [`ZoneNameTimestamp`] from a number of seconds since the UNIX epoch.
+    pub fn from_epoch_seconds(seconds: i64) -> Self {
+        let seconds = match seconds {
             // Values that are not multiples of 15, that we map to the next multiple
             // of 15 (which is always 00:15 or 00:45, values that are otherwise unused).
-            63593070000..63593100000 => 63593100000,
-            307622400000..307622700000 => 307622700000,
-            576041460000..576042300000 => 576042300000,
-            576043260000..576044100000 => 576044100000,
-            594180060000..594180900000 => 594180900000,
-            607491060000..607491900000 => 607491900000,
-            1601740860000..1601741700000 => 1601741700000,
-            1633190460000..1633191300000 => 1633191300000,
-            1664640060000..1664640900000 => 1664640900000,
-            ms => ms,
+            63593070..63593100 => 63593100,
+            307622400..307622700 => 307622700,
+            576041460..576042300 => 576042300,
+            576043260..576044100 => 576044100,
+            594180060..594180900 => 594180900,
+            607491060..607491900 => 607491900,
+            1601740860..1601741700 => 1601741700,
+            1633190460..1633191300 => 1633191300,
+            1664640060..1664640900 => 1664640900,
+            s => s,
         };
-        let qh = ms / 1000 / 60 / 15;
+        let qh = seconds / 60 / 15;
         let qh_clamped = qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
         // Valid cast as the value is clamped to u32 values.
         Self(qh_clamped as u32)
+    }
+
+    /// Returns the *approximate* number of seconds since the UNIX epoch represented by this
+    /// timestamp.
+    ///
+    /// As this type is only used for time zone name resolution, it does not store a
+    /// full-precision timestamp internally.
+    fn epoch_seconds(self) -> i64 {
+        match self.0 as i64 * 15 * 60 {
+            // See `from_epoch_seconds`
+            63593100 => 63593070,
+            307622700 => 307622400,
+            576042300 => 576041460,
+            576044100 => 576043260,
+            594180900 => 594180060,
+            607491900 => 607491060,
+            1601741700 => 1601740860,
+            1633191300 => 1633190460,
+            1664640900 => 1664640060,
+            ms => ms,
+        }
     }
 
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
@@ -165,7 +194,7 @@ impl ZoneNameTimestamp {
         note = "implicitly interprets the DateTime as UTC. Use `from_zoned_date_time_iso` instead."
     )]
     pub fn from_date_time_iso(DateTime { date, time }: DateTime<Iso>) -> Self {
-        Self::from_zoned_date_time_iso(ZonedDateTime {
+        Self::from_zoned_date_time(ZonedDateTime {
             date,
             time,
             zone: UtcOffset::zero(),
@@ -185,7 +214,7 @@ impl ZoneNameTimestamp {
 
 impl fmt::Debug for ZoneNameTimestamp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&self.to_zoned_date_time_iso(), f)
+        write!(f, "~{:?}", self.to_zoned_date_time_iso())
     }
 }
 
@@ -226,7 +255,7 @@ impl serde::Serialize for ZoneNameTimestamp {
             let second = date_time.time.second.number();
             let mut s = alloc::format!("{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}");
             if second != 0 {
-                use alloc::fmt::Write;
+                use core::fmt::Write;
                 let _infallible = write!(&mut s, ":{second:02}");
             }
             // don't serialize the metadata for now
@@ -259,9 +288,9 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
             let day = parts[8..10].parse::<u8>().map_err(e1)?;
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
-            return Ok(Self::from_zoned_date_time_iso(ZonedDateTime {
+            return Ok(Self::from_zoned_date_time(ZonedDateTime {
                 date: icu_calendar::Date::try_new_iso(year, month, day).map_err(e2)?,
-                time: crate::Time::try_new(hour, minute, 0, 0).map_err(e3)?,
+                time: Time::try_new(hour, minute, 0, 0).map_err(e3)?,
                 zone: UtcOffset::zero(),
             }));
         }
@@ -339,7 +368,7 @@ mod test {
                 output: "2025-04-30T15:15Z",
             },
         ] {
-            let znt = ZoneNameTimestamp::from_zoned_date_time_iso(
+            let znt = ZoneNameTimestamp::from_zoned_date_time(
                 ZonedDateTime::try_offset_only_from_str(test_case.input, Iso).unwrap(),
             );
             let actual = znt.to_zoned_date_time_iso();

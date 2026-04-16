@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::{names::*, time_zones::tz, *},
+    provider::semantic_skeletons::GluePattern,
+    provider::{names::*, packed_pattern::*, time_zones::tz},
     scaffold::*,
 };
 use icu_calendar::{
@@ -185,6 +186,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// - [`ZonedDateTime`](icu_time::ZonedDateTime)
 /// - [`UtcOffset`](icu_time::zone::UtcOffset)
 /// - [`TimeZoneInfo`](icu_time::TimeZoneInfo)
+/// - And datetime types from third party crates; see [`unstable_third_party`](crate::input::unstable_third_party)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
 /// [`Time`]: icu_time::Time

@@ -18,23 +18,33 @@ internal interface CodePointMapData16Lib: Library {
 *
 *For properties whose values fit into 16 bits.
 *
-*See the [Rust documentation for `properties`](https://docs.rs/icu/2.1.1/icu/properties/index.html) for more information.
+*See the [Rust documentation for `properties`](https://docs.rs/icu/2.2.0/icu/properties/index.html) for more information.
 *
-*See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapData.html) for more information.
+*See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapData.html) for more information.
 *
-*See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+*See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
 */
 class CodePointMapData16 internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CodePointMapData16Cleaner(val handle: Pointer, val lib: CodePointMapData16Lib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CodePointMapData16Cleaner(val handle: Pointer, val lib: CodePointMapData16Lib) : Runnable {
         override fun run() {
             lib.icu4x_CodePointMapData16_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CodePointMapData16.CodePointMapData16Cleaner(handle, CodePointMapData16.lib));
     }
 
     companion object {
@@ -44,41 +54,40 @@ class CodePointMapData16 internal constructor (
         
         /** Create a map for the `Script` property, using compiled data.
         *
-        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html) for more information.
+        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html) for more information.
         */
         fun createScript(): CodePointMapData16 {
             
             val returnVal = lib.icu4x_CodePointMapData16_create_script_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CodePointMapData16(handle, selfEdges)
-            CLEANER.register(returnOpaque, CodePointMapData16.CodePointMapData16Cleaner(handle, CodePointMapData16.lib));
+            val returnOpaque = CodePointMapData16(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
         
         /** Create a map for the `Script` property, using a particular data source.
         *
-        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html) for more information.
+        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html) for more information.
         */
         fun createScriptWithProvider(provider: DataProvider): Result<CodePointMapData16> {
             
             val returnVal = lib.icu4x_CodePointMapData16_create_script_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CodePointMapData16(handle, selfEdges)
-                CLEANER.register(returnOpaque, CodePointMapData16.CodePointMapData16Cleaner(handle, CodePointMapData16.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointMapData16(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
     
     /** Gets the value for a code point.
     *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
     */
     fun get(cp: Int): UShort {
         
@@ -88,45 +97,44 @@ class CodePointMapData16 internal constructor (
     
     /** Produces an iterator over ranges of code points that map to `value`
     *
-    *See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+    *See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
     */
     fun iterRangesForValue(value: UShort): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointMapData16_iter_ranges_for_value_mv1(handle, FFIUint16(value));
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
-        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
+        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
     
     /** Produces an iterator over ranges of code points that do not map to `value`
     *
-    *See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+    *See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
     */
     fun iterRangesForValueComplemented(value: UShort): CodePointRangeIterator {
+        // This lifetime edge depends on lifetimes: 'a
+        val aEdges: MutableList<Any> = mutableListOf(this);
         
         val returnVal = lib.icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(handle, FFIUint16(value));
         val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 
-        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, CodePointRangeIterator.CodePointRangeIteratorCleaner(handle, CodePointRangeIterator.lib));
+        val returnOpaque = CodePointRangeIterator(handle, selfEdges, aEdges, true)
         return returnOpaque
     }
     
     /** Gets a [CodePointSetData] representing all entries in this map that map to the given value
     *
-    *See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+    *See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
     */
     fun getSetForValue(value: UShort): CodePointSetData {
         
         val returnVal = lib.icu4x_CodePointMapData16_get_set_for_value_mv1(handle, FFIUint16(value));
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = CodePointSetData(handle, selfEdges)
-        CLEANER.register(returnOpaque, CodePointSetData.CodePointSetDataCleaner(handle, CodePointSetData.lib));
+        val returnOpaque = CodePointSetData(handle, selfEdges, true)
         return returnOpaque
     }
 

@@ -43,6 +43,7 @@
 //! 4. [`UtcOffset`](icu_time::zone::UtcOffset)
 //! 5. [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 //! 6. [`ZonedDateTime`](icu_time::ZonedDateTime)
+//! 7. And datetime types from third party crates; see [`input::unstable_third_party`].
 //!
 //! Not all inputs are valid for all field sets.
 //!
@@ -120,11 +121,15 @@
 
 extern crate alloc;
 
+#[cfg(feature = "unstable_chrono_0_4")]
+mod chrono;
 mod combo;
 mod error;
 mod external_loaders;
 pub mod fieldsets;
 mod format;
+#[cfg(feature = "unstable_jiff_0_2")]
+mod jiff;
 mod neo;
 pub mod options;
 pub mod parts;
@@ -133,6 +138,8 @@ pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;
+#[cfg(feature = "unstable_time_0_3")]
+mod time_crate;
 pub mod unchecked;
 
 pub use error::{DateTimeFormatterLoadError, MismatchedCalendarError};
@@ -163,6 +170,9 @@ pub mod preferences {
 ///
 /// This module contains re-exports from the [`icu_calendar`] and [`icu_time`] crates.
 pub mod input {
+    #[path = "third_party.rs"]
+    pub mod unstable_third_party;
+
     pub use icu_calendar::Date;
     pub use icu_time::zone::UtcOffset;
     pub use icu_time::DateTime;
@@ -170,4 +180,7 @@ pub mod input {
     pub use icu_time::TimeZone;
     pub use icu_time::TimeZoneInfo;
     pub use icu_time::ZonedDateTime;
+
+    #[cfg(feature = "unstable")]
+    pub use icu_time::ZonedTime;
 }

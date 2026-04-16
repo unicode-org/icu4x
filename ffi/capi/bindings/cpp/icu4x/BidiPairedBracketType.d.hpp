@@ -26,21 +26,21 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
+ * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
  */
 class BidiPairedBracketType {
 public:
     enum Value {
         /**
-         * Represents Bidi_Paired_Bracket_Type=Open.
+         * Represents `Bidi_Paired_Bracket_Type=Open`.
          */
         Open = 0,
         /**
-         * Represents Bidi_Paired_Bracket_Type=Close.
+         * Represents `Bidi_Paired_Bracket_Type=Close`.
          */
         Close = 1,
         /**
-         * Represents Bidi_Paired_Bracket_Type=None.
+         * Represents `Bidi_Paired_Bracket_Type=None`.
          */
         None = 2,
     };

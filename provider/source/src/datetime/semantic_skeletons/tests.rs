@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use icu::datetime::provider::fields;
 
 use crate::SourceDataProvider;
 
@@ -172,7 +173,7 @@ fn test_en_overlap_patterns() {
 
 /// This is a test that should eventually be moved to CLDR.
 ///
-/// See: https://unicode-org.atlassian.net/browse/CLDR-14993
+/// See: <https://unicode-org.atlassian.net/browse/CLDR-14993>
 #[cfg(feature = "networking")]
 mod date_skeleton_consistency_tests {
     use super::*;

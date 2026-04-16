@@ -172,6 +172,26 @@ struct Cli {
     #[cfg(feature = "provider")]
     icuexport_root: Option<PathBuf>,
 
+    #[arg(long, value_name = "TAG", default_value = "17.0.0")]
+    #[arg(
+        help = "Download versioned UCD from unicode.org (`https://www.unicode.org/Public/{tag}/`). \
+                  Use 'latest' for the latest version verified to work with this version of the binary, \
+                  and 'latest-tag' for the literal tag 'latest' on unicode.org."
+    )]
+    #[cfg_attr(not(feature = "networking"), arg(hide = true))]
+    #[cfg(feature = "provider")]
+    ucd_tag: String,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(help = "Path to a local Unihan.zip file or directory.")]
+    #[cfg(feature = "provider")]
+    unihan_root: Option<PathBuf>,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(help = "Path to a local UCD root directory containing security/IdentifierStatus.txt.")]
+    #[cfg(feature = "provider")]
+    ucd_root: Option<PathBuf>,
+
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
@@ -370,10 +390,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
         match cli.markers.as_slice() {
             [x] if x == "none" => Default::default(),
             [x] if x == "all" => {
-                #[cfg(feature = "experimental")]
-                log::info!("The icu4x-datagen crate has been built with the `experimental` feature, so `--markers all` includes experimental markers");
-                #[cfg(not(feature = "experimental"))]
-                log::info!("The icu4x-datagen crate has been built without the `experimental` feature, so `--markers all` does not include experimental markers");
+                #[cfg(feature = "unstable")]
+                log::info!("The icu4x-datagen crate has been built with the `unstable` feature, so `--markers all` includes unstable markers");
+                #[cfg(not(feature = "unstable"))]
+                log::info!("The icu4x-datagen crate has been built without the `unstable` feature, so `--markers all` does not include unstable markers");
                 all_markers()
             }
             markers => markers
@@ -381,7 +401,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 .map(|k| match marker_lookup().get(k.as_str()) {
                     Some(Some(marker)) => Ok(*marker),
                     Some(None) => {
-                        eyre::bail!("Marker {k:?} requires `experimental` Cargo feature")
+                        eyre::bail!("Marker {k:?} requires `unstable` Cargo feature")
                     }
                     None => eyre::bail!("Unknown marker {k:?}"),
                 })
@@ -417,16 +437,22 @@ fn run(cli: Cli) -> eyre::Result<()> {
     fn missing_data_message<T>(e: DataError) -> Result<T, eyre::Report> {
         #[cfg(feature = "provider")]
         if SourceDataProvider::is_missing_cldr_error(e) {
-            eyre::bail!("CLDR data is required for this invocation, set --cldr-path or --cldr-tag");
+            eyre::bail!("CLDR data is required for this invocation, set --cldr-root or --cldr-tag");
         } else if SourceDataProvider::is_missing_icuexport_error(e) {
             eyre::bail!(
-                "ICU data is required for this invocation, set --icuexport-path or --icuexport-tag"
+                "ICU data is required for this invocation, set --icuexport-root or --icuexport-tag"
             );
         } else if SourceDataProvider::is_missing_segmenter_lstm_error(e) {
-            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segementer-lstm-path or --segementer-lstm-tag");
+            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segmenter-lstm-root or --segmenter-lstm-tag");
+        } else if SourceDataProvider::is_missing_unihan_error(e) {
+            eyre::bail!(
+                "Unihan data is required for this invocation, set --unihan-root or --ucd-tag"
+            );
+        } else if SourceDataProvider::is_missing_ucd_error(e) {
+            eyre::bail!("UCD data is required for this invocation, set --ucd-root or --ucd-tag");
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
             eyre::bail!(
-                "Timezone data is required for this invocation, set --tzdb-path or --tzdb-tag"
+                "Timezone data is required for this invocation, set --tzdb-root or --tzdb-tag"
             );
         }
 
@@ -444,7 +470,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
         }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => {
-            let provider = icu_provider_blob::BlobDataProvider::try_new_from_blob(
+            let provider = BlobDataProvider::try_new_from_blob(
                 std::fs::read(cli.input_blob.unwrap())?.into(),
             )?;
             let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
@@ -503,6 +529,30 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 (None, _) => p,
             };
 
+            p = match (cli.unihan_root, cli.ucd_tag.as_str()) {
+                (Some(path), _) => p.with_unihan(&path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG),
+                #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_unihan_for_tag("latest"),
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_unihan_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => p,
+            };
+
+            p = match (cli.ucd_root, cli.ucd_tag.as_str()) {
+                (Some(path), _) => p.with_ucd(&path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => p.with_ucd_for_tag(SourceDataProvider::TESTED_UCD_TAG),
+                #[cfg(feature = "networking")]
+                (_, "latest-tag") => p.with_ucd_for_tag("latest"),
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_ucd_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => p,
+            };
+
             p = match (cli.tzdb_root, cli.tzdb_tag.as_str()) {
                 (Some(path), _) => p.with_tzdb(&path)?,
                 #[cfg(feature = "networking")]
@@ -537,7 +587,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 .collect::<Option<Vec<_>>>()
             {
                 preprocessed_locales = Some(PreprocessedLocales::Locales(
-                    p.locales_for_coverage_levels(locale_subsets.into_iter())?
+                    p.locales_for_coverage_levels(locale_subsets)?
                         .into_iter()
                         .collect(),
                 ));
@@ -695,14 +745,14 @@ fn run(cli: Cli) -> eyre::Result<()> {
 }
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn all_markers() -> Vec<DataMarkerInfo> {
             vec![
                 $(
                     <$marker_ty>::INFO,
                 )+
                 $(
-                    #[cfg(feature = "experimental")]
+                    #[cfg(feature = "unstable")]
                     <$emarker_ty>::INFO,
                 )+
             ]
@@ -720,13 +770,13 @@ macro_rules! cb {
                         (stringify!($marker).into(), Some(<$marker_ty>::INFO)),
                     )+
                     $(
-                        #[cfg(feature = "experimental")]
+                        #[cfg(feature = "unstable")]
                         (stringify!($emarker_ty).replace(' ', ""), Some(<$emarker_ty>::INFO)),
-                        #[cfg(feature = "experimental")]
+                        #[cfg(feature = "unstable")]
                         (stringify!($emarker).into(), Some(<$emarker_ty>::INFO)),
-                        #[cfg(not(feature = "experimental"))]
+                        #[cfg(not(feature = "unstable"))]
                         (stringify!($emarker_ty).replace(' ', ""), None),
-                        #[cfg(not(feature = "experimental"))]
+                        #[cfg(not(feature = "unstable"))]
                         (stringify!($emarker).into(), None),
                     )+
 
@@ -753,7 +803,7 @@ macro_rules! cb {
                     $marker_ty,
                 )+
                 $(
-                    #[cfg(feature = "experimental")]
+                    #[cfg(feature = "unstable")]
                     $emarker_ty,
                 )+
             ]
@@ -772,7 +822,7 @@ use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;
 
 #[cfg(feature = "blob_input")]
-struct ReexportableBlobDataProvider(icu_provider_blob::BlobDataProvider);
+struct ReexportableBlobDataProvider(BlobDataProvider);
 
 #[cfg(feature = "blob_input")]
 impl<M: DataMarker> DataProvider<M> for ReexportableBlobDataProvider

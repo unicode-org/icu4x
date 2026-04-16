@@ -25,11 +25,11 @@ define_preferences!(
 
 /// Lookup of the locale-specific display names by region code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, RegionDisplayNames,
+///     DisplayNamesOptions, multi::RegionDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::region};
 ///
@@ -92,11 +92,11 @@ impl RegionDisplayNames {
 
 /// Lookup of the locale-specific display names by script code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, ScriptDisplayNames,
+///     DisplayNamesOptions, multi::ScriptDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::script};
 ///
@@ -159,11 +159,11 @@ impl ScriptDisplayNames {
 
 /// Lookup of the locale-specific display names by variant.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, VariantDisplayNames,
+///     DisplayNamesOptions, multi::VariantDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::variant};
 ///
@@ -223,11 +223,11 @@ impl VariantDisplayNames {
 
 /// Lookup of the locale-specific display names by language code.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, LanguageDisplayNames,
+///     DisplayNamesOptions, multi::LanguageDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::language};
 ///
@@ -294,11 +294,11 @@ impl LanguageDisplayNames {
 
 /// Format a locale as a display string.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, LocaleDisplayNamesFormatter,
+///     DisplayNamesOptions, multi::LocaleDisplayNamesFormatter,
 /// };
 /// use icu::locale::locale;
 ///

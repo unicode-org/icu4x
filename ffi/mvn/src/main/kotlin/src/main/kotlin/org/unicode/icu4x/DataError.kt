@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface DataErrorLib: Library {
 }
-/** Additional information: [1](https://docs.rs/icu_provider/2.1.1/icu_provider/struct.DataError.html), [2](https://docs.rs/icu_provider/2.1.1/icu_provider/enum.DataErrorKind.html)
+/** Additional information: [1](https://docs.rs/icu_provider/2.2.0/icu_provider/struct.DataError.html), [2](https://docs.rs/icu_provider/2.2.0/icu_provider/enum.DataErrorKind.html)
 */
 enum class DataError {
     Unknown,

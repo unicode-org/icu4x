@@ -455,13 +455,13 @@ fn test_lengths_with_preferences() {
     );
 }
 
-/// Tests simple component::Bag.
+/// Tests simple components.
 #[test]
 fn test_components() {
     test_fixture("components", include_str!("fixtures/tests/components.json"));
 }
 
-/// Tests component::Bag configurations that have exact matches to CLDR skeletons.
+/// Tests components configurations that have exact matches to CLDR skeletons.
 #[test]
 fn test_components_exact_matches() {
     test_fixture(
@@ -487,7 +487,7 @@ fn test_components_with_zones() {
     );
 }
 
-/// Tests that component::Bags can adjust for width differences in the final pattern.
+/// Tests that components can adjust for width differences in the final pattern.
 #[test]
 fn test_components_width_differences() {
     test_fixture(
@@ -496,7 +496,7 @@ fn test_components_width_differences() {
     );
 }
 
-/// Tests that combine component::Bags options that don't exactly match a pattern.
+/// Tests that combine components options that don't exactly match a pattern.
 #[test]
 fn test_components_partial_matches() {
     test_fixture(
@@ -505,7 +505,7 @@ fn test_components_partial_matches() {
     );
 }
 
-/// Tests that component::Bags can combine a date skeleton, and a time skeleton.
+/// Tests that components can combine a date skeleton, and a time skeleton.
 #[test]
 fn test_components_combine_datetime() {
     test_fixture(

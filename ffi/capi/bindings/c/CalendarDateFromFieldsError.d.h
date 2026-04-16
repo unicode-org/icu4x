@@ -13,14 +13,17 @@
 
 typedef enum CalendarDateFromFieldsError {
   CalendarDateFromFieldsError_Unknown = 0,
-  CalendarDateFromFieldsError_OutOfRange = 1,
-  CalendarDateFromFieldsError_UnknownEra = 2,
+  CalendarDateFromFieldsError_InvalidDay = 1,
+  CalendarDateFromFieldsError_InvalidOrdinalMonth = 9,
+  CalendarDateFromFieldsError_InvalidEra = 2,
   CalendarDateFromFieldsError_MonthCodeInvalidSyntax = 3,
-  CalendarDateFromFieldsError_MonthCodeNotInCalendar = 4,
-  CalendarDateFromFieldsError_MonthCodeNotInYear = 5,
+  CalendarDateFromFieldsError_MonthNotInCalendar = 4,
+  CalendarDateFromFieldsError_MonthNotInYear = 5,
   CalendarDateFromFieldsError_InconsistentYear = 6,
   CalendarDateFromFieldsError_InconsistentMonth = 7,
   CalendarDateFromFieldsError_NotEnoughFields = 8,
+  CalendarDateFromFieldsError_TooManyFields = 10,
+  CalendarDateFromFieldsError_Overflow = 11,
 } CalendarDateFromFieldsError;
 
 typedef struct CalendarDateFromFieldsError_option {union { CalendarDateFromFieldsError ok; }; bool is_ok; } CalendarDateFromFieldsError_option;

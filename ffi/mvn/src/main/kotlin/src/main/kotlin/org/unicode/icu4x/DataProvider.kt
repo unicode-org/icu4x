@@ -20,19 +20,29 @@ internal interface DataProviderLib: Library {
 *If you wish to use ICU4X's builtin "compiled data", use the version of the constructors that do not have `_with_provider`
 *in their names.
 *
-*See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/2.1.1/icu_provider/index.html) for more information.
+*See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/2.2.0/icu_provider/index.html) for more information.
 */
 class DataProvider internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class DataProviderCleaner(val handle: Pointer, val lib: DataProviderLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class DataProviderCleaner(val handle: Pointer, val lib: DataProviderLib) : Runnable {
         override fun run() {
             lib.icu4x_DataProvider_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, DataProvider.DataProviderCleaner(handle, DataProvider.lib));
     }
 
     companion object {
@@ -44,42 +54,44 @@ class DataProvider internal constructor (
         *Requires the `provider_fs` Cargo feature.
         *Not supported in WASM.
         *
-        *See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/2.1.1/icu_provider_fs/struct.FsDataProvider.html) for more information.
+        *See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/2.2.0/icu_provider_fs/struct.FsDataProvider.html) for more information.
         */
         fun fromFs(path: String): Result<DataProvider> {
-            val (pathMem, pathSlice) = PrimitiveArrayTools.borrowUtf8(path)
+            val pathSliceMemory = PrimitiveArrayTools.borrowUtf8(path)
             
-            val returnVal = lib.icu4x_DataProvider_from_fs_mv1(pathSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = DataProvider(handle, selfEdges)
-                CLEANER.register(returnOpaque, DataProvider.DataProviderCleaner(handle, DataProvider.lib));
-                if (pathMem != null) pathMem.close()
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_DataProvider_from_fs_mv1(pathSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = DataProvider(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                pathSliceMemory.close()
             }
         }
         @JvmStatic
         
         /** Constructs a `BlobDataProvider` and returns it as an [DataProvider].
         *
-        *See the [Rust documentation for `try_new_from_static_blob`](https://docs.rs/icu_provider_blob/2.1.1/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_static_blob) for more information.
+        *See the [Rust documentation for `try_new_from_static_blob`](https://docs.rs/icu_provider_blob/2.2.0/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_static_blob) for more information.
         */
         fun fromByteSlice(blob: ByteArray): Result<DataProvider> {
-            val (blobMem, blobSlice) = PrimitiveArrayTools.borrow(blob)
+            val blobSliceMemory = PrimitiveArrayTools.borrow(blob).leakStatic()
             
-            val returnVal = lib.icu4x_DataProvider_from_byte_slice_mv1(blobSlice);
-            if (returnVal.isOk == 1.toByte()) {
+            val returnVal = lib.icu4x_DataProvider_from_byte_slice_mv1(blobSliceMemory.slice);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = DataProvider(handle, selfEdges)
-                CLEANER.register(returnOpaque, DataProvider.DataProviderCleaner(handle, DataProvider.lib));
-                if (blobMem != null) blobMem.close()
+                val handle = nativeOkVal 
+                val returnOpaque = DataProvider(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -89,43 +101,46 @@ class DataProvider internal constructor (
     *
     *This takes ownership of the `other` provider, leaving an empty provider in its place.
     *
-    *See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/2.1.1/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
+    *See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/2.2.0/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
     */
     fun forkByMarker(other: DataProvider): Result<Unit> {
         
         val returnVal = lib.icu4x_DataProvider_fork_by_marker_mv1(handle, other.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
-        if (returnVal.isOk == 1.toByte()) {
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
             return Unit.ok()
         } else {
-            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
         }
     }
     
     /** Same as `fork_by_key` but forks by locale instead of key.
     *
-    *See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/2.1.1/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
+    *See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/2.2.0/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
     */
     fun forkByLocale(other: DataProvider): Result<Unit> {
         
         val returnVal = lib.icu4x_DataProvider_fork_by_locale_mv1(handle, other.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
-        if (returnVal.isOk == 1.toByte()) {
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
             return Unit.ok()
         } else {
-            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
         }
     }
     
-    /** See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/2.1.1/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
+    /** See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/2.2.0/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
     *
-    *Additional information: [1](https://docs.rs/icu_provider_adapters/2.1.1/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
+    *Additional information: [1](https://docs.rs/icu_provider_adapters/2.2.0/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
     */
     fun enableLocaleFallbackWith(fallbacker: LocaleFallbacker): Result<Unit> {
         
         val returnVal = lib.icu4x_DataProvider_enable_locale_fallback_with_mv1(handle, fallbacker.handle);
-        if (returnVal.isOk == 1.toByte()) {
+        val nativeOkVal = returnVal.getNativeOk();
+        if (nativeOkVal != null) {
             return Unit.ok()
         } else {
-            return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
         }
     }
 

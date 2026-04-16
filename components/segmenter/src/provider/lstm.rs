@@ -31,7 +31,7 @@ macro_rules! lstm_matrix {
 
         impl<'data> $name<'data> {
             #[cfg(any(feature = "serde", feature = "datagen"))]
-            /// Creates a LstmMatrix with the given dimensions. Fails if the dimensions don't match the data.
+            #[doc = concat!("Creates a [`", stringify!($name), "`] with the given dimensions. Fails if the dimensions don't match the data.")]
             pub fn from_parts(
                 dims: [u16; $generic],
                 data: ZeroVec<'data, f32>,
@@ -182,7 +182,7 @@ impl<'data> LstmDataFloat32<'data> {
     }
 
     #[cfg(any(feature = "serde", feature = "datagen"))]
-    /// Creates a LstmDataFloat32 with the given data. Fails if the matrix dimensions are inconsistent.
+    /// Creates a [`LstmDataFloat32`] with the given data. Fails if the matrix dimensions are inconsistent.
     #[expect(clippy::too_many_arguments)] // constructor
     pub fn try_from_parts(
         model: ModelType,

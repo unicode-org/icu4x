@@ -181,6 +181,7 @@ impl<T: Writeable + ?Sized> Writeable for &T {
 #[cfg(feature = "alloc")]
 macro_rules! impl_write_smart_pointer {
     ($ty:path, T: $extra_bound:path) => {
+        #[allow(unused_qualifications)]
         impl<T: ?Sized + Writeable + $extra_bound> Writeable for $ty {
             #[inline]
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -243,7 +244,7 @@ fn test_string_impls() {
         assert_writeable_eq!(&chars[i], s);
         for j in 0..chars.len() {
             assert_eq!(
-                crate::cmp_str(&chars[j], &s),
+                cmp_str(&chars[j], &s),
                 chars[j].cmp(&chars[i]),
                 "{:?} vs {:?}",
                 chars[j],

@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TimeZone`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html) for more information.
+/// See the [Rust documentation for `TimeZone`](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZone.html) for more information.
 final class TimeZone implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class TimeZone implements ffi.Finalizable {
 
   /// The unknown time zone.
   ///
-  /// See the [Rust documentation for `unknown`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
+  /// See the [Rust documentation for `unknown`](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
   factory TimeZone.unknown() {
     final result = _icu4x_TimeZone_unknown_mv1();
     return TimeZone._fromFfi(result, []);
@@ -34,30 +34,57 @@ final class TimeZone implements ffi.Finalizable {
 
   /// Whether the time zone is the unknown zone.
   ///
-  /// See the [Rust documentation for `is_unknown`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
+  /// See the [Rust documentation for `is_unknown`](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
   bool isUnknown() {
     final result = _icu4x_TimeZone_is_unknown_mv1(_ffi);
     return result;
+  }
+
+  /// Construct a [TimeZone] from an IANA time zone ID.
+  ///
+  /// See the [Rust documentation for `from_iana_id`](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZone.html#method.from_iana_id) for more information.
+  factory TimeZone.fromIanaId(String ianaId) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_TimeZone_create_from_iana_id_mv1(ianaId._utf8AllocIn(temp.arena));
+    return TimeZone._fromFfi(result, []);
+  }
+
+  /// Construct a [TimeZone] from a Windows time zone ID and region.
+  ///
+  /// See the [Rust documentation for `from_windows_id`](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZone.html#method.from_windows_id) for more information.
+  factory TimeZone.fromWindowsId(String windowsId, String region) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_TimeZone_create_from_windows_id_mv1(windowsId._utf8AllocIn(temp.arena), region._utf8AllocIn(temp.arena));
+    return TimeZone._fromFfi(result, []);
+  }
+
+  /// Construct a [TimeZone] from the platform-specific ID.
+  ///
+  /// See the [Rust documentation for `from_system_id`](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZone.html#method.from_system_id) for more information.
+  factory TimeZone.fromSystemId(String id, String region) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_TimeZone_create_from_system_id_mv1(id._utf8AllocIn(temp.arena), region._utf8AllocIn(temp.arena));
+    return TimeZone._fromFfi(result, []);
   }
 
   /// Creates a time zone from a BCP-47 string.
   ///
   /// Returns the unknown time zone if the string is not a valid BCP-47 subtag.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html)
+  /// Additional information: [1](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZone.html)
   factory TimeZone.fromBcp47(String id) {
     final temp = _FinalizedArena();
     final result = _icu4x_TimeZone_create_from_bcp47_mv1(id._utf8AllocIn(temp.arena));
     return TimeZone._fromFfi(result, []);
   }
 
-  /// See the [Rust documentation for `with_offset`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.with_offset) for more information.
+  /// See the [Rust documentation for `with_offset`](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZone.html#method.with_offset) for more information.
   TimeZoneInfo withOffset(UtcOffset offset) {
     final result = _icu4x_TimeZone_with_offset_mv1(_ffi, offset._ffi);
     return TimeZoneInfo._fromFfi(result, []);
   }
 
-  /// See the [Rust documentation for `without_offset`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZone.html#method.without_offset) for more information.
+  /// See the [Rust documentation for `without_offset`](https://docs.rs/icu/2.2.0/icu/time/struct.TimeZone.html#method.without_offset) for more information.
   TimeZoneInfo withoutOffset() {
     final result = _icu4x_TimeZone_without_offset_mv1(_ffi);
     return TimeZoneInfo._fromFfi(result, []);
@@ -79,6 +106,21 @@ external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_unknown_mv1();
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZone_is_unknown_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_TimeZone_is_unknown_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@_DiplomatFfiUse('icu4x_TimeZone_create_from_iana_id_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_iana_id_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_create_from_iana_id_mv1(_SliceUtf8 ianaId);
+
+@_DiplomatFfiUse('icu4x_TimeZone_create_from_windows_id_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_windows_id_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_create_from_windows_id_mv1(_SliceUtf8 windowsId, _SliceUtf8 region);
+
+@_DiplomatFfiUse('icu4x_TimeZone_create_from_system_id_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_system_id_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_create_from_system_id_mv1(_SliceUtf8 id, _SliceUtf8 region);
 
 @_DiplomatFfiUse('icu4x_TimeZone_create_from_bcp47_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_bcp47_mv1')

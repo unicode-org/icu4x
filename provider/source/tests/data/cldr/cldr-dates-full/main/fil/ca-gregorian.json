@@ -371,7 +371,7 @@
                 "hmv": "h:mm a v",
                 "Hmv": "HH:mm v",
                 "hv": "h a v",
-                "Hv": "HH'h' v",
+                "Hv": "HH v",
                 "M": "L",
                 "Md": "M/d",
                 "MEd": "E, M/d",

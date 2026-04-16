@@ -40,14 +40,14 @@ icu_provider::data_marker!(UnitsInfoV1, UnitsInfo<'static>, is_singleton = true)
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsInfo<'data> {
-    /// Contains conversion information sorted by unit_id, including conversion rates and base units.
+    /// Contains conversion information sorted by `unit_id`, including conversion rates and base units.
     /// For instance, the conversion for `foot` is represented as `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub conversion_info: VarZeroVec<'data, ConversionInfoULE>,
 }
 
 impl UnitsInfo<'_> {
-    /// Retrieves the conversion details associated with a specific unit_id.
+    /// Retrieves the conversion details associated with a specific `unit_id`.
     ///
     /// # Parameters
     ///
@@ -55,8 +55,8 @@ impl UnitsInfo<'_> {
     ///
     /// # Returns
     ///
-    /// * `Some(&ConversionInfoULE)` - A reference to the conversion information if the unit_id is found.
-    /// * `None` - If the unit_id is not found.
+    /// * `Some(&ConversionInfoULE)` - A reference to the conversion information if the `unit_id` is found.
+    /// * `None` - If the `unit_id` is not found.
     pub fn conversion_info_by_unit_id(&self, unit_id: UnitID) -> Option<&ConversionInfoULE> {
         self.conversion_info
             .zvl_binary_search_by(|convert_unit| {

@@ -13,21 +13,31 @@ internal interface WeekInformationLib: Library {
     fun icu4x_WeekInformation_is_weekend_mv1(handle: Pointer, day: Int): Byte
     fun icu4x_WeekInformation_weekend_mv1(handle: Pointer): Pointer
 }
-/** A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
+/** A Week calculator, useful to be passed in to `week_of_year()` on Date and `DateTime` types
 *
-*See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html) for more information.
+*See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekInformation.html) for more information.
 */
 class WeekInformation internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class WeekInformationCleaner(val handle: Pointer, val lib: WeekInformationLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class WeekInformationCleaner(val handle: Pointer, val lib: WeekInformationLib) : Runnable {
         override fun run() {
             lib.icu4x_WeekInformation_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, WeekInformation.WeekInformationCleaner(handle, WeekInformation.lib));
     }
 
     companion object {
@@ -37,45 +47,45 @@ class WeekInformation internal constructor (
         
         /** Creates a new [WeekInformation] from locale data using compiled data.
         *
-        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
         */
         fun create(locale: Locale): Result<WeekInformation> {
             
             val returnVal = lib.icu4x_WeekInformation_create_mv1(locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WeekInformation(handle, selfEdges)
-                CLEANER.register(returnOpaque, WeekInformation.WeekInformationCleaner(handle, WeekInformation.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WeekInformation(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** Creates a new [WeekInformation] from locale data using a particular data source.
         *
-        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
         */
         fun createWithProvider(provider: DataProvider, locale: Locale): Result<WeekInformation> {
             
             val returnVal = lib.icu4x_WeekInformation_create_with_provider_mv1(provider.handle, locale.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WeekInformation(handle, selfEdges)
-                CLEANER.register(returnOpaque, WeekInformation.WeekInformationCleaner(handle, WeekInformation.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WeekInformation(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
     
     /** Returns the weekday that starts the week for this object's locale
     *
-    *See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
+    *See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
     */
     fun firstWeekday(): Weekday {
         
@@ -83,9 +93,9 @@ class WeekInformation internal constructor (
         return (Weekday.fromNative(returnVal))
     }
     
-    /** See the [Rust documentation for `weekend`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
+    /** See the [Rust documentation for `weekend`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
     *
-    *See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
+    *See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
     */
     fun isWeekend(day: Weekday): Boolean {
         
@@ -93,15 +103,14 @@ class WeekInformation internal constructor (
         return (returnVal > 0)
     }
     
-    /** See the [Rust documentation for `weekend`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
+    /** See the [Rust documentation for `weekend`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
     */
     fun weekend(): WeekdaySetIterator {
         
         val returnVal = lib.icu4x_WeekInformation_weekend_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = WeekdaySetIterator(handle, selfEdges)
-        CLEANER.register(returnOpaque, WeekdaySetIterator.WeekdaySetIteratorCleaner(handle, WeekdaySetIterator.lib));
+        val returnOpaque = WeekdaySetIterator(handle, selfEdges, true)
         return returnOpaque
     }
 

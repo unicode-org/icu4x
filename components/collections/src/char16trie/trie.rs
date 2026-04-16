@@ -104,7 +104,7 @@ impl<'data> Char16Trie<'data> {
 /// This struct represents an iterator over a [`Char16Trie`].
 #[derive(Clone, Debug)]
 pub struct Char16TrieIterator<'a> {
-    /// A reference to the Char16Trie data to iterate over.
+    /// A reference to the [`Char16Trie`] data to iterate over.
     trie: &'a ZeroSlice<u16>,
     /// Index of next trie unit to read, or `None` if there are no more matches.
     pos: Option<usize>,

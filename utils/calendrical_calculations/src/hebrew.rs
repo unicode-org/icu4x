@@ -202,27 +202,9 @@ impl BookHebrew {
     pub fn last_day_of_book_hebrew_month(book_year: i32, book_month: u8) -> u8 {
         match book_month {
             IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
-            ADAR => {
-                if !Self::is_hebrew_leap_year(book_year) {
-                    29
-                } else {
-                    30
-                }
-            }
-            MARHESHVAN => {
-                if !Self::is_long_marheshvan(book_year) {
-                    29
-                } else {
-                    30
-                }
-            }
-            KISLEV => {
-                if Self::is_short_kislev(book_year) {
-                    29
-                } else {
-                    30
-                }
-            }
+            ADAR if !Self::is_hebrew_leap_year(book_year) => 29,
+            MARHESHVAN if !Self::is_long_marheshvan(book_year) => 29,
+            KISLEV if Self::is_short_kislev(book_year) => 29,
             _ => 30,
         }
     }

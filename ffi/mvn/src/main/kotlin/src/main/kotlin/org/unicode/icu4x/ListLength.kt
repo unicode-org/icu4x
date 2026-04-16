@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface ListLengthLib: Library {
 }
-/** See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.1.1/icu/list/options/enum.ListLength.html) for more information.
+/** See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.2.0/icu/list/options/enum.ListLength.html) for more information.
 */
 enum class ListLength {
     Wide,

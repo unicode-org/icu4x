@@ -13,12 +13,11 @@ use icu::datetime::provider::semantic_skeletons::marker_attrs::GlueType;
 use icu::datetime::provider::semantic_skeletons::marker_attrs::{
     self, Context, Length, PatternLength,
 };
+use icu::datetime::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
-use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
-use writeable::Writeable;
-use zerovec::VarZeroCow;
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -32,7 +31,7 @@ const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::WIDE_STANDALONE,
 ];
 
-/// Lengths for month data (NORMAL_MARKER_LENGTHS + numeric)
+/// Lengths for month data (`NORMAL_MARKER_LENGTHS` + numeric)
 const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
@@ -164,6 +163,7 @@ impl SourceDataProvider {
     }
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn weekday_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
@@ -189,6 +189,7 @@ fn weekday_convert(
     })
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn dayperiods_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
@@ -273,21 +274,11 @@ fn years_convert(
             .max()
             .unwrap_or_default();
 
-        if calendar == DatagenCalendar::Japanese {
-            // The Japanese calendar didn't produce era indices until 2.2.0. To keep
-            // new-data-old-code working, we need to produce `YearNames::VariableEras`.
-            let kv = eras
-                .iter()
-                .map(|(&(k, _), &v)| (PotentialUtf8::from_str(k), v))
-                .unzip::<_, _, Vec<_>, Vec<_>>();
-            Ok(YearNames::VariableEras(VarZeroCow::from_encodeable(&kv)))
-        } else {
-            let mut out_eras = vec![""; max_icu4x_era_index];
-            for ((_, idx), era) in eras {
-                out_eras[idx] = era;
-            }
-            Ok(YearNames::FixedEras((&out_eras).into()))
+        let mut out_eras = vec![""; max_icu4x_era_index];
+        for ((_, idx), era) in eras {
+            out_eras[idx] = era;
         }
+        Ok(YearNames::FixedEras((&out_eras).into()))
     } else if let Some(years) = data
         .cyclic_name_sets
         .as_ref()
@@ -309,22 +300,7 @@ fn years_convert(
     }
 }
 
-/// Returns the number of regular months in a calendar, as well as whether it is
-/// has leap months
-fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
-    match cal {
-        DatagenCalendar::Hebrew | DatagenCalendar::Chinese | DatagenCalendar::Dangi => (24, true),
-        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => (13, false),
-        DatagenCalendar::Gregorian
-        | DatagenCalendar::Buddhist
-        | DatagenCalendar::Japanese
-        | DatagenCalendar::Indian
-        | DatagenCalendar::Persian
-        | DatagenCalendar::Hijri
-        | DatagenCalendar::Roc => (12, false),
-    }
-}
-
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn months_convert(
     _datagen: &SourceDataProvider,
     locale: &DataLocale,
@@ -348,96 +324,128 @@ fn months_convert(
         )));
     }
 
-    let months = data.months.get_symbols(context, length);
+    let months = &data.months.get_symbols(context, length).0;
 
-    let (month_count, has_leap) = calendar_months(calendar);
-    let mut symbols = vec![Cow::Borrowed(""); month_count];
+    if calendar == DatagenCalendar::Hebrew
+        && length == Length::Narrow
+        && months["10"].starts_with(&months["1"])
+        && months["11"].starts_with(&months["1"])
+        && months["12"].starts_with(&months["1"])
+        && months["13"].starts_with(&months["1"])
+    {
+        // CLDR currently has these locales that have data for Hebrew narrow months:
+        // * und: uses digits "6", "7", "7"
+        // * ast: uses digits, "6", "7", "7b"
+        // * bn: uses digits, "৬", "৭", "৭"
+        // * fa: uses words, "آ", "و", "و" (<- RTL)
+        // * ff-Adlm: uses digits, "𞥖", "𞥗", "𞥗" (<- RTL)
+        // * fi: uses letters, "A", "A", "A"
+        // * he: uses words, "א״א", "אד׳" ,"א״ב" (<- RTL)
+        // * ml: uses letters, "അ I", "അ.", "അ II",
+        // * mr: uses digits, "६", "७", "७",
+        // where the names are for Adar I, Adar, Adar II in that order.
 
-    if calendar == DatagenCalendar::Hebrew {
-        for (k, v) in months.0.iter() {
-            // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
-            //
-            // So we need to handle the 6 and 7 cases as leap months, and everything after 6 needs to
-            // be offset by 1
-            let index = if k == "7-yeartype-leap" {
-                // Adar II => M06L:
-                // * 12 months in a year
-                // * M06 is the 6th month
-                // * -1 because the data is zero-indexed
-                12 + 6 - 1
-            } else if k == "6" {
-                // Adar I => M05L:
-                // * 12 months in a year
-                // * M05 is the 5th month
-                // * -1 because the data is zero-indexed
-                12 + 5 - 1
-            } else {
-                let mut index: usize = k
+        // Unlike CLDR, ICU4X does not consider Adar/Adar II to have number 7 (and subsequent
+        // months to be shifted), so we have to special-case the locales that use digits.
+        // We detect this by checking whether the names for month["1n"] starts with the name
+        // for month["1"]. This branch will therefore be taken for und, ast, bn, ff-Adlm, and mr.
+
+        // The CLDR 48 data, for e.g. fa, can be inspected at
+        // https://github.com/unicode-org/cldr-json/blob/48.0.0/cldr-json/cldr-cal-hebrew-full/main/fa/ca-hebrew.json#L28-L43
+
+        Ok(MonthNames::LeapPattern(
+            (&[
+                months["1"].as_str(),
+                months["2"].as_str(),
+                months["3"].as_str(),
+                months["4"].as_str(),
+                months["5"].as_str(),
+                months["6"].as_str(),
+                months["7"].as_str(),
+                months["8"].as_str(),
+                months["9"].as_str(),
+                months["10"].as_str(),
+                months["11"].as_str(),
+                months["12"].as_str(),
+                // For lack of a better solution, we call Adar I and Adar II "a" and "b" instead.
+                &SinglePlaceholderPattern::try_from_str(
+                    &format!("{}a", &months["6"]),
+                    Default::default(),
+                )
+                .unwrap()
+                .store,
+                &SinglePlaceholderPattern::try_from_str(
+                    &format!("{}b", &months["6"]),
+                    Default::default(),
+                )
+                .unwrap()
+                .store,
+            ])
+                .into(),
+        ))
+    } else if calendar == DatagenCalendar::Hebrew {
+        let shevat = &months["5"];
+        let adar_i = &months["6"];
+        let adar = &months["7"];
+        let adar_ii = &months["7-yeartype-leap"];
+        // Adar I is the only leap month, so we can hardcode it as the leap pattern. The placeholder
+        // is the normal fifth month (Shevat), we can try reducing the data size by using it (but it
+        // should not actually match).
+        let leap_pattern = SinglePlaceholderPattern::try_from_str(
+            &adar_i.replace(shevat, "{0}"),
+            Default::default(),
+        )
+        .unwrap();
+        // Adar II is the only leap-base month, so we can hardcode it as the leap-base pattern. The
+        // placeholder is the normal sixth month (Adar), we can reduce the data size by using it.
+        let leap_base_pattern = SinglePlaceholderPattern::try_from_str(
+            &adar_ii.replace(adar, "{0}"),
+            Default::default(),
+        )
+        .unwrap();
+
+        let symbols = [
+            months["1"].as_str(),
+            months["2"].as_str(),
+            months["3"].as_str(),
+            months["4"].as_str(),
+            months["5"].as_str(),
+            months["7"].as_str(),
+            months["8"].as_str(),
+            months["9"].as_str(),
+            months["10"].as_str(),
+            months["11"].as_str(),
+            months["12"].as_str(),
+            months["13"].as_str(),
+            &leap_pattern.store,
+            &leap_base_pattern.store,
+        ];
+        Ok(MonthNames::LeapPattern((&symbols).into()))
+    } else {
+        let months = months
+            .iter()
+            .map(|(k, v)| {
+                let index: usize = k
                     .parse()
                     .expect("CLDR month indices must parse as numbers!");
-
-                if index > 5 {
-                    index -= 1;
-                }
                 if index == 0 {
                     panic!("CLDR month indices cannot be zero");
                 }
+                (index, v.as_str())
+            })
+            .collect::<BTreeMap<_, _>>();
 
-                index - 1
-            };
-
-            symbols[index] = (&**v).into();
-        }
-        Ok(MonthNames::LeapLinear((&symbols).into()))
-    } else {
-        for (k, v) in months.0.iter() {
-            let index: usize = k
-                .parse()
-                .expect("CLDR month indices must parse as numbers!");
-            if index == 0 {
-                panic!("CLDR month indices cannot be zero");
-            }
-
-            symbols[index - 1] = v.into();
+        if *months.last_key_value().unwrap().0 != months.len() {
+            panic!("Calendar {calendar:?} does not have data for all months: {months:?}");
         }
 
-        let nonleap = if has_leap {
-            month_count / 2
-        } else {
-            month_count
-        };
+        let mut symbols = months.into_values().collect::<Vec<_>>();
 
-        for (i, val) in symbols.iter().take(nonleap).enumerate() {
-            if val.is_empty() {
-                panic!("Calendar {calendar:?} does not have data for month {i}; found data for {symbols:?}");
-            }
-        }
-
-        if has_leap {
-            // This branch is only for chinese-like calendars with N regular months and N potential leap months
-            // rather than hebrew-like where there's one or two special leap months
-            debug_assert!(
-                calendar != DatagenCalendar::Hebrew,
-                "Hebrew calendar should have been handled in the branch above"
-            );
-            let patterns = data
-                .month_patterns
-                .as_ref()
-                .expect("Calendar with leap months must have monthPatterns");
-            let leap = &patterns.get_symbols(context, length).leap;
-
-            for i in 0..nonleap {
-                if symbols[i].is_empty() {
-                    continue;
-                }
-                let replaced = leap
-                    .0
-                    .interpolate([&symbols[i]])
-                    .write_to_string()
-                    .into_owned();
-                symbols[nonleap + i] = replaced.into();
-            }
-            Ok(MonthNames::LeapLinear((&symbols).into()))
+        if let Some(patterns) = data.month_patterns.as_ref() {
+            symbols.push(&patterns.get_symbols(context, length).leap.0.store);
+            // Leap bases format as normal months for non-Hebrew
+            symbols.push(&SinglePlaceholderPattern::PASS_THROUGH.store);
+            Ok(MonthNames::LeapPattern((&symbols).into()))
         } else {
             Ok(MonthNames::Linear((&symbols).into()))
         }
@@ -492,16 +500,13 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
     })
 }
 
+#[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
     glue_type: GlueType,
 ) -> Result<GluePattern<'static>, DataError> {
-    let append_tz = icu_pattern::DoublePlaceholderPattern::try_from_str(
-        &data.datetime_formats.append_items.timezone,
-        Default::default(),
-    )
-    .expect("failed to parse pattern");
+    let append_tz = &data.datetime_formats.append_items.timezone;
 
     // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
     let at_time = data
@@ -513,7 +518,9 @@ fn datetimepattern_convert(
         GlueType::DateTime => at_time.parse(),
         GlueType::DateZone => append_tz.interpolate_to_string(["{1}", "{2}"]).parse(),
         GlueType::TimeZone => append_tz.interpolate_to_string(["{0}", "{2}"]).parse(),
-        GlueType::DateTimeZone => append_tz.interpolate_to_string([at_time, "{2}"]).parse(),
+        GlueType::DateTimeZone => at_time
+            .replace("{0}", &append_tz.interpolate_to_string(["{0}", "{2}"]))
+            .parse(),
     }
     .expect("failed to parse pattern");
     Ok(GluePattern { pattern })

@@ -377,7 +377,7 @@
                 "hmvvvv": "h:mm a, vvvv",
                 "Hmvvvv": "H:mm, vvvv",
                 "hv": "h a v",
-                "Hv": "H 'h' v",
+                "Hv": "H v",
                 "M": "L",
                 "Md": "d. M.",
                 "MEd": "E d. M.",

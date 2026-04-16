@@ -28,7 +28,7 @@ pub enum DateDurationUnit {
     Days,
 }
 
-impl From<DateDurationUnit> for icu_calendar::types::DateDurationUnit {
+impl From<DateDurationUnit> for icu_calendar::options::DateDurationUnit {
     fn from(other: DateDurationUnit) -> Self {
         match other {
             DateDurationUnit::Years => Self::Years,

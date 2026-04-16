@@ -9,7 +9,7 @@ internal interface LineBreakIteratorUtf16Lib: Library {
     fun icu4x_LineBreakIteratorUtf16_destroy_mv1(handle: Pointer)
     fun icu4x_LineBreakIteratorUtf16_next_mv1(handle: Pointer): Int
 }
-/** See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.LineBreakIterator.html) for more information.
+/** See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.LineBreakIterator.html) for more information.
 */
 class LineBreakIteratorUtf16 internal constructor (
     internal val handle: Pointer,
@@ -17,12 +17,22 @@ class LineBreakIteratorUtf16 internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LineBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: LineBreakIteratorUtf16Lib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LineBreakIteratorUtf16Cleaner(val handle: Pointer, val lib: LineBreakIteratorUtf16Lib) : Runnable {
         override fun run() {
             lib.icu4x_LineBreakIteratorUtf16_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, LineBreakIteratorUtf16.LineBreakIteratorUtf16Cleaner(handle, LineBreakIteratorUtf16.lib));
     }
 
     companion object {
@@ -33,7 +43,7 @@ class LineBreakIteratorUtf16 internal constructor (
     /** Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
     *out of range of a 32-bit signed integer.
     *
-    *See the [Rust documentation for `next`](https://docs.rs/icu/2.1.1/icu/segmenter/iterators/struct.LineBreakIterator.html#method.next) for more information.
+    *See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.LineBreakIterator.html#method.next) for more information.
     */
     fun next(): Int {
         

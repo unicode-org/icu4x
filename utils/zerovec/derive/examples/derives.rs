@@ -43,11 +43,11 @@ impl AsULE for Foo {
 #[repr(C, packed)]
 #[derive(ule::VarULE)]
 struct RelationULE {
-    /// This maps to (AndOr, Polarity, Operand),
-    /// with the first bit mapping to AndOr (1 == And), the second bit
-    /// to Polarity (1 == Positive), and the remaining bits to Operand
-    /// encoded via Operand::encode. It is unsound for the Operand bits to
-    /// not be a valid encoded Operand.
+    /// This maps to (`AndOr`, `Polarity`, `Operand`),
+    /// with the first bit mapping to `AndOr` (`1 == And`), the second bit
+    /// to `Polarity` (`1 == Positive`), and the remaining bits to `Operand`
+    /// encoded via `Operand::encode`. It is unsound for the `Operand` bits to
+    /// not be a valid encoded `Operand`.
     andor_polarity_operand: u8,
     modulo: <u32 as AsULE>::ULE,
     range_list: ZeroSlice<Foo>,

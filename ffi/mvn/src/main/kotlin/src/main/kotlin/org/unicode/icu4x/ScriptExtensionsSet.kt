@@ -11,9 +11,9 @@ internal interface ScriptExtensionsSetLib: Library {
     fun icu4x_ScriptExtensionsSet_count_mv1(handle: Pointer): FFISizet
     fun icu4x_ScriptExtensionsSet_script_at_mv1(handle: Pointer, index: FFISizet): OptionFFIUint16
 }
-/** An object that represents the Script_Extensions property for a single character
+/** An object that represents the `Script_Extensions` property for a single character
 *
-*See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
+*See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
 */
 class ScriptExtensionsSet internal constructor (
     internal val handle: Pointer,
@@ -21,12 +21,22 @@ class ScriptExtensionsSet internal constructor (
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
     internal val aEdges: List<Any?>,
+    internal var owned: Boolean,
 )  {
 
-    internal class ScriptExtensionsSetCleaner(val handle: Pointer, val lib: ScriptExtensionsSetLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class ScriptExtensionsSetCleaner(val handle: Pointer, val lib: ScriptExtensionsSetLib) : Runnable {
         override fun run() {
             lib.icu4x_ScriptExtensionsSet_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, ScriptExtensionsSet.ScriptExtensionsSetCleaner(handle, ScriptExtensionsSet.lib));
     }
 
     companion object {
@@ -34,9 +44,9 @@ class ScriptExtensionsSet internal constructor (
         internal val lib: ScriptExtensionsSetLib = Native.load("icu4x", libClass)
     }
     
-    /** Check if the Script_Extensions property of the given code point covers the given script
+    /** Check if the `Script_Extensions` property of the given code point covers the given script
     *
-    *See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
+    *See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
     */
     fun contains(script: UShort): Boolean {
         
@@ -46,7 +56,7 @@ class ScriptExtensionsSet internal constructor (
     
     /** Get the number of scripts contained in here
     *
-    *See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+    *See the [Rust documentation for `iter`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
     */
     fun count(): ULong {
         
@@ -56,7 +66,7 @@ class ScriptExtensionsSet internal constructor (
     
     /** Get script at index
     *
-    *See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.1/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+    *See the [Rust documentation for `iter`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
     */
     fun scriptAt(index: ULong): UShort? {
         

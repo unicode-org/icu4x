@@ -13,21 +13,31 @@ internal interface CanonicalCompositionLib: Library {
 }
 /** The raw canonical composition operation.
 *
-*Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
+*Callers should generally use `ComposingNormalizer` unless they specifically need raw composition operations
 *
-*See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+*See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
 */
 class CanonicalComposition internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class CanonicalCompositionCleaner(val handle: Pointer, val lib: CanonicalCompositionLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class CanonicalCompositionCleaner(val handle: Pointer, val lib: CanonicalCompositionLib) : Runnable {
         override fun run() {
             lib.icu4x_CanonicalComposition_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, CanonicalComposition.CanonicalCompositionCleaner(handle, CanonicalComposition.lib));
     }
 
     companion object {
@@ -35,36 +45,35 @@ class CanonicalComposition internal constructor (
         internal val lib: CanonicalCompositionLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new CanonicalComposition instance for NFC using compiled data.
+        /** Construct a new `CanonicalComposition` instance for NFC using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
         */
         fun create(): CanonicalComposition {
             
             val returnVal = lib.icu4x_CanonicalComposition_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = CanonicalComposition(handle, selfEdges)
-            CLEANER.register(returnOpaque, CanonicalComposition.CanonicalCompositionCleaner(handle, CanonicalComposition.lib));
+            val returnOpaque = CanonicalComposition(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
         
-        /** Construct a new CanonicalComposition instance for NFC using a particular data source.
+        /** Construct a new `CanonicalComposition` instance for NFC using a particular data source.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<CanonicalComposition> {
             
             val returnVal = lib.icu4x_CanonicalComposition_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = CanonicalComposition(handle, selfEdges)
-                CLEANER.register(returnOpaque, CanonicalComposition.CanonicalCompositionCleaner(handle, CanonicalComposition.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = CanonicalComposition(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
@@ -72,7 +81,7 @@ class CanonicalComposition internal constructor (
     /** Performs canonical composition (including Hangul) on a pair of characters
     *or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
     *
-    *See the [Rust documentation for `compose`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
+    *See the [Rust documentation for `compose`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
     */
     fun compose(starter: Int, second: Int): Int {
         

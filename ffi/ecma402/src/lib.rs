@@ -41,9 +41,9 @@ impl core::ops::Deref for DataLocale {
     }
 }
 
-impl ecma402_traits::Locale for crate::DataLocale {}
+impl ecma402_traits::Locale for DataLocale {}
 
-impl core::fmt::Display for crate::DataLocale {
+impl core::fmt::Display for DataLocale {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         self.0.fmt(f)
     }

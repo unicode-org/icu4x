@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.ParseError.html)
+/// Additional information: [1](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.ParseError.html)
 enum DecimalParseError {
   // ignore: public_member_api_docs
   unknown,

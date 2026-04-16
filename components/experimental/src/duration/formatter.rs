@@ -138,8 +138,8 @@ impl DurationUnitFormatter {
     fn try_new_unstable<
         D: ?Sized
             + DataProvider<UnitsDisplayNamesV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<DecimalSymbolsV1>
+            + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     >(
         provider: &D,

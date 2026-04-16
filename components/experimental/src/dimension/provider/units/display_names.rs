@@ -39,7 +39,7 @@ impl<'data> UnitsDisplayNames<'data> {
     /// The bytes must represent a valid [`icu_plurals::provider::PluralElementsPackedULE`]
     pub const unsafe fn from_bytes_unchecked(bytes: &'data [u8]) -> Self {
         Self {
-            patterns: icu_plurals::provider::PluralElementsPackedCow {
+            patterns: PluralElementsPackedCow {
                 elements: alloc::borrow::Cow::Borrowed(
                     // Safety: this function's safety invariant guarantees that the bytes
                     // represent a valid `PluralElementsPackedULE`

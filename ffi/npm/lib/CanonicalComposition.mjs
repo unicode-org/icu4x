@@ -11,9 +11,9 @@ const CanonicalComposition_box_destroy_registry = new FinalizationRegistry((ptr)
 /**
  * The raw canonical composition operation.
  *
- * Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
+ * Callers should generally use `ComposingNormalizer` unless they specifically need raw composition operations
  *
- * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+ * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
  */
 export class CanonicalComposition {
     // Internal ptr reference:
@@ -45,9 +45,9 @@ export class CanonicalComposition {
 
 
     /**
-     * Construct a new CanonicalComposition instance for NFC using compiled data.
+     * Construct a new `CanonicalComposition` instance for NFC using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
      */
     #defaultConstructor() {
 
@@ -63,9 +63,9 @@ export class CanonicalComposition {
     }
 
     /**
-     * Construct a new CanonicalComposition instance for NFC using a particular data source.
+     * Construct a new `CanonicalComposition` instance for NFC using a particular data source.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -91,7 +91,7 @@ export class CanonicalComposition {
      * Performs canonical composition (including Hangul) on a pair of characters
      * or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
      *
-     * See the [Rust documentation for `compose`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
+     * See the [Rust documentation for `compose`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
      */
     compose(starter, second) {
 
@@ -107,9 +107,9 @@ export class CanonicalComposition {
     }
 
     /**
-     * Construct a new CanonicalComposition instance for NFC using compiled data.
+     * Construct a new `CanonicalComposition` instance for NFC using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
      */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

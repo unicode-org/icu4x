@@ -67,7 +67,7 @@ mod test {
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::{
         provider::fields::{Day, Field, FieldLength, Month, Weekday},
-        provider::pattern::{reference, runtime},
+        provider::pattern::reference,
     };
     use icu::locale::locale;
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
@@ -168,7 +168,7 @@ mod test {
         let mut skeletons = BTreeMap::new();
         skeletons.insert(
             Skeleton::try_from("EEEE").unwrap(),
-            PluralElements::new(runtime::Pattern::from_str("weekday EEEE").unwrap()),
+            PluralElements::new(Pattern::from_str("weekday EEEE").unwrap()),
         );
 
         assert_eq!(

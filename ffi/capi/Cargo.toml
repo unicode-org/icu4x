@@ -5,6 +5,8 @@
 [package]
 name = "icu_capi"
 description = "C interface to ICU4X"
+categories = ["internationalization", "localization", "external-ffi-bindings", "no-std", "embedded"]
+keywords = ["ffi", "bindings", "c-api"]
 license = "Unicode-3.0"
 include = [
     "bindings/c/**/*",
@@ -19,7 +21,6 @@ include = [
 version.workspace = true
 
 authors.workspace = true
-categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
@@ -79,7 +80,7 @@ calendar = ["dep:icu_calendar", "dep:icu_time", "dep:tinystr"]
 casemap = ["dep:icu_casemap"]
 collator = ["dep:icu_collator"]
 # collections = ["dep:icu_collections"] # Not useful on its own: use properties
-datetime = ["calendar", "dep:icu_datetime", "icu_datetime/experimental"]
+datetime = ["calendar", "dep:icu_datetime"]
 decimal = ["dep:icu_decimal", "dep:fixed_decimal", "dep:zerovec"]
 experimental = ["dep:icu_experimental"]
 list = ["dep:icu_list", "dep:potential_utf"]
@@ -91,7 +92,7 @@ segmenter = ["dep:icu_segmenter"]
 timezone = ["calendar"]
 
 # Unstable features on individual components
-unstable = ["icu_calendar?/unstable"]
+unstable = ["icu_calendar?/unstable", "icu_datetime?/unstable", "icu_plurals?/unstable", "icu_time?/unstable"]
 
 compiled_data = [
     "icu_calendar?/compiled_data",

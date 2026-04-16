@@ -19,10 +19,12 @@ const LOCALES: &[LanguageIdentifier] = &[
     langid!("ccp"),
     // English:
     // - Widely understood language in software engineering
-    // - Includes regional variants to test similar-data fallbacks
+    // - Includes regional variant to test similar-data fallbacks
+    // - Includes a BCP-47 variant to test handling absent data
     langid!("en"),
     langid!("en-001"),
     langid!("en-ZA"),
+    langid!("en-US-posix"),
     // Spanish:
     //  - Most popular Romance language
     //  - South American dialect

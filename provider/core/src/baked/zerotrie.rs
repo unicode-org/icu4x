@@ -14,6 +14,8 @@ use crate::{
     prelude::{zerofrom::ZeroFrom, *},
     ule::MaybeAsVarULE,
 };
+#[cfg(feature = "alloc")]
+use alloc::string::String;
 pub use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{vecs::Index32, VarZeroSlice};
 
@@ -47,7 +49,7 @@ fn iter(
     trie: &'static ZeroTrieSimpleAscii<&'static [u8]>,
 ) -> core::iter::FilterMap<
     zerotrie::ZeroTrieStringIterator<'static>,
-    fn((alloc::string::String, usize)) -> Option<DataIdentifierCow<'static>>,
+    fn((String, usize)) -> Option<DataIdentifierCow<'static>>,
 > {
     use alloc::borrow::ToOwned;
     trie.iter().filter_map(move |(s, _)| {
@@ -99,7 +101,7 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
     #[cfg(feature = "alloc")]
     type IterReturn = core::iter::FilterMap<
         zerotrie::ZeroTrieStringIterator<'static>,
-        fn((alloc::string::String, usize)) -> Option<DataIdentifierCow<'static>>,
+        fn((String, usize)) -> Option<DataIdentifierCow<'static>>,
     >;
     #[cfg(feature = "alloc")]
     fn iter(&'static self) -> Self::IterReturn {
@@ -145,7 +147,7 @@ impl<M: DataMarker> super::DataStore<M> for DataRef<M> {
     #[cfg(feature = "alloc")]
     type IterReturn = core::iter::FilterMap<
         zerotrie::ZeroTrieStringIterator<'static>,
-        fn((alloc::string::String, usize)) -> Option<DataIdentifierCow<'static>>,
+        fn((String, usize)) -> Option<DataIdentifierCow<'static>>,
     >;
     #[cfg(feature = "alloc")]
     fn iter(&'static self) -> Self::IterReturn {
@@ -153,7 +155,7 @@ impl<M: DataMarker> super::DataStore<M> for DataRef<M> {
     }
 }
 
-/// Optimized data stored as a single VarZeroSlice to reduce token count
+/// Optimized data stored as a single [`VarZeroSlice`] to reduce token count
 #[allow(missing_debug_implementations)] // Debug on this will not be too useful
 pub struct DataForVarULEs<M: DataMarker>
 where
@@ -209,7 +211,7 @@ where
     #[cfg(feature = "alloc")]
     type IterReturn = core::iter::FilterMap<
         zerotrie::ZeroTrieStringIterator<'static>,
-        fn((alloc::string::String, usize)) -> Option<DataIdentifierCow<'static>>,
+        fn((String, usize)) -> Option<DataIdentifierCow<'static>>,
     >;
     #[cfg(feature = "alloc")]
     fn iter(&'static self) -> Self::IterReturn {

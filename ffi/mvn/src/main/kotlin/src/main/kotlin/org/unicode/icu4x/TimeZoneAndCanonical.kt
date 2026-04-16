@@ -62,7 +62,7 @@ internal class OptionTimeZoneAndCanonicalNative constructor(): Structure(), Stru
 
 }
 
-/** See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
+/** See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
 */
 class TimeZoneAndCanonical (var timeZone: TimeZone, var canonical: String) {
     companion object {
@@ -72,7 +72,7 @@ class TimeZoneAndCanonical (var timeZone: TimeZone, var canonical: String) {
         val NATIVESIZE: Long = Native.getNativeSize(TimeZoneAndCanonicalNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: TimeZoneAndCanonicalNative, aEdges: List<Any?>): TimeZoneAndCanonical {
-            val timeZone: TimeZone = TimeZone(nativeStruct.timeZone, listOf())
+            val timeZone: TimeZone = TimeZone(nativeStruct.timeZone, listOf(), true)
             val canonical: String = PrimitiveArrayTools.getUtf8(nativeStruct.canonical)
 
             return TimeZoneAndCanonical(timeZone, canonical)

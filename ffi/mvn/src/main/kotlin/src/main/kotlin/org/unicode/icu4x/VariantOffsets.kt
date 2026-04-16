@@ -62,7 +62,7 @@ internal class OptionVariantOffsetsNative constructor(): Structure(), Structure.
 
 }
 
-/** See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsets.html) for more information.
+/** See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.2.0/icu/time/zone/struct.VariantOffsets.html) for more information.
 */
 class VariantOffsets (var standard: UtcOffset, var daylight: UtcOffset?) {
     companion object {
@@ -72,12 +72,8 @@ class VariantOffsets (var standard: UtcOffset, var daylight: UtcOffset?) {
         val NATIVESIZE: Long = Native.getNativeSize(VariantOffsetsNative::class.java).toLong()
 
         internal fun fromNative(nativeStruct: VariantOffsetsNative): VariantOffsets {
-            val standard: UtcOffset = UtcOffset(nativeStruct.standard, listOf())
-            val daylight: UtcOffset? = if (nativeStruct.daylight == null) {
-        null
-    } else {
-        UtcOffset(nativeStruct.daylight!!, listOf())
-    }
+            val standard: UtcOffset = UtcOffset(nativeStruct.standard, listOf(), true)
+            val daylight: UtcOffset? = nativeStruct.daylight?.let { UtcOffset(it, listOf(), true) }
 
             return VariantOffsets(standard, daylight)
         }

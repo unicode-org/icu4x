@@ -16,19 +16,29 @@ internal interface WindowsParserLib: Library {
 *This mapper supports two-way mapping, but it is optimized for the case of Windows to BCP-47.
 *It also supports normalizing and canonicalizing the Windows strings.
 *
-*See the [Rust documentation for `WindowsParser`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html) for more information.
+*See the [Rust documentation for `WindowsParser`](https://docs.rs/icu/2.2.0/icu/time/zone/windows/struct.WindowsParser.html) for more information.
 */
 class WindowsParser internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class WindowsParserCleaner(val handle: Pointer, val lib: WindowsParserLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class WindowsParserCleaner(val handle: Pointer, val lib: WindowsParserLib) : Runnable {
         override fun run() {
             lib.icu4x_WindowsParser_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, WindowsParser.WindowsParserCleaner(handle, WindowsParser.lib));
     }
 
     companion object {
@@ -38,52 +48,53 @@ class WindowsParser internal constructor (
         
         /** Create a new [WindowsParser] using compiled data
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
         */
         fun create(): WindowsParser {
             
             val returnVal = lib.icu4x_WindowsParser_create_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = WindowsParser(handle, selfEdges)
-            CLEANER.register(returnOpaque, WindowsParser.WindowsParserCleaner(handle, WindowsParser.lib));
+            val returnOpaque = WindowsParser(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
         
         /** Create a new [WindowsParser] using a particular data source
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
         */
         fun createWithProvider(provider: DataProvider): Result<WindowsParser> {
             
             val returnVal = lib.icu4x_WindowsParser_create_with_provider_mv1(provider.handle);
-            if (returnVal.isOk == 1.toByte()) {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = WindowsParser(handle, selfEdges)
-                CLEANER.register(returnOpaque, WindowsParser.WindowsParserCleaner(handle, WindowsParser.lib));
+                val handle = nativeOkVal 
+                val returnOpaque = WindowsParser(handle, selfEdges, true)
                 return returnOpaque.ok()
             } else {
-                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }
     
-    /** See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
+    /** See the [Rust documentation for `parse`](https://docs.rs/icu/2.2.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
     */
     fun parse(value: String, region: String): TimeZone? {
-        val (valueMem, valueSlice) = PrimitiveArrayTools.borrowUtf8(value)
-        val (regionMem, regionSlice) = PrimitiveArrayTools.borrowUtf8(region)
+        val valueSliceMemory = PrimitiveArrayTools.borrowUtf8(value)
+        val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
         
-        val returnVal = lib.icu4x_WindowsParser_parse_mv1(handle, valueSlice, regionSlice);
-        val selfEdges: List<Any> = listOf()
-        val handle = returnVal ?: return null
-        val returnOpaque = TimeZone(handle, selfEdges)
-        CLEANER.register(returnOpaque, TimeZone.TimeZoneCleaner(handle, TimeZone.lib));
-        if (valueMem != null) valueMem.close()
-        if (regionMem != null) regionMem.close()
-        return returnOpaque
+        val returnVal = lib.icu4x_WindowsParser_parse_mv1(handle, valueSliceMemory.slice, regionSliceMemory.slice);
+        try {
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal ?: return null
+            val returnOpaque = TimeZone(handle, selfEdges, true)
+            return returnOpaque
+        } finally {
+            valueSliceMemory.close()
+            regionSliceMemory.close()
+        }
     }
 
 }

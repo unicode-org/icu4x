@@ -12,8 +12,13 @@
 #include <optional>
 #include <cstdlib>
 #include "Calendar.hpp"
+#include "CalendarDateAddError.hpp"
 #include "CalendarDateFromFieldsError.hpp"
 #include "CalendarError.hpp"
+#include "CalendarMismatchedCalendarError.hpp"
+#include "DateAddOptions.hpp"
+#include "DateDifferenceOptions.hpp"
+#include "DateDuration.hpp"
 #include "DateFields.hpp"
 #include "DateFromFieldsOptions.hpp"
 #include "IsoDate.hpp"
@@ -75,7 +80,15 @@ namespace capi {
 
     uint16_t icu4x_Date_days_in_year_mv1(const icu4x::capi::Date* self);
 
+    bool icu4x_Date_is_in_leap_year_mv1(const icu4x::capi::Date* self);
+
     icu4x::capi::Calendar* icu4x_Date_calendar_mv1(const icu4x::capi::Date* self);
+
+    typedef struct icu4x_Date_try_add_with_options_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarDateAddError err;}; bool is_ok;} icu4x_Date_try_add_with_options_mv1_result;
+    icu4x_Date_try_add_with_options_mv1_result icu4x_Date_try_add_with_options_mv1(const icu4x::capi::Date* self, icu4x::capi::DateDuration duration, icu4x::capi::DateAddOptions options);
+
+    typedef struct icu4x_Date_try_until_with_options_mv1_result {union {icu4x::capi::DateDuration ok; }; bool is_ok;} icu4x_Date_try_until_with_options_mv1_result;
+    icu4x_Date_try_until_with_options_mv1_result icu4x_Date_try_until_with_options_mv1(const icu4x::capi::Date* self, const icu4x::capi::Date* other, icu4x::capi::DateDifferenceOptions options);
 
     void icu4x_Date_destroy_mv1(Date* self);
 
@@ -223,9 +236,28 @@ inline uint16_t icu4x::Date::days_in_year() const {
     return result;
 }
 
+inline bool icu4x::Date::is_in_leap_year() const {
+    auto result = icu4x::capi::icu4x_Date_is_in_leap_year_mv1(this->AsFFI());
+    return result;
+}
+
 inline std::unique_ptr<icu4x::Calendar> icu4x::Date::calendar() const {
     auto result = icu4x::capi::icu4x_Date_calendar_mv1(this->AsFFI());
     return std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError> icu4x::Date::try_add_with_options(icu4x::DateDuration duration, icu4x::DateAddOptions options) const {
+    auto result = icu4x::capi::icu4x_Date_try_add_with_options_mv1(this->AsFFI(),
+        duration.AsFFI(),
+        options.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateAddError>(icu4x::diplomat::Err<icu4x::CalendarDateAddError>(icu4x::CalendarDateAddError::FromFFI(result.err)));
+}
+
+inline icu4x::diplomat::result<icu4x::DateDuration, icu4x::CalendarMismatchedCalendarError> icu4x::Date::try_until_with_options(const icu4x::Date& other, icu4x::DateDifferenceOptions options) const {
+    auto result = icu4x::capi::icu4x_Date_try_until_with_options_mv1(this->AsFFI(),
+        other.AsFFI(),
+        options.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<icu4x::DateDuration, icu4x::CalendarMismatchedCalendarError>(icu4x::diplomat::Ok<icu4x::DateDuration>(icu4x::DateDuration::FromFFI(result.ok))) : icu4x::diplomat::result<icu4x::DateDuration, icu4x::CalendarMismatchedCalendarError>(icu4x::diplomat::Err<icu4x::CalendarMismatchedCalendarError>(icu4x::CalendarMismatchedCalendarError {}));
 }
 
 inline const icu4x::capi::Date* icu4x::Date::AsFFI() const {

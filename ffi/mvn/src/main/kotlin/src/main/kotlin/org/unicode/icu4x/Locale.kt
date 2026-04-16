@@ -19,6 +19,13 @@ internal interface LocaleLib: Library {
     fun icu4x_Locale_set_region_mv1(handle: Pointer, s: Slice): ResultUnitInt
     fun icu4x_Locale_script_mv1(handle: Pointer, write: Pointer): OptionUnit
     fun icu4x_Locale_set_script_mv1(handle: Pointer, s: Slice): ResultUnitInt
+    fun icu4x_Locale_variants_mv1(handle: Pointer, write: Pointer): Unit
+    fun icu4x_Locale_variant_count_mv1(handle: Pointer): FFISizet
+    fun icu4x_Locale_variant_at_mv1(handle: Pointer, index: FFISizet, write: Pointer): OptionUnit
+    fun icu4x_Locale_has_variant_mv1(handle: Pointer, s: Slice): Byte
+    fun icu4x_Locale_add_variant_mv1(handle: Pointer, s: Slice): ResultByteInt
+    fun icu4x_Locale_remove_variant_mv1(handle: Pointer, s: Slice): Byte
+    fun icu4x_Locale_clear_variants_mv1(handle: Pointer): Unit
     fun icu4x_Locale_normalize_mv1(s: Slice, write: Pointer): ResultUnitInt
     fun icu4x_Locale_to_string_mv1(handle: Pointer, write: Pointer): Unit
     fun icu4x_Locale_normalizing_eq_mv1(handle: Pointer, other: Slice): Byte
@@ -27,19 +34,29 @@ internal interface LocaleLib: Library {
 }
 /** An ICU4X Locale, capable of representing strings like `"en-US"`.
 *
-*See the [Rust documentation for `Locale`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html) for more information.
+*See the [Rust documentation for `Locale`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html) for more information.
 */
 class Locale internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LocaleCleaner(val handle: Pointer, val lib: LocaleLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LocaleCleaner(val handle: Pointer, val lib: LocaleLib) : Runnable {
         override fun run() {
             lib.icu4x_Locale_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Locale.LocaleCleaner(handle, Locale.lib));
     }
 
     companion object {
@@ -53,76 +70,82 @@ class Locale internal constructor (
         *performance are critical and the locale is of a known shape (such as
         *`aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
         *
-        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
         */
         fun fromString(name: String): Result<Locale> {
-            val (nameMem, nameSlice) = PrimitiveArrayTools.borrowUtf8(name)
+            val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
             
-            val returnVal = lib.icu4x_Locale_from_string_mv1(nameSlice);
-            if (returnVal.isOk == 1.toByte()) {
-                val selfEdges: List<Any> = listOf()
-                val handle = returnVal.union.ok 
-                val returnOpaque = Locale(handle, selfEdges)
-                CLEANER.register(returnOpaque, Locale.LocaleCleaner(handle, Locale.lib));
-                if (nameMem != null) nameMem.close()
-                return returnOpaque.ok()
-            } else {
-                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_Locale_from_string_mv1(nameSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = Locale(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                nameSliceMemory.close()
             }
         }
         @JvmStatic
         
         /** Construct a unknown [Locale] "und".
         *
-        *See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
+        *See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
         */
         fun unknown(): Locale {
             
             val returnVal = lib.icu4x_Locale_unknown_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
-            val returnOpaque = Locale(handle, selfEdges)
-            CLEANER.register(returnOpaque, Locale.LocaleCleaner(handle, Locale.lib));
+            val returnOpaque = Locale(handle, selfEdges, true)
             return returnOpaque
         }
         @JvmStatic
         
         /** Normalizes a locale string.
         *
-        *See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalize) for more information.
+        *See the [Rust documentation for `normalize`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.normalize) for more information.
         */
         fun normalize(s: String): Result<String> {
-            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_Locale_normalize_mv1(sSlice, write);
-            if (returnVal.isOk == 1.toByte()) {
-                
-                val returnString = DW.writeToString(write)
-                return returnString.ok()
-            } else {
-                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+            val returnVal = lib.icu4x_Locale_normalize_mv1(sSliceMemory.slice, write);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    
+                    val returnString = DW.writeToString(write)
+                    return returnString.ok()
+                } else {
+                    return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                sSliceMemory.close()
             }
         }
     }
     
     /** Clones the [Locale].
     *
-    *See the [Rust documentation for `Locale`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html) for more information.
+    *See the [Rust documentation for `Locale`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html) for more information.
     */
     fun clone(): Locale {
         
         val returnVal = lib.icu4x_Locale_clone_mv1(handle);
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
-        val returnOpaque = Locale(handle, selfEdges)
-        CLEANER.register(returnOpaque, Locale.LocaleCleaner(handle, Locale.lib));
+        val returnOpaque = Locale(handle, selfEdges, true)
         return returnOpaque
     }
     
     /** Returns a string representation of the `LanguageIdentifier` part of
     *[Locale].
     *
-    *See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+    *See the [Rust documentation for `id`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#structfield.id) for more information.
     */
     fun basename(): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -134,35 +157,44 @@ class Locale internal constructor (
     
     /** Returns a string representation of the unicode extension.
     *
-    *See the [Rust documentation for `extensions`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+    *See the [Rust documentation for `extensions`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
     */
     fun getUnicodeExtension(s: String): String? {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_Locale_get_unicode_extension_mv1(handle, sSlice, write);
-        
-        returnVal.option() ?: return null
+        val returnVal = lib.icu4x_Locale_get_unicode_extension_mv1(handle, sSliceMemory.slice, write);
+        try {
+            
+            returnVal.option() ?: return null
 
-        val returnString = DW.writeToString(write)
-        return returnString
-                                
+            val returnString = DW.writeToString(write)
+            return returnString
+                                    
+        } finally {
+            sSliceMemory.close()
+        }
     }
     
     /** Set a Unicode extension.
     *
-    *See the [Rust documentation for `extensions`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+    *See the [Rust documentation for `extensions`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
     */
     fun setUnicodeExtension(k: String, v: String): Unit? {
-        val (kMem, kSlice) = PrimitiveArrayTools.borrowUtf8(k)
-        val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
+        val kSliceMemory = PrimitiveArrayTools.borrowUtf8(k)
+        val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
         
-        val returnVal = lib.icu4x_Locale_set_unicode_extension_mv1(handle, kSlice, vSlice);
-        return returnVal.option()
+        val returnVal = lib.icu4x_Locale_set_unicode_extension_mv1(handle, kSliceMemory.slice, vSliceMemory.slice);
+        try {
+            return returnVal.option()
+        } finally {
+            kSliceMemory.close()
+            vSliceMemory.close()
+        }
     }
     
     /** Returns a string representation of [Locale] language.
     *
-    *See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+    *See the [Rust documentation for `id`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#structfield.id) for more information.
     */
     fun language(): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -174,22 +206,27 @@ class Locale internal constructor (
     
     /** Set the language part of the [Locale].
     *
-    *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+    *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
     */
     fun setLanguage(s: String): Result<Unit> {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_Locale_set_language_mv1(handle, sSlice);
-        if (returnVal.isOk == 1.toByte()) {
-            return Unit.ok()
-        } else {
-            return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+        val returnVal = lib.icu4x_Locale_set_language_mv1(handle, sSliceMemory.slice);
+        try {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                return Unit.ok()
+            } else {
+                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        } finally {
+            sSliceMemory.close()
         }
     }
     
     /** Returns a string representation of [Locale] region.
     *
-    *See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+    *See the [Rust documentation for `id`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#structfield.id) for more information.
     */
     fun region(): String? {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -204,22 +241,27 @@ class Locale internal constructor (
     
     /** Set the region part of the [Locale].
     *
-    *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+    *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
     */
     fun setRegion(s: String): Result<Unit> {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_Locale_set_region_mv1(handle, sSlice);
-        if (returnVal.isOk == 1.toByte()) {
-            return Unit.ok()
-        } else {
-            return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+        val returnVal = lib.icu4x_Locale_set_region_mv1(handle, sSliceMemory.slice);
+        try {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                return Unit.ok()
+            } else {
+                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        } finally {
+            sSliceMemory.close()
         }
     }
     
     /** Returns a string representation of [Locale] script.
     *
-    *See the [Rust documentation for `id`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#structfield.id) for more information.
+    *See the [Rust documentation for `id`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#structfield.id) for more information.
     */
     fun script(): String? {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -234,22 +276,130 @@ class Locale internal constructor (
     
     /** Set the script part of the [Locale]. Pass an empty string to remove the script.
     *
-    *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+    *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
     */
     fun setScript(s: String): Result<Unit> {
-        val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
         
-        val returnVal = lib.icu4x_Locale_set_script_mv1(handle, sSlice);
-        if (returnVal.isOk == 1.toByte()) {
-            return Unit.ok()
-        } else {
-            return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.union.err)).err()
+        val returnVal = lib.icu4x_Locale_set_script_mv1(handle, sSliceMemory.slice);
+        try {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                return Unit.ok()
+            } else {
+                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        } finally {
+            sSliceMemory.close()
         }
+    }
+    
+    /** Returns a string representation of the [Locale] variants.
+    *
+    *See the [Rust documentation for `Variants`](https://docs.rs/icu/2.2.0/icu/locale/struct.Variants.html) for more information.
+    */
+    fun variants(): String {
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_Locale_variants_mv1(handle, write);
+        
+        val returnString = DW.writeToString(write)
+        return returnString
+    }
+    
+    /** Returns the number of variants in this [Locale].
+    *
+    *See the [Rust documentation for `Variants`](https://docs.rs/icu/2.2.0/icu/locale/struct.Variants.html) for more information.
+    */
+    fun variantCount(): ULong {
+        
+        val returnVal = lib.icu4x_Locale_variant_count_mv1(handle);
+        return (returnVal.toULong())
+    }
+    
+    /** Returns the variant at the given index, or nothing if the index is out of bounds.
+    *
+    *See the [Rust documentation for `Variants`](https://docs.rs/icu/2.2.0/icu/locale/struct.Variants.html) for more information.
+    */
+    fun variantAt(index: ULong): String? {
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_Locale_variant_at_mv1(handle, FFISizet(index), write);
+        
+        returnVal.option() ?: return null
+
+        val returnString = DW.writeToString(write)
+        return returnString
+                                
+    }
+    
+    /** Returns whether the [Locale] has a specific variant.
+    *
+    *See the [Rust documentation for `Variants`](https://docs.rs/icu/2.2.0/icu/locale/struct.Variants.html) for more information.
+    */
+    fun hasVariant(s: String): Boolean {
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+        
+        val returnVal = lib.icu4x_Locale_has_variant_mv1(handle, sSliceMemory.slice);
+        try {
+            return (returnVal > 0)
+        } finally {
+            sSliceMemory.close()
+        }
+    }
+    
+    /** Adds a variant to the [Locale].
+    *
+    *Returns an error if the variant string is invalid.
+    *Returns `true` if the variant was added, `false` if already present.
+    *
+    *See the [Rust documentation for `push`](https://docs.rs/icu/2.2.0/icu/locale/struct.Variants.html#method.push) for more information.
+    */
+    fun addVariant(s: String): Result<Boolean> {
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+        
+        val returnVal = lib.icu4x_Locale_add_variant_mv1(handle, sSliceMemory.slice);
+        try {
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                return (nativeOkVal > 0).ok()
+            } else {
+                return LocaleParseErrorError(LocaleParseError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        } finally {
+            sSliceMemory.close()
+        }
+    }
+    
+    /** Removes a variant from the [Locale].
+    *
+    *Returns `true` if the variant was removed, `false` if not present.
+    *Returns `false` for invalid variant strings (they cannot exist in the locale).
+    *
+    *See the [Rust documentation for `remove`](https://docs.rs/icu/2.2.0/icu/locale/struct.Variants.html#method.remove) for more information.
+    */
+    fun removeVariant(s: String): Boolean {
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+        
+        val returnVal = lib.icu4x_Locale_remove_variant_mv1(handle, sSliceMemory.slice);
+        try {
+            return (returnVal > 0)
+        } finally {
+            sSliceMemory.close()
+        }
+    }
+    
+    /** Clears all variants from the [Locale].
+    *
+    *See the [Rust documentation for `clear`](https://docs.rs/icu/2.2.0/icu/locale/struct.Variants.html#method.clear) for more information.
+    */
+    fun clearVariants(): Unit {
+        
+        val returnVal = lib.icu4x_Locale_clear_variants_mv1(handle);
+        
     }
     
     /** Returns a string representation of [Locale].
     *
-    *See the [Rust documentation for `write_to`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.write_to) for more information.
+    *See the [Rust documentation for `write_to`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.write_to) for more information.
     */
     override fun toString(): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -259,25 +409,33 @@ class Locale internal constructor (
         return returnString
     }
     
-    /** See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
+    /** See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
     */
     fun normalizingEq(other: String): Boolean {
-        val (otherMem, otherSlice) = PrimitiveArrayTools.borrowUtf8(other)
+        val otherSliceMemory = PrimitiveArrayTools.borrowUtf8(other)
         
-        val returnVal = lib.icu4x_Locale_normalizing_eq_mv1(handle, otherSlice);
-        return (returnVal > 0)
+        val returnVal = lib.icu4x_Locale_normalizing_eq_mv1(handle, otherSliceMemory.slice);
+        try {
+            return (returnVal > 0)
+        } finally {
+            otherSliceMemory.close()
+        }
     }
     
-    /** See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
+    /** See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
     */
     fun compareToString(other: String): Byte {
-        val (otherMem, otherSlice) = PrimitiveArrayTools.borrowUtf8(other)
+        val otherSliceMemory = PrimitiveArrayTools.borrowUtf8(other)
         
-        val returnVal = lib.icu4x_Locale_compare_to_string_mv1(handle, otherSlice);
-        return (returnVal)
+        val returnVal = lib.icu4x_Locale_compare_to_string_mv1(handle, otherSliceMemory.slice);
+        try {
+            return (returnVal)
+        } finally {
+            otherSliceMemory.close()
+        }
     }
     
-    /** See the [Rust documentation for `total_cmp`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html#method.total_cmp) for more information.
+    /** See the [Rust documentation for `total_cmp`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.total_cmp) for more information.
     */
     fun compareTo(other: Locale): Byte {
         

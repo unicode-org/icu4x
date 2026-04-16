@@ -77,7 +77,7 @@ mod test {
         assert_eq!(rg.suffix, subdivision_suffix!("sct"));
 
         for i in &["4aabel", "a4bel", "ukabcde"] {
-            let val = unicode::Value::try_from_str(i).unwrap();
+            let val = Value::try_from_str(i).unwrap();
             let rg: Result<RegionalSubdivision, _> = val.try_into();
             assert!(rg.is_err());
         }

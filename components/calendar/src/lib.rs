@@ -101,14 +101,22 @@ pub mod cal;
 pub mod options;
 pub mod provider;
 pub mod types;
+#[path = "third_party.rs"]
+pub mod unstable_third_party;
 pub mod week;
 
 mod calendar;
 mod calendar_arithmetic;
+#[cfg(feature = "unstable_chrono_0_4")]
+mod chrono;
 mod duration;
 pub mod error;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
+#[cfg(feature = "unstable_jiff_0_2")]
+mod jiff;
+#[cfg(feature = "unstable_time_0_3")]
+mod time_crate;
 
 // Top-level types
 pub use any_calendar::IntoAnyCalendar;

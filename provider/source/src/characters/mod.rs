@@ -301,7 +301,7 @@ mod tests {
         ]
         .iter()
         .copied()
-        .map(std::string::String::from)
+        .map(String::from)
         .collect();
         let actual = parse_exemplar_char_string(af_numbers);
 
@@ -317,7 +317,7 @@ mod tests {
         ]
         .iter()
         .copied()
-        .map(std::string::String::from)
+        .map(String::from)
         .collect();
         let actual = parse_exemplar_char_string(sr_main);
 
@@ -330,7 +330,7 @@ mod tests {
         let expected: HashSet<String> = ["万", "丈", "三", "上", "下"]
             .iter()
             .copied()
-            .map(std::string::String::from)
+            .map(String::from)
             .collect();
         let actual = parse_exemplar_char_string(ja_main_subset_range);
 
@@ -343,7 +343,7 @@ mod tests {
         let expected: HashSet<String> = ["万", "丈", "三", "上", "下", "a", "z"]
             .iter()
             .copied()
-            .map(std::string::String::from)
+            .map(String::from)
             .collect();
         let actual = parse_exemplar_char_string(range_amid_chars);
 
@@ -359,7 +359,7 @@ mod tests {
         ]
         .iter()
         .copied()
-        .map(std::string::String::from)
+        .map(String::from)
         .collect();
         let actual = parse_exemplar_char_string(sr_main);
 
@@ -375,7 +375,7 @@ mod tests {
         ]
         .iter()
         .copied()
-        .map(std::string::String::from)
+        .map(String::from)
         .collect();
         let actual = parse_exemplar_char_string(ar_eg_auxiliary);
 
@@ -385,11 +385,7 @@ mod tests {
     #[test]
     fn test_parse_quotes() {
         let quotes = "[\"＂]";
-        let expected: HashSet<String> = ["\"", "＂"]
-            .iter()
-            .copied()
-            .map(std::string::String::from)
-            .collect();
+        let expected: HashSet<String> = ["\"", "＂"].iter().copied().map(String::from).collect();
         let actual = parse_exemplar_char_string(quotes);
 
         assert_eq!(actual, expected);

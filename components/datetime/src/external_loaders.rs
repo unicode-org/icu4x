@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 
 use crate::scaffold::FormattableAnyCalendar;
 
-/// Trait for loading a DecimalFormatter.
+/// Trait for loading a [`DecimalFormatter`].
 ///
 /// Implemented on the provider-specific loader types in this module.
 pub(crate) trait DecimalFormatterLoader {
@@ -22,7 +22,7 @@ pub(crate) trait DecimalFormatterLoader {
     ) -> Result<DecimalFormatter, DataError>;
 }
 
-/// Trait for loading an AnyCalendar.
+/// Trait for loading an [`AnyCalendar`](icu_calendar::AnyCalendar).
 ///
 /// Implemented on the provider-specific loader types in this module.
 pub(crate) trait FormattableAnyCalendarLoader {

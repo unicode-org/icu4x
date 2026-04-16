@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Experimental.
-
 use fixed_decimal::Decimal;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
@@ -63,7 +61,7 @@ pub struct UnitsFormatter {
 
 impl UnitsFormatter {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: UnitsFormatterPreferences, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
+        (prefs: UnitsFormatterPreferences, unit: &str, options: UnitsFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_buffer_provider,
@@ -95,7 +93,7 @@ impl UnitsFormatter {
     pub fn try_new(
         prefs: UnitsFormatterPreferences,
         unit: &str,
-        options: super::options::UnitsFormatterOptions,
+        options: UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = UnitsDisplayNamesV1::make_locale(prefs.locale_preferences);
         let decimal_formatter =
@@ -131,11 +129,11 @@ impl UnitsFormatter {
         provider: &D,
         prefs: UnitsFormatterPreferences,
         unit: &str,
-        options: super::options::UnitsFormatterOptions,
+        options: UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::units::display_names::UnitsDisplayNamesV1>
+            + DataProvider<UnitsDisplayNamesV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,

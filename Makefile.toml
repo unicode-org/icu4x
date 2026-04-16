@@ -183,6 +183,15 @@ script = '''
 exec --fail-on-error cargo make check-all-features-chunked 3
 '''
 
+[tasks.ci-job-features-4]
+description = "Run all tests for the CI 'features-4' job"
+category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error cargo make check-all-features-chunked 4
+'''
+
 [tasks.ci-job-features]
 description = "Run all tests for the CI 'features' job"
 category = "CI"

@@ -8,7 +8,7 @@ import com.sun.jna.Structure
 
 internal interface WeekdayLib: Library {
 }
-/** See the [Rust documentation for `Weekday`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.Weekday.html) for more information.
+/** See the [Rust documentation for `Weekday`](https://docs.rs/icu/2.2.0/icu/calendar/types/enum.Weekday.html) for more information.
 */
 enum class Weekday(val inner: Int) {
     Monday(1),

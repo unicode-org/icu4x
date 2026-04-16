@@ -10,7 +10,7 @@ use alloc::vec::Vec;
 use icu_locale_core::Locale;
 use litemap::LiteMap;
 
-/// DefaultPersonName, default implementation provided for PersonNameFormatter.
+/// [`DefaultPersonName`], default implementation provided for [`PersonNameFormatter`](super::PersonNamesFormatter).
 #[derive(Debug)]
 pub struct DefaultPersonName {
     person_data: LiteMap<NameField, String>,

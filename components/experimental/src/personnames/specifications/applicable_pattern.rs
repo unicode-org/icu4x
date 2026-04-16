@@ -30,11 +30,11 @@ pub fn find_best_applicable_pattern<'lt>(
                 }
                 (*used_field_count, *missing_field_count, Some(element))
             });
-    max_applicable_pattern
-        .map(Ok)
-        .unwrap_or(Err(PersonNamesFormatterError::ParseError(String::from(
+    max_applicable_pattern.map(Ok).unwrap_or_else(|| {
+        Err(PersonNamesFormatterError::ParseError(String::from(
             "Invalid Person name pattern",
-        ))))
+        )))
+    })
 }
 
 #[cfg(test)]

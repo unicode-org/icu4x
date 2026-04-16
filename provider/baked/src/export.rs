@@ -628,7 +628,7 @@ impl DataExporter for BakedExporter {
                 },
             ));
 
-            stats.lookup_struct_size = core::mem::size_of::<
+            stats.lookup_struct_size = size_of::<
                 icu_provider::baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1>,
             >() + trie.as_borrowed_slice().borrows_size();
 
@@ -911,7 +911,7 @@ pub struct BakedExporterCloseMetadata {
 }
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
             if marker.id == icu_provider::hello_world::HelloWorldV1::INFO.id {
                 return databake::quote!(icu_provider::hello_world::HelloWorldV1);

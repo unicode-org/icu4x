@@ -12,4 +12,4 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu = { version = "2.0.0", features = ["experimental"] }
+icu = { version = "2.0.0", features = ["unstable"] }

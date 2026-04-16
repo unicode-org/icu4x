@@ -22,6 +22,6 @@ struct_keyword!(
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
     |input: &NumberingSystem| {
-        crate::extensions::unicode::Value::from_subtag(Some(input.0))
+        Value::from_subtag(Some(input.0))
     }
 );

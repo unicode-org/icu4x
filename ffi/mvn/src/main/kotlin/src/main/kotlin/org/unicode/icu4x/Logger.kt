@@ -16,12 +16,22 @@ class Logger internal constructor (
     // These ensure that anything that is borrowed is kept alive and not cleaned
     // up by the garbage collector.
     internal val selfEdges: List<Any>,
+    internal var owned: Boolean,
 )  {
 
-    internal class LoggerCleaner(val handle: Pointer, val lib: LoggerLib) : Runnable {
+    init {
+        if (this.owned) {
+            this.registerCleaner()
+        }
+    }
+
+    private class LoggerCleaner(val handle: Pointer, val lib: LoggerLib) : Runnable {
         override fun run() {
             lib.icu4x_Logger_destroy_mv1(handle)
         }
+    }
+    private fun registerCleaner() {
+        CLEANER.register(this, Logger.LoggerCleaner(handle, Logger.lib));
     }
 
     companion object {

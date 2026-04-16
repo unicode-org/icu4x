@@ -4,7 +4,9 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
+use crate::error::{
+    DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -63,11 +65,11 @@ impl DateFieldsResolver for Persian {
     }
 
     #[inline]
-    fn year_info_from_era(
+    fn extended_year_from_era_year_unchecked(
         &self,
         era: &[u8],
         era_year: i32,
-    ) -> Result<Self::YearInfo, UnknownEraError> {
+    ) -> Result<i32, UnknownEraError> {
         match era {
             b"ap" => Ok(era_year),
             _ => Err(UnknownEraError),
@@ -80,13 +82,18 @@ impl DateFieldsResolver for Persian {
     }
 
     #[inline]
+    fn extended_from_year_info(&self, year_info: Self::YearInfo) -> i32 {
+        year_info
+    }
+
+    #[inline]
     fn reference_year_from_month_day(
         &self,
         month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         let (ordinal_month, false) = (month.number(), month.is_leap()) else {
-            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+            return Err(EcmaReferenceYearError::MonthNotInCalendar);
         };
         // December 31, 1972 occurs on 10th month, 10th day, 1351 AP
         let persian_year = if ordinal_month < 10 || (ordinal_month == 10 && day <= 10) {
@@ -107,20 +114,17 @@ impl crate::cal::scaffold::UnstableSealed for Persian {}
 impl Calendar for Persian {
     type DateInner = PersianDateInner;
     type Year = types::EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type DateCompatibilityError = core::convert::Infallible;
 
-    fn from_codes(
+    fn new_date(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
+        year: types::YearInput,
+        month: types::Month,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
-            .map(PersianDateInner)
+    ) -> Result<Self::DateInner, DateNewError> {
+        ArithmeticDate::from_input_year_month_code_day(year, month, day, self).map(PersianDateInner)
     }
 
-    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: DateFields,
@@ -162,24 +166,26 @@ impl Calendar for Persian {
         Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
-    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
         duration: types::DateDuration,
         options: DateAddOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateAddError> {
         date.0.added(duration, self, options).map(PersianDateInner)
     }
 
-    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
-    ) -> Result<types::DateDuration, Self::DifferenceError> {
-        Ok(date1.0.until(&date2.0, self, options))
+    ) -> types::DateDuration {
+        date1.0.until(&date2.0, self, options)
+    }
+
+    fn check_date_compatibility(&self, &Self: &Self) -> Result<(), Self::DateCompatibilityError> {
+        Ok(())
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
@@ -232,7 +238,7 @@ impl Date<Persian> {
     /// Construct new Persian [`Date`].
     ///
     /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
-    /// valid range of `-1,000,000..=1,000,000`.
+    /// valid range of `-9999..=9999`.
     ///
     /// ```rust
     /// use icu::calendar::Date;

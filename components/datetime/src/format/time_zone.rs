@@ -40,7 +40,7 @@ pub(super) enum FormatTimeZoneError {
 }
 
 pub(super) trait FormatTimeZone {
-    /// Tries to write the timezone to the sink. If a DateTimeError is returned, the sink
+    /// Tries to write the timezone to the sink. If a [`FormatTimeZoneError`] is returned, the sink
     /// has not been touched, so another format can be attempted.
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,

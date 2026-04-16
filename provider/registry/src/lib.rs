@@ -21,8 +21,8 @@
 //!
 //! ```
 //! macro_rules! cb {
-//!     ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
-//!         // Do something for each marker, or each experimental marker
+//!     ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
+//!         // Do something for each marker, or each unstable marker
 //!     };
 //! }
 //! ```
@@ -232,7 +232,6 @@ macro_rules! registry(
             icu::time::provider::windows::TimezoneIdentifiersWindowsV1: TimezoneIdentifiersWindowsV1,
             icu::datetime::provider::names::DatetimeNamesWeekdayV1: DatetimeNamesWeekdayV1,
             icu::datetime::provider::names::DatetimeNamesDayperiodV1: DatetimeNamesDayperiodV1,
-            icu::datetime::provider::names::DatetimePatternsGlueV1: DatetimePatternsGlueV1,
             icu::datetime::provider::names::DatetimeNamesYearBuddhistV1: DatetimeNamesYearBuddhistV1,
             icu::datetime::provider::names::DatetimeNamesYearChineseV1: DatetimeNamesYearChineseV1,
             icu::datetime::provider::names::DatetimeNamesYearCopticV1: DatetimeNamesYearCopticV1,
@@ -257,22 +256,23 @@ macro_rules! registry(
             icu::datetime::provider::names::DatetimeNamesMonthJapaneseV1: DatetimeNamesMonthJapaneseV1,
             icu::datetime::provider::names::DatetimeNamesMonthPersianV1: DatetimeNamesMonthPersianV1,
             icu::datetime::provider::names::DatetimeNamesMonthRocV1: DatetimeNamesMonthRocV1,
-            icu::datetime::provider::DatetimePatternsDateBuddhistV1: DatetimePatternsDateBuddhistV1,
-            icu::datetime::provider::DatetimePatternsDateChineseV1: DatetimePatternsDateChineseV1,
-            icu::datetime::provider::DatetimePatternsDateCopticV1: DatetimePatternsDateCopticV1,
-            icu::datetime::provider::DatetimePatternsDateDangiV1: DatetimePatternsDateDangiV1,
-            icu::datetime::provider::DatetimePatternsDateEthiopianV1: DatetimePatternsDateEthiopianV1,
-            icu::datetime::provider::DatetimePatternsDateGregorianV1: DatetimePatternsDateGregorianV1,
-            icu::datetime::provider::DatetimePatternsDateHebrewV1: DatetimePatternsDateHebrewV1,
-            icu::datetime::provider::DatetimePatternsDateIndianV1: DatetimePatternsDateIndianV1,
-            icu::datetime::provider::DatetimePatternsDateHijriV1: DatetimePatternsDateHijriV1,
-            icu::datetime::provider::DatetimePatternsDateJapaneseV1: DatetimePatternsDateJapaneseV1,
-            icu::datetime::provider::DatetimePatternsDatePersianV1: DatetimePatternsDatePersianV1,
-            icu::datetime::provider::DatetimePatternsDateRocV1: DatetimePatternsDateRocV1,
-            icu::datetime::provider::DatetimePatternsTimeV1: DatetimePatternsTimeV1,
-            #[experimental]
-            icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1: LongCompactDecimalFormatDataV1,
-            icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1: ShortCompactDecimalFormatDataV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsGlueV1: DatetimePatternsGlueV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateBuddhistV1: DatetimePatternsDateBuddhistV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateChineseV1: DatetimePatternsDateChineseV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateCopticV1: DatetimePatternsDateCopticV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateDangiV1: DatetimePatternsDateDangiV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateEthiopianV1: DatetimePatternsDateEthiopianV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateGregorianV1: DatetimePatternsDateGregorianV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateHebrewV1: DatetimePatternsDateHebrewV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateIndianV1: DatetimePatternsDateIndianV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateHijriV1: DatetimePatternsDateHijriV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateJapaneseV1: DatetimePatternsDateJapaneseV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDatePersianV1: DatetimePatternsDatePersianV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsDateRocV1: DatetimePatternsDateRocV1,
+            icu::datetime::provider::semantic_skeletons::DatetimePatternsTimeV1: DatetimePatternsTimeV1,
+            #[unstable]
+            icu::decimal::provider::DecimalCompactLongV1: DecimalCompactLongV1,
+            icu::decimal::provider::DecimalCompactShortV1: DecimalCompactShortV1,
             icu::experimental::dimension::provider::currency::compact::ShortCurrencyCompactV1: ShortCurrencyCompactV1,
             icu::experimental::dimension::provider::currency::displayname::CurrencyDisplaynameV1: CurrencyDisplaynameV1,
             icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsV1: CurrencyEssentialsV1,
@@ -303,6 +303,15 @@ macro_rules! registry(
             icu::experimental::displaynames::provider::LocaleDisplayNamesV1: LocaleDisplayNamesV1,
             icu::experimental::displaynames::provider::ScriptDisplayNamesV1: ScriptDisplayNamesV1,
             icu::experimental::displaynames::provider::VariantDisplayNamesV1: VariantDisplayNamesV1,
+            icu::experimental::displaynames::provider::LocaleNamesRegionLongV1: LocaleNamesRegionLongV1,
+            icu::experimental::displaynames::provider::LocaleNamesRegionShortV1: LocaleNamesRegionShortV1,
+            icu::experimental::displaynames::provider::LocaleNamesLanguageLongV1: LocaleNamesLanguageLongV1,
+            icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1: LocaleNamesLanguageShortV1,
+            icu::experimental::displaynames::provider::LocaleNamesLanguageMenuLongV1: LocaleNamesLanguageMenuLongV1,
+            icu::experimental::displaynames::provider::LocaleNamesScriptLongV1: LocaleNamesScriptLongV1,
+            icu::experimental::displaynames::provider::LocaleNamesScriptShortV1: LocaleNamesScriptShortV1,
+            icu::experimental::displaynames::provider::LocaleNamesVariantLongV1: LocaleNamesVariantLongV1,
+            icu::experimental::displaynames::provider::LocaleNamesVariantShortV1: LocaleNamesVariantShortV1,
             icu::experimental::measure::provider::UnitIdsV1: UnitIdsV1,
             icu::experimental::relativetime::provider::LongSecondRelativeV1: LongSecondRelativeV1,
             icu::experimental::relativetime::provider::ShortSecondRelativeV1: ShortSecondRelativeV1,
@@ -337,7 +346,7 @@ macro_rules! registry(
 );
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[unstable] $($emarker_ty:ty:$emarker:ident,)+) => {
         #[test]
         fn no_marker_collisions() {
             use icu_provider::prelude::*;

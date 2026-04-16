@@ -48,6 +48,22 @@ icu4x_Locale_script_mv1_result icu4x_Locale_script_mv1(const Locale* self, Diplo
 typedef struct icu4x_Locale_set_script_mv1_result {union { LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_script_mv1_result;
 icu4x_Locale_set_script_mv1_result icu4x_Locale_set_script_mv1(Locale* self, DiplomatStringView s);
 
+void icu4x_Locale_variants_mv1(const Locale* self, DiplomatWrite* write);
+
+size_t icu4x_Locale_variant_count_mv1(const Locale* self);
+
+typedef struct icu4x_Locale_variant_at_mv1_result { bool is_ok;} icu4x_Locale_variant_at_mv1_result;
+icu4x_Locale_variant_at_mv1_result icu4x_Locale_variant_at_mv1(const Locale* self, size_t index, DiplomatWrite* write);
+
+bool icu4x_Locale_has_variant_mv1(const Locale* self, DiplomatStringView s);
+
+typedef struct icu4x_Locale_add_variant_mv1_result {union {bool ok; LocaleParseError err;}; bool is_ok;} icu4x_Locale_add_variant_mv1_result;
+icu4x_Locale_add_variant_mv1_result icu4x_Locale_add_variant_mv1(Locale* self, DiplomatStringView s);
+
+bool icu4x_Locale_remove_variant_mv1(Locale* self, DiplomatStringView s);
+
+void icu4x_Locale_clear_variants_mv1(Locale* self);
+
 typedef struct icu4x_Locale_normalize_mv1_result {union { LocaleParseError err;}; bool is_ok;} icu4x_Locale_normalize_mv1_result;
 icu4x_Locale_normalize_mv1_result icu4x_Locale_normalize_mv1(DiplomatStringView s, DiplomatWrite* write);
 
