@@ -670,26 +670,25 @@ fn generate_rule_break_data_override(
         if p.left.is_none() && p.right.is_none() {
             // If any values aren't set, this is builtin type.
             match &*segmenter.segmenter_type {
-                "word"
-                    // UAX29 defines the colon as MidLetter, but ICU4C's
-                    // English data doesn't.
-                    // See https://unicode-org.atlassian.net/browse/ICU-22112
-                    //
-                    // TODO: We have to consider this definition from CLDR instead.
-                    if p.name == "MidLetter" => {
-                        properties_trie.set_value(0x003a, property_index);
-                        properties_trie.set_value(0xfe55, property_index);
-                        properties_trie.set_value(0xff1a, property_index);
-                    }
-                "sentence"
-                    // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
-                    // Greek data does.
-                    //
-                    // TODO: We have to consider this definition from CLDR instead.
-                    if p.name == "STerm" => {
-                        properties_trie.set_value(0x003b, property_index);
-                        properties_trie.set_value(0x037e, property_index);
-                    }
+                // UAX29 defines the colon as MidLetter, but ICU4C's
+                // English data doesn't.
+                // See https://unicode-org.atlassian.net/browse/ICU-22112
+                //
+                // TODO: We have to consider this definition from CLDR instead.
+                "word" if p.name == "MidLetter" => {
+                    properties_trie.set_value(0x003a, property_index);
+                    properties_trie.set_value(0xfe55, property_index);
+                    properties_trie.set_value(0xff1a, property_index);
+                }
+
+                // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
+                // Greek data does.
+                //
+                // TODO: We have to consider this definition from CLDR instead.
+                "sentence" if p.name == "STerm" => {
+                    properties_trie.set_value(0x003b, property_index);
+                    properties_trie.set_value(0x037e, property_index);
+                }
                 _ => {}
             }
         }

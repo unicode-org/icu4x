@@ -32,6 +32,7 @@ where
         let mut ret = if let Some(peek) = self.peek.take() {
             peek
         } else {
+            // Exit early when there are no ranges
             self.iter.next()?
         };
 
