@@ -1984,6 +1984,7 @@ dependencies = [
  "icu_codepointtrie_builder",
  "icu_pattern",
  "icu_provider",
+ "icu_provider_adapters",
  "icu_provider_export",
  "icu_provider_registry",
  "icu_segmenter",

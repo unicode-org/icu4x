@@ -9,7 +9,7 @@
 
 use icu::locale::LanguageIdentifier;
 use serde::Deserialize;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize, PartialOrd, Ord, Eq)]
 pub(crate) struct LocaleRule {
@@ -28,7 +28,7 @@ pub(crate) struct LocaleRules {
 pub(crate) struct ParentLocales {
     #[serde(rename = "parentLocale")]
     pub(crate) parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
-    pub(crate) collations: BTreeMap<String, LanguageIdentifier>,
+    pub(crate) collations: HashMap<LanguageIdentifier, LanguageIdentifier>,
     #[serde(rename = "_localeRules", default = "rules_backport")]
     pub(crate) rules: LocaleRules,
 }
