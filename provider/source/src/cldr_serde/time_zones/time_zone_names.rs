@@ -9,8 +9,8 @@
 
 use icu_pattern::{DoublePlaceholder, PatternString, SinglePlaceholder};
 use serde::{
-    Deserialize, Deserializer,
     de::{IgnoredAny, MapAccess, Visitor},
+    Deserialize, Deserializer,
 };
 use std::collections::BTreeMap;
 

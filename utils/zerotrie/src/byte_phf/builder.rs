@@ -160,8 +160,8 @@ mod tests {
     }
 
     fn random_alphanums(seed: u64, len: usize) -> Vec<u8> {
-        use rand::SeedableRng;
         use rand::seq::SliceRandom;
+        use rand::SeedableRng;
         let mut bytes: Vec<u8> =
             b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".into();
         let mut rng = rand_pcg::Lcg64Xsh32::seed_from_u64(seed);

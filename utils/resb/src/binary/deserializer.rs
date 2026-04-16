@@ -7,14 +7,14 @@ use core::fmt;
 use crate::MASK_28_BIT;
 
 use super::{
-    BinIndex, BinaryDeserializerError, CharsetFamily, FormatVersion, ResDescriptor,
-    ResourceReprType, get_subslice, header::BinHeader, read_u16,
+    get_subslice, header::BinHeader, read_u16, BinIndex, BinaryDeserializerError, CharsetFamily,
+    FormatVersion, ResDescriptor, ResourceReprType,
 };
 
 extern crate alloc;
 use alloc::string::String;
 
-use serde_core::{Deserialize, de, forward_to_deserialize_any};
+use serde_core::{de, forward_to_deserialize_any, Deserialize};
 
 /// The character set family of the current system.
 ///
@@ -140,7 +140,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
             Err(_) => {
                 return Err(BinaryDeserializerError::invalid_data(
                     "unable to read resource descriptor",
-                ));
+                ))
             }
         };
         let descriptor = u32::from_ne_bytes(descriptor);
@@ -221,7 +221,7 @@ impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
             _ => {
                 return Err(BinaryDeserializerError::resource_type_mismatch(
                     "expected integer resource representable as boolean",
-                ));
+                ))
             }
         };
 
@@ -407,7 +407,7 @@ impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
             _ => {
                 return Err(BinaryDeserializerError::resource_type_mismatch(
                     "expected binary data resource",
-                ));
+                ))
             }
         };
 
@@ -1226,7 +1226,7 @@ impl TryFrom<&[u8]> for FormatVersion {
             _ => {
                 return Err(BinaryDeserializerError::invalid_data(
                     "unrecognized format version",
-                ));
+                ))
             }
         };
 

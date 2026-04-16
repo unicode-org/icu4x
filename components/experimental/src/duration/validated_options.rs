@@ -75,9 +75,7 @@ pub enum DurationFormatterOptionsError {
 
     /// A previous unit's style is set to `Numeric` or `TwoDigit` and the following unit's style is not
     /// `Fractional`, `Numeric`, or `TwoDigit`.
-    #[displaydoc(
-        "A previous unit's style is set to Numeric or TwoDigit and the following unit's style is not Fractional, Numeric, or TwoDigit"
-    )]
+    #[displaydoc("A previous unit's style is set to Numeric or TwoDigit and the following unit's style is not Fractional, Numeric, or TwoDigit")]
     PreviousNumeric,
 
     /// The number of fractional digits is out of acceptable range. See [`FractionalDigits::Fixed`].

@@ -4,10 +4,10 @@
 
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 
-use crate::{SourceDataProvider, cldr_serde};
+use crate::{cldr_serde, SourceDataProvider};
 use icu::time::{
-    TimeZone,
     provider::windows::{TimezoneIdentifiersWindowsV1, WindowsZonesToBcp47Map},
+    TimeZone,
 };
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -87,7 +87,7 @@ impl crate::IterableDataProviderCached<TimezoneIdentifiersWindowsV1> for SourceD
 #[cfg(test)]
 mod tests {
     use icu::locale::subtags::subtag;
-    use icu::time::{TimeZone, provider::windows::TimezoneIdentifiersWindowsV1};
+    use icu::time::{provider::windows::TimezoneIdentifiersWindowsV1, TimeZone};
     use icu_provider::{DataProvider, DataRequest, DataResponse};
 
     use crate::SourceDataProvider;

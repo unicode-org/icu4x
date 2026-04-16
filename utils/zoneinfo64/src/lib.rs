@@ -402,11 +402,7 @@ impl<'a> TzZoneData<'a> {
             };
         }
 
-        debug_assert!(
-            idx < self.transition_count(),
-            "Called transition_offset_at with out-of-range index (got {idx}, but only have {} transitions)",
-            self.transition_count()
-        );
+        debug_assert!(idx < self.transition_count(), "Called transition_offset_at with out-of-range index (got {idx}, but only have {} transitions)", self.transition_count());
 
         let idx = core::cmp::min(idx, self.transition_count() - 1);
 
@@ -537,7 +533,7 @@ impl<'a> Zone<'a> {
                         before: before_first_candidate,
                         after: first_candidate.into(),
                         transition: first_candidate.since,
-                    };
+                    }
                 }
                 // We are after the first candidate, try the second
                 (false, false) => {}
@@ -580,7 +576,7 @@ impl<'a> Zone<'a> {
                         before: first_candidate.into(),
                         after: second_candidate.into(),
                         transition: second_candidate.since,
-                    };
+                    }
                 }
                 // We are after the second candidate
                 (false, false) => return PossibleOffset::Single(second_candidate.into()),

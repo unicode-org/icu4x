@@ -8,7 +8,7 @@ use crate::{
     locale::WindowsLocale,
 };
 use icu_locale_core::{
-    Locale, extensions::unicode, preferences::extensions::unicode::keywords::CalendarAlgorithm,
+    extensions::unicode, preferences::extensions::unicode::keywords::CalendarAlgorithm, Locale,
 };
 use std::str::FromStr;
 
@@ -54,7 +54,11 @@ impl RawHostInfoBackend for WindowsHostInfoBackend {
         let region =
             windows::System::UserProfile::GlobalizationPreferences::HomeGeographicRegion()?;
         let s = region.to_string_lossy();
-        if s.is_empty() { Ok(None) } else { Ok(Some(s)) }
+        if s.is_empty() {
+            Ok(None)
+        } else {
+            Ok(Some(s))
+        }
     }
 
     fn raw_requested_locales() -> Result<Vec<String>, HostInfoError> {
@@ -96,15 +100,15 @@ impl RawHostInfoBackend for WindowsHostInfoBackend {
 
 #[cfg(test)]
 mod tests {
-    use crate::backends::{RawHostInfoBackend, windows::WindowsHostInfoBackend};
+    use crate::backends::{windows::WindowsHostInfoBackend, RawHostInfoBackend};
     use crate::locale::WindowsLocale;
     use icu_locale_core::Locale;
     use std::sync::{LazyLock, Mutex};
+    use windows::core::{BOOL, PCWSTR};
     use windows::Win32::{
         Foundation::LPARAM,
         Globalization::{EnumSystemLocalesEx, LOCALE_ALL},
     };
-    use windows::core::{BOOL, PCWSTR};
 
     // Since [`EnumSystemLocalesEx`] iterates using a callback with no obvious (safe) way to return data,
     // store them in this static instead. Since this is only a single test with roughly 1,000 items,

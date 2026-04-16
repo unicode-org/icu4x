@@ -25,14 +25,14 @@ use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::VarZeroSlice;
-use zerovec::ule::AsULE;
-use zerovec::ule::EncodeAsVarULE;
-use zerovec::ule::ULE;
-use zerovec::ule::UleError;
-use zerovec::ule::VarULE;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::vartuple::VarTupleULE;
+use zerovec::ule::AsULE;
+use zerovec::ule::EncodeAsVarULE;
+use zerovec::ule::UleError;
+use zerovec::ule::VarULE;
+use zerovec::ule::ULE;
+use zerovec::VarZeroSlice;
 
 pub mod rules;
 
@@ -637,7 +637,11 @@ pub struct FourBitMetadata(u8);
 impl FourBitMetadata {
     /// Creates a [`FourBitMetadata`] if the given value fits in 4 bits.
     pub fn try_from_byte(byte: u8) -> Option<Self> {
-        if byte <= 0x0F { Some(Self(byte)) } else { None }
+        if byte <= 0x0F {
+            Some(Self(byte))
+        } else {
+            None
+        }
     }
 
     /// Creates a [`FourBitMetadata`] with a zero value.

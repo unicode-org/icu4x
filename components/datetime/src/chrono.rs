@@ -333,7 +333,7 @@ impl ConvertCalendar for chrono::FixedOffset {
 
 #[test]
 fn chrono() {
-    use crate::{DateTimeFormatter, fieldsets};
+    use crate::{fieldsets, DateTimeFormatter};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -387,7 +387,7 @@ fn chrono() {
 
 #[test]
 fn chrono_fixed_calendar() {
-    use crate::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets};
+    use crate::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -447,7 +447,7 @@ fn chrono_fixed_calendar() {
 
 #[test]
 fn chrono_no_calendar() {
-    use crate::{NoCalendarFormatter, fieldsets};
+    use crate::{fieldsets, NoCalendarFormatter};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 

@@ -4,7 +4,7 @@
 
 use std::collections::HashMap;
 
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use zerovec::maps::ZeroMapKV;
 use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};

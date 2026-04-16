@@ -7,14 +7,14 @@ use crate::{
     error::HostInfoError,
     locale::PosixLocale,
 };
-use icu_locale_core::{Locale, preferences::extensions::unicode::keywords::HourCycle};
+use icu_locale_core::{preferences::extensions::unicode::keywords::HourCycle, Locale};
 
 pub struct LinuxHostInfoBackend;
 
 impl HostInfoBackend for LinuxHostInfoBackend {
     #[cfg(feature = "datetime")]
     fn datetime_preferences() -> Result<icu_datetime::DateTimeFormatterPreferences, HostInfoError> {
-        use crate::backends::shared::posix::{LocaleCategory, raw_locale_categories};
+        use crate::backends::shared::posix::{raw_locale_categories, LocaleCategory};
 
         let mut categories = raw_locale_categories()?;
 

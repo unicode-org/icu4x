@@ -350,9 +350,7 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
 
             // sentinel value
             if packed == 0xFF00 {
-                return Err(DataError::custom(
-                    "Found unknown general category mask value, properties code may need to be updated.",
-                ));
+                return Err(DataError::custom("Found unknown general category mask value, properties code may need to be updated."));
             }
 
             map.insert(value.long.as_str(), packed);
@@ -518,7 +516,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        use icu::properties::{CodePointMapData, props::GeneralCategory};
+        use icu::properties::{props::GeneralCategory, CodePointMapData};
         let provider = SourceDataProvider::new_testing();
 
         let trie = CodePointMapData::<GeneralCategory>::try_new_unstable(&provider).unwrap();
@@ -530,7 +528,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        use icu::properties::{CodePointMapData, props::Script};
+        use icu::properties::{props::Script, CodePointMapData};
         let provider = SourceDataProvider::new_testing();
 
         let trie = CodePointMapData::<Script>::try_new_unstable(&provider).unwrap();

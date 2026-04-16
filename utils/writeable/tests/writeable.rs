@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::fmt;
+use writeable::assert_writeable_eq;
 use writeable::LengthHint;
 use writeable::Writeable;
-use writeable::assert_writeable_eq;
 
 /// A sample type implementing Writeable
 struct WriteableMessage<'s> {

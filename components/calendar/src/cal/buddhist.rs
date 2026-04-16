@@ -6,10 +6,9 @@ use crate::cal::abstract_gregorian::AbstractGregorian;
 use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
 use crate::{
-    Date, RangeError,
-    cal::abstract_gregorian::{GregorianYears, impl_with_abstract_gregorian},
+    cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears},
     calendar_arithmetic::ArithmeticDate,
-    types,
+    types, Date, RangeError,
 };
 use tinystr::tinystr;
 

@@ -7,7 +7,7 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::{I32CastError, i64_to_i32};
+use crate::helpers::{i64_to_i32, I32CastError};
 use crate::rata_die::RataDie;
 
 pub(crate) const COPTIC_EPOCH: RataDie = crate::julian::fixed_from_julian(284, 8, 29);

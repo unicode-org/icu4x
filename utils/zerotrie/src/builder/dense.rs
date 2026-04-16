@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ZeroTrieBuildError;
-use crate::ZeroTrieSimpleAscii;
 use crate::dense::DenseType;
 use crate::dense::ZeroAsciiDenseSparse2dTrieOwned;
+use crate::ZeroTrieBuildError;
+use crate::ZeroTrieSimpleAscii;
 use alloc::collections::BTreeMap;
 use alloc::collections::BTreeSet;
 use alloc::string::String;

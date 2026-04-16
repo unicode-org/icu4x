@@ -305,7 +305,7 @@ pub mod vecs {
 
     #[cfg(feature = "alloc")]
     pub use crate::varzerovec::VarZeroVecOwned;
-    pub use crate::varzerovec::{Index8, Index16, Index32, VarZeroSliceIter, VarZeroVecFormat};
+    pub use crate::varzerovec::{Index16, Index32, Index8, VarZeroSliceIter, VarZeroVecFormat};
 
     pub type VarZeroVec16<'a, T> = VarZeroVec<'a, T, Index16>;
     pub type VarZeroVec32<'a, T> = VarZeroVec<'a, T, Index32>;

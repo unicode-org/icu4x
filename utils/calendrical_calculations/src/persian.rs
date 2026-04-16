@@ -7,7 +7,7 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::{I32CastError, IntegerRoundings, i64_to_i32};
+use crate::helpers::{i64_to_i32, I32CastError, IntegerRoundings};
 use crate::rata_die::RataDie;
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4720>
@@ -129,7 +129,11 @@ fn arithmetic_persian_year_from_fixed(date: RataDie) -> i64 {
         (128 * d1 + 46878).div_euclid(46751)
     };
     let year = 474 + n2820 * 2820 + y2820;
-    if year > 0 { year } else { year - 1 }
+    if year > 0 {
+        year
+    } else {
+        year - 1
+    }
 }
 
 /// [`arithmetic_persian_year_from_fixed`] modified for the 33-year rule

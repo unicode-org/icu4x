@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ZeroVec;
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+use crate::ZeroVec;
 use alloc::vec::Vec;
 use core::borrow::Borrow;
 use core::hash::Hash;
@@ -218,7 +218,7 @@ where
 mod tests {
     use super::*;
     use crate::ule::AsULE;
-    use rand::{Rng, SeedableRng, distr::StandardUniform};
+    use rand::{distr::StandardUniform, Rng, SeedableRng};
     use rand_pcg::Lcg64Xsh32;
 
     #[test]

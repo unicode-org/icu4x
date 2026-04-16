@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale_core::{LanguageIdentifier, langid};
-use icu_segmenter::LineSegmenter;
+use icu_locale_core::{langid, LanguageIdentifier};
 use icu_segmenter::options::LineBreakOptions;
 use icu_segmenter::options::LineBreakStrictness;
 use icu_segmenter::options::LineBreakWordOption;
+use icu_segmenter::LineSegmenter;
 
 fn check_with_options(
     s: &str,

@@ -24,8 +24,8 @@ mod uchar;
 mod ustr;
 
 pub use uchar::PotentialCodePoint;
-pub use ustr::PotentialUtf8;
 pub use ustr::PotentialUtf16;
+pub use ustr::PotentialUtf8;
 
 #[cfg(feature = "writeable")]
 mod writeable;

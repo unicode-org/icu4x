@@ -7,14 +7,14 @@ mod parse_state;
 use std::{borrow::Cow, fmt};
 
 use nom::{
-    Finish, IResult, Parser,
     branch::alt,
     bytes::complete::{tag, take, take_until, take_while1},
     character::complete::{hex_digit1, i32, multispace1, not_line_ending, u32},
     combinator::{eof, map, map_parser, map_res, opt, peek, value},
-    error::{ContextError, ParseError, VerboseError, context, convert_error, make_error},
+    error::{context, convert_error, make_error, ContextError, ParseError, VerboseError},
     multi::{many0, separated_list0},
     sequence::{delimited, pair, preceded, terminated},
+    Finish, IResult, Parser,
 };
 
 use crate::bundle::{Int28, Key, Resource, ResourceBundle, Table};

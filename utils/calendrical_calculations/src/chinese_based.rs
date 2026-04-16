@@ -475,10 +475,7 @@ pub fn get_leap_month_from_new_year<C: ChineseBased>(new_year: RataDie) -> u8 {
         solar_term = next_solar_term;
         result += 1;
     }
-    debug_assert!(
-        result < MAX_ITERS_FOR_MONTHS_OF_YEAR,
-        "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month."
-    );
+    debug_assert!(result < MAX_ITERS_FOR_MONTHS_OF_YEAR, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
     result
 }
 
@@ -595,10 +592,7 @@ pub fn days_until_month<C: ChineseBased>(new_year: RataDie, month: u8) -> u16 {
 
     let new_moon = new_moon_on_or_after::<C>(new_year.as_moment() + (month_approx as f64));
     let result = new_moon - new_year;
-    debug_assert!(
-        ((u16::MIN as i64)..=(u16::MAX as i64)).contains(&result),
-        "Result {result} from new moon: {new_moon:?} and new year: {new_year:?} should be in range of u16!"
-    );
+    debug_assert!(((u16::MIN as i64)..=(u16::MAX as i64)).contains(&result), "Result {result} from new moon: {new_moon:?} and new year: {new_year:?} should be in range of u16!");
     result as u16
 }
 
@@ -626,10 +620,7 @@ mod test {
             let moment = Moment::new(i as f64);
             let before = new_moon_before::<Chinese>(moment);
             let after = new_moon_on_or_after::<Chinese>(moment);
-            assert!(
-                before < after,
-                "Chinese new moon directionality failed for Moment: {moment:?}, with:\n\tBefore: {before:?}\n\tAfter: {after:?}"
-            );
+            assert!(before < after, "Chinese new moon directionality failed for Moment: {moment:?}, with:\n\tBefore: {before:?}\n\tAfter: {after:?}");
         }
     }
 

@@ -4,7 +4,7 @@
 
 use icu_normalizer::{ComposingNormalizerBorrowed, DecomposingNormalizerBorrowed};
 
-use criterion::{Criterion, Throughput, black_box};
+use criterion::{black_box, Criterion, Throughput};
 
 use smallvec::SmallVec;
 

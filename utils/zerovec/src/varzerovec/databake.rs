@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::vecs::{Index16, Index32};
-use crate::{VarZeroSlice, VarZeroVec, ule::VarULE};
+use crate::{ule::VarULE, VarZeroSlice, VarZeroVec};
 use databake::*;
 
 impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T, Index16> {

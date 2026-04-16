@@ -13,8 +13,8 @@ use core::str::FromStr;
 use litemap::LiteMap;
 use writeable::Writeable;
 
-use crate::Error;
 use crate::common::*;
+use crate::Error;
 
 /// A string wrapper for the [`MultiNamedPlaceholder`] pattern backend.
 ///

@@ -7,9 +7,8 @@
 use alloc::boxed::Box;
 use icu_calendar::Gregorian;
 use icu_datetime::{
-    DateTimeFormatter, DateTimeFormatterLoadError, FixedCalendarDateTimeFormatter,
-    fieldsets::Combo, fieldsets::builder::BuilderError, fieldsets::enums::*, pattern::*,
-    scaffold::*,
+    fieldsets::builder::BuilderError, fieldsets::enums::*, fieldsets::Combo, pattern::*,
+    scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError, FixedCalendarDateTimeFormatter,
 };
 
 pub(crate) fn map_or_default<Input, Output>(input: Option<Input>) -> Output

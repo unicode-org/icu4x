@@ -59,7 +59,11 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
     /// Gets the last element in the store, or `None` if the store is empty.
     fn lm_last(&self) -> Option<(&K, &V)> {
         let len = self.lm_len();
-        if len == 0 { None } else { self.lm_get(len - 1) }
+        if len == 0 {
+            None
+        } else {
+            self.lm_get(len - 1)
+        }
     }
 
     /// Searches the store for a particular element with a comparator function.

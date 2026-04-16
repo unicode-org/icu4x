@@ -37,7 +37,11 @@ struct Prop {
 
 impl Prop {
     fn kind(&self) -> &'static str {
-        if self.is_open { "Struct" } else { "Enum" }
+        if self.is_open {
+            "Struct"
+        } else {
+            "Enum"
+        }
     }
 
     fn variant_kind(&self) -> &'static str {

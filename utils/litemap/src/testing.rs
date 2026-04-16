@@ -4,8 +4,8 @@
 
 //! Test utilities, primarily targeted to custom [`LiteMap`] stores.
 
-use crate::LiteMap;
 use crate::store::*;
+use crate::LiteMap;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 

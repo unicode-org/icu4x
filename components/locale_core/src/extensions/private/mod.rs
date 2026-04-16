@@ -36,7 +36,7 @@ use core::ops::Deref;
 use core::str::FromStr;
 
 #[doc(inline)]
-pub use other::{Subtag, subtag};
+pub use other::{subtag, Subtag};
 
 #[cfg(feature = "alloc")]
 use super::ExtensionType;

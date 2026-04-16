@@ -11,7 +11,7 @@
 
 use icu_provider::prelude::*;
 use num_bigint::BigInt;
-use zerovec::{VarZeroVec, ZeroVec, maps::ZeroVecLike, ule::AsULE};
+use zerovec::{maps::ZeroVecLike, ule::AsULE, VarZeroVec, ZeroVec};
 
 use crate::measure::provider::single_unit::{SingleUnit, UnitID};
 #[cfg(feature = "compiled_data")]

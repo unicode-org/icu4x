@@ -10,9 +10,9 @@ use core::fmt;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
 
+use crate::{uint_iterator::IntIterator, IncrementLike, NoIncrement};
 #[cfg(feature = "ryu")]
 use crate::{FloatPrecision, LimitError};
-use crate::{IncrementLike, NoIncrement, uint_iterator::IntIterator};
 use crate::{ParseError, RoundingIncrement, UnsignedRoundingMode};
 
 // UnsignedDecimal assumes usize (digits.len()) is at least as big as a u16

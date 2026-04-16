@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::super::{PatternItem, TimeGranularity};
-use ::serde::{Deserialize, Deserializer, de};
+use ::serde::{de, Deserialize, Deserializer};
 use alloc::{fmt, format, vec::Vec};
 
 #[cfg(feature = "datagen")]
-use ::serde::{Serialize, ser};
+use ::serde::{ser, Serialize};
 
 mod reference {
     use super::super::super::reference::Pattern;
@@ -117,7 +117,7 @@ mod reference {
 }
 
 mod runtime {
-    use super::super::super::{PatternItem, runtime::Pattern, runtime::PatternMetadata};
+    use super::super::super::{runtime::Pattern, runtime::PatternMetadata, PatternItem};
     use super::*;
     use zerovec::ZeroVec;
 

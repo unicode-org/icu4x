@@ -4,7 +4,7 @@
 
 use criterion::measurement::WallTime;
 use criterion::{
-    BatchSize, BenchmarkGroup, BenchmarkId, Criterion, black_box, criterion_group, criterion_main,
+    black_box, criterion_group, criterion_main, BatchSize, BenchmarkGroup, BenchmarkId, Criterion,
 };
 
 use icu::collator::{options::*, *};

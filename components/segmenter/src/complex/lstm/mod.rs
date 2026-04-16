@@ -5,7 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenterBorrowed;
 use crate::provider::*;
 use alloc::vec::Vec;
-use core::char::{REPLACEMENT_CHARACTER, decode_utf16};
+use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 use potential_utf::PotentialUtf8;
 use zerovec::maps::ZeroMapBorrowed;
 

@@ -10,8 +10,8 @@ use alloc::borrow::Cow;
 use alloc::string::String;
 use icu_locale_core::preferences::define_preferences;
 use icu_locale_core::{
-    LanguageIdentifier, Locale, subtags::Language, subtags::Region, subtags::Script,
-    subtags::Variant,
+    subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
+    Locale,
 };
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;

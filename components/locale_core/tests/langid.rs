@@ -7,7 +7,7 @@ mod fixtures;
 use std::convert::TryInto;
 use writeable::*;
 
-use icu_locale_core::{LanguageIdentifier, ParseError, subtags};
+use icu_locale_core::{subtags, LanguageIdentifier, ParseError};
 
 type Result = std::result::Result<LanguageIdentifier, ParseError>;
 

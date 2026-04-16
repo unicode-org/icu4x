@@ -160,8 +160,8 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
-    use crate::ZeroVec;
     use crate::samples::*;
+    use crate::ZeroVec;
 
     #[derive(serde::Serialize, serde::Deserialize)]
     #[allow(

@@ -4,11 +4,11 @@
 
 use super::ZeroHashMap;
 use crate::{
-    ZeroVec,
     map::{ZeroMapKV, ZeroVecLike},
+    ZeroVec,
 };
 
-use serde::{Deserialize, Serialize, de};
+use serde::{de, Deserialize, Serialize};
 
 impl<'a, K, V> Serialize for ZeroHashMap<'a, K, V>
 where

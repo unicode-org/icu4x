@@ -4,12 +4,12 @@
 
 use fixed_decimal::{Decimal, Sign};
 use icu_decimal::{
-    DecimalFormatter, DecimalFormatterPreferences, options::DecimalFormatterOptions,
-    provider::DecimalDigitsV1, provider::DecimalSymbolsV1,
+    options::DecimalFormatterOptions, provider::DecimalDigitsV1, provider::DecimalSymbolsV1,
+    DecimalFormatter, DecimalFormatterPreferences,
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
-use icu_plurals::{PluralRules, provider::PluralsCardinalV1};
+use icu_plurals::{provider::PluralsCardinalV1, PluralRules};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 

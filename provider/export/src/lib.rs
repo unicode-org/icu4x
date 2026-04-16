@@ -76,9 +76,9 @@ pub mod prelude {
         DataLocaleFamily, DeduplicationStrategy, ExportDriver, FallbackOptions, NoFallbackOptions,
     };
     #[doc(no_inline)]
-    pub use icu_locale::{LocaleFallbacker, locale};
+    pub use icu_locale::{locale, LocaleFallbacker};
     #[doc(no_inline)]
-    pub use icu_provider::{DataLocale, DataMarker, DataMarkerInfo, export::DataExporter};
+    pub use icu_provider::{export::DataExporter, DataLocale, DataMarker, DataMarkerInfo};
 }
 
 use icu_locale::LocaleFallbacker;
@@ -196,9 +196,7 @@ impl ExportDriver {
             .attributes_filters
             .insert(String::from(domain), Arc::new(Box::new(filter)));
         if old_value.is_some() {
-            log::warn!(
-                "Filter applied to domain '{domain}' multiple times; ignoring all but the last filter"
-            );
+            log::warn!("Filter applied to domain '{domain}' multiple times; ignoring all but the last filter");
         }
         self
     }

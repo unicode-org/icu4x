@@ -7,7 +7,7 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::{I32CastError, i64_to_i32, k_day_after};
+use crate::helpers::{i64_to_i32, k_day_after, I32CastError};
 use crate::rata_die::RataDie;
 
 // The Gregorian epoch is equivalent to first day in fixed day measurement
@@ -53,7 +53,11 @@ pub const fn fixed_from_gregorian(year: i32, month: u8, day: u8) -> RataDie {
 pub const fn days_before_month(year: i32, month: u8) -> u16 {
     if month < 3 {
         // This compiles to a conditional move, so there's only one branch in this function
-        if month == 1 { 0 } else { 31 }
+        if month == 1 {
+            0
+        } else {
+            31
+        }
     } else {
         31 + 28 + is_leap_year(year) as u16 + ((979 * (month as u32) - 2919) >> 5) as u16
     }

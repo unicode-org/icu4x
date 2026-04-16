@@ -158,7 +158,7 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
     type Item = (usize, WordType);
     fn next(&mut self) -> Option<Self::Item> {
         let ret = self.0.next()?;
-        Some((ret, self.0.0.word_type()))
+        Some((ret, self.0 .0.word_type()))
     }
 }
 

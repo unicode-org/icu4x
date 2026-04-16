@@ -16,17 +16,17 @@ use icu_collections::{
 };
 use icu_properties::script::ScriptWithExtensions;
 use icu_properties::{
-    CodePointMapData,
     props::{
         CanonicalCombiningClass, EnumeratedProperty, GeneralCategory, GeneralCategoryGroup,
         GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
     },
+    CodePointMapData,
 };
 use icu_properties::{
-    CodePointSetData,
     props::{PatternWhiteSpace, XidContinue, XidStart},
+    CodePointSetData,
 };
-use icu_properties::{PropertyParser, provider::*};
+use icu_properties::{provider::*, PropertyParser};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -62,8 +62,8 @@ pub enum ParseErrorKind {
     /// The provided escape sequence is not a valid Unicode code point or represents too many code points.
     InvalidEscape,
 }
-use ParseErrorKind as PEK;
 use zerovec::VarZeroVec;
+use ParseErrorKind as PEK;
 
 impl ParseErrorKind {
     fn with_offset(self, offset: usize) -> ParseError {

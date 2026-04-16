@@ -206,7 +206,11 @@ where
         let q = debug_unwrap!(qq.get(l1), return None);
         let l2 = f2(key, *q, n) as usize;
         let ek = debug_unwrap!(eks.get(l2), return None);
-        if *ek == key { Some(l2) } else { None }
+        if *ek == key {
+            Some(l2)
+        } else {
+            None
+        }
     }
     /// This is called `num_items` because `len` is ambiguous: it could refer
     /// to the number of items or the number of bytes.
@@ -284,8 +288,8 @@ mod tests {
     extern crate std;
 
     fn random_alphanums(seed: u64, len: usize) -> Vec<u8> {
-        use rand::SeedableRng;
         use rand::seq::SliceRandom;
+        use rand::SeedableRng;
 
         let mut bytes: Vec<u8> =
             b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".into();

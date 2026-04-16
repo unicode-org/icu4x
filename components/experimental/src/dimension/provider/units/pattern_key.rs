@@ -4,7 +4,7 @@
 
 use zerovec::{
     maps::ZeroMapKV,
-    ule::{AsULE, ULE, UleError},
+    ule::{AsULE, UleError, ULE},
 };
 
 use crate::dimension::provider::units::essentials::CompoundCount;

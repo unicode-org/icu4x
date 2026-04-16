@@ -25,13 +25,13 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::ext::IdentExt as _;
 use syn::spanned::Spanned;
-use syn::{DeriveInput, GenericParam, Ident, WherePredicate, parse_macro_input, parse_quote};
+use syn::{parse_macro_input, parse_quote, DeriveInput, GenericParam, Ident, WherePredicate};
 use synstructure::Structure;
 
 use self::lifetimes::{custom_lt, ignored_lifetime_ident, replace_lifetime, static_lt};
 use self::visitor::{
-    CheckResult, check_parameter_for_bound_lts, check_type_for_parameters,
-    check_where_clause_for_bound_lts,
+    check_parameter_for_bound_lts, check_type_for_parameters, check_where_clause_for_bound_lts,
+    CheckResult,
 };
 
 /// Custom derive for `yoke::Yokeable`.

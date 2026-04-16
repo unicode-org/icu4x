@@ -9,7 +9,7 @@ use icu_calendar::{AsCalendar, Iso};
 use zerovec::ule::AsULE;
 
 use crate::Time;
-use crate::{DateTime, ZonedDateTime, zone::UtcOffset};
+use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 
 /// The moment in time for resolving a time zone name.
 ///

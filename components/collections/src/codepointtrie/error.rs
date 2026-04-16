@@ -20,14 +20,10 @@ pub enum Error {
     #[displaydoc("CodePointTrie must be constructed from data vector with at least one element")]
     EmptyDataVector,
     /// [`CodePointTrie`](super::CodePointTrie) must be constructed from index vector long enough to accommodate fast-path access
-    #[displaydoc(
-        "CodePointTrie must be constructed from index vector long enough to accommodate fast-path access"
-    )]
+    #[displaydoc("CodePointTrie must be constructed from index vector long enough to accommodate fast-path access")]
     IndexTooShortForFastAccess,
     /// [`CodePointTrie`](super::CodePointTrie) must be constructed from data vector long enough to accommodate fast-path access
-    #[displaydoc(
-        "CodePointTrie must be constructed from data vector long enough to accommodate fast-path access"
-    )]
+    #[displaydoc("CodePointTrie must be constructed from data vector long enough to accommodate fast-path access")]
     DataTooShortForFastAccess,
 }
 

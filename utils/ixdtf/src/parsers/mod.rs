@@ -4,9 +4,9 @@
 
 //! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
-use crate::ParserResult;
 use crate::core::Cursor;
-use crate::encoding::{EncodingType, Utf8, Utf16};
+use crate::encoding::{EncodingType, Utf16, Utf8};
+use crate::ParserResult;
 
 #[cfg(feature = "duration")]
 use crate::records::DurationParseRecord;

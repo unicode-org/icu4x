@@ -6,7 +6,7 @@
 //! (duplicated in yoke/derive/src/visitor.rs)
 
 use std::collections::HashMap;
-use syn::visit::{Visit, visit_lifetime, visit_type, visit_type_path};
+use syn::visit::{visit_lifetime, visit_type, visit_type_path, Visit};
 use syn::{Ident, Lifetime, Type, TypePath};
 
 struct TypeVisitor<'a> {
@@ -62,7 +62,7 @@ pub fn check_type_for_parameters(
 mod tests {
     use proc_macro2::Span;
     use std::collections::HashMap;
-    use syn::{Ident, parse_quote};
+    use syn::{parse_quote, Ident};
 
     use super::check_type_for_parameters;
     fn make_typarams(params: &[&str]) -> HashMap<Ident, Option<Ident>> {

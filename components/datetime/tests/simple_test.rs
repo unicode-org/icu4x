@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::Date;
 use icu_calendar::cal::Hebrew;
+use icu_calendar::Date;
 use icu_datetime::fieldsets;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
 use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
-use icu_locale_core::{Locale, locale};
+use icu_locale_core::{locale, Locale};
 use icu_time::{DateTime, Time};
 use writeable::assert_writeable_eq;
 
@@ -222,9 +222,9 @@ fn test_5387() {
 
 #[test]
 fn test_vancouver_2026() {
-    use icu_datetime::{DateTimeFormatter, fieldsets};
-    use icu_time::ZonedDateTime;
+    use icu_datetime::{fieldsets, DateTimeFormatter};
     use icu_time::zone::{TimeZone, UtcOffset};
+    use icu_time::ZonedDateTime;
 
     let date = Date::try_new_gregorian(2026, 12, 1).unwrap();
     let time = Time::try_new(12, 0, 0, 0).unwrap();

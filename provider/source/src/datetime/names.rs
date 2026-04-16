@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::DatagenCalendar;
+use crate::cldr_serde::ca;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use crate::cldr_serde::ca;
 use icu::datetime::provider::pattern;
 
 use icu::datetime::provider::names::*;
@@ -316,9 +316,7 @@ fn months_convert(
             "numeric months only found for Context::Format"
         );
         let Some(ref patterns) = data.month_patterns else {
-            panic!(
-                "No month_patterns found but numeric months were requested for {calendar:?} with {locale}"
-            );
+            panic!("No month_patterns found but numeric months were requested for {calendar:?} with {locale}");
         };
         let pattern = patterns.get_symbols(context, length);
         return Ok(MonthNames::LeapNumeric(Cow::Owned(

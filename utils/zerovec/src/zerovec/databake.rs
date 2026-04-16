@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::ZeroVec;
-use crate::{ZeroSlice, ule::AsULE};
+use crate::{ule::AsULE, ZeroSlice};
 use databake::*;
 
 impl<T: AsULE> Bake for ZeroVec<'_, T> {

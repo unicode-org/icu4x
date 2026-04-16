@@ -7,8 +7,8 @@ use alloc::vec::Vec;
 use core::{char, cmp::Ordering, ops::RangeBounds};
 use potential_utf::PotentialCodePoint;
 
-use crate::codepointinvlist::{CodePointInversionList, utils::deconstruct_range};
-use zerovec::{ZeroVec, ule::AsULE};
+use crate::codepointinvlist::{utils::deconstruct_range, CodePointInversionList};
+use zerovec::{ule::AsULE, ZeroVec};
 
 /// A builder for [`CodePointInversionList`].
 ///

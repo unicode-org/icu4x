@@ -43,7 +43,7 @@ pub fn replace_lifetime(lt_param: &Ident, x: &Type, lt: Lifetime) -> Type {
 #[cfg(test)]
 mod tests {
     use proc_macro2::Span;
-    use syn::{Ident, parse_quote};
+    use syn::{parse_quote, Ident};
 
     use super::{custom_lt, replace_lifetime};
 

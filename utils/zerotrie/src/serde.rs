@@ -2,23 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::options::ZeroTrieWithOptions;
+use crate::zerotrie::ZeroTrieFlavor;
 use crate::ZeroAsciiIgnoreCaseTrie;
 use crate::ZeroTrie;
 use crate::ZeroTrieExtendedCapacity;
 use crate::ZeroTriePerfectHash;
 use crate::ZeroTrieSimpleAscii;
-use crate::options::ZeroTrieWithOptions;
-use crate::zerotrie::ZeroTrieFlavor;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
 use litemap::LiteMap;
+use serde_core::de::Error;
+use serde_core::de::Visitor;
 use serde_core::Deserialize;
 use serde_core::Deserializer;
 use serde_core::Serialize;
 use serde_core::Serializer;
-use serde_core::de::Error;
-use serde_core::de::Visitor;
 
 struct ByteStrVisitor;
 impl<'de> Visitor<'de> for ByteStrVisitor {

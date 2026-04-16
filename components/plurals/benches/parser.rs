@@ -4,7 +4,7 @@
 
 mod fixtures;
 
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_provider::prelude::*;
 

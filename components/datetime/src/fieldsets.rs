@@ -67,8 +67,8 @@ use enums::*;
 use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 use icu_provider::marker::NeverMarker;
 use icu_time::{
-    Hour, Minute, Nanosecond, Second, TimeZone,
     zone::{UtcOffset, ZoneNameTimestamp},
+    Hour, Minute, Nanosecond, Second, TimeZone,
 };
 
 #[cfg(doc)]

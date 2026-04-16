@@ -8,9 +8,9 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use serde_core::{
-    Deserialize, Deserializer, Serialize, Serializer,
     de::{MapAccess, SeqAccess, Visitor},
     ser::{SerializeMap, SerializeSeq},
+    Deserialize, Deserializer, Serialize, Serializer,
 };
 
 impl<K, V, R> Serialize for LiteMap<K, V, R>

@@ -15,9 +15,7 @@ pub enum ZeroTrieBuildError {
     #[displaydoc("Reached maximum capacity of trie")]
     CapacityExceeded,
     /// The builder could not solve the perfect hash function.
-    #[displaydoc(
-        "Failed to solve the perfect hash function. This is rare! Please report your case to the ICU4X team."
-    )]
+    #[displaydoc("Failed to solve the perfect hash function. This is rare! Please report your case to the ICU4X team.")]
     CouldNotSolvePerfectHash,
     /// Mixed-case data was added to a case-insensitive trie.
     #[displaydoc("Mixed-case data added to case-insensitive trie")]

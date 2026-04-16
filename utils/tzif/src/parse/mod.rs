@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use combine::parser::combinator::Either;
-use combine::parser::error::{Unexpected, unexpected_any};
+use combine::parser::error::{unexpected_any, Unexpected};
 use combine::parser::token::Value;
-use combine::{Parser, Stream, value};
+use combine::{value, Parser, Stream};
 
 /// Parser definition for POSIX time-zone strings as specified by
 /// <https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html>

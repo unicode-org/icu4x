@@ -5,7 +5,7 @@
 use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::{ShortBoxSlice, ShortBoxSliceIntoIter};
-use crate::subtags::{Subtag, subtag};
+use crate::subtags::{subtag, Subtag};
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 #[cfg(feature = "alloc")]

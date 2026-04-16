@@ -92,7 +92,7 @@ pub use reader::ZeroTrieIterator;
 
 #[doc(hidden)]
 pub mod _internal {
-    pub use crate::byte_phf::PerfectByteHashMap;
     pub use crate::byte_phf::f1;
     pub use crate::byte_phf::f2;
+    pub use crate::byte_phf::PerfectByteHashMap;
 }

@@ -57,8 +57,6 @@ mod multi_named;
 mod parser;
 mod single;
 
-#[doc(no_inline)]
-pub use PatternError as Error;
 pub use common::PatternBackend;
 pub use common::PatternItem;
 #[cfg(feature = "alloc")]
@@ -67,9 +65,9 @@ pub use common::PlaceholderValueProvider;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
 pub use error::PatternError;
-pub use frontend::Pattern;
 #[cfg(feature = "serde")]
 pub use frontend::serde::*;
+pub use frontend::Pattern;
 pub use multi_named::MissingNamedPlaceholderError;
 pub use multi_named::MultiNamedPlaceholder;
 pub use multi_named::MultiNamedPlaceholderKey;
@@ -85,6 +83,8 @@ pub use parser::ParserOptions;
 pub use parser::QuoteMode;
 pub use single::SinglePlaceholder;
 pub use single::SinglePlaceholderKey;
+#[doc(no_inline)]
+pub use PatternError as Error;
 
 mod private {
     pub trait Sealed {}

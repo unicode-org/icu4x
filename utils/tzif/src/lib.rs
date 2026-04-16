@@ -37,7 +37,7 @@
 //!     tzif::parse_posix_tz_string(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").unwrap();
 //! ```
 
-use combine::{Parser, stream};
+use combine::{stream, Parser};
 use data::{posix::PosixTzString, tzif::TzifData};
 use error::Error;
 use std::fs::File;

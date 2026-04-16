@@ -71,8 +71,8 @@ mod test {
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use std::collections::BTreeMap;
 
-    use crate::SourceDataProvider;
     use crate::datetime::DatagenCalendar;
+    use crate::SourceDataProvider;
 
     fn get_data_payload() -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
         let locale = locale!("en").into();

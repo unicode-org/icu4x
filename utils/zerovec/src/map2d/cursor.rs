@@ -105,7 +105,7 @@ where
             &'l <V as ZeroMapKV<'a>>::GetType,
         ),
     > + ExactSizeIterator
-    + '_ {
+           + '_ {
         let range = self.get_range();
         #[expect(clippy::unwrap_used)] // `self.get_range()` returns a valid range
         range.map(move |idx| {

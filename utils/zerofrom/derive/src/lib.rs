@@ -25,8 +25,8 @@ use syn::fold::{self, Fold};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::{
-    DeriveInput, Ident, Lifetime, MetaList, Token, TraitBoundModifier, Type, TypeParamBound,
-    TypePath, WherePredicate, parse_macro_input, parse_quote,
+    parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, MetaList, Token,
+    TraitBoundModifier, Type, TypeParamBound, TypePath, WherePredicate,
 };
 use synstructure::Structure;
 mod visitor;

@@ -4,10 +4,10 @@
 
 #![allow(non_snake_case)]
 
-use crate::extensions::unicode::{Value, value};
+use crate::extensions::unicode::{value, Value};
 use crate::preferences::extensions::unicode::enum_keyword;
 use crate::preferences::extensions::unicode::errors::PreferencesParseError;
-use crate::subtags::{Subtag, subtag};
+use crate::subtags::{subtag, Subtag};
 
 enum_keyword!(
     /// Hijri Calendar sub-type

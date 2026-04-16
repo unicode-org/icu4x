@@ -17,7 +17,7 @@ use crate::{
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 pub use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::{VarZeroSlice, vecs::Index32};
+use zerovec::{vecs::Index32, VarZeroSlice};
 
 fn get_index(
     trie: ZeroTrieSimpleAscii<&'static [u8]>,

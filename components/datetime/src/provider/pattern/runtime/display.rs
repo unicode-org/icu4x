@@ -11,7 +11,7 @@ use super::{
 use crate::provider::fields::FieldSymbol;
 use alloc::string::String;
 use core::fmt::{self, Write};
-use writeable::{Writeable, impl_display_with_writeable};
+use writeable::{impl_display_with_writeable, Writeable};
 
 /// A helper function optimized to dump string buffers into `Pattern`
 /// serialization wrapping minimal chunks of the buffer in escaping `'`

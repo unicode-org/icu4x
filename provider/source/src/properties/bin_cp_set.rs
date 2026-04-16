@@ -292,7 +292,7 @@ expand!(
 
 #[test]
 fn test_basic() {
-    use icu::properties::{CodePointSetData, props::WhiteSpace};
+    use icu::properties::{props::WhiteSpace, CodePointSetData};
 
     let provider = SourceDataProvider::new_testing();
 

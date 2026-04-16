@@ -22,10 +22,10 @@
 //! ```
 
 use displaydoc::Display;
-use icu_locale_core::extensions::Extensions;
 use icu_locale_core::extensions::unicode::{key, value};
-use icu_locale_core::subtags::{Language, Region, Variants, language, script, variant};
-use icu_locale_core::{LanguageIdentifier, Locale, ParseError, locale};
+use icu_locale_core::extensions::Extensions;
+use icu_locale_core::subtags::{language, script, variant, Language, Region, Variants};
+use icu_locale_core::{locale, LanguageIdentifier, Locale, ParseError};
 
 #[derive(Display, Debug, PartialEq)]
 /// An error while parsing a POSIX locale identifier
@@ -287,16 +287,14 @@ mod tests {
 
     mod error {
         mod parse {
-            use crate::locale::{PosixLocale, posix::PosixParseError};
+            use crate::locale::{posix::PosixParseError, PosixLocale};
 
             fn expect_error(src: &str, posix_error: PosixParseError) {
                 let result = PosixLocale::try_from_str(src);
 
                 match result {
                     Ok(invalid_locale) => {
-                        panic!(
-                            "Expected the error `{posix_error:?}`, got the locale `{invalid_locale:?}` from input of `{src}`"
-                        )
+                        panic!("Expected the error `{posix_error:?}`, got the locale `{invalid_locale:?}` from input of `{src}`")
                     }
                     Err(error) => {
                         assert_eq!(error, posix_error, "Comparing expected output of `{src}`")
@@ -512,9 +510,7 @@ mod tests {
                     PosixLocale::try_from_str(src).expect(src).try_into();
                 match result {
                     Ok(invalid_locale) => {
-                        panic!(
-                            "Expected the error `{icu_error:?}`, got the locale `{invalid_locale:?}` from input of `{src}`"
-                        )
+                        panic!("Expected the error `{icu_error:?}`, got the locale `{invalid_locale:?}` from input of `{src}`")
                     }
                     Err(error) => {
                         assert_eq!(error, icu_error, "Comparing expected output of `{src}`")

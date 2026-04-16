@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::abstract_gregorian::{
-    AbstractGregorian, GregorianYears, impl_with_abstract_gregorian,
+    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
 };
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
-use crate::{Date, RangeError, types};
+use crate::{types, Date, RangeError};
 use tinystr::tinystr;
 
 /// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)

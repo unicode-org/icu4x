@@ -233,7 +233,7 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
-    use crate::{ZeroMap, map::ZeroMapBorrowed};
+    use crate::{map::ZeroMapBorrowed, ZeroMap};
 
     #[derive(serde::Serialize, serde::Deserialize)]
     #[expect(

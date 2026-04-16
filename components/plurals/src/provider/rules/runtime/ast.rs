@@ -10,7 +10,7 @@ use core::{
 };
 use icu_provider::prelude::*;
 use zerovec::{
-    ule::{AsULE, ULE, UleError, tuple::Tuple2ULE},
+    ule::{tuple::Tuple2ULE, AsULE, UleError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
@@ -219,7 +219,11 @@ fn get_modulo(op: &Option<reference::ast::Value>) -> Result<u32, num::TryFromInt
 }
 
 fn get_modulus(input: u32) -> Option<reference::ast::Value> {
-    if input == 0 { None } else { Some(input.into()) }
+    if input == 0 {
+        None
+    } else {
+        Some(input.into())
+    }
 }
 
 impl TryFrom<&reference::ast::Value> for u32 {
@@ -373,7 +377,7 @@ impl AsULE for RangeOrValue {
 #[cfg(feature = "serde")]
 mod serde {
     use super::*;
-    use ::serde::{Deserialize, Deserializer, Serialize, de, ser};
+    use ::serde::{de, ser, Deserialize, Deserializer, Serialize};
     use alloc::{
         format,
         string::{String, ToString},
@@ -450,9 +454,9 @@ mod serde {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::PluralOperands;
     use crate::provider::rules::reference;
     use crate::provider::rules::runtime::test_rule;
+    use crate::PluralOperands;
 
     #[test]
     fn simple_rule_test() {

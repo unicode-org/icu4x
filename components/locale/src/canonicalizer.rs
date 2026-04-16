@@ -13,9 +13,9 @@ use crate::TransformResult;
 use icu_locale_core::extensions::Extensions;
 use icu_locale_core::subtags::{Language, Region, Script};
 use icu_locale_core::{
-    LanguageIdentifier, Locale,
     extensions::unicode::key,
-    subtags::{Variant, Variants, language},
+    subtags::{language, Variant, Variants},
+    LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;

@@ -7,10 +7,10 @@ use itertools::Itertools;
 use rand::Rng;
 use rand::SeedableRng;
 use std::collections::BTreeMap;
-use zerotrie::ZeroTrieSimpleAscii;
 use zerotrie::dense::ZeroAsciiDenseSparse2dTrieBorrowed;
 use zerotrie::dense::ZeroAsciiDenseSparse2dTrieOwned;
 use zerotrie::dense::ZeroAsciiDenseSparse2dTrieVarULE;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroCow;
 
 mod testdata {

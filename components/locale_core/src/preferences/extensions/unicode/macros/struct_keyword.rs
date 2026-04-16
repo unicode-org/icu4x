@@ -111,7 +111,7 @@ mod tests {
     use super::*;
     use crate::{
         extensions::unicode,
-        subtags::{Subtag, subtag},
+        subtags::{subtag, Subtag},
     };
     use core::str::FromStr;
 

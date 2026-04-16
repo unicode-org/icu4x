@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{ZeroMap2d, ZeroMap2dBorrowed, ZeroMap2dCursor};
-use crate::ZeroVec;
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+use crate::ZeroVec;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;

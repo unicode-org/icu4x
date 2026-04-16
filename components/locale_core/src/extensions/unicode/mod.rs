@@ -38,15 +38,15 @@ use core::cmp::Ordering;
 use core::str::FromStr;
 
 #[doc(inline)]
-pub use attribute::{Attribute, attribute};
+pub use attribute::{attribute, Attribute};
 pub use attributes::Attributes;
 #[doc(inline)]
-pub use key::{Key, key};
+pub use key::{key, Key};
 pub use keywords::Keywords;
 #[doc(inline)]
-pub use subdivision::{SubdivisionId, SubdivisionSuffix, subdivision_suffix};
+pub use subdivision::{subdivision_suffix, SubdivisionId, SubdivisionSuffix};
 #[doc(inline)]
-pub use value::{Value, value};
+pub use value::{value, Value};
 
 #[cfg(feature = "alloc")]
 use super::ExtensionType;

@@ -4,8 +4,8 @@
 
 use super::*;
 use crate::error::ZeroTrieBuildError;
-use alloc::collections::BTreeMap;
 use alloc::collections::btree_map::Entry;
+use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 
 /// Helper class for caching the results of multiple [`PerfectByteHashMap`] calculations.

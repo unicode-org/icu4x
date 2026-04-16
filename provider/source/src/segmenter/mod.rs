@@ -10,11 +10,11 @@
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie;
 use icu::properties::{
-    CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
         Script, SentenceBreak, WordBreak,
     },
+    CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
 };
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
@@ -94,7 +94,7 @@ fn generate_rule_break_data(
     rules_file: &str,
     trie_type: crate::TrieType,
 ) -> RuleBreakData<'static> {
-    use icu::properties::{PropertyParser, props::ExtendedPictographic};
+    use icu::properties::{props::ExtendedPictographic, PropertyParser};
     use icu_codepointtrie_builder::CodePointTrieBuilder;
 
     let segmenter = provider
@@ -782,8 +782,8 @@ macro_rules! implement_override {
 
 fn hardcoded_segmenter_provider() -> SourceDataProvider {
     use crate::{
-        SourceDataProvider,
         source::{AbstractFs, SerdeCache},
+        SourceDataProvider,
     };
     // Singleton so that all instantiations share the same cache.
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();

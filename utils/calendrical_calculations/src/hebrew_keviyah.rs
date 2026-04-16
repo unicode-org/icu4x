@@ -780,7 +780,8 @@ mod test {
             let kv_yearinfo = YearInfo::compute_for(h_year);
             let kv_ny = kv_yearinfo.new_year();
             assert_eq!(
-                book_ny, kv_ny,
+                book_ny,
+                kv_ny,
                 "Book and Keviyah-based years should match for Hebrew Year {h_year}. Got YearInfo {kv_yearinfo:?}"
             );
             let book_is_leap = BookHebrew::is_hebrew_leap_year(h_year);
@@ -805,7 +806,8 @@ mod test {
 
             let kv_recomputed_yearinfo = kv_yearinfo.keviyah.year_info(h_year);
             assert_eq!(
-                kv_recomputed_yearinfo, kv_yearinfo,
+                kv_recomputed_yearinfo,
+                kv_yearinfo,
                 "Recomputed YearInfo should match for Hebrew Year {h_year}. Got YearInfo {kv_yearinfo:?}"
             );
 
@@ -824,16 +826,9 @@ mod test {
                 let book_date = BookHebrew::from_civil_date(h_year, month, 1);
                 let book_month_len =
                     BookHebrew::last_day_of_book_hebrew_month(book_date.year, book_date.month);
-                assert_eq!(
-                    kv_month_len, book_month_len,
-                    "Month lengths should be same for ordinal hebrew month {month} in year {h_year}. Got YearInfo {kv_yearinfo:?}"
-                );
+                assert_eq!(kv_month_len, book_month_len, "Month lengths should be same for ordinal hebrew month {month} in year {h_year}. Got YearInfo {kv_yearinfo:?}");
 
-                assert_eq!(
-                    days_preceding,
-                    kv_yearinfo.keviyah.days_preceding(month),
-                    "Days preceding should be the sum of preceding days for ordinal hebrew month {month} in year {h_year}. Got YearInfo {kv_yearinfo:?}"
-                );
+                assert_eq!(days_preceding, kv_yearinfo.keviyah.days_preceding(month), "Days preceding should be the sum of preceding days for ordinal hebrew month {month} in year {h_year}. Got YearInfo {kv_yearinfo:?}");
                 days_preceding += u16::from(kv_month_len);
             }
 
@@ -841,22 +836,13 @@ mod test {
                 let offset_date = kv_ny + offset.into();
                 let (offset_yearinfo, offset_h_year) = YearInfo::year_containing_rd(offset_date);
 
-                assert_eq!(
-                    offset_h_year, h_year,
-                    "Backcomputed h_year should be same for date {offset_date:?} in Hebrew Year {h_year} (offset from ny {offset})"
-                );
-                assert_eq!(
-                    offset_yearinfo, kv_yearinfo,
-                    "Backcomputed YearInfo should be same for date {offset_date:?} in Hebrew Year {h_year} (offset from ny {offset})"
-                );
+                assert_eq!(offset_h_year, h_year, "Backcomputed h_year should be same for date {offset_date:?} in Hebrew Year {h_year} (offset from ny {offset})");
+                assert_eq!(offset_yearinfo, kv_yearinfo, "Backcomputed YearInfo should be same for date {offset_date:?} in Hebrew Year {h_year} (offset from ny {offset})");
             }
 
             if let Some((last_h_year, predicted_ny)) = last_year {
                 if last_h_year + 1 == h_year {
-                    assert_eq!(
-                        predicted_ny, kv_ny,
-                        "{last_h_year}'s YearInfo predicts New Year {predicted_ny:?}, which does not match current new year. Got YearInfo {kv_yearinfo:?}"
-                    );
+                    assert_eq!(predicted_ny, kv_ny, "{last_h_year}'s YearInfo predicts New Year {predicted_ny:?}, which does not match current new year. Got YearInfo {kv_yearinfo:?}");
                 }
             }
 

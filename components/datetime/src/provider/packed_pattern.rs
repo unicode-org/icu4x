@@ -5,14 +5,14 @@
 //! Data structures for packing of datetime patterns.
 
 use super::pattern::{
-    PatternItem,
     runtime::{Pattern, PatternBorrowed, PatternMetadata},
+    PatternItem,
 };
 use crate::{options::Length, size_test_macro::size_test};
 use alloc::vec::Vec;
 use icu_plurals::{
-    PluralElements,
     provider::{FourBitMetadata, PluralElementsPackedULE},
+    PluralElements,
 };
 use icu_provider::prelude::*;
 use zerovec::{VarZeroVec, ZeroSlice};
@@ -577,7 +577,7 @@ mod _serde {
                     _ => {
                         return Err(D::Error::custom(
                             "must have either one pattern per variant or indices",
-                        ));
+                        ))
                     }
                 };
                 let elements = human
@@ -824,10 +824,7 @@ mod tests {
         assert_eq!(builder, bincode_recovered.to_builder());
 
         let json_str = serde_json::to_string(&packed).unwrap();
-        assert_eq!(
-            json_str,
-            "{\"has_explicit_short\":true,\"variant_pattern_indices\":[3,4,5,0,0,0],\"elements\":[\"M/d/y\",\"HH:mm\",\"E\",\"E MMM d\",\"dd.MM.yy\"]}"
-        );
+        assert_eq!(json_str, "{\"has_explicit_short\":true,\"variant_pattern_indices\":[3,4,5,0,0,0],\"elements\":[\"M/d/y\",\"HH:mm\",\"E\",\"E MMM d\",\"dd.MM.yy\"]}");
         let json_recovered = serde_json::from_str::<PackedPatterns>(&json_str).unwrap();
         assert_eq!(builder, json_recovered.to_builder());
     }

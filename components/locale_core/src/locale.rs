@@ -4,7 +4,7 @@
 
 use crate::parser::*;
 use crate::subtags::Subtag;
-use crate::{LanguageIdentifier, extensions, subtags};
+use crate::{extensions, subtags, LanguageIdentifier};
 #[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
 use core::cmp::Ordering;

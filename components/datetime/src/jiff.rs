@@ -330,7 +330,7 @@ impl ConvertCalendar for jiff::tz::Offset {
 
 #[test]
 fn jiff() {
-    use crate::{DateTimeFormatter, fieldsets};
+    use crate::{fieldsets, DateTimeFormatter};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -382,7 +382,7 @@ fn jiff() {
 
 #[test]
 fn jiff_fixed_calendar() {
-    use crate::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets};
+    use crate::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -437,7 +437,7 @@ fn jiff_fixed_calendar() {
 
 #[test]
 fn jiff_no_calendar() {
-    use crate::{NoCalendarFormatter, fieldsets};
+    use crate::{fieldsets, NoCalendarFormatter};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 

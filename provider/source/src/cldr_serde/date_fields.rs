@@ -11,8 +11,8 @@ use std::collections::HashMap;
 
 use icu_pattern::{PatternString, SinglePlaceholder};
 use serde::{
-    Deserialize,
     de::{Error, IgnoredAny, Visitor},
+    Deserialize,
 };
 
 #[derive(Debug, Deserialize, Default)]

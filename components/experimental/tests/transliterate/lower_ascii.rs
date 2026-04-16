@@ -5,7 +5,7 @@
 use core::any::TypeId;
 
 use icu_experimental::transliterate::{
-    RuleCollection, RuleCollectionProvider, Transliterator, provider::TransliteratorRulesV1,
+    provider::TransliteratorRulesV1, RuleCollection, RuleCollectionProvider, Transliterator,
 };
 use icu_provider::prelude::*;
 

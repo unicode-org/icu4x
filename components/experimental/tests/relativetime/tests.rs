@@ -4,8 +4,8 @@
 
 use fixed_decimal::Decimal;
 use icu_experimental::relativetime::{
-    RelativeTimeFormatter, RelativeTimeFormatterOptions, RelativeTimeFormatterPreferences,
-    options::Numeric,
+    options::Numeric, RelativeTimeFormatter, RelativeTimeFormatterOptions,
+    RelativeTimeFormatterPreferences,
 };
 use icu_locale_core::{extensions::unicode::value, locale};
 use writeable::assert_writeable_eq;

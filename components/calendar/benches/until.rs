@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{
-    BenchmarkGroup, Criterion, black_box, criterion_group, criterion_main, measurement::WallTime,
+    black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
 use icu_calendar::options::{DateDifferenceOptions, DateDurationUnit};
 use icu_calendar::types::RataDie;

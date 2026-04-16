@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::DateTimeFormatterPreferences;
 use crate::fieldsets::builder;
 use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::format::DateTimeInputUnchecked;
@@ -10,19 +9,20 @@ use crate::options::*;
 use crate::pattern::DateTimePattern;
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::provider::pattern::{
-    GenericPatternItem, PatternItem,
     runtime::{self, PatternMetadata},
+    GenericPatternItem, PatternItem,
 };
 use crate::provider::{
     packed_pattern::{ErasedPackedPatterns, PackedSkeletonVariant},
-    semantic_skeletons::{DatetimePatternsGlueV1, GluePattern, marker_attrs},
+    semantic_skeletons::{marker_attrs, DatetimePatternsGlueV1, GluePattern},
 };
+use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
-use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
+use icu_provider::DataPayloadOr;
 use marker_attrs::GlueType;
-use zerovec::ZeroSlice;
 use zerovec::ule::AsULE;
+use zerovec::ZeroSlice;
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawOptions {

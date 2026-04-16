@@ -245,9 +245,9 @@ tuple_varule!(Tuple6VarULE, 6, [ A a AE 0, B b BE 1, C c CE 2, D d DE 3, E e EE 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::varzerovec::{Index16, Index32, Index8, VarZeroVecFormat};
     use crate::VarZeroSlice;
     use crate::VarZeroVec;
-    use crate::varzerovec::{Index8, Index16, Index32, VarZeroVecFormat};
 
     #[test]
     fn test_pairvarule_validate() {

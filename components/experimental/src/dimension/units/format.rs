@@ -6,7 +6,7 @@ use crate::dimension::provider::units::display_names::UnitsDisplayNames;
 use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
-use writeable::{Writeable, impl_display_with_writeable};
+use writeable::{impl_display_with_writeable, Writeable};
 
 #[derive(Debug)]
 pub struct FormattedUnit<'l> {

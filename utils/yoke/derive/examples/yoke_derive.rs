@@ -6,7 +6,7 @@
 
 use std::{borrow::Cow, marker::PhantomData};
 use yoke::{Yoke, Yokeable};
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec, maps::ZeroMapKV, ule::AsULE};
+use zerovec::{maps::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(Yokeable)]
 struct StringExample {
