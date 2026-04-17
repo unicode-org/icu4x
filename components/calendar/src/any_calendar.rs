@@ -414,6 +414,9 @@ make_any_calendar!(
     /// use icu::calendar::Iso;
     ///
     /// fn julian_or_gregorian_date(year: i32, month: u8, day: u8) -> Result<Date<AnyCalendar>, RangeError> {
+    ///     // Note: Different regions observed different change dates.
+    ///     // October 15, 1582 is the first day in the Gregorian calendar
+    ///     // when it was introduced by Pope Gregory XIII.
     ///     if (year, month, day) < (1582, 10, 15) {
     ///         Ok(Date::try_new_julian(year, month, day)?.to_any())
     ///     } else {
