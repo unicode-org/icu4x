@@ -538,6 +538,75 @@ impl TzdbCache {
     }
 }
 
+// A cache representing https://unicode.org/Public/{version}/
+#[derive(Debug)]
+pub(crate) struct UnicodeCache {
+    root: AbstractFs,
+    // The UCD contains zip files, which we let callers transparently access as
+    // directories. We cache the parsed zip files.
+    zip_cache: FrozenMap<String, Box<AbstractFs>>,
+    // Cached file contents. It's all text files, so we cache them as strings.
+    file_cache: FrozenMap<String, String>,
+}
+
+impl UnicodeCache {
+    pub fn new(root: AbstractFs) -> Self {
+        Self {
+            root,
+            zip_cache: FrozenMap::new(),
+            file_cache: FrozenMap::new(),
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn file_exists(&self, file: &str) -> Result<bool, DataError> {
+        if self.file_cache.get(file).is_some() {
+            return Ok(true);
+        }
+
+        if let Some((zip_path, path)) = file.split_once(".zip/") {
+            let zip_fs = if let Some(zip) = self.zip_cache.get(zip_path) {
+                zip
+            } else {
+                let zip = AbstractFs::new_zip_from_bytes(
+                    self.root.read_to_buf(&format!("{zip_path}.zip"))?,
+                )?;
+                self.zip_cache.insert(zip_path.to_string(), Box::new(zip))
+            };
+
+            Ok(zip_fs.file_exists(path)?)
+        } else {
+            Ok(self.root.file_exists(file)?)
+        }
+    }
+
+    #[allow(dead_code)] // only used with CodePointTrieBuilder, which is feature-gated
+    pub fn read_to_string(&self, file: &str) -> Result<&str, DataError> {
+        if let Some(x) = self.file_cache.get(file) {
+            return Ok(x);
+        }
+
+        if let Some((zip_path, path)) = file.split_once(".zip/") {
+            let zip_fs = if let Some(zip) = self.zip_cache.get(zip_path) {
+                zip
+            } else {
+                let zip = AbstractFs::new_zip_from_bytes(
+                    self.root.read_to_buf(&format!("{zip_path}.zip"))?,
+                )?;
+                self.zip_cache.insert(zip_path.to_string(), Box::new(zip))
+            };
+
+            Ok(self
+                .file_cache
+                .insert(file.into(), zip_fs.read_to_string(path)?))
+        } else {
+            Ok(self
+                .file_cache
+                .insert(file.to_string(), self.root.read_to_string(file)?))
+        }
+    }
+}
+
 macro_rules! include_files {
     ($base:literal; $($file:literal),* $(,)?) => {
         crate::source::AbstractFs::Memory([

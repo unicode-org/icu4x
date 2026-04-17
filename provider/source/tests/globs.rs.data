@@ -206,9 +206,10 @@ const LSTM_GLOB: &[&str] = &[
     "Thai_graphclust_model4_heavy/weights.json",
 ];
 
-const UNIHAN_GLOB: &[&str] = &["Unihan_IRGSources.txt"];
-
-const UCD_GLOB: &[&str] = &["security/IdentifierStatus.txt"];
+const UNICODE_GLOB: &[&str] = &[
+    "security/IdentifierStatus.txt",
+    "ucd/Unihan.zip/Unihan_IRGSources.txt",
+];
 
 const TZDB_GLOB: &[&str] = &[
     "africa",

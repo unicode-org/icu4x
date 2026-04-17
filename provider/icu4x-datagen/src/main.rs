@@ -183,7 +183,7 @@ struct Cli {
     ucd_tag: String,
 
     #[arg(long, value_name = "PATH")]
-    #[arg(help = "Path to a local Unihan.zip file or directory.")]
+    #[arg(help = "[DEPRECATED] Path to a local Unihan.zip file or directory.")]
     #[cfg(feature = "provider")]
     unihan_root: Option<PathBuf>,
 
@@ -444,10 +444,6 @@ fn run(cli: Cli) -> eyre::Result<()> {
             );
         } else if SourceDataProvider::is_missing_segmenter_lstm_error(e) {
             eyre::bail!("Segmentation LSTM data is required for this invocation, set --segmenter-lstm-root or --segmenter-lstm-tag");
-        } else if SourceDataProvider::is_missing_unihan_error(e) {
-            eyre::bail!(
-                "Unihan data is required for this invocation, set --unihan-root or --ucd-tag"
-            );
         } else if SourceDataProvider::is_missing_ucd_error(e) {
             eyre::bail!("UCD data is required for this invocation, set --ucd-root or --ucd-tag");
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
@@ -529,17 +525,9 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 (None, _) => p,
             };
 
-            p = match (cli.unihan_root, cli.ucd_tag.as_str()) {
-                (Some(path), _) => p.with_unihan(&path)?,
-                #[cfg(feature = "networking")]
-                (_, "latest") => p.with_unihan_for_tag(SourceDataProvider::TESTED_UCD_TAG),
-                #[cfg(feature = "networking")]
-                (_, "latest-tag") => p.with_unihan_for_tag("latest"),
-                #[cfg(feature = "networking")]
-                (_, tag) => p.with_unihan_for_tag(tag),
-                #[cfg(not(feature = "networking"))]
-                (None, _) => p,
-            };
+            if cli.unihan_root.is_some() {
+                log::warn!("Ignoring --unihan-root, use --ucd-root instead")
+            }
 
             p = match (cli.ucd_root, cli.ucd_tag.as_str()) {
                 (Some(path), _) => p.with_ucd(&path)?,

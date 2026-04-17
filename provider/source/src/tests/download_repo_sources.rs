@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::source::AbstractFs;
+use crate::source::{AbstractFs, UnicodeCache};
 use crate::SourceDataProvider;
 use icu::locale::{langid, LanguageIdentifier};
 use icu_provider::DataError;
 use std::collections::BTreeSet;
 use std::fs::File;
-use std::io::{BufRead, BufReader, Write};
+use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
@@ -32,6 +32,52 @@ impl AbstractFs {
             std::fs::create_dir_all(target.join(&file).parent().unwrap())?;
             crlify::BufWriterWithLineEndingFix::new(File::create(target.join(&file))?)
                 .write_all(&self.read_to_buf(&file)?)?;
+        }
+
+        Ok(files)
+    }
+}
+
+impl UnicodeCache {
+    pub fn dump(
+        &self,
+        target: &Path,
+        mut files: BTreeSet<String>,
+    ) -> Result<BTreeSet<String>, DataError> {
+        std::fs::remove_dir_all(target)?;
+
+        for file in files.clone() {
+            if !self.file_exists(&file).unwrap() {
+                files.remove(&file);
+                continue;
+            }
+
+            if let Some((zip_path, path)) = file.split_once(".zip/") {
+                files.remove(&file);
+                files.insert(format!("{zip_path}.zip"));
+
+                use std::io::Write;
+                use zip::write::SimpleFileOptions;
+                use zip::ZipWriter;
+
+                let zip_path = target.join(zip_path).with_extension("zip");
+                let mut zip_write = if std::fs::exists(&zip_path).unwrap() {
+                    ZipWriter::new_append(File::open(&zip_path).unwrap()).unwrap()
+                } else {
+                    std::fs::create_dir_all(zip_path.parent().unwrap())?;
+                    ZipWriter::new(File::create_new(zip_path).unwrap())
+                };
+
+                zip_write
+                    .start_file(path, SimpleFileOptions::default())
+                    .unwrap();
+                zip_write.write_all(self.read_to_string(&file)?.as_bytes())?;
+                zip_write.finish().unwrap();
+            } else {
+                std::fs::create_dir_all(target.join(&file).parent().unwrap())?;
+                crlify::BufWriterWithLineEndingFix::new(File::create(target.join(&file))?)
+                    .write_all(self.read_to_string(&file)?.as_bytes())?;
+            }
         }
 
         Ok(files)
@@ -95,49 +141,14 @@ fn download_repo_sources() {
         )
         .unwrap();
 
-    let unihan_files = provider
-        .unihan_paths
+    let unicode_files = provider
+        .unicode_paths
         .unwrap()
         .dump(
-            &out_root.join("unihan"),
-            UNIHAN_GLOB.iter().copied().map(String::from).collect(),
+            &out_root.join("unicode"),
+            UNICODE_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
-    let irg_path = out_root.join("unihan/Unihan_IRGSources.txt");
-    std::io::copy(
-        &mut BufReader::new(File::open(&irg_path).unwrap())
-            .lines()
-            .map_while(Result::ok)
-            .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
-            .collect::<Vec<_>>()
-            .join("\n")
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(File::create(&irg_path).unwrap()),
-    )
-    .unwrap();
-
-    let ucd_files = provider
-        .ucd_paths
-        .unwrap()
-        .dump(
-            &out_root.join("ucd"),
-            UCD_GLOB.iter().copied().map(String::from).collect(),
-        )
-        .unwrap();
-    let identifier_status_path = out_root.join("ucd/security/IdentifierStatus.txt");
-    std::io::copy(
-        &mut BufReader::new(File::open(&identifier_status_path).unwrap())
-            .lines()
-            .map_while(Result::ok)
-            .filter(|l| l.contains("CJK") || l.starts_with('#'))
-            .collect::<Vec<_>>()
-            .join("\n")
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(&identifier_status_path).unwrap(),
-        ),
-    )
-    .unwrap();
 
     let mut tzdb_files = provider
         .tzdb_paths
@@ -179,12 +190,11 @@ fn download_repo_sources() {
     tzdb_files.remove("Makefile");
     tzdb_files.remove("ziguard.awk");
 
-    let [cldr_files, icuexport_files, lstm_files, unihan_files, ucd_files, tzdb_files] = [
+    let [cldr_files, icuexport_files, lstm_files, unicode_files, tzdb_files] = [
         cldr_files,
         icuexport_files,
         lstm_files,
-        unihan_files,
-        ucd_files,
+        unicode_files,
         tzdb_files,
     ]
     .map(|files| {
@@ -233,18 +243,10 @@ pub fn lstm_data() -> AbstractFs {{
 }}
 
 #[rustfmt::skip]
-pub fn unihan_data() -> AbstractFs {{
+pub fn unicode_data() -> AbstractFs {{
     include_files!(
-        \"../../tests/data/unihan/\";
-        {unihan_files}
-    )
-}}
-
-#[rustfmt::skip]
-pub fn ucd_data() -> AbstractFs {{
-    include_files!(
-        \"../../tests/data/ucd/\";
-        {ucd_files}
+        \"../../tests/data/unicode/\";
+        {unicode_files}
     )
 }}
 

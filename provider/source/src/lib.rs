@@ -36,7 +36,7 @@ use icu::calendar::{Date, Iso};
 use icu::time::zone::UtcOffset;
 use icu::time::Time;
 use icu_provider::prelude::*;
-use source::{AbstractFs, SerdeCache, TzdbCache};
+use source::{AbstractFs, SerdeCache, TzdbCache, UnicodeCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::path::Path;
@@ -99,8 +99,7 @@ pub struct SourceDataProvider {
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
-    unihan_paths: Option<Arc<AbstractFs>>,
-    ucd_paths: Option<Arc<AbstractFs>>,
+    unicode_paths: Option<Arc<UnicodeCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
     pub(crate) timezone_horizon: time_zones::Timestamp,
@@ -164,7 +163,6 @@ impl SourceDataProvider {
                     .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
                     .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
                     .with_ucd_for_tag(Self::TESTED_UCD_TAG)
-                    .with_unihan_for_tag(Self::TESTED_UCD_TAG)
             })
             .clone()
     }
@@ -180,8 +178,7 @@ impl SourceDataProvider {
             icuexport_paths: None,
             segmenter_lstm_paths: None,
             tzdb_paths: None,
-            unihan_paths: None,
-            ucd_paths: None,
+            unicode_paths: None,
             trie_type: Default::default(),
             timezone_horizon: time_zones::Timestamp::try_offset_only_from_str(
                 "2015-01-01T00:00:00Z",
@@ -225,18 +222,16 @@ impl SourceDataProvider {
 
     /// Adds Unihan source data to the provider. The path should point to the Unihan ZIP file
     /// (see [Unicode Character Database](https://www.unicode.org/ucd/)).
-    pub fn with_unihan(self, root: &Path) -> Result<Self, DataError> {
-        Ok(Self {
-            unihan_paths: Some(Arc::new(AbstractFs::new(root)?)),
-            ..self
-        })
+    #[deprecated]
+    pub fn with_unihan(self, _root: &Path) -> Result<Self, DataError> {
+        panic!("Use `.with_ucd` to set UCD data, which includes Unihan data.");
     }
 
     /// Adds UCD source data to the provider. The path should point to a
     /// directory containing `security/IdentifierStatus.txt`.
     pub fn with_ucd(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
-            ucd_paths: Some(Arc::new(AbstractFs::new(root)?)),
+            unicode_paths: Some(Arc::new(UnicodeCache::new(AbstractFs::new(root)?))),
             ..self
         })
     }
@@ -314,13 +309,9 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn with_unihan_for_tag(self, tag: &str) -> Self {
-        Self {
-            unihan_paths: Some(Arc::new(AbstractFs::new_zip_from_url(format!(
-                "https://www.unicode.org/Public/{tag}/ucd/Unihan.zip"
-            )))),
-            ..self
-        }
+    #[deprecated]
+    pub fn with_unihan_for_tag(self, _tag: &str) -> Self {
+        panic!("Use `.with_ucd_for_tag` to set UCD data, which includes Unihan data.");
     }
 
     /// Adds UCD source data to the provider. The data will be downloaded from unicode.org
@@ -332,8 +323,8 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_ucd_for_tag(self, tag: &str) -> Self {
         Self {
-            ucd_paths: Some(Arc::new(AbstractFs::new_from_url(format!(
-                "https://www.unicode.org/Public/{tag}/"
+            unicode_paths: Some(Arc::new(UnicodeCache::new(AbstractFs::new_from_url(
+                format!("https://www.unicode.org/Public/{tag}/"),
             )))),
             ..self
         }
@@ -365,11 +356,8 @@ impl SourceDataProvider {
         "Missing segmenter data. Use `.with_segmenter_lstm[_for_tag]` to set segmenter data.",
     );
 
-    const MISSING_UNIHAN_ERROR: DataError =
-        DataError::custom("Missing Unihan data. Use `.with_unihan[_for_tag]` to set Unihan data.");
-
     const MISSING_UCD_ERROR: DataError =
-        DataError::custom("Missing UCD data. Use `.with_ucd` to set UCD data.");
+        DataError::custom("Missing UCD data. Use `.with_ucd[_for_tag]` to set UCD data.");
 
     const MISSING_TZDB_ERROR: DataError =
         DataError::custom("Missing tzdb data. Use `.with_tzdb[_for_tag]` to set tzdb data.");
@@ -399,9 +387,9 @@ impl SourceDataProvider {
     }
 
     /// Identifies errors that are due to missing UCD data.
-    pub fn is_missing_unihan_error(mut e: DataError) -> bool {
-        e.marker = None;
-        e == Self::MISSING_UNIHAN_ERROR
+    #[deprecated]
+    pub fn is_missing_unihan_error(e: DataError) -> bool {
+        Self::is_missing_ucd_error(e)
     }
 
     /// Identifies errors that are due to missing UCD data.
@@ -427,15 +415,8 @@ impl SourceDataProvider {
     }
 
     #[allow(dead_code)]
-    fn unihan(&self) -> Result<&AbstractFs, DataError> {
-        self.unihan_paths
-            .as_deref()
-            .ok_or(Self::MISSING_UNIHAN_ERROR)
-    }
-
-    #[allow(dead_code)]
-    fn ucd(&self) -> Result<&AbstractFs, DataError> {
-        self.ucd_paths.as_deref().ok_or(Self::MISSING_UCD_ERROR)
+    fn unicode(&self) -> Result<&UnicodeCache, DataError> {
+        self.unicode_paths.as_deref().ok_or(Self::MISSING_UCD_ERROR)
     }
 
     fn tzdb(&self) -> Result<&TzdbCache, DataError> {
