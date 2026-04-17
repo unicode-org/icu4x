@@ -403,6 +403,34 @@ make_any_calendar!(
     Japanese(Japanese),
     #[deprecated(since = "2.2.0", note = "see `Japanese`")]
     JapaneseExtended(Japanese),
+    /// The `Julian` variant of [`AnyCalendar`] can be used to implement a date that
+    /// switches between Julian and Gregorian based on a change date.
+    ///
+    /// ```rust
+    /// use icu::calendar::AnyCalendar;
+    /// use icu::calendar::AnyCalendarKind;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::RangeError;
+    /// use icu::calendar::Iso;
+    ///
+    /// fn julian_or_gregorian_date(year: i32, month: u8, day: u8) -> Result<Date<AnyCalendar>, RangeError> {
+    ///     if (year, month, day) < (1582, 10, 15) {
+    ///         Ok(Date::try_new_julian(year, month, day)?.to_any())
+    ///     } else {
+    ///         Ok(Date::try_new_gregorian(year, month, day)?.to_any())
+    ///     }
+    /// }
+    ///
+    /// let julian = julian_or_gregorian_date(1500, 1, 1).unwrap();
+    /// let gregorian = julian_or_gregorian_date(2000, 1, 1).unwrap();
+    ///
+    /// assert_eq!(julian.calendar().kind(), AnyCalendarKind::Julian);
+    /// assert_eq!(gregorian.calendar().kind(), AnyCalendarKind::Gregorian);
+    ///
+    /// // Check the resolved dates in the ISO calendar:
+    /// assert_eq!(julian.to_calendar(Iso), Date::try_new_iso(1500, 1, 10).unwrap());
+    /// assert_eq!(gregorian.to_calendar(Iso), Date::try_new_iso(2000, 1, 1).unwrap());
+    /// ```
     Julian(Julian),
     Persian(Persian),
     Roc(Roc),
