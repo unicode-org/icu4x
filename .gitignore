@@ -37,3 +37,4 @@ gha-creds-*.json
 .venv
 
 *~
+codedb.snapshot

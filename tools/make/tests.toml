@@ -128,3 +128,11 @@ category = "ICU4X Development"
 dependencies = ["install-cortex-7"]
 command = "cargo"
 args = ["check", "--package", "icu_capi", "--target", "thumbv7m-none-eabi", "--no-default-features", "--features=buffer_provider"]
+
+[tasks.sync-mf2-tests]
+description = "Sync the MessageFormat 2 conformance fixtures from a local clone of unicode-org/message-format-wg"
+category = "ICU4X Development"
+script_runner = "@shell"
+script = '''
+./tools/scripts/sync-mf2-tests.sh
+'''

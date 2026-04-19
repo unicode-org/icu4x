@@ -32,13 +32,16 @@ icu_collections = { workspace = true }
 icu_provider = { workspace = true }
 icu_locale_core = { workspace = true }
 
+icu_calendar = { workspace = true, features = ["ixdtf"] }
 icu_casemap = { workspace = true }
+icu_datetime = { workspace = true }
 icu_decimal = { workspace = true, features = ["unstable"] }
 icu_list = { workspace = true }
 icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true, features = ["alloc"] }
+icu_time = { workspace = true, features = ["alloc", "ixdtf", "unstable"] }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 either = { workspace = true }
@@ -72,22 +75,43 @@ icu_locale_data = { workspace = true }
 icu_properties_data = { workspace = true }
 icu_normalizer_data = { workspace = true }
 
+serde_json = { workspace = true }
+
 [features]
 default = ["compiled_data"]
-compiled_data = ["dep:icu_experimental_data", "icu_decimal/compiled_data", "icu_list/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data", "icu_provider/baked"]
+compiled_data = ["dep:icu_experimental_data", "icu_calendar/compiled_data", "icu_casemap/compiled_data", "icu_datetime/compiled_data", "icu_decimal/compiled_data", "icu_list/compiled_data", "icu_normalizer/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data", "icu_provider/baked", "icu_time/compiled_data"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_collections/databake", "dep:log", "icu_pattern/databake", "icu_plurals/datagen", "icu_pattern/alloc", "icu_provider/export", "icu_decimal/datagen"]
 ryu = ["fixed_decimal/ryu"]
 log = ["dep:log"]
 serde = ["dep:serde", "zerovec/serde", "potential_utf/serde", "tinystr/serde", "icu_collections/serde", "icu_decimal/serde", "icu_list/serde", "icu_pattern/serde", "icu_plurals/serde", "icu_provider/alloc", "icu_provider/serde", "zerotrie/serde", "icu_normalizer/serde", "icu_casemap/serde"]
+# Unstable APIs — gate draft MessageFormat 2 function handlers
+# (`:date`, `:time`, `:datetime`) and other API surface that is expected
+# to break between minor releases.
+# `icu_datetime/unstable` is required for `ZonedTime` input traits used by
+# draft `:time` / `:datetime` formatting.
+unstable = ["icu_datetime/unstable"]
 
 [[bench]]
 name = "transliterate"
 path = "benches/transliterate/bench.rs"
 harness = false
 
+[[bench]]
+name = "messageformat"
+path = "benches/messageformat/bench.rs"
+harness = false
+
 [[test]]
 name = "displaynames_test"
 path = "tests/displaynames/tests.rs"
+
+[[test]]
+name = "messageformat_test"
+path = "tests/messageformat/tests.rs"
+
+[[test]]
+name = "messageformat_conformance"
+path = "tests/messageformat/conformance.rs"
 
 [[test]]
 name = "personnames_test"

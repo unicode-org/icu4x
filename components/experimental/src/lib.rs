@@ -31,6 +31,7 @@ pub mod dimension;
 pub mod displaynames;
 pub mod duration;
 pub mod measure;
+pub mod messageformat;
 pub mod personnames;
 pub mod relativetime;
 pub mod transliterate;

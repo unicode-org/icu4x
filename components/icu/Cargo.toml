@@ -130,6 +130,7 @@ unstable = [
     "icu_plurals/unstable",
     "icu_time/unstable",
     "dep:icu_experimental",
+    "icu_experimental?/unstable",
     "dep:icu_pattern",
 ]
 sync = ["icu_provider/sync"]
