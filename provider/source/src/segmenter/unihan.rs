@@ -71,11 +71,7 @@ fn build_unihan_radicals_data(
         if let Some(first_part) = candidate.split_whitespace().next() {
             candidate = first_part;
         }
-        let radical_str = if let Some(idx) = candidate.find('.') {
-            &candidate[..idx]
-        } else {
-            candidate
-        };
+        let radical_str = candidate.split('.').next().unwrap_or(candidate);
         let clean_str = radical_str.replace('\'', "");
         if let Ok(value) = clean_str.parse::<u8>() {
             builder.set_value(codepoint, value);
