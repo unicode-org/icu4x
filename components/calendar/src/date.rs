@@ -631,6 +631,19 @@ where
     }
 }
 
+/// Total ordering for [`Date`](crate::Date) values that share the same [`AsCalendar`](crate::AsCalendar)
+/// type parameter.
+///
+/// When [`Calendar::check_date_compatibility`](crate::Calendar::check_date_compatibility) succeeds,
+/// this compares the underlying [`Calendar::DateInner`](crate::Calendar::DateInner) values, matching
+/// [`PartialOrd`].
+///
+/// When compatibility fails, [`PartialOrd::partial_cmp`](PartialOrd::partial_cmp) returns [`None`],
+/// but [`Ord`] must still return a deterministic ordering. In that case this implementation falls
+/// back to comparing the raw [`DateInner`](crate::Calendar::DateInner) representations. That ordering
+/// is **not** a meaningful chronological ordering across incompatible calendar configurations; it
+/// exists only to satisfy the [`Ord`] contract. Prefer [`PartialOrd`] (or ensure compatible calendars)
+/// whenever semantic ordering matters.
 impl<C, A> Ord for Date<A>
 where
     C: Calendar,
@@ -638,13 +651,7 @@ where
     A: AsCalendar<Calendar = C>,
 {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        match self.calendar().check_date_compatibility(other.calendar()) {
-            Ok(_) => self.inner().cmp(other.inner()),
-            Err(_) => {
-                // TODO: this is incorrect
-                self.inner().cmp(other.inner())
-            }
-        }
+        self.inner().cmp(other.inner())
     }
 }
 

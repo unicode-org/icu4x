@@ -31,8 +31,8 @@
 //!
 //! // Multi: Load a formatter that can display many regions.
 //! let multi = RegionDisplayNames::try_new(locale, DisplayNamesOptions::default()).unwrap();
-//! assert_writeable_eq!(multi.of(region!("US")).unwrap(), "United States");
-//! assert_writeable_eq!(multi.of(region!("GB")).unwrap(), "United Kingdom");
+//! assert_writeable_eq!(multi.of(region!("US")).expect("US"), "United States");
+//! assert_writeable_eq!(multi.of(region!("GB")).expect("GB"), "United Kingdom");
 //!
 //! // Single: Load only the region(s) we need.
 //! let us = RegionDisplayName::try_new(locale, region!("US")).unwrap();

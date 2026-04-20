@@ -15,7 +15,7 @@ fn main() {
         Default::default(),
     )
     .expect("locale 'fr' should be present in compiled data");
-    let name = names.of(region!("DE")).unwrap();
-    assert_eq!(name, "Allemagne");
+    let name = names.of(region!("DE")).expect("DE display name");
+    assert_eq!(name.as_ref(), "Allemagne");
     println!("{name}");
 }

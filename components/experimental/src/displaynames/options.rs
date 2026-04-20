@@ -21,7 +21,7 @@
 ///     .expect("Data should load successfully");
 ///
 /// // Full name would be "Bosnia & Herzegovina"
-/// assert_eq!(display_name.of(region!("BA")), Some("Bosnia"));
+/// assert_eq!(display_name.of(region!("BA")).as_deref(), Some("Bosnia"));
 /// ```
 #[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]

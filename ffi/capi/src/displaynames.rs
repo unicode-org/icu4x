@@ -210,11 +210,17 @@ pub mod ffi {
             region: &DiplomatStr,
             write: &mut DiplomatWrite,
         ) -> Result<(), LocaleParseError> {
-            let _infallible = self
+            match self
                 .0
                 .of(icu_locale_core::subtags::Region::try_from_utf8(region)?)
-                .unwrap_or("")
-                .write_to(write);
+            {
+                Some(name) => {
+                    let _infallible = name.write_to(write);
+                }
+                None => {
+                    let _infallible = "".write_to(write);
+                }
+            }
             Ok(())
         }
     }
