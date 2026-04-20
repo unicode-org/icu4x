@@ -23,10 +23,9 @@
 //! (e.g. some draft datetime option behaviors) are listed in
 //! [`KNOWN_FAILURES`] with a brief reason.
 //!
-//! When `unicode-org/message-format-wg` adds `test/tests/functions/unit.json`,
-//! sync fixtures (`cargo make sync-mf2-tests`), re-run this test with
-//! `--all-features`, then fix `:unit` or add `KNOWN_FAILURES` rows — see
-//! [`fixtures/README.md`](fixtures/README.md) § *When upstream adds `functions/unit.json`*.
+//! ICU4X maintains [`fixtures/tests/functions/unit.json`](fixtures/tests/functions/unit.json)
+//! until the WG ships the same path; `sync-mf2-tests` preserves it. When upstream adds
+//! `unit.json`, merge WG cases with ICU4X rows (see [`fixtures/README.md`](fixtures/README.md)).
 
 use std::collections::BTreeSet;
 use std::fs;
@@ -68,7 +67,9 @@ struct Case {
     description: Option<String>,
     locale: Option<String>,
     src: String,
-    params: Vec<(String, Value)>,
+    /// Each element is a full WG-style param object (`name`, `value`, and
+    /// optionally `type`, `unit`, …).
+    params: Vec<Value>,
     exp: Option<String>,
     exp_parts: Option<Vec<Value>>,
     exp_errors: Vec<String>,
@@ -130,15 +131,7 @@ fn build_case(file_stem: &str, idx: usize, defaults: &Value, t: &Value) -> Case 
         .unwrap_or_default();
     let params = get("params")
         .and_then(Value::as_array)
-        .map(|a| {
-            a.iter()
-                .filter_map(|p| {
-                    let name = p.get("name")?.as_str()?.to_string();
-                    let value = p.get("value")?.clone();
-                    Some((name, value))
-                })
-                .collect::<Vec<_>>()
-        })
+        .map(|a| a.iter().cloned().collect::<Vec<_>>())
         .unwrap_or_default();
     let only = t.get("only").and_then(Value::as_bool).unwrap_or(false);
     Case {
@@ -157,24 +150,53 @@ fn build_case(file_stem: &str, idx: usize, defaults: &Value, t: &Value) -> Case 
     }
 }
 
-fn inputs_from_params(params: &[(String, Value)]) -> OwnedInputs {
+fn inputs_from_params(params: &[Value]) -> OwnedInputs {
     let mut inputs = OwnedInputs::new();
-    for (name, value) in params {
-        match value {
-            Value::Null => inputs = inputs.with_null(name),
-            Value::Bool(b) => inputs = inputs.with_bool(name, *b),
-            Value::String(s) => inputs = inputs.with_str(name, s),
-            Value::Number(n) => {
-                // Preserve precision by routing through the string form.
-                if let Some(i) = n.as_i64() {
-                    inputs = inputs.with_number(name, i);
-                } else if let Ok(dec) = n.to_string().parse::<Decimal>() {
-                    inputs = inputs.with_number(name, dec);
-                } else {
-                    inputs = inputs.with_str(name, &n.to_string());
-                }
+    for p in params {
+        let Some(name) = p.get("name").and_then(Value::as_str) else {
+            continue;
+        };
+        match p.get("type").and_then(Value::as_str) {
+            Some("unit") => {
+                let Some(unit) = p.get("unit").and_then(Value::as_str) else {
+                    continue;
+                };
+                let Some(val) = p.get("value") else {
+                    continue;
+                };
+                inputs = match val {
+                    Value::Number(n) => {
+                        if let Some(i) = n.as_i64() {
+                            inputs.with_unit(name, i, unit)
+                        } else if let Ok(dec) = n.to_string().parse::<Decimal>() {
+                            inputs.with_unit(name, dec, unit)
+                        } else {
+                            inputs.with_str(name, &n.to_string())
+                        }
+                    }
+                    other => inputs.with_str(name, &other.to_string()),
+                };
             }
-            other => inputs = inputs.with_str(name, &other.to_string()),
+            _ => {
+                let Some(value) = p.get("value") else {
+                    continue;
+                };
+                inputs = match value {
+                    Value::Null => inputs.with_null(name),
+                    Value::Bool(b) => inputs.with_bool(name, *b),
+                    Value::String(s) => inputs.with_str(name, s),
+                    Value::Number(n) => {
+                        if let Some(i) = n.as_i64() {
+                            inputs.with_number(name, i)
+                        } else if let Ok(dec) = n.to_string().parse::<Decimal>() {
+                            inputs.with_number(name, dec)
+                        } else {
+                            inputs.with_str(name, &n.to_string())
+                        }
+                    }
+                    other => inputs.with_str(name, &other.to_string()),
+                };
+            }
         }
     }
     inputs
@@ -542,6 +564,12 @@ fn run_upstream_conformance_suite() {
     let mut files = Vec::new();
     collect_fixture_files(&root, &mut files);
     files.sort();
+    // `functions/unit.json` exercises draft `:unit` (requires `unstable` + `compiled_data`).
+    #[cfg(not(all(feature = "unstable", feature = "compiled_data")))]
+    files.retain(|p| {
+        !(p.parent().and_then(|d| d.file_name()).and_then(|n| n.to_str()) == Some("functions")
+            && p.file_stem().and_then(|s| s.to_str()) == Some("unit"))
+    });
 
     let mut total = 0usize;
     let mut passed = 0usize;

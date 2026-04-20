@@ -1185,8 +1185,9 @@ fn custom_strategy_can_delegate_to_default() {
     assert_eq!(out, "<\u{2068}x\u{2069}>");
 }
 
-/// End-to-end coverage for draft `:unit` (WG fixtures do not include `unit.json`
-/// at the pinned SHA — see `messageformat-tr35-spec-tracking.md`).
+/// End-to-end coverage for draft `:unit` (JSON cases live in
+/// `tests/messageformat/fixtures/tests/functions/unit.json`; see
+/// `messageformat-tr35-spec-tracking.md` §2).
 #[cfg(all(feature = "unstable", feature = "compiled_data"))]
 #[test]
 fn messageformatter_end_to_end_unit_without_usage() {

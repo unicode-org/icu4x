@@ -28,7 +28,7 @@ mkdir -p "$DEST/tests" "$DEST/schemas"
 # Preserve ICU4X-only witness rows (see fixtures/README.md) across rsync --delete.
 BACKUP_DIR="$DEST/.icu4x-fixture-backup"
 mkdir -p "$BACKUP_DIR/functions"
-for f in number.json currency.json; do
+for f in number.json currency.json unit.json; do
     if [[ -f "$DEST/tests/functions/$f" ]]; then
         cp "$DEST/tests/functions/$f" "$BACKUP_DIR/functions/$f"
     fi
@@ -37,7 +37,13 @@ done
 rsync -a --delete "$WG/test/tests/" "$DEST/tests/"
 rsync -a --delete "$WG/test/schemas/" "$DEST/schemas/"
 
-for f in number.json currency.json; do
+# WG does not ship functions/unit.json yet; restore ICU4X-maintained copy.
+if [[ ! -f "$DEST/tests/functions/unit.json" && -f "$BACKUP_DIR/functions/unit.json" ]]; then
+    cp "$BACKUP_DIR/functions/unit.json" "$DEST/tests/functions/unit.json"
+    echo "restored ICU4X-maintained tests/functions/unit.json from $BACKUP_DIR/functions/"
+fi
+
+for f in number.json currency.json unit.json; do
     if [[ -f "$BACKUP_DIR/functions/$f" && -f "$DEST/tests/functions/$f" ]]; then
         if ! cmp -s "$BACKUP_DIR/functions/$f" "$DEST/tests/functions/$f"; then
             echo "notice: tests/functions/$f changed upstream — diff against $BACKUP_DIR/functions/$f"
@@ -50,6 +56,6 @@ SHA="$(git -C "$WG" rev-parse HEAD 2>/dev/null || echo unknown)"
 printf '%s\n' "$SHA" >"$DEST/UPSTREAM_SHA"
 
 echo "Synced MF2 fixtures from $WG (UPSTREAM_SHA=$SHA) -> $DEST"
-echo "Next: merge ICU4X-only rows in tests/functions/number.json and currency.json if needed;"
+echo "Next: merge ICU4X-only rows in tests/functions/number.json, currency.json, and unit.json if needed;"
 echo "      update the pin line in fixtures/README.md; then run:"
 echo "  cargo test -p icu_experimental --test messageformat_conformance --all-features"

@@ -116,6 +116,7 @@ Use this subsection to record **dated** passes of §1c so the next editor knows 
 | Date | TR35 anchor | WG fixtures pin | Notes |
 | --- | --- | --- | --- |
 | 2026-04-20 | tr35-76 MessageFormat (spot-check against §1b) | `dd86e42e10d1d0c9c4401d0781cdd87ee7166366` | Re-ran [`tools/scripts/sync-mf2-tests.sh`](tools/scripts/sync-mf2-tests.sh) against a local `message-format-wg` checkout (HEAD already at pin). **§1b** option names match [`NumberOptions::parse`](components/experimental/src/messageformat/function.rs), [`CurrencyHandler`](components/experimental/src/messageformat/function.rs) merged keys, [`OffsetHandler`](components/experimental/src/messageformat/function.rs) `add` / `subtract`, [`UnitHandler`](components/experimental/src/messageformat/function.rs) `unit` / `unitDisplay` / `usage`, and [`parse_datetime_options`](components/experimental/src/messageformat/function.rs) match arms for `date` / `time` / `datetime`. Conformance: `cargo test -p icu_experimental --test messageformat_conformance --all-features` green. |
+| 2026-04-20 | tr35-76 §1c (plan audit) | `dd86e42e10d1d0c9c4401d0781cdd87ee7166366` | Plan todo **spec-diff**: re-checked [`FunctionRegistry::default_registry`](components/experimental/src/messageformat/function.rs) names against **§1a**; option parsers vs **§1b** unchanged on spot review; `cargo test -p icu_experimental --test messageformat_conformance --all-features` green. |
 | 2026-04-21 | tr35-76 §1c (Default Functions walk vs code) | `dd86e42e10d1d0c9c4401d0781cdd87ee7166366` | Repeated §1c procedure: default handlers in [`function.rs`](components/experimental/src/messageformat/function.rs) map to **§1a** rows; no new option keys vs **§1b** inventory. **§3** currency accounting: extended CLDR outer affixes to `currencyDisplay` `code` / `never` and marked stitch branches as CLDR-owned shells (see [`CurrencyFormatter::accounting_outer_affixes_if_encoded`](components/experimental/src/dimension/currency/formatter.rs)). Re-run `cargo test -p icu_experimental --test messageformat_conformance --all-features` after edits. |
 
 ---
@@ -125,30 +126,32 @@ Use this subsection to record **dated** passes of §1c so the next editor knows 
 **Current behavior** ([`UnitHandler`](components/experimental/src/messageformat/function.rs)):
 
 - Requires `unit` option and a numeric operand (including `InputValue::Unit`).
-- **`usage`:** If present and a well-formed identifier →
-  [`FunctionError::UnsupportedOperation`](components/experimental/src/messageformat/error.rs).
-  If malformed → `BadOption`.
-- **Conversion:** Not implemented; TR35 *Unit Conversion* is out of scope until
-  ICU4X dimension APIs support it.
+- **`usage`:** Well-formed identifiers are resolved when supported; unsupported
+  preferences or mixed-unit outputs → [`FunctionError::UnsupportedOperation`](components/experimental/src/messageformat/error.rs).
+  Malformed `usage` → `BadOption`.
+- **Conversion:** Broader TR35 *Unit Conversion* remains tied to the dimension stack;
+  see [`UnitHandler`](components/experimental/src/messageformat/function.rs).
 
-**WG conformance fixtures:** At upstream SHA pinned in
-[`fixtures/README.md`](components/experimental/tests/messageformat/fixtures/README.md),
-`unicode-org/message-format-wg` had **no** `test/tests/functions/unit.json`
-(verified **2026-04-21**; see README “last verified absent”).
-Upstream JSON therefore does not exercise `:unit`.
+**Conformance fixtures:** WG still had **no** `test/tests/functions/unit.json` at the
+pin in [`fixtures/README.md`](components/experimental/tests/messageformat/fixtures/README.md)
+(last checked **2026-04-20**, `test/tests/functions/` in a local WG checkout at
+[`UPSTREAM_SHA`](components/experimental/tests/messageformat/fixtures/UPSTREAM_SHA)). ICU4X maintains
+[`tests/functions/unit.json`](components/experimental/tests/messageformat/fixtures/tests/functions/unit.json)
+in-repo; [`sync-mf2-tests.sh`](tools/scripts/sync-mf2-tests.sh) backs it up and restores it after
+`rsync` until upstream ships the same path. When WG adds `unit.json`, **merge** their cases with
+ICU4X rows (same process as `number.json` / `currency.json`).
 
 **Plan:**
 
-1. **Short term:** ~~Add ICU4X-only integration tests~~ **Done:** see
-   `messageformatter_end_to_end_unit_without_usage` and
-   `messageformatter_unit_usage_yields_unsupported_operation` in
+1. **Integration tests:** see `messageformatter_end_to_end_unit_without_usage` and
+   `messageformatter_unit_usage_converts_to_preferred_region_unit` in
    [`tests.rs`](components/experimental/tests/messageformat/tests.rs)
    (`unstable` + `compiled_data`).
-2. **When WG adds `unit.json`:** Run `cargo make sync-mf2-tests`, merge, and keep
-   [`KNOWN_FAILURES`](components/experimental/tests/messageformat/conformance.rs) empty or list only unavoidable gaps
-   (step-by-step: [`fixtures/README.md`](components/experimental/tests/messageformat/fixtures/README.md) § *When upstream adds `functions/unit.json`*).
-3. **Long term:** Implement `usage` + conversion against the dimension stack;
-   remove `UnsupportedOperation` for supported `usage` values.
+2. **JSON conformance:** ICU4X [`functions/unit.json`](components/experimental/tests/messageformat/fixtures/tests/functions/unit.json)
+   (see README § *ICU4X-maintained `functions/unit.json`*). Keep
+   [`KNOWN_FAILURES`](components/experimental/tests/messageformat/conformance.rs) empty when possible.
+3. **Long term:** Expand `usage` / conversion coverage as the dimension stack grows;
+   align with WG `unit.json` when it appears upstream.
 
 ---
 
@@ -165,7 +168,12 @@ The previous ASCII-only **`(...)`** outer wrap was removed as redundant.
 
 **Remaining #4677-adjacent work** (datagen / pattern selection, not MessageFormat-only): see
 [`documents/design/messageformat_currency_accounting.md`](documents/design/messageformat_currency_accounting.md)
-(**#6064**, **#3838**, compact pattern negative subpatterns).
+(compact pattern negative subpatterns and numbering-system–aware extraction).
+
+| Tracker | Role (MF2 `:currency` impact) |
+| --- | --- |
+| [#6064](https://github.com/unicode-org/icu4x/issues/6064) | Currency **negative subpattern** handling / `PatternSelection` and compact paths so CLDR `;`-separated patterns drive formatting consistently. |
+| [#3838](https://github.com/unicode-org/icu4x/issues/3838) | **Numbering-system–aware** currency pattern extraction in datagen so `CurrencyEssentials` matches resolved digit context end-to-end. |
 
 **Regression coverage:** ICU4X-only cases in
 [`functions/currency.json`](components/experimental/tests/messageformat/fixtures/tests/functions/currency.json)
@@ -235,6 +243,24 @@ design + tracking issue (do not fold into the MF2 formatter crate without an own
    Today: consume [`ValidatedMessage`](components/experimental/src/messageformat/validator.rs) and pattern-match on [`ast::Message`](components/experimental/src/messageformat/ast.rs).
 3. **Multi-error validation** — collect every data-model violation in one pass for IDE
    diagnostics. Today: [`validate`](components/experimental/src/messageformat/validator.rs) returns the **first** [`ValidationError`](components/experimental/src/messageformat/error.rs).
+
+### 5.2 Suggested standalone issues (npm / editor parity)
+
+If a product explicitly needs JS-class tooling, file **separate** issues (one per
+workstream) rather than bundling into a single “MF2 parity” ticket. Suggested titles
+and scope:
+
+1. **`messageformat: add lossless CST / trivia-preserving parse`**
+   - **Goal:** `parseCST`-equivalent: preserve whitespace, comments, and raw spans for editor integrations.
+   - **Non-goal:** Replacing the current owned AST for runtime formatting unless dual representation is accepted.
+
+2. **`messageformat: visitor or transform API over Message AST`**
+   - **Goal:** Stable traversal / rewrite hooks (lints, migrations, codegen) without ad-hoc deep matches on every node type.
+   - **Acceptance:** Documented trait(s) or iterator; at least one example (e.g. strip all markup, or rename a function id).
+
+3. **`messageformat: multi-error validation mode`**
+   - **Goal:** Optional `validate_all` (or similar) returning every [`ValidationError`](components/experimental/src/messageformat/error.rs) with offsets/paths for IDE diagnostics.
+   - **Constraint:** Keep default `validate` behavior as first-error for callers that depend on short-circuiting.
 
 ---
 

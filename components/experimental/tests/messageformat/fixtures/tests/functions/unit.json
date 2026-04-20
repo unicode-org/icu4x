@@ -1,0 +1,103 @@
+{
+  "$schema": "../../schemas/v0/tests.schema.json",
+  "scenario": "Unit function (ICU4X-maintained)",
+  "description": "Draft :unit behavior. This file is maintained in ICU4X until unicode-org/message-format-wg ships test/tests/functions/unit.json; see fixtures/README.md.",
+  "defaultTestProperties": {
+    "tags": [":unit"],
+    "bidiIsolation": "none",
+    "locale": "en-US",
+    "expErrors": []
+  },
+  "tests": [
+    {
+      "description": "Missing operand",
+      "src": "{:unit unit=meter}",
+      "exp": "{:unit}",
+      "expErrors": [{ "type": "bad-operand" }]
+    },
+    {
+      "description": "Missing unit option",
+      "src": "{{{$n :unit}}}",
+      "params": [{ "name": "n", "value": 2 }],
+      "exp": "{$n}",
+      "expErrors": [{ "type": "bad-operand" }]
+    },
+    {
+      "description": "Invalid unit identifier",
+      "src": "{{{$n :unit unit=not-a-real-unit-icu}}}",
+      "params": [{ "name": "n", "value": 1 }],
+      "exp": "{$n}",
+      "expErrors": [{ "type": "bad-option" }]
+    },
+    {
+      "description": "Invalid unitDisplay value",
+      "src": "{{{$n :unit unit=meter unitDisplay=wide}}}",
+      "params": [{ "name": "n", "value": 2 }],
+      "exp": "{$n}",
+      "expErrors": [{ "type": "bad-option" }]
+    },
+    {
+      "description": "ICU4X: numeric operand + meter short (en-US)",
+      "src": "{{{$n :unit unit=meter}}}",
+      "params": [{ "name": "n", "value": 2 }],
+      "exp": "2 m"
+    },
+    {
+      "description": "ICU4X: unitDisplay long",
+      "src": "{{{$n :unit unit=meter unitDisplay=long}}}",
+      "params": [{ "name": "n", "value": 2 }],
+      "exp": "2 meters"
+    },
+    {
+      "description": "ICU4X: usage=road converts meter to feet (en-US), rounded",
+      "src": "{{{$n :unit unit=meter usage=road maximumFractionDigits=1}}}",
+      "params": [{ "name": "n", "value": 2 }],
+      "exp": "6.6 ft"
+    },
+    {
+      "description": "ICU4X: param type unit — operand carries meter, expression omits unit=",
+      "src": "{{{$len :unit}}}",
+      "params": [
+        {
+          "name": "len",
+          "type": "unit",
+          "unit": "meter",
+          "value": 3
+        }
+      ],
+      "exp": "3 m"
+    },
+    {
+      "description": "ICU4X: unitDisplay=narrow (en-US)",
+      "src": "{{{$n :unit unit=meter unitDisplay=narrow}}}",
+      "params": [{ "name": "n", "value": 2 }],
+      "exp": "2m"
+    },
+    {
+      "description": "ICU4X: fractional numeric operand",
+      "src": "{{{$n :unit unit=meter}}}",
+      "params": [{ "name": "n", "value": 1.5 }],
+      "exp": "1.5 m"
+    },
+    {
+      "description": "ICU4X: usage=person-height yields unsupported-operation (mixed unit)",
+      "src": "{{{$n :unit unit=meter usage=person-height}}}",
+      "params": [{ "name": "n", "value": 2 }],
+      "exp": "{$n}",
+      "expErrors": [{ "type": "unsupported-operation" }]
+    },
+    {
+      "description": "ICU4X: minimumFractionDigits on :unit",
+      "src": "{{{$n :unit unit=meter minimumFractionDigits=2}}}",
+      "params": [{ "name": "n", "value": 2 }],
+      "exp": "2.00 m"
+    },
+    {
+      "description": "ICU4X: meter short de-DE (decimal comma)",
+      "locale": "de-DE",
+      "src": "{{{$n :unit unit=meter}}}",
+      "params": [{ "name": "n", "value": 2.5 }],
+      "exp": "2,5 m"
+    }
+  ]
+}

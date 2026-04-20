@@ -206,6 +206,7 @@
         "enum": [
           ":currency",
           ":percent",
+          ":unit",
           "u:dir",
           "u:id"
         ]
@@ -245,6 +246,28 @@
               "$comment": "Should be converted to a datetime.",
               "type": "string"
             }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "type",
+            "unit",
+            "value"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "const": "unit"
+            },
+            "unit": {
+              "type": "string",
+              "$comment": "CLDR unit identifier (e.g. meter, foot)."
+            },
+            "value": {}
           }
         }
       ]
@@ -405,7 +428,8 @@
               "bad-selector",
               "bad-operand",
               "bad-option",
-              "bad-variant-key"
+              "bad-variant-key",
+              "unsupported-operation"
             ]
           }
         }
