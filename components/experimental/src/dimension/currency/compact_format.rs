@@ -70,13 +70,13 @@ mod tests {
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, &currency_code);
-        // TODO(#6064)
+        // Golden values; revisit under #6064 if negative currency subpatterns change RTL shaping.
         assert_writeable_eq!(formatted_currency, "\u{200f}١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"); //  "ج.م.١٢ألف"
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, &currency_code);
-        // TODO(#6064)
+        // Golden values; revisit under #6064 if negative currency subpatterns change RTL shaping.
         assert_writeable_eq!(
             formatted_currency,
             "\u{61c}-\u{200f}١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"

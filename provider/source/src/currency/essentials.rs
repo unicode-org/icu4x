@@ -47,7 +47,9 @@ fn currency_pattern_selection(
         return Err(DataError::custom("Place holder value must not be empty"));
     }
 
-    // TODO(#6064): Handle the negative sub pattern.
+    // TODO(#6064): Today we only inspect the positive subpattern when deciding
+    // `PatternSelection::StandardAlphaNextToNumber`. If CLDR's negative subpattern places the
+    // currency differently, selection for negative amounts could disagree with CLDR until this is addressed.
     let pattern = &pattern.positive;
 
     let currency_sign_index = pattern
@@ -137,7 +139,8 @@ fn extract_currency_essentials<'data>(
 ) -> Result<CurrencyEssentials<'data>, DataError> {
     let currencies = &currencies_resource.main.value.numbers.currencies;
 
-    // TODO(#3838): these patterns might be numbering system dependent.
+    // TODO(#3838): `currency_patterns` are keyed by numbering system in CLDR; we currently hard-code
+    // `"latn"`. Extend extraction once per-locale resolved numbering system data is wired through.
     let currency_formats = &&numbers_resource
         .main
         .value
@@ -283,8 +286,9 @@ fn extract_currency_essentials<'data>(
     fn create_pattern_from_items<'data>(
         items: &[NumberPatternItem],
     ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
-        // TODO: this is wrong - the currency pattern does not necessarily match the decimal pattern with a currency
-        // sign and some literals tacked on.
+        // Note: CLDR currency patterns can include grouping, signs, and other tokens. Here we keep only
+        // literals, the currency sign, and the decimal separator, mapping them into a minimal
+        // `DoublePlaceholderPattern` (`Place0` = number, `Place1` = currency). Full pattern fidelity is handled at format time.
         let pattern_items = items.iter().flat_map(|item| match item {
             NumberPatternItem::Currency => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
@@ -411,7 +415,7 @@ fn test_basic() {
         &en,
         &en_payload.placeholders,
     );
-    // TODO(#6064)
+    // Golden values; may need revision when #6064 changes negative-subpattern handling.
     assert_eq!(en_egp_short, "EGP");
     assert_eq!(en_egp_narrow, "E£");
 

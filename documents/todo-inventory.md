@@ -68,6 +68,11 @@ User-facing notes for these changes live under **icu4x 2.2 → `icu_experimental
 - **Comment hygiene**: Fixed spelling “inconcistencies” → “inconsistencies” in `utils/calendrical_calculations/src/astronomy.rs`.
 - **Transliteration #3958**: Not changed here; removing `#![expect(clippy::indexing_slicing, clippy::unwrap_used)]` from `transliterator/mod.rs` remains a larger cleanup tracked on the issue checklist.
 
+### Open follow-ups (currency)
+
+- [#6064](https://github.com/unicode-org/icu4x/issues/6064): Negative currency subpatterns in CLDR vs datagen `PatternSelection` and runtime golden tests ([`provider/source/src/currency/essentials.rs`](../provider/source/src/currency/essentials.rs), [`components/experimental/src/dimension/currency/format.rs`](../components/experimental/src/dimension/currency/format.rs), compact format tests). Comments in those files now spell out what is still pending.
+- [#3838](https://github.com/unicode-org/icu4x/issues/3838): Resolve `currency_patterns` via numbering system instead of hard-coded `"latn"` in the same `essentials.rs` extractor.
+
 ## Regenerating detailed line lists
 
 For a full path-annotated list (large):
