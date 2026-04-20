@@ -21,7 +21,9 @@ cargo make sync-mf2-tests
 This runs [`tools/scripts/sync-mf2-tests.sh`](../../../../tools/scripts/sync-mf2-tests.sh)
 (see `tools/make/tests.toml`). It rsyncs `test/tests/` and `test/schemas/` from the
 WG checkout and writes [`UPSTREAM_SHA`](UPSTREAM_SHA). It does **not** overwrite this
-`README.md` (ICU4X-specific instructions stay here).
+`README.md` (ICU4X-specific instructions stay here). A transient
+[`.icu4x-fixture-backup/`](.gitignore) directory may appear during the run; it is listed in
+[`fixtures/.gitignore`](.gitignore) and should not be committed.
 
 If you cannot run the script, sync manually from a WG checkout: copy `test/tests/**/*.json`
 and `test/schemas/**` into this directory, then record the upstream `git rev-parse HEAD`

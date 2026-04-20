@@ -51,6 +51,20 @@
       "src": ".local $n = {42 :currency currency=EUR} .match $n * {{other}}",
       "exp": "other",
       "expErrors": [{ "type": "bad-selector" }]
+    },
+    {
+      "description": "ICU4X-only: accounting USD en-US uses parentheses on the CLDR short-currency path.",
+      "src": "{{{$p :currency currency=USD currencySign=accounting}}}",
+      "locale": "en-US",
+      "params": [{ "name": "p", "value": -3.5 }],
+      "exp": "($3.5)"
+    },
+    {
+      "description": "ICU4X-only: accounting EUR de-DE uses locale negative presentation (no ASCII outer parens).",
+      "src": "{{{$p :currency currency=EUR currencySign=accounting}}}",
+      "locale": "de-DE",
+      "params": [{ "name": "p", "value": -3.5 }],
+      "exp": "-3,5\u00a0€"
     }
   ]
 }

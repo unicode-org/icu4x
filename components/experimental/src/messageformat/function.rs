@@ -852,11 +852,8 @@ fn stitch_standard_currency_number(
     use crate::dimension::currency::formatter::CurrencyFormatter;
     use crate::dimension::currency::options::CurrencyFormatterOptions;
     use writeable::Writeable;
-    let sample_val = currency_stitch_sample_value(
-        fmt_value,
-        currency_display_sign,
-        sign_encoded_neg,
-    );
+    let sample_val =
+        currency_stitch_sample_value(fmt_value, currency_display_sign, sign_encoded_neg);
     let formatter = CurrencyFormatter::try_new(
         prefs.clone(),
         CurrencyFormatterOptions {
@@ -887,11 +884,8 @@ fn stitch_long_currency_number(
     use crate::dimension::currency::long_formatter::LongCurrencyFormatter;
     use crate::dimension::currency::options::LongCurrencyFormatterOptions;
     use writeable::Writeable;
-    let sample_val = currency_stitch_sample_value(
-        fmt_value,
-        currency_display_sign,
-        sign_encoded_neg,
-    );
+    let sample_val =
+        currency_stitch_sample_value(fmt_value, currency_display_sign, sign_encoded_neg);
     let formatter = LongCurrencyFormatter::try_new(
         prefs.clone(),
         currency_code,
@@ -1531,33 +1525,30 @@ impl FunctionHandler for CurrencyHandler {
             CurrencyDisplayMode::Standard(w) => w,
             _ => Width::Short,
         };
-        let sign_encoded_neg_for_stitch = if matches!(
-            currency_display_sign,
-            CurrencyDisplaySign::Accounting
-        ) {
-            CurrencyFormatter::try_new(
-                eff_locale.clone().into(),
-                CurrencyFormatterOptions {
-                    width: stitch_resolve_width,
-                    currency_display_sign,
-                },
-            )
-            .ok()
-            .map(|f| f.negative_sign_encoded_in_pattern(&currency_code))
-            .unwrap_or(false)
-        } else {
-            false
-        };
-
-        let fmt_value =
-            if matches!(currency_display_sign, CurrencyDisplaySign::Accounting)
-                && value.sign() == Sign::Negative
-                && sign_encoded_neg_for_stitch
-            {
-                Decimal::new(Sign::None, value.absolute.clone())
+        let sign_encoded_neg_for_stitch =
+            if matches!(currency_display_sign, CurrencyDisplaySign::Accounting) {
+                CurrencyFormatter::try_new(
+                    eff_locale.clone().into(),
+                    CurrencyFormatterOptions {
+                        width: stitch_resolve_width,
+                        currency_display_sign,
+                    },
+                )
+                .ok()
+                .map(|f| f.negative_sign_encoded_in_pattern(&currency_code))
+                .unwrap_or(false)
             } else {
-                value.clone()
+                false
             };
+
+        let fmt_value = if matches!(currency_display_sign, CurrencyDisplaySign::Accounting)
+            && value.sign() == Sign::Negative
+            && sign_encoded_neg_for_stitch
+        {
+            Decimal::new(Sign::None, value.absolute.clone())
+        } else {
+            value.clone()
+        };
 
         use writeable::Writeable;
         let short_standard_currency_path = matches!(
@@ -1587,19 +1578,17 @@ impl FunctionHandler for CurrencyHandler {
             );
         let mut formatted = match display {
             CurrencyDisplayMode::Standard(width) => match parsed.notation {
-                NotationKind::Standard => {
-                    CurrencyFormatter::try_new(
-                        eff_locale.clone().into(),
-                        CurrencyFormatterOptions {
-                            width,
-                            currency_display_sign,
-                        },
-                    )
-                    .map_err(|_| FunctionError::UnsupportedOperation)?
-                    .format_fixed_decimal(&value, &currency_code)
-                    .write_to_string()
-                    .into_owned()
-                }
+                NotationKind::Standard => CurrencyFormatter::try_new(
+                    eff_locale.clone().into(),
+                    CurrencyFormatterOptions {
+                        width,
+                        currency_display_sign,
+                    },
+                )
+                .map_err(|_| FunctionError::UnsupportedOperation)?
+                .format_fixed_decimal(&value, &currency_code)
+                .write_to_string()
+                .into_owned(),
                 NotationKind::Compact => match parsed.compact_display {
                     CompactDisplayKind::Short => {
                         let c_prefs: CompactCurrencyFormatterPreferences =

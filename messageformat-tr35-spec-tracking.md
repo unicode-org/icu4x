@@ -77,10 +77,12 @@ skips `minimumIntegerDigits`, `roundingIncrement`, `select`). `:percent` forces
 **`:currency`:** `currency` (required for plain numeric operands), `currencyDisplay`
 (`narrowSymbol` \| `symbol` \| `name` \| `code` \| `never`), `currencySign`
 (`standard` \| `accounting`), `fractionDigits` (`auto` or digit count), plus
-the shared numeric bag above. Accounting uses a **locale heuristic**
-(`currency_accounting_style`) for parentheses vs locale-standard negative
-rendering until [#4677](https://github.com/unicode-org/icu4x/issues/4677) exposes
-dedicated CLDR patterns in [`CurrencyEssentials`](components/experimental/src/dimension/provider/currency/essentials.rs).
+the shared numeric bag above. **`currencySign=accounting`** uses **CLDR**
+patterns from [`CurrencyEssentials`](components/experimental/src/dimension/provider/currency/essentials.rs)
+on the branches where [`CurrencyHandler`](components/experimental/src/messageformat/function.rs)
+sets **`cldr_handles_accounting_shell`**; other branches may use an ASCII **`(...)`**
+fallback shell until [#4677](https://github.com/unicode-org/icu4x/issues/4677) threads
+the same data through every display / notation combination.
 
 **`:offset` / `:math`:** `add` or `subtract` (exactly one), each a
 `digit-size-option` string.
@@ -107,6 +109,14 @@ Use this when adopting **LDML 48** as the normative baseline or after any TR35 P
 4. Record deltas in a PR description (or a short issue comment): **new option names**, **default changes**, **REQUIRED vs RECOMMENDED** wording moves, and any new **Unsupported Operation** cases the spec now requires.
 5. After edits, run `cargo test -p icu_experimental --test messageformat_conformance --all-features` and refresh vendored WG JSON only when ready (see [`fixtures/README.md`](components/experimental/tests/messageformat/fixtures/README.md)).
 
+### 1d. Maintenance audit log (LDML 48 vs `function.rs`)
+
+Use this subsection to record **dated** passes of §1c so the next editor knows when the inventory was last checked against code (not a substitute for reading TR35 when the edition changes).
+
+| Date | TR35 anchor | WG fixtures pin | Notes |
+| --- | --- | --- | --- |
+| 2026-04-20 | tr35-76 MessageFormat (spot-check against §1b) | `dd86e42e10d1d0c9c4401d0781cdd87ee7166366` | Re-ran [`tools/scripts/sync-mf2-tests.sh`](tools/scripts/sync-mf2-tests.sh) against a local `message-format-wg` checkout (HEAD already at pin). **§1b** option names match [`NumberOptions::parse`](components/experimental/src/messageformat/function.rs), [`CurrencyHandler`](components/experimental/src/messageformat/function.rs) merged keys, [`OffsetHandler`](components/experimental/src/messageformat/function.rs) `add` / `subtract`, [`UnitHandler`](components/experimental/src/messageformat/function.rs) `unit` / `unitDisplay` / `usage`, and [`parse_datetime_options`](components/experimental/src/messageformat/function.rs) match arms for `date` / `time` / `datetime`. Conformance: `cargo test -p icu_experimental --test messageformat_conformance --all-features` green. |
+
 ---
 
 ## 2. `:unit` — `usage`, conversion, and tests
@@ -122,7 +132,8 @@ Use this when adopting **LDML 48** as the normative baseline or after any TR35 P
 
 **WG conformance fixtures:** At upstream SHA pinned in
 [`fixtures/README.md`](components/experimental/tests/messageformat/fixtures/README.md),
-`unicode-org/message-format-wg` had **no** `test/tests/functions/unit.json`.
+`unicode-org/message-format-wg` had **no** `test/tests/functions/unit.json`
+(verified again **2026-04-20** on a local WG checkout at the same pin).
 Upstream JSON therefore does not exercise `:unit`.
 
 **Plan:**
@@ -144,23 +155,30 @@ Upstream JSON therefore does not exercise `:unit`.
 
 **Deep dive (CLDR → datagen → formatters → MessageFormat):** see [`documents/design/messageformat_currency_accounting.md`](documents/design/messageformat_currency_accounting.md).
 
-**Tracking issue:** [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677) (open) — add CLDR
-negative / accounting pattern slots to dimension data, then replace the
-`currency_accounting_style` heuristic in [`CurrencyHandler`](components/experimental/src/messageformat/function.rs).
+**Tracking issue:** [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677) (open) — finish threading CLDR
+**standard** / **accounting** / **alpha-next-to-number** patterns (including optional `;` negative
+subpatterns) through **every** display and notation branch so MessageFormat never needs a
+fallback shell.
 
 **Current behavior** ([`CurrencyHandler`](components/experimental/src/messageformat/function.rs)):
 
-- For **`notation=standard`** with symbol / narrow symbol display, `currencySign=accounting`
-  (and optional `;` negatives for `currencySign=standard`) are driven by CLDR
-  patterns in [`CurrencyEssentials`](components/experimental/src/dimension/provider/currency/essentials.rs)
-  via [`CurrencyFormatter`](components/experimental/src/dimension/currency/formatter.rs)
-  (`CurrencyDisplaySign` in [`options.rs`](components/experimental/src/dimension/currency/options.rs)).
-- For **long name, compact, scientific/engineering, ISO code, and hidden** paths,
-  [`currency_accounting_style`](components/experimental/src/messageformat/function.rs)
-  and `stitch_*` helpers may still apply the older **locale heuristic** and outer
-  parenthesis wrapping where those formatters do not yet consume accounting payloads.
-- Follow-up under **#4677**: extend the same CLDR-driven behavior to the remaining
-  branches and remove residual heuristics; see
+- **CLDR-native accounting shell** when `cldr_handles_accounting_shell` is true: **`notation=standard`**
+  with symbol / narrow symbol; **`notation=compact`** with **`compactDisplay=short`** on those widths;
+  **`currencyDisplay=name`** with **`notation=standard`**; **`currencyDisplay=name`** with
+  **`notation=compact`** and **`compactDisplay=long`**. These paths use
+  [`CurrencyEssentials`](components/experimental/src/dimension/provider/currency/essentials.rs)
+  via [`CurrencyFormatter`](components/experimental/src/dimension/currency/formatter.rs),
+  [`CompactCurrencyFormatter`](components/experimental/src/dimension/currency/compact_formatter.rs),
+  [`LongCurrencyFormatter`](components/experimental/src/dimension/currency/long_formatter.rs), or
+  [`LongCompactCurrencyFormatter`](components/experimental/src/dimension/currency/long_compact_formatter.rs)
+  with [`CurrencyDisplaySign`](components/experimental/src/dimension/currency/options.rs).
+- **Fallback:** when `currencySign=accounting`, the operand is negative, and the resolved short
+  currency path encodes the negative sign inside the pattern (`negative_sign_encoded_in_pattern`),
+  but `cldr_handles_accounting_shell` is **false** (e.g. **ISO code**, **`currencyDisplay=never`**,
+  **scientific/engineering**, **compact long on symbol width**, **compact short on long name**),
+  the handler wraps the formatted string in ASCII **`(...)`** as an accounting-style shell.
+- Follow-up under **#4677**: replace that outer-wrap fallback wherever a formatter can consume the
+  same CLDR accounting payloads as the short-currency path; see
   [`documents/design/messageformat_currency_accounting.md`](documents/design/messageformat_currency_accounting.md).
 
 **Regression coverage:** ICU4X-only cases in
@@ -171,9 +189,10 @@ sign path). Extend this file when #4677 lands and output shifts.
 **Plan:**
 
 1. **Blocked on** [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677):
-   add negative / accounting pattern payloads to `CurrencyEssentials`, thread
-   them through `CurrencyFormatter` / compact variants, then simplify or remove
-   the `currency_accounting_style` heuristic in favor of data-driven choice.
+   extend CLDR accounting / negative pattern use to **all** `CurrencyHandler` branches that
+   still rely on the ASCII **`(...)`** fallback, then drop that fallback where redundant.
+   (`CurrencyEssentials` already carries standard / accounting / alpha-next-to-number patterns
+   and optional negative subpatterns from datagen; see design doc §2.)
 2. After (1), refresh the ICU4X-only rows in `currency.json` (and add more
    locales) to match CLDR-backed output.
 3. Crate docs in [`mod.rs`](components/experimental/src/messageformat/mod.rs)

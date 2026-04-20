@@ -130,13 +130,15 @@ impl CurrencyFormatter {
     /// (parentheses or similar) for the current [`CurrencyFormatterOptions`], rather than a
     /// leading minus on the number.
     pub fn negative_sign_encoded_in_pattern(&self, currency_code: &CurrencyCode) -> bool {
-        self.essential.get().resolve_currency_pattern(
-            self.options.width,
-            currency_code,
-            self.options.currency_display_sign,
-            true,
-        )
-        .sign_encoded_in_pattern
+        self.essential
+            .get()
+            .resolve_currency_pattern(
+                self.options.width,
+                currency_code,
+                self.options.currency_display_sign,
+                true,
+            )
+            .sign_encoded_in_pattern
     }
 
     /// Formats a [`Decimal`] value for the given currency code.

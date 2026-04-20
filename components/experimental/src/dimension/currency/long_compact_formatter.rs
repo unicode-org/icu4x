@@ -267,30 +267,31 @@ impl LongCompactCurrencyFormatter {
             display_name,
         ));
 
-        let (prefix, suffix, output_sign) =
-            if matches!(self.options.currency_display_sign, CurrencyDisplaySign::Accounting)
-                && value.sign() == Sign::Negative
-            {
-                let resolved = self.essential.get().resolve_currency_pattern(
-                    Width::Short,
-                    &self.currency_code,
-                    self.options.currency_display_sign,
-                    true,
-                );
-                let (prefix, suffix) = if resolved.sign_encoded_in_pattern {
-                    outer_literal_affixes_double_placeholder(resolved.pattern)
-                } else {
-                    (String::new(), String::new())
-                };
-                let output_sign = if resolved.sign_encoded_in_pattern {
-                    Sign::None
-                } else {
-                    value.sign()
-                };
-                (prefix, suffix, output_sign)
+        let (prefix, suffix, output_sign) = if matches!(
+            self.options.currency_display_sign,
+            CurrencyDisplaySign::Accounting
+        ) && value.sign() == Sign::Negative
+        {
+            let resolved = self.essential.get().resolve_currency_pattern(
+                Width::Short,
+                &self.currency_code,
+                self.options.currency_display_sign,
+                true,
+            );
+            let (prefix, suffix) = if resolved.sign_encoded_in_pattern {
+                outer_literal_affixes_double_placeholder(resolved.pattern)
             } else {
-                (String::new(), String::new(), value.sign())
+                (String::new(), String::new())
             };
+            let output_sign = if resolved.sign_encoded_in_pattern {
+                Sign::None
+            } else {
+                value.sign()
+            };
+            (prefix, suffix, output_sign)
+        } else {
+            (String::new(), String::new(), value.sign())
+        };
 
         let wrapped = Concat(Concat(prefix, inner), suffix);
         self.decimal_formatter.format_sign(output_sign, wrapped)
