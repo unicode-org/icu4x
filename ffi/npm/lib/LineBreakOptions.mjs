@@ -35,13 +35,13 @@ export class LineBreakOptions {
         }
 
         if ("strictness" in structObj) {
-            this.#strictness = structObj.strictness;
+            this.#strictness = new LineBreakStrictness(structObj.strictness);
         } else {
             this.#strictness = null;
         }
 
         if ("wordOption" in structObj) {
-            this.#wordOption = structObj.wordOption;
+            this.#wordOption = new LineBreakWordOption(structObj.wordOption);
         } else {
             this.#wordOption = null;
         }

@@ -35,13 +35,13 @@ export class DateFromFieldsOptions {
         }
 
         if ("overflow" in structObj) {
-            this.#overflow = structObj.overflow;
+            this.#overflow = new DateOverflow(structObj.overflow);
         } else {
             this.#overflow = null;
         }
 
         if ("missingFieldsStrategy" in structObj) {
-            this.#missingFieldsStrategy = structObj.missingFieldsStrategy;
+            this.#missingFieldsStrategy = new DateMissingFieldsStrategy(structObj.missingFieldsStrategy);
         } else {
             this.#missingFieldsStrategy = null;
         }

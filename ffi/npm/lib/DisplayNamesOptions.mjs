@@ -45,19 +45,19 @@ export class DisplayNamesOptions {
         }
 
         if ("style" in structObj) {
-            this.#style = structObj.style;
+            this.#style = new DisplayNamesStyle(structObj.style);
         } else {
             this.#style = null;
         }
 
         if ("fallback" in structObj) {
-            this.#fallback = structObj.fallback;
+            this.#fallback = new DisplayNamesFallback(structObj.fallback);
         } else {
             this.#fallback = null;
         }
 
         if ("languageDisplay" in structObj) {
-            this.#languageDisplay = structObj.languageDisplay;
+            this.#languageDisplay = new LanguageDisplay(structObj.languageDisplay);
         } else {
             this.#languageDisplay = null;
         }

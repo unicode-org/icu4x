@@ -27,7 +27,7 @@ export class DateDifferenceOptions {
         }
 
         if ("largestUnit" in structObj) {
-            this.#largestUnit = structObj.largestUnit;
+            this.#largestUnit = new DateDurationUnit(structObj.largestUnit);
         } else {
             this.#largestUnit = null;
         }
