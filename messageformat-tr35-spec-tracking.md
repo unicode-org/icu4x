@@ -168,7 +168,7 @@ The previous ASCII-only **`(...)`** outer wrap was removed as redundant.
 
 **Remaining #4677-adjacent work** (datagen / pattern selection, not MessageFormat-only): see
 [`documents/design/messageformat_currency_accounting.md`](documents/design/messageformat_currency_accounting.md)
-(compact pattern negative subpatterns; locale-default numbering-system extraction for `CurrencyEssentials` is wired).
+(compact short currency still emits positive-only patterns, with **warnings** only when a negative subpattern disagrees or fails the same parse rules; locale-default numbering-system extraction for `CurrencyEssentials` is wired).
 
 | Tracker | Role (MF2 `:currency` impact) |
 | --- | --- |

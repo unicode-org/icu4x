@@ -103,7 +103,7 @@ Remaining datagen limitations called out in source (see **#4677**, **#6064**); *
 | Primary pattern body | `create_pattern` | Still maps **`pattern.positive`** only into each main `DoublePlaceholderPattern` (correct for the positive arm; negative is a sibling field today). |
 | `PatternSelection` (standard vs alpha-next-to-number) | `currency_pattern_selection` | Classifies **positive** and optional **`;` negative** subpatterns; when they disagree, uses **StandardAlphaNextToNumber** if either arm needs it (heuristic; **#6064** tracks finer per-polarity handling if CLDR requires it). |
 | Currency format numbering system | `extract_currency_essentials` | Reads `currencyFormats` for **`numbers.json` `defaultNumberingSystem`**, with the Sindhi→`latn` override ([#5374](https://github.com/unicode-org/icu4x/issues/5374)) and a **`latn` map fallback** if the default key is absent ([#3838](https://github.com/unicode-org/icu4x/issues/3838)). |
-| Compact short currency patterns | [`provider/source/src/currency/compact.rs`](../../provider/source/src/currency/compact.rs) | May still log when **`pattern.negative`** is present and build from **positive** only. |
+| Compact short currency patterns | [`provider/source/src/currency/compact.rs`](../../provider/source/src/currency/compact.rs) | Builds from **positive** only; logs when optional **`negative`** is present **and** parses differently from positive (same digit/currency rules) or cannot be parsed the same way (**#6064**). |
 
 ---
 
