@@ -101,7 +101,7 @@ Remaining datagen limitations called out in source (see **#4677**, **#6064**); *
 | Topic | Location | Behavior |
 | --- | --- | --- |
 | Primary pattern body | `create_pattern` | Still maps **`pattern.positive`** only into each main `DoublePlaceholderPattern` (correct for the positive arm; negative is a sibling field today). |
-| `PatternSelection` (standard vs alpha-next-to-number) | `currency_pattern_selection` | Uses **`pattern.positive`** only when inspecting currency vs digit placement (**#6064**). |
+| `PatternSelection` (standard vs alpha-next-to-number) | `currency_pattern_selection` | Classifies **positive** and optional **`;` negative** subpatterns; when they disagree, uses **StandardAlphaNextToNumber** if either arm needs it (heuristic; **#6064** tracks finer per-polarity handling if CLDR requires it). |
 | Currency format numbering system | `extract_currency_essentials` | Reads `currencyFormats` for **`numbers.json` `defaultNumberingSystem`**, with the Sindhi→`latn` override ([#5374](https://github.com/unicode-org/icu4x/issues/5374)) and a **`latn` map fallback** if the default key is absent ([#3838](https://github.com/unicode-org/icu4x/issues/3838)). |
 | Compact short currency patterns | [`provider/source/src/currency/compact.rs`](../../provider/source/src/currency/compact.rs) | May still log when **`pattern.negative`** is present and build from **positive** only. |
 
@@ -165,7 +165,7 @@ Pick one approach in **#4677** / an RFC before large changes.
 | Tracker | Role |
 | --- | --- |
 | [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677) | MessageFormat **scope done:** ISO / hidden / stitch paths use CLDR outer literals; ASCII-only wrap removed. **Remaining:** compact datagen / pattern-selection follow-ups (see **#6064**); locale-default numbering system for `CurrencyEssentials` datagen is wired (**#3838**). |
-| **#6064** (see TODOs in source) | Negative **subpattern** in currency pattern parsing / `PatternSelection` and tests ([`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs), [`components/experimental/src/dimension/currency/format.rs`](../../components/experimental/src/dimension/currency/format.rs), compact format). |
+| **#6064** | Negative **subpattern** parity: `currency_pattern_selection` now reads both arms; compact datagen and per-polarity selection may remain ([`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs), [`components/experimental/src/dimension/currency/format.rs`](../../components/experimental/src/dimension/currency/format.rs), compact format). |
 | **#3838** | `extract_currency_essentials` now keys `currencyFormats` off **`defaultNumberingSystem`** (see §4). Remaining scope on the issue, if any, is for **marker- or option-scoped** numbering systems beyond the locale default. |
 
 ---

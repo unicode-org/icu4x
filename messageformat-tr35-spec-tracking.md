@@ -168,12 +168,12 @@ The previous ASCII-only **`(...)`** outer wrap was removed as redundant.
 
 **Remaining #4677-adjacent work** (datagen / pattern selection, not MessageFormat-only): see
 [`documents/design/messageformat_currency_accounting.md`](documents/design/messageformat_currency_accounting.md)
-(compact pattern negative subpatterns and numbering-system–aware extraction).
+(compact pattern negative subpatterns; locale-default numbering-system extraction for `CurrencyEssentials` is wired).
 
 | Tracker | Role (MF2 `:currency` impact) |
 | --- | --- |
-| [#6064](https://github.com/unicode-org/icu4x/issues/6064) | Currency **negative subpattern** handling / `PatternSelection` and compact paths so CLDR `;`-separated patterns drive formatting consistently. |
-| [#3838](https://github.com/unicode-org/icu4x/issues/3838) | **Numbering-system–aware** currency pattern extraction in datagen so `CurrencyEssentials` matches resolved digit context end-to-end. |
+| [#6064](https://github.com/unicode-org/icu4x/issues/6064) | Further **negative subpattern** parity: compact datagen, per-polarity `PatternSelection` if needed beyond the current positive/negative merge heuristic in `currency_pattern_selection`. |
+| [#3838](https://github.com/unicode-org/icu4x/issues/3838) | **Numbering-system–aware** `CurrencyEssentials` datagen: locale **`defaultNumberingSystem`** is used; follow issue for marker-scoped `-u-nu-*` if still required. |
 
 **Regression coverage:** ICU4X-only cases in
 [`functions/currency.json`](components/experimental/tests/messageformat/fixtures/tests/functions/currency.json)

@@ -54,7 +54,7 @@ Checked via GitHub API on 2026-04-20; all were **open** and titles still matched
 | Issue | Title (short) | Notes |
 |-------|----------------|-------|
 | [#3077](https://github.com/unicode-org/icu4x/issues/3077) | Add person name formatting in ICU4X | Still open as umbrella work; initials regression test for multi-part given names is fixed in-tree by capping derived initials at two (see `derive_missing_initials`). |
-| [#6064](https://github.com/unicode-org/icu4x/issues/6064) | Handle negative sub pattern in currency pattern | Still active; TODOs in currency datagen remain appropriate. |
+| [#6064](https://github.com/unicode-org/icu4x/issues/6064) | Handle negative sub pattern in currency pattern | Partially addressed in `currency_pattern_selection`; issue may remain open for per-polarity data and formatter parity. |
 | [#3838](https://github.com/unicode-org/icu4x/issues/3838) | Support currency patterns that vary by numbering system | Locale-default `currencyFormats` selection is implemented in `extract_currency_essentials`; issue may still track marker-scoped overrides. |
 | [#3958](https://github.com/unicode-org/icu4x/issues/3958) | Cleanup transliteration runtime | Open; checklist includes removing module-level clippy allows—large follow-up. |
 
@@ -67,11 +67,12 @@ User-facing notes for these changes live under **icu4x 2.2 → `icu_experimental
 - **Person names initials**: `derive_missing_initials` caps at two generated initials for multi-part given strings so output matches the two-slot `initial_sequence_pattern` case (see `derive_missing_initials.rs` tests).
 - **Comment hygiene**: Fixed spelling “inconcistencies” → “inconsistencies” in `utils/calendrical_calculations/src/astronomy.rs`.
 - **Currency #3838 (locale default):** [`extract_currency_essentials`](../provider/source/src/currency/essentials.rs) selects `currencyFormats` using `numbers.json` `defaultNumberingSystem` (Sindhi override [#5374](https://github.com/unicode-org/icu4x/issues/5374), then `latn` fallback), matching the approach in [`currency/patterns.rs`](../provider/source/src/currency/patterns.rs).
+- **Currency #6064 (partial):** [`currency_pattern_selection`](../provider/source/src/currency/essentials.rs) classifies both positive and negative `;` subpatterns when merging `PatternSelection`.
 - **Transliteration #3958**: Not changed here; removing `#![expect(clippy::indexing_slicing, clippy::unwrap_used)]` from `transliterator/mod.rs` remains a larger cleanup tracked on the issue checklist.
 
 ### Open follow-ups (currency)
 
-- [#6064](https://github.com/unicode-org/icu4x/issues/6064): Negative currency subpatterns in CLDR vs datagen `PatternSelection` and runtime golden tests ([`provider/source/src/currency/essentials.rs`](../provider/source/src/currency/essentials.rs), [`components/experimental/src/dimension/currency/format.rs`](../components/experimental/src/dimension/currency/format.rs), compact format tests). Comments in those files now spell out what is still pending.
+- [#6064](https://github.com/unicode-org/icu4x/issues/6064): `currency_pattern_selection` now inspects **both** `;` subpatterns when present (union heuristic when they disagree). Remaining work may include per-polarity pattern selection in data and golden test updates ([`provider/source/src/currency/essentials.rs`](../provider/source/src/currency/essentials.rs), dimension currency tests).
 
 ## Regenerating detailed line lists
 
