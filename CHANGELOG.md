@@ -240,6 +240,8 @@ Several crates have had patch releases in the 2.2 stream:
         - `icu_provider_source`: Filter Unihan radical data using UCD `IdentifierStatus.txt` (unicode-org#7800)
           - New methods: `SourceDataProvider::with_ucd()`, `SourceDataProvider::is_missing_ucd_error()`
           - Behavior change: Unihan radical data now excludes code points not present in `IdentifierStatus.txt`
+    - `icu_experimental_data`
+        - Rebaked `CurrencyEssentialsV1` compiled payloads to match current `CurrencyEssentials` datagen (unicode-org#3838, unicode-org#6064).
 - FFI
     - `icu_capi`
         - FFI analogues for *most* new ICU4X component APIs

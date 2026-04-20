@@ -336,7 +336,7 @@ fn currency_sign_accounting_uses_standard_form_when_locale_has_no_accounting_pat
 
 #[cfg(feature = "compiled_data")]
 #[test]
-fn currency_sign_accounting_arabic_uses_accounting_affixes() {
+fn currency_sign_accounting_arabic_respects_default_numbering_system() {
     let formatter = MessageFormatter::builder()
         .source("{{{$p :currency currency=USD currencySign=accounting}}}")
         .locale(locale!("ar-EG"))
@@ -344,9 +344,17 @@ fn currency_sign_accounting_arabic_uses_accounting_affixes() {
         .expect("valid");
     let inputs = OwnedInputs::new().with_number("p", Decimal::try_from_str("-3.50").unwrap());
     let (out, errs) = formatter.format_to_string(&inputs);
-    assert!(errs.is_empty());
-    assert!(out.contains('(') && out.contains(')'), "{out:?}");
-    assert!(out.contains('\u{061C}'), "{out:?}");
+    assert!(errs.is_empty(), "{errs:?}");
+    // ar-EG default numbering system is `arab`. CLDR `currencyFormats-numberSystem-arab` set
+    // `accounting` equal to `standard` (no parenthetical negative subpattern); `latn` patterns
+    // in the same locale use parentheses for accounting (unicode-org#3838).
+    assert!(out.contains('\u{061C}'), "expected ALM (U+061C): {out:?}");
+    assert!(out.contains("US$"), "expected USD short symbol: {out:?}");
+    assert!(out.contains('٣'), "expected Arabic digit 3: {out:?}");
+    assert!(
+        out.contains('-') || out.contains('('),
+        "expected a negative monetary presentation: {out:?}"
+    );
 }
 
 #[cfg(feature = "compiled_data")]

@@ -31494,20 +31494,35 @@ currency/displayname/v1, zu/ZAR, 44B, 21B, 3ee33af014eb8505
 currency/displayname/v1, zu/ZMK, 54B, 31B, abe05b241d692995
 currency/displayname/v1, zu/ZMW, 40B, 17B, 15b95ba727a96fd5
 currency/displayname/v1, zu/ZWG, -> ceb/ZWG
-currency/essentials/v1, <lookup>, 1820B, 365 identifiers
-currency/essentials/v1, <total>, 447493B, 363306B, 323 unique payloads
+currency/essentials/v1, <lookup>, 1878B, 380 identifiers
+currency/essentials/v1, <total>, 449050B, 364577B, 324 unique payloads
 currency/essentials/v1, af, 1271B, 1011B, 7dd52100092dec21
 currency/essentials/v1, af-NA, 1271B, 1011B, 9da1f125ada7181a
 currency/essentials/v1, ak, 1289B, 1029B, 77c97ec871b182ac
 currency/essentials/v1, am, 1301B, 1041B, b80505dd0cf4dae7
 currency/essentials/v1, ar, 1727B, 1469B, d9139e36bf91581a
 currency/essentials/v1, ar-AE, 1722B, 1464B, 8890dc57ce05c771
-currency/essentials/v1, ar-DJ, 1738B, 1480B, fa012c7f81945aa5
-currency/essentials/v1, ar-ER, 1738B, 1480B, 12318002f81d81ad
-currency/essentials/v1, ar-KM, 1727B, 1469B, 58b8cbd68a745163
-currency/essentials/v1, ar-LB, 1719B, 1461B, 24ca1c23c39261a9
-currency/essentials/v1, ar-SO, 1736B, 1478B, 55caa2d909c189c7
-currency/essentials/v1, ar-SS, 1733B, 1475B, edc28cd2b782ab7f
+currency/essentials/v1, ar-BH, 1703B, 1441B, b34da25804110ca3
+currency/essentials/v1, ar-DJ, 1714B, 1452B, 2ccaa00bc16d3aab
+currency/essentials/v1, ar-EG, -> ar-BH
+currency/essentials/v1, ar-ER, 1714B, 1452B, 93abb9882ea811b3
+currency/essentials/v1, ar-IL, -> ar-BH
+currency/essentials/v1, ar-IQ, -> ar-BH
+currency/essentials/v1, ar-JO, -> ar-BH
+currency/essentials/v1, ar-KM, 1703B, 1441B, 33be4732fe2302b1
+currency/essentials/v1, ar-KW, -> ar-BH
+currency/essentials/v1, ar-LB, 1695B, 1433B, 545a7557fe232b96
+currency/essentials/v1, ar-MR, -> ar-BH
+currency/essentials/v1, ar-OM, -> ar-BH
+currency/essentials/v1, ar-PS, -> ar-BH
+currency/essentials/v1, ar-QA, -> ar-BH
+currency/essentials/v1, ar-SA, -> ar-BH
+currency/essentials/v1, ar-SD, -> ar-BH
+currency/essentials/v1, ar-SO, 1712B, 1450B, 96d597eaf92cd319
+currency/essentials/v1, ar-SS, 1709B, 1447B, b8eefe1de94f9716
+currency/essentials/v1, ar-SY, -> ar-BH
+currency/essentials/v1, ar-TD, -> ar-BH
+currency/essentials/v1, ar-YE, -> ar-BH
 currency/essentials/v1, as, 1288B, 1028B, 16bdd2e6480556ad
 currency/essentials/v1, ast, 1241B, 979B, 2a9a851a6c341fba
 currency/essentials/v1, az, 1285B, 1023B, 71bc382610ab8299
@@ -31654,7 +31669,7 @@ currency/essentials/v1, es-UY, 1263B, 1003B, 6b186ae041844822
 currency/essentials/v1, es-VE, 1252B, 994B, abebc4f11c7f5588
 currency/essentials/v1, et, 1277B, 1017B, 576c86d11e400191
 currency/essentials/v1, eu, 1292B, 1032B, 7d408f06c6e63d1f
-currency/essentials/v1, fa, 1323B, 1063B, 64e4b03e7435b6b0
+currency/essentials/v1, fa, 1321B, 1061B, 9544495762d2b38a
 currency/essentials/v1, fa-AF, 1311B, 1051B, aa6cde70f4decd79
 currency/essentials/v1, ff-Adlm, 1375B, 1113B, 4e6096c564e1a430
 currency/essentials/v1, ff-Adlm-BF, 1371B, 1109B, 9eecf466c440eb5e

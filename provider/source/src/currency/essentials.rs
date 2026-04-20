@@ -466,6 +466,11 @@ fn test_basic() {
         ar_eg_payload.standard_pattern.interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
+    assert_eq!(
+        ar_eg_payload.standard_pattern.as_ref(),
+        ar_eg_payload.accounting_pattern.as_ref(),
+        "CLDR ar-EG `currencyFormats` for default `arab` define accounting identical to standard"
+    );
 
     let (ar_eg_egp_short, ar_eg_egp_narrow) = get_placeholders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),
