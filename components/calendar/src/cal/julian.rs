@@ -71,9 +71,9 @@ use tinystr::tinystr;
 /// The calendar was used [incorrectly](https://en.wikipedia.org/wiki/Julian_calendar#Leap_year_error)
 /// for a while after adoption, so the first year where the months align with this proleptic
 /// implementation is probably 4 CE.
-/// 
+///
 /// # Examples
-/// 
+///
 /// The `Julian` variant of [`AnyCalendar`](crate::AnyCalendar) can be used to implement a date that
 /// switches between [`Julian`] and [`Gregorian`](crate::cal::Gregorian).
 ///
