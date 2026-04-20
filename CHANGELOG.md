@@ -226,6 +226,7 @@ Several crates have had patch releases in the 2.2 stream:
     - `icu_provider_registry`
         - Various new data markers as needed by component crates
     - `icu_provider_source`
+        - `CurrencyEssentials` datagen: select `currencyFormats` from `numbers.json` `defaultNumberingSystem` (with Sindhi `latn` override per unicode-org#5374, then `latn` fallback) instead of always using `latn` (unicode-org#3838).
         - Support for generating any new data markers as needed by component crates
         - Update datagen to TZDB 2025c (unicode-org#7306)
         - Always generate fast-mode data for `NFD` and `NFKD` tries (unicode-org#7222)

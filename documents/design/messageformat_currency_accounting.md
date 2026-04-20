@@ -96,13 +96,13 @@ Both are **`NumberPattern`** values and therefore **may carry `negative`** when 
 
 [`CurrencyEssentials`](../../components/experimental/src/dimension/provider/currency/essentials.rs) **does** serialize CLDR **standard** / **accounting** / **standard-alphaNextToNumber** / **accounting-alphaNextToNumber** patterns and optional **`;` negative** subpatterns from [`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs) (`create_pattern` on `pattern.positive`, `create_optional_negative_subpattern` on `pattern.negative`).
 
-Remaining datagen limitations called out in source (see **#4677**, **#6064**, **#3838**):
+Remaining datagen limitations called out in source (see **#4677**, **#6064**); **#3838** is addressed for locale-default numbering systems in `extract_currency_essentials` (see table below).
 
 | Topic | Location | Behavior |
 | --- | --- | --- |
 | Primary pattern body | `create_pattern` | Still maps **`pattern.positive`** only into each main `DoublePlaceholderPattern` (correct for the positive arm; negative is a sibling field today). |
 | `PatternSelection` (standard vs alpha-next-to-number) | `currency_pattern_selection` | Uses **`pattern.positive`** only when inspecting currency vs digit placement (**#6064**). |
-| Currency format numbering system | `extract_currency_essentials` | Reads `currency_patterns` under **`"latn"`** only (**#3838**). |
+| Currency format numbering system | `extract_currency_essentials` | Reads `currencyFormats` for **`numbers.json` `defaultNumberingSystem`**, with the Sindhi→`latn` override ([#5374](https://github.com/unicode-org/icu4x/issues/5374)) and a **`latn` map fallback** if the default key is absent ([#3838](https://github.com/unicode-org/icu4x/issues/3838)). |
 | Compact short currency patterns | [`provider/source/src/currency/compact.rs`](../../provider/source/src/currency/compact.rs) | May still log when **`pattern.negative`** is present and build from **positive** only. |
 
 ---
@@ -137,7 +137,7 @@ Pick one approach in **#4677** / an RFC before large changes.
 ### Option A — Full CLDR parity on every branch
 
 - Tighten **compact** datagen when CLDR supplies negative subpatterns, and align **pattern selection** with optional negative arms (**#6064**).
-- Resolve **numbering-system–aware** currency pattern extraction (**#3838**) so `CurrencyEssentials` matches the resolved locale digits context end-to-end.
+- **#3838 (locale default):** `extract_currency_essentials` keys `currencyFormats` off `defaultNumberingSystem`; keep validating end-to-end where explicit `-u-nu-*` differs from the locale default.
 
 ### Option B — Phased
 
@@ -155,7 +155,7 @@ Pick one approach in **#4677** / an RFC before large changes.
 | Layer | What to run / extend |
 | --- | --- |
 | MessageFormat | `cargo test -p icu_experimental --test messageformat_conformance --all-features`; ICU4X-only [`currency.json`](../../components/experimental/tests/messageformat/fixtures/tests/functions/currency.json) |
-| Datagen | Unit tests in [`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs) (`test_basic` ~305+); today includes `TODO(#6064)` expectations for placeholders (e.g. EGP) — **expect these to evolve** when negative subpatterns affect selection |
+| Datagen | Unit tests in [`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs) (`test_basic` ~305+); golden expectations for placeholders (e.g. EGP) **may still evolve** under **#6064** when negative subpatterns affect selection |
 | Dimension | Formatter tests under `components/experimental/src/dimension/currency/` and any provider JSON snapshots |
 
 ---
@@ -164,9 +164,9 @@ Pick one approach in **#4677** / an RFC before large changes.
 
 | Tracker | Role |
 | --- | --- |
-| [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677) | MessageFormat **scope done:** ISO / hidden / stitch paths use CLDR outer literals; ASCII-only wrap removed. **Remaining:** compact datagen / pattern-selection / numbering-system follow-ups (see **#6064**, **#3838**). |
+| [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677) | MessageFormat **scope done:** ISO / hidden / stitch paths use CLDR outer literals; ASCII-only wrap removed. **Remaining:** compact datagen / pattern-selection follow-ups (see **#6064**); locale-default numbering system for `CurrencyEssentials` datagen is wired (**#3838**). |
 | **#6064** (see TODOs in source) | Negative **subpattern** in currency pattern parsing / `PatternSelection` and tests ([`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs), [`components/experimental/src/dimension/currency/format.rs`](../../components/experimental/src/dimension/currency/format.rs), compact format). |
-| **#3838** (see TODOs in source) | Currency patterns should follow **resolved numbering system**, not hard-coded `"latn"` in datagen ([`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs)). |
+| **#3838** | `extract_currency_essentials` now keys `currencyFormats` off **`defaultNumberingSystem`** (see §4). Remaining scope on the issue, if any, is for **marker- or option-scoped** numbering systems beyond the locale default. |
 
 ---
 
