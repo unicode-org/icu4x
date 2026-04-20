@@ -31,6 +31,24 @@ use icu_provider::DataProvider;
 use icu::experimental::dimension::provider::currency::essentials::*;
 use icu_provider::prelude::*;
 
+/// When positive and negative CLDR subpatterns disagree on whether the symbol is
+/// “alpha next to number”, keep a single selection for the locale until data carries both.
+#[inline]
+fn merge_currency_pattern_selections(
+    positive: PatternSelection,
+    negative: PatternSelection,
+) -> PatternSelection {
+    if negative == positive {
+        positive
+    } else if positive == PatternSelection::StandardAlphaNextToNumber
+        || negative == PatternSelection::StandardAlphaNextToNumber
+    {
+        PatternSelection::StandardAlphaNextToNumber
+    } else {
+        PatternSelection::Standard
+    }
+}
+
 /// Returns the pattern selection for a currency.
 /// For example:
 ///    if the pattern is ¤#,##0.00 and the symbol is EGP,
@@ -99,19 +117,7 @@ fn currency_pattern_selection(
         None => positive_selection,
         Some(negative) => {
             let negative_selection = classify_subpattern(negative)?;
-            if negative_selection == positive_selection {
-                positive_selection
-            } else {
-                // unicode-org#6064: CLDR can disagree across `;` arms. Until per-polarity selections
-                // exist in data, use StandardAlphaNextToNumber when either arm needs it.
-                if positive_selection == PatternSelection::StandardAlphaNextToNumber
-                    || negative_selection == PatternSelection::StandardAlphaNextToNumber
-                {
-                    PatternSelection::StandardAlphaNextToNumber
-                } else {
-                    PatternSelection::Standard
-                }
-            }
+            merge_currency_pattern_selections(positive_selection, negative_selection)
         }
     })
 }
@@ -476,4 +482,46 @@ fn test_basic() {
     );
     assert_eq!(ar_eg_usd_short, "US$");
     assert_eq!(ar_eg_usd_narrow, "US$");
+}
+
+#[cfg(test)]
+mod merge_currency_pattern_selections_tests {
+    use super::merge_currency_pattern_selections;
+    use icu::experimental::dimension::provider::currency::essentials::PatternSelection;
+
+    #[test]
+    fn merge_identical() {
+        assert_eq!(
+            merge_currency_pattern_selections(
+                PatternSelection::Standard,
+                PatternSelection::Standard
+            ),
+            PatternSelection::Standard
+        );
+        assert_eq!(
+            merge_currency_pattern_selections(
+                PatternSelection::StandardAlphaNextToNumber,
+                PatternSelection::StandardAlphaNextToNumber
+            ),
+            PatternSelection::StandardAlphaNextToNumber
+        );
+    }
+
+    #[test]
+    fn merge_union_prefers_alpha_when_either_arm_is_alpha() {
+        assert_eq!(
+            merge_currency_pattern_selections(
+                PatternSelection::Standard,
+                PatternSelection::StandardAlphaNextToNumber
+            ),
+            PatternSelection::StandardAlphaNextToNumber
+        );
+        assert_eq!(
+            merge_currency_pattern_selections(
+                PatternSelection::StandardAlphaNextToNumber,
+                PatternSelection::Standard
+            ),
+            PatternSelection::StandardAlphaNextToNumber
+        );
+    }
 }
