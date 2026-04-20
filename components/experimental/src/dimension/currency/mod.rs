@@ -14,6 +14,8 @@ pub mod long_format;
 pub mod long_formatter;
 pub mod options;
 
+pub use options::CurrencyDisplaySign;
+
 /// A currency code, such as "USD" or "EUR".
 #[derive(Clone, Copy, Debug)]
 #[allow(clippy::exhaustive_structs)] // newtype

@@ -40,6 +40,12 @@ use serde_json::Value;
 /// Tests we cannot pass yet. Entries are `(file_stem, index_as_string)` and
 /// must match the case's position in its fixture file.
 ///
+/// Keep this empty when the SHA in `tests/messageformat/fixtures/UPSTREAM_SHA`
+/// is fully green under
+/// `cargo test -p icu_experimental --test messageformat_conformance --all-features`.
+/// After syncing new WG fixtures, run that command and either fix regressions or
+/// add entries here until the implementation catches up.
+///
 /// Draft `:datetime` / `:date` / `:time` handlers and the spec's
 /// reserved-for-testing `:test:function` / `:test:select` / `:test:format`
 /// handlers are registered by [`run_case`] so every upstream case runs.

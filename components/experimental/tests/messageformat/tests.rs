@@ -7,11 +7,13 @@
 //! Each phase appends tests that exercise the end-to-end public API from an
 //! external-crate perspective.
 
+#[cfg(feature = "compiled_data")]
+use fixed_decimal::Decimal;
 use icu::locale::locale;
 use icu_experimental::messageformat::{
-    ast::Message, function::FunctionOptions, BidiIsolation, BuildError, Direction, FormatError,
-    FormattedPart, FunctionContext, FunctionError, FunctionHandler, MessageFormatter, OwnedInputs,
-    ParseError, ResolvedValue,
+    ast::Message, function::FunctionOptions, BidiIsolation, BidiStrategy, BuildError,
+    DefaultBidiStrategy, Direction, FormatError, FormattedPart, FunctionContext, FunctionError,
+    FunctionHandler, MessageFormatter, OwnedInputs, ParseError, ResolvedValue,
 };
 
 #[test]
@@ -33,6 +35,7 @@ fn phase3_parser_reports_syntax_error() {
 fn phase5_formats_simple_variable_substitution() {
     let formatter = MessageFormatter::builder()
         .source("Hello, {$user}!")
+        .locale_undetermined()
         .build()
         .expect("builder succeeds");
     let inputs: &[(&str, &str)] = &[("user", "Ada")];
@@ -45,6 +48,7 @@ fn phase5_formats_simple_variable_substitution() {
 fn phase5_formats_with_string_function() {
     let formatter = MessageFormatter::builder()
         .source(".input {$who :string}\n{{Hi, {$who}!}}")
+        .locale_undetermined()
         .build()
         .expect("builder succeeds");
     let inputs: &[(&str, &str)] = &[("who", "Grace")];
@@ -59,6 +63,7 @@ fn phase5_formats_with_string_function() {
 fn phase5_unresolved_variable_yields_fallback() {
     let formatter = MessageFormatter::builder()
         .source("Hello, {$missing}!")
+        .locale_undetermined()
         .build()
         .expect("builder succeeds");
     let inputs: &[(&str, &str)] = &[];
@@ -75,6 +80,7 @@ fn phase5_builder_validation_error() {
     // Missing fallback variant should surface as BuildError::Validation.
     let err = MessageFormatter::builder()
         .source(".input {$x :integer}\n.match $x\n1 {{one}}")
+        .locale_undetermined()
         .build()
         .expect_err("validator rejects missing fallback");
     assert!(matches!(err, BuildError::Validation(_)));
@@ -158,6 +164,282 @@ fn matcher_two_selectors_lexicographic_ranking() {
     assert_eq!(out, "star-star");
 }
 
+#[cfg(feature = "compiled_data")]
+#[test]
+fn number_notation_compact_short_english() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$n :number notation=compact}}}")
+        .locale(locale!("en"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("n", 1500_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert_eq!(out, "1.5K");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn number_notation_scientific_ascii_exponent() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$n :number notation=scientific}}}")
+        .locale(locale!("en"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("n", 12345_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert_eq!(out, "1.2345E4");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn number_notation_engineering() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$n :number notation=engineering}}}")
+        .locale(locale!("en"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("n", 12345_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert_eq!(out, "12.345E3");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn number_numbering_system_thai_digits() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$n :number numberingSystem=thai}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("n", 42_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert_eq!(out, "๔๒");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn math_alias_matches_offset_subtract() {
+    let formatter = MessageFormatter::builder()
+        .source(
+            ".input {$n :integer}\n\
+             .local $m = {$n :math subtract=1}\n\
+             .match $n $m\n\
+             1 0 {{ok}}\n\
+             * * {{other}}",
+        )
+        .locale(locale!("en"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("n", 1_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert_eq!(out, "ok");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_display_name_uses_long_formatter() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$p :currency currency=USD currencyDisplay=name}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("p", Decimal::try_from_str("5.01").unwrap());
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    let lower = out.to_lowercase();
+    assert!(
+        lower.contains("dollar") || lower.contains("us "),
+        "unexpected long currency: {out:?}"
+    );
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_display_code_prefixes_iso() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$p :currency currency=USD currencyDisplay=code}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("p", Decimal::from(12_i64));
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert!(out.starts_with("USD"));
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_display_never_hides_currency() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$p :currency currency=EUR currencyDisplay=never}}}")
+        .locale(locale!("de-DE"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("p", 999_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert!(!out.contains("EUR"));
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_display_code_compact_notation_on_amount() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$p :currency currency=USD currencyDisplay=code notation=compact}}}")
+        .locale(locale!("en"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("p", 1500_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert!(out.starts_with("USD "));
+    assert!(out.contains("1.5K"), "compact amount in code mode: {out:?}");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_sign_accounting_parentheses_negative() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$p :currency currency=USD currencySign=accounting}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("p", Decimal::try_from_str("-3.50").unwrap());
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert!(
+        out.starts_with('(') && out.ends_with(')'),
+        "expected parens: {out:?}"
+    );
+    assert!(!out.contains("-"));
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_sign_accounting_uses_standard_form_when_locale_has_no_accounting_pattern() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$p :currency currency=EUR currencySign=accounting}}}")
+        .locale(locale!("de-DE"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("p", Decimal::try_from_str("-3.50").unwrap());
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert!(out.contains('-'));
+    assert!(!out.starts_with('(') && !out.ends_with(')'));
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_sign_accounting_arabic_uses_accounting_affixes() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$p :currency currency=USD currencySign=accounting}}}")
+        .locale(locale!("ar-EG"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("p", Decimal::try_from_str("-3.50").unwrap());
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert!(out.contains('(') && out.contains(')'), "{out:?}");
+    assert!(out.contains('\u{061C}'), "{out:?}");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_symbol_scientific_en_us() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$p :currency currency=USD notation=scientific}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("p", 1500_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert_eq!(out, "$1.5E3");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn currency_name_compact_long_and_short_en_us() {
+    let f_long = MessageFormatter::builder()
+        .source("{{{$p :currency currency=USD currencyDisplay=name notation=compact compactDisplay=long}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let (out_long, errs) =
+        f_long.format_to_string(&OwnedInputs::new().with_number("p", 1_500_000_i64));
+    assert!(errs.is_empty(), "{errs:?}");
+    let lower = out_long.to_lowercase();
+    assert!(
+        lower.contains("million") && lower.contains("dollar"),
+        "{out_long:?}"
+    );
+
+    let f_short = MessageFormatter::builder()
+        .source("{{{$p :currency currency=USD currencyDisplay=name notation=compact compactDisplay=short}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let (out_short, errs) =
+        f_short.format_to_string(&OwnedInputs::new().with_number("p", 1_500_000_i64));
+    assert!(errs.is_empty(), "{errs:?}");
+    let lower = out_short.to_lowercase();
+    assert!(
+        out_short.contains('M') && lower.contains("dollar"),
+        "{out_short:?}"
+    );
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn number_scientific_times_superscript() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$n :number notation=scientific scientificNotation=timesSuperscript}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("n", 1500_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert!(out.contains('\u{00d7}'), "multiplication sign: {out:?}");
+    // Superscript digit ³ (U+00B3) for exponent 3
+    assert!(out.contains('\u{00b3}'), "{out:?}");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn scientific_notation_option_requires_scientific_or_engineering() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$n :number notation=standard scientificNotation=e}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("n", 1_i64);
+    let (_out, errs) = formatter.format_to_string(&inputs);
+    assert!(!errs.is_empty(), "expected option validation error, got ok");
+}
+
+#[cfg(feature = "compiled_data")]
+#[test]
+fn number_scientific_exponent_uses_numbering_system() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$n :number notation=scientific numberingSystem=thai}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("valid");
+    let inputs = OwnedInputs::new().with_number("n", 12345_i64);
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert!(out.contains('E'));
+    // Exponent 4 uses Thai digit ๔
+    assert!(out.contains('๔'), "expected Thai exponent digit: {out:?}");
+}
+
 // ---------------------------------------------------------------------------
 // u-namespace options
 // ---------------------------------------------------------------------------
@@ -167,6 +449,7 @@ fn u_dir_ltr_wraps_with_lri_when_base_is_rtl() {
     let formatter = MessageFormatter::builder()
         .source("before {$x :string u:dir=ltr} after")
         .direction(Direction::Rtl)
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[("x", "LTRtext")];
@@ -180,6 +463,7 @@ fn u_dir_ltr_wraps_with_lri_when_base_is_rtl() {
 fn u_dir_inherit_suppresses_isolation() {
     let formatter = MessageFormatter::builder()
         .source("a {$x :string u:dir=inherit} b")
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[("x", "inner")];
@@ -193,6 +477,7 @@ fn u_dir_inherit_suppresses_isolation() {
 fn u_id_flows_to_parts() {
     let formatter = MessageFormatter::builder()
         .source("{$x :string u:id=label1}")
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[("x", "v")];
@@ -251,6 +536,7 @@ fn custom_function_registered_via_builder() {
     let formatter = MessageFormatter::builder()
         .source("shout {$x :upper}")
         .function("upper", UppercaseFn)
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[("x", "hello")];
@@ -265,6 +551,7 @@ fn custom_function_registered_via_builder() {
 fn unknown_function_yields_fallback_and_error() {
     let formatter = MessageFormatter::builder()
         .source("x {$y :nonexistent}")
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[("y", "v")];
@@ -285,6 +572,7 @@ fn unknown_function_yields_fallback_and_error() {
 fn format_to_parts_emits_text_and_expression() {
     let formatter = MessageFormatter::builder()
         .source("Hi, {$name}!")
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[("name", "Ada")];
@@ -303,6 +591,7 @@ fn format_to_parts_emits_text_and_expression() {
 fn format_to_parts_marks_fallback_kind() {
     let formatter = MessageFormatter::builder()
         .source("{$missing}")
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[];
@@ -330,6 +619,7 @@ fn bidi_isolation_disabled_suppresses_isolates() {
     let formatter = MessageFormatter::builder()
         .source(".input {$who :string}\n{{Hi, {$who}!}}")
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[("who", "Grace")];
@@ -345,6 +635,7 @@ fn bidi_isolation_disabled_suppresses_isolates() {
 #[test]
 fn builder_without_source_errors() {
     let err = MessageFormatter::builder()
+        .locale_undetermined()
         .build()
         .expect_err("no source supplied");
     assert!(matches!(err, BuildError::NoMessage));
@@ -354,6 +645,7 @@ fn builder_without_source_errors() {
 fn builder_syntax_error_propagates() {
     let err = MessageFormatter::builder()
         .source("{$x")
+        .locale_undetermined()
         .build()
         .expect_err("syntax error");
     assert!(matches!(err, BuildError::Parse(ParseError::Syntax { .. })));
@@ -363,6 +655,7 @@ fn builder_syntax_error_propagates() {
 fn duplicate_declaration_is_validation_error() {
     let err = MessageFormatter::builder()
         .source(".input {$x :string}\n.input {$x :string}\n{{{$x}}}")
+        .locale_undetermined()
         .build()
         .expect_err("duplicate declaration");
     assert!(matches!(err, BuildError::Validation(_)));
@@ -393,6 +686,7 @@ fn custom_function_error_surfaces_through_format() {
     let formatter = MessageFormatter::builder()
         .source("x {$y :failing}")
         .function("failing", FailingFn)
+        .locale_undetermined()
         .build()
         .expect("valid");
     let inputs: &[(&str, &str)] = &[("y", "v")];
@@ -426,9 +720,11 @@ fn to_source_round_trip_pattern() {
     for src in sources {
         let a = Message::parse(src).unwrap_or_else(|e| panic!("parse {src:?}: {e:?}"));
         let emitted = a.to_source();
-        let b = Message::parse(&emitted)
-            .unwrap_or_else(|e| panic!("reparse {emitted:?}: {e:?}"));
-        assert_eq!(a, b, "round-trip mismatch\n  src: {src:?}\n  emit: {emitted:?}");
+        let b = Message::parse(&emitted).unwrap_or_else(|e| panic!("reparse {emitted:?}: {e:?}"));
+        assert_eq!(
+            a, b,
+            "round-trip mismatch\n  src: {src:?}\n  emit: {emitted:?}"
+        );
     }
 }
 
@@ -494,11 +790,14 @@ fn empty_expression_is_validation_error() {
 fn missing_fallback_variant_validation_error() {
     let err = MessageFormatter::builder()
         .source(".input {$c :integer}\n.match $c\n1 {{one}}")
+        .locale_undetermined()
         .build()
         .expect_err("no catchall");
     assert!(matches!(
         err,
-        BuildError::Validation(icu_experimental::messageformat::ValidationError::MissingFallbackVariant)
+        BuildError::Validation(
+            icu_experimental::messageformat::ValidationError::MissingFallbackVariant
+        )
     ));
 }
 
@@ -507,6 +806,7 @@ fn unresolved_variable_emits_fallback() {
     let formatter = MessageFormatter::builder()
         .source("Value: {$missing}")
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[];
@@ -522,6 +822,7 @@ fn attributes_do_not_affect_output() {
     let formatter = MessageFormatter::builder()
         .source("x {$y :string @note=|internal| @flag}")
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[("y", "v")];
@@ -556,16 +857,18 @@ fn bidi_isolation_enum_default_matches_bool_true() {
     let a = MessageFormatter::builder()
         .source("{$x :string}")
         .bidi_isolation(BidiIsolation::Default)
+        .locale_undetermined()
         .build()
         .unwrap();
     let b = MessageFormatter::builder()
         .source("{$x :string}")
         .bidi_isolation(true)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[("x", "v")];
     assert_eq!(a.format_to_string(&inputs).0, b.format_to_string(&inputs).0);
-    assert_eq!(a.bidi_isolation(), BidiIsolation::Default);
+    assert!(matches!(a.bidi_isolation(), BidiIsolation::Default));
     assert!(a.bidi_isolation().is_enabled());
 }
 
@@ -574,17 +877,19 @@ fn bidi_isolation_enum_none_matches_bool_false() {
     let a = MessageFormatter::builder()
         .source("{$x :string}")
         .bidi_isolation(BidiIsolation::None)
+        .locale_undetermined()
         .build()
         .unwrap();
     let b = MessageFormatter::builder()
         .source("{$x :string}")
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[("x", "v")];
     assert_eq!(a.format_to_string(&inputs).0, b.format_to_string(&inputs).0);
-    assert_eq!(a.bidi_isolation(), BidiIsolation::None);
-    assert_eq!(b.bidi_isolation(), BidiIsolation::None);
+    assert!(matches!(a.bidi_isolation(), BidiIsolation::None));
+    assert!(matches!(b.bidi_isolation(), BidiIsolation::None));
     assert!(!a.bidi_isolation().is_enabled());
 }
 
@@ -592,9 +897,10 @@ fn bidi_isolation_enum_none_matches_bool_false() {
 fn bidi_isolation_defaults_to_enabled_without_call() {
     let fmt = MessageFormatter::builder()
         .source("{$x :string}")
+        .locale_undetermined()
         .build()
         .unwrap();
-    assert_eq!(fmt.bidi_isolation(), BidiIsolation::Default);
+    assert!(matches!(fmt.bidi_isolation(), BidiIsolation::Default));
     assert!(fmt.bidi_isolation().is_enabled());
 }
 
@@ -613,6 +919,7 @@ fn local_declaration_references_prior_input() {
              {{Hello, {$greeting}!}}",
         )
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[("name", "Ada")];
@@ -626,9 +933,13 @@ fn duplicate_variant_is_validation_error() {
     use icu_experimental::messageformat::ValidationError;
     let err = MessageFormatter::builder()
         .source(".input {$c :integer}\n.match $c\n1 {{a}}\n1 {{b}}\n* {{c}}")
+        .locale_undetermined()
         .build()
         .expect_err("duplicate variant");
-    assert!(matches!(err, BuildError::Validation(ValidationError::DuplicateVariant)));
+    assert!(matches!(
+        err,
+        BuildError::Validation(ValidationError::DuplicateVariant)
+    ));
 }
 
 #[test]
@@ -637,6 +948,7 @@ fn missing_selector_annotation_is_validation_error() {
     // `.match $x` with `$x` never annotated triggers MissingSelectorAnnotation.
     let err = MessageFormatter::builder()
         .source(".match $x\n1 {{a}}\n* {{b}}")
+        .locale_undetermined()
         .build()
         .expect_err("missing annotation");
     assert!(matches!(
@@ -655,6 +967,7 @@ fn markup_with_attributes_emits_but_ignores_attributes() {
     let formatter = MessageFormatter::builder()
         .source("{#link @role=button}click{/link}")
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[];
@@ -675,6 +988,7 @@ fn markup_u_dir_option_triggers_bad_option_error() {
     let formatter = MessageFormatter::builder()
         .source("{#b u:dir=ltr}x{/b}")
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[];
@@ -697,6 +1011,7 @@ fn formatter_is_reusable_across_calls() {
     let formatter = MessageFormatter::builder()
         .source("Hello, {$name}!")
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let a_in: &[(&str, &str)] = &[("name", "Ada")];
@@ -711,6 +1026,7 @@ fn format_into_arbitrary_fmt_write_sink() {
     let formatter = MessageFormatter::builder()
         .source("Hi, {$u}")
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     // Test via a buffered String sink — any `fmt::Write` works.
@@ -737,6 +1053,7 @@ fn string_selector_exact_match_wins_over_catchall() {
              *     {{other}}",
         )
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let apple: &[(&str, &str)] = &[("kind", "apple")];
@@ -755,14 +1072,19 @@ fn unknown_function_in_selector_triggers_bad_selector_and_falls_back() {
              * {{other}}",
         )
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[("x", "1")];
     let (out, errs) = formatter.format_to_string(&inputs);
     assert_eq!(out, "other");
     // Spec requires both UnknownFunction *and* BadSelector.
-    assert!(errs.iter().any(|e| matches!(e, FormatError::UnknownFunction { .. })));
-    assert!(errs.iter().any(|e| matches!(e, FormatError::BadSelector { .. })));
+    assert!(errs
+        .iter()
+        .any(|e| matches!(e, FormatError::UnknownFunction { .. })));
+    assert!(errs
+        .iter()
+        .any(|e| matches!(e, FormatError::BadSelector { .. })));
 }
 
 // ---------------------------------------------------------------------------
@@ -772,15 +1094,129 @@ fn unknown_function_in_selector_triggers_bad_selector_and_falls_back() {
 #[test]
 fn builder_accepts_pre_validated_message() {
     use icu_experimental::messageformat::ValidatedMessage;
-    let validated: ValidatedMessage = Message::parse("Hello, {$u}!")
-        .unwrap()
-        .try_into()
-        .unwrap();
+    let validated: ValidatedMessage = Message::parse("Hello, {$u}!").unwrap().try_into().unwrap();
     let formatter = MessageFormatter::builder()
         .message(validated)
         .bidi_isolation(false)
+        .locale_undetermined()
         .build()
         .unwrap();
     let inputs: &[(&str, &str)] = &[("u", "Ada")];
     assert_eq!(formatter.format_to_string(&inputs).0, "Hello, Ada!");
+}
+
+// ---------------------------------------------------------------------------
+// Explicit-locale enforcement + pluggable bidi strategies
+// ---------------------------------------------------------------------------
+
+#[test]
+fn missing_locale_surfaces_as_build_error() {
+    let err = MessageFormatter::builder()
+        .source("Hello")
+        .build()
+        .expect_err("locale is required");
+    assert!(matches!(err, BuildError::MissingLocale));
+}
+
+#[test]
+fn custom_bidi_strategy_runs() {
+    use std::borrow::Cow;
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct Bracket;
+    impl BidiStrategy for Bracket {
+        fn isolate<'a>(
+            &'a self,
+            _base: Direction,
+            _placeholder: Option<Direction>,
+            _explicit: bool,
+        ) -> (Cow<'a, str>, Cow<'a, str>) {
+            (Cow::Borrowed("["), Cow::Borrowed("]"))
+        }
+    }
+
+    let formatter = MessageFormatter::builder()
+        .source("Hi, {$u :string}!")
+        .locale(locale!("en"))
+        .bidi_isolation(BidiIsolation::Custom(Arc::new(Bracket)))
+        .build()
+        .unwrap();
+    let inputs: &[(&str, &str)] = &[("u", "Ada")];
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty());
+    assert_eq!(out, "Hi, [Ada]!");
+}
+
+#[test]
+fn custom_strategy_can_delegate_to_default() {
+    use std::borrow::Cow;
+    use std::sync::Arc;
+
+    // Wraps the default isolate pair in extra marker characters to prove
+    // both delegation and dynamic (owned) returns work.
+    #[derive(Debug, Default)]
+    struct WrapMarker;
+    impl BidiStrategy for WrapMarker {
+        fn isolate<'a>(
+            &'a self,
+            base: Direction,
+            placeholder: Option<Direction>,
+            explicit: bool,
+        ) -> (Cow<'a, str>, Cow<'a, str>) {
+            let (pre, suf) = DefaultBidiStrategy.isolate(base, placeholder, explicit);
+            (
+                Cow::Owned(format!("<{}", pre)),
+                Cow::Owned(format!("{}>", suf)),
+            )
+        }
+    }
+
+    let formatter = MessageFormatter::builder()
+        .source("{$u :string}")
+        .locale(locale!("en"))
+        .bidi_isolation(BidiIsolation::Custom(Arc::new(WrapMarker)))
+        .build()
+        .unwrap();
+    let inputs: &[(&str, &str)] = &[("u", "x")];
+    let (out, _errs) = formatter.format_to_string(&inputs);
+    // DefaultBidiStrategy emits FSI (U+2068)+PDI (U+2069) when direction
+    // is unknown; the marker strategy brackets them.
+    assert_eq!(out, "<\u{2068}x\u{2069}>");
+}
+
+/// End-to-end coverage for draft `:unit` (WG fixtures do not include `unit.json`
+/// at the pinned SHA — see `messageformat-tr35-spec-tracking.md`).
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+#[test]
+fn messageformatter_end_to_end_unit_without_usage() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$len :unit unit=meter}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("build");
+    let inputs = OwnedInputs::new().with_unit("len", 2_i64, "meter");
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty(), "{errs:?}");
+    assert!(
+        out.contains('2') && (out.contains("meter") || out.contains('m')),
+        "unexpected output: {out:?}"
+    );
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+#[test]
+fn messageformatter_unit_usage_converts_to_preferred_region_unit() {
+    let formatter = MessageFormatter::builder()
+        .source("{{{$len :unit unit=meter usage=road}}}")
+        .locale(locale!("en-US"))
+        .build()
+        .expect("build");
+    let inputs = OwnedInputs::new().with_unit("len", 2_i64, "meter");
+    let (out, errs) = formatter.format_to_string(&inputs);
+    assert!(errs.is_empty(), "{errs:?}");
+    assert!(
+        out.contains("ft") || out.contains("foot"),
+        "expected road usage to pick feet in en-US, got {out:?}"
+    );
 }

@@ -7,6 +7,21 @@
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
+/// Whether to use CLDR **standard** or **accounting** currency format strings.
+///
+/// This corresponds to ECMA-402 / LDML `currencySign` (`standard` vs `accounting`) for
+/// short/narrow currency formatting backed by [`CurrencyEssentials`](crate::dimension::provider::currency::essentials::CurrencyEssentials).
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
+pub enum CurrencyDisplaySign {
+    /// CLDR `standard` currency patterns (`currencyFormats` `standard` / `standard-alphaNextToNumber`).
+    #[default]
+    Standard,
+    /// CLDR `accounting` currency patterns (`accounting` / `accounting-alphaNextToNumber`).
+    Accounting,
+}
+
 /// A collection of configuration options that determine the formatting behavior of
 /// [`CurrencyFormatter`](crate::dimension::currency::formatter::CurrencyFormatter).
 #[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
@@ -15,11 +30,26 @@ use serde::{Deserialize, Serialize};
 pub struct CurrencyFormatterOptions {
     /// The width of the currency format.
     pub width: Width,
+    /// Standard vs accounting currency patterns from locale data.
+    pub currency_display_sign: CurrencyDisplaySign,
+}
+
+/// Options for [`LongCurrencyFormatter`](crate::dimension::currency::long_formatter::LongCurrencyFormatter)
+/// and [`LongCompactCurrencyFormatter`](crate::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter).
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
+pub struct LongCurrencyFormatterOptions {
+    /// Standard vs accounting currency patterns (same CLDR keys as short currency formatting).
+    pub currency_display_sign: CurrencyDisplaySign,
 }
 
 impl From<Width> for CurrencyFormatterOptions {
     fn from(width: Width) -> Self {
-        Self { width }
+        Self {
+            width,
+            currency_display_sign: CurrencyDisplaySign::Standard,
+        }
     }
 }
 

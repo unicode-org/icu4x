@@ -1083,8 +1083,9 @@ mod to_source_tests {
     fn assert_round_trip(src: &str) {
         let parsed = Message::parse(src).expect("source parses");
         let emitted = parsed.to_source();
-        let reparsed =
-            Message::parse(&emitted).unwrap_or_else(|e| panic!("reparse failed: {e:?}\n  orig: {src:?}\n  emitted: {emitted:?}"));
+        let reparsed = Message::parse(&emitted).unwrap_or_else(|e| {
+            panic!("reparse failed: {e:?}\n  orig: {src:?}\n  emitted: {emitted:?}")
+        });
         assert_eq!(parsed, reparsed, "\norig:    {src:?}\nemitted: {emitted:?}");
     }
 

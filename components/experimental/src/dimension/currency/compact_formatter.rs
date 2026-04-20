@@ -7,7 +7,7 @@ use core::fmt::Display;
 use crate::dimension::provider::{
     currency::compact::ShortCurrencyCompactV1, currency::essentials::CurrencyEssentialsV1,
 };
-use fixed_decimal::Decimal;
+use fixed_decimal::{Decimal, Sign};
 use icu_decimal::preferences::CompactDecimalFormatterPreferences;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
@@ -15,7 +15,10 @@ use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-use super::{options::CurrencyFormatterOptions, CurrencyCode};
+use super::{
+    options::{CurrencyDisplaySign, CurrencyFormatterOptions},
+    CurrencyCode,
+};
 
 extern crate alloc;
 
@@ -216,10 +219,21 @@ impl CompactCurrencyFormatter {
         value: &'l Decimal,
         currency_code: &'l CurrencyCode,
     ) -> impl Writeable + Display + 'l {
-        let (currency_placeholder, pattern, _pattern_selection) = self
-            .essential
-            .get()
-            .name_and_pattern(self.options.width, currency_code);
+        let value_is_negative_for_resolve = matches!(
+            self.options.currency_display_sign,
+            CurrencyDisplaySign::Accounting
+        ) && value.sign() == Sign::Negative;
+        let resolved = self.essential.get().resolve_currency_pattern(
+            self.options.width,
+            currency_code,
+            self.options.currency_display_sign,
+            value_is_negative_for_resolve,
+        );
+        let output_sign = if resolved.sign_encoded_in_pattern {
+            Sign::None
+        } else {
+            value.sign()
+        };
 
         // TODO: The current behavior is the behavior when there is no compact currency pattern found.
         // Therefore, in the next PR, we will add the code to handle using the compact currency patterns.
@@ -230,14 +244,14 @@ impl CompactCurrencyFormatter {
             .get_pattern_and_significand(&value.absolute, &self.plural_rules);
 
         self.decimal_formatter.format_sign(
-            value.sign,
-            pattern.interpolate((
+            output_sign,
+            resolved.pattern.interpolate((
                 compact_pattern
                     .unwrap_or(icu_pattern::SinglePlaceholderPattern::PASS_THROUGH)
                     .interpolate([self
                         .decimal_formatter
                         .format_unsigned(icu_decimal::Cow::Owned(significand))]),
-                currency_placeholder,
+                resolved.currency,
             )),
         )
     }

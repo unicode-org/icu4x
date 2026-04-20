@@ -96,9 +96,20 @@ pub enum ValidationError {
 /// Errors produced while building a [`super::MessageFormatter`].
 #[non_exhaustive]
 #[derive(Debug, Clone, Display, PartialEq, Eq)]
+#[ignore_extra_doc_attributes]
 pub enum BuildError {
     /// No message source or pre-parsed message supplied to the builder
     NoMessage,
+    /// No locale supplied to the builder
+    ///
+    /// The builder requires an explicit locale so that locale-sensitive
+    /// functions (`:number`, `:integer`, `:percent`, `:currency`, `:date` /
+    /// `:time` / `:datetime`) cannot silently produce root-locale output.
+    /// Call [`super::MessageFormatterBuilder::locale`] with a concrete
+    /// [`icu_locale_core::Locale`], or
+    /// [`super::MessageFormatterBuilder::locale_undetermined`] to opt into
+    /// `und` explicitly.
+    MissingLocale,
     /// Parse error: {0}
     Parse(ParseError),
     /// Validation error: {0}
@@ -274,6 +285,10 @@ mod tests {
         assert_eq!(
             BuildError::NoMessage.to_string(),
             "No message source or pre-parsed message supplied to the builder"
+        );
+        assert_eq!(
+            BuildError::MissingLocale.to_string(),
+            "No locale supplied to the builder"
         );
         // ValidationError flows through both From impls and normalizes to
         // BuildError::Validation — never BuildError::Parse — even when

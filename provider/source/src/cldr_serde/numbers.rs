@@ -306,6 +306,10 @@ pub(crate) struct CurrencyFormattingPatterns {
     /// Standard pattern
     pub(crate) standard: NumberPattern,
 
+    /// Accounting pattern (CLDR `currencyFormats` — often includes a `;` negative subpattern).
+    #[serde(rename = "accounting")]
+    pub(crate) accounting: Option<NumberPattern>,
+
     /// Contains the compact currency patterns for short compact currency formatting
     #[serde(rename = "short")]
     pub(crate) compact_short: Option<ShortCompactCurrencyPatterns>,
@@ -313,6 +317,10 @@ pub(crate) struct CurrencyFormattingPatterns {
     /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
     pub(crate) standard_alpha_next_to_number: Option<NumberPattern>,
+
+    /// Accounting alpha-next-to-number pattern.
+    #[serde(rename = "accounting-alphaNextToNumber")]
+    pub(crate) accounting_alpha_next_to_number: Option<NumberPattern>,
 
     #[serde(rename = "unitPattern-count-0")]
     pub(crate) pattern_explicit_zero: Option<PatternString<DoublePlaceholder>>,

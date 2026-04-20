@@ -9,13 +9,20 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::{long_formatter::LongCurrencyFormatter, CurrencyCode};
+    use crate::dimension::currency::{
+        long_formatter::LongCurrencyFormatter, options::LongCurrencyFormatterOptions, CurrencyCode,
+    };
 
     #[test]
     pub fn test_en_us() {
         let currency_preferences = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCurrencyFormatter::try_new(currency_preferences, &currency_code).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(
+            currency_preferences,
+            &currency_code,
+            LongCurrencyFormatterOptions::default(),
+        )
+        .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -32,7 +39,12 @@ mod tests {
     pub fn test_fr_fr() {
         let currency_preferences = locale!("fr-FR").into();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt = LongCurrencyFormatter::try_new(currency_preferences, &currency_code).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(
+            currency_preferences,
+            &currency_code,
+            LongCurrencyFormatterOptions::default(),
+        )
+        .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -49,7 +61,12 @@ mod tests {
     pub fn test_ar_eg() {
         let currency_preferences = locale!("ar-EG").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let fmt = LongCurrencyFormatter::try_new(currency_preferences, &currency_code).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(
+            currency_preferences,
+            &currency_code,
+            LongCurrencyFormatterOptions::default(),
+        )
+        .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();

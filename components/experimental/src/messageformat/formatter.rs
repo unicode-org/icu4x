@@ -18,7 +18,7 @@ use core::fmt;
 use icu_locale_core::{locale, Locale};
 
 use super::ast::{Message, Pattern, PatternElement};
-use super::bidi::{isolates_for, BidiIsolation, Direction};
+use super::bidi::{self, BidiIsolation, BidiStrategy, Direction};
 use super::error::{BuildError, FormatError};
 use super::function::FunctionRegistry;
 use super::input::InputValues;
@@ -70,7 +70,7 @@ impl MessageFormatter {
     {
         let opts = WriteOpts {
             base_direction: self.direction,
-            bidi_isolation: self.bidi_isolation.is_enabled(),
+            bidi_isolation: self.bidi_strategy(),
         };
         match self.message.as_message() {
             Message::Pattern {
@@ -150,7 +150,7 @@ impl MessageFormatter {
         let mut parts: Vec<FormattedPart> = Vec::new();
         let opts = WriteOpts {
             base_direction: self.direction,
-            bidi_isolation: self.bidi_isolation.is_enabled(),
+            bidi_isolation: self.bidi_strategy(),
         };
         let errs = match self.message.as_message() {
             Message::Pattern {
@@ -244,15 +244,28 @@ impl MessageFormatter {
     /// The configured bidi-isolation strategy. Use
     /// [`BidiIsolation::is_enabled`] (or pattern-match the enum directly)
     /// if you just need a yes/no signal.
-    pub fn bidi_isolation(&self) -> BidiIsolation {
-        self.bidi_isolation
+    pub fn bidi_isolation(&self) -> &BidiIsolation {
+        &self.bidi_isolation
+    }
+
+    /// Resolve the configured [`BidiIsolation`] to a strategy reference, or
+    /// `None` if isolation is disabled. Used by the formatting loops.
+    fn bidi_strategy(&self) -> Option<&dyn BidiStrategy> {
+        match &self.bidi_isolation {
+            BidiIsolation::None => None,
+            BidiIsolation::Default => Some(&bidi::DEFAULT_BIDI),
+            BidiIsolation::Custom(s) => Some(s.as_ref()),
+        }
     }
 }
 
 #[derive(Clone, Copy)]
-struct WriteOpts {
+struct WriteOpts<'a> {
     base_direction: Direction,
-    bidi_isolation: bool,
+    /// `None` = no isolation (fast path); `Some` delegates to the strategy,
+    /// covering both the default and any caller-supplied strategy through
+    /// one code path.
+    bidi_isolation: Option<&'a dyn BidiStrategy>,
 }
 
 fn push_bidi_isolation_parts(out: &mut Vec<FormattedPart>, isolate: &str) {
@@ -265,7 +278,7 @@ fn collect_pattern_parts<V>(
     resolver: &mut Resolver<'_, V>,
     pattern: &Pattern,
     out: &mut Vec<FormattedPart>,
-    opts: WriteOpts,
+    opts: WriteOpts<'_>,
 ) where
     V: InputValues + ?Sized,
 {
@@ -278,17 +291,20 @@ fn collect_pattern_parts<V>(
             }
             PatternElement::Expression(expr) => {
                 let v = resolver.resolve_expression(expr);
-                if opts.bidi_isolation {
-                    let (prefix, suffix) =
-                        isolates_for(opts.base_direction, v.direction(), v.direction_explicit());
-                    push_bidi_isolation_parts(out, prefix);
+                if let Some(strategy) = opts.bidi_isolation {
+                    let (prefix, suffix) = strategy.isolate(
+                        opts.base_direction,
+                        v.direction(),
+                        v.direction_explicit(),
+                    );
+                    push_bidi_isolation_parts(out, &prefix);
                     out.push(FormattedPart::Expression {
                         kind: v.part_kind().into(),
                         value: v.text().into(),
                         id: v.u_id().map(Into::into),
                         direction: v.direction(),
                     });
-                    push_bidi_isolation_parts(out, suffix);
+                    push_bidi_isolation_parts(out, &suffix);
                     continue;
                 }
                 out.push(FormattedPart::Expression {
@@ -333,7 +349,7 @@ fn write_pattern<V, W>(
     resolver: &mut Resolver<'_, V>,
     pattern: &Pattern,
     out: &mut W,
-    opts: WriteOpts,
+    opts: WriteOpts<'_>,
 ) -> Result<(), fmt::Error>
 where
     V: InputValues + ?Sized,
@@ -344,12 +360,15 @@ where
             PatternElement::Text(s) => out.write_str(s)?,
             PatternElement::Expression(expr) => {
                 let v = resolver.resolve_expression(expr);
-                if opts.bidi_isolation {
-                    let (prefix, suffix) =
-                        isolates_for(opts.base_direction, v.direction(), v.direction_explicit());
-                    out.write_str(prefix)?;
+                if let Some(strategy) = opts.bidi_isolation {
+                    let (prefix, suffix) = strategy.isolate(
+                        opts.base_direction,
+                        v.direction(),
+                        v.direction_explicit(),
+                    );
+                    out.write_str(&prefix)?;
                     out.write_str(v.text())?;
-                    out.write_str(suffix)?;
+                    out.write_str(&suffix)?;
                 } else {
                     out.write_str(v.text())?;
                 }
@@ -398,11 +417,23 @@ impl MessageFormatterBuilder {
     }
 
     /// Set the locale used for number formatting, plural rules, and future
-    /// locale-sensitive functions. Defaults to `und` when not set — note
-    /// that `und` yields root-locale behavior silently, so set an explicit
-    /// locale whenever a localized result is expected.
+    /// locale-sensitive functions.
+    ///
+    /// **Required.** [`Self::build`] returns [`BuildError::MissingLocale`]
+    /// if no locale was supplied — this prevents callers from silently
+    /// shipping root-locale output. If root-locale behavior is genuinely
+    /// desired, call [`Self::locale_undetermined`] instead.
     pub fn locale(mut self, locale: Locale) -> Self {
         self.locale = Some(locale);
+        self
+    }
+
+    /// Explicitly opt in to undetermined-locale (`und`) behavior. Equivalent
+    /// to `.locale(locale!("und"))` but self-documents the intent for
+    /// future readers. Locale-sensitive functions will emit root-locale
+    /// output; this is almost never what you want for user-facing messages.
+    pub fn locale_undetermined(mut self) -> Self {
+        self.locale = Some(locale!("und"));
         self
     }
 
@@ -413,9 +444,18 @@ impl MessageFormatterBuilder {
     }
 
     /// Set the bidi-isolation strategy for expression output. Defaults to
-    /// [`BidiIsolation::Default`]. Accepts either a [`BidiIsolation`] value
-    /// or a `bool` (`true` → [`BidiIsolation::Default`], `false` →
-    /// [`BidiIsolation::None`]).
+    /// [`BidiIsolation::Default`]. Accepts any value convertible into a
+    /// [`BidiIsolation`]:
+    ///
+    /// - [`BidiIsolation`] itself (including
+    ///   [`BidiIsolation::Custom`] for a caller-supplied
+    ///   [`super::BidiStrategy`]);
+    /// - `bool` — `true` → [`BidiIsolation::Default`], `false` →
+    ///   [`BidiIsolation::None`];
+    /// - `Arc<dyn BidiStrategy>` — shorthand for
+    ///   [`BidiIsolation::Custom`];
+    /// - the unit structs [`super::DefaultBidiStrategy`] and
+    ///   [`super::NoneBidiStrategy`].
     pub fn bidi_isolation(mut self, mode: impl Into<BidiIsolation>) -> Self {
         self.bidi_isolation = Some(mode.into());
         self
@@ -456,7 +496,7 @@ impl MessageFormatterBuilder {
         let registry = self
             .registry
             .unwrap_or_else(FunctionRegistry::default_registry);
-        let locale = self.locale.unwrap_or(locale!("und"));
+        let locale = self.locale.ok_or(BuildError::MissingLocale)?;
         // When the caller did not set an explicit base direction, derive it
         // from the locale via LocaleDirectionality per formatting.md — RTL
         // locales get an RTL message base direction.
@@ -484,7 +524,11 @@ mod tests {
     use crate::messageformat::error::FunctionError;
 
     fn fmt(src: &str, inputs: &[(&str, &str)]) -> (String, Vec<FormatError>) {
-        let f = MessageFormatter::builder().source(src).build().unwrap();
+        let f = MessageFormatter::builder()
+            .source(src)
+            .locale_undetermined()
+            .build()
+            .unwrap();
         f.format_to_string(&inputs)
     }
 
@@ -699,6 +743,7 @@ mod tests {
     fn datetime_handler_registers_under_unstable() {
         let f = MessageFormatter::builder()
             .source("On {$d :datetime} we met.")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("d", "2026-04-19T12:00:00")];
@@ -712,6 +757,7 @@ mod tests {
     fn date_time_parts_carry_correct_kind() {
         let f = MessageFormatter::builder()
             .source("{$d :date}/{$t :time}/{$dt :datetime}")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[
@@ -737,6 +783,7 @@ mod tests {
     fn parts_plain_text() {
         let f = MessageFormatter::builder()
             .source("Hello, world!")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[];
@@ -754,6 +801,7 @@ mod tests {
     fn parts_text_plus_expression() {
         let f = MessageFormatter::builder()
             .source("Hello, {$user}!")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("user", "Ada")];
@@ -825,6 +873,7 @@ mod tests {
     fn parts_u_id_propagates() {
         let f = MessageFormatter::builder()
             .source("{$x :string u:id=my-id}")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "hi")];
@@ -848,6 +897,7 @@ mod tests {
     fn parts_markup_emitted() {
         let f = MessageFormatter::builder()
             .source("a{#b}bold{/b}c")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[];
@@ -886,6 +936,7 @@ mod tests {
         let f = MessageFormatter::builder()
             .source("a {$x :string u:dir=rtl} b")
             .direction(Direction::Ltr)
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "xxx")];
@@ -913,6 +964,7 @@ mod tests {
     fn parts_fallback_kind_on_unresolved() {
         let f = MessageFormatter::builder()
             .source("Hi, {$ghost}!")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[];
@@ -941,6 +993,7 @@ mod tests {
         let formatter = MessageFormatter::builder()
             .source("a {$x :string u:dir=ltr} b")
             .direction(Direction::Rtl)
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "world")];
@@ -954,6 +1007,7 @@ mod tests {
         let formatter = MessageFormatter::builder()
             .source("a {$x :string u:dir=rtl} b")
             .direction(Direction::Ltr)
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "שלום")];
@@ -967,6 +1021,7 @@ mod tests {
         let formatter = MessageFormatter::builder()
             .source("{$x :string u:dir=auto}")
             .direction(Direction::Ltr)
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "?")];
@@ -979,6 +1034,7 @@ mod tests {
         let formatter = MessageFormatter::builder()
             .source("{$x :string u:dir=inherit}")
             .direction(Direction::Rtl)
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "xxx")];
@@ -993,6 +1049,7 @@ mod tests {
         let formatter = MessageFormatter::builder()
             .source("{$x :string u:dir=ltr}")
             .direction(Direction::Ltr)
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "world")];
@@ -1006,6 +1063,7 @@ mod tests {
             .source("{$x :string u:dir=ltr}")
             .direction(Direction::Rtl)
             .bidi_isolation(false)
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "world")];
@@ -1014,14 +1072,15 @@ mod tests {
     }
 
     #[test]
-    fn u_dir_invalid_value_yields_fallback() {
+    fn u_dir_invalid_value_is_ignored() {
         let formatter = MessageFormatter::builder()
             .source("{$x :string u:dir=sideways}")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "y")];
         let (out, errs) = formatter.format_to_string(&inputs);
-        assert_eq!(out, "\u{2068}{$x}\u{2069}");
+        assert_eq!(out, "\u{2068}y\u{2069}");
         assert_eq!(errs.len(), 1);
         assert!(matches!(
             &errs[0],
@@ -1039,6 +1098,7 @@ mod tests {
         // options map. Direction is unknown → FSI+PDI per Default Bidi.
         let formatter = MessageFormatter::builder()
             .source("{$x :string u:id=my-id}")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "hello")];
@@ -1307,6 +1367,7 @@ mod tests {
         // and is ignored; u:id is still surfaced. Other options pass through.
         let f = MessageFormatter::builder()
             .source("{#link href=|/x| u:id=main u:dir=ltr}click{/link}")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[];
@@ -1354,6 +1415,7 @@ mod tests {
     fn markup_variable_option_resolves() {
         let f = MessageFormatter::builder()
             .source("{#a href=$url}ok{/a}")
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("url", "/docs")];
@@ -1687,6 +1749,7 @@ mod tests {
         let f = MessageFormatter::builder()
             .source("{$x :broken}")
             .function("broken", Broken)
+            .locale_undetermined()
             .build()
             .unwrap();
         let inputs: &[(&str, &str)] = &[("x", "v")];
@@ -1709,9 +1772,38 @@ mod tests {
     }
 
     #[test]
+    fn builder_requires_locale() {
+        let err = MessageFormatter::builder()
+            .source("Hello")
+            .build()
+            .unwrap_err();
+        assert_eq!(err, BuildError::MissingLocale);
+    }
+
+    #[test]
+    fn builder_undetermined_locale_opt_in() {
+        let f = MessageFormatter::builder()
+            .source("Hello")
+            .locale_undetermined()
+            .build()
+            .unwrap();
+        assert_eq!(f.locale().to_string(), "und");
+    }
+
+    #[test]
+    fn no_message_takes_precedence_over_missing_locale() {
+        // Pins the check order inside `.build()` — the input check runs
+        // first, so a fully-empty builder surfaces `NoMessage`, not
+        // `MissingLocale`.
+        let err = MessageFormatter::builder().build().unwrap_err();
+        assert_eq!(err, BuildError::NoMessage);
+    }
+
+    #[test]
     fn builder_propagates_parse_errors() {
         let err = MessageFormatter::builder()
             .source("{$x")
+            .locale_undetermined()
             .build()
             .unwrap_err();
         assert!(matches!(err, BuildError::Parse(_)));
@@ -1721,6 +1813,7 @@ mod tests {
     fn builder_propagates_validation_errors() {
         let err = MessageFormatter::builder()
             .source(".input {$x :integer}\n.match $x\n1 {{one}}")
+            .locale_undetermined()
             .build()
             .unwrap_err();
         assert!(matches!(err, BuildError::Validation(_)));

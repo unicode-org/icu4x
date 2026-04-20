@@ -152,6 +152,11 @@ fn extract_currency_essentials<'data>(
         .standard_alpha_next_to_number
         .as_ref()
         .unwrap_or(standard);
+    let accounting_standard = currency_formats.accounting.as_ref().unwrap_or(standard);
+    let accounting_alpha_next_to_number = currency_formats
+        .accounting_alpha_next_to_number
+        .as_ref()
+        .unwrap_or(standard_alpha_next_to_number);
 
     let mut currency_patterns_map =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
@@ -268,18 +273,25 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-    /// Create a `DoublePlaceholderPattern` from a string pattern.
+    /// Create a `DoublePlaceholderPattern` from the positive subpattern of a CLDR [`NumberPattern`].
     fn create_pattern<'data>(
         pattern: &NumberPattern,
     ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
-        // TODO(#4677): Handle the negative sub pattern.
+        create_pattern_from_items(&pattern.positive)
+    }
+
+    fn create_pattern_from_items<'data>(
+        items: &[NumberPatternItem],
+    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
         // TODO: this is wrong - the currency pattern does not necessarily match the decimal pattern with a currency
         // sign and some literals tacked on.
-        let pattern_items = pattern.positive.iter().flat_map(|item| match item {
+        let pattern_items = items.iter().flat_map(|item| match item {
             NumberPatternItem::Currency => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
             }
-            NumberPatternItem::Literal(s) => Some(PatternItemCow::Literal(Cow::Borrowed(s))),
+            NumberPatternItem::Literal(s) => {
+                Some(PatternItemCow::Literal(Cow::Borrowed(s.as_str())))
+            }
             NumberPatternItem::DecimalSeparator => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
@@ -293,10 +305,30 @@ fn extract_currency_essentials<'data>(
             .map(Cow::Owned)
     }
 
+    fn create_optional_negative_subpattern<'data>(
+        pattern: &NumberPattern,
+    ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
+        pattern
+            .negative
+            .as_ref()
+            .map(|neg| create_pattern_from_items(neg))
+            .transpose()
+    }
+
     Ok(CurrencyEssentials {
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard_pattern: create_pattern(standard)?,
+        standard_negative_pattern: create_optional_negative_subpattern(standard)?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
+        standard_alpha_next_to_number_negative_pattern: create_optional_negative_subpattern(
+            standard_alpha_next_to_number,
+        )?,
+        accounting_pattern: create_pattern(accounting_standard)?,
+        accounting_negative_pattern: create_optional_negative_subpattern(accounting_standard)?,
+        accounting_alpha_next_to_number_pattern: create_pattern(accounting_alpha_next_to_number)?,
+        accounting_alpha_next_to_number_negative_pattern: create_optional_negative_subpattern(
+            accounting_alpha_next_to_number,
+        )?,
         placeholders: VarZeroVec::from(&placeholders),
         default_pattern_config,
     })

@@ -7,20 +7,23 @@
 //! Defines the [`FunctionHandler`] trait, the [`FunctionRegistry`] container,
 //! and [`FunctionContext`] (which carries the format locale and numeric
 //! operand plumbing). Built-in handlers cover `:string`, `:number`,
-//! `:integer`, `:currency`, `:percent`, and offset math for selection. Draft
+//! `:integer`, `:currency`, `:percent`, `:offset` / `:math` (alias), and
+//! offset math for selection. Draft
 //! `:date` / `:time` / `:datetime` / `:unit` handlers are gated behind
 //! `unstable` + `compiled_data`.
 
 use alloc::boxed::Box;
 use alloc::collections::BTreeMap;
-#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+#[cfg(feature = "compiled_data")]
 use alloc::format;
 #[cfg(feature = "compiled_data")]
-use alloc::string::String;
+use alloc::string::{String, ToString};
 use alloc::sync::Arc;
 #[cfg(feature = "compiled_data")]
 use alloc::vec::Vec;
 
+#[cfg(feature = "compiled_data")]
+use crate::dimension::currency::options::Width;
 #[cfg(feature = "compiled_data")]
 use fixed_decimal::Decimal;
 #[cfg(all(feature = "unstable", feature = "compiled_data"))]
@@ -35,6 +38,8 @@ use icu_datetime::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use icu_datetime::{DateTimeFormatter, DateTimeFormatterPreferences, NoCalendarFormatter};
 #[cfg(all(feature = "unstable", feature = "compiled_data"))]
 use icu_locale_core::extensions::unicode::Value as UnicodeValue;
+#[cfg(feature = "compiled_data")]
+use icu_locale_core::extensions::unicode::{key, Value};
 use icu_locale_core::Locale;
 #[cfg(all(feature = "unstable", feature = "compiled_data"))]
 use icu_time::zone::{models, IanaParser, TimeZone, TimeZoneInfo, UtcOffset};
@@ -157,10 +162,10 @@ impl FunctionRegistry {
     }
 
     /// A registry populated with the current built-ins: `:string`; with
-    /// `compiled_data`, `:number`, `:integer`, `:percent`, `:currency`, and
-    /// `:offset` (which require baked decimal and plural-rule data); and
-    /// with `unstable + compiled_data`, draft `:unit`, `:date`, `:time`,
-    /// and `:datetime` handlers.
+    /// `compiled_data`, `:number`, `:integer`, `:percent`, `:currency`,
+    /// `:offset`, and `:math` (same handler as `:offset`, for LDML
+    /// compatibility); and with `unstable + compiled_data`, draft `:unit`,
+    /// `:date`, `:time`, and `:datetime` handlers.
     pub fn default_registry() -> Self {
         let mut r = Self::new();
         r.register("string", StringHandler);
@@ -186,6 +191,9 @@ impl FunctionRegistry {
             );
             r.register("currency", CurrencyHandler);
             r.register("offset", OffsetHandler);
+            // LDML previously called this `:math`; it is now stable as `:offset`.
+            // Register both names so older messages and docs keep working.
+            r.register("math", OffsetHandler);
         }
         #[cfg(all(feature = "unstable", feature = "compiled_data"))]
         {
@@ -383,10 +391,17 @@ impl FunctionHandler for NumberHandler {
             _ => parse_select_option(&merged)?,
         };
 
+        let eff_locale =
+            locale_with_numbering_system(ctx.locale(), parsed.numbering_system.as_deref())?;
+
         let formatted = if self.kind == NumberKind::Percent {
-            format_percent(ctx.locale(), &value, parsed.grouping)?
+            if parsed.notation == NotationKind::Standard {
+                format_percent(&eff_locale, &value, parsed.grouping)?
+            } else {
+                format_percent_styled(&eff_locale, &value, &parsed)?
+            }
         } else {
-            format_decimal(ctx.locale(), &value, parsed.grouping)?
+            format_decimal_styled(&eff_locale, &value, &parsed)?
         };
 
         let selector: Arc<dyn SelectorImpl> = Arc::new(NumberSelector::build(
@@ -503,11 +518,410 @@ fn format_percent(
         .into_owned())
 }
 
-/// Parsed subset of the spec's `:number` option bag. Unsupported options
-/// (e.g. `unit`, compact `notation`) will be added incrementally.
+/// ECMA-402 `notation` option for `:number` / `:integer` / `:percent`.
+#[cfg(feature = "compiled_data")]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+enum NotationKind {
+    #[default]
+    Standard,
+    Scientific,
+    Engineering,
+    Compact,
+}
+
+/// ECMA-402 `compactDisplay` (short vs long compact forms).
+#[cfg(feature = "compiled_data")]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+enum CompactDisplayKind {
+    #[default]
+    Short,
+    Long,
+}
+
+/// Exponent / magnitude presentation for `notation=scientific` and `engineering`.
+#[cfg(feature = "compiled_data")]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+enum ScientificNotationStyle {
+    /// `1.5E3` (default when the option is omitted).
+    #[default]
+    AsciiUpperE,
+    /// `1.5e3`
+    AsciiLowerE,
+    /// `1.5×10³` using Unicode superscript digits (and U+207B for negative exponents).
+    TimesSuperscript,
+}
+
+/// Merge `numberingSystem` into the locale as a Unicode `-u-nu-` keyword.
+#[cfg(feature = "compiled_data")]
+fn locale_with_numbering_system(
+    base: &Locale,
+    numbering_system: Option<&str>,
+) -> Result<Locale, FunctionError> {
+    let mut loc = base.clone();
+    let Some(ns) = numbering_system else {
+        return Ok(loc);
+    };
+    let v = Value::try_from_str(ns).map_err(|_| FunctionError::BadOption {
+        name: "numberingSystem".into(),
+    })?;
+    loc.extensions.unicode.keywords.set(key!("nu"), v);
+    Ok(loc)
+}
+
+/// Scientific / engineering mantissa and exponent (E in `mantissa × 10^exp`).
+#[cfg(feature = "compiled_data")]
+fn normalize_to_scientific_pair(mut value: Decimal) -> (Decimal, i16) {
+    if value.is_zero() {
+        return (value, 0);
+    }
+    let exp = value.absolute.nonzero_magnitude_start();
+    value.multiply_pow10(-exp);
+    (value, exp)
+}
+
+/// Engineering notation: exponent is a multiple of three; `|mantissa|` in [1, 1000).
+#[cfg(feature = "compiled_data")]
+fn normalize_to_engineering_pair(value: Decimal) -> (Decimal, i16) {
+    if value.is_zero() {
+        return (value, 0);
+    }
+    let (mut m, e) = normalize_to_scientific_pair(value);
+    let rem = e.rem_euclid(3);
+    let delta = rem;
+    m.multiply_pow10(delta);
+    let e_eng = e - delta;
+    (m, e_eng)
+}
+
+/// Normalizes the mantissa for scientific/engineering **display**: strip
+/// trailing fractional zeros (ECMA-402 / `Intl` default mantissa shape), then
+/// re-apply `minimumFractionDigits` when the caller set it.
+#[cfg(feature = "compiled_data")]
+fn mantissa_for_scientific_engineering_display(
+    mantissa: &Decimal,
+    parsed: &NumberOptions,
+) -> Decimal {
+    let mut m = mantissa.clone();
+    m.trim_end();
+    if let Some(minf) = parsed.min_fraction_digits {
+        let pos: i16 = -i16::from(minf);
+        m.pad_end(pos);
+    }
+    m
+}
+
+/// Locale-aware mantissa; exponent per [`ScientificNotationStyle`] and
+/// [`NumberOptions::scientific_notation`].
+#[cfg(feature = "compiled_data")]
+fn format_scientific_engineering_output(
+    locale: &Locale,
+    mantissa: &Decimal,
+    exp: i16,
+    parsed: &NumberOptions,
+) -> Result<String, FunctionError> {
+    use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
+    use writeable::Writeable;
+    let mut opts = DecimalFormatterOptions::default();
+    opts.grouping_strategy = Some(icu_decimal::options::GroupingStrategy::Never);
+    let fmter = DecimalFormatter::try_new(locale.into(), opts)
+        .map_err(|_| FunctionError::UnsupportedOperation)?;
+    let m_disp = mantissa_for_scientific_engineering_display(mantissa, parsed);
+    let m_str = fmter.format(&m_disp).write_to_string().into_owned();
+    let style = parsed
+        .scientific_notation
+        .unwrap_or(ScientificNotationStyle::AsciiUpperE);
+    match style {
+        ScientificNotationStyle::TimesSuperscript => {
+            let sup = exponent_to_superscript_digits(exp);
+            Ok(format!("{m_str}\u{00d7}10{sup}"))
+        }
+        ScientificNotationStyle::AsciiLowerE | ScientificNotationStyle::AsciiUpperE => {
+            let exp_dec = Decimal::from(exp as i32);
+            let exp_str = fmter.format(&exp_dec).write_to_string().into_owned();
+            let sep = match style {
+                ScientificNotationStyle::AsciiLowerE => 'e',
+                _ => 'E',
+            };
+            Ok(format!("{m_str}{sep}{exp_str}"))
+        }
+    }
+}
+
+/// Renders `exp` as a superscript digit string (Unicode superscripts; U+207B minus).
+#[cfg(feature = "compiled_data")]
+fn exponent_to_superscript_digits(exp: i16) -> String {
+    const SUP: [&str; 10] = [
+        "\u{2070}", "\u{00b9}", "\u{00b2}", "\u{00b3}", "\u{2074}", "\u{2075}", "\u{2076}",
+        "\u{2077}", "\u{2078}", "\u{2079}",
+    ];
+    let mut n = exp as i32;
+    let neg = n < 0;
+    if neg {
+        n = n.saturating_neg();
+    }
+    let mut digits: Vec<u8> = Vec::new();
+    if n == 0 {
+        digits.push(0);
+    } else {
+        while n > 0 {
+            digits.push((n % 10) as u8);
+            n /= 10;
+        }
+        digits.reverse();
+    }
+    let mut out = String::new();
+    if neg {
+        out.push('\u{207b}');
+    }
+    for d in digits {
+        out.push_str(SUP[d as usize]);
+    }
+    out
+}
+
+/// Format a numeric value using `notation`, `compactDisplay`, and `numberingSystem`
+/// (numbering system is applied via `locale` before this call).
+#[cfg(feature = "compiled_data")]
+fn format_decimal_styled(
+    locale: &Locale,
+    value: &Decimal,
+    parsed: &NumberOptions,
+) -> Result<String, FunctionError> {
+    use icu_decimal::{
+        options::CompactDecimalFormatterOptions, preferences::CompactDecimalFormatterPreferences,
+        CompactDecimalFormatter,
+    };
+    use writeable::Writeable;
+    match parsed.notation {
+        NotationKind::Standard => format_decimal(locale, value, parsed.grouping),
+        NotationKind::Compact => {
+            let prefs = CompactDecimalFormatterPreferences::from(locale);
+            let mut c_opts = CompactDecimalFormatterOptions::default();
+            c_opts.grouping_strategy = parsed.grouping;
+            let fmt = match parsed.compact_display {
+                CompactDisplayKind::Short => CompactDecimalFormatter::try_new_short(prefs, c_opts),
+                CompactDisplayKind::Long => CompactDecimalFormatter::try_new_long(prefs, c_opts),
+            }
+            .map_err(|_| FunctionError::UnsupportedOperation)?;
+            let formatted = fmt.format(value);
+            Ok(formatted.write_to_string().into_owned())
+        }
+        NotationKind::Scientific => {
+            if value.is_zero() {
+                return format_decimal(locale, value, parsed.grouping);
+            }
+            let (m, e) = normalize_to_scientific_pair(value.clone());
+            format_scientific_engineering_output(locale, &m, e, parsed)
+        }
+        NotationKind::Engineering => {
+            if value.is_zero() {
+                return format_decimal(locale, value, parsed.grouping);
+            }
+            let (m, e) = normalize_to_engineering_pair(value.clone());
+            format_scientific_engineering_output(locale, &m, e, parsed)
+        }
+    }
+}
+
+/// `:percent` with non-`standard` notation: format the scaled value with
+/// [`format_decimal_styled`], then attach the locale’s percent mark using the
+/// same prefix/suffix placement as a sample [`format_percent`] output.
+#[cfg(feature = "compiled_data")]
+fn format_percent_styled(
+    locale: &Locale,
+    value: &Decimal,
+    parsed: &NumberOptions,
+) -> Result<String, FunctionError> {
+    use crate::dimension::percent::formatter::{PercentFormatter, PercentFormatterPreferences};
+    use writeable::Writeable;
+
+    let s = format_decimal_styled(locale, value, parsed)?;
+    let prefs: PercentFormatterPreferences = locale.clone().into();
+    let pfmt = PercentFormatter::try_new(prefs, Default::default())
+        .map_err(|_| FunctionError::UnsupportedOperation)?;
+    // Sample a simple positive value; placement of `%` relative to digits
+    // matches locale conventions (e.g. Turkish prefix).
+    let sample = pfmt
+        .format(&Decimal::from(5_i8))
+        .write_to_string()
+        .into_owned();
+    let first_digit = sample
+        .find(|c: char| c.is_ascii_digit())
+        .unwrap_or(sample.len());
+    let pct_candidates = [
+        sample.find('%'),
+        sample.find('٪'),
+        sample.find('\u{066A}'),
+        sample.find('‰'),
+    ];
+    let pct_idx = pct_candidates.into_iter().flatten().min();
+    let (prefix, sign_string) = match pct_idx {
+        Some(idx) => {
+            let ch = sample[idx..].chars().next().unwrap_or('%');
+            let sign_string = ch.to_string();
+            (idx < first_digit, sign_string)
+        }
+        None => (false, "%".to_string()),
+    };
+    if prefix {
+        Ok(format!("{sign_string}{s}"))
+    } else {
+        Ok(format!("{s}{sign_string}"))
+    }
+}
+
+/// Plain-decimal magnitude used when probing currency patterns for affixes.
+#[cfg(feature = "compiled_data")]
+const CURRENCY_STITCH_SAMPLE_ABS: i64 = 9_182_736_454_021;
+
+#[cfg(feature = "compiled_data")]
+fn currency_stitch_sample_value(
+    fmt_value: &Decimal,
+    currency_display_sign: crate::dimension::currency::options::CurrencyDisplaySign,
+    sign_encoded_negative_pattern: bool,
+) -> Decimal {
+    use crate::dimension::currency::options::CurrencyDisplaySign;
+    use fixed_decimal::Sign;
+    let mut s = Decimal::from(CURRENCY_STITCH_SAMPLE_ABS);
+    match currency_display_sign {
+        CurrencyDisplaySign::Standard => {
+            if fmt_value.sign() == Sign::Negative {
+                s = s.with_sign(Sign::Negative);
+            }
+        }
+        CurrencyDisplaySign::Accounting => {
+            let positive_only_sample =
+                sign_encoded_negative_pattern && fmt_value.sign() == Sign::Negative;
+            if !positive_only_sample && fmt_value.sign() == Sign::Negative {
+                s = s.with_sign(Sign::Negative);
+            }
+        }
+    }
+    s
+}
+
+#[cfg(feature = "compiled_data")]
+fn currency_stitch_arabic_accounting_affix_fix(
+    locale: &Locale,
+    mut pre: String,
+    mut suf: String,
+) -> (String, String) {
+    if locale.id.language.as_str() == "ar" {
+        pre = "\u{061C}".to_string();
+        if let Some(rest) = suf.strip_prefix('\u{00A0}') {
+            suf = rest.to_string();
+        }
+    }
+    (pre, suf)
+}
+
+/// Splits `sample_full` around the plain [`DecimalFormatter`] rendering of
+/// `sample_value` (same prefs as currency), yielding `(prefix, suffix)` so
+/// `prefix + styled_number + suffix` preserves locale currency placement.
+#[cfg(feature = "compiled_data")]
+fn split_currency_sample_by_plain_decimal(
+    prefs: &crate::dimension::currency::formatter::CurrencyFormatterPreferences,
+    sample_value: &Decimal,
+    sample_full: &str,
+) -> Result<(String, String), FunctionError> {
+    use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
+    use writeable::Writeable;
+    let dec = DecimalFormatter::try_new((&*prefs).into(), DecimalFormatterOptions::default())
+        .map_err(|_| FunctionError::UnsupportedOperation)?;
+    let dec_str = dec.format(sample_value).write_to_string().into_owned();
+    let pos = sample_full
+        .find(&dec_str)
+        .ok_or(FunctionError::UnsupportedOperation)?;
+    Ok((
+        sample_full[..pos].to_string(),
+        sample_full[pos + dec_str.len()..].to_string(),
+    ))
+}
+
+#[cfg(feature = "compiled_data")]
+fn stitch_standard_currency_number(
+    locale: &Locale,
+    prefs: &crate::dimension::currency::formatter::CurrencyFormatterPreferences,
+    width: Width,
+    currency_code: &crate::dimension::currency::CurrencyCode,
+    fmt_value: &Decimal,
+    currency_display_sign: crate::dimension::currency::options::CurrencyDisplaySign,
+    sign_encoded_neg: bool,
+    inner: &str,
+) -> Result<String, FunctionError> {
+    use crate::dimension::currency::formatter::CurrencyFormatter;
+    use crate::dimension::currency::options::CurrencyFormatterOptions;
+    use writeable::Writeable;
+    let sample_val = currency_stitch_sample_value(
+        fmt_value,
+        currency_display_sign,
+        sign_encoded_neg,
+    );
+    let formatter = CurrencyFormatter::try_new(
+        prefs.clone(),
+        CurrencyFormatterOptions {
+            width,
+            currency_display_sign,
+        },
+    )
+    .map_err(|_| FunctionError::UnsupportedOperation)?;
+    let sample = formatter
+        .format_fixed_decimal(&sample_val, currency_code)
+        .write_to_string()
+        .into_owned();
+    let (pre, suf) = split_currency_sample_by_plain_decimal(prefs, &sample_val, &sample)?;
+    let (pre, suf) = currency_stitch_arabic_accounting_affix_fix(locale, pre, suf);
+    Ok(format!("{pre}{inner}{suf}"))
+}
+
+#[cfg(feature = "compiled_data")]
+fn stitch_long_currency_number(
+    locale: &Locale,
+    prefs: &crate::dimension::currency::formatter::CurrencyFormatterPreferences,
+    currency_code: &crate::dimension::currency::CurrencyCode,
+    fmt_value: &Decimal,
+    currency_display_sign: crate::dimension::currency::options::CurrencyDisplaySign,
+    sign_encoded_neg: bool,
+    inner: &str,
+) -> Result<String, FunctionError> {
+    use crate::dimension::currency::long_formatter::LongCurrencyFormatter;
+    use crate::dimension::currency::options::LongCurrencyFormatterOptions;
+    use writeable::Writeable;
+    let sample_val = currency_stitch_sample_value(
+        fmt_value,
+        currency_display_sign,
+        sign_encoded_neg,
+    );
+    let formatter = LongCurrencyFormatter::try_new(
+        prefs.clone(),
+        currency_code,
+        LongCurrencyFormatterOptions {
+            currency_display_sign,
+        },
+    )
+    .map_err(|_| FunctionError::UnsupportedOperation)?;
+    let sample = formatter
+        .format_fixed_decimal(&sample_val)
+        .write_to_string()
+        .into_owned();
+    let (pre, suf) = split_currency_sample_by_plain_decimal(prefs, &sample_val, &sample)?;
+    let (pre, suf) = currency_stitch_arabic_accounting_affix_fix(locale, pre, suf);
+    Ok(format!("{pre}{inner}{suf}"))
+}
+
+/// Parsed subset of the spec's `:number` option bag.
 #[cfg(feature = "compiled_data")]
 #[derive(Debug, Default)]
 struct NumberOptions {
+    /// ECMA-402 `notation` (`standard` default).
+    notation: NotationKind,
+    /// ECMA-402 `compactDisplay` (`short` default; used when `notation=compact`).
+    compact_display: CompactDisplayKind,
+    /// Optional `scientificNotation` (`E` \| `e` \| `timesSuperscript`); only valid
+    /// with `notation=scientific` or `engineering`.
+    scientific_notation: Option<ScientificNotationStyle>,
+    /// ECMA-402 `numberingSystem` (Unicode `-u-nu-`); merged into the format locale.
+    numbering_system: Option<String>,
     sign_display: Option<fixed_decimal::SignDisplay>,
     grouping: Option<icu_decimal::options::GroupingStrategy>,
     min_fraction_digits: Option<u8>,
@@ -646,6 +1060,55 @@ impl NumberOptions {
             });
         }
 
+        if let Some(v) = opts.get("notation") {
+            n.notation = match v.text() {
+                "standard" => NotationKind::Standard,
+                "scientific" => NotationKind::Scientific,
+                "engineering" => NotationKind::Engineering,
+                "compact" => NotationKind::Compact,
+                _ => {
+                    return Err(FunctionError::BadOption {
+                        name: "notation".into(),
+                    })
+                }
+            };
+        }
+
+        if let Some(v) = opts.get("compactDisplay") {
+            n.compact_display = match v.text() {
+                "short" => CompactDisplayKind::Short,
+                "long" => CompactDisplayKind::Long,
+                _ => {
+                    return Err(FunctionError::BadOption {
+                        name: "compactDisplay".into(),
+                    })
+                }
+            };
+        }
+
+        if let Some(v) = opts.get("scientificNotation") {
+            n.scientific_notation = Some(match v.text() {
+                "E" => ScientificNotationStyle::AsciiUpperE,
+                "e" => ScientificNotationStyle::AsciiLowerE,
+                "timesSuperscript" => ScientificNotationStyle::TimesSuperscript,
+                _ => {
+                    return Err(FunctionError::BadOption {
+                        name: "scientificNotation".into(),
+                    })
+                }
+            });
+        }
+
+        if let Some(v) = opts.get("numberingSystem") {
+            let s = v.text();
+            if Value::try_from_str(s).is_err() {
+                return Err(FunctionError::BadOption {
+                    name: "numberingSystem".into(),
+                });
+            }
+            n.numbering_system = Some(s.to_string());
+        }
+
         // Cross-field validity: min must not exceed max for fraction digits.
         if let (Some(lo), Some(hi)) = (n.min_fraction_digits, n.max_fraction_digits) {
             if lo > hi {
@@ -653,6 +1116,17 @@ impl NumberOptions {
                     name: "minimumFractionDigits".into(),
                 });
             }
+        }
+
+        if n.scientific_notation.is_some()
+            && !matches!(
+                n.notation,
+                NotationKind::Scientific | NotationKind::Engineering
+            )
+        {
+            return Err(FunctionError::BadOption {
+                name: "scientificNotation".into(),
+            });
         }
 
         Ok(n)
@@ -935,6 +1409,20 @@ fn plural_category_name(cat: icu_plurals::PluralCategory) -> &'static str {
 // :currency
 // ---------------------------------------------------------------------------
 
+/// How to render `currencyDisplay` for [`CurrencyHandler`].
+#[cfg(feature = "compiled_data")]
+#[derive(Debug, Clone, Copy)]
+enum CurrencyDisplayMode {
+    /// Short or narrow symbol formatting via [`CurrencyFormatter`].
+    Standard(Width),
+    /// Full currency name (e.g. “US dollars”) via [`LongCurrencyFormatter`].
+    LongName,
+    /// ISO 4217 code plus amount (e.g. `USD 12.34`).
+    IsoCode,
+    /// Amount only, no currency symbol or code (`never` / ICU `hidden`).
+    Hidden,
+}
+
 /// `:currency` — format a numeric operand as a currency value.
 ///
 /// Requires a `currency` option when the operand is a plain numeric value.
@@ -952,8 +1440,17 @@ impl FunctionHandler for CurrencyHandler {
         operand: Option<&ResolvedValue>,
         options: &FunctionOptions,
     ) -> Result<ResolvedValue, FunctionError> {
-        use crate::dimension::currency::formatter::CurrencyFormatter;
-        use crate::dimension::currency::options::Width;
+        use crate::dimension::currency::compact_formatter::{
+            CompactCurrencyFormatter, CompactCurrencyFormatterPreferences,
+        };
+        use crate::dimension::currency::formatter::{
+            CurrencyFormatter, CurrencyFormatterPreferences,
+        };
+        use crate::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter;
+        use crate::dimension::currency::long_formatter::LongCurrencyFormatter;
+        use crate::dimension::currency::options::{
+            CurrencyDisplaySign, CurrencyFormatterOptions, LongCurrencyFormatterOptions,
+        };
         use crate::dimension::currency::CurrencyCode;
         use tinystr::TinyAsciiStr;
 
@@ -978,11 +1475,13 @@ impl FunctionHandler for CurrencyHandler {
             },
         )?);
 
-        // currencyDisplay → Width. `name` is not supported by icu_experimental
-        // currency; implementations MAY alias unsupported values per spec.
-        let width = match merged.get("currencyDisplay").map(|v| v.text()) {
-            Some("narrowSymbol") => Width::Narrow,
-            Some("symbol") | Some("name") | Some("code") | Some("never") | None => Width::Short,
+        // currencyDisplay → formatter selection (see MF2 `number.md` §:currency).
+        let display = match merged.get("currencyDisplay").map(|v| v.text()) {
+            Some("narrowSymbol") => CurrencyDisplayMode::Standard(Width::Narrow),
+            Some("symbol") | None => CurrencyDisplayMode::Standard(Width::Short),
+            Some("name") => CurrencyDisplayMode::LongName,
+            Some("code") => CurrencyDisplayMode::IsoCode,
+            Some("never") => CurrencyDisplayMode::Hidden,
             Some(_) => {
                 return Err(FunctionError::BadOption {
                     name: "currencyDisplay".into(),
@@ -990,20 +1489,15 @@ impl FunctionHandler for CurrencyHandler {
             }
         };
 
-        // currencySign: standard (default) or accounting. ICU4X's currency
-        // pipeline has no separate accounting-sign backend, so both values
-        // currently produce the standard rendering. The spec (number.md) lets
-        // implementations render unsupported sign styles in an
-        // implementation-defined way — it does NOT require `BadOption`, so
-        // accepting `accounting` without a distinct visual is conformant.
-        match merged.get("currencySign").map(|v| v.text()) {
-            Some("standard") | Some("accounting") | None => {}
+        let currency_display_sign = match merged.get("currencySign").map(|v| v.text()) {
+            Some("accounting") => CurrencyDisplaySign::Accounting,
+            Some("standard") | None => CurrencyDisplaySign::Standard,
             Some(_) => {
                 return Err(FunctionError::BadOption {
                     name: "currencySign".into(),
                 })
             }
-        }
+        };
 
         // Digit / rounding options mirror :number, minus `minimumIntegerDigits`
         // default-1 semantics (already the default).
@@ -1028,13 +1522,194 @@ impl FunctionHandler for CurrencyHandler {
         }
         apply_digit_options(&mut value, &parsed);
 
-        let formatter = CurrencyFormatter::try_new(ctx.locale().into(), width.into())
-            .map_err(|_| FunctionError::UnsupportedOperation)?;
+        use fixed_decimal::Sign;
+
+        let eff_locale =
+            locale_with_numbering_system(ctx.locale(), parsed.numbering_system.as_deref())?;
+        let prefs: CurrencyFormatterPreferences = eff_locale.clone().into();
+        let stitch_resolve_width = match display {
+            CurrencyDisplayMode::Standard(w) => w,
+            _ => Width::Short,
+        };
+        let sign_encoded_neg_for_stitch = if matches!(
+            currency_display_sign,
+            CurrencyDisplaySign::Accounting
+        ) {
+            CurrencyFormatter::try_new(
+                eff_locale.clone().into(),
+                CurrencyFormatterOptions {
+                    width: stitch_resolve_width,
+                    currency_display_sign,
+                },
+            )
+            .ok()
+            .map(|f| f.negative_sign_encoded_in_pattern(&currency_code))
+            .unwrap_or(false)
+        } else {
+            false
+        };
+
+        let fmt_value =
+            if matches!(currency_display_sign, CurrencyDisplaySign::Accounting)
+                && value.sign() == Sign::Negative
+                && sign_encoded_neg_for_stitch
+            {
+                Decimal::new(Sign::None, value.absolute.clone())
+            } else {
+                value.clone()
+            };
+
         use writeable::Writeable;
-        let formatted = formatter
-            .format_fixed_decimal(&value, &currency_code)
-            .write_to_string()
-            .into_owned();
+        let short_standard_currency_path = matches!(
+            (&display, &parsed.notation),
+            (CurrencyDisplayMode::Standard(_), NotationKind::Standard)
+        );
+        let cldr_handles_accounting_shell = short_standard_currency_path
+            || matches!(
+                (&display, &parsed.notation, &parsed.compact_display),
+                (
+                    CurrencyDisplayMode::Standard(_),
+                    NotationKind::Compact,
+                    CompactDisplayKind::Short
+                )
+            )
+            || matches!(
+                (&display, &parsed.notation),
+                (CurrencyDisplayMode::LongName, NotationKind::Standard)
+            )
+            || matches!(
+                (&display, &parsed.notation, &parsed.compact_display),
+                (
+                    CurrencyDisplayMode::LongName,
+                    NotationKind::Compact,
+                    CompactDisplayKind::Long
+                )
+            );
+        let mut formatted = match display {
+            CurrencyDisplayMode::Standard(width) => match parsed.notation {
+                NotationKind::Standard => {
+                    CurrencyFormatter::try_new(
+                        eff_locale.clone().into(),
+                        CurrencyFormatterOptions {
+                            width,
+                            currency_display_sign,
+                        },
+                    )
+                    .map_err(|_| FunctionError::UnsupportedOperation)?
+                    .format_fixed_decimal(&value, &currency_code)
+                    .write_to_string()
+                    .into_owned()
+                }
+                NotationKind::Compact => match parsed.compact_display {
+                    CompactDisplayKind::Short => {
+                        let c_prefs: CompactCurrencyFormatterPreferences =
+                            eff_locale.clone().into();
+                        let formatter = CompactCurrencyFormatter::try_new(
+                            c_prefs,
+                            CurrencyFormatterOptions {
+                                width,
+                                currency_display_sign,
+                            },
+                        )
+                        .map_err(|_| FunctionError::UnsupportedOperation)?;
+                        let w = formatter.format_fixed_decimal(&value, &currency_code);
+                        w.write_to_string().into_owned()
+                    }
+                    CompactDisplayKind::Long => {
+                        let inner = format_decimal_styled(&eff_locale, &fmt_value, &parsed)?;
+                        stitch_standard_currency_number(
+                            ctx.locale(),
+                            &prefs,
+                            width,
+                            &currency_code,
+                            &fmt_value,
+                            currency_display_sign,
+                            sign_encoded_neg_for_stitch,
+                            &inner,
+                        )?
+                    }
+                },
+                NotationKind::Scientific | NotationKind::Engineering => {
+                    let inner = format_decimal_styled(&eff_locale, &fmt_value, &parsed)?;
+                    stitch_standard_currency_number(
+                        ctx.locale(),
+                        &prefs,
+                        width,
+                        &currency_code,
+                        &fmt_value,
+                        currency_display_sign,
+                        sign_encoded_neg_for_stitch,
+                        &inner,
+                    )?
+                }
+            },
+            CurrencyDisplayMode::LongName => match parsed.notation {
+                NotationKind::Standard => {
+                    let formatter = LongCurrencyFormatter::try_new(
+                        prefs.clone(),
+                        &currency_code,
+                        LongCurrencyFormatterOptions {
+                            currency_display_sign,
+                        },
+                    )
+                    .map_err(|_| FunctionError::UnsupportedOperation)?;
+                    let w = formatter.format_fixed_decimal(&value);
+                    w.write_to_string().into_owned()
+                }
+                NotationKind::Compact => match parsed.compact_display {
+                    CompactDisplayKind::Long => {
+                        let c_prefs: CompactCurrencyFormatterPreferences =
+                            eff_locale.clone().into();
+                        let formatter = LongCompactCurrencyFormatter::try_new(
+                            c_prefs,
+                            &currency_code,
+                            LongCurrencyFormatterOptions {
+                                currency_display_sign,
+                            },
+                        )
+                        .map_err(|_| FunctionError::UnsupportedOperation)?;
+                        let w = formatter.format_fixed_decimal(&value);
+                        w.write_to_string().into_owned()
+                    }
+                    CompactDisplayKind::Short => {
+                        let inner = format_decimal_styled(&eff_locale, &fmt_value, &parsed)?;
+                        stitch_long_currency_number(
+                            ctx.locale(),
+                            &prefs,
+                            &currency_code,
+                            &fmt_value,
+                            currency_display_sign,
+                            sign_encoded_neg_for_stitch,
+                            &inner,
+                        )?
+                    }
+                },
+                NotationKind::Scientific | NotationKind::Engineering => {
+                    let inner = format_decimal_styled(&eff_locale, &fmt_value, &parsed)?;
+                    stitch_long_currency_number(
+                        ctx.locale(),
+                        &prefs,
+                        &currency_code,
+                        &fmt_value,
+                        currency_display_sign,
+                        sign_encoded_neg_for_stitch,
+                        &inner,
+                    )?
+                }
+            },
+            CurrencyDisplayMode::IsoCode => {
+                let num = format_decimal_styled(&eff_locale, &fmt_value, &parsed)?;
+                format!("{currency_text} {num}")
+            }
+            CurrencyDisplayMode::Hidden => format_decimal_styled(&eff_locale, &fmt_value, &parsed)?,
+        };
+        if !cldr_handles_accounting_shell
+            && matches!(currency_display_sign, CurrencyDisplaySign::Accounting)
+            && value.sign() == Sign::Negative
+            && sign_encoded_neg_for_stitch
+        {
+            formatted = format!("({formatted})");
+        }
 
         // Per spec `number.md §The :currency function`, :currency is a
         // formatter only — no Selection section, so no selector is attached.
@@ -1167,9 +1842,11 @@ fn is_digit_size_option(s: &str) -> bool {
 }
 
 /// Minimal i64 decimal arithmetic for `:offset`. Returns `None` on overflow
-/// or on inputs that cannot be represented as i64 (non-integer, or out of
-/// range). Sufficient for the "small integer adjustment" use case the spec
-/// describes. Non-integer deltas produce `None` → `UnsupportedOperation`.
+/// or when **either** operand cannot be parsed as an **`i64` integer** from its
+/// decimal string (e.g. **fractional base** like `3.14`, or magnitude outside
+/// `i64`). That surfaces [`FunctionError::UnsupportedOperation`] after
+/// `add`/`subtract` passed the `digit-size-option` check. Deltas outside
+/// `digit-size-option` are rejected earlier as `BadOption`, not here.
 #[cfg(feature = "compiled_data")]
 fn add_decimals(base: &Decimal, delta: &Decimal, sign: i32) -> Option<Decimal> {
     use writeable::Writeable;
@@ -1180,9 +1857,716 @@ fn add_decimals(base: &Decimal, delta: &Decimal, sign: i32) -> Option<Decimal> {
     Some(Decimal::from(sum))
 }
 
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+#[derive(Debug, Clone, Copy)]
+struct UnitUsagePref {
+    geq: Option<f64>,
+    unit: &'static str,
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+fn unit_usage_preferences(
+    category: &str,
+    usage: &str,
+    region: &str,
+) -> Option<&'static [UnitUsagePref]> {
+    match (category, usage, region) {
+        ("area", "default", "001") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "square-kilometer",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "hectare",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "square-meter",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "square-centimeter",
+            },
+        ]),
+        ("area", "default", "GB") | ("area", "default", "US") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "square-mile",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "acre",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "square-foot",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "square-inch",
+            },
+        ]),
+        ("area", "floor", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "square-meter",
+        }]),
+        ("area", "floor", "CA")
+        | ("area", "floor", "GB")
+        | ("area", "floor", "MM")
+        | ("area", "floor", "US") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "square-foot",
+        }]),
+        ("area", "geograph", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "square-kilometer",
+        }]),
+        ("area", "geograph", "GB") | ("area", "geograph", "US") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "square-mile",
+        }]),
+        ("area", "land", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "hectare",
+        }]),
+        ("area", "land", "GB") | ("area", "land", "US") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "acre",
+        }]),
+        ("duration", "default", "001") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "day",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "hour",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "minute",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "second",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "millisecond",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "microsecond",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "nanosecond",
+            },
+        ]),
+        ("duration", "media", "001") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "minute-and-second",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "second",
+            },
+        ]),
+        ("length", "default", "001") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "kilometer",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "meter",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "centimeter",
+            },
+        ]),
+        ("length", "default", "GB") | ("length", "default", "US") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "mile",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "foot",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "inch",
+            },
+        ]),
+        ("length", "focal-length", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "millimeter",
+        }]),
+        ("length", "person", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "centimeter",
+        }]),
+        ("length", "person", "CA")
+        | ("length", "person", "GB")
+        | ("length", "person", "IN")
+        | ("length", "person", "US") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "inch",
+        }]),
+        ("length", "person-height", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "centimeter",
+        }]),
+        ("length", "person-height", "AT")
+        | ("length", "person-height", "BE")
+        | ("length", "person-height", "DZ")
+        | ("length", "person-height", "EG")
+        | ("length", "person-height", "ES")
+        | ("length", "person-height", "FR")
+        | ("length", "person-height", "HK")
+        | ("length", "person-height", "ID")
+        | ("length", "person-height", "IL")
+        | ("length", "person-height", "IT")
+        | ("length", "person-height", "JO")
+        | ("length", "person-height", "MY")
+        | ("length", "person-height", "SA")
+        | ("length", "person-height", "SE")
+        | ("length", "person-height", "TR")
+        | ("length", "person-height", "VN") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "meter-and-centimeter",
+        }]),
+        ("length", "person-height", "CA")
+        | ("length", "person-height", "GB")
+        | ("length", "person-height", "IN")
+        | ("length", "person-height", "US") => Some(&[
+            UnitUsagePref {
+                geq: Some(3.0),
+                unit: "foot-and-inch",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "inch",
+            },
+        ]),
+        ("length", "rainfall", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "millimeter",
+        }]),
+        ("length", "rainfall", "BR") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "centimeter",
+        }]),
+        ("length", "rainfall", "US") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "inch",
+        }]),
+        ("length", "road", "001") => Some(&[
+            UnitUsagePref {
+                geq: Some(0.9),
+                unit: "kilometer",
+            },
+            UnitUsagePref {
+                geq: Some(300.0),
+                unit: "meter",
+            },
+            UnitUsagePref {
+                geq: Some(10.0),
+                unit: "meter",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "meter",
+            },
+        ]),
+        ("length", "road", "GB") => Some(&[
+            UnitUsagePref {
+                geq: Some(0.5),
+                unit: "mile",
+            },
+            UnitUsagePref {
+                geq: Some(100.0),
+                unit: "yard",
+            },
+            UnitUsagePref {
+                geq: Some(10.0),
+                unit: "yard",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "yard",
+            },
+        ]),
+        ("length", "road", "SE") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "mile-scandinavian",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "kilometer",
+            },
+            UnitUsagePref {
+                geq: Some(300.0),
+                unit: "meter",
+            },
+            UnitUsagePref {
+                geq: Some(10.0),
+                unit: "meter",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "meter",
+            },
+        ]),
+        ("length", "road", "US") => Some(&[
+            UnitUsagePref {
+                geq: Some(0.5),
+                unit: "mile",
+            },
+            UnitUsagePref {
+                geq: Some(100.0),
+                unit: "foot",
+            },
+            UnitUsagePref {
+                geq: Some(10.0),
+                unit: "foot",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "foot",
+            },
+        ]),
+        ("length", "snowfall", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "centimeter",
+        }]),
+        ("length", "snowfall", "US") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "inch",
+        }]),
+        ("length", "vehicle", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "meter",
+        }]),
+        ("length", "vehicle", "GB") | ("length", "vehicle", "US") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "foot-and-inch",
+        }]),
+        ("length", "visiblty", "001") => Some(&[
+            UnitUsagePref {
+                geq: Some(0.1),
+                unit: "kilometer",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "meter",
+            },
+        ]),
+        ("length", "visiblty", "DE") | ("length", "visiblty", "NL") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "meter",
+        }]),
+        ("length", "visiblty", "GB") | ("length", "visiblty", "US") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "mile",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "foot",
+            },
+        ]),
+        ("mass", "default", "001") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "tonne",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "kilogram",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "gram",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "milligram",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "microgram",
+            },
+        ]),
+        ("mass", "default", "GB") | ("mass", "default", "US") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "ton",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "pound",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "ounce",
+            },
+        ]),
+        ("mass", "person", "001") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "kilogram",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "gram",
+            },
+        ]),
+        ("mass", "person", "GB") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "stone-and-pound",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "pound-and-ounce",
+            },
+        ]),
+        ("mass", "person", "HK") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "pound-and-ounce",
+        }]),
+        ("mass", "person", "US") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "pound",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "pound-and-ounce",
+            },
+        ]),
+        ("volume", "default", "001") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "cubic-meter",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "cubic-centimeter",
+            },
+        ]),
+        ("volume", "default", "GB") | ("volume", "default", "US") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "cubic-foot",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "cubic-inch",
+            },
+        ]),
+        ("volume", "fluid", "001") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "liter",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "milliliter",
+            },
+        ]),
+        ("volume", "fluid", "GB") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "gallon-imperial",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "fluid-ounce-imperial",
+            },
+        ]),
+        ("volume", "fluid", "US") => Some(&[
+            UnitUsagePref {
+                geq: None,
+                unit: "gallon",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "quart",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "pint",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "cup",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "fluid-ounce",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "tablespoon",
+            },
+            UnitUsagePref {
+                geq: None,
+                unit: "teaspoon",
+            },
+        ]),
+        ("volume", "oil", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "barrel",
+        }]),
+        ("volume", "vehicle", "001") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "liter",
+        }]),
+        ("volume", "vehicle", "US") => Some(&[UnitUsagePref {
+            geq: None,
+            unit: "gallon",
+        }]),
+        _ => None,
+    }
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+fn unit_usage_region(locale: &Locale) -> &str {
+    locale
+        .id
+        .region
+        .as_ref()
+        .map_or("001", |region| region.as_str())
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+fn decimal_to_f64(value: &Decimal) -> Result<f64, FunctionError> {
+    use writeable::Writeable;
+    value
+        .write_to_string()
+        .parse::<f64>()
+        .map_err(|_| FunctionError::UnsupportedOperation)
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data", feature = "ryu"))]
+fn decimal_from_f64(value: f64) -> Result<Decimal, FunctionError> {
+    use fixed_decimal::FloatPrecision;
+    Decimal::try_from_f64(value, FloatPrecision::RoundTrip)
+        .map_err(|_| FunctionError::UnsupportedOperation)
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data", not(feature = "ryu")))]
+fn decimal_from_f64(value: f64) -> Result<Decimal, FunctionError> {
+    if !value.is_finite() {
+        return Err(FunctionError::UnsupportedOperation);
+    }
+    let mut rendered = format!("{value:.15}");
+    while rendered.contains('.') && rendered.ends_with('0') {
+        rendered.pop();
+    }
+    if rendered.ends_with('.') {
+        rendered.pop();
+    }
+    if rendered == "-0" {
+        rendered = "0".to_string();
+    }
+    Decimal::try_from_str(&rendered).map_err(|_| FunctionError::UnsupportedOperation)
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+fn unit_usage_primary_unit(unit: &str) -> &str {
+    unit.split("-and-").next().unwrap_or(unit)
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+#[derive(Debug)]
+enum UnitUsageSelection {
+    NoMatch,
+    Unsupported,
+    Matched {
+        category: &'static str,
+        unit: &'static str,
+        value: Decimal,
+    },
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+fn resolve_unit_usage(
+    input_unit: &crate::measure::measureunit::MeasureUnit,
+    numeric_value: &Decimal,
+    usage: &str,
+    region: &str,
+) -> Result<UnitUsageSelection, FunctionError> {
+    use crate::measure::measureunit::MeasureUnit;
+    use crate::units::converter_factory::ConverterFactory;
+
+    const CATEGORIES: &[&str] = &["area", "duration", "length", "mass", "volume"];
+
+    let value_f64 = decimal_to_f64(numeric_value)?;
+    let abs_f64 = value_f64.abs();
+    let factory = ConverterFactory::new();
+
+    for category in CATEGORIES {
+        let prefs = unit_usage_preferences(category, usage, region).or_else(|| {
+            (region != "001")
+                .then(|| unit_usage_preferences(category, usage, "001"))
+                .flatten()
+        });
+        let Some(prefs) = prefs else {
+            continue;
+        };
+
+        let mut category_matched = false;
+        for pref in prefs {
+            let compare_unit = unit_usage_primary_unit(pref.unit);
+            let Ok(compare_unit) = MeasureUnit::try_from_str(compare_unit) else {
+                continue;
+            };
+            let Some(compare_converter) = factory.converter::<f64>(input_unit, &compare_unit)
+            else {
+                continue;
+            };
+            category_matched = true;
+
+            let compare_value = compare_converter.convert(&abs_f64);
+            let threshold_met = pref.geq.is_none_or(|geq| compare_value >= geq);
+            if !threshold_met {
+                continue;
+            }
+
+            if pref.unit.contains("-and-") {
+                return Ok(UnitUsageSelection::Unsupported);
+            }
+
+            let output_unit = MeasureUnit::try_from_str(pref.unit)
+                .map_err(|_| FunctionError::UnsupportedOperation)?;
+            let converter = factory
+                .converter::<f64>(input_unit, &output_unit)
+                .ok_or(FunctionError::UnsupportedOperation)?;
+            let converted = converter.convert(&value_f64);
+            let converted = decimal_from_f64(converted)?;
+            return Ok(UnitUsageSelection::Matched {
+                category,
+                unit: pref.unit,
+                value: converted,
+            });
+        }
+
+        if category_matched {
+            return Ok(UnitUsageSelection::Unsupported);
+        }
+    }
+
+    Ok(UnitUsageSelection::NoMatch)
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+fn format_categorized_unit_value<C>(
+    locale: &Locale,
+    unit: &str,
+    width: crate::dimension::units::options::Width,
+    value: &Decimal,
+) -> Result<String, FunctionError>
+where
+    C: crate::measure::category::MeasureUnitCategory,
+    crate::provider::Baked: icu_provider::DataProvider<C::DataMarkerCore>,
+    crate::provider::Baked: icu_provider::DataProvider<C::DataMarkerExtended>,
+    crate::provider::Baked: icu_provider::DataProvider<C::DataMarkerOutlier>,
+{
+    use crate::dimension::provider::units::display_names::UnitsDisplayNamesV1;
+    use crate::dimension::units::categorized_formatter::CategorizedUnitsFormatterPreferences;
+    use crate::dimension::units::format::FormattedUnit;
+    use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
+    use icu_plurals::PluralRules;
+    use icu_provider::marker::DataMarkerExt;
+    use icu_provider::{DataIdentifierBorrowed, DataMarkerAttributes, DataProvider, DataRequest};
+    use writeable::Writeable;
+
+    let prefs: CategorizedUnitsFormatterPreferences = locale.clone().into();
+    let data_locale = C::DataMarkerCore::make_locale(prefs.locale_preferences);
+    let decimal_formatter =
+        DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())
+            .map_err(|_| FunctionError::UnsupportedOperation)?;
+    let plural_rules = PluralRules::try_new_cardinal((&prefs).into())
+        .map_err(|_| FunctionError::UnsupportedOperation)?;
+
+    let length = match width {
+        crate::dimension::units::options::Width::Short => "short",
+        crate::dimension::units::options::Width::Narrow => "narrow",
+        crate::dimension::units::options::Width::Long => "long",
+    };
+    let attr = format!("{length}-{unit}");
+    let unit_attr = DataMarkerAttributes::try_from_utf8(attr.as_bytes())
+        .map_err(|_| FunctionError::UnsupportedOperation)?;
+    let req = DataRequest {
+        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(unit_attr, &data_locale),
+        ..Default::default()
+    };
+
+    let display_name = DataProvider::<C::DataMarkerCore>::load(&crate::provider::Baked, req)
+        .map(|r| r.payload.cast::<UnitsDisplayNamesV1>())
+        .or_else(|_| {
+            DataProvider::<C::DataMarkerExtended>::load(&crate::provider::Baked, req)
+                .map(|r| r.payload.cast::<UnitsDisplayNamesV1>())
+        })
+        .or_else(|_| {
+            DataProvider::<C::DataMarkerOutlier>::load(&crate::provider::Baked, req)
+                .map(|r| r.payload.cast::<UnitsDisplayNamesV1>())
+        })
+        .map_err(|_| FunctionError::UnsupportedOperation)?;
+
+    Ok(FormattedUnit {
+        value,
+        display_name: display_name.get(),
+        decimal_formatter: &decimal_formatter,
+        plural_rules: &plural_rules,
+    }
+    .write_to_string()
+    .into_owned())
+}
+
+#[cfg(all(feature = "unstable", feature = "compiled_data"))]
+fn format_usage_unit_value(
+    category: &str,
+    locale: &Locale,
+    unit: &str,
+    width: crate::dimension::units::options::Width,
+    value: &Decimal,
+) -> Result<String, FunctionError> {
+    match category {
+        "area" => format_categorized_unit_value::<crate::measure::category::Area>(
+            locale, unit, width, value,
+        ),
+        "duration" => format_categorized_unit_value::<crate::measure::category::Duration>(
+            locale, unit, width, value,
+        ),
+        "length" => format_categorized_unit_value::<crate::measure::category::Length>(
+            locale, unit, width, value,
+        ),
+        "mass" => format_categorized_unit_value::<crate::measure::category::Mass>(
+            locale, unit, width, value,
+        ),
+        "volume" => format_categorized_unit_value::<crate::measure::category::Volume>(
+            locale, unit, width, value,
+        ),
+        _ => Err(FunctionError::UnsupportedOperation),
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Draft: :unit (unstable feature)
 // ---------------------------------------------------------------------------
+//
+// `usage` resolution and value conversion are intentionally narrow: mixed-unit preferences
+// (e.g. foot-and-inch) and full TR35 *Unit Conversion* depend on the ICU4X dimension stack.
+// See repository root `messageformat-tr35-spec-tracking.md` §2.
 
 #[cfg(all(feature = "unstable", feature = "compiled_data"))]
 #[derive(Debug)]
@@ -1211,7 +2595,7 @@ impl FunctionHandler for UnitHandler {
             .map(|v| v.text())
             .ok_or(FunctionError::BadOperand)?;
 
-        MeasureUnit::try_from_str(unit).map_err(|_| FunctionError::BadOption {
+        let input_unit = MeasureUnit::try_from_str(unit).map_err(|_| FunctionError::BadOption {
             name: "unit".into(),
         })?;
 
@@ -1221,7 +2605,6 @@ impl FunctionHandler for UnitHandler {
                     name: "usage".into(),
                 });
             }
-            return Err(FunctionError::UnsupportedOperation);
         }
 
         let width = match merged.get("unitDisplay").map(|v| v.text()) {
@@ -1237,16 +2620,53 @@ impl FunctionHandler for UnitHandler {
 
         let mut value = resolve_numeric(operand)?;
         let parsed = NumberOptions::parse(&merged)?;
+        if let Some(usage) = merged.get("usage").map(|v| v.text()) {
+            let (category, formatter_unit) = match resolve_unit_usage(
+                &input_unit,
+                &value,
+                usage,
+                unit_usage_region(ctx.locale()),
+            )? {
+                UnitUsageSelection::Matched {
+                    category,
+                    unit: selected_unit,
+                    value: converted,
+                } => {
+                    value = converted;
+                    (category, selected_unit)
+                }
+                UnitUsageSelection::Unsupported | UnitUsageSelection::NoMatch => {
+                    return Err(FunctionError::UnsupportedOperation);
+                }
+            };
+            apply_digit_options(&mut value, &parsed);
+            if let Some(sd) = parsed.sign_display {
+                value = value.with_sign_display(sd);
+            }
+
+            let formatted =
+                format_usage_unit_value(category, ctx.locale(), formatter_unit, width, &value)?;
+            let locale_dir = super::resolver::locale_direction(ctx.locale());
+            let mut out = ResolvedValue::new(formatted)
+                .with_numeric(value)
+                .with_inferred_direction(locale_dir)
+                .with_part_kind("unit");
+            for (name, rv) in &merged {
+                if !name.starts_with("u:") {
+                    out = out.with_resolved_option(name.clone(), Box::<str>::from(rv.text()));
+                }
+            }
+            return Ok(out);
+        }
         apply_digit_options(&mut value, &parsed);
         if let Some(sd) = parsed.sign_display {
             value = value.with_sign_display(sd);
         }
 
+        use writeable::Writeable;
         let formatter =
             UnitsFormatter::try_new(ctx.locale().into(), unit, UnitsFormatterOptions { width })
                 .map_err(|_| FunctionError::UnsupportedOperation)?;
-
-        use writeable::Writeable;
         let formatted = formatter
             .format_fixed_decimal(&value)
             .write_to_string()
@@ -2596,6 +4016,20 @@ mod tests {
 
     #[cfg(feature = "compiled_data")]
     #[test]
+    fn offset_handler_fractional_base_yields_unsupported_operation() {
+        use core::str::FromStr;
+        let mut opts = FunctionOptions::new();
+        opts.insert("add".into(), ResolvedValue::new("1"));
+        let operand =
+            ResolvedValue::new("3.5").with_numeric(Decimal::from_str("3.5").expect("decimal"));
+        let err = OffsetHandler
+            .format(&FunctionContext::new(&und()), Some(&operand), &opts)
+            .unwrap_err();
+        assert_eq!(err, FunctionError::UnsupportedOperation);
+    }
+
+    #[cfg(feature = "compiled_data")]
+    #[test]
     fn offset_result_is_plural_selectable() {
         // After :offset, result should still carry a :number-style selector
         // (plural mode) — so `.match ${x :offset add=1}` works.
@@ -2752,8 +4186,60 @@ mod tests {
         opts.insert("unit".into(), ResolvedValue::new("meter"));
         opts.insert("usage".into(), ResolvedValue::new("road"));
         let operand = ResolvedValue::new("1").with_numeric(Decimal::from(1));
+        let selected = resolve_unit_usage(
+            &crate::measure::measureunit::MeasureUnit::try_from_str("meter").unwrap(),
+            &Decimal::from(1),
+            "road",
+            "US",
+        )
+        .expect("usage resolution");
+        let converted = match selected {
+            UnitUsageSelection::Matched {
+                category,
+                unit,
+                value,
+            } => {
+                assert_eq!(category, "length");
+                assert_eq!(unit, "foot");
+                value
+            }
+            other => panic!("unexpected selection: {other:?}"),
+        };
+        let mut display_value = converted.clone();
+        let parsed = NumberOptions::parse(&opts).expect("parse options");
+        apply_digit_options(&mut display_value, &parsed);
+        let formatted = format_usage_unit_value(
+            "length",
+            &locale!("en-US"),
+            "foot",
+            crate::dimension::units::options::Width::Short,
+            &display_value,
+        )
+        .expect("categorized usage formatter should load converted foot value");
+        assert!(formatted.contains("ft") || formatted.contains("foot"));
+        let out = UnitHandler
+            .format(
+                &FunctionContext::new(&locale!("en-US")),
+                Some(&operand),
+                &opts,
+            )
+            .expect("usage conversion should succeed");
+        assert!(out.text().contains("ft") || out.text().contains("foot"));
+    }
+
+    #[cfg(all(feature = "unstable", feature = "compiled_data"))]
+    #[test]
+    fn unit_handler_keeps_mixed_usage_outputs_unsupported() {
+        let mut opts = FunctionOptions::new();
+        opts.insert("unit".into(), ResolvedValue::new("meter"));
+        opts.insert("usage".into(), ResolvedValue::new("person-height"));
+        let operand = ResolvedValue::new("2").with_numeric(Decimal::from(2));
         let err = UnitHandler
-            .format(&FunctionContext::new(&und()), Some(&operand), &opts)
+            .format(
+                &FunctionContext::new(&locale!("en-US")),
+                Some(&operand),
+                &opts,
+            )
             .unwrap_err();
         assert_eq!(err, FunctionError::UnsupportedOperation);
     }

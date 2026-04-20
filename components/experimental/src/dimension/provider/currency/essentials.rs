@@ -7,15 +7,17 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
+use alloc::string::String;
+use alloc::vec::Vec;
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
 #[cfg(feature = "serde")]
 use icu_pattern::DoublePlaceholder;
-use icu_pattern::DoublePlaceholderPattern;
+use icu_pattern::{DoublePlaceholderKey, DoublePlaceholderPattern, PatternItem};
 
-use crate::dimension::currency::options::Width;
+use crate::dimension::currency::options::{CurrencyDisplaySign, Width};
 use crate::dimension::currency::CurrencyCode;
 
 #[cfg(feature = "compiled_data")]
@@ -51,7 +53,6 @@ pub struct CurrencyEssentials<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern_config_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>,
 
-    // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
     /// The standard currency pattern used for formatting.
     ///
     /// This pattern uses two placeholders:
@@ -66,7 +67,17 @@ pub struct CurrencyEssentials<'data> {
     )]
     pub standard_pattern: Cow<'data, DoublePlaceholderPattern>,
 
-    // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
+    /// Optional negative subpattern for [`Self::standard_pattern`] (CLDR `;` suffix).
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            default,
+            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
+    pub standard_negative_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
+
     /// The `standard_alpha_next_to_number` currency pattern used for formatting.
     ///
     /// This pattern uses two placeholders:
@@ -80,6 +91,61 @@ pub struct CurrencyEssentials<'data> {
         )
     )]
     pub standard_alpha_next_to_number_pattern: Cow<'data, DoublePlaceholderPattern>,
+
+    /// Optional negative subpattern for [`Self::standard_alpha_next_to_number_pattern`].
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            default,
+            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
+    pub standard_alpha_next_to_number_negative_pattern:
+        Option<Cow<'data, DoublePlaceholderPattern>>,
+
+    /// CLDR `accounting` pattern — positive subpattern (before `;` when present).
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
+    pub accounting_pattern: Cow<'data, DoublePlaceholderPattern>,
+
+    /// CLDR `accounting` pattern — negative subpattern (after `;`), when present.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            default,
+            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
+    pub accounting_negative_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
+
+    /// CLDR `accounting-alphaNextToNumber` — positive subpattern.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
+    pub accounting_alpha_next_to_number_pattern: Cow<'data, DoublePlaceholderPattern>,
+
+    /// CLDR `accounting-alphaNextToNumber` — negative subpattern, when present.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            default,
+            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
+    pub accounting_alpha_next_to_number_negative_pattern:
+        Option<Cow<'data, DoublePlaceholderPattern>>,
 
     /// A list of placeholders (strings), such as currency symbols, referenced by index.
     ///
@@ -143,14 +209,21 @@ pub struct CurrencyPatternConfig {
     pub narrow_placeholder_value: Option<PlaceholderValue>,
 }
 
+/// Result of [`CurrencyEssentials::resolve_currency_pattern`].
+pub(crate) struct ResolvedCurrencyPattern<'a> {
+    pub currency: &'a str,
+    pub pattern: &'a DoublePlaceholderPattern,
+    /// When true, format the numeric magnitude with [`fixed_decimal::Sign::None`] — the pattern
+    /// already encodes parentheses or other sign semantics.
+    pub sign_encoded_in_pattern: bool,
+}
+
 impl<'a> CurrencyEssentials<'a> {
-    // Returns the currency placeholder value for the currency,
-    // and the currency pattern for the given width and currency
-    pub(crate) fn name_and_pattern(
+    fn currency_str_and_selection(
         &'a self,
         width: Width,
         currency: &'a CurrencyCode,
-    ) -> (&'a str, &'a DoublePlaceholderPattern, PatternSelection) {
+    ) -> (&'a str, PatternSelection) {
         let config = self
             .pattern_config_map
             .get_copied(&currency.0.to_unvalidated())
@@ -171,14 +244,89 @@ impl<'a> CurrencyEssentials<'a> {
             Width::Short => config.short_pattern_selection,
             Width::Narrow => config.narrow_pattern_selection,
         };
-
-        let pattern = match pattern_selection {
-            PatternSelection::Standard => &*self.standard_pattern,
-            PatternSelection::StandardAlphaNextToNumber => {
-                &*self.standard_alpha_next_to_number_pattern
-            }
-        };
-
-        (currency, pattern, pattern_selection)
+        (currency, pattern_selection)
     }
+
+    /// Resolves the CLDR pattern for short/narrow currency formatting, including optional
+    /// negative subpatterns and accounting vs standard pattern choice.
+    pub(crate) fn resolve_currency_pattern(
+        &'a self,
+        width: Width,
+        currency: &'a CurrencyCode,
+        currency_display_sign: CurrencyDisplaySign,
+        value_is_negative: bool,
+    ) -> ResolvedCurrencyPattern<'a> {
+        let (currency, pattern_selection) = self.currency_str_and_selection(width, currency);
+        let (positive, negative_opt) = match currency_display_sign {
+            CurrencyDisplaySign::Standard => match pattern_selection {
+                PatternSelection::Standard => (
+                    self.standard_pattern.as_ref(),
+                    self.standard_negative_pattern.as_ref(),
+                ),
+                PatternSelection::StandardAlphaNextToNumber => (
+                    self.standard_alpha_next_to_number_pattern.as_ref(),
+                    self.standard_alpha_next_to_number_negative_pattern.as_ref(),
+                ),
+            },
+            CurrencyDisplaySign::Accounting => match pattern_selection {
+                PatternSelection::Standard => (
+                    self.accounting_pattern.as_ref(),
+                    self.accounting_negative_pattern.as_ref(),
+                ),
+                PatternSelection::StandardAlphaNextToNumber => (
+                    self.accounting_alpha_next_to_number_pattern.as_ref(),
+                    self.accounting_alpha_next_to_number_negative_pattern
+                        .as_ref(),
+                ),
+            },
+        };
+        if value_is_negative {
+            if let Some(neg) = negative_opt {
+                return ResolvedCurrencyPattern {
+                    currency,
+                    pattern: neg.as_ref(),
+                    sign_encoded_in_pattern: true,
+                };
+            }
+        }
+        ResolvedCurrencyPattern {
+            currency,
+            pattern: positive,
+            sign_encoded_in_pattern: false,
+        }
+    }
+}
+
+/// Concatenates literals before the first placeholder and after the last placeholder in a
+/// [`DoublePlaceholderPattern`].
+///
+/// Used to reuse CLDR accounting negative framing (for example parentheses) when the formatted
+/// monetary value is built from a different placeholder layout than the short `¤` pattern.
+pub(crate) fn outer_literal_affixes_double_placeholder(
+    pattern: &DoublePlaceholderPattern,
+) -> (String, String) {
+    let items: Vec<PatternItem<'_, DoublePlaceholderKey>> = pattern.iter().collect();
+    let first_ph = items
+        .iter()
+        .position(|m| matches!(m, PatternItem::Placeholder(_)));
+    let last_ph = items
+        .iter()
+        .rposition(|m| matches!(m, PatternItem::Placeholder(_)));
+    let (f, l) = match (first_ph, last_ph) {
+        (Some(f), Some(l)) => (f, l),
+        _ => return (String::new(), String::new()),
+    };
+    let mut prefix = String::new();
+    for it in &items[..f] {
+        if let PatternItem::Literal(s) = it {
+            prefix.push_str(s);
+        }
+    }
+    let mut suffix = String::new();
+    for it in &items[l + 1..] {
+        if let PatternItem::Literal(s) = it {
+            suffix.push_str(s);
+        }
+    }
+    (prefix, suffix)
 }

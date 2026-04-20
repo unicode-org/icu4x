@@ -9,15 +9,19 @@ mod tests {
     use writeable::assert_writeable_eq;
 
     use crate::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter;
-    use crate::dimension::currency::CurrencyCode;
+    use crate::dimension::currency::{options::LongCurrencyFormatterOptions, CurrencyCode};
 
     #[test]
     pub fn test_en_us() {
         let currency_formatter_prefs = locale!("en-US").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCompactCurrencyFormatter::try_new(currency_formatter_prefs, &currency_code)
-            .unwrap();
+        let fmt = LongCompactCurrencyFormatter::try_new(
+            currency_formatter_prefs,
+            &currency_code,
+            LongCurrencyFormatterOptions::default(),
+        )
+        .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -35,8 +39,12 @@ mod tests {
         let currency_formatter_prefs = locale!("en-US").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCompactCurrencyFormatter::try_new(currency_formatter_prefs, &currency_code)
-            .unwrap();
+        let fmt = LongCompactCurrencyFormatter::try_new(
+            currency_formatter_prefs,
+            &currency_code,
+            LongCurrencyFormatterOptions::default(),
+        )
+        .unwrap();
 
         // Positive case
         let positive_value = "12345000.67".parse().unwrap();
@@ -54,8 +62,12 @@ mod tests {
         let currency_formatter_prefs = locale!("fr-FR").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCompactCurrencyFormatter::try_new(currency_formatter_prefs, &currency_code)
-            .unwrap();
+        let fmt = LongCompactCurrencyFormatter::try_new(
+            currency_formatter_prefs,
+            &currency_code,
+            LongCurrencyFormatterOptions::default(),
+        )
+        .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -73,8 +85,12 @@ mod tests {
         let currency_formatter_prefs = locale!("fr-FR").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCompactCurrencyFormatter::try_new(currency_formatter_prefs, &currency_code)
-            .unwrap();
+        let fmt = LongCompactCurrencyFormatter::try_new(
+            currency_formatter_prefs,
+            &currency_code,
+            LongCurrencyFormatterOptions::default(),
+        )
+        .unwrap();
 
         // Positive case
         let positive_value = "12345000.67".parse().unwrap();

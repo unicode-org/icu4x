@@ -3,7 +3,9 @@
 - Author: Alexey Lyakhov
 
 _Companion to `messageformat-v2-research.md` (background) and
-`messageformat-v2-architecture.md` (crate/type layout)._
+`messageformat-v2-architecture.md` (crate/type layout). For **LDML 46.1 vs 48
+default-function deltas**, **`:unit` / `:currency` / `:offset` gap tracking**, and
+**JavaScript ecosystem scope decisions**, see `messageformat-tr35-spec-tracking.md`._
 
 This document is the **execution plan**: a sequence of red/green/refactor
 commit phases, the testing strategy, the tooling/CI wiring, and the

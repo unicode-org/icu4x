@@ -4,7 +4,7 @@
 
 use core::fmt::Display;
 
-use fixed_decimal::Decimal;
+use fixed_decimal::{Decimal, Sign};
 use icu_decimal::{
     options::DecimalFormatterOptions, DecimalFormatter, DecimalFormatterPreferences,
 };
@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 use super::super::provider::currency::essentials::CurrencyEssentialsV1;
-use super::options::CurrencyFormatterOptions;
+use super::options::{CurrencyDisplaySign, CurrencyFormatterOptions};
 use super::CurrencyCode;
 
 extern crate alloc;
@@ -126,6 +126,19 @@ impl CurrencyFormatter {
         })
     }
 
+    /// Returns whether a **negative** amount is formatted using a CLDR negative subpattern
+    /// (parentheses or similar) for the current [`CurrencyFormatterOptions`], rather than a
+    /// leading minus on the number.
+    pub fn negative_sign_encoded_in_pattern(&self, currency_code: &CurrencyCode) -> bool {
+        self.essential.get().resolve_currency_pattern(
+            self.options.width,
+            currency_code,
+            self.options.currency_display_sign,
+            true,
+        )
+        .sign_encoded_in_pattern
+    }
+
     /// Formats a [`Decimal`] value for the given currency code.
     ///
     /// # Examples
@@ -150,17 +163,27 @@ impl CurrencyFormatter {
         value: &'l Decimal,
         currency_code: &'l CurrencyCode,
     ) -> impl Writeable + Display + 'l {
-        let (currency_str, pattern, _pattern_selection) = self
-            .essential
-            .get()
-            .name_and_pattern(self.options.width, currency_code);
-
+        let value_is_negative_for_resolve = matches!(
+            self.options.currency_display_sign,
+            CurrencyDisplaySign::Accounting
+        ) && value.sign() == Sign::Negative;
+        let resolved = self.essential.get().resolve_currency_pattern(
+            self.options.width,
+            currency_code,
+            self.options.currency_display_sign,
+            value_is_negative_for_resolve,
+        );
+        let output_sign = if resolved.sign_encoded_in_pattern {
+            Sign::None
+        } else {
+            value.sign()
+        };
         self.decimal_formatter.format_sign(
-            value.sign,
-            pattern.interpolate((
+            output_sign,
+            resolved.pattern.interpolate((
                 self.decimal_formatter
                     .format_unsigned(icu_decimal::Cow::Borrowed(&value.absolute)),
-                currency_str,
+                resolved.currency,
             )),
         )
     }

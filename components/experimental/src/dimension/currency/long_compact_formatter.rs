@@ -4,20 +4,28 @@
 
 use core::fmt::Display;
 
-use fixed_decimal::Decimal;
+use fixed_decimal::{Decimal, Sign};
 use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
+use writeable::adapters::Concat;
 use writeable::Writeable;
 
 use crate::dimension::currency::compact_formatter::CompactCurrencyFormatterPreferences;
 use crate::dimension::provider::currency::{
-    extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
+    essentials::{outer_literal_affixes_double_placeholder, CurrencyEssentialsV1},
+    extended::CurrencyExtendedDataV1,
+    patterns::CurrencyPatternsDataV1,
 };
 
-use super::CurrencyCode;
+use super::{
+    options::{CurrencyDisplaySign, LongCurrencyFormatterOptions, Width},
+    CurrencyCode,
+};
 
 extern crate alloc;
+
+use alloc::string::String;
 
 /// A formatter for monetary values.
 ///
@@ -26,11 +34,15 @@ extern crate alloc;
 ///   2. Locale-sensitive grouping separator positions.
 #[derive(Debug)]
 pub struct LongCompactCurrencyFormatter {
+    currency_code: CurrencyCode,
+
     /// Extended data for the currency formatter.
     extended: DataPayload<CurrencyExtendedDataV1>,
 
     /// Formatting patterns for each currency plural category.
     patterns: DataPayload<CurrencyPatternsDataV1>,
+
+    essential: DataPayload<CurrencyEssentialsV1>,
 
     decimal_formatter: DecimalFormatter,
 
@@ -38,13 +50,16 @@ pub struct LongCompactCurrencyFormatter {
 
     /// A [`PluralRules`] to determine the plural category of the unit.
     plural_rules: PluralRules,
+
+    options: LongCurrencyFormatterOptions,
 }
 
 impl LongCompactCurrencyFormatter {
     icu_provider::gen_buffer_data_constructors!(
         (
             prefs: CompactCurrencyFormatterPreferences,
-            currency_code: &CurrencyCode
+            currency_code: &CurrencyCode,
+            options: LongCurrencyFormatterOptions
         ) -> error: DataError,
         functions: [
             try_new: skip,
@@ -63,6 +78,7 @@ impl LongCompactCurrencyFormatter {
     pub fn try_new(
         prefs: CompactCurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
+        options: LongCurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let decimal_formatter = DecimalFormatter::try_new((&prefs).into(), Default::default())?;
 
@@ -101,14 +117,25 @@ impl LongCompactCurrencyFormatter {
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
+        let essential_locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let essential = crate::provider::Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&essential_locale),
+                ..Default::default()
+            })?
+            .payload;
+
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         Ok(Self {
+            currency_code: *currency_code,
             extended,
             patterns,
+            essential,
             decimal_formatter,
             compact_data,
             plural_rules,
+            options,
         })
     }
 
@@ -117,11 +144,13 @@ impl LongCompactCurrencyFormatter {
         provider: &D,
         prefs: CompactCurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
+        options: LongCurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencyEssentialsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
@@ -148,6 +177,14 @@ impl LongCompactCurrencyFormatter {
 
         let patterns = provider.load(Default::default())?.payload;
 
+        let essential_locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let essential = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&essential_locale),
+                ..Default::default()
+            })?
+            .payload;
+
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         let decimal_formatter =
@@ -168,11 +205,14 @@ impl LongCompactCurrencyFormatter {
         .cast();
 
         Ok(Self {
+            currency_code: *currency_code,
             extended,
             patterns,
+            essential,
             decimal_formatter,
             compact_data,
             plural_rules,
+            options,
         })
     }
 
@@ -181,6 +221,7 @@ impl LongCompactCurrencyFormatter {
     /// # Examples
     /// ```
     /// use icu::experimental::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter;
+    /// use icu::experimental::dimension::currency::options::LongCurrencyFormatterOptions;
     /// use icu::experimental::dimension::currency::CurrencyCode;
     /// use icu::locale::locale;
     /// use tinystr::*;
@@ -188,7 +229,12 @@ impl LongCompactCurrencyFormatter {
     ///
     /// let currency_prefs = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = LongCompactCurrencyFormatter::try_new(currency_prefs, &currency_code).unwrap();
+    /// let fmt = LongCompactCurrencyFormatter::try_new(
+    ///     currency_prefs,
+    ///     &currency_code,
+    ///     LongCurrencyFormatterOptions::default(),
+    /// )
+    /// .unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12 thousand US dollars");
     /// ```
@@ -212,16 +258,41 @@ impl LongCompactCurrencyFormatter {
             .get()
             .get_pattern_and_significand(&value.absolute, &self.plural_rules);
 
-        self.decimal_formatter.format_sign(
-            value.sign,
-            pattern.interpolate((
-                compact_pattern
-                    .unwrap_or(icu_pattern::SinglePlaceholderPattern::PASS_THROUGH)
-                    .interpolate([self
-                        .decimal_formatter
-                        .format_unsigned(icu_decimal::Cow::Owned(significand))]),
-                display_name,
-            )),
-        )
+        let inner = pattern.interpolate((
+            compact_pattern
+                .unwrap_or(icu_pattern::SinglePlaceholderPattern::PASS_THROUGH)
+                .interpolate([self
+                    .decimal_formatter
+                    .format_unsigned(icu_decimal::Cow::Owned(significand))]),
+            display_name,
+        ));
+
+        let (prefix, suffix, output_sign) =
+            if matches!(self.options.currency_display_sign, CurrencyDisplaySign::Accounting)
+                && value.sign() == Sign::Negative
+            {
+                let resolved = self.essential.get().resolve_currency_pattern(
+                    Width::Short,
+                    &self.currency_code,
+                    self.options.currency_display_sign,
+                    true,
+                );
+                let (prefix, suffix) = if resolved.sign_encoded_in_pattern {
+                    outer_literal_affixes_double_placeholder(resolved.pattern)
+                } else {
+                    (String::new(), String::new())
+                };
+                let output_sign = if resolved.sign_encoded_in_pattern {
+                    Sign::None
+                } else {
+                    value.sign()
+                };
+                (prefix, suffix, output_sign)
+            } else {
+                (String::new(), String::new(), value.sign())
+            };
+
+        let wrapped = Concat(Concat(prefix, inner), suffix);
+        self.decimal_formatter.format_sign(output_sign, wrapped)
     }
 }

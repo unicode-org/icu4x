@@ -166,7 +166,8 @@ impl<'a, V: InputValues + ?Sized> Resolver<'a, V> {
         // Strip u: options before calling the handler. u:id is opaque
         // metadata; u:dir overrides the value's direction; u:locale overrides
         // the formatting locale for this expression only. Invalid values
-        // emit BadOption and force the expression to fall back.
+        // emit BadOption; `u:dir` is ignored per u-namespace.md, while
+        // invalid `u:locale` still forces the expression to fall back.
         //
         // Spec: u-namespace.md defines `u:id`, `u:dir`, and (Draft) `u:locale`.
         // Other u:* options reach the handler unchanged.
@@ -199,7 +200,7 @@ impl<'a, V: InputValues + ?Sized> Resolver<'a, V> {
                             name: "u:dir".into(),
                         },
                     });
-                    return self.fallback_for_expression(expr);
+                    None
                 }
             },
             None => None,
