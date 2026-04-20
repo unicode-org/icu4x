@@ -49,6 +49,7 @@ mod tests {
         assert_writeable_eq!(formatted_currency, "-12\u{202f}345,67\u{a0}€");
     }
 
+    #[cfg(feature = "compiled_data")]
     #[test]
     fn accounting_outer_affixes_if_encoded_en_us() {
         let locale = locale!("en-US").into();

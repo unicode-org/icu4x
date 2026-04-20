@@ -13,14 +13,15 @@ use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-use super::super::provider::currency::essentials::{
-    outer_literal_affixes_double_placeholder, CurrencyEssentialsV1,
-};
+use super::super::provider::currency::essentials::CurrencyEssentialsV1;
+#[cfg(feature = "compiled_data")]
+use super::super::provider::currency::essentials::outer_literal_affixes_double_placeholder;
 use super::options::{CurrencyDisplaySign, CurrencyFormatterOptions};
 use super::CurrencyCode;
 
 extern crate alloc;
 
+#[cfg(feature = "compiled_data")]
 use alloc::string::String;
 
 define_preferences!(
@@ -150,6 +151,7 @@ impl CurrencyFormatter {
     /// prefix and suffix around the numeric amount — for composing
     /// `currencyDisplay=code` / `never` amounts with the same accounting shell as
     /// short currency formatting.
+    #[cfg(feature = "compiled_data")]
     pub(crate) fn accounting_outer_affixes_if_encoded(
         &self,
         currency_code: &CurrencyCode,
