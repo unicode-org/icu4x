@@ -10,7 +10,7 @@ authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zero-copy", "serialization", "memory-efficiency", "self-referential"]
 
-edition.workspace = true
+edition = "2021"
 include.workspace = true
 license.workspace = true
 repository.workspace = true

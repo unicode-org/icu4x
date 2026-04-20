@@ -6,12 +6,12 @@
 //!
 //! For more information, see the [index](..).
 
-use harfbuzz::{sys, Buffer, Direction, UnicodeFuncs, UnicodeFuncsBuilder};
+use harfbuzz::{Buffer, Direction, UnicodeFuncs, UnicodeFuncsBuilder, sys};
 use icu_normalizer::properties::*;
 use icu_properties::{
+    CodePointMapData,
     props::{BidiMirroringGlyph, GeneralCategory},
     script::HarfbuzzScriptData,
-    CodePointMapData,
 };
 
 pub fn main() {

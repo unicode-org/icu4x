@@ -341,6 +341,7 @@ macro_rules! registry(
             icu::experimental::transliterate::provider::TransliteratorRulesV1: TransliteratorRulesV1,
             icu::experimental::units::provider::UnitsInfoV1: UnitsInfoV1,
             icu::plurals::provider::PluralsRangesV1: PluralsRangesV1,
+            icu::segmenter::provider::radical::SegmenterUnihanRadicalV1: SegmenterUnihanRadicalV1,
         );
     }
 );

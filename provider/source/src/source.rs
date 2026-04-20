@@ -4,7 +4,6 @@
 
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
 use std::any::Any;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
@@ -481,92 +480,6 @@ impl TzdbCache {
                         )
                     }),
                 })
-            })
-            .as_ref()
-            .map_err(|&e| e)
-    }
-}
-
-#[derive(Debug)]
-#[allow(dead_code)]
-pub struct IRGValue {
-    pub value: u8,
-}
-
-#[derive(Debug)]
-pub(crate) struct UnihanCache {
-    #[allow(dead_code)]
-    pub(crate) root: AbstractFs,
-    pub(crate) irg_cache: OnceLock<Result<LiteMap<char, IRGValue>, DataError>>,
-}
-
-impl UnihanCache {
-    #[allow(dead_code)]
-    pub(crate) fn irg_sources(
-        &self,
-        identifier_status: &AbstractFs,
-    ) -> Result<&LiteMap<char, IRGValue>, DataError> {
-        self.irg_cache
-            .get_or_init(|| {
-                let identifier_status =
-                    identifier_status.read_to_string("security/IdentifierStatus.txt")?;
-                let identifier_status = identifier_status
-                    .lines()
-                    .filter(|line| !line.starts_with('#') && !line.trim().is_empty())
-                    .map(|line| {
-                        let field = line.split(';').next().unwrap().trim();
-                        let (start, end) = field.split_once("..").unwrap_or((field, field));
-                        (
-                            u32::from_str_radix(start, 16)
-                                .expect("Invalid IdentifierStatus codepoint format"),
-                            u32::from_str_radix(end, 16)
-                                .expect("Invalid IdentifierStatus codepoint format"),
-                        )
-                    })
-                    .collect::<Vec<_>>();
-
-                let raw_content = self.root.read_to_string("Unihan_IRGSources.txt")?;
-                let mut map = LiteMap::new();
-                for line in raw_content.lines() {
-                    if line.starts_with('#') || line.trim().is_empty() {
-                        continue;
-                    }
-                    let parts: Vec<&str> = line.trim().split('\t').collect();
-                    if parts[1] != "kRSUnicode" {
-                        continue;
-                    }
-                    let codepoint = parts[0]
-                        .strip_prefix("U+")
-                        .and_then(|hex| u32::from_str_radix(hex, 16).ok())
-                        .expect("Invalid Unihan codepoint format");
-
-                    let codepoint_idx =
-                        identifier_status.partition_point(|(start, _)| *start <= codepoint);
-                    if codepoint_idx == 0 || identifier_status[codepoint_idx - 1].1 < codepoint {
-                        continue;
-                    }
-
-                    let codepoint =
-                        char::from_u32(codepoint).expect("Invalid Unihan codepoint format");
-
-                    let mut candidate = parts[2].trim();
-                    if let Some(first_part) = candidate.split_whitespace().next() {
-                        candidate = first_part;
-                    }
-                    let radical_str = if let Some(idx) = candidate.find('.') {
-                        &candidate[..idx]
-                    } else {
-                        candidate
-                    };
-                    let clean_str = radical_str.replace('\'', "");
-                    if let Ok(value) = clean_str.parse::<u8>() {
-                        let val = IRGValue { value };
-                        if let Some((k, v)) = map.try_append(codepoint, val) {
-                            map.insert(k, v);
-                        }
-                    }
-                }
-                Ok(map)
             })
             .as_ref()
             .map_err(|&e| e)

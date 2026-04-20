@@ -10,7 +10,7 @@ categories = ["rust-patterns", "memory-management", "development-tools::procedur
 keywords = ["zerocopy", "serialization", "const"]
 
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 include.workspace = true
 license.workspace = true
 repository.workspace = true

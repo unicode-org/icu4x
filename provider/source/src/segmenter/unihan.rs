@@ -4,24 +4,137 @@
 
 //! This module contains provider implementations for Unihan radicals.
 
-#[cfg(test)]
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+use crate::AbstractFs;
+use crate::{IterableDataProviderCached, SourceDataProvider};
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+use icu::collections::codepointtrie;
+use icu::segmenter::provider::radical::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+use icu_codepointtrie_builder::CodePointTrieBuilder;
+use icu_provider::prelude::*;
+use std::collections::HashSet;
+
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+fn build_unihan_radicals_data(
+    unihan: &AbstractFs,
+    ucd: &AbstractFs,
+    trie_type: crate::TrieType,
+) -> Result<UnihanRadicalsData<'static>, DataError> {
+    let identifier_status = ucd.read_to_string("security/IdentifierStatus.txt")?;
+    let mut id_builder = CodePointInversionListBuilder::new();
+    for line in identifier_status.lines() {
+        if line.starts_with('#') || line.trim().is_empty() {
+            continue;
+        }
+
+        let field = line.split(';').next().unwrap().trim();
+        let (start, end) = field.split_once("..").unwrap_or((field, field));
+
+        let start =
+            u32::from_str_radix(start, 16).expect("Invalid IdentifierStatus codepoint format");
+        let end = u32::from_str_radix(end, 16).expect("Invalid IdentifierStatus codepoint format");
+
+        id_builder.add_range32(start..=end);
+    }
+    let identifier_status = id_builder.build();
+
+    let raw_content = unihan.read_to_string("Unihan_IRGSources.txt")?;
+    let mut builder = CodePointTrieBuilder::new(
+        0u8,
+        0u8,
+        match trie_type {
+            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+            crate::TrieType::Small => codepointtrie::TrieType::Small,
+        },
+    );
+
+    for line in raw_content.lines() {
+        if line.starts_with('#') || line.trim().is_empty() {
+            continue;
+        }
+        let parts: Vec<&str> = line.trim().split('\t').collect();
+        if parts[1] != "kRSUnicode" {
+            continue;
+        }
+        let codepoint = parts[0]
+            .strip_prefix("U+")
+            .and_then(|hex| u32::from_str_radix(hex, 16).ok())
+            .expect("Invalid Unihan codepoint format");
+
+        if !identifier_status.contains32(codepoint) {
+            continue;
+        }
+
+        let mut candidate = parts[2].trim();
+        if let Some(first_part) = candidate.split_whitespace().next() {
+            candidate = first_part;
+        }
+        let radical_str = candidate.split('.').next().unwrap_or(candidate);
+        let clean_str = radical_str.replace('\'', "");
+        if let Ok(value) = clean_str.parse::<u8>() {
+            builder.set_value(codepoint, value);
+        }
+    }
+
+    let trie = builder.build();
+
+    Ok(UnihanRadicalsData { trie })
+}
+
+impl DataProvider<SegmenterUnihanRadicalV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterUnihanRadicalV1>, DataError> {
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(
+            DataError::custom("Unihan data generation requires use_wasm or use_icu4c")
+                .with_req(SegmenterUnihanRadicalV1::INFO, req),
+        );
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            self.check_req::<SegmenterUnihanRadicalV1>(req)?;
+
+            let unihan = self.unihan()?;
+            let ucd = self.ucd()?;
+            let data = build_unihan_radicals_data(unihan, ucd, self.trie_type())?;
+
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(data),
+            })
+        }
+    }
+}
+
+impl IterableDataProviderCached<SegmenterUnihanRadicalV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(HashSet::new())
+    }
+}
+
+#[cfg(all(test, any(feature = "use_wasm", feature = "use_icu4c")))]
 mod tests {
+    use super::build_unihan_radicals_data;
     use crate::SourceDataProvider;
+    use icu::segmenter::provider::radical::SegmenterUnihanRadicalV1;
+    use icu_provider::prelude::*;
 
     #[test]
-    fn test_chinese_irg_values() {
+    fn test_chinese_radical_values_trie() {
         let provider = SourceDataProvider::new_testing();
 
-        let unihan_cache = provider.unihan().expect("Unihan data should be available");
-        let ucd = provider.ucd().expect("UCD data should be available");
+        let response: DataResponse<SegmenterUnihanRadicalV1> = provider
+            .load(DataRequest::default())
+            .expect("Failed to build CodePointTrie from Unihan data");
 
-        let irg_map = unihan_cache
-            .irg_sources(ucd)
-            .expect("Should be able to parse Unihan_IRGSources.txt");
+        let trie = &response.payload.get().trie;
 
-        assert_eq!(irg_map.get(&'我').map(|v| v.value), Some(62));
-        assert_eq!(irg_map.get(&'爱').map(|v| v.value), Some(87));
-        assert_eq!(irg_map.get(&'中').map(|v| v.value), Some(2));
-        assert_eq!(irg_map.get(&'文').map(|v| v.value), Some(67));
+        assert_eq!(trie.get('我'), 62);
+        assert_eq!(trie.get('爱'), 87);
+        assert_eq!(trie.get('中'), 2);
+        assert_eq!(trie.get('文'), 67);
+
+        assert_eq!(trie.get('A'), 0);
     }
 }

@@ -35,13 +35,13 @@ export class TitlecaseOptions {
         }
 
         if ("leadingAdjustment" in structObj) {
-            this.#leadingAdjustment = structObj.leadingAdjustment;
+            this.#leadingAdjustment = new LeadingAdjustment(structObj.leadingAdjustment);
         } else {
             this.#leadingAdjustment = null;
         }
 
         if ("trailingCase" in structObj) {
-            this.#trailingCase = structObj.trailingCase;
+            this.#trailingCase = new TrailingCase(structObj.trailingCase);
         } else {
             this.#trailingCase = null;
         }

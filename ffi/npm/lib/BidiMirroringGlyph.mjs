@@ -53,7 +53,7 @@ export class BidiMirroringGlyph {
         }
 
         if ("pairedBracketType" in structObj) {
-            this.#pairedBracketType = structObj.pairedBracketType;
+            this.#pairedBracketType = new BidiPairedBracketType(structObj.pairedBracketType);
         } else {
             throw new Error("Missing required field pairedBracketType.");
         }

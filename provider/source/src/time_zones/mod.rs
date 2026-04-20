@@ -634,7 +634,7 @@ impl IterableDataProviderCached<TimezonePeriodsV1> for SourceDataProvider {
 }
 
 impl crate::source::Tzdb {
-    fn transitions<'a>(&'a self, iana: &str) -> Option<impl Iterator<Item = Transition> + 'a> {
+    fn transitions(&self, iana: &str) -> Option<impl Iterator<Item = Transition> + use<>> {
         use icu_time::zone::UtcOffset;
         use parse_zoneinfo::transitions::*;
 

@@ -28,13 +28,12 @@ struct ProcessedArgs {
 fn process_cli_args() -> ProcessedArgs {
     let processed = ProcessedArgs::parse();
 
-    if let Some(ref os) = processed.os {
-        if !os
+    if let Some(ref os) = processed.os
+        && !os
             .chars()
             .all(|c| c.is_alphanumeric() || c == '_' || c == '-')
-        {
-            panic!("The OS had an unexpected character");
-        }
+    {
+        panic!("The OS had an unexpected character");
     }
     for example in &processed.examples {
         if !example

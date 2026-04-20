@@ -4,6 +4,7 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
+use core::cmp::Ordering;
 use icu::locale::provider::*;
 use icu::locale::{
     subtags::{self, language},
@@ -37,24 +38,24 @@ impl crate::IterableDataProviderCached<LocaleAliasesV1> for SourceDataProvider {
 // Sort rules following algorithm in Preprocessing, step 5 of Appendix C:
 //   - the size of the union of all field value sets, with largest size first
 //   - alphabetically by each field
-fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
-    let mut union_size = langid.variants.len() as i8;
-    if !langid.language.is_unknown() {
-        union_size += 1;
-    }
-    if langid.script.is_some() {
-        union_size += 1;
-    }
-    if langid.region.is_some() {
-        union_size += 1;
-    }
-    (
-        -union_size,
-        langid.language,
-        langid.script,
-        langid.region,
-        langid.variants.clone(),
-    )
+fn appendix_c_cmp(a: &LanguageIdentifier, b: &LanguageIdentifier) -> Ordering {
+    let a_union_size = a.variants.len() as u8
+        + (!a.language.is_unknown()) as u8
+        + a.script.is_some() as u8
+        + a.region.is_some() as u8;
+    let b_union_size = b.variants.len() as u8
+        + (!b.language.is_unknown()) as u8
+        + b.script.is_some() as u8
+        + b.region.is_some() as u8;
+
+    a_union_size.cmp(&b_union_size).reverse().then_with(|| {
+        (a.language, a.script, a.region, &a.variants).cmp(&(
+            b.language,
+            b.script,
+            b.region,
+            &b.variants,
+        ))
+    })
 }
 
 impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
@@ -194,8 +195,8 @@ impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
         }
 
         // 5. Sort the non-special-cased rules
-        language_variants.sort_unstable_by_key(|(langid, _)| appendix_c_cmp(langid));
-        language.sort_unstable_by_key(|(langid, _)| appendix_c_cmp(langid));
+        language_variants.sort_unstable_by(|(a, _), (b, _)| appendix_c_cmp(a, b));
+        language.sort_unstable_by(|(a, _), (b, _)| appendix_c_cmp(a, b));
 
         let language_variants = language_variants
             .iter()
@@ -267,7 +268,7 @@ fn test_appendix_c_cmp() {
     let fr = icu::locale::langid!("fr-CA");
 
     let mut rules = vec![&en, &ca, &und, &fr];
-    rules.sort_unstable_by_key(|&l| appendix_c_cmp(l));
+    rules.sort_unstable_by(|&a, &b| appendix_c_cmp(a, b));
 
     assert_eq!(rules, &[&en, &fr, &und, &ca]);
 }

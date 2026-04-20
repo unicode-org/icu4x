@@ -6,7 +6,6 @@
 name = "icu_segmenter_lstm"
 version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
 license = "Unicode-3.0"

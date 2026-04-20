@@ -4,7 +4,7 @@
 
 [package]
 name = "tutorial_harfbuzz"
-edition = "2021"
+edition = "2024"
 publish = false
 
 [dependencies]

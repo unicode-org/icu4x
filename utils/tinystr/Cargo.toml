@@ -10,7 +10,7 @@ keywords = ["small-string", "ascii", "string", "str"]
 categories = ["data-structures"]
 
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 include.workspace = true
 license.workspace = true
 repository.workspace = true

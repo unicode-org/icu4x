@@ -27,7 +27,7 @@ export class DateAddOptions {
         }
 
         if ("overflow" in structObj) {
-            this.#overflow = structObj.overflow;
+            this.#overflow = new DateOverflow(structObj.overflow);
         } else {
             this.#overflow = null;
         }

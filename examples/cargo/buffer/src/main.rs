@@ -14,7 +14,7 @@
 //! For more information, see the [index](..).
 
 use icu::calendar::{Date, Gregorian};
-use icu::datetime::{fieldsets::YMDT, FixedCalendarDateTimeFormatter};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMDT};
 use icu::locale::locale;
 use icu::time::{DateTime, Time};
 use icu_provider_blob::BlobDataProvider;

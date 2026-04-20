@@ -10,7 +10,7 @@ authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["macros", "derive", "serialization", "zero-copy"]
 
-edition.workspace = true
+edition = "2021"
 license.workspace = true
 repository.workspace = true
 

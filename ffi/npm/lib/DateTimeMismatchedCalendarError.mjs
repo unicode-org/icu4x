@@ -34,13 +34,13 @@ export class DateTimeMismatchedCalendarError {
         }
 
         if ("thisKind" in structObj) {
-            this.#thisKind = structObj.thisKind;
+            this.#thisKind = new CalendarKind(structObj.thisKind);
         } else {
             throw new Error("Missing required field thisKind.");
         }
 
         if ("dateKind" in structObj) {
-            this.#dateKind = structObj.dateKind;
+            this.#dateKind = new CalendarKind(structObj.dateKind);
         } else {
             this.#dateKind = null;
         }

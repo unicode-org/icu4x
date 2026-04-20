@@ -15,7 +15,7 @@ categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-s
 keywords = ["calendars", "mathematics"]
 
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 include.workspace = true
 repository.workspace = true
 rust-version = "1.82"

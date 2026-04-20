@@ -18,16 +18,16 @@ fn wasm_filesize(dir: &str, filesuffix: &str) -> Result<u64, std::io::Error> {
     let mut count: u64 = 0;
     for path in paths {
         let p = path.unwrap().path();
-        if let Some(suffix) = p.extension() {
-            if suffix == filesuffix {
-                count += 1;
-                println!(
-                    // Write the file name and size in bytes to stdout in ndjson format.
-                    "{{\"biggerIsBetter\":false,\"name\":{:?},\"unit\":\"bytes\",\"value\":{}}}",
-                    p.file_name().unwrap(),
-                    p.metadata()?.len()
-                );
-            }
+        if let Some(suffix) = p.extension()
+            && suffix == filesuffix
+        {
+            count += 1;
+            println!(
+                // Write the file name and size in bytes to stdout in ndjson format.
+                "{{\"biggerIsBetter\":false,\"name\":{:?},\"unit\":\"bytes\",\"value\":{}}}",
+                p.file_name().unwrap(),
+                p.metadata()?.len()
+            );
         }
     }
     Ok(count)

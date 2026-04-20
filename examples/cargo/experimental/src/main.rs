@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This is a demo project using test data with experimental features.
-//! 
+//!
 //! For more information, see the [index](..).
 
 use icu::experimental::displaynames::multi::RegionDisplayNames;

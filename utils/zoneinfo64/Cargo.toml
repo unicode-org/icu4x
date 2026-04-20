@@ -11,7 +11,7 @@ keywords = ["timezone", "database"]
 
 rust-version = "1.82"
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 repository.workspace = true
 homepage.workspace = true
 license.workspace = true

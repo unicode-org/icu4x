@@ -93,7 +93,7 @@ fn main() -> std::io::Result<()> {
     std::fs::remove_dir_all(&include)?;
     std::fs::create_dir_all(&include)?;
 
-    diplomat_tool::gen(
+    diplomat_tool::r#gen(
         &root.join("ffi/capi/src/lib.rs"),
         lang.as_str(),
         &include,

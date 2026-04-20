@@ -28,6 +28,7 @@ use zerovec::ZeroVec;
 
 mod dictionary;
 mod lstm;
+#[cfg(feature = "unstable")]
 mod unihan;
 
 // state machine name define by builtin name

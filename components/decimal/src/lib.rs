@@ -108,7 +108,7 @@ impl<'a, T> core::ops::Deref for Cow<'a, T> {
     fn deref(&self) -> &Self::Target {
         match self {
             Self::Borrowed(r) => r,
-            Self::Owned(ref r) => r,
+            Self::Owned(r) => r,
         }
     }
 }

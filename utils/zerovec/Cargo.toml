@@ -10,7 +10,7 @@ categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-s
 keywords = ["zero-copy", "serialization", "memory-efficiency", "serde"]
 
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 include.workspace = true
 license.workspace = true
 repository.workspace = true

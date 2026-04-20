@@ -346,7 +346,7 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-    ) -> impl Writeable + 'a {
+    ) -> impl Writeable + 'a + use<'a> {
         if options.leading_adjustment.unwrap_or_default() == LeadingAdjustment::Auto {
             // letter, number, symbol, or private use code point
             const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter

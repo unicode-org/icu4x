@@ -9,7 +9,7 @@ version = "0.3.0"
 keywords = ["compression", "binary"]
 
 authors.workspace = true
-edition.workspace = true
+edition = "2021"
 homepage.workspace = true
 include.workspace = true
 license.workspace = true

@@ -404,7 +404,7 @@ fn apply_subseconds(pattern: &mut runtime::Pattern, subseconds: Option<Subsecond
         let mut items = pattern.items.to_vec();
         for item in items.iter_mut() {
             if let PatternItem::Field(
-                ref mut field @ Field {
+                field @ Field {
                     symbol:
                         FieldSymbol::Second(fields::Second::Second) | FieldSymbol::DecimalSecond(_),
                     ..

@@ -174,12 +174,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         }
 
         fn check_ignored_assoc_item(name: &str, trait_path: Option<&str>) -> bool {
-            if let Some(tr) = trait_path {
-                if let Some(ignored) = IGNORED_ASSOCIATED_ITEMS.get(tr) {
-                    if ignored.contains(&name) {
-                        return true;
-                    }
-                }
+            if let Some(tr) = trait_path
+                && let Some(ignored) = IGNORED_ASSOCIATED_ITEMS.get(tr)
+                && ignored.contains(&name)
+            {
+                return true;
             }
             false
         }
@@ -358,30 +357,29 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(types, path, ast::DocType::Macro);
                     }
                     ItemEnum::TypeAlias(t) => {
-                        if let Type::ResolvedPath(p) = &t.type_ {
-                            if let ItemEnum::Struct(rustdoc_types::Struct { impls, .. })
+                        if let Type::ResolvedPath(p) = &t.type_
+                            && let ItemEnum::Struct(rustdoc_types::Struct { impls, .. })
                             | ItemEnum::Enum(rustdoc_types::Enum { impls, .. }) =
                                 &krate.index[&p.id].inner
-                            {
-                                for id in impls {
-                                    if let ItemEnum::Impl(inner) = &krate.index[id].inner {
-                                        let mut trait_name = None;
-                                        if let Some(path) = &inner.trait_ {
-                                            if IGNORED_TRAITS.contains(path.path.as_str()) {
-                                                continue;
-                                            }
-                                            trait_name = Some(path.path.as_str());
+                        {
+                            for id in impls {
+                                if let ItemEnum::Impl(inner) = &krate.index[id].inner {
+                                    let mut trait_name = None;
+                                    if let Some(path) = &inner.trait_ {
+                                        if IGNORED_TRAITS.contains(path.path.as_str()) {
+                                            continue;
                                         }
-                                        for id in &inner.items {
-                                            recurse(
-                                                &krate.index[id],
-                                                krate,
-                                                types,
-                                                path.clone(),
-                                                false,
-                                                Some(In::Type(trait_name)),
-                                            );
-                                        }
+                                        trait_name = Some(path.path.as_str());
+                                    }
+                                    for id in &inner.items {
+                                        recurse(
+                                            &krate.index[id],
+                                            krate,
+                                            types,
+                                            path.clone(),
+                                            false,
+                                            Some(In::Type(trait_name)),
+                                        );
                                     }
                                 }
                             }

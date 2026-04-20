@@ -190,9 +190,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
         panic!();
     };
 
-    let result = ch_lite.trim().to_string();
-
-    result
+    ch_lite.trim().to_string()
 }
 
 /// Parse the input string, and insert the represented exemplar "characters" (each of

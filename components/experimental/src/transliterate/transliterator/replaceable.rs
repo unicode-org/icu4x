@@ -898,7 +898,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
     /// ```
     pub(super) fn start_replaceable_adapter(
         &mut self,
-    ) -> InsertableToReplaceableAdapter<'a, '_, impl FnMut(usize) + '_> {
+    ) -> InsertableToReplaceableAdapter<'a, '_, impl FnMut(usize) + use<'_>> {
         let range_start = self.curr;
         let child_insertable = Insertable {
             _rep: self._rep,
@@ -954,7 +954,7 @@ where
 {
     /// Returns a type that allows getting a `Replaceable` from it. The replaceable will
     /// transliterate everything since `self` was created with [`Insertable::start_replaceable_adapter`].
-    pub(super) fn as_replaceable(&mut self) -> InsertableGuard<'_, impl FnMut(&[u8]) + '_> {
+    pub(super) fn as_replaceable(&mut self) -> InsertableGuard<'_, impl FnMut(&[u8]) + use<'_, F>> {
         // Thought: we don't need to make the Insertable contiguous because the visible length hides
         //  the invalid UTF-8 tail. However, we do not gain anything from that empty buffer at the
         //  moment, because the child Replaceable's Insertable will not know about it. can we

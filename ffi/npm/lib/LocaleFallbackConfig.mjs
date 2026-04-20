@@ -29,7 +29,7 @@ export class LocaleFallbackConfig {
         }
 
         if ("priority" in structObj) {
-            this.#priority = structObj.priority;
+            this.#priority = new LocaleFallbackPriority(structObj.priority);
         } else {
             throw new Error("Missing required field priority.");
         }

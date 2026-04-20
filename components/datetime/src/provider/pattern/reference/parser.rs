@@ -167,11 +167,11 @@ impl<'p> Parser<'p> {
     ) -> Result<bool, PatternError> {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
-                (Segment::Literal(ref mut literal), true) => {
+                (Segment::Literal(literal), true) => {
                     literal.literal.push('\'');
                     chars.next();
                 }
-                (Segment::Literal(ref mut literal), false) => {
+                (Segment::Literal(literal), false) => {
                     literal.quoted = !literal.quoted;
                 }
                 (state, true) => {
@@ -246,14 +246,13 @@ impl<'p> Parser<'p> {
             if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
                 if let Ok(new_symbol) = FieldSymbol::try_from(ch) {
                     match &mut self.state {
-                        Segment::Symbol(SegmentSymbol {
-                            ref symbol,
-                            ref mut length,
-                        }) if new_symbol == *symbol => {
+                        Segment::Symbol(SegmentSymbol { symbol, length })
+                            if new_symbol == *symbol =>
+                        {
                             *length += 1;
                         }
                         Segment::SecondSymbol(SegmentSecondSymbol {
-                            ref mut integer_digits,
+                            integer_digits,
                             seen_decimal_separator: false,
                             ..
                         }) if matches!(new_symbol, FieldSymbol::Second(fields::Second::Second)) => {

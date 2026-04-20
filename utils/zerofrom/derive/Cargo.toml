@@ -10,7 +10,7 @@ authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["macros", "derive", "zero-copy", "serialization"]
 
-edition.workspace = true
+edition = "2021"
 license.workspace = true
 repository.workspace = true
 rust-version = "1.71.1"
