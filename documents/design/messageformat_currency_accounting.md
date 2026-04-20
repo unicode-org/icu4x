@@ -2,7 +2,7 @@
 
 This document traces how **LDML MessageFormat 2** `:currency` with `currencySign=accounting` is implemented in ICU4X, how **CLDR** `currencyFormats` data flows into [`CurrencyEssentials`](../../components/experimental/src/dimension/provider/currency/essentials.rs), and what remains for **full** parity (long name, compact, scientific paths, numbering-system–aware datagen).
 
-**Implemented:** CLDR `standard` / `accounting` / `standard-alphaNextToNumber` / `accounting-alphaNextToNumber` patterns (including optional `;` negative subpatterns) are baked into `CurrencyEssentials`; the dimension currency formatters select them via [`CurrencyDisplaySign`](../../components/experimental/src/dimension/currency/options.rs). MessageFormat `:currency` routes **CLDR-native** accounting for the matrix described in §1.2 (symbol / narrow **standard** and **compact short**, long name **standard** and **compact long**, etc.) and uses an ASCII **`(...)`** fallback shell only when **`cldr_handles_accounting_shell`** is false.
+**Implemented:** CLDR `standard` / `accounting` / `standard-alphaNextToNumber` / `accounting-alphaNextToNumber` patterns (including optional `;` negative subpatterns) are baked into `CurrencyEssentials`; the dimension currency formatters select them via [`CurrencyDisplaySign`](../../components/experimental/src/dimension/currency/options.rs). MessageFormat `:currency` routes **CLDR-native** accounting on every shipped branch (dimension formatters, stitch helpers, and **`currencyDisplay=code`** / **`never`** via [`CurrencyFormatter::accounting_outer_affixes_if_encoded`](../../components/experimental/src/dimension/currency/formatter.rs)); the previous ASCII-only outer **`(...)`** fallback in [`CurrencyHandler`](../../components/experimental/src/messageformat/function.rs) was removed.
 
 Normative MF2 behavior: [LDML Part 9 — MessageFormat](https://www.unicode.org/reports/tr35/tr35-76/tr35-messageFormat.html) (`:currency` default function). Cross-repo tracking: [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677).
 
@@ -19,8 +19,8 @@ Normative MF2 behavior: [LDML Part 9 — MessageFormat](https://www.unicode.org/
 
 In [`CurrencyHandler::format`](../../components/experimental/src/messageformat/function.rs):
 
-1. When **`cldr_handles_accounting_shell`** is true (see inline comment in that function), CLDR **standard** / **accounting** patterns from [`CurrencyEssentials`](../../components/experimental/src/dimension/provider/currency/essentials.rs) are applied via the dimension formatters (`CurrencyFormatter`, `CompactCurrencyFormatter`, `LongCurrencyFormatter`, or `LongCompactCurrencyFormatter`) with [`CurrencyFormatterOptions`](../../components/experimental/src/dimension/currency/options.rs) / long / compact options carrying `currency_display_sign` from MF2 `currencySign`. No ASCII outer **`(...)`** wrap is used on these paths.
-2. **Other combinations** (e.g. ISO code, `currencyDisplay=never`, scientific/engineering, some compact + display pairings): the handler may still wrap the formatted string in ASCII **`(...)`** when `currencySign=accounting`, the amount is negative, and the short-currency resolver reports that the negative sign is encoded in the pattern — a fallback until **#4677** threads the same CLDR payloads through every branch.
+1. CLDR **standard** / **accounting** patterns from [`CurrencyEssentials`](../../components/experimental/src/dimension/provider/currency/essentials.rs) are applied via the dimension formatters (`CurrencyFormatter`, `CompactCurrencyFormatter`, `LongCurrencyFormatter`, or `LongCompactCurrencyFormatter`) with [`CurrencyFormatterOptions`](../../components/experimental/src/dimension/currency/options.rs) / long / compact options carrying `currency_display_sign` from MF2 `currencySign` wherever those formatters render the full monetary string.
+2. For **`currencyDisplay=code`** / **`never`**, scientific/engineering, and some compact + display pairings, the handler composes a styled or plain-decimal inner amount and applies the same CLDR **outer literal** accounting framing as short currency formatting via [`CurrencyFormatter::accounting_outer_affixes_if_encoded`](../../components/experimental/src/dimension/currency/formatter.rs) when the short-currency resolver reports that the negative sign is encoded in the pattern.
 
 Regression expectations include ICU4X-only rows under [`components/experimental/tests/messageformat/fixtures/tests/functions/currency.json`](../../components/experimental/tests/messageformat/fixtures/tests/functions/currency.json) (e.g. `en-US` parentheses vs `de-DE` minus presentation).
 
@@ -49,7 +49,7 @@ flowchart LR
   subgraph mf2 [messageformat]
     CH[CurrencyHandler]
     stitch[stitch_standard_currency_number]
-    wrap[ASCII_outer_wrap_fallback]
+    affix[accounting_outer_affixes_if_encoded]
   end
   numbers --> extract
   currencies --> extract
@@ -62,7 +62,8 @@ flowchart LR
   CF --> dec
   CH --> stitch
   CF --> stitch
-  CH --> wrap
+  CH --> affix
+  CF --> affix
 ```
 
 **Note:** `LongCurrencyFormatter`, `CompactCurrencyFormatter`, and `LongCompactCurrencyFormatter` use **additional** data markers (`CurrencyExtendedDataV1`, `CurrencyPatternsDataV1`, compact payloads). MessageFormat’s `CurrencyHandler` branches into those formatters for some `currencyDisplay` / `notation` combinations; any future accounting work must keep **all** branches consistent (see section 5).
@@ -120,12 +121,12 @@ Implemented in [`CurrencyHandler::format`](../../components/experimental/src/mes
 
 1. Parse **`currencySign`** into [`CurrencyDisplaySign`](../../components/experimental/src/dimension/currency/options.rs) (**standard** vs **accounting**).
 2. For **accounting** + negative amounts, optionally rewrite the numeric operand to **absolute** magnitude when the short `CurrencyFormatter` reports that the **negative sign is encoded inside the CLDR pattern** (`negative_sign_encoded_in_pattern`), so the formatter does not double-apply a decimal minus.
-3. Dispatch to the dimension formatters per `currencyDisplay` / `notation` / `compactDisplay`. When **`cldr_handles_accounting_shell`** is true, CLDR owns the accounting presentation for that branch.
-4. If **`cldr_handles_accounting_shell`** is false but step 2 applied, wrap the final string in ASCII **`(...)`** as a **fallback accounting shell** (see §1.2).
+3. Dispatch to the dimension formatters per `currencyDisplay` / `notation` / `compactDisplay`.
+4. For **`currencyDisplay=code`** / **`never`**, or when composing scientific / compact-long amounts via stitch helpers, apply CLDR outer affixes from **`accounting_outer_affixes_if_encoded`** when step 2 applies, matching the short-currency negative subpattern framing.
 
 ### 6.1 Why “stitch” exists
 
-Helpers such as [`stitch_standard_currency_number`](../../components/experimental/src/messageformat/function.rs) probe a sample magnitude and split around the plain decimal to recover **prefix/suffix** around styled inner numbers when composing **scientific** / **engineering** / some **compact** shapes with currency literals. That remains a **layout** tool; it is not a full CLDR accounting substitute on its own.
+Helpers such as [`stitch_standard_currency_number`](../../components/experimental/src/messageformat/function.rs) probe a sample magnitude and split around the plain decimal to recover **prefix/suffix** around styled inner numbers when composing **scientific** / **engineering** / some **compact** shapes with currency literals. That is a **layout** tool; CLDR accounting **outer literals** for negative amounts that encode the sign in the pattern are supplied separately via **`accounting_outer_affixes_if_encoded`** when the stitched inner does not carry the full currency pattern body.
 
 ---
 
@@ -135,8 +136,8 @@ Pick one approach in **#4677** / an RFC before large changes.
 
 ### Option A — Full CLDR parity on every branch
 
-- Thread the same **accounting / negative** pattern selection used by `CurrencyFormatter` through **ISO code**, **`currencyDisplay=never`**, **scientific/engineering**, and any **compact + display** pair that still hits the ASCII **`(...)`** fallback today.
-- Tighten **compact** datagen when CLDR supplies negative subpatterns.
+- Tighten **compact** datagen when CLDR supplies negative subpatterns, and align **pattern selection** with optional negative arms (**#6064**).
+- Resolve **numbering-system–aware** currency pattern extraction (**#3838**) so `CurrencyEssentials` matches the resolved locale digits context end-to-end.
 
 ### Option B — Phased
 
@@ -163,7 +164,7 @@ Pick one approach in **#4677** / an RFC before large changes.
 
 | Tracker | Role |
 | --- | --- |
-| [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677) | Umbrella: extend CLDR accounting / negative pattern consumption to **all** branches (compact datagen, ISO/hidden/scientific MessageFormat paths, etc.); remove the MessageFormat ASCII **`(...)`** fallback where redundant. |
+| [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677) | MessageFormat **scope done:** ISO / hidden / stitch paths use CLDR outer literals; ASCII-only wrap removed. **Remaining:** compact datagen / pattern-selection / numbering-system follow-ups (see **#6064**, **#3838**). |
 | **#6064** (see TODOs in source) | Negative **subpattern** in currency pattern parsing / `PatternSelection` and tests ([`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs), [`components/experimental/src/dimension/currency/format.rs`](../../components/experimental/src/dimension/currency/format.rs), compact format). |
 | **#3838** (see TODOs in source) | Currency patterns should follow **resolved numbering system**, not hard-coded `"latn"` in datagen ([`provider/source/src/currency/essentials.rs`](../../provider/source/src/currency/essentials.rs)). |
 

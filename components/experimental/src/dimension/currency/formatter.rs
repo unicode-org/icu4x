@@ -13,11 +13,15 @@ use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-use super::super::provider::currency::essentials::CurrencyEssentialsV1;
+use super::super::provider::currency::essentials::{
+    outer_literal_affixes_double_placeholder, CurrencyEssentialsV1,
+};
 use super::options::{CurrencyDisplaySign, CurrencyFormatterOptions};
 use super::CurrencyCode;
 
 extern crate alloc;
+
+use alloc::string::String;
 
 define_preferences!(
     /// The preferences for currency formatting.
@@ -139,6 +143,37 @@ impl CurrencyFormatter {
                 true,
             )
             .sign_encoded_in_pattern
+    }
+
+    /// When `currencySign=accounting`, `value` is negative, and the resolved CLDR
+    /// pattern encodes the sign (e.g. parentheses), returns the outer literal
+    /// prefix and suffix around the numeric amount — for composing
+    /// `currencyDisplay=code` / `never` amounts with the same accounting shell as
+    /// short currency formatting.
+    pub(crate) fn accounting_outer_affixes_if_encoded(
+        &self,
+        currency_code: &CurrencyCode,
+        value: &Decimal,
+    ) -> Option<(String, String)> {
+        if !matches!(
+            self.options.currency_display_sign,
+            CurrencyDisplaySign::Accounting
+        ) {
+            return None;
+        }
+        if value.sign() != Sign::Negative {
+            return None;
+        }
+        let resolved = self.essential.get().resolve_currency_pattern(
+            self.options.width,
+            currency_code,
+            self.options.currency_display_sign,
+            true,
+        );
+        if !resolved.sign_encoded_in_pattern {
+            return None;
+        }
+        Some(outer_literal_affixes_double_placeholder(resolved.pattern))
     }
 
     /// Formats a [`Decimal`] value for the given currency code.

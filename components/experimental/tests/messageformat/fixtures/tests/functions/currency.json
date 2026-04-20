@@ -65,6 +65,20 @@
       "locale": "de-DE",
       "params": [{ "name": "p", "value": -3.5 }],
       "exp": "-3,5\u00a0€"
+    },
+    {
+      "description": "ICU4X-only: accounting + currencyDisplay=code uses CLDR outer affixes (en-US).",
+      "src": "{{{$p :currency currency=USD currencySign=accounting currencyDisplay=code}}}",
+      "locale": "en-US",
+      "params": [{ "name": "p", "value": -3.5 }],
+      "exp": "(USD 3.5)"
+    },
+    {
+      "description": "ICU4X-only: accounting + currencyDisplay=never uses CLDR outer affixes (en-US).",
+      "src": "{{{$p :currency currency=USD currencySign=accounting currencyDisplay=never}}}",
+      "locale": "en-US",
+      "params": [{ "name": "p", "value": -3.5 }],
+      "exp": "(3.5)"
     }
   ]
 }

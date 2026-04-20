@@ -22,6 +22,11 @@
 //! Tests that rely on features this implementation does not yet provide
 //! (e.g. some draft datetime option behaviors) are listed in
 //! [`KNOWN_FAILURES`] with a brief reason.
+//!
+//! When `unicode-org/message-format-wg` adds `test/tests/functions/unit.json`,
+//! sync fixtures (`cargo make sync-mf2-tests`), re-run this test with
+//! `--all-features`, then fix `:unit` or add `KNOWN_FAILURES` rows — see
+//! [`fixtures/README.md`](fixtures/README.md) § *When upstream adds `functions/unit.json`*.
 
 use std::collections::BTreeSet;
 use std::fs;

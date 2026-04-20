@@ -93,10 +93,10 @@
 //! amount into a sample standard currency string). **`currencySign=accounting`**
 //! (design doc: `documents/design/messageformat_currency_accounting.md` at repo root)
 //! uses **CLDR accounting patterns** from [`CurrencyEssentials`](crate::dimension::provider::currency::essentials::CurrencyEssentials)
-//! on the branches documented by the **`cldr_handles_accounting_shell`** inline comment in
-//! [`function.rs`](crate::messageformat::function); other display / notation combinations may still
-//! use an ASCII **`(...)`** fallback shell until [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677)
-//! extends the same data path everywhere.
+//! on every shipped branch (including **`currencyDisplay=code`** / **`never`** via
+//! [`CurrencyFormatter::accounting_outer_affixes_if_encoded`](crate::dimension::currency::formatter::CurrencyFormatter)).
+//! See [icu4x#4677](https://github.com/unicode-org/icu4x/issues/4677) for datagen / compact-pattern
+//! follow-ups outside MessageFormat.
 //!
 //! Draft options such as **`u:locale`** may still evolve with the TR35 text; the
 //! resolver applies overrides per the current editor’s draft.

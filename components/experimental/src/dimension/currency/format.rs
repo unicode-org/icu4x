@@ -9,7 +9,11 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::{formatter::CurrencyFormatter, CurrencyCode};
+    use crate::dimension::currency::{
+        formatter::CurrencyFormatter,
+        options::{CurrencyDisplaySign, CurrencyFormatterOptions, Width},
+        CurrencyCode,
+    };
 
     #[test]
     pub fn test_en_us() {
@@ -43,6 +47,23 @@ mod tests {
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, &currency_code);
         assert_writeable_eq!(formatted_currency, "-12\u{202f}345,67\u{a0}€");
+    }
+
+    #[test]
+    fn accounting_outer_affixes_if_encoded_en_us() {
+        let locale = locale!("en-US").into();
+        let currency_code = CurrencyCode(tinystr!(3, "USD"));
+        let fmt = CurrencyFormatter::try_new(
+            locale,
+            CurrencyFormatterOptions {
+                width: Width::Short,
+                currency_display_sign: CurrencyDisplaySign::Accounting,
+            },
+        )
+        .unwrap();
+        let negative_value: fixed_decimal::Decimal = "-12.34".parse().unwrap();
+        let aff = fmt.accounting_outer_affixes_if_encoded(&currency_code, &negative_value);
+        assert_eq!(aff, Some(("(".into(), ")".into())));
     }
 
     #[test]

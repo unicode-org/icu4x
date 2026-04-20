@@ -1551,32 +1551,7 @@ impl FunctionHandler for CurrencyHandler {
         };
 
         use writeable::Writeable;
-        let short_standard_currency_path = matches!(
-            (&display, &parsed.notation),
-            (CurrencyDisplayMode::Standard(_), NotationKind::Standard)
-        );
-        let cldr_handles_accounting_shell = short_standard_currency_path
-            || matches!(
-                (&display, &parsed.notation, &parsed.compact_display),
-                (
-                    CurrencyDisplayMode::Standard(_),
-                    NotationKind::Compact,
-                    CompactDisplayKind::Short
-                )
-            )
-            || matches!(
-                (&display, &parsed.notation),
-                (CurrencyDisplayMode::LongName, NotationKind::Standard)
-            )
-            || matches!(
-                (&display, &parsed.notation, &parsed.compact_display),
-                (
-                    CurrencyDisplayMode::LongName,
-                    NotationKind::Compact,
-                    CompactDisplayKind::Long
-                )
-            );
-        let mut formatted = match display {
+        let formatted = match display {
             CurrencyDisplayMode::Standard(width) => match parsed.notation {
                 NotationKind::Standard => CurrencyFormatter::try_new(
                     eff_locale.clone().into(),
@@ -1688,17 +1663,59 @@ impl FunctionHandler for CurrencyHandler {
             },
             CurrencyDisplayMode::IsoCode => {
                 let num = format_decimal_styled(&eff_locale, &fmt_value, &parsed)?;
-                format!("{currency_text} {num}")
+                let mut out = format!("{currency_text} {num}");
+                if matches!(currency_display_sign, CurrencyDisplaySign::Accounting)
+                    && value.sign() == Sign::Negative
+                    && sign_encoded_neg_for_stitch
+                {
+                    if let Ok(affix_fmt) = CurrencyFormatter::try_new(
+                        eff_locale.clone().into(),
+                        CurrencyFormatterOptions {
+                            width: stitch_resolve_width,
+                            currency_display_sign,
+                        },
+                    ) {
+                        if let Some((pre, suf)) =
+                            affix_fmt.accounting_outer_affixes_if_encoded(&currency_code, &value)
+                        {
+                            let (pre, suf) =
+                                currency_stitch_arabic_accounting_affix_fix(ctx.locale(), pre, suf);
+                            out = format!("{pre}{out}{suf}");
+                        }
+                    }
+                }
+                out
             }
-            CurrencyDisplayMode::Hidden => format_decimal_styled(&eff_locale, &fmt_value, &parsed)?,
+            CurrencyDisplayMode::Hidden => {
+                let num = format_decimal_styled(&eff_locale, &fmt_value, &parsed)?;
+                if matches!(currency_display_sign, CurrencyDisplaySign::Accounting)
+                    && value.sign() == Sign::Negative
+                    && sign_encoded_neg_for_stitch
+                {
+                    if let Ok(affix_fmt) = CurrencyFormatter::try_new(
+                        eff_locale.clone().into(),
+                        CurrencyFormatterOptions {
+                            width: stitch_resolve_width,
+                            currency_display_sign,
+                        },
+                    ) {
+                        if let Some((pre, suf)) =
+                            affix_fmt.accounting_outer_affixes_if_encoded(&currency_code, &value)
+                        {
+                            let (pre, suf) =
+                                currency_stitch_arabic_accounting_affix_fix(ctx.locale(), pre, suf);
+                            format!("{pre}{num}{suf}")
+                        } else {
+                            num
+                        }
+                    } else {
+                        num
+                    }
+                } else {
+                    num
+                }
+            }
         };
-        if !cldr_handles_accounting_shell
-            && matches!(currency_display_sign, CurrencyDisplaySign::Accounting)
-            && value.sign() == Sign::Negative
-            && sign_encoded_neg_for_stitch
-        {
-            formatted = format!("({formatted})");
-        }
 
         // Per spec `number.md §The :currency function`, :currency is a
         // formatter only — no Selection section, so no selector is attached.

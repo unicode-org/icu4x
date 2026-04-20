@@ -75,6 +75,9 @@ replace).
 
 ## When upstream adds `functions/unit.json`
 
+**Last verified absent:** 2026-04-21 on WG `test/tests/functions/` at pin
+[`dd86e42e10d1d0c9c4401d0781cdd87ee7166366`](UPSTREAM_SHA).
+
 The WG repo did not ship `test/tests/functions/unit.json` at the last pin, but
 the conformance harness discovers **every** `*.json` under `tests/` automatically.
 When a sync brings in `unit.json`:
