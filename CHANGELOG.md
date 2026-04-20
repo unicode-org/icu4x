@@ -55,6 +55,7 @@ Several crates have had patch releases in the 2.2 stream:
         - Replace `JapaneseExtended` with reexport of `Japanese`, since CLDR no longer includes pre-Meiji eras. (unicode-org#7322)
         - Reject date strings with invalid calendar annotations (unicode-org#7626)
         - Improve validation in scenarios where you may try comparing dates from different calendars. `PartialEq` and `PartialOrd` on two different `HijriTabular` calendars will now produce `None`. (unicode-org#7734)
+        - Document that `Ord::cmp` on `Date` is a deterministic tie-break when calendar instances are incompatible; prefer `PartialOrd` for semantic ordering across configurations.
         - Improve efficiency of `until()` by starting year/month calculations at a guaranteed minimum bound (unicode-org#7682)
         - Speed up `until` year and month field handling by 75% on average by optimizing `surpasses` calculation (unicode-org#7745)
         - Optimize the stack size of `Date` types (unicode-org#7220)
@@ -121,10 +122,13 @@ Several crates have had patch releases in the 2.2 stream:
             - Split formatting types into `multi` and `single` modules; seeking feedback (unicode-org#7826)
              - Moved to `displaynames::multi`: `LanguageDisplayNames`, `LocaleDisplayNamesFormatter`, `RegionDisplayNames`, `ScriptDisplayNames`, `VariantDisplayNames`
              - Introduced in `displaynames::single`: `RegionDisplayName`, `ScriptDisplayName`
+            - (Breaking) In `displaynames::multi`, `RegionDisplayNames::of`, `ScriptDisplayNames::of`, `LanguageDisplayNames::of`, and `VariantDisplayNames::of` now return `Option<Cow<'_, str>>` and honor `DisplayNamesOptions::fallback` (`Fallback::Code` returns the subtag when data is missing; `Fallback::None` returns `None`).
         - `duration`
             - Export more needed types (unicode-org#7784)
              - Newly public types: `ValidatedDurationFormatterOptions`, `DurationFormatterOptionsError`
         - `measure`
+        - `personnames`
+            - Cap derived initials at two tokens when interpolating multi-part given names into initial patterns (matches two-slot `initial_sequence_pattern` usage).
         - `relativetime`
         - `transliterator`
             - Fix UB caused in partially-written unwind states by using checked UTF-8 conversion instead of `from_utf8_unchecked` (unicode-org#7781)

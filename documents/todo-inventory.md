@@ -60,6 +60,8 @@ Checked via GitHub API on 2026-04-20; all were **open** and titles still matched
 
 ## Implemented follow-ups from triage
 
+User-facing notes for these changes live under **icu4x 2.2 → `icu_experimental` → `displaynames` / `personnames`** and **`icu_calendar`** in the root [`CHANGELOG.md`](../CHANGELOG.md).
+
 - **DisplayNames `Fallback`**: `RegionDisplayNames`, `ScriptDisplayNames`, `LanguageDisplayNames`, and `VariantDisplayNames` now honor [`DisplayNamesOptions::fallback`](https://github.com/unicode-org/icu4x/blob/main/components/experimental/src/displaynames/options.rs) via `Option<Cow<'_, str>>` on `of` (see `components/experimental/src/displaynames/displaynames.rs`).
 - **`Date` `Ord`**: Documented why `cmp` may disagree with calendar semantics when [`Calendar::check_date_compatibility`](https://github.com/unicode-org/icu4x/blob/main/components/calendar/src/calendar.rs) fails (`components/calendar/src/date.rs`).
 - **Person names initials**: `derive_missing_initials` caps at two generated initials for multi-part given strings so output matches the two-slot `initial_sequence_pattern` case (see `derive_missing_initials.rs` tests).
