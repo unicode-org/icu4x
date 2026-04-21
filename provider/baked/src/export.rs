@@ -666,7 +666,6 @@ impl DataExporter for BakedExporter {
                     let bake = payload.tokenize(&dependencies);
 
                     consts.push(quote! {
-                        #[doc(hidden)]
                         pub const #ident: &<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &#bake;
                     });
 
@@ -678,7 +677,6 @@ impl DataExporter for BakedExporter {
                         .parse::<TokenStream>()
                         .unwrap();
                         consts.push(quote! {
-                            #[doc(hidden)]
                             pub const #deduped_ident: &<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = Self::#ident;
                         });
                     }
