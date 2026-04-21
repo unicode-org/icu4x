@@ -145,7 +145,7 @@ impl<B: PatternBackend> Pattern<B> {
     #[cfg(feature = "alloc")]
     pub(crate) fn from_boxed_store_unchecked(store: Box<B::Store>) -> Box<Self> {
         // Safety: Box::into_raw fulfils Box::from_raw's requirements, as Pattern<B> is
-        // repr(transparent) over B::Store
+        // repr(transparent) over B::Store, and does not have further validity constraints
         unsafe { Box::from_raw(Box::into_raw(store) as *mut Self) }
     }
 

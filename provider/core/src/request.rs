@@ -325,7 +325,7 @@ impl DataMarkerAttributes {
 
         let boxed = s.into_boxed_str();
         // Safety: Box::into_raw fulfils Box::from_raw's requirements, as DataMarkerAttributes is
-        // repr(transparent) over str
+        // repr(transparent) over str, and its (non-safety) validity constraints were validated above
         Ok(unsafe { Box::from_raw(Box::into_raw(boxed) as *mut Self) })
     }
 
@@ -359,7 +359,7 @@ impl ToOwned for DataMarkerAttributes {
     fn to_owned(&self) -> Self::Owned {
         let boxed = self.as_str().to_boxed();
         // Safety: Box::into_raw fulfils Box::from_raw's requirements, as DataMarkerAttributes is
-        // repr(transparent) over str
+        // repr(transparent) over str, and `str` has strictly fewer validity constraints than DataMarkerAttributes
         unsafe { Box::from_raw(Box::into_raw(boxed) as *mut Self) }
     }
 }
