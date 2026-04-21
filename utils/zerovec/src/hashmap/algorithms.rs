@@ -62,7 +62,16 @@ pub fn compute_index(f: (u32, u32), d: (u32, u32), m: u32) -> Option<usize> {
 /// # Arguments
 ///
 /// * `key_hashes` - [`ExactSizeIterator`] over the hashed key values
-#[expect(clippy::indexing_slicing, clippy::unwrap_used, clippy::expect_used)]
+///
+/// # Panics
+///
+/// Panics if the `key_hashes` iterator claims to have more elements than can fit in a u32.
+#[expect(
+    clippy::indexing_slicing,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    reason = "Documented panic"
+)]
 pub fn compute_displacements(
     key_hashes: impl ExactSizeIterator<Item = u64>,
 ) -> (Vec<(u32, u32)>, Vec<usize>) {

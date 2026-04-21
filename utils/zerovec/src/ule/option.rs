@@ -197,7 +197,7 @@ unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
 
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        debug_assert!(!bytes.is_empty());
+        debug_assert!(!bytes.is_empty(), "Bytes must be nonempty by OptionVarULE validation invariants");
         let entire_struct_as_slice: *const [u8] =
             ::core::ptr::slice_from_raw_parts(bytes.as_ptr(), bytes.len() - 1);
         &*(entire_struct_as_slice as *const Self)

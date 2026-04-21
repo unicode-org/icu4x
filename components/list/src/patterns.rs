@@ -95,8 +95,10 @@ impl<'data> ListJoinerPattern<'data> {
                     && (allow_prefix || index_0 == 0)
                     && (allow_suffix || index_1 == pattern.len() - 3) =>
             {
-                let index1_minus_three = index_1.wrapping_sub(3);
-                if (index_0 > 0 && !cfg!(test)) || index_0 >= 256 || index1_minus_three >= 256 {
+                // Because index0 < index1, we can guarantee that the string has
+                // at least 3 characters ("{0}") before index1, so index1 - 3
+                // will not wrap. This also tests that index0 < 256 since index0 <= index1 - 3.
+                if (index_0 > 0 && !cfg!(test)) || index1 - 3 >= 256 {
                     return Err(DataError::custom(
                         "Found valid pattern that cannot be stored in ListFormatterPatterns",
                     )
@@ -113,7 +115,7 @@ impl<'data> ListJoinerPattern<'data> {
                         .into_boxed_str(),
                     ),
                     index_0: index_0 as u8,
-                    index_1: index1_minus_three as u8,
+                    index_1: (index1 - 3) as u8,
                 })
             }
             _ => Err(DataError::custom("Invalid list pattern").with_debug_context(pattern)),
