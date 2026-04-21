@@ -17,8 +17,8 @@ use icu_collections::{
 use icu_properties::script::ScriptWithExtensions;
 use icu_properties::{
     props::{
-        CanonicalCombiningClass, EnumeratedProperty, GeneralCategory, GeneralCategoryGroup,
-        GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+        CanonicalCombiningClass, EastAsianWidth, EnumeratedProperty, GeneralCategory,
+        GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
     },
     CodePointMapData,
 };
@@ -488,6 +488,7 @@ where
         + DataProvider<PropertyBinaryXidContinueV1>
         + DataProvider<PropertyBinaryXidStartV1>
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
+        + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
         + DataProvider<PropertyEnumLineBreakV1>
@@ -495,6 +496,7 @@ where
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
         + DataProvider<PropertyNameParseLineBreakV1>
@@ -1142,6 +1144,8 @@ where
         let mut try_sb = Err(PEK::UnknownProperty.into());
         // contains a value for the Word_Break property that needs to be tried
         let mut try_wb = Err(PEK::UnknownProperty.into());
+        // contains a value for the East_Asian_Width property that needs to be tried
+        let mut try_eaw = Err(PEK::UnknownProperty.into());
         // contains a supposed binary property name that needs to be tried
         let mut try_binary = Err(PEK::UnknownProperty.into());
         // contains a supposed canonical combining class property name that needs to be tried
@@ -1167,6 +1171,7 @@ where
                 CanonicalCombiningClass::NAME | CanonicalCombiningClass::SHORT_NAME => {
                     try_ccc = Ok(value)
                 }
+                EastAsianWidth::NAME | EastAsianWidth::SHORT_NAME => try_eaw = Ok(value),
                 b"Script_Extensions" | b"scx" => try_scx = Ok(value),
                 b"Block" | b"blk" => try_block = Ok(value),
                 _ => {
@@ -1201,6 +1206,7 @@ where
             .or_else(|_| try_lb.and_then(|value| self.try_load_line_break_set(value)))
             .or_else(|_| try_sb.and_then(|value| self.try_load_sentence_break_set(value)))
             .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))
+            .or_else(|_| try_eaw.and_then(|value| self.try_load_east_asian_width_set(value)))
             .or_else(|_| try_ccc.and_then(|value| self.try_load_ccc_set(value)))
             .or_else(|_| try_block.and_then(|value| self.try_load_block_set(value)))?;
         Ok(inverted)
@@ -1493,6 +1499,22 @@ where
         Ok(())
     }
 
+    fn try_load_east_asian_width_set(&mut self, name: &str) -> Result<()> {
+        let parser = PropertyParser::<EastAsianWidth>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let eaw_value = parser
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map =
+            CodePointMapData::<EastAsianWidth>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(eaw_value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
     fn try_load_ccc_set(&mut self, name: &str) -> Result<()> {
         let parser =
             PropertyParser::<CanonicalCombiningClass>::try_new_unstable(self.property_provider)
@@ -1711,6 +1733,7 @@ where
         + DataProvider<PropertyBinaryXidContinueV1>
         + DataProvider<PropertyBinaryXidStartV1>
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
+        + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
         + DataProvider<PropertyEnumLineBreakV1>
@@ -1718,6 +1741,7 @@ where
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
         + DataProvider<PropertyNameParseLineBreakV1>
@@ -1829,6 +1853,7 @@ where
         + DataProvider<PropertyBinaryXidContinueV1>
         + DataProvider<PropertyBinaryXidStartV1>
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
+        + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
         + DataProvider<PropertyEnumLineBreakV1>
@@ -1836,6 +1861,7 @@ where
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
         + DataProvider<PropertyNameParseLineBreakV1>
