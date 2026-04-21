@@ -268,6 +268,7 @@ impl DataMarkerAttributes {
     /// Safety-usable invariant: validated bytes are ASCII only
     const fn validate(s: &[u8]) -> Result<(), AttributeParseError> {
         let mut i = 0;
+        // Initialized to true in order to prevent leading slashes
         let mut prev_was_slash = true;
         while i < s.len() {
             #[expect(clippy::indexing_slicing)] // duh

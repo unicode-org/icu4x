@@ -98,10 +98,9 @@ impl FsDataProvider {
                     // + underscore/dash/slash. This is defense-in-depth
                     // against potential path traversal attacks: we ensure that
                     // the path does not start with a slash, and does not contain
-                    // '..' or backslashes.
+                    // dots or backslashes.
                     assert!(!attr_path.starts_with('/'));
-                    assert!(!attr_path.contains(".."));
-                    assert!(!attr_path.contains('\\'));
+                    assert!(!attr_path.contains(['\\', '.']));
                     path.push(attr_path);
                 }
             }
