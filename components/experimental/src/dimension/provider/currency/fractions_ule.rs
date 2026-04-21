@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::fractions::FractionInfo;
+use super::fractions::{FractionInfo, Rounding};
 use zerovec::{
     maps::ZeroMapKV,
     ule::{AsULE, RawBytesULE},
@@ -26,22 +26,27 @@ impl AsULE for FractionInfo {
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
         debug_assert!(self.digits < 16);
-        debug_assert!(self.rounding < 16);
 
         let cash_digits = self.cash_digits.unwrap_or(NONE_MARKER);
         debug_assert!(cash_digits < 16);
 
+        let rounding = match self.rounding {
+            Rounding::R1 => 0,
+            Rounding::R5 => 1,
+            Rounding::R20 => 2,
+            Rounding::R50 => 3,
+        };
+
         let cash_rounding = match self.cash_rounding {
+            Some(Rounding::R1) => 0,
+            Some(Rounding::R5) => 1,
+            Some(Rounding::R20) => 2,
+            Some(Rounding::R50) => 3,
             None => 15,
-            Some(50) => 14,
-            Some(n) => {
-                debug_assert!(n < 14);
-                n
-            }
         };
 
         RawBytesULE([
-            (self.digits & 0x0f) | (self.rounding << 4),
+            (self.digits & 0x0f) | (rounding << 4),
             (cash_digits & 0x0f) | (cash_rounding << 4),
         ])
     }
@@ -57,16 +62,31 @@ impl AsULE for FractionInfo {
 
         FractionInfo {
             digits,
-            rounding,
+            rounding: match rounding {
+                0 => Rounding::R1,
+                1 => Rounding::R5,
+                2 => Rounding::R20,
+                3 => Rounding::R50,
+                _n => {
+                    debug_assert!(false, "invalid rounding encoding {_n}");
+                    Rounding::R1
+                }
+            },
             cash_digits: if cash_digits == NONE_MARKER {
                 None
             } else {
                 Some(cash_digits)
             },
             cash_rounding: match cash_rounding {
-                14 => Some(50),
+                0 => Some(Rounding::R1),
+                1 => Some(Rounding::R5),
+                2 => Some(Rounding::R20),
+                3 => Some(Rounding::R50),
                 15 => None,
-                n => Some(n),
+                _n => {
+                    debug_assert!(false, "invalid rounding encoding {_n}");
+                    None
+                }
             },
         }
     }

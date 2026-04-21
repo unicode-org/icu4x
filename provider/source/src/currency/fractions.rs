@@ -65,10 +65,15 @@ fn parse_rounding_modes(
     let rounding = modes
         .rounding
         .as_ref()
-        .map(|s| s.parse::<u8>())
-        .transpose()
-        .map_err(|_| DataError::custom("Invalid rounding value"))?
-        .unwrap_or(0);
+        .map(|s| match s.as_str() {
+            "0" => Ok(Rounding::R1),
+            "5" => Ok(Rounding::R5),
+            "20" => Ok(Rounding::R20),
+            "50" => Ok(Rounding::R50),
+            _ => Err(DataError::custom("Invalid rounding value")),
+        })
+        .transpose()?
+        .unwrap_or(Rounding::R1);
 
     let cash_digits = modes
         .cash_digits
@@ -80,9 +85,14 @@ fn parse_rounding_modes(
     let cash_rounding = modes
         .cash_rounding
         .as_ref()
-        .map(|s| s.parse::<u8>())
-        .transpose()
-        .map_err(|_| DataError::custom("Invalid cash_rounding value"))?;
+        .map(|s| match s.as_str() {
+            "0" => Ok(Rounding::R1),
+            "5" => Ok(Rounding::R5),
+            "20" => Ok(Rounding::R20),
+            "50" => Ok(Rounding::R50),
+            _ => Err(DataError::custom("Invalid cash_rounding value")),
+        })
+        .transpose()?;
 
     Ok(FractionInfo {
         digits,
@@ -101,7 +111,7 @@ fn test_basic() {
 
     // Check default values (from CLDR DEFAULT entry: digits=2, rounding=0)
     assert_eq!(data.default.digits, 2);
-    assert_eq!(data.default.rounding, 0);
+    assert_eq!(data.default.rounding, Rounding::R1);
     assert_eq!(data.default.cash_digits, None);
     assert_eq!(data.default.cash_rounding, None);
 
@@ -116,6 +126,6 @@ fn test_basic() {
     let chf = tinystr::tinystr!(3, "CHF").to_unvalidated();
     if let Some(chf_info) = data.fractions.get(&chf) {
         let info: FractionInfo = zerovec::ule::AsULE::from_unaligned(*chf_info);
-        assert_eq!(info.cash_rounding, Some(5));
+        assert_eq!(info.cash_rounding, Some(Rounding::R5));
     }
 }
