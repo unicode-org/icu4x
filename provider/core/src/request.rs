@@ -234,7 +234,7 @@ impl Default for DataIdentifierCow<'_> {
 #[derive(PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[repr(transparent)]
 pub struct DataMarkerAttributes {
-    // Validated to be non-empty ASCII alphanumeric + hyphen + underscore + forward slash
+    // Validated to be non-empty ASCII alphanumeric + hyphen + underscore + forward slash. Disallows leading and double slashes.
     value: str,
 }
 
@@ -267,11 +267,28 @@ pub struct AttributeParseError;
 impl DataMarkerAttributes {
     /// Safety-usable invariant: validated bytes are ASCII only
     const fn validate(s: &[u8]) -> Result<(), AttributeParseError> {
+        if s.is_empty() {
+            return Ok(());
+        }
+        #[expect(clippy::indexing_slicing)] // checked non-empty
+        if s[0] == b'/' {
+            return Err(AttributeParseError);
+        }
         let mut i = 0;
+        let mut prev_was_slash = false;
         while i < s.len() {
             #[expect(clippy::indexing_slicing)] // duh
-            if !matches!(s[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_' | b'/') {
+            let c = s[i];
+            if !matches!(c, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_' | b'/') {
                 return Err(AttributeParseError);
+            }
+            if c == b'/' {
+                if prev_was_slash {
+                    return Err(AttributeParseError);
+                }
+                prev_was_slash = true;
+            } else {
+                prev_was_slash = false;
             }
             i += 1;
         }
@@ -373,5 +390,42 @@ fn test_data_marker_attributes_from_utf8() {
     for bytes in bytes_vec {
         let marker = DataMarkerAttributes::try_from_utf8(bytes).unwrap();
         assert_eq!(marker.to_string().as_bytes(), bytes);
+    }
+}
+
+#[test]
+fn test_data_marker_attributes_syntax() {
+    let valid_cases = [
+        "long-meter",
+        "long",
+        "meter",
+        "short-meter-second",
+        "usd",
+        "nested/part",
+        "foo/bar/baz",
+    ];
+
+    let invalid_cases = [
+        "/leading",
+        "double//slash",
+        "invalid space",
+        "invalid$character",
+        "invalid\\backslash",
+    ];
+
+    for s in valid_cases {
+        assert!(
+            DataMarkerAttributes::try_from_str(s).is_ok(),
+            "Expected valid: {}",
+            s
+        );
+    }
+
+    for s in invalid_cases {
+        assert!(
+            DataMarkerAttributes::try_from_str(s).is_err(),
+            "Expected invalid: {}",
+            s
+        );
     }
 }
