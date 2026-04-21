@@ -234,7 +234,7 @@ impl Default for DataIdentifierCow<'_> {
 #[derive(PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[repr(transparent)]
 pub struct DataMarkerAttributes {
-    // Validated to be non-empty ASCII alphanumeric + hyphen + underscore + forward slash. Disallows leading and double slashes.
+    // Validated to be non-empty ASCII alphanumeric + hyphen + underscore + forward slash. Disallows leading, trailing, and double slashes.
     value: str,
 }
 
@@ -267,6 +267,9 @@ pub struct AttributeParseError;
 impl DataMarkerAttributes {
     /// Safety-usable invariant: validated bytes are ASCII only
     const fn validate(s: &[u8]) -> Result<(), AttributeParseError> {
+        if s.is_empty() {
+            return Ok(());
+        }
         let mut i = 0;
         // Initialized to true in order to prevent leading slashes
         let mut prev_was_slash = true;
@@ -285,6 +288,10 @@ impl DataMarkerAttributes {
                 prev_was_slash = false;
             }
             i += 1;
+        }
+        // If the last character was a slash, it's a trailing slash, which is disallowed.
+        if prev_was_slash {
+            return Err(AttributeParseError);
         }
         Ok(())
     }
@@ -397,10 +404,12 @@ fn test_data_marker_attributes_syntax() {
         "usd",
         "nested/part",
         "foo/bar/baz",
+        "",
     ];
 
     let invalid_cases = [
         "/leading",
+        "trailing/",
         "double//slash",
         "invalid space",
         "invalid$character",
