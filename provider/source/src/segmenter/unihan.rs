@@ -4,12 +4,9 @@
 
 //! This module contains provider implementations for Unihan radicals.
 
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use crate::AbstractFs;
 use crate::{IterableDataProviderCached, SourceDataProvider};
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
-use icu::collections::codepointtrie;
 use icu::segmenter::provider::radical::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
@@ -106,12 +103,9 @@ impl IterableDataProviderCached<SegmenterUnihanRadicalV1> for SourceDataProvider
     }
 }
 
-#[cfg(all(test, any(feature = "use_wasm", feature = "use_icu4c")))]
+#[cfg(test)]
 mod tests {
-    use super::build_unihan_radicals_data;
-    use crate::SourceDataProvider;
-    use icu::segmenter::provider::radical::SegmenterUnihanRadicalV1;
-    use icu_provider::prelude::*;
+    use super::*;
 
     #[test]
     fn test_chinese_radical_values_trie() {

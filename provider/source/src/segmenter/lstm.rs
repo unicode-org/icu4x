@@ -5,7 +5,6 @@
 //! This module contains provider implementations backed by LSTM segmentation data.
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
-use icu::locale::langid;
 use icu::segmenter::provider::{
     LstmData, LstmDataFloat32, LstmMatrix1, LstmMatrix2, LstmMatrix3, ModelType,
     SegmenterLstmAutoV1,

@@ -4,12 +4,13 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-#![allow(dead_code)]
-#![allow(unused_imports)]
+#![cfg_attr(
+    not(any(feature = "use_wasm", feature = "use_icu4c")),
+    allow(dead_code, unused_imports)
+)]
 
-use crate::source::include_files;
+use crate::source::{include_files, SerdeCache};
 use crate::SourceDataProvider;
-use icu::collections::codepointtrie;
 use icu::properties::{
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
@@ -20,12 +21,9 @@ use icu::properties::{
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_provider::prelude::*;
-use std::cmp;
 use std::collections::HashSet;
 use std::fmt::Debug;
-use std::ops::RangeInclusive;
 use std::sync::OnceLock;
-use zerovec::ZeroVec;
 
 mod dictionary;
 mod lstm;
@@ -635,7 +633,6 @@ fn generate_rule_break_data_override(
     let segmenter =
         toml::from_str::<SegmenterRuleTable>(rules_file).expect("The data should be valid!");
 
-    const CODEPOINT_TABLE_LEN: usize = 0xE1000;
     let mut properties_trie = CodePointTrieBuilder::new(0u8, 0, trie_type.into());
     let mut properties_names = Vec::<String>::new();
 
@@ -754,10 +751,6 @@ macro_rules! implement_override {
 }
 
 fn hardcoded_segmenter_provider() -> SourceDataProvider {
-    use crate::{
-        source::{AbstractFs, SerdeCache},
-        SourceDataProvider,
-    };
     // Singleton so that all instantiations share the same cache.
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
     SINGLETON
