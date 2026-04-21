@@ -83,7 +83,7 @@ fn main() -> eyre::Result<()> {
         zip: PathBuf,
         paths: Vec<String>,
         root: PathBuf,
-        success: &mut Vec<String>,
+        success: &mut BTreeSet<String>,
     ) -> eyre::Result<()> {
         let mut zip = ZipArchive::new(Cursor::new(
             std::fs::read(&zip).expect("should just have been downloaded"),
@@ -102,7 +102,7 @@ fn main() -> eyre::Result<()> {
                     ),
                 )
                 .with_context(|| format!("Failed to write file {:?}", &path))?;
-                success.push(spath);
+                success.insert(spath);
             }
         }
         Ok(())
@@ -112,7 +112,7 @@ fn main() -> eyre::Result<()> {
         tar: PathBuf,
         paths: BTreeSet<String>,
         root: PathBuf,
-        success: &mut Vec<String>,
+        success: &mut BTreeSet<String>,
     ) -> eyre::Result<()> {
         let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(
             std::fs::File::open(&tar).expect("should just have been downloaded"),
@@ -134,7 +134,7 @@ fn main() -> eyre::Result<()> {
                     ),
                 )
                 .with_context(|| format!("Failed to write file {:?}", &spath))?;
-                success.push(spath);
+                success.insert(spath);
             }
         }
         Ok(())
@@ -162,7 +162,7 @@ fn main() -> eyre::Result<()> {
     }
 
     std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
-    let mut cldr_data = Vec::new();
+    let mut cldr_files = BTreeSet::new();
     extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
@@ -172,11 +172,11 @@ fn main() -> eyre::Result<()> {
         .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
         out_root.join("tests/data/cldr"),
-        &mut cldr_data,
+        &mut cldr_files,
     )?;
 
     std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
-    let mut icuexport_data = Vec::new();
+    let mut icuexport_files = BTreeSet::new();
     extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/icu/releases/download/{}/icu4x-icuexportdata-{}.zip",
@@ -188,10 +188,11 @@ fn main() -> eyre::Result<()> {
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
         out_root.join("tests/data/icuexport"),
-        &mut icuexport_data,
+        &mut icuexport_files,
     )?;
 
     std::fs::remove_dir_all(out_root.join("tests/data/lstm"))?;
+    let mut lstm_files = BTreeSet::new();
     extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
@@ -200,13 +201,11 @@ fn main() -> eyre::Result<()> {
         .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
         out_root.join("tests/data/lstm"),
-        &mut Default::default(),
+        &mut lstm_files,
     )?;
 
-    let unihan_path = out_root.join("tests/data/unihan");
-    if unihan_path.exists() {
-        std::fs::remove_dir_all(&unihan_path)?;
-    }
+    std::fs::remove_dir_all(out_root.join("tests/data/unihan"))?;
+    let mut unihan_files = BTreeSet::new();
     extract_zip(
         cached(&format!(
             "https://www.unicode.org/Public/{}/ucd/Unihan.zip",
@@ -215,92 +214,8 @@ fn main() -> eyre::Result<()> {
         .with_context(|| "Failed to download Unihan ZIP".to_owned())?,
         UNIHAN_GLOB.iter().copied().map(String::from).collect(),
         out_root.join("tests/data/unihan"),
-        &mut Default::default(),
+        &mut unihan_files,
     )?;
-
-    let ucd_path = out_root.join("tests/data/ucd");
-    if ucd_path.exists() {
-        std::fs::remove_dir_all(&ucd_path)?;
-    }
-    std::fs::create_dir_all(&ucd_path)?;
-    let identifier_status_path = ucd_path.join(UCD_GLOB[0]);
-    std::fs::create_dir_all(identifier_status_path.parent().unwrap())?;
-    std::fs::copy(
-        cached(&format!(
-            "https://www.unicode.org/Public/{}/security/IdentifierStatus.txt",
-            SourceDataProvider::TESTED_UCD_TAG,
-        ))
-        .with_context(|| "Failed to download IdentifierStatus.txt".to_owned())?,
-        &identifier_status_path,
-    )?;
-
-    std::fs::remove_dir_all(out_root.join("tests/data/tzdb"))?;
-    extract_tar(
-        cached(&format!(
-            "https://www.iana.org/time-zones/repository/releases/tzdata{}.tar.gz",
-            SourceDataProvider::TESTED_TZDB_TAG,
-        ))
-        .with_context(|| "Failed to download TZDB ZIP".to_owned())?,
-        TZDB_GLOB.iter().copied().map(String::from).collect(),
-        out_root.join("tests/data/tzdb"),
-        &mut Default::default(),
-    )?;
-
-    let mut tzdb_data = TZDB_GLOB.iter().copied().collect::<BTreeSet<_>>();
-
-    let gen_files = ["rearguard.zi", "vanguard.zi"];
-    Command::new("make")
-        .arg("-C")
-        .arg(out_root.join("tests/data/tzdb"))
-        .args(gen_files)
-        .status()
-        .unwrap();
-    tzdb_data.extend(gen_files);
-    std::fs::remove_file(out_root.join("tests/data/tzdb/Makefile")).unwrap();
-    std::fs::remove_file(out_root.join("tests/data/tzdb/ziguard.awk")).unwrap();
-    tzdb_data.remove("Makefile");
-    tzdb_data.remove("ziguard.awk");
-
-    let cldr_data = cldr_data
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/cldr/{path}").as_slice())"#)
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                        ");
-    let icuexport_data = icuexport_data
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/icuexport/{path}").as_slice())"#)
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                        ");
-    let lstm_data = LSTM_GLOB
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/lstm/{path}").as_slice())"#)
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                        ");
-    let unihan_data = UNIHAN_GLOB
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/unihan/{path}").as_slice())"#)
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                        ");
-    let ucd_data = UCD_GLOB
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/ucd/{path}").as_slice())"#)
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                        ");
     let irg_path = out_root.join("tests/data/unihan/Unihan_IRGSources.txt");
     let file = File::open(&irg_path)?;
     let reader = io::BufReader::new(file);
@@ -310,6 +225,22 @@ fn main() -> eyre::Result<()> {
         .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
         .collect::<Vec<_>>()
         .join("\n");
+
+    std::fs::remove_dir_all(out_root.join("tests/data/ucd"))?;
+    let mut ucd_files = BTreeSet::new();
+    for spath in UCD_GLOB {
+        let path = out_root.join("tests/data/ucd").join(spath);
+        std::fs::create_dir_all(path.parent().unwrap())?;
+        std::fs::copy(
+            cached(&format!(
+                "https://www.unicode.org/Public/{}/security/IdentifierStatus.txt",
+                SourceDataProvider::TESTED_UCD_TAG,
+            ))
+            .with_context(|| "Failed to download IdentifierStatus.txt".to_owned())?,
+            &path,
+        )?;
+        ucd_files.insert(spath.to_string());
+    }
     fs::write(&irg_path, filtered_content)?;
     let identifier_status_path = out_root.join("tests/data/ucd/security/IdentifierStatus.txt");
     let file = File::open(&identifier_status_path)?;
@@ -321,68 +252,112 @@ fn main() -> eyre::Result<()> {
         .collect::<Vec<_>>()
         .join("\n");
     fs::write(&identifier_status_path, filtered_content)?;
-    let tzdb_data: String = tzdb_data
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/tzdb/{path}").as_slice())"#)
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                        ");
 
-    write!(&mut crlify::BufWriterWithLineEndingFix::new(File::create(out_root.join("src/tests/data.rs")).unwrap()), "\
+    std::fs::remove_dir_all(out_root.join("tests/data/tzdb"))?;
+    let mut tzdb_files = BTreeSet::new();
+    extract_tar(
+        cached(&format!(
+            "https://www.iana.org/time-zones/repository/releases/tzdata{}.tar.gz",
+            SourceDataProvider::TESTED_TZDB_TAG,
+        ))
+        .with_context(|| "Failed to download TZDB ZIP".to_owned())?,
+        TZDB_GLOB.iter().copied().map(String::from).collect(),
+        out_root.join("tests/data/tzdb"),
+        &mut tzdb_files,
+    )?;
+
+    let gen_files = ["rearguard.zi".into(), "vanguard.zi".into()];
+    Command::new("make")
+        .arg("-C")
+        .arg(out_root.join("tests/data/tzdb"))
+        .args(&gen_files)
+        .status()
+        .unwrap();
+    tzdb_files.extend(gen_files);
+    std::fs::remove_file(out_root.join("tests/data/tzdb/Makefile")).unwrap();
+    std::fs::remove_file(out_root.join("tests/data/tzdb/ziguard.awk")).unwrap();
+    tzdb_files.remove("Makefile");
+    tzdb_files.remove("ziguard.awk");
+
+    let [cldr_files, icuexport_files, lstm_files, unihan_files, ucd_files, tzdb_files] = [
+        cldr_files,
+        icuexport_files,
+        lstm_files,
+        unihan_files,
+        ucd_files,
+        tzdb_files,
+    ]
+    .map(|files| {
+        files
+            .iter()
+            .map(|path| format!("{path:?}"))
+            .collect::<Vec<_>>()
+            .join(",\n        ")
+    });
+
+    write!(
+        &mut crlify::BufWriterWithLineEndingFix::new(
+            File::create(out_root.join("src/tests/data.rs")).unwrap()
+        ),
+        "\
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Generated by `download-repo-sources.rs`
+// Generated by `download-repo-sources.rs`
 
-use crate::{{AbstractFs, CldrCache, SerdeCache, SourceDataProvider, TzdbCache}};
-use std::sync::{{Arc, OnceLock}};
-impl SourceDataProvider {{
-    // This is equivalent to `new` for the files defined in `tools/testdata-scripts/globs.rs.data`.
-    pub(crate) fn new_testing() -> Self {{
-        // Singleton so that all instantiations share the same cache.
-        static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
-        SINGLETON
-            .get_or_init(|| Self {{
-                cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::Memory(
-                    [
-                        {cldr_data}
-                    ].into_iter().collect(),
-                ))))),
-                icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
-                    [
-                        {icuexport_data}
-                    ].into_iter().collect(),
-                )))),
-                segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
-                    [
-                        {lstm_data}
-                    ].into_iter().collect(),
-                )))),
-                unihan_paths: Some(Arc::new(AbstractFs::Memory(
-                    [
-                        {unihan_data}
-                    ].into_iter().collect(),
-                ))),
-                ucd_paths: Some(Arc::new(AbstractFs::Memory(
-                    [
-                        {ucd_data}
-                    ].into_iter().collect(),
-                ))),
-                tzdb_paths: Some(Arc::new(TzdbCache {{ root: AbstractFs::Memory(
-                    [
-                        {tzdb_data}
-                    ].into_iter().collect(),
-                ), transitions: Default::default() }})),
-                ..SourceDataProvider::new_custom()
-            }})
-            .clone()
-    }}
+use crate::source::{{include_files, AbstractFs}};
+
+#[rustfmt::skip]
+pub fn cldr_data() -> AbstractFs {{
+    include_files!(
+        \"../../tests/data/cldr/\";
+        {cldr_files}
+    )
+}}
+
+#[rustfmt::skip]
+pub fn icuexport_data() -> AbstractFs {{
+    include_files!(
+        \"../../tests/data/icuexport/\";
+        {icuexport_files}
+    )
+}}
+
+#[rustfmt::skip]
+pub fn lstm_data() -> AbstractFs {{
+    include_files!(
+        \"../../tests/data/lstm/\";
+        {lstm_files}
+    )
+}}
+
+#[rustfmt::skip]
+pub fn unihan_data() -> AbstractFs {{
+    include_files!(
+        \"../../tests/data/unihan/\";
+        {unihan_files}
+    )
+}}
+
+#[rustfmt::skip]
+pub fn ucd_data() -> AbstractFs {{
+    include_files!(
+        \"../../tests/data/ucd/\";
+        {ucd_files}
+    )
+}}
+
+#[rustfmt::skip]
+pub fn tzdb_data() -> AbstractFs {{
+    include_files!(
+        \"../../tests/data/tzdb/\";
+        {tzdb_files}
+    )
 }}
 "
-    ).unwrap();
+    )
+    .unwrap();
 
     Ok(())
 }

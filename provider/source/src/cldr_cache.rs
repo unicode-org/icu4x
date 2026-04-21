@@ -6,7 +6,7 @@
 
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
-use crate::source::SerdeCache;
+use crate::source::{AbstractFs, SerdeCache};
 use crate::CoverageLevel;
 use icu::locale::provider::{
     LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
@@ -46,9 +46,9 @@ pub(crate) struct CldrCache {
 }
 
 impl CldrCache {
-    pub(crate) fn from_serde_cache(serde_cache: SerdeCache) -> Self {
+    pub(crate) fn new(root: AbstractFs) -> Self {
         CldrCache {
-            serde_cache,
+            serde_cache: SerdeCache::new(root),
             dir_suffix: Default::default(),
             extended_locale_expander: Default::default(),
             calendar_eras: Default::default(),
