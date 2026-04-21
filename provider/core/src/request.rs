@@ -234,7 +234,7 @@ impl Default for DataIdentifierCow<'_> {
 #[derive(PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[repr(transparent)]
 pub struct DataMarkerAttributes {
-    // Validated to be non-empty ASCII alphanumeric + hyphen + underscore
+    // Validated to be non-empty ASCII alphanumeric + hyphen + underscore + forward slash
     value: str,
 }
 
@@ -270,7 +270,7 @@ impl DataMarkerAttributes {
         let mut i = 0;
         while i < s.len() {
             #[expect(clippy::indexing_slicing)] // duh
-            if !matches!(s[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_') {
+            if !matches!(s[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_' | b'/') {
                 return Err(AttributeParseError);
             }
             i += 1;
@@ -280,7 +280,7 @@ impl DataMarkerAttributes {
 
     /// Creates a borrowed [`DataMarkerAttributes`] from a borrowed string.
     ///
-    /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
+    /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-/]`.
     pub const fn try_from_str(s: &str) -> Result<&Self, AttributeParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
@@ -299,7 +299,7 @@ impl DataMarkerAttributes {
     ///
     /// # Errors
     ///
-    /// Returns an error if the byte slice contains code units other than `[a-zA-Z0-9_\-]`.
+    /// Returns an error if the byte slice contains code units other than `[a-zA-Z0-9_\-/]`.
     pub const fn try_from_utf8(code_units: &[u8]) -> Result<&Self, AttributeParseError> {
         let Ok(()) = Self::validate(code_units) else {
             return Err(AttributeParseError);
@@ -314,7 +314,7 @@ impl DataMarkerAttributes {
 
     /// Creates an owned [`DataMarkerAttributes`] from an owned string.
     ///
-    /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
+    /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-/]`.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
@@ -329,7 +329,7 @@ impl DataMarkerAttributes {
 
     /// Creates a borrowed [`DataMarkerAttributes`] from a borrowed string.
     ///
-    /// Panics if the string contains characters other than `[a-zA-Z0-9_\-]`.
+    /// Panics if the string contains characters other than `[a-zA-Z0-9_\-/]`.
     pub const fn from_str_or_panic(s: &str) -> &Self {
         #[allow(clippy::panic)] // documented
         let Ok(r) = Self::try_from_str(s) else {
