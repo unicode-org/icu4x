@@ -267,15 +267,8 @@ pub struct AttributeParseError;
 impl DataMarkerAttributes {
     /// Safety-usable invariant: validated bytes are ASCII only
     const fn validate(s: &[u8]) -> Result<(), AttributeParseError> {
-        if s.is_empty() {
-            return Ok(());
-        }
-        #[expect(clippy::indexing_slicing)] // checked non-empty
-        if s[0] == b'/' {
-            return Err(AttributeParseError);
-        }
         let mut i = 0;
-        let mut prev_was_slash = false;
+        let mut prev_was_slash = true;
         while i < s.len() {
             #[expect(clippy::indexing_slicing)] // duh
             let c = s[i];
