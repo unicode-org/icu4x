@@ -6,6 +6,8 @@
 //!
 //! Most tests should either be in-module unit tests or integration tests.
 
+#[cfg(feature = "networking")]
+mod download_repo_sources;
 mod make_testdata;
 
 include!("data.rs");

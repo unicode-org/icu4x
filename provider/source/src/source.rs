@@ -253,7 +253,7 @@ impl AbstractFs {
         Ok(())
     }
 
-    fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+    pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         self.init()?;
         match self {
             Self::Fs(root) => {
@@ -363,7 +363,7 @@ impl AbstractFs {
         })
     }
 
-    fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+    pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
         self.init()?;
         Ok(match self {
             Self::Fs(root) => root.join(path).is_file(),
