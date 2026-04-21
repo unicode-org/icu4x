@@ -10,6 +10,8 @@
 )]
 
 use crate::source::{include_files, SerdeCache, UnicodeCache};
+#[cfg(feature = "unstable")]
+use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::properties::{
     props::{
@@ -864,18 +866,21 @@ fn unicode_15_1() -> &'static SourceDataProvider {
         provider.unicode_paths = Some(std::sync::Arc::new(UnicodeCache::new_local(
             include_files!(
                 "../../data/segmenter/unicode15/";
+                "ucd/DerivedCoreProperties.txt",
                 "ucd/emoji/emoji-data.txt",
                 "ucd/extracted/DerivedEastAsianWidth.txt",
                 "ucd/extracted/DerivedGeneralCategory.txt",
                 "ucd/LineBreak.txt",
                 "ucd/PropertyAliases.txt",
                 "ucd/PropertyValueAliases.txt",
+                "ucd/PropList.txt",
             ),
         )));
         provider.icuexport_paths = Some(std::sync::Arc::new(SerdeCache::new(include_files!(
             "../../data/segmenter/icuexportdata74/";
             "uprops/small/ea.toml",
             "uprops/small/gc.toml",
+            "uprops/small/gcm.toml",
             "uprops/small/lb.toml",
         ))));
         provider
@@ -888,6 +893,168 @@ implement!(SegmenterBreakWordV1, "word.toml", |s| s);
 implement!(SegmenterBreakSentenceV1, "sentence.toml", |s| s);
 implement_override!(SegmenterBreakWordOverrideV1, "word.toml", ["fi", "sv"]);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakLineV2>, DataError> {
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakLineV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            use icu::collections::codepointtrie::TrieType;
+            use icu_codepointtrie_builder::CodePointTrieBuilder;
+            use std::collections::{BTreeMap, BTreeSet};
+
+            self.check_req::<SegmenterBreakLineV2>(req)?;
+
+            let classes = include_str!("../../data/segmenter/neo/LineBreakClasses.txt")
+                .lines()
+                .map(|l| l.split('#').next().unwrap().trim())
+                .filter(|l| !l.is_empty())
+                .map(|line| {
+                    let mut iter = line.split(';');
+                    let class = iter.next().unwrap().trim();
+                    let unicode_set = iter.next().unwrap().trim();
+
+                    let set = icu::properties::unicodeset_parse::parse_unstable(
+                        unicode_set,
+                        unicode_15_1(),
+                    )
+                    .map_err(|e| DataError::custom("unicodeset parse").with_debug_context(&e))?
+                    .0;
+                    Ok((class, set))
+                })
+                .collect::<Result<BTreeMap<_, _>, DataError>>()?;
+            let states = include_str!("../../data/segmenter/neo/LineBreakStates.txt")
+                .lines()
+                .map(|l| l.split('#').next().unwrap().trim())
+                .filter(|l| !l.is_empty())
+                .map(|line| {
+                    let mut iter = line.split(';');
+                    let state = iter.next().unwrap().trim();
+                    let accepting = iter.next().unwrap().trim();
+                    let lookahead = iter.next().unwrap().trim();
+                    (
+                        state,
+                        (accepting, Some(lookahead).filter(|s| !s.is_empty())),
+                    )
+                })
+                .collect::<BTreeMap<_, _>>();
+            let transitions = include_str!("../../data/segmenter/neo/LineBreakTransitions.txt")
+                .lines()
+                .map(|l| l.split('#').next().unwrap().trim())
+                .filter(|l| !l.is_empty())
+                .map(|line| {
+                    let mut iter = line.split(';');
+                    let state = iter.next().unwrap().trim();
+                    let class = iter.next().unwrap().trim();
+                    let next_state = iter.next().unwrap().trim();
+                    ((state, class), next_state)
+                })
+                .collect::<BTreeMap<_, _>>();
+
+            let lookaheads = states
+                .iter()
+                .flat_map(|(_, &(_, lookahead))| lookahead)
+                .collect::<BTreeSet<_>>();
+
+            // Reserve one class for EOT
+            assert!(classes.len() < usize::from(Class::MAX) - 1);
+            // Reserve two states for START and TRASH
+            assert!(states.len() < usize::from(State::MAX) - 2);
+            // Reserve two values for Acceptance::{Accept, Continue}
+            assert!(lookaheads.len() < usize::from(Lookahead::MAX) - 2);
+            // Check invariants of the start state
+            assert_eq!(states["START"], ("No", None));
+
+            let class_lookup = core::iter::once("eot")
+                .chain(classes.keys().filter(|&&s| s != "eot").copied())
+                .enumerate()
+                .map(|(i, class)| (class, Class::try_from(i).unwrap()))
+                .collect::<BTreeMap<_, _>>();
+
+            let state_lookup = core::iter::once("START")
+                .chain(states.keys().filter(|&&s| s != "START").copied())
+                .enumerate()
+                .map(|(i, state)| (state, State::try_from(i).unwrap()))
+                .collect::<BTreeMap<_, _>>();
+
+            let lookahead_lookup = lookaheads
+                .iter()
+                .enumerate()
+                .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
+                .collect::<BTreeMap<_, _>>();
+
+            let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
+            for (&class, set) in &classes {
+                for range in set.code_points().iter_ranges() {
+                    builder.set_range_value(range.clone(), class_lookup[class]);
+                }
+            }
+            let classes = builder.build();
+
+            let states = states
+                .iter()
+                .map(|(&state, &(accepting, lookahead))| {
+                    (
+                        state_lookup[state],
+                        (
+                            match accepting {
+                                "Yes" => Acceptance::Accept,
+                                "No" => Acceptance::Continue,
+                                l => Acceptance::Conditional(lookahead_lookup[l]),
+                            },
+                            lookahead.as_ref().map(|l| lookahead_lookup[l]),
+                        ),
+                    )
+                })
+                .collect::<BTreeMap<_, _>>()
+                .into_values()
+                .collect();
+
+            let transitions = transitions
+                .iter()
+                .map(|((state, class), next_state)| {
+                    (
+                        usize::from(state_lookup[state])
+                            + state_lookup.len() * usize::from(class_lookup[class]),
+                        *state_lookup.get(next_state).expect(next_state),
+                    )
+                })
+                .collect::<BTreeMap<_, _>>();
+
+            let transitions = (0..=*transitions.last_key_value().unwrap().0)
+                .map(|i| {
+                    transitions
+                        .get(&i)
+                        .copied()
+                        .unwrap_or(SegmenterStateMachine::TRASH_STATE)
+                })
+                .collect();
+
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(SegmenterStateMachine {
+                    transitions,
+                    classes,
+                    states,
+                    num_lookaheads: lookahead_lookup.len(),
+                }),
+            })
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl IterableDataProviderCached<SegmenterBreakLineV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok([Default::default()].into_iter().collect())
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -944,6 +1111,5 @@ mod tests {
             .expect("Loading should succeed!");
         response.payload.get();
     }
-
     // TODO: Add loading override table data. But no locales in testdata.
 }

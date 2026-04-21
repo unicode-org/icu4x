@@ -15,6 +15,11 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+#[cfg(feature = "unstable")]
+#[allow(missing_docs)]
+mod neo;
+#[cfg(feature = "unstable")]
+pub use neo::*;
 mod lstm;
 pub use lstm::*;
 #[cfg(feature = "unstable")]
@@ -57,6 +62,8 @@ const _: () = {
     impl_segmenter_break_word_v1!(Baked);
     impl_segmenter_break_word_override_v1!(Baked);
     impl_segmenter_break_sentence_override_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_break_line_v2!(Baked);
 };
 
 icu_provider::data_marker!(
@@ -138,6 +145,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterLstmAutoV1::INFO,
     #[cfg(feature = "unstable")]
     radical::SegmenterUnihanRadicalV1::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterBreakLineV2::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
