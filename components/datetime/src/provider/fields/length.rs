@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::string::{String, ToString};
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
 use displaydoc::Display;
@@ -211,10 +212,344 @@ impl FieldNumericOverrides {
             Self::Jpnyear => "jpnyear",
         }
     }
+
+    fn format_hanidec(number: usize) -> String {
+        const HANIDEC_DIGITS: &[char] =
+            &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+        if number == 0 {
+            return "〇".to_string();
+        }
+        let mut n = number;
+        let mut buf = [0u8; 20]; // Max digits for u64 is 20
+        let mut i = 20;
+        #[allow(clippy::indexing_slicing, reason = "i is < 20")]
+        while n > 0 && i > 0 {
+            i -= 1;
+            buf[i] = (n % 10) as u8;
+            n /= 10;
+        }
+        #[allow(
+            clippy::indexing_slicing,
+            reason = "buf is sliced with an index < 20 and digits are within 0-9"
+        )]
+        let s = buf[i..]
+            .iter()
+            .map(|&d| HANIDEC_DIGITS[d as usize])
+            .collect();
+        s
+    }
+
+    fn format_hanidays(number: usize) -> String {
+        if number == 0 || number > 31 {
+            debug_assert!(
+                false,
+                "hanidays should only be found in a d context and only supports 1-31"
+            );
+            return number.to_string();
+        }
+        let han_digits = [
+            "", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
+        ];
+        if number <= 10 {
+            let mut s = "初".to_string(); // '初' (chū) for the first decade
+            #[allow(clippy::indexing_slicing, reason = "number is <= 10")]
+            s.push_str(han_digits[number]);
+            s
+        } else if number < 20 {
+            let mut s = "十".to_string(); // '十' (shí) for ten
+            #[allow(clippy::indexing_slicing, reason = "number % 10 < 10")]
+            s.push_str(han_digits[number % 10]);
+            s
+        } else if number == 20 {
+            "二十".to_string() // '二十' for twenty
+        } else if number < 30 {
+            let mut s = "廿".to_string(); // '廿' (niàn) for twenty
+            #[allow(clippy::indexing_slicing, reason = "number % 20 < 10")]
+            s.push_str(han_digits[number % 20]);
+            s
+        } else if number == 30 {
+            "三十".to_string() // '三十' for thirty
+        } else {
+            // 31
+            "丗一".to_string() // '丗' (sà/sashì) for thirty
+        }
+    }
+
+    fn format_romanlow(number: usize) -> String {
+        let mut n = number;
+        if n == 0 || n >= 4000 {
+            debug_assert!(
+                false,
+                "romanlow should only be found in an M context and only supports 1-3999"
+            );
+            return n.to_string();
+        }
+        let mut s = String::new();
+        let mappings = [
+            (1000, "m"),
+            (900, "cm"),
+            (500, "d"),
+            (400, "cd"),
+            (100, "c"),
+            (90, "xc"),
+            (50, "l"),
+            (40, "xl"),
+            (10, "x"),
+            (9, "ix"),
+            (5, "v"),
+            (4, "iv"),
+            (1, "i"),
+        ];
+        for &(value, roman) in mappings.iter() {
+            while n >= value {
+                s.push_str(roman);
+                n -= value;
+            }
+        }
+        s
+    }
+
+    fn format_hebrew(number: usize) -> String {
+        fn hebrew_units(digit: usize) -> Option<char> {
+            match digit {
+                1 => Some('א'),
+                2 => Some('ב'),
+                3 => Some('ג'),
+                4 => Some('ד'),
+                5 => Some('ה'),
+                6 => Some('ו'),
+                7 => Some('ז'),
+                8 => Some('ח'),
+                9 => Some('ט'),
+                _ => None,
+            }
+        }
+
+        fn hebrew_tens(digit: usize) -> Option<char> {
+            match digit {
+                1 => Some('י'),
+                2 => Some('כ'),
+                3 => Some('ל'),
+                4 => Some('מ'),
+                5 => Some('נ'),
+                6 => Some('ס'),
+                7 => Some('ע'),
+                8 => Some('פ'),
+                9 => Some('צ'),
+                _ => None,
+            }
+        }
+
+        fn hebrew_hundreds(digit: usize) -> &'static str {
+            // Hebrew numerals only have unique letters for hundreds up to 400 (ת).
+            // Values from 500 to 900 are represented by combining Tav (ת = 400)
+            // with another hundred letter (e.g., 500 = 400 + 100 = תק).
+            match digit {
+                1 => "ק",
+                2 => "ר",
+                3 => "ש",
+                4 => "ת",
+                5 => "תק",
+                6 => "תר",
+                7 => "תש",
+                8 => "תת",
+                9 => "תתק",
+                _ => "",
+            }
+        }
+
+        fn format_hebrew_less_than_1000(n: usize) -> String {
+            let mut s = String::new();
+            let hundreds = n / 100;
+            let rem = n % 100;
+
+            s.push_str(hebrew_hundreds(hundreds));
+
+            if rem == 15 {
+                s.push_str("טו");
+            } else if rem == 16 {
+                s.push_str("טז");
+            } else {
+                let tens = rem / 10;
+                let units = rem % 10;
+
+                if let Some(c) = hebrew_tens(tens) {
+                    s.push(c);
+                }
+                if let Some(c) = hebrew_units(units) {
+                    s.push(c);
+                }
+            }
+            s
+        }
+
+        /// Applies Hebrew punctuation (geresh or gershayim) to a string of Hebrew numerals.
+        ///
+        /// The rules are:
+        /// - Single-letter numbers (e.g., units like "א", tens like "י", or hundreds like "ק")
+        ///   get a geresh (׳) at the end to indicate they are numerals.
+        /// - Multi-letter numbers (e.g., "טו" or "קא") get a gershayim (״) before the last letter.
+        ///
+        /// This follows standard conventions for Hebrew Gematria numerals, ensuring that
+        /// every numeral string has either a geresh or a gershayim, and is consistent
+        /// with how ICU4C formats dates with Hebrew numbering.
+        fn apply_hebrew_punctuation(s: &mut String) {
+            let count = s.chars().count();
+            if count == 1 {
+                s.push('׳');
+            } else if count > 1 {
+                if let Some((i, _)) = s.char_indices().last() {
+                    s.insert(i, '״');
+                }
+            }
+        }
+
+        if number == 0 {
+            return "0".to_string();
+        }
+        let thousands = number / 1000;
+        let rest = number % 1000;
+
+        if thousands >= 1000 {
+            // Fall back to decimal for large numbers not supported by this scheme
+            return number.to_string();
+        }
+
+        let mut result = String::new();
+
+        if thousands > 0 {
+            let mut thousands_s = format_hebrew_less_than_1000(thousands);
+            apply_hebrew_punctuation(&mut thousands_s);
+            result.push_str(&thousands_s);
+
+            if rest == 0 {
+                // Special case for bare thousands (e.g. 5000 -> ה׳ אלפים)
+                // to avoid ambiguity, based on ICU4C behavior.
+                result.push_str(" אלפים");
+                return result;
+            }
+        }
+
+        let mut rest_s = format_hebrew_less_than_1000(rest);
+
+        if !rest_s.is_empty() {
+            apply_hebrew_punctuation(&mut rest_s);
+            result.push_str(&rest_s);
+        }
+
+        result
+    }
+
+    /// Formats a number according to the override system.
+    pub fn format_number(self, number: usize) -> String {
+        match self {
+            // https://github.com/unicode-org/cldr/blob/main/common/supplemental/numberingSystems.xml#L39
+            Self::Hanidec => Self::format_hanidec(number),
+            // https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16
+            Self::Jpnyear => {
+                if number == 1 {
+                    "元".to_string()
+                } else {
+                    number.to_string()
+                }
+            }
+            // https://github.com/unicode-org/cldr/blob/main/common/rbnf/zh.xml#L26
+            Self::Hanidays => Self::format_hanidays(number),
+            // https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L684
+            Self::Romanlow => Self::format_romanlow(number),
+            // https://github.com/unicode-org/cldr/blob/main/common/supplemental/numberingSystems.xml#L41
+            // https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522
+            Self::Hebr => Self::format_hebrew(number),
+        }
+    }
 }
 
 impl fmt::Display for FieldNumericOverrides {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.as_str().fmt(f)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_format_number() {
+        // hanidec
+        assert_eq!(
+            FieldNumericOverrides::Hanidec.format_number(2024),
+            "二〇二四"
+        );
+        assert_eq!(FieldNumericOverrides::Hanidec.format_number(0), "〇");
+        assert_eq!(FieldNumericOverrides::Hanidec.format_number(10), "一〇");
+
+        // hanidays
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(1), "初一");
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(10), "初十");
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(11), "十一");
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(19), "十九");
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(20), "二十");
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(21), "廿一");
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(29), "廿九");
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(30), "三十");
+        assert_eq!(FieldNumericOverrides::Hanidays.format_number(31), "丗一");
+
+        // jpnyear
+        assert_eq!(FieldNumericOverrides::Jpnyear.format_number(1), "元");
+        assert_eq!(FieldNumericOverrides::Jpnyear.format_number(2), "2");
+        assert_eq!(FieldNumericOverrides::Jpnyear.format_number(2024), "2024");
+
+        // romanlow
+        assert_eq!(FieldNumericOverrides::Romanlow.format_number(1), "i");
+        assert_eq!(FieldNumericOverrides::Romanlow.format_number(4), "iv");
+        assert_eq!(FieldNumericOverrides::Romanlow.format_number(9), "ix");
+        assert_eq!(FieldNumericOverrides::Romanlow.format_number(49), "xlix");
+        assert_eq!(
+            FieldNumericOverrides::Romanlow.format_number(3999),
+            "mmmcmxcix"
+        );
+    }
+
+    #[test]
+    #[cfg(debug_assertions)]
+    #[should_panic(expected = "hanidays should only be found in a d context")]
+    fn test_hanidays_invalid() {
+        FieldNumericOverrides::Hanidays.format_number(32);
+    }
+
+    #[test]
+    #[cfg(debug_assertions)]
+    #[should_panic(expected = "romanlow should only be found in an M context")]
+    fn test_romanlow_invalid() {
+        FieldNumericOverrides::Romanlow.format_number(4000);
+    }
+
+    #[test]
+    fn test_hebr() {
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(1), "א׳");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(10), "י׳");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(15), "ט״ו");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(16), "ט״ז");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(17), "י״ז");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(21), "כ״א");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(100), "ק׳");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(101), "ק״א");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(115), "קט״ו");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(400), "ת׳");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(500), "ת״ק");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(784), "תשפ״ד");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(1000), "א׳ אלפים");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(5000), "ה׳ אלפים");
+        assert_eq!(FieldNumericOverrides::Hebr.format_number(5783), "ה׳תשפ״ג");
+        assert_eq!(
+            FieldNumericOverrides::Hebr.format_number(100000),
+            "ק׳ אלפים"
+        );
+        assert_eq!(
+            FieldNumericOverrides::Hebr.format_number(1000000),
+            "1000000"
+        );
+        // Fallback
     }
 }

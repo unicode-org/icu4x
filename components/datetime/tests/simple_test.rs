@@ -193,6 +193,63 @@ fn hebrew_months() {
 }
 
 #[test]
+fn hebrew_numbering() {
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(locale!("he").into(), fieldsets::YMD::long())
+            .unwrap();
+
+    let formatted_datetime = formatter.format(
+        &Date::try_new_hebrew_v2(5771, 3.into(), 17)
+            .unwrap()
+            .to_calendar(Hebrew),
+    );
+
+    assert_writeable_eq!(formatted_datetime, "י״ז בכסלו ה׳תשע״א");
+}
+
+#[test]
+fn hanidec_numbering() {
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(locale!("ja").into(), fieldsets::YMD::long())
+            .unwrap();
+
+    let formatted_datetime =
+        formatter.format(&Date::try_new_chinese_traditional(2011, 3.into(), 29).unwrap());
+
+    // Unfortunately the only patterns that currently use hanidec use cyclic years,
+    // so we can't see this in action on the years field, but the day here is hanidays.
+    assert_writeable_eq!(formatted_datetime, "辛卯年三月二九日");
+}
+
+#[test]
+fn hanidays_numbering() {
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(locale!("zh").into(), fieldsets::YMD::long())
+            .unwrap();
+
+    let formatted_datetime =
+        formatter.format(&Date::try_new_chinese_traditional(2011, 12.into(), 29).unwrap());
+
+    assert_writeable_eq!(formatted_datetime, "2011年腊月廿九");
+}
+
+#[test]
+fn hanidec_ja_chinese_numbering() {
+    use icu_calendar::cal::ChineseTraditional;
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(locale!("ja").into(), fieldsets::YMD::long())
+            .unwrap();
+
+    let formatted_datetime = formatter.format(
+        &Date::try_new_iso(2011, 3, 4)
+            .unwrap()
+            .to_calendar(ChineseTraditional::new()),
+    );
+
+    assert_writeable_eq!(formatted_datetime, "辛卯年正月三〇日");
+}
+
+#[test]
 fn test_5387() {
     let datetime = DateTime {
         date: Date::try_new_gregorian(2024, 8, 16).unwrap(),
