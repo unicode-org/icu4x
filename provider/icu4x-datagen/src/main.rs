@@ -46,6 +46,7 @@ use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1;
 use icu_provider::DataError;
 use icu_provider_export::prelude::*;
+use icu_provider_export::AltVariantStrategy;
 use icu_provider_export::ExportMetadata;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
@@ -306,7 +307,7 @@ struct Cli {
     segmenter_models: Vec<String>,
 
     #[arg(long)]
-    #[arg(help = "Use data data from this blob file instead of generating it from sources")]
+    #[arg(help = "Use data from this blob file instead of generating it from sources")]
     #[cfg(feature = "blob_input")]
     input_blob: Option<PathBuf>,
 
@@ -642,15 +643,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
     let mut driver = ExportDriver::new(locale_families, deduplication_strategy.into(), fallbacker);
 
-    use icu_provider_export::AltVariantStrategy;
-    driver = driver
-        .with_markers(markers)
-        .with_alt_variant_strategy(if cli.only_alt_variants {
-            AltVariantStrategy::OnlyAlternative
-        } else {
-            AltVariantStrategy::All
-        });
-
+    driver = driver.with_markers(markers);
+    if cli.only_alt_variants {
+        driver = driver.with_alt_variant_strategy(AltVariantStrategy::OnlyAlternative);
+    }
     driver = driver.with_additional_collations(
         cli.include_collations
             .iter()
