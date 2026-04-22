@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod arithmetic;
+mod constructor_roundtrip;
 mod continuity_test;
 mod date_arithmetic_snapshot;
 mod exhaustive;
