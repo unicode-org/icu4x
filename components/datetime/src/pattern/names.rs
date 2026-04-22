@@ -3722,10 +3722,12 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
 
                 // M..MM, L..LL
-                (FS::Month(_), One | Two) => numeric_field = Some(field),
+                (FS::Month(_), One | Two | NumericOverride(_)) => numeric_field = Some(field),
 
                 // d..dd
-                (FS::Day(Day::DayOfMonth), One | Two) => numeric_field = Some(field),
+                (FS::Day(Day::DayOfMonth), One | Two | NumericOverride(_)) => {
+                    numeric_field = Some(field)
+                }
                 // D..DDD
                 (FS::Day(Day::DayOfYear), One | Two | Three) => numeric_field = Some(field),
                 // F

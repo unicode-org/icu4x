@@ -216,28 +216,18 @@ impl SourceDataProvider {
             }
         }
 
-        let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
+        let mut trios = [Length::Long, Length::Medium, Length::Short]
             .map(|length| {
                 let components = to_components_bag(length, attributes, data);
                 let preferred_hour_cycle = preferred_hour_cycle(data, locale);
                 // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
-                let mut pattern = select_pattern(
+                let pattern = select_pattern(
                     components,
                     &skeleton_patterns,
                     preferred_hour_cycle,
                     &length_combinations_v1,
                 );
 
-                let lp = match length {
-                    Length::Long => &data.date_skeletons.long,
-                    Length::Medium => &data.date_skeletons.medium,
-                    Length::Short => &data.date_skeletons.short,
-                    _ => unreachable!(),
-                };
-
-                pattern.inner.for_each_mut(|p| {
-                    super::names::apply_numeric_overrides(lp, p);
-                });
                 match components {
                     components::Bag {
                         era: None,
@@ -312,6 +302,28 @@ impl SourceDataProvider {
                 });
                 trio
             });
+
+        // Apply numeric overrides to the patterns in a separate iteration.
+        // This applies the numbering system overrides found in length patterns (e.g. yMMM)
+        // to the skeletons we selected.
+        for (i, length) in [Length::Long, Length::Medium, Length::Short]
+            .iter()
+            .enumerate()
+        {
+            let lp = match length {
+                Length::Long => &data.date_skeletons.long,
+                Length::Medium => &data.date_skeletons.medium,
+                Length::Short => &data.date_skeletons.short,
+                _ => unreachable!(),
+            };
+            for variant in trios[i].iter_in_quality_order_mut() {
+                variant.inner.for_each_mut(|p| {
+                    crate::datetime::names::apply_numeric_overrides(lp, p);
+                });
+            }
+        }
+        let [long, medium, short] = trios;
+
         let builder = PackedPatternsBuilder {
             standard: LengthPluralElements {
                 long: long.standard.inner().as_ref().map(runtime::Pattern::as_ref),
