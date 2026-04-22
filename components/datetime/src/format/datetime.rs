@@ -249,9 +249,17 @@ where
             let extended = year.extended_year();
             try_write_number(PART, w, decimal_formatter, extended.into(), l)?
         }
-        (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
+        (
+            FieldSymbol::Month(_),
+            l @ (FieldLength::One | FieldLength::Two | FieldLength::NumericOverride(_)),
+        ) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
+            if let FieldLength::NumericOverride(o) = l {
+                let s = o.format_number(month.number() as usize);
+                w.with_part(PART, |w| w.write_str(&s))?;
+                return Ok(Ok(()));
+            }
             try_write_number(PART, w, decimal_formatter, month.number().into(), l)?
         }
         (FieldSymbol::Month(symbol), l) => {

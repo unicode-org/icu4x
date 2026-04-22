@@ -680,4 +680,41 @@ mod tests {
 
         assert_try_writeable_eq!(formatted_pattern, "כ״ח", Ok(()),);
     }
+
+    // Unfortunately we do not datagen `haw` in our default data set.
+    // So this is a manual test.
+    #[test]
+    fn manual_romanlow_month() {
+        use crate::fieldsets::enums::DateFieldSet;
+        use crate::provider::fields::{
+            Field, FieldLength, FieldNumericOverrides, FieldSymbol, Month,
+        };
+        use crate::provider::pattern::runtime::Pattern;
+        use crate::provider::pattern::PatternItem;
+        use icu_calendar::cal::Gregorian;
+        use icu_calendar::Date;
+
+        let items = vec![PatternItem::Field(Field {
+            symbol: FieldSymbol::Month(Month::Format),
+            length: FieldLength::NumericOverride(FieldNumericOverrides::Romanlow),
+        })];
+        let pattern = Pattern::from(items);
+        let datetime_pattern = DateTimePattern::from(pattern);
+
+        let mut names_formatter = FixedCalendarDateTimeNames::<Gregorian, DateFieldSet>::try_new(
+            icu_locale_core::locale!("haw").into(),
+        )
+        .unwrap();
+
+        let date = Date::try_new_iso(2020, 1, 21)
+            .unwrap()
+            .to_calendar(Gregorian);
+
+        let formatted = names_formatter
+            .include_for_pattern(&datetime_pattern)
+            .unwrap()
+            .format(&date);
+
+        writeable::assert_try_writeable_eq!(formatted, "i", Ok(()));
+    }
 }
