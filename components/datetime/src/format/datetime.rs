@@ -165,6 +165,9 @@ where
         (FieldSymbol::Year(Year::Calendar), l) => {
             const PART: Part = parts::YEAR;
             input!(PART, Year, year = input.year);
+            // We don't want to write this code with early returns.
+            // This allows us to write "exit early" code without using `return`.
+            let mut done_formatting = false;
             if let FieldLength::NumericOverride(o) = l {
                 let year_val = year.era_year_or_related_iso();
 
@@ -173,15 +176,19 @@ where
                 // what you want in years, so we fall back.
                 if year_val >= 0 {
                     w.with_part(PART, |w| o.format_number(year_val as u32, w))?;
-                    return Ok(Ok(()));
+                    done_formatting = true;
                 }
             }
-            let mut year = Decimal::from(year.era_year_or_related_iso());
-            if matches!(l, FieldLength::Two) {
-                // 'yy' and 'YY' truncate
-                year.set_max_position(2);
+            if !done_formatting {
+                let mut year = Decimal::from(year.era_year_or_related_iso());
+                if matches!(l, FieldLength::Two) {
+                    // 'yy' and 'YY' truncate
+                    year.set_max_position(2);
+                }
+                try_write_number(PART, w, decimal_formatter, year, l)?
+            } else {
+                Ok(())
             }
-            try_write_number(PART, w, decimal_formatter, year, l)?
         }
         (FieldSymbol::Year(Year::Cyclic), l) => {
             const PART: Part = parts::YEAR_NAME;
@@ -252,17 +259,16 @@ where
             let extended = year.extended_year();
             try_write_number(PART, w, decimal_formatter, extended.into(), l)?
         }
-        (
-            FieldSymbol::Month(_),
-            l @ (FieldLength::One | FieldLength::Two | FieldLength::NumericOverride(_)),
-        ) => {
+        (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
-            if let FieldLength::NumericOverride(o) = l {
-                w.with_part(PART, |w| o.format_number(month.number() as u32, w))?;
-                return Ok(Ok(()));
-            }
             try_write_number(PART, w, decimal_formatter, month.number().into(), l)?
+        }
+        (FieldSymbol::Month(_), FieldLength::NumericOverride(o)) => {
+            const PART: Part = parts::MONTH;
+            input!(PART, Month, month = input.month);
+            w.with_part(PART, |w| o.format_number(month.number() as u32, w))?;
+            Ok(())
         }
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
@@ -358,6 +364,12 @@ where
                 }
                 Ok(s) => Ok(w.with_part(PART, |w| w.write_str(s))?),
             }
+        }
+        (FieldSymbol::Day(fields::Day::DayOfMonth), FieldLength::NumericOverride(o)) => {
+            const PART: Part = parts::DAY;
+            input!(PART, DayOfMonth, day_of_month = input.day_of_month);
+            w.with_part(PART, |w| o.format_number(day_of_month.0 as u32, w))?;
+            Ok(())
         }
         (FieldSymbol::Day(fields::Day::DayOfMonth), l) => {
             const PART: Part = parts::DAY;
