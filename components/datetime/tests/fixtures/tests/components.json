@@ -26,7 +26,7 @@
                 "en-u-hc-h23": "Tuesday, January 21, 2020 AD at 08:25:07",
                 "en-u-ca-buddhist-hc-h23": "Tuesday, January 21, 2563 BE at 08:25:07",
                 "en-u-ca-chinese-hc-h23": "Tuesday, Twelfth Month 27, 2019(ji-hai) at 08:25:07",
-                "zh-u-ca-chinese-hc-h23": "2019己亥年腊月27星期二 08:25:07",
+                "zh-u-ca-chinese-hc-h23": "2019己亥年腊月廿七星期二 08:25:07",
                 "en-u-ca-japanese-hc-h23": "Tuesday, January 21, 2 Reiwa at 08:25:07",
                 "ja-u-ca-japanese-hc-h23": "令和2年1月21日火曜日 8:25:07",
                 "en-u-ca-coptic-hc-h23": "Tuesday, Toba 12, 1736 AM at 08:25:07",
@@ -79,7 +79,7 @@
         "output": {
             "values": {
                 "en-u-ca-chinese-hc-h23": "Friday, Second Month 19, 2023(gui-mao) at 14:15:07",
-                "zh-u-ca-chinese-hc-h23": "2023癸卯年二月19星期五 14:15:07"
+                "zh-u-ca-chinese-hc-h23": "2023癸卯年二月十九星期五 14:15:07"
             }
         }
     },
@@ -108,7 +108,7 @@
         "output": {
             "values": {
                 "en-u-ca-chinese-hc-h23": "Thursday, Second Monthbis 2, 2023(gui-mao) at 14:15:07",
-                "zh-u-ca-chinese-hc-h23": "2023癸卯年闰二月2星期四 14:15:07"
+                "zh-u-ca-chinese-hc-h23": "2023癸卯年闰二月初二星期四 14:15:07"
             }
         }
     },
