@@ -966,8 +966,8 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
             assert!(classes.len() < usize::from(Class::MAX) - 1);
             // Reserve two states for START and TRASH
             assert!(states.len() < usize::from(State::MAX) - 2);
-            // Reserve two values for Acceptance::{Accept, Continue}
-            assert!(lookaheads.len() < usize::from(Lookahead::MAX) - 2);
+            // Reserve three values for Acceptance::{Accept, Continue, AcceptMandatory}
+            assert!(lookaheads.len() < usize::from(Lookahead::MAX) - 3);
             // Check invariants of the start state
             assert_eq!(states["START"], ("No", None));
 
@@ -997,6 +997,43 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
             }
             let classes = builder.build();
 
+            let lb = CodePointMapData::<LineBreak>::try_new_unstable(unicode_15_1()).unwrap();
+            let lb = lb.as_borrowed();
+
+            let mandatory_break_classes = [
+                LineBreak::CarriageReturn,
+                LineBreak::LineFeed,
+                LineBreak::MandatoryBreak,
+                LineBreak::NextLine,
+            ]
+            .into_iter()
+            .flat_map(|l| lb.iter_ranges_for_value(l))
+            .flatten()
+            .map(|c| classes.get32(c))
+            .collect::<BTreeSet<_>>();
+
+            let mandatory_break_states = transitions
+                .iter()
+                .filter_map(|(&(_, class), &right)| {
+                    mandatory_break_classes
+                        .contains(&class_lookup[class])
+                        .then_some(right)
+                })
+                .inspect(|&state| {
+                    // all incoming transitions are mandatory classes
+                    assert!(transitions
+                        .iter()
+                        .all(|(&(_, class), &right)| right != state
+                            || mandatory_break_classes.contains(&class_lookup[class])));
+
+                    // the state is unconditionally accepting
+                    assert_eq!(states[state].0, "Yes");
+
+                    // the state can't be reached by lookahead
+                    assert_eq!(states[state].1, None);
+                })
+                .collect::<BTreeSet<_>>();
+
             let states = states
                 .iter()
                 .map(|(&state, &(accepting, lookahead))| {
@@ -1004,6 +1041,9 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
                         state_lookup[state],
                         (
                             match accepting {
+                                "Yes" if mandatory_break_states.contains(state) => {
+                                    Acceptance::AcceptMandatory
+                                }
                                 "Yes" => Acceptance::Accept,
                                 "No" => Acceptance::Continue,
                                 l => Acceptance::Conditional(lookahead_lookup[l]),

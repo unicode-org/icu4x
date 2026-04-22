@@ -17,6 +17,7 @@ pub type Lookahead = u8;
 pub enum Acceptance {
     Accept,
     Continue,
+    AcceptMandatory,
     Conditional(Lookahead),
 }
 
@@ -27,6 +28,7 @@ impl zerovec::ule::AsULE for Acceptance {
         match self {
             Self::Accept => 255,
             Self::Continue => 254,
+            Self::AcceptMandatory => 253,
             Self::Conditional(n) => n,
         }
     }
@@ -35,6 +37,7 @@ impl zerovec::ule::AsULE for Acceptance {
         match unaligned {
             255 => Self::Accept,
             254 => Self::Continue,
+            253 => Self::AcceptMandatory,
             n => Self::Conditional(n),
         }
     }
@@ -84,7 +87,7 @@ icu_provider::data_marker!(
 
 #[cfg(test)]
 impl SegmenterStateMachine<'_> {
-    fn breaks(&self, input: &str) -> impl Iterator<Item = usize> {
+    fn breaks(&self, input: &str) -> impl Iterator<Item = (usize, bool)> {
         let mut remaining_input = input.char_indices();
 
         core::iter::from_fn(move || {
@@ -97,6 +100,7 @@ impl SegmenterStateMachine<'_> {
 
             // Dummy value, we don't use this until it has been replaced
             let mut last_accepting: core::str::CharIndices<'_> = iter.clone();
+            let mut last_accepting_mandatory = false;
             let mut lookahead_positions: Vec<Option<core::str::CharIndices<'_>>> =
                 alloc::vec![None; self.num_lookaheads];
 
@@ -125,7 +129,14 @@ impl SegmenterStateMachine<'_> {
                     .unwrap_or((Acceptance::Continue, None));
 
                 match acceptance {
-                    Acceptance::Accept => last_accepting = iter.clone(),
+                    Acceptance::Accept => {
+                        last_accepting = iter.clone();
+                        last_accepting_mandatory = false;
+                    }
+                    Acceptance::AcceptMandatory => {
+                        last_accepting = iter.clone();
+                        last_accepting_mandatory = true;
+                    }
                     Acceptance::Continue => (),
                     Acceptance::Conditional(l) => {
                         if let Some(last) = &lookahead_positions[usize::from(l)] {
@@ -140,7 +151,10 @@ impl SegmenterStateMachine<'_> {
                 }
             };
 
-            Some(remaining_input.offset())
+            Some((
+                remaining_input.offset(),
+                last_accepting_mandatory || remaining_input.as_str().is_empty(),
+            ))
         })
     }
 }
@@ -150,6 +164,22 @@ fn test() {
     use alloc::{vec, vec::Vec};
 
     let segmenter = crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V2;
+
+    let actual_breaks = segmenter
+        .breaks("this has a mandatory\nline break")
+        .collect::<Vec<_>>();
+
+    assert_eq!(
+        actual_breaks,
+        [
+            (5, false),
+            (9, false),
+            (11, false),
+            (21, true),
+            (26, false),
+            (31, true)
+        ]
+    );
 
     for line in include_str!("../../tests/testdata/LineBreakTest.txt").lines() {
         let line = line.split('#').next().unwrap().trim();
@@ -170,7 +200,10 @@ fn test() {
             }
         }
 
-        let actual_breaks = segmenter.breaks(&test_string).collect::<Vec<_>>();
+        let actual_breaks = segmenter
+            .breaks(&test_string)
+            .map(|(i, _)| i)
+            .collect::<Vec<_>>();
 
         assert_eq!(actual_breaks, expected_breaks, "{line}",);
     }
