@@ -253,9 +253,12 @@ unsafe impl ULE for FieldSymbolULE {
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[allow(clippy::exhaustive_enums)] // used in data struct
+/// Categorization of field symbols as text or numeric.
 #[cfg(feature = "datagen")]
-pub(crate) enum TextOrNumeric {
+pub enum TextOrNumeric {
+    /// The field is represented by text.
     Text,
+    /// The field is represented by numeric digits.
     Numeric,
 }
 

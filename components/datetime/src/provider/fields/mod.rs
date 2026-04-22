@@ -59,8 +59,9 @@ pub struct Field {
 }
 
 impl Field {
+    /// Returns whether the field length represents text or numeric.
     #[cfg(feature = "datagen")]
-    pub(crate) fn get_length_type(self) -> TextOrNumeric {
+    pub fn get_length_type(self) -> TextOrNumeric {
         match self.symbol {
             FieldSymbol::Era => TextOrNumeric::Text,
             FieldSymbol::Year(year) => year.get_length_type(self.length),

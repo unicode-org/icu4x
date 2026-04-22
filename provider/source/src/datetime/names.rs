@@ -482,13 +482,18 @@ pub(crate) fn apply_numeric_overrides(
     pattern.items.for_each_mut(|item| {
         if let pattern::PatternItem::Field(ref mut field) = *item {
             // only replace numeric items
+            if (*field).get_length_type() != fields::TextOrNumeric::Numeric {
+                return;
+            }
             if field.length != FieldLength::One {
                 assert!(
                     field.length != FieldLength::Two || symbol_to_replace != Some(field.symbol),
                     "We don't know what to do when there is a non-targeted numeric override \
                          on a two-digit numeric field"
                 );
-                return;
+                if field.length == FieldLength::Two {
+                    return;
+                }
             }
             // if we need to replace a specific symbol, filter
             // out everyone else
