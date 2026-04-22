@@ -835,6 +835,11 @@ impl DataExporter for BakedExporter {
 
         let required_crates_list = required_crates.iter().map(|c| format!(" * `{c}`"));
 
+        let marker_bakes = data
+            .keys()
+            .map(|marker_info| bake_marker(*marker_info))
+            .collect::<Vec<_>>();
+
         // mod.rs is the interface for built-in data. It exposes one macro per marker.
         self.write_to_file(
             Path::new("mod.rs"),
@@ -883,8 +888,33 @@ impl DataExporter for BakedExporter {
                         )*
                     };
                 }
+
+                #[allow(unused_macros)]
+                macro_rules! impl_blanket_data_provider {
+                    ($wrapper:ty, $inner_provider:ty) => {
+                        impl<M> icu_provider::DataProvider<M> for $wrapper
+                        where
+                            M: icu_provider::DataMarker,
+                        {
+                            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<M>, icu_provider::DataError> {
+                                use core::any::TypeId;
+                                #(
+                                    if TypeId::of::<M>() == TypeId::of::<#marker_bakes>() {
+                                        let res = icu_provider::DataProvider::<#marker_bakes>::load(&self.0, req)?;
+                                        return Ok(icu_provider::DataResponse {
+                                            metadata: res.metadata,
+                                            payload: res.payload.dynamic_cast()?,
+                                        });
+                                    }
+                                )*
+                                Err(icu_provider::DataErrorKind::MarkerNotFound.into_error())
+                            }
+                        }
+                    };
+                }
             },
         )?;
+
 
         let statistics = data
             .into_iter()
