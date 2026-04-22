@@ -523,6 +523,11 @@ pub(crate) struct UnicodeCache {
     uts_35_zip: Option<AbstractFs>,
     // Cached file contents. It's all text files, so we cache them as strings.
     file_cache: FrozenMap<String, String>,
+    // Cache of enumerated properties CPTs, indexed by short property name.
+    //
+    // CPT building is a big bottleneck, so we don't want to build the same one twice.
+    #[allow(dead_code)]
+    pub(crate) cpt_cache: FrozenMap<&'static str, Box<dyn Any + Send + Sync>>,
 }
 
 impl UnicodeCache {
@@ -544,6 +549,7 @@ impl UnicodeCache {
             unihan_zip: Some(unihan_zip),
             uts_35_zip: Some(uts_35_zip),
             file_cache: FrozenMap::new(),
+            cpt_cache: FrozenMap::new(),
         }
     }
 
@@ -554,6 +560,7 @@ impl UnicodeCache {
             unihan_zip: None,
             uts_35_zip: None,
             file_cache: FrozenMap::new(),
+            cpt_cache: FrozenMap::new(),
         }
     }
 

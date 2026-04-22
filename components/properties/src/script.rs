@@ -48,7 +48,19 @@ pub struct ScriptWithExt(pub u16);
 #[allow(non_upper_case_globals)]
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsProperty` constructor
 impl ScriptWithExt {
-    pub const Unknown: ScriptWithExt = ScriptWithExt(0);
+    pub const Unknown: ScriptWithExt = Self::single(Script::Unknown);
+
+    pub const fn single(script: Script) -> Self {
+        Self(script.to_icu4c_value() & SCRIPT_X_SCRIPT_VAL)
+    }
+
+    pub const fn new(script: Script, extensions: u16) -> Self {
+        match script {
+            Script::Common => Self(1 << SCRIPT_VAL_LENGTH | extensions & SCRIPT_X_SCRIPT_VAL),
+            Script::Inherited => Self(2 << SCRIPT_VAL_LENGTH | extensions & SCRIPT_X_SCRIPT_VAL),
+            _script => Self(3 << SCRIPT_VAL_LENGTH | extensions & SCRIPT_X_SCRIPT_VAL),
+        }
+    }
 }
 
 impl AsULE for ScriptWithExt {

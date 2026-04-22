@@ -17,28 +17,79 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
         use icu::collections::codepointtrie::TrieType;
-        use icu::collections::codepointtrie::TrieValue;
         use icu::properties::props::BidiMirroringGlyph;
         use icu::properties::props::BidiPairedBracketType;
         use icu::properties::props::EnumeratedProperty;
         use icu_codepointtrie_builder::CodePointTrieBuilder;
+        use std::collections::HashMap;
 
         self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
 
-        let bidi_m_cpinvlist = self
-            .get_binary_prop_for_code_point_set("Bidi_Mirrored", "Bidi_M")?
-            .build_inversion_list();
+        if let Some(t) = self
+            .unicode()?
+            .cpt_cache
+            .get(core::str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap())
+        {
+            let trie = t.downcast_ref::<icu::collections::codepointtrie::CodePointTrie<'static, BidiMirroringGlyph>>().unwrap().clone();
 
-        let bmg_trie = self
-            .get_enumerated_prop(
-                core::str::from_utf8(BidiMirroringGlyph::NAME).unwrap(),
-                core::str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap(),
-            )?
-            .build_codepointtrie()?;
+            return Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(
+                    icu::properties::provider::PropertyCodePointMap::CodePointTrie(trie),
+                ),
+            });
+        }
 
-        let bpt = self.get_enumerated_prop("Bidi_Paired_Bracket_Type", "bpt")?;
-        let bpt_trie = bpt.build_codepointtrie::<u16>()?;
-        let bpt_lookup = bpt.values_to_names_long();
+        let bidi_m_cpinvlist = self.get_binary_prop("Bidi_Mirrored", "Bidi_M")?;
+
+        let bidi_mirroring = self
+            .unicode()?
+            .read_to_string("ucd/BidiMirroring.txt")?
+            .lines()
+            .filter_map(|line| {
+                let line = line.split('#').next().unwrap().trim();
+                if line.is_empty() {
+                    return None;
+                }
+                let mut fields = line.split(';');
+                let cp_range = fields.next().unwrap().trim();
+                let prop_value = fields.next().unwrap().trim();
+                let value = u32::from_str_radix(prop_value, 16).expect(prop_value);
+
+                let cp = u32::from_str_radix(cp_range, 16).unwrap();
+                Some((cp, char::from_u32(value).unwrap()))
+            })
+            .collect::<HashMap<_, _>>();
+
+        let paired_brackets = self
+           .unicode()?
+            .read_to_string("ucd/BidiBrackets.txt")?
+            .lines()
+            .filter_map(|line| {
+                let line = line.split('#').next().unwrap().trim();
+                if line.is_empty() {
+                    return None;
+                }
+                let mut parts = line.split(';');
+                let cp = u32::from_str_radix(parts.next().unwrap().trim(), 16).unwrap();
+                let mirror = u32::from_str_radix(parts.next().unwrap().trim(), 16).unwrap();
+
+                if bidi_mirroring[&cp] as u32 != mirror {
+                    log::warn!(
+                        "BidiMirroring.txt and BidiBrackets.txt disagree for U+{cp:X}: {:?} vs U+{mirror:X}", 
+                        bidi_mirroring[&cp]
+                    );
+                }
+
+                let typ = match parts.next().unwrap().trim() {
+                    "o" => BidiPairedBracketType::Open,
+                    "c" => BidiPairedBracketType::Close,
+                    "n" => BidiPairedBracketType::None,
+                    _ => unreachable!(),
+                };
+                Some((cp, typ))
+            })
+            .collect::<HashMap<_, _>>();
 
         let mut builder = CodePointTrieBuilder::new(
             BidiMirroringGlyph::default(),
@@ -50,25 +101,17 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
             if !bidi_m_cpinvlist.contains32(cp) {
                 continue;
             }
-            let mirroring_glyph = Some(bmg_trie.get32(cp)).filter(|&m| m as u32 != 0);
+            let mirroring_glyph = bidi_mirroring.get(&cp).copied();
             if mirroring_glyph.is_none() {
                 log::trace!(
                     "Missing mirroring glyph: U+{cp:X}: {}",
-                    char::try_from_u32(cp).unwrap()
+                    char::from_u32(cp).unwrap()
                 );
             };
-            let paired_bracket_type = match bpt_lookup.get(&(bpt_trie.get32(cp))).copied() {
-                Some("Open") => BidiPairedBracketType::Open,
-                Some("Close") => BidiPairedBracketType::Close,
-                Some("None") => BidiPairedBracketType::None,
-                _ => {
-                    log::trace!(
-                        "Missing paired-bracket-type: U+{cp:X}: {}",
-                        char::try_from_u32(cp).unwrap()
-                    );
-                    BidiPairedBracketType::None
-                }
-            };
+            let paired_bracket_type = paired_brackets
+                .get(&cp)
+                .copied()
+                .unwrap_or(BidiPairedBracketType::None);
             builder.set_value(
                 cp,
                 BidiMirroringGlyph {
@@ -79,10 +122,17 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
             );
         }
 
+        let trie = builder.build();
+
+        self.unicode()?.cpt_cache.insert(
+            core::str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap(),
+            Box::new(trie.clone()),
+        );
+
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
-                icu::properties::provider::PropertyCodePointMap::CodePointTrie(builder.build()),
+                icu::properties::provider::PropertyCodePointMap::CodePointTrie(trie),
             ),
         })
     }

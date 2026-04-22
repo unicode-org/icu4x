@@ -2,14 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![cfg_attr(
+    not(any(feature = "use_wasm", feature = "use_icu4c")),
+    allow(unused_imports, dead_code)
+)]
+
 use crate::SourceDataProvider;
-use icu::collections::codepointtrie::CodePointTrie;
+use icu::properties::props::EnumeratedProperty;
 use icu::properties::props::Script;
 use icu::properties::provider::{PropertyScriptWithExtensionsV1, ScriptWithExtensionsProperty};
 use icu::properties::script::ScriptWithExt;
+use icu::properties::{CodePointMapData, PropertyParser};
 use icu_provider::prelude::*;
-use std::collections::HashSet;
-use std::convert::TryFrom;
+use std::collections::{BTreeMap, HashMap, HashSet};
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 // implement data provider
@@ -19,52 +24,119 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<PropertyScriptWithExtensionsV1>, DataError> {
         self.check_req::<PropertyScriptWithExtensionsV1>(req)?;
-        let scx_data = self
-            .icuexport()?
-            .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
-                "uprops/{}/scx.toml",
-                self.trie_type(),
-            ))?
-            .script_extensions
-            .first()
-            .ok_or_else(|| DataError::custom("Could not parse Script_Extensions data from TOML"))?;
 
-        if scx_data.long_name != "Script_Extensions" || scx_data.short_name != "scx" {
-            return Err(DataError::custom("Property name mismatch")
-                .with_marker(PropertyScriptWithExtensionsV1::INFO));
-        }
+        self.validate_property_name(
+            core::str::from_utf8(Script::NAME).unwrap(),
+            core::str::from_utf8(Script::SHORT_NAME).unwrap(),
+        )?;
 
-        let cpt_data = &scx_data.code_point_trie;
-        let scx_array_data = &scx_data.script_code_array;
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build properties data",
+        )
+        .with_req(PropertyScriptWithExtensionsV1::INFO, req));
 
-        let trie = CodePointTrie::<ScriptWithExt>::try_from(cpt_data).map_err(|e| {
-            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
-        })?;
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            let data = if let Some(t) = self
+                .unicode()?
+                .cpt_cache
+                .get(core::str::from_utf8(Script::SHORT_NAME).unwrap())
+                .and_then(|t| t.downcast_ref::<ScriptWithExtensionsProperty>().cloned())
+            {
+                t
+            } else {
+                let script_parser = PropertyParser::<Script>::try_new_unstable(&self)?;
+                let script = CodePointMapData::try_new_unstable(self)?;
 
-        // Convert the input from Vec<Vec<u16>> to Vec<ZeroVec<Script>> so that
-        // we can go through the VarZeroVec construction process for a desired result
-        // type of VZV<ZeroSlice<Script>>
-        let ule_scx_array_data: Vec<ZeroVec<Script>> = scx_array_data
-            .iter()
-            .map(|v| {
-                v.iter()
-                    .copied()
-                    .map(Script::from_icu4c_value)
-                    .collect::<ZeroVec<Script>>()
+                let mut script_sets = vec![];
+                let mut script_sets_lookup = BTreeMap::new();
+
+                let mut char_with_extensions = HashMap::new();
+
+                for line in self
+                    .unicode()?
+                    .read_to_string("ucd/ScriptExtensions.txt")?
+                    .lines()
+                {
+                    let line = line.split('#').next().unwrap().trim();
+                    if line.is_empty() {
+                        continue;
+                    }
+                    let mut fields = line.split(';');
+                    let cp_range = fields.next().unwrap().trim();
+                    let values = fields.next().unwrap().trim();
+                    let mut value = values
+                        .split_ascii_whitespace()
+                        .map(|s| script_parser.as_borrowed().get_strict(s).unwrap())
+                        .collect::<Vec<_>>();
+                    // Sort in discriminant order
+                    value.sort();
+
+                    let (start, end) = cp_range.split_once("..").unwrap_or((cp_range, cp_range));
+                    let start = u32::from_str_radix(start, 16).unwrap();
+                    let end = u32::from_str_radix(end, 16).unwrap();
+
+                    for cp in start..=end {
+                        let mut value = value.clone();
+
+                        let script = script.as_borrowed().get32(cp);
+                        if !matches!(script, Script::Inherited | Script::Common) {
+                            value.insert(0, script);
+                        }
+
+                        if !script_sets_lookup.contains_key(&value) {
+                            script_sets_lookup.insert(value.clone(), script_sets.len());
+                            script_sets.push(value.clone());
+                        }
+
+                        char_with_extensions.insert(
+                            cp,
+                            ScriptWithExt::new(script, script_sets_lookup[&value] as u16),
+                        );
+                    }
+                }
+
+                let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+                    ScriptWithExt::single(Script::Unknown),
+                    ScriptWithExt::single(Script::Unknown),
+                    icu::collections::codepointtrie::TrieType::Small,
+                );
+
+                for cp in 0..(char::MAX as u32) {
+                    builder.set_value(
+                        cp,
+                        char_with_extensions.get(&cp).copied().unwrap_or_else(|| {
+                            ScriptWithExt::single(script.as_borrowed().get32(cp))
+                        }),
+                    );
+                }
+
+                let extensions: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::from(
+                    script_sets
+                        .into_iter()
+                        .map(|v| v.into_iter().collect::<ZeroVec<_>>())
+                        .collect::<Vec<ZeroVec<_>>>()
+                        .as_slice(),
+                );
+
+                let trie = builder.build();
+
+                let data = ScriptWithExtensionsProperty { trie, extensions };
+
+                self.unicode()?.cpt_cache.insert(
+                    core::str::from_utf8(Script::SHORT_NAME).unwrap(),
+                    Box::new(data.clone()),
+                );
+
+                data
+            };
+
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(data),
             })
-            .collect::<Vec<ZeroVec<Script>>>();
-        let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
-            VarZeroVec::from(ule_scx_array_data.as_slice());
-
-        let data_struct = ScriptWithExtensionsProperty {
-            trie,
-            extensions: scx_vzv,
-        };
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data_struct),
-        })
+        }
     }
 }
 

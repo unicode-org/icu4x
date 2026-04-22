@@ -5,45 +5,221 @@
 use crate::SourceDataProvider;
 use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 use icu::properties::props::BinaryProperty;
-use icu::properties::provider::*;
+use icu::properties::{provider::*, CodePointMapData, CodePointSetData};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 impl SourceDataProvider {
-    // get the source data for a Unicode binary property that only defines values for code points
-    pub(super) fn get_binary_prop_for_code_point_set<'a>(
-        &'a self,
+    pub(super) fn validate_property_name(
+        &self,
         name: &str,
         short_name: &str,
-    ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
-        let data = self
-            .icuexport()?
-            .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
-                "uprops/{}/{}.toml",
-                self.trie_type(),
-                short_name
-            ))?
-            .binary_property
-            .first()
-            .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())?;
+    ) -> Result<(), DataError> {
+        let sn = self
+            .unicode()?
+            .read_to_string("ucd/PropertyAliases.txt")?
+            .lines()
+            .filter_map(|l| Some(l.split('#').next().unwrap().trim()).filter(|l| !l.is_empty()))
+            .find_map(|l| {
+                let mut fields = l.split(';').map(str::trim);
+                let sn = fields.next()?;
+                let n = fields.next()?;
+                if n == name {
+                    Some(sn)
+                } else {
+                    None
+                }
+            });
 
-        if name != data.long_name
-            || short_name != data.short_name.as_ref().unwrap_or(&data.long_name)
-        {
-            return Err(DataError::custom("Property name mismatch").with_display_context(name));
+        if let Some(sn) = sn {
+            if sn != short_name {
+                return Err(DataError::custom("Property name mismatch")
+                    .with_display_context(name)
+                    .with_debug_context(&(sn, short_name)));
+            }
         }
 
-        Ok(data)
+        Ok(())
     }
-}
 
-impl super::uprops_serde::binary::BinaryProperty {
-    pub(crate) fn build_inversion_list(&self) -> CodePointInversionList<'static> {
+    // get the source data for a Unicode binary property that only defines values for code points
+    pub(super) fn get_binary_prop(
+        &self,
+        name: &str,
+        short_name: &str,
+    ) -> Result<CodePointInversionList<'static>, DataError> {
         let mut builder = CodePointInversionListBuilder::new();
-        for (start, end) in &self.ranges {
-            builder.add_range32(start..=end);
+
+        // UTS #18 Annex C Compatibility Properties
+        if name == "alnum" {
+            // \p{alpha}\p{digit} = \p{Alphabetic}\p{gc=Decimal_Number}
+            let gc = CodePointMapData::<icu::properties::props::GeneralCategory>::try_new_unstable(
+                &self,
+            )?;
+
+            builder.add_set(
+                &CodePointSetData::try_new_unstable::<icu::properties::props::Alphabetic>(self)?
+                    .to_code_point_inversion_list(),
+            );
+            builder.add_set(
+                &gc.as_borrowed()
+                    .get_set_for_value(icu::properties::props::GeneralCategory::DecimalNumber)
+                    .to_code_point_inversion_list(),
+            );
+        } else if name == "blank" {
+            // \p{gc=Space_Separator}\N{CHARACTER TABULATION}
+            let gc = CodePointMapData::<icu::properties::props::GeneralCategory>::try_new_unstable(
+                &self,
+            )?;
+
+            builder.add_set(
+                &gc.as_borrowed()
+                    .get_set_for_value(icu::properties::props::GeneralCategory::SpaceSeparator)
+                    .to_code_point_inversion_list(),
+            );
+            builder.add_char('\t');
+        } else if name == "graph" {
+            // [^\p{space}\p{gc=Control}\p{gc=Surrogate}\p{gc=Unassigned}] = [^\p{Whitespace}\p{gc=Control}\p{gc=Surrogate}\p{gc=Unassigned}]
+            let gc = CodePointMapData::<icu::properties::props::GeneralCategory>::try_new_unstable(
+                &self,
+            )?;
+
+            builder.add_set(
+                &CodePointSetData::try_new_unstable::<icu::properties::props::WhiteSpace>(self)?
+                    .to_code_point_inversion_list(),
+            );
+            builder.add_set(
+                &gc.as_borrowed()
+                    .get_set_for_value(icu::properties::props::GeneralCategory::Control)
+                    .to_code_point_inversion_list(),
+            );
+            builder.add_set(
+                &gc.as_borrowed()
+                    .get_set_for_value(icu::properties::props::GeneralCategory::Surrogate)
+                    .to_code_point_inversion_list(),
+            );
+            builder.add_set(
+                &gc.as_borrowed()
+                    .get_set_for_value(icu::properties::props::GeneralCategory::Unassigned)
+                    .to_code_point_inversion_list(),
+            );
+            builder.complement();
+        } else if name == "print" {
+            // \p{graph}\p{blank} -- \p{cntrl} = \p{graph}\p{blank} -- \p{gc=Control}
+            let gc = CodePointMapData::<icu::properties::props::GeneralCategory>::try_new_unstable(
+                &self,
+            )?;
+            builder.add_set(
+                &CodePointSetData::try_new_unstable::<icu::properties::props::Graph>(self)?
+                    .to_code_point_inversion_list(),
+            );
+            builder.add_set(
+                &CodePointSetData::try_new_unstable::<icu::properties::props::Blank>(self)?
+                    .to_code_point_inversion_list(),
+            );
+            builder.remove_set(
+                &gc.as_borrowed()
+                    .get_set_for_value(icu::properties::props::GeneralCategory::Control)
+                    .to_code_point_inversion_list(),
+            );
+        } else if name == "xdigit" {
+            // \p{gc=Decimal_Number}\p{Hex_Digit}
+            let gc = CodePointMapData::<icu::properties::props::GeneralCategory>::try_new_unstable(
+                &self,
+            )?;
+
+            builder.add_set(
+                &CodePointSetData::try_new_unstable::<icu::properties::props::HexDigit>(self)?
+                    .to_code_point_inversion_list(),
+            );
+            builder.add_set(
+                &gc.as_borrowed()
+                    .get_set_for_value(icu::properties::props::GeneralCategory::DecimalNumber)
+                    .to_code_point_inversion_list(),
+            );
+        } else if matches!(name, |"Case_Sensitive"| "NFC_Inert"
+            | "NFD_Inert"
+            | "NFKC_Inert"
+            | "NFKD_Inert"
+            | "Segment_Starter")
+        {
+            // Non-Unicode properties that we need to read from icuexportdata
+            let data = self
+                .icuexport()?
+                .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
+                    "uprops/{}/{}.toml",
+                    self.trie_type(),
+                    short_name
+                ))?
+                .binary_property
+                .first()
+                .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())?;
+
+            if name != data.long_name
+                || short_name != data.short_name.as_ref().unwrap_or(&data.long_name)
+            {
+                return Err(DataError::custom("Property name mismatch").with_display_context(name));
+            }
+            for (start, end) in &data.ranges {
+                builder.add_range32(start..=end);
+            }
+        } else {
+            self.validate_property_name(name, short_name)?;
+
+            let file = match name {
+                "Alphabetic"
+                | "Case_Ignorable"
+                | "Cased"
+                | "Changes_When_Casefolded"
+                | "Changes_When_Casemapped"
+                | "Changes_When_Lowercased"
+                | "Changes_When_Titlecased"
+                | "Changes_When_Uppercased"
+                | "Default_Ignorable_Code_Point"
+                | "Grapheme_Base"
+                | "Grapheme_Extend"
+                | "Grapheme_Link"
+                | "ID_Continue"
+                | "ID_Start"
+                | "Lowercase"
+                | "Math"
+                | "Uppercase"
+                | "XID_Continue"
+                | "XID_Start" => "ucd/DerivedCoreProperties.txt",
+                "Changes_When_NFKC_Casefolded" | "Full_Composition_Exclusion" => {
+                    "ucd/DerivedNormalizationProps.txt"
+                }
+                "Emoji_Component"
+                | "Emoji_Modifier_Base"
+                | "Emoji_Modifier"
+                | "Emoji_Presentation"
+                | "Emoji"
+                | "Extended_Pictographic" => "ucd/emoji/emoji-data.txt",
+                "Bidi_Mirrored" => "ucd/extracted/DerivedBinaryProperties.txt",
+                _ => "ucd/PropList.txt",
+            };
+
+            for line in self.unicode()?.read_to_string(file)?.lines() {
+                let line = line.split('#').next().unwrap().trim();
+                if line.is_empty() {
+                    continue;
+                }
+
+                let mut parts = line.split(';').map(str::trim);
+                let range = parts.next().unwrap();
+                if parts.next() != Some(name) {
+                    continue;
+                }
+
+                let (a, b) = range.split_once("..").unwrap_or((range, range));
+                let a = u32::from_str_radix(a, 16).unwrap();
+                let b = u32::from_str_radix(b, 16).unwrap();
+
+                builder.add_range32(a..=b);
+            }
         }
-        builder.build()
+
+        Ok(builder.build())
     }
 }
 
@@ -56,14 +232,14 @@ macro_rules! expand {
                     req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let data = self.get_binary_prop_for_code_point_set(
+                    let data = self.get_binary_prop(
                         core::str::from_utf8(<$prop as BinaryProperty>::NAME).unwrap(),
                         core::str::from_utf8(<$prop as BinaryProperty>::SHORT_NAME).unwrap()
                     )?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
-                        payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(data.build_inversion_list()))
+                        payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(data))
                     })
                 }
             }

@@ -9,7 +9,7 @@
     allow(dead_code, unused_imports)
 )]
 
-use crate::source::{include_files, SerdeCache};
+use crate::source::{include_files, SerdeCache, UnicodeCache};
 use crate::SourceDataProvider;
 use icu::properties::{
     props::{
@@ -796,10 +796,20 @@ fn unicode_15_1() -> &'static SourceDataProvider {
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
     SINGLETON.get_or_init(|| {
         let mut provider = SourceDataProvider::new_custom();
+        provider.unicode_paths = Some(std::sync::Arc::new(UnicodeCache::new_local(
+            include_files!(
+                "../../data/segmenter/unicode15/";
+                "ucd/emoji/emoji-data.txt",
+                "ucd/extracted/DerivedEastAsianWidth.txt",
+                "ucd/extracted/DerivedGeneralCategory.txt",
+                "ucd/LineBreak.txt",
+                "ucd/PropertyAliases.txt",
+                "ucd/PropertyValueAliases.txt",
+            ),
+        )));
         provider.icuexport_paths = Some(std::sync::Arc::new(SerdeCache::new(include_files!(
             "../../data/segmenter/icuexportdata74/";
             "uprops/small/ea.toml",
-            "uprops/small/ExtPict.toml",
             "uprops/small/gc.toml",
             "uprops/small/lb.toml",
         ))));

@@ -8,51 +8,57 @@ use icu::collections::codepointinvliststringlist::CodePointInversionListAndStrin
 use icu::properties::props::EmojiSet;
 use icu::properties::provider::*;
 use icu_provider::prelude::*;
-use std::collections::HashSet;
+use std::collections::{BTreeSet, HashSet};
 use zerovec::VarZeroVec;
 
 impl SourceDataProvider {
-    fn get_binary_prop_for_unicodeset<'a>(
-        &'a self,
+    fn get_unicodeset_property(
+        &self,
         name: &str,
         short_name: &str,
-    ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
-        let data = self
-            .icuexport()?
-            .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
-                "uprops/{}/{}.toml",
-                self.trie_type(),
-                short_name
-            ))?
-            .binary_property
-            .first()
-            .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())?;
+    ) -> Result<CodePointInversionListAndStringList<'static>, DataError> {
+        self.validate_property_name(name, short_name)?;
 
-        if name != data.long_name
-            || short_name != data.short_name.as_ref().unwrap_or(&data.long_name)
+        let mut inv_list = CodePointInversionListBuilder::new();
+        let mut strings = BTreeSet::new();
+
+        for line in self
+            .unicode()?
+            .read_to_string("emoji/emoji-sequences.txt")?
+            .lines()
         {
-            return Err(DataError::custom("Property name mismatch").with_display_context(name));
+            let line = line.split('#').next().unwrap().trim();
+            if line.is_empty() {
+                continue;
+            }
+
+            let mut parts = line.split(';').map(str::trim);
+            let seq = parts.next().unwrap();
+            if parts.next().unwrap() != short_name {
+                continue;
+            }
+            if let Some((a, b)) = seq.split_once("..") {
+                inv_list.add_range32(
+                    u32::from_str_radix(a, 16).unwrap()..=u32::from_str_radix(b, 16).unwrap(),
+                );
+            } else if seq.contains(' ') {
+                strings.insert(
+                    seq.split(' ')
+                        .map(|cp| char::from_u32(u32::from_str_radix(cp, 16).unwrap()).unwrap())
+                        .collect::<String>(),
+                );
+            } else {
+                inv_list.add32(u32::from_str_radix(seq, 16).unwrap());
+            }
         }
 
-        Ok(data)
-    }
-}
+        let inv_list = inv_list.build();
 
-impl super::uprops_serde::binary::BinaryProperty {
-    fn build_uniset(&self) -> Result<CodePointInversionListAndStringList<'static>, DataError> {
-        let mut builder = CodePointInversionListBuilder::new();
-        for (start, end) in &self.ranges {
-            builder.add_range32(start..=end);
-        }
-        let inv_list = builder.build();
-
-        let strings = self.strings.as_ref().ok_or(DataError::custom(
-            "Error in deserializing strings from BinaryProperty source data",
-        ))?;
-        let string_list = VarZeroVec::<str>::from(strings);
-
-        CodePointInversionListAndStringList::try_from(inv_list, string_list)
-            .map_err(|_| DataError::custom("Error in constructing CodePointInversionListAndStringList from deserialized BinaryProperty data"))
+        Ok(CodePointInversionListAndStringList::try_from(
+            inv_list,
+            VarZeroVec::from(&strings.into_iter().collect::<Vec<_>>()),
+        )
+        .expect("invariants upheld"))
     }
 }
 
@@ -65,14 +71,14 @@ macro_rules! expand {
                     req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let data = self.get_binary_prop_for_unicodeset(
+                    let data = self.get_unicodeset_property(
                         core::str::from_utf8(<$prop as EmojiSet>::NAME).unwrap(),
-                        core::str::from_utf8(<$prop as EmojiSet>::SHORT_NAME).unwrap()
+                        core::str::from_utf8(<$prop as EmojiSet>::SHORT_NAME).unwrap(),
                     )?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
-                        payload: DataPayload::from_owned(PropertyUnicodeSet::CPInversionListStrList(data.build_uniset()?)),
+                        payload: DataPayload::from_owned(PropertyUnicodeSet::CPInversionListStrList(data)),
                     })
                 }
             }

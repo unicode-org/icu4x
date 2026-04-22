@@ -2,6 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![cfg_attr(
+    not(any(feature = "use_wasm", feature = "use_icu4c")),
+    allow(unused_imports, dead_code)
+)]
+
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu::properties::props::EnumeratedProperty;
@@ -9,7 +14,6 @@ use icu::properties::provider::{names::*, *};
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
-use std::convert::TryFrom;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 
@@ -64,80 +68,160 @@ impl SourceDataProvider {
 
         Ok(data)
     }
-}
 
-impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
-    pub(crate) fn build_codepointtrie<T: TrieValue>(
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    pub(super) fn build_enumerated_prop<T: TrieValue>(
         &self,
+        name: &str,
+        short_name: &str,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
-        let code_point_trie = CodePointTrie::try_from(&self.code_point_trie)
-            .map_err(|e| DataError::custom("CPT").with_display_context(&e))?;
+        self.validate_property_name(name, short_name)?;
 
-        for (cpt_range, raw_range) in code_point_trie.iter_ranges().zip(&self.ranges) {
-            if (cpt_range.range, TrieValue::to_u32(cpt_range.value))
-                != (raw_range.a..=raw_range.b, raw_range.v as u32)
-            {
-                return Err(DataError::custom("precomputed CPT doesn't match ranges"));
+        let discriminants = self.enumerated_prop_names(name, short_name)?.0;
+
+        let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+            T::default(),
+            T::default(),
+            self.trie_type().into(),
+        );
+
+        let file = match name {
+            "Indic_Conjunct_Break" => "ucd/DerivedCoreProperties.txt".into(),
+            "Canonical_Combining_Class"
+            | "General_Category"
+            | "Bidi_Class"
+            | "Numeric_Type"
+            | "East_Asian_Width"
+            | "Joining_Type"
+            | "Joining_Group" => {
+                format!(
+                    "ucd/extracted/Derived{}.txt",
+                    name.replace('_', "").replace("Canonical", "")
+                )
+            }
+            "Grapheme_Cluster_Break" | "Word_Break" | "Sentence_Break" => {
+                format!(
+                    "ucd/auxiliary/{}Property.txt",
+                    name.replace('_', "").replace("Cluster", "")
+                )
+            }
+            _ => format!(
+                "ucd/{}.txt",
+                name.replace('_', "").replace("Script", "Scripts")
+            ),
+        };
+
+        for line in self.unicode()?.read_to_string(&file)?.lines() {
+            let line = line.strip_prefix("# @missing: ").unwrap_or(line);
+            let line = line.split('#').next().unwrap().trim();
+            if line.is_empty() {
+                continue;
+            }
+            let mut fields = line.split(';');
+            let cp_range = fields.next().unwrap().trim();
+            if &file == "ucd/DerivedCoreProperties.txt" {
+                // This is a file containing multiple properties, so we need to check
+                // the second column for the property name
+                if fields.next().unwrap().trim() != short_name {
+                    continue;
+                }
+            }
+            let value = fields.next().unwrap().trim();
+            let value = discriminants.get(value).copied().expect(value);
+            let value = TrieValue::try_from_u32(value as u32).ok().unwrap();
+
+            if let Some((start, end)) = cp_range.split_once("..") {
+                let start = u32::from_str_radix(start, 16).unwrap();
+                let end = u32::from_str_radix(end, 16).unwrap();
+                builder.set_range_value(start..=end, value);
+            } else {
+                let cp = u32::from_str_radix(cp_range, 16).unwrap();
+                builder.set_value(cp, value);
             }
         }
 
-        Ok(code_point_trie)
+        Ok(builder.build())
     }
 
-    pub(crate) fn names_to_values(&self) -> BTreeMap<&str, u16> {
-        let mut map = BTreeMap::new();
+    #[allow(clippy::type_complexity)] // just a tuple
+    fn enumerated_prop_names<'a>(
+        &'a self,
+        name: &str,
+        mut short_name: &str,
+    ) -> Result<
+        (
+            BTreeMap<&'a str, u16>,
+            BTreeMap<u16, &'a str>,
+            BTreeMap<u16, &'a str>,
+        ),
+        DataError,
+    > {
+        let mut short_names = self
+            .get_enumerated_prop(name, short_name)?
+            .values
+            .iter()
+            .map(|value| (value.discr, value.short.as_str()))
+            .collect::<BTreeMap<_, _>>();
 
-        for range in &self.ranges {
-            if let Some(name) = range.name.as_deref() {
-                map.insert(name, range.v);
+        if short_name == "InCB" {
+            // https://unicode-org.atlassian.net/browse/ICU-23383
+            short_names.extend([(1, "Consonant"), (2, "Extend"), (3, "Linker")]);
+        }
+
+        // For the gcm property we want to look up gc names.
+        if short_name == "gcm" {
+            short_name = "gc";
+        }
+
+        let mut discriminants = short_names
+            .iter()
+            .map(|(&d, &n)| (n, d))
+            .collect::<BTreeMap<_, _>>();
+        let mut long_names = BTreeMap::new();
+
+        if short_name == "sc" {
+            // ICU adds a bunch of scripts that don't appear in Unicode,
+            // and hence don't have long names
+            for short in [
+                "Afak", "Aran", "Blis", "Cirt", "Cyrs", "Egyd", "Egyh", "Geok", "Hanb", "Hans",
+                "Hant", "Hntl", "Inds", "Jamo", "Jpan", "Jurc", "Kore", "Kpel", "Latf", "Latg",
+                "Loma", "Maya", "Moon", "Nkgb", "Phlv", "Roro", "Sara", "Syre", "Syrj", "Syrn",
+                "Teng", "Visp", "Wole", "Zmth", "Zsye", "Zsym", "Zxxx",
+            ] {
+                long_names.entry(discriminants[short]).or_insert(short);
             }
         }
 
-        for value in &self.values {
-            map.insert(value.long.as_str(), value.discr);
-            if let Some(ref short) = value.short {
-                map.insert(short.as_str(), value.discr);
+        for line in self
+            .unicode()?
+            .read_to_string("ucd/PropertyValueAliases.txt")?
+            .lines()
+        {
+            let line = line.split('#').next().unwrap().trim();
+            if line.is_empty() {
+                continue;
             }
-            for alias in &value.aliases {
-                map.insert(alias.as_str(), value.discr);
+            let mut parts = line.split(';').map(str::trim);
+            if parts.next().unwrap().trim() != short_name {
+                continue;
             }
-        }
-
-        map
-    }
-
-    pub(crate) fn values_to_names_long(&self) -> BTreeMap<u16, &str> {
-        let mut map: BTreeMap<_, &str> = BTreeMap::new();
-
-        for range in &self.ranges {
-            if let Some(name) = range.name.as_deref() {
-                map.insert(range.v, name);
+            let numeric_name = (short_name == "ccc").then(|| parts.next().unwrap());
+            let short = parts.next().unwrap();
+            let Some(discriminant) = discriminants.get(short).copied() else {
+                continue;
+            };
+            let long = parts.next().unwrap();
+            long_names.insert(discriminant, long);
+            discriminants.insert(long, discriminant);
+            for alias in parts {
+                discriminants.insert(alias, discriminant);
             }
-        }
-
-        for value in &self.values {
-            map.insert(value.discr, &value.long);
-        }
-
-        map
-    }
-
-    pub(crate) fn values_to_names_short(&self) -> BTreeMap<u16, &str> {
-        let mut map: BTreeMap<_, &str> = BTreeMap::new();
-
-        for range in &self.ranges {
-            if let Some(name) = range.name.as_deref() {
-                map.insert(range.v, name);
+            if let Some(numeric_name) = numeric_name {
+                discriminants.insert(numeric_name, discriminant);
             }
         }
 
-        for value in &self.values {
-            if let Some(ref short) = value.short {
-                map.insert(value.discr, short);
-            }
-        }
-
-        map
+        Ok((discriminants, short_names, long_names))
     }
 }
 
@@ -226,16 +310,34 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let data = self.get_enumerated_prop(
-                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
-                        core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
-                    )?;
-                    let trie = data.build_codepointtrie()?;
 
-                    Ok(DataResponse {
-                        metadata: Default::default(),
-                        payload: DataPayload::from_owned(PropertyCodePointMap::CodePointTrie(trie)),
-                    })
+                    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+                    return Err(DataError::custom(
+                        "icu_provider_source must be built with use_icu4c or use_wasm to build properties data",
+                    )
+                    .with_req($marker::INFO, req));
+                    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                    {
+                        let trie = if let Some(t) = self.unicode()?.cpt_cache.get(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
+                            and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
+                            t
+                        } else {
+                            let trie = self.build_enumerated_prop(
+                                core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
+                                core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
+                            )?;
+
+                            self.unicode()?.cpt_cache
+                                .insert(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
+
+                            trie
+                        };
+
+                        Ok(DataResponse {
+                            metadata: Default::default(),
+                            payload: DataPayload::from_owned(PropertyCodePointMap::CodePointTrie(trie)),
+                        })
+                    }
                 }
             }
 
@@ -243,11 +345,11 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$parse_marker>, DataError> {
                     self.check_req::<$parse_marker>(req)?;
-                    let data = self.get_enumerated_prop(
+                    let data = self.enumerated_prop_names(
                         core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
                         core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
                     )?;
-                    let map = data.names_to_values();
+                    let map = data.0;
                     for name in map.keys() {
                         if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
                             return Err(
@@ -273,11 +375,11 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$short_marker>, DataError> {
                     self.check_req::<$short_marker>(req)?;
-                    let data = self.get_enumerated_prop(
+                    let data = self.enumerated_prop_names(
                         core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
                         core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
                     )?;
-                    let map = ($short_convert)(data.values_to_names_short())?;
+                    let map = ($short_convert)(data.1)?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
@@ -290,11 +392,11 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$long_marker>, DataError> {
                     self.check_req::<$long_marker>(req)?;
-                    let data = self.get_enumerated_prop(
+                    let data = self.enumerated_prop_names(
                         core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
                         core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
                     )?;
-                    let map = ($long_convert)(data.values_to_names_long())?;
+                    let map = ($long_convert)(data.2)?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
@@ -341,37 +443,43 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
 
         self.check_req::<PropertyNameParseGeneralCategoryMaskV1>(req)?;
 
-        let data = self.get_mask_prop("General_Category_Mask", "gcm", "General_Category")?;
+        let mut discriminants = self
+            .get_mask_prop("General_Category_Mask", "gcm", "General_Category")?
+            .values
+            .iter()
+            .map(|value| {
+                (
+                    value.short.as_str(),
+                    GeneralCategoryGroup::from(value.discr).to_u32() as usize,
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
 
-        let mut map = BTreeMap::new();
-
-        for value in &data.values {
-            let packed = TrieValue::to_u32(GeneralCategoryGroup::from(value.discr)) as usize;
-
-            // sentinel value
-            if packed == 0xFF00 {
-                return Err(DataError::custom("Found unknown general category mask value, properties code may need to be updated."));
+        for line in self
+            .unicode()?
+            .read_to_string("ucd/PropertyValueAliases.txt")?
+            .lines()
+        {
+            let line = line.split('#').next().unwrap().trim();
+            if line.is_empty() {
+                continue;
             }
-
-            map.insert(value.long.as_str(), packed);
-            if let Some(ref short) = value.short {
-                map.insert(short.as_str(), packed);
+            let mut parts = line.split(';').map(str::trim);
+            if parts.next().unwrap() != "gc" {
+                continue;
             }
-            for alias in &value.aliases {
-                map.insert(alias.as_str(), packed);
+            let short = parts.next().unwrap();
+            let Some(discriminant) = discriminants.get(short).copied() else {
+                continue;
+            };
+            let long = parts.next().unwrap();
+            discriminants.insert(long, discriminant);
+            for alias in parts {
+                discriminants.insert(alias, discriminant);
             }
         }
 
-        for name in map.keys() {
-            if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
-                return Err(
-                    DataError::custom("Property name contains '-' or whitespace")
-                        .with_display_context(name),
-                );
-            }
-        }
-
-        let trie = map
+        let trie = discriminants
             .into_iter()
             .collect::<ZeroTrieSimpleAscii<_>>()
             .convert_store();
