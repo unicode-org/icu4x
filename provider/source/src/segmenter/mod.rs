@@ -1076,6 +1076,14 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
                 })
                 .collect();
 
+            let complex_classes = lb
+                .iter_ranges_for_value(LineBreak::ComplexContext)
+                .flatten()
+                .map(|c| classes.get32(c))
+                .collect::<BTreeSet<_>>()
+                .into_iter()
+                .collect();
+
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(SegmenterStateMachine {
@@ -1083,6 +1091,7 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
                     classes,
                     states,
                     num_lookaheads: lookahead_lookup.len(),
+                    complex_classes,
                 }),
             })
         }

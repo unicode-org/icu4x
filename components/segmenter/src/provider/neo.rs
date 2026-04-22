@@ -59,6 +59,8 @@ pub struct SegmenterStateMachine<'data> {
     pub transitions: ZeroVec<'data, State>,
     // The number of lookahead classes, used to size the lookahead_positions vector.
     pub num_lookaheads: usize,
+    // Complex classes
+    pub complex_classes: ZeroVec<'data, Class>,
 }
 
 icu_provider::data_struct!(
@@ -110,6 +112,13 @@ impl SegmenterStateMachine<'_> {
                 } else {
                     Self::EOT_CLASS
                 };
+
+                if self.complex_classes.iter().find(|&c| c == class).is_some() {
+                    println!(
+                        "Complex segmentation needed for {:?}",
+                        remaining_input.as_str()
+                    );
+                }
 
                 if let Some(next_state) = self
                     .transitions
