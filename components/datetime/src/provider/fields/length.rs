@@ -422,11 +422,8 @@ impl FieldNumericOverrides {
         }
 
         let mut rest_s = format_hebrew_less_than_1000(rest);
-
-        if !rest_s.is_empty() {
-            apply_hebrew_punctuation(&mut rest_s);
-            w.write_str(&rest_s)?;
-        }
+        apply_hebrew_punctuation(&mut rest_s);
+        w.write_str(&rest_s)?;
 
         Ok(())
     }
