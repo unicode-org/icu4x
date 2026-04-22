@@ -481,18 +481,23 @@ pub(crate) fn apply_numeric_overrides(
 
     pattern.items.for_each_mut(|item| {
         if let pattern::PatternItem::Field(ref mut field) = *item {
+            // We currently only support overrides for these fields
+            // and in CLDR overrides are only found in dateFormats and dateSkeletons
+            // So we should not be applying them to e.g. time fields
+            if !matches!(field.symbol, FieldSymbol::Year(..)| FieldSymbol::Month(..) | FieldSymbol::Day(..)) {
+                return;
+            }
+
             // only replace numeric items
             if (*field).get_length_type() != fields::TextOrNumeric::Numeric {
                 return;
             }
-            if field.length != FieldLength::One {
-                assert!(
-                    field.length != FieldLength::Two || symbol_to_replace != Some(field.symbol),
-                    "We don't know what to do when there is a non-targeted numeric override \
-                         on a two-digit numeric field"
-                );
-                if field.length == FieldLength::Two {
+            if field.length == FieldLength::Two {
+                if symbol_to_replace.is_none() {
+                    eprintln!("WARN: Skipping non-targeted numeric override on a two-digit field {:?} because it implies fixed width.", field.symbol);
                     return;
+                } else {
+                    eprintln!("WARN: Applying targeted numeric override to a two-digit field {:?}. This may not respect fixed width!", field.symbol);
                 }
             }
             // if we need to replace a specific symbol, filter
@@ -502,7 +507,6 @@ pub(crate) fn apply_numeric_overrides(
                     return;
                 }
             }
-
             field.length = FieldLength::NumericOverride(numeric);
         }
     })
