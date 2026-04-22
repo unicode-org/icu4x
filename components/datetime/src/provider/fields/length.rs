@@ -272,7 +272,8 @@ impl FieldNumericOverrides {
         } else if number == 30 {
             "三十".to_string() // '三十' for thirty
         } else {
-            // 31
+            // We checked that number <= 31 above, and all other cases are handled.
+            debug_assert_eq!(number, 31);
             "丗一".to_string() // '丗' (sà/sashì) for thirty
         }
     }
