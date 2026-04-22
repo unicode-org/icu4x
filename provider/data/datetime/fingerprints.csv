@@ -11726,8 +11726,8 @@ datetime/patterns/date/buddhist/v1, zu/y, -> af/y
 datetime/patterns/date/buddhist/v1, zu/ym0, -> eo/ym0
 datetime/patterns/date/buddhist/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 datetime/patterns/date/buddhist/v1, zu/ym0de, -> xh/ym0de
-datetime/patterns/date/chinese/v1, <lookup>, 2426B, 410 identifiers
-datetime/patterns/date/chinese/v1, <total>, 19950B, 14262B, 198 unique payloads
+datetime/patterns/date/chinese/v1, <lookup>, 2565B, 444 identifiers
+datetime/patterns/date/chinese/v1, <total>, 21080B, 14916B, 214 unique payloads
 datetime/patterns/date/chinese/v1, af-NA/ej, 176B, 149B, 890083ab5102739
 datetime/patterns/date/chinese/v1, ak/ej, -> af-NA/ej
 datetime/patterns/date/chinese/v1, am/ej, -> af-NA/ej
@@ -11930,16 +11930,16 @@ datetime/patterns/date/chinese/v1, it/y, 74B, 46B, c75a9e2938c21d07
 datetime/patterns/date/chinese/v1, it/ym0, 89B, 61B, a70b927c576dcc10
 datetime/patterns/date/chinese/v1, it/ym0d, 113B, 85B, ea09897d4a08379b
 datetime/patterns/date/chinese/v1, it/ym0de, 149B, 121B, ee796fc818aec2c
-datetime/patterns/date/chinese/v1, ja/d, 41B, 11B, b47e4586b0755740
-datetime/patterns/date/chinese/v1, ja/de, 62B, 32B, 4a331210cc6af1e9
+datetime/patterns/date/chinese/v1, ja/d, 50B, 20B, 5e13f03332266cb7
+datetime/patterns/date/chinese/v1, ja/de, 80B, 50B, 24c5ccd685b098c2
 datetime/patterns/date/chinese/v1, ja/ej, 146B, 118B, a5415008b697cacb
 datetime/patterns/date/chinese/v1, ja/m0, 50B, 20B, efc11d7c761e083e
-datetime/patterns/date/chinese/v1, ja/m0d, 56B, 26B, 359ee0eed839ceb3
-datetime/patterns/date/chinese/v1, ja/m0de, 89B, 59B, 67e8959161c1bf27
+datetime/patterns/date/chinese/v1, ja/m0d, 56B, 26B, b9aea53557481478
+datetime/patterns/date/chinese/v1, ja/m0de, 89B, 59B, b6a06eae01338bbf
 datetime/patterns/date/chinese/v1, ja/y, 41B, 11B, bbc2a420a832e8a1
 datetime/patterns/date/chinese/v1, ja/ym0, 59B, 31B, e0ffa6f023e59254
-datetime/patterns/date/chinese/v1, ja/ym0d, 68B, 38B, 4580454d71fbf100
-datetime/patterns/date/chinese/v1, ja/ym0de, 110B, 82B, 3f2135168b7baee2
+datetime/patterns/date/chinese/v1, ja/ym0d, 68B, 38B, 2e7a5b048df41e91
+datetime/patterns/date/chinese/v1, ja/ym0de, 137B, 109B, 171963abfac875e4
 datetime/patterns/date/chinese/v1, kk-Arab/ej, 158B, 130B, c8cd8a228a9ff462
 datetime/patterns/date/chinese/v1, km/ej, -> af-NA/ej
 datetime/patterns/date/chinese/v1, kn/ej, -> af-NA/ej
@@ -12091,49 +12091,83 @@ datetime/patterns/date/chinese/v1, vi/y, 44B, 14B, ec991a7027a1de71
 datetime/patterns/date/chinese/v1, vi/ym0, 152B, 124B, 8109c2c3382c0097
 datetime/patterns/date/chinese/v1, vi/ym0d, 194B, 167B, 481981166318696a
 datetime/patterns/date/chinese/v1, vi/ym0de, 230B, 203B, d9017359f665d1f3
-datetime/patterns/date/chinese/v1, yue-Hans/d, -> ja/d
-datetime/patterns/date/chinese/v1, yue-Hans/de, 56B, 26B, de1bf461f78fca5f
+datetime/patterns/date/chinese/v1, yue-Hans/d, 50B, 20B, 2c2c5e1174121f5b
+datetime/patterns/date/chinese/v1, yue-Hans/de, 56B, 26B, 19481e9dafa5968f
 datetime/patterns/date/chinese/v1, yue-Hans/m0, -> ja/m0
-datetime/patterns/date/chinese/v1, yue-Hans/m0d, -> ja/m0d
-datetime/patterns/date/chinese/v1, yue-Hans/m0de, 77B, 47B, b2ce246084b3ea90
+datetime/patterns/date/chinese/v1, yue-Hans/m0d, 68B, 38B, 3419455261876978
+datetime/patterns/date/chinese/v1, yue-Hans/m0de, 77B, 47B, 8a11f7798c6609a1
 datetime/patterns/date/chinese/v1, yue-Hans/y, 44B, 14B, 6c9f49debcd486cc
 datetime/patterns/date/chinese/v1, yue-Hans/ym0, 47B, 17B, 7f381c3d9f46ee01
-datetime/patterns/date/chinese/v1, yue-Hans/ym0d, 47B, 17B, 7b0fd0b1dff78749
-datetime/patterns/date/chinese/v1, yue-Hans/ym0de, 98B, 70B, 79884362f120a1c5
+datetime/patterns/date/chinese/v1, yue-Hans/ym0d, 62B, 32B, 6216836ea1e8f076
+datetime/patterns/date/chinese/v1, yue-Hans/ym0de, 98B, 70B, 3893d7926c1f465d
 datetime/patterns/date/chinese/v1, yue-Hant-CN/ej, -> ar-IL/ej
-datetime/patterns/date/chinese/v1, yue/d, -> ja/d
+datetime/patterns/date/chinese/v1, yue/d, -> yue-Hans/d
 datetime/patterns/date/chinese/v1, yue/de, -> yue-Hans/de
 datetime/patterns/date/chinese/v1, yue/ej, -> af-NA/ej
 datetime/patterns/date/chinese/v1, yue/m0, -> ja/m0
-datetime/patterns/date/chinese/v1, yue/m0d, -> ja/m0d
+datetime/patterns/date/chinese/v1, yue/m0d, -> yue-Hans/m0d
 datetime/patterns/date/chinese/v1, yue/m0de, -> yue-Hans/m0de
 datetime/patterns/date/chinese/v1, yue/y, -> yue-Hans/y
 datetime/patterns/date/chinese/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/chinese/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/chinese/v1, yue/ym0de, -> yue-Hans/ym0de
-datetime/patterns/date/chinese/v1, zh-HK/de, -> yue-Hans/de
+datetime/patterns/date/chinese/v1, zh-HK/d, 41B, 11B, b47e4586b0755740
+datetime/patterns/date/chinese/v1, zh-HK/de, 56B, 26B, de1bf461f78fca5f
 datetime/patterns/date/chinese/v1, zh-HK/ej, 182B, 155B, c4a5826b42b70b3a
+datetime/patterns/date/chinese/v1, zh-HK/m0d, 56B, 26B, 359ee0eed839ceb3
+datetime/patterns/date/chinese/v1, zh-HK/m0de, 77B, 47B, b2ce246084b3ea90
+datetime/patterns/date/chinese/v1, zh-HK/ym0d, 47B, 17B, 7b0fd0b1dff78749
+datetime/patterns/date/chinese/v1, zh-HK/ym0de, 98B, 70B, 79884362f120a1c5
+datetime/patterns/date/chinese/v1, zh-Hans-HK/d, -> ja/d
+datetime/patterns/date/chinese/v1, zh-Hans-HK/de, 68B, 38B, d3926924b5365822
 datetime/patterns/date/chinese/v1, zh-Hans-HK/ej, 164B, 137B, 197ab743a3edc9ef
+datetime/patterns/date/chinese/v1, zh-Hans-HK/m0d, 56B, 26B, 545610e14008b528
+datetime/patterns/date/chinese/v1, zh-Hans-HK/m0de, 77B, 47B, 2e9b8ccd8b322eaf
+datetime/patterns/date/chinese/v1, zh-Hans-HK/y, 56B, 26B, 931bcf8afbe8716c
+datetime/patterns/date/chinese/v1, zh-Hans-HK/ym0, 62B, 32B, 705b744b9dbacb1f
+datetime/patterns/date/chinese/v1, zh-Hans-HK/ym0d, 62B, 32B, 639c5253af9f99d2
+datetime/patterns/date/chinese/v1, zh-Hans-HK/ym0de, 119B, 91B, 1d3b9d5a67154eff
+datetime/patterns/date/chinese/v1, zh-Hans-MO/d, -> ja/d
+datetime/patterns/date/chinese/v1, zh-Hans-MO/de, -> zh-Hans-HK/de
 datetime/patterns/date/chinese/v1, zh-Hans-MO/ej, -> zh-Hans-HK/ej
-datetime/patterns/date/chinese/v1, zh-Hant/d, -> ja/d
-datetime/patterns/date/chinese/v1, zh-Hant/de, -> bs/de
+datetime/patterns/date/chinese/v1, zh-Hans-MO/m0d, -> zh-Hans-HK/m0d
+datetime/patterns/date/chinese/v1, zh-Hans-MO/m0de, -> zh-Hans-HK/m0de
+datetime/patterns/date/chinese/v1, zh-Hans-MO/y, -> zh-Hans-HK/y
+datetime/patterns/date/chinese/v1, zh-Hans-MO/ym0, -> zh-Hans-HK/ym0
+datetime/patterns/date/chinese/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
+datetime/patterns/date/chinese/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
+datetime/patterns/date/chinese/v1, zh-Hant/d, -> yue-Hans/d
+datetime/patterns/date/chinese/v1, zh-Hant/de, 56B, 26B, f1d2c9e26c93343d
 datetime/patterns/date/chinese/v1, zh-Hant/ej, 164B, 137B, c4cbd7473d228ecb
 datetime/patterns/date/chinese/v1, zh-Hant/m0, -> ja/m0
-datetime/patterns/date/chinese/v1, zh-Hant/m0d, -> ja/m0d
+datetime/patterns/date/chinese/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/chinese/v1, zh-Hant/m0de, -> yue-Hans/m0de
 datetime/patterns/date/chinese/v1, zh-Hant/y, -> yue-Hans/y
 datetime/patterns/date/chinese/v1, zh-Hant/ym0, -> yue-Hans/ym0
 datetime/patterns/date/chinese/v1, zh-Hant/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/chinese/v1, zh-Hant/ym0de, -> yue-Hans/ym0de
-datetime/patterns/date/chinese/v1, zh-MO/de, -> yue-Hans/de
+datetime/patterns/date/chinese/v1, zh-MO/d, -> zh-HK/d
+datetime/patterns/date/chinese/v1, zh-MO/de, -> zh-HK/de
 datetime/patterns/date/chinese/v1, zh-MO/ej, -> zh-HK/ej
+datetime/patterns/date/chinese/v1, zh-MO/m0d, -> zh-HK/m0d
+datetime/patterns/date/chinese/v1, zh-MO/m0de, -> zh-HK/m0de
+datetime/patterns/date/chinese/v1, zh-MO/ym0d, -> zh-HK/ym0d
+datetime/patterns/date/chinese/v1, zh-MO/ym0de, -> zh-HK/ym0de
 datetime/patterns/date/chinese/v1, zh-MY/ej, -> zh-Hans-HK/ej
+datetime/patterns/date/chinese/v1, zh-SG/d, -> ja/d
+datetime/patterns/date/chinese/v1, zh-SG/de, -> zh-Hans-HK/de
 datetime/patterns/date/chinese/v1, zh-SG/ej, -> zh-Hans-HK/ej
-datetime/patterns/date/chinese/v1, zh/d, -> ja/d
+datetime/patterns/date/chinese/v1, zh-SG/m0d, -> zh-Hans-HK/m0d
+datetime/patterns/date/chinese/v1, zh-SG/m0de, -> zh-Hans-HK/m0de
+datetime/patterns/date/chinese/v1, zh-SG/y, -> zh-Hans-HK/y
+datetime/patterns/date/chinese/v1, zh-SG/ym0, -> zh-Hans-HK/ym0
+datetime/patterns/date/chinese/v1, zh-SG/ym0d, -> zh-Hans-HK/ym0d
+datetime/patterns/date/chinese/v1, zh-SG/ym0de, -> zh-Hans-HK/ym0de
+datetime/patterns/date/chinese/v1, zh/d, -> yue-Hans/d
 datetime/patterns/date/chinese/v1, zh/de, -> yue-Hans/de
 datetime/patterns/date/chinese/v1, zh/m0, -> ja/m0
-datetime/patterns/date/chinese/v1, zh/m0d, 56B, 26B, 3415e3774721e5e0
-datetime/patterns/date/chinese/v1, zh/m0de, 77B, 47B, 47b6cb2d050a9104
+datetime/patterns/date/chinese/v1, zh/m0d, 68B, 38B, d393d31927082046
+datetime/patterns/date/chinese/v1, zh/m0de, 77B, 47B, e9b05fe752e56763
 datetime/patterns/date/chinese/v1, zh/y, -> yue-Hans/y
 datetime/patterns/date/chinese/v1, zh/ym0, -> yue-Hans/ym0
 datetime/patterns/date/chinese/v1, zh/ym0d, -> yue-Hans/ym0d
@@ -13467,8 +13501,8 @@ datetime/patterns/date/coptic/v1, zu/y, -> af/y
 datetime/patterns/date/coptic/v1, zu/ym0, -> eo/ym0
 datetime/patterns/date/coptic/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 datetime/patterns/date/coptic/v1, zu/ym0de, -> xh/ym0de
-datetime/patterns/date/dangi/v1, <lookup>, 2433B, 413 identifiers
-datetime/patterns/date/dangi/v1, <total>, 20328B, 14553B, 201 unique payloads
+datetime/patterns/date/dangi/v1, <lookup>, 2528B, 437 identifiers
+datetime/patterns/date/dangi/v1, <total>, 21402B, 15181B, 216 unique payloads
 datetime/patterns/date/dangi/v1, af-NA/ej, 176B, 149B, 890083ab5102739
 datetime/patterns/date/dangi/v1, ak/ej, -> af-NA/ej
 datetime/patterns/date/dangi/v1, am/ej, -> af-NA/ej
@@ -13676,16 +13710,16 @@ datetime/patterns/date/dangi/v1, it/y, 74B, 46B, c75a9e2938c21d07
 datetime/patterns/date/dangi/v1, it/ym0, 89B, 61B, a70b927c576dcc10
 datetime/patterns/date/dangi/v1, it/ym0d, 113B, 85B, ea09897d4a08379b
 datetime/patterns/date/dangi/v1, it/ym0de, 149B, 121B, ee796fc818aec2c
-datetime/patterns/date/dangi/v1, ja/d, 41B, 11B, b47e4586b0755740
-datetime/patterns/date/dangi/v1, ja/de, 62B, 32B, 4a331210cc6af1e9
+datetime/patterns/date/dangi/v1, ja/d, 50B, 20B, 5e13f03332266cb7
+datetime/patterns/date/dangi/v1, ja/de, 80B, 50B, 24c5ccd685b098c2
 datetime/patterns/date/dangi/v1, ja/ej, 146B, 118B, a5415008b697cacb
 datetime/patterns/date/dangi/v1, ja/m0, 50B, 20B, efc11d7c761e083e
-datetime/patterns/date/dangi/v1, ja/m0d, 56B, 26B, 359ee0eed839ceb3
-datetime/patterns/date/dangi/v1, ja/m0de, 89B, 59B, 67e8959161c1bf27
+datetime/patterns/date/dangi/v1, ja/m0d, 56B, 26B, b9aea53557481478
+datetime/patterns/date/dangi/v1, ja/m0de, 89B, 59B, b6a06eae01338bbf
 datetime/patterns/date/dangi/v1, ja/y, 41B, 11B, bbc2a420a832e8a1
 datetime/patterns/date/dangi/v1, ja/ym0, 59B, 31B, e0ffa6f023e59254
-datetime/patterns/date/dangi/v1, ja/ym0d, 68B, 38B, 4580454d71fbf100
-datetime/patterns/date/dangi/v1, ja/ym0de, 110B, 82B, 3f2135168b7baee2
+datetime/patterns/date/dangi/v1, ja/ym0d, 68B, 38B, 2e7a5b048df41e91
+datetime/patterns/date/dangi/v1, ja/ym0de, 137B, 109B, 171963abfac875e4
 datetime/patterns/date/dangi/v1, kk-Arab/ej, 158B, 130B, c8cd8a228a9ff462
 datetime/patterns/date/dangi/v1, km/ej, -> af-NA/ej
 datetime/patterns/date/dangi/v1, kn/ej, -> af-NA/ej
@@ -13837,47 +13871,71 @@ datetime/patterns/date/dangi/v1, vi/y, 44B, 14B, ec991a7027a1de71
 datetime/patterns/date/dangi/v1, vi/ym0, 152B, 124B, 8109c2c3382c0097
 datetime/patterns/date/dangi/v1, vi/ym0d, 194B, 167B, 481981166318696a
 datetime/patterns/date/dangi/v1, vi/ym0de, 230B, 203B, d9017359f665d1f3
-datetime/patterns/date/dangi/v1, yue-Hans/d, -> ja/d
-datetime/patterns/date/dangi/v1, yue-Hans/de, 56B, 26B, de1bf461f78fca5f
+datetime/patterns/date/dangi/v1, yue-Hans/d, 50B, 20B, 2c2c5e1174121f5b
+datetime/patterns/date/dangi/v1, yue-Hans/de, 56B, 26B, 19481e9dafa5968f
 datetime/patterns/date/dangi/v1, yue-Hans/m0, -> ja/m0
-datetime/patterns/date/dangi/v1, yue-Hans/m0d, -> ja/m0d
-datetime/patterns/date/dangi/v1, yue-Hans/m0de, 77B, 47B, b2ce246084b3ea90
+datetime/patterns/date/dangi/v1, yue-Hans/m0d, 68B, 38B, 3419455261876978
+datetime/patterns/date/dangi/v1, yue-Hans/m0de, 77B, 47B, 8a11f7798c6609a1
 datetime/patterns/date/dangi/v1, yue-Hans/y, 44B, 14B, 6c9f49debcd486cc
 datetime/patterns/date/dangi/v1, yue-Hans/ym0, 47B, 17B, 7f381c3d9f46ee01
-datetime/patterns/date/dangi/v1, yue-Hans/ym0d, 47B, 17B, 7b0fd0b1dff78749
-datetime/patterns/date/dangi/v1, yue-Hans/ym0de, 98B, 70B, 79884362f120a1c5
+datetime/patterns/date/dangi/v1, yue-Hans/ym0d, 62B, 32B, 6216836ea1e8f076
+datetime/patterns/date/dangi/v1, yue-Hans/ym0de, 98B, 70B, 3893d7926c1f465d
 datetime/patterns/date/dangi/v1, yue-Hant-CN/ej, -> ar-IL/ej
-datetime/patterns/date/dangi/v1, yue/d, -> ja/d
+datetime/patterns/date/dangi/v1, yue/d, -> yue-Hans/d
 datetime/patterns/date/dangi/v1, yue/de, -> yue-Hans/de
 datetime/patterns/date/dangi/v1, yue/ej, -> af-NA/ej
 datetime/patterns/date/dangi/v1, yue/m0, -> ja/m0
-datetime/patterns/date/dangi/v1, yue/m0d, -> ja/m0d
+datetime/patterns/date/dangi/v1, yue/m0d, -> yue-Hans/m0d
 datetime/patterns/date/dangi/v1, yue/m0de, -> yue-Hans/m0de
 datetime/patterns/date/dangi/v1, yue/y, -> yue-Hans/y
 datetime/patterns/date/dangi/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/dangi/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/dangi/v1, yue/ym0de, -> yue-Hans/ym0de
 datetime/patterns/date/dangi/v1, zh-HK/ej, 182B, 155B, c4a5826b42b70b3a
+datetime/patterns/date/dangi/v1, zh-Hans-HK/d, -> ja/d
+datetime/patterns/date/dangi/v1, zh-Hans-HK/de, 68B, 38B, d3926924b5365822
 datetime/patterns/date/dangi/v1, zh-Hans-HK/ej, 164B, 137B, 197ab743a3edc9ef
+datetime/patterns/date/dangi/v1, zh-Hans-HK/m0d, 56B, 26B, 545610e14008b528
+datetime/patterns/date/dangi/v1, zh-Hans-HK/m0de, 77B, 47B, 2e9b8ccd8b322eaf
+datetime/patterns/date/dangi/v1, zh-Hans-HK/y, 56B, 26B, 931bcf8afbe8716c
+datetime/patterns/date/dangi/v1, zh-Hans-HK/ym0, 62B, 32B, 705b744b9dbacb1f
+datetime/patterns/date/dangi/v1, zh-Hans-HK/ym0d, 62B, 32B, 639c5253af9f99d2
+datetime/patterns/date/dangi/v1, zh-Hans-HK/ym0de, 119B, 91B, 1d3b9d5a67154eff
+datetime/patterns/date/dangi/v1, zh-Hans-MO/d, -> ja/d
+datetime/patterns/date/dangi/v1, zh-Hans-MO/de, -> zh-Hans-HK/de
 datetime/patterns/date/dangi/v1, zh-Hans-MO/ej, -> zh-Hans-HK/ej
-datetime/patterns/date/dangi/v1, zh-Hant/d, -> ja/d
-datetime/patterns/date/dangi/v1, zh-Hant/de, -> yue-Hans/de
+datetime/patterns/date/dangi/v1, zh-Hans-MO/m0d, -> zh-Hans-HK/m0d
+datetime/patterns/date/dangi/v1, zh-Hans-MO/m0de, -> zh-Hans-HK/m0de
+datetime/patterns/date/dangi/v1, zh-Hans-MO/y, -> zh-Hans-HK/y
+datetime/patterns/date/dangi/v1, zh-Hans-MO/ym0, -> zh-Hans-HK/ym0
+datetime/patterns/date/dangi/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
+datetime/patterns/date/dangi/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
+datetime/patterns/date/dangi/v1, zh-Hant/d, 41B, 11B, b47e4586b0755740
+datetime/patterns/date/dangi/v1, zh-Hant/de, 56B, 26B, de1bf461f78fca5f
 datetime/patterns/date/dangi/v1, zh-Hant/ej, 164B, 137B, c4cbd7473d228ecb
 datetime/patterns/date/dangi/v1, zh-Hant/m0, -> ja/m0
-datetime/patterns/date/dangi/v1, zh-Hant/m0d, -> ja/m0d
-datetime/patterns/date/dangi/v1, zh-Hant/m0de, -> yue-Hans/m0de
+datetime/patterns/date/dangi/v1, zh-Hant/m0d, 56B, 26B, 359ee0eed839ceb3
+datetime/patterns/date/dangi/v1, zh-Hant/m0de, 77B, 47B, b2ce246084b3ea90
 datetime/patterns/date/dangi/v1, zh-Hant/y, -> yue-Hans/y
 datetime/patterns/date/dangi/v1, zh-Hant/ym0, -> yue-Hans/ym0
-datetime/patterns/date/dangi/v1, zh-Hant/ym0d, -> yue-Hans/ym0d
-datetime/patterns/date/dangi/v1, zh-Hant/ym0de, -> yue-Hans/ym0de
+datetime/patterns/date/dangi/v1, zh-Hant/ym0d, 47B, 17B, 7b0fd0b1dff78749
+datetime/patterns/date/dangi/v1, zh-Hant/ym0de, 98B, 70B, 79884362f120a1c5
 datetime/patterns/date/dangi/v1, zh-MO/ej, -> zh-HK/ej
 datetime/patterns/date/dangi/v1, zh-MY/ej, -> zh-Hans-HK/ej
+datetime/patterns/date/dangi/v1, zh-SG/d, -> ja/d
+datetime/patterns/date/dangi/v1, zh-SG/de, -> zh-Hans-HK/de
 datetime/patterns/date/dangi/v1, zh-SG/ej, -> zh-Hans-HK/ej
-datetime/patterns/date/dangi/v1, zh/d, -> ja/d
+datetime/patterns/date/dangi/v1, zh-SG/m0d, -> zh-Hans-HK/m0d
+datetime/patterns/date/dangi/v1, zh-SG/m0de, -> zh-Hans-HK/m0de
+datetime/patterns/date/dangi/v1, zh-SG/y, -> zh-Hans-HK/y
+datetime/patterns/date/dangi/v1, zh-SG/ym0, -> zh-Hans-HK/ym0
+datetime/patterns/date/dangi/v1, zh-SG/ym0d, -> zh-Hans-HK/ym0d
+datetime/patterns/date/dangi/v1, zh-SG/ym0de, -> zh-Hans-HK/ym0de
+datetime/patterns/date/dangi/v1, zh/d, -> yue-Hans/d
 datetime/patterns/date/dangi/v1, zh/de, -> yue-Hans/de
 datetime/patterns/date/dangi/v1, zh/m0, -> ja/m0
-datetime/patterns/date/dangi/v1, zh/m0d, 56B, 26B, 3415e3774721e5e0
-datetime/patterns/date/dangi/v1, zh/m0de, 77B, 47B, 47b6cb2d050a9104
+datetime/patterns/date/dangi/v1, zh/m0d, 68B, 38B, d393d31927082046
+datetime/patterns/date/dangi/v1, zh/m0de, 77B, 47B, e9b05fe752e56763
 datetime/patterns/date/dangi/v1, zh/y, -> yue-Hans/y
 datetime/patterns/date/dangi/v1, zh/ym0, -> yue-Hans/ym0
 datetime/patterns/date/dangi/v1, zh/ym0d, -> yue-Hans/ym0d
@@ -16702,8 +16760,8 @@ datetime/patterns/date/gregorian/v1, zu/y, -> ak/y
 datetime/patterns/date/gregorian/v1, zu/ym0, 134B, 106B, 931317f5b502b319
 datetime/patterns/date/gregorian/v1, zu/ym0d, 182B, 155B, ba251bfe4caa3bd5
 datetime/patterns/date/gregorian/v1, zu/ym0de, 245B, 218B, 89c520f6502b69d6
-datetime/patterns/date/hebrew/v1, <lookup>, 6263B, 1260 identifiers
-datetime/patterns/date/hebrew/v1, <total>, 66848B, 47439B, 652 unique payloads
+datetime/patterns/date/hebrew/v1, <lookup>, 6266B, 1261 identifiers
+datetime/patterns/date/hebrew/v1, <total>, 66992B, 47495B, 655 unique payloads
 datetime/patterns/date/hebrew/v1, af-NA/ej, 176B, 149B, b9c83a6526cb9c09
 datetime/patterns/date/hebrew/v1, af/de, 56B, 26B, faf5f931c7465223
 datetime/patterns/date/hebrew/v1, af/m0d, 68B, 38B, 7ee1ccd522a39e65
@@ -17177,14 +17235,15 @@ datetime/patterns/date/hebrew/v1, ha/y, -> ak/y
 datetime/patterns/date/hebrew/v1, ha/ym0, 86B, 56B, b91ff08ba861d619
 datetime/patterns/date/hebrew/v1, ha/ym0d, 104B, 74B, f1e9a2fd53f55e70
 datetime/patterns/date/hebrew/v1, ha/ym0de, 131B, 101B, 51bc0bffa5e8a767
-datetime/patterns/date/hebrew/v1, he/de, -> af/de
+datetime/patterns/date/hebrew/v1, he/d, 38B, 8B, 8f6e58c23fac3aa9
+datetime/patterns/date/hebrew/v1, he/de, 56B, 26B, 3ae3f3ed58e73c96
 datetime/patterns/date/hebrew/v1, he/m0, 38B, 8B, 214a962732f7b4be
-datetime/patterns/date/hebrew/v1, he/m0d, 47B, 17B, 7a98ca03ae679e2b
-datetime/patterns/date/hebrew/v1, he/m0de, 80B, 50B, 8bed6ff1db682df0
-datetime/patterns/date/hebrew/v1, he/y, -> en/y
-datetime/patterns/date/hebrew/v1, he/ym0, 62B, 34B, ec7ab8b92f8cb0da
-datetime/patterns/date/hebrew/v1, he/ym0d, 80B, 52B, fe98475e5f9fda30
-datetime/patterns/date/hebrew/v1, he/ym0de, 164B, 137B, 620d689a5a34cb05
+datetime/patterns/date/hebrew/v1, he/m0d, 47B, 17B, fdb2d9a8e8e29ef4
+datetime/patterns/date/hebrew/v1, he/m0de, 80B, 50B, eff01a927e95c718
+datetime/patterns/date/hebrew/v1, he/y, 50B, 22B, 8f5a3bcee2be977e
+datetime/patterns/date/hebrew/v1, he/ym0, 62B, 34B, dd4f26b6e8d23d03
+datetime/patterns/date/hebrew/v1, he/ym0d, 80B, 52B, ebf3f20e5af3ad5f
+datetime/patterns/date/hebrew/v1, he/ym0de, 164B, 137B, 6ad3645658c369e6
 datetime/patterns/date/hebrew/v1, hi-Latn/ej, 194B, 167B, 791d56bc38a89a05
 datetime/patterns/date/hebrew/v1, hi/de, -> bn/de
 datetime/patterns/date/hebrew/v1, hi/ej, -> af-NA/ej
@@ -20604,7 +20663,7 @@ datetime/patterns/date/indian/v1, zu/ym0, -> eo/ym0
 datetime/patterns/date/indian/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 datetime/patterns/date/indian/v1, zu/ym0de, -> xh/ym0de
 datetime/patterns/date/japanese/v1, <lookup>, 6030B, 1213 identifiers
-datetime/patterns/date/japanese/v1, <total>, 63166B, 44784B, 617 unique payloads
+datetime/patterns/date/japanese/v1, <total>, 63220B, 44838B, 617 unique payloads
 datetime/patterns/date/japanese/v1, af-NA/ej, 176B, 149B, b9c83a6526cb9c09
 datetime/patterns/date/japanese/v1, af/de, 56B, 26B, faf5f931c7465223
 datetime/patterns/date/japanese/v1, af/m0d, 68B, 38B, 7ee1ccd522a39e65
@@ -21145,10 +21204,10 @@ datetime/patterns/date/japanese/v1, ja/ej, 188B, 161B, c15112ac7cc9bb2f
 datetime/patterns/date/japanese/v1, ja/m0, 41B, 11B, a80fccef94abd382
 datetime/patterns/date/japanese/v1, ja/m0d, 59B, 29B, ab1dec5bd5507ff
 datetime/patterns/date/japanese/v1, ja/m0de, 95B, 65B, 89f5fc04f54f6e3c
-datetime/patterns/date/japanese/v1, ja/y, 56B, 26B, 920faa37e41fb059
-datetime/patterns/date/japanese/v1, ja/ym0, 65B, 35B, ba60baf377a98cd2
-datetime/patterns/date/japanese/v1, ja/ym0d, 77B, 47B, 161c23bad7387ea9
-datetime/patterns/date/japanese/v1, ja/ym0de, 122B, 92B, dc96b5de5de4bfea
+datetime/patterns/date/japanese/v1, ja/y, 68B, 38B, 64e4dd4a8e7e8608
+datetime/patterns/date/japanese/v1, ja/ym0, 83B, 53B, 74d62914b8670f9c
+datetime/patterns/date/japanese/v1, ja/ym0d, 101B, 71B, 7bbc045a22665e40
+datetime/patterns/date/japanese/v1, ja/ym0de, 122B, 92B, 9dea21493b455454
 datetime/patterns/date/japanese/v1, jv/de, -> be/de
 datetime/patterns/date/japanese/v1, jv/m0d, -> br/m0d
 datetime/patterns/date/japanese/v1, jv/m0de, -> cy/m0de
