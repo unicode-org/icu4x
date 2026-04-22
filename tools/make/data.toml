@@ -41,6 +41,7 @@ exec --fail-on-error cargo build -p icu4x-datagen --no-default-features --featur
 
 # Filesystem
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format fs --syntax json --out provider/fs/tests/data/json --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format fs --syntax json --only-alt-variants --out provider/fs/tests/data/json_alt --overwrite
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format fs --syntax bincode --out provider/fs/tests/data/bincode --overwrite
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format fs --syntax postcard --out provider/fs/tests/data/postcard --overwrite
 

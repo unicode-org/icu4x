@@ -1130,5 +1130,5 @@ fn test_debug() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234), alt_variant_status: None }, payload: HelloWorld { message: \"Hello World\" } }", format!("{resp:?}"));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234), alt_variant_status: Some(Standard) }, payload: HelloWorld { message: \"Hello World\" } }", format!("{resp:?}"));
 }

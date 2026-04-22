@@ -9,6 +9,7 @@
 use crate as icu_provider;
 
 use crate::prelude::*;
+use crate::AltVariantStatus;
 use alloc::borrow::Cow;
 use alloc::collections::BTreeSet;
 use alloc::string::String;
@@ -193,8 +194,16 @@ impl DataProvider<HelloWorldV1> for HelloWorldProvider {
             })
             .map(|(_, _, v)| v)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req))?;
+        let mut metadata = DataResponseMetadata::default();
+        metadata.checksum = Some(1234);
+        if req.id.locale.strict_cmp(b"vi").is_eq() {
+            metadata.alt_variant_status = Some(AltVariantStatus::Alternative);
+        } else {
+            metadata.alt_variant_status = Some(AltVariantStatus::Standard);
+        }
+
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default().with_checksum(1234),
+            metadata,
             payload: DataPayload::from_static_str(data),
         })
     }
@@ -202,7 +211,11 @@ impl DataProvider<HelloWorldV1> for HelloWorldProvider {
 
 impl DryDataProvider<HelloWorldV1> for HelloWorldProvider {
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
-        self.load(req).map(|r| r.metadata)
+        self.load(req).map(|r| {
+            let mut metadata = r.metadata;
+            metadata.alt_variant_status = None;
+            metadata
+        })
     }
 }
 
