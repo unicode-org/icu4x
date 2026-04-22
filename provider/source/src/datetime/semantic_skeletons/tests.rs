@@ -92,6 +92,51 @@ fn test_en_year_patterns() {
 }
 
 #[test]
+fn test_haw_month_overrides() {
+    use icu::datetime::provider::fields::{FieldLength, FieldNumericOverrides, FieldSymbol};
+    use icu::datetime::provider::pattern::PatternItem;
+    use icu::locale::locale;
+
+    // This test verifies that Hawaiian locale ("haw") applies Roman numeral overrides
+    // to the month field in datetime patterns, as specified in CLDR.
+    let provider = SourceDataProvider::new_testing();
+    let payload: DataPayload<DatetimePatternsDateGregorianV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("ym0d"),
+                &locale!("haw").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let elements = &payload.get().elements;
+    let mut found_roman_month = false;
+
+    for element in elements.iter() {
+        let (_metadata, items) = element.get_default();
+        for item in items.iter() {
+            if let PatternItem::Field(field) = item {
+                if let FieldSymbol::Month(_) = field.symbol {
+                    if matches!(
+                        field.length,
+                        FieldLength::NumericOverride(FieldNumericOverrides::Romanlow)
+                    ) {
+                        found_roman_month = true;
+                    }
+                }
+            }
+        }
+    }
+
+    assert!(
+        found_roman_month,
+        "Should have found month field with romanlow override"
+    );
+}
+
+#[test]
 fn test_en_hour_patterns() {
     use icu::locale::locale;
 

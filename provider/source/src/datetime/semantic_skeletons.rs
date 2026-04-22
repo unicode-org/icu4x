@@ -192,16 +192,27 @@ impl SourceDataProvider {
         }
 
         let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
-            .map(|length| to_components_bag(length, attributes, data))
-            .map(|components| {
+            .map(|length| {
+                let components = to_components_bag(length, attributes, data);
                 let preferred_hour_cycle = preferred_hour_cycle(data, locale);
                 // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
-                let pattern = select_pattern(
+                let mut pattern = select_pattern(
                     components,
                     &skeleton_patterns,
                     preferred_hour_cycle,
                     &length_combinations_v1,
                 );
+
+                let lp = match length {
+                    Length::Long => &data.date_skeletons.long,
+                    Length::Medium => &data.date_skeletons.medium,
+                    Length::Short => &data.date_skeletons.short,
+                    _ => unreachable!(),
+                };
+
+                pattern.inner.for_each_mut(|p| {
+                    super::names::apply_numeric_overrides(lp, p);
+                });
                 match components {
                     components::Bag {
                         era: None,
