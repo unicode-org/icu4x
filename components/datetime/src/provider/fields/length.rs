@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
 use displaydoc::Display;
@@ -214,11 +214,11 @@ impl FieldNumericOverrides {
     }
 
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-    fn format_hanidec(number: u32) -> String {
+    fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
         const HANIDEC_DIGITS: &[char] =
             &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
         if number == 0 {
-            return "〇".to_string();
+            return w.write_char('〇');
         }
         let mut n = number;
         let mut buf = [0u8; 20]; // Max digits for u64 is 20
@@ -233,62 +233,59 @@ impl FieldNumericOverrides {
             clippy::indexing_slicing,
             reason = "buf is sliced with an index < 20 and digits are within 0-9"
         )]
-        let s = buf[i..]
-            .iter()
-            .map(|&d| HANIDEC_DIGITS[d as usize])
-            .collect();
-        s
+        for &d in buf[i..].iter() {
+            w.write_char(HANIDEC_DIGITS[d as usize])?;
+        }
+        Ok(())
     }
 
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-    fn format_hanidays(number: u32) -> String {
+    fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
         if number == 0 || number > 31 {
             debug_assert!(
                 false,
                 "hanidays should only be found in a d context and only supports 1-31"
             );
-            return number.to_string();
+            return number.write_to(w);
         }
         let han_digits = [
             "", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
         ];
+        #[allow(
+            clippy::indexing_slicing,
+            reason = "We are always indexing a 10-element array with a digit"
+        )]
         if number <= 10 {
-            let mut s = "初".to_string(); // '初' (chū) for the first decade
-            #[allow(clippy::indexing_slicing, reason = "number is <= 10")]
-            s.push_str(han_digits[number as usize]);
-            s
+            w.write_str("初")?;
+            w.write_str(han_digits[number as usize])?;
         } else if number < 20 {
-            let mut s = "十".to_string(); // '十' (shí) for ten
-            #[allow(clippy::indexing_slicing, reason = "number % 10 < 10")]
-            s.push_str(han_digits[(number % 10) as usize]);
-            s
+            w.write_str("十")?;
+            w.write_str(han_digits[(number % 10) as usize])?;
         } else if number == 20 {
-            "二十".to_string() // '二十' for twenty
+            w.write_str("二十")?;
         } else if number < 30 {
-            let mut s = "廿".to_string(); // '廿' (niàn) for twenty
-            #[allow(clippy::indexing_slicing, reason = "number % 20 < 10")]
-            s.push_str(han_digits[(number % 20) as usize]);
-            s
+            w.write_str("廿")?;
+            w.write_str(han_digits[(number % 20) as usize])?;
         } else if number == 30 {
-            "三十".to_string() // '三十' for thirty
+            w.write_str("三十")?;
         } else {
             // We checked that number <= 31 above, and all other cases are handled.
             debug_assert_eq!(number, 31);
-            "丗一".to_string() // '丗' (sà/sashì) for thirty
+            w.write_str("丗一")?;
         }
+        Ok(())
     }
 
     // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-    fn format_romanlow(number: u32) -> String {
+    fn format_romanlow<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
         let mut n = number;
         if n == 0 || n >= 4000 {
             debug_assert!(
                 false,
                 "romanlow should only be found in an M context and only supports 1-3999"
             );
-            return n.to_string();
+            return write!(w, "{}", n);
         }
-        let mut s = String::new();
         let mappings = [
             (1000, "m"),
             (900, "cm"),
@@ -306,11 +303,11 @@ impl FieldNumericOverrides {
         ];
         for &(value, roman) in mappings.iter() {
             while n >= value {
-                s.push_str(roman);
+                w.write_str(roman)?;
                 n -= value;
             }
         }
-        s
+        Ok(())
     }
 
     /// Formats a number using traditional Hebrew numerals (Gematria).
@@ -342,7 +339,7 @@ impl FieldNumericOverrides {
     /// This matches the `hebrew` RBNF rule
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>,
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-    fn format_hebrew(number: u32) -> String {
+    fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
         fn hebrew_units(digit: u32) -> Option<char> {
             match digit {
                 1 => Some('א'),
@@ -438,14 +435,16 @@ impl FieldNumericOverrides {
         }
 
         if number == 0 {
-            return "0".to_string();
+            // Hebrew just uses regular 0s, 0 is not a part of the
+            // traditional system. This *is* reachable for 0 years.
+            return w.write_str("0");
         }
         let thousands = number / 1000;
         let rest = number % 1000;
 
         if thousands >= 1000 {
             // Fall back to decimal for large numbers not supported by this scheme
-            return number.to_string();
+            return number.write_to(w);
         }
 
         let mut result = String::new();
@@ -459,7 +458,7 @@ impl FieldNumericOverrides {
                 // Special case for bare thousands (e.g. 5000 -> ה׳ אלפים)
                 // to avoid ambiguity, based on ICU4C behavior.
                 result.push_str(" אלפים");
-                return result;
+                return w.write_str(&result);
             }
         }
 
@@ -470,24 +469,24 @@ impl FieldNumericOverrides {
             result.push_str(&rest_s);
         }
 
-        result
+        w.write_str(&result)
     }
 
     /// Formats a number according to the override system.
-    pub fn format_number(self, number: u32) -> String {
+    pub fn format_number<W: fmt::Write + ?Sized>(self, number: u32, w: &mut W) -> fmt::Result {
         match self {
-            Self::Hanidec => Self::format_hanidec(number),
+            Self::Hanidec => Self::format_hanidec(number, w),
             // https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16
             Self::Jpnyear => {
                 if number == 1 {
-                    "元".to_string()
+                    w.write_str("元")
                 } else {
-                    number.to_string()
+                    number.write_to(w)
                 }
             }
-            Self::Hanidays => Self::format_hanidays(number),
-            Self::Romanlow => Self::format_romanlow(number),
-            Self::Hebr => Self::format_hebrew(number),
+            Self::Hanidays => Self::format_hanidays(number, w),
+            Self::Romanlow => Self::format_romanlow(number, w),
+            Self::Hebr => Self::format_hebrew(number, w),
         }
     }
 }
@@ -502,39 +501,75 @@ impl fmt::Display for FieldNumericOverrides {
 mod tests {
     use super::*;
 
+    fn format_to_string(o: FieldNumericOverrides, n: u32) -> String {
+        let mut s = String::new();
+        o.format_number(n, &mut s).unwrap();
+        s
+    }
+
     #[test]
     fn test_format_number() {
         // hanidec
         assert_eq!(
-            FieldNumericOverrides::Hanidec.format_number(2024),
+            format_to_string(FieldNumericOverrides::Hanidec, 2024),
             "二〇二四"
         );
-        assert_eq!(FieldNumericOverrides::Hanidec.format_number(0), "〇");
-        assert_eq!(FieldNumericOverrides::Hanidec.format_number(10), "一〇");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hanidec, 0), "〇");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hanidec, 10), "一〇");
 
         // hanidays
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(1), "初一");
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(10), "初十");
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(11), "十一");
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(19), "十九");
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(20), "二十");
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(21), "廿一");
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(29), "廿九");
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(30), "三十");
-        assert_eq!(FieldNumericOverrides::Hanidays.format_number(31), "丗一");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hanidays, 1), "初一");
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hanidays, 10),
+            "初十"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hanidays, 11),
+            "十一"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hanidays, 19),
+            "十九"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hanidays, 20),
+            "二十"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hanidays, 21),
+            "廿一"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hanidays, 29),
+            "廿九"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hanidays, 30),
+            "三十"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hanidays, 31),
+            "丗一"
+        );
 
         // jpnyear
-        assert_eq!(FieldNumericOverrides::Jpnyear.format_number(1), "元");
-        assert_eq!(FieldNumericOverrides::Jpnyear.format_number(2), "2");
-        assert_eq!(FieldNumericOverrides::Jpnyear.format_number(2024), "2024");
+        assert_eq!(format_to_string(FieldNumericOverrides::Jpnyear, 1), "元");
+        assert_eq!(format_to_string(FieldNumericOverrides::Jpnyear, 2), "2");
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Jpnyear, 2024),
+            "2024"
+        );
 
         // romanlow
-        assert_eq!(FieldNumericOverrides::Romanlow.format_number(1), "i");
-        assert_eq!(FieldNumericOverrides::Romanlow.format_number(4), "iv");
-        assert_eq!(FieldNumericOverrides::Romanlow.format_number(9), "ix");
-        assert_eq!(FieldNumericOverrides::Romanlow.format_number(49), "xlix");
+        assert_eq!(format_to_string(FieldNumericOverrides::Romanlow, 1), "i");
+        assert_eq!(format_to_string(FieldNumericOverrides::Romanlow, 4), "iv");
+        assert_eq!(format_to_string(FieldNumericOverrides::Romanlow, 9), "ix");
         assert_eq!(
-            FieldNumericOverrides::Romanlow.format_number(3999),
+            format_to_string(FieldNumericOverrides::Romanlow, 49),
+            "xlix"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Romanlow, 3999),
             "mmmcmxcix"
         );
     }
@@ -543,39 +578,48 @@ mod tests {
     #[cfg(debug_assertions)]
     #[should_panic(expected = "hanidays should only be found in a d context")]
     fn test_hanidays_invalid() {
-        FieldNumericOverrides::Hanidays.format_number(32);
+        format_to_string(FieldNumericOverrides::Hanidays, 32);
     }
 
     #[test]
     #[cfg(debug_assertions)]
     #[should_panic(expected = "romanlow should only be found in an M context")]
     fn test_romanlow_invalid() {
-        FieldNumericOverrides::Romanlow.format_number(4000);
+        format_to_string(FieldNumericOverrides::Romanlow, 4000);
     }
 
     #[test]
     fn test_hebr() {
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(1), "א׳");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(10), "י׳");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(15), "ט״ו");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(16), "ט״ז");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(17), "י״ז");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(21), "כ״א");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(100), "ק׳");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(101), "ק״א");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(115), "קט״ו");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(400), "ת׳");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(500), "ת״ק");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(784), "תשפ״ד");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(1000), "א׳ אלפים");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(5000), "ה׳ אלפים");
-        assert_eq!(FieldNumericOverrides::Hebr.format_number(5783), "ה׳תשפ״ג");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1), "א׳");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 10), "י׳");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15), "ט״ו");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 16), "ט״ז");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 17), "י״ז");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 21), "כ״א");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 100), "ק׳");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 101), "ק״א");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 115), "קט״ו");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 400), "ת׳");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 500), "ת״ק");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 784), "תשפ״ד");
         assert_eq!(
-            FieldNumericOverrides::Hebr.format_number(100000),
+            format_to_string(FieldNumericOverrides::Hebr, 1000),
+            "א׳ אלפים"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hebr, 5000),
+            "ה׳ אלפים"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hebr, 5783),
+            "ה׳תשפ״ג"
+        );
+        assert_eq!(
+            format_to_string(FieldNumericOverrides::Hebr, 100000),
             "ק׳ אלפים"
         );
         assert_eq!(
-            FieldNumericOverrides::Hebr.format_number(1000000),
+            format_to_string(FieldNumericOverrides::Hebr, 1000000),
             "1000000"
         );
         // Fallback
