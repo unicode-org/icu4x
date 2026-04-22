@@ -163,29 +163,54 @@ impl SourceDataProvider {
                     // We need to fix conflicting field errors. We keep checking until we can
                     // load data for a pattern without errors. Each evaluation of the loop will
                     // reduce the number of errors by 1.
-                    while let Err(e) = names
-                        .load_for_pattern(&DebugProvider, &DateTimePattern::from(pattern.clone()))
-                    {
-                        let PatternLoadError::ConflictingField {
-                            field: requested_field,
-                            previous_field,
-                        } = e
-                        else {
-                            panic!("only know how to fix ConflictingField, but got: {e:?}")
-                        };
-                        log_fn(previous_field, requested_field, variant.distance);
-                        let requested_field = Field::from(requested_field);
-                        let previous_field = Field::from(previous_field);
+                    loop {
                         let mut pattern_items = reference::Pattern::from(&*pattern).into_items();
-                        for pattern_item in pattern_items.iter_mut() {
-                            let PatternItem::Field(field) = pattern_item else {
-                                continue; // nothing to do: not a Field
-                            };
-                            if *field == requested_field {
-                                *field = previous_field;
+                        for item in pattern_items.iter_mut() {
+                            if let PatternItem::Field(field) = item {
+                                // Replace NumericOverride with One for the purpose of checking conflicting fields.
+                                // names.load_for_pattern only understands standard field lengths, and numbering
+                                // system overrides do not affect name loading.
+                                if let FieldLength::NumericOverride(_) = field.length {
+                                    field.length = FieldLength::One;
+                                }
                             }
                         }
-                        *pattern = runtime::Pattern::from(pattern_items);
+                        let pattern_for_check = runtime::Pattern::from(pattern_items);
+                        match names.load_for_pattern(
+                            &DebugProvider,
+                            &DateTimePattern::from(pattern_for_check),
+                        ) {
+                            Ok(_) => break,
+                            Err(e) => {
+                                let PatternLoadError::ConflictingField {
+                                    field: requested_field,
+                                    previous_field,
+                                } = e
+                                else {
+                                    panic!("only know how to fix ConflictingField, but got: {e:?}")
+                                };
+                                log_fn(previous_field, requested_field, variant.distance);
+                                let requested_field = Field::from(requested_field);
+                                let previous_field = Field::from(previous_field);
+                                let mut pattern_items =
+                                    reference::Pattern::from(&*pattern).into_items();
+                                for pattern_item in pattern_items.iter_mut() {
+                                    let PatternItem::Field(field) = pattern_item else {
+                                        continue; // nothing to do: not a Field
+                                    };
+                                    if field.symbol == requested_field.symbol
+                                        && (field.length == requested_field.length
+                                            || (matches!(
+                                                field.length,
+                                                FieldLength::NumericOverride(_)
+                                            ) && requested_field.length == FieldLength::One))
+                                    {
+                                        *field = previous_field;
+                                    }
+                                }
+                                *pattern = runtime::Pattern::from(pattern_items);
+                            }
+                        }
                     }
                 })
             }
@@ -499,15 +524,21 @@ fn gen_date_components(
 ) -> components::Bag {
     // Pull the field lengths from the date length patterns, and then use
     // those lengths for classical skeleton datetime pattern generation.
-    //
-    // TODO(#308): Utilize the numbering system pattern variations.
-    let date_pattern: reference::Pattern = match length {
+    let mut date_pattern: runtime::Pattern = match length {
         Length::Long => data.date_skeletons.long.get_pattern().parse().unwrap(),
         Length::Medium => data.date_skeletons.medium.get_pattern().parse().unwrap(),
         Length::Short => data.date_skeletons.short.get_pattern().parse().unwrap(),
         _ => unreachable!(),
     };
-    let date_bag = components::Bag::from(&date_pattern);
+    let lp = match length {
+        Length::Long => &data.date_skeletons.long,
+        Length::Medium => &data.date_skeletons.medium,
+        Length::Short => &data.date_skeletons.short,
+        _ => unreachable!(),
+    };
+    crate::datetime::names::apply_numeric_overrides(lp, &mut date_pattern);
+    let date_pattern_ref: reference::Pattern = (&date_pattern).into();
+    let date_bag = components::Bag::from(&date_pattern_ref);
     let mut filtered_components = components::Bag::empty();
     if check_for_field(attributes, "y") {
         filtered_components.era = date_bag.era;
