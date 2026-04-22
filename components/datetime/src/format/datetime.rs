@@ -165,6 +165,14 @@ where
         (FieldSymbol::Year(Year::Calendar), l) => {
             const PART: Part = parts::YEAR;
             input!(PART, Year, year = input.year);
+            if let FieldLength::NumericOverride(o) = l {
+                let year_val = year.era_year_or_related_iso();
+                if year_val >= 0 {
+                    let s = o.format_number(year_val as usize);
+                    w.with_part(PART, |w| w.write_str(&s))?;
+                    return Ok(Ok(()));
+                }
+            }
             let mut year = Decimal::from(year.era_year_or_related_iso());
             if matches!(l, FieldLength::Two) {
                 // 'yy' and 'YY' truncate
@@ -344,6 +352,11 @@ where
         (FieldSymbol::Day(fields::Day::DayOfMonth), l) => {
             const PART: Part = parts::DAY;
             input!(PART, DayOfMonth, day_of_month = input.day_of_month);
+            if let FieldLength::NumericOverride(o) = l {
+                let s = o.format_number(day_of_month.0 as usize);
+                w.with_part(PART, |w| w.write_str(&s))?;
+                return Ok(Ok(()));
+            }
             try_write_number(PART, w, decimal_formatter, day_of_month.0.into(), l)?
         }
         (FieldSymbol::Day(fields::Day::DayOfWeekInMonth), l) => {
