@@ -167,6 +167,10 @@ where
             input!(PART, Year, year = input.year);
             if let FieldLength::NumericOverride(o) = l {
                 let year_val = year.era_year_or_related_iso();
+
+                // We only support overriding for positive numbers.
+                // For negative numbers RBNF coverage is spotty and often not actually
+                // what you want in years, so we fall back.
                 if year_val >= 0 {
                     w.with_part(PART, |w| o.format_number(year_val as u32, w))?;
                     return Ok(Ok(()));
