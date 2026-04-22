@@ -31,6 +31,8 @@
 //! - [`IdentiferNotFoundPredicate`]
 
 use alloc::vec::Vec;
+#[cfg(doc)]
+use icu_provider::prelude::*;
 
 mod by_error;
 
