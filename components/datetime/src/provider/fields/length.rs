@@ -340,60 +340,21 @@ impl FieldNumericOverrides {
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>,
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
     fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
-        fn hebrew_units(digit: u32) -> Option<char> {
-            match digit {
-                1 => Some('א'),
-                2 => Some('ב'),
-                3 => Some('ג'),
-                4 => Some('ד'),
-                5 => Some('ה'),
-                6 => Some('ו'),
-                7 => Some('ז'),
-                8 => Some('ח'),
-                9 => Some('ט'),
-                _ => None,
-            }
-        }
-
-        fn hebrew_tens(digit: u32) -> Option<char> {
-            match digit {
-                1 => Some('י'),
-                2 => Some('כ'),
-                3 => Some('ל'),
-                4 => Some('מ'),
-                5 => Some('נ'),
-                6 => Some('ס'),
-                7 => Some('ע'),
-                8 => Some('פ'),
-                9 => Some('צ'),
-                _ => None,
-            }
-        }
-
-        fn hebrew_hundreds(digit: u32) -> &'static str {
-            // Hebrew numerals only have unique letters for hundreds up to 400 (ת).
-            // Values from 500 to 900 are represented by combining Tav (ת = 400)
-            // with another hundred letter (e.g., 500 = 400 + 100 = תק).
-            match digit {
-                1 => "ק",
-                2 => "ר",
-                3 => "ש",
-                4 => "ת",
-                5 => "תק",
-                6 => "תר",
-                7 => "תש",
-                8 => "תת",
-                9 => "תתק",
-                _ => "",
-            }
-        }
+        const HEBREW_UNITS: [char; 9] = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט'];
+        const HEBREW_TENS: [char; 9] = ['י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ'];
+        // Hebrew numerals only have unique letters for hundreds up to 400 (ת).
+        // Values from 500 to 900 are represented by combining Tav (ת = 400)
+        // with another hundred letter (e.g., 500 = 400 + 100 = תק).
+        const HEBREW_HUNDREDS: [&str; 9] = ["ק", "ר", "ש", "ת", "תק", "תר", "תש", "תת", "תתק"];
 
         fn format_hebrew_less_than_1000(n: u32) -> String {
             let mut s = String::new();
             let hundreds = n / 100;
             let rem = n % 100;
 
-            s.push_str(hebrew_hundreds(hundreds));
+            if let Some(&str) = HEBREW_HUNDREDS.get((hundreds as usize).wrapping_sub(1)) {
+                s.push_str(str);
+            }
 
             if rem == 15 {
                 s.push_str("טו");
@@ -403,10 +364,10 @@ impl FieldNumericOverrides {
                 let tens = rem / 10;
                 let units = rem % 10;
 
-                if let Some(c) = hebrew_tens(tens) {
+                if let Some(&c) = HEBREW_TENS.get((tens as usize).wrapping_sub(1)) {
                     s.push(c);
                 }
-                if let Some(c) = hebrew_units(units) {
+                if let Some(&c) = HEBREW_UNITS.get((units as usize).wrapping_sub(1)) {
                     s.push(c);
                 }
             }
