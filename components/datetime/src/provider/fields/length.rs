@@ -222,7 +222,7 @@ impl FieldNumericOverrides {
             return w.write_char('〇');
         }
         let mut n = number;
-        let mut buf = [0u8; 10]; // Max digits for u32 is 10
+        let mut buf = [0u8; u32::MAX.ilog10() as usize + 1];
         let mut i = 10;
         #[allow(clippy::indexing_slicing, reason = "i is < 10")]
         while n > 0 && i > 0 {
