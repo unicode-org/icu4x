@@ -71,7 +71,9 @@ impl YearNameLength {
         // UTS 35 says that "G..GGG" and "U..UUU" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
         match field_length {
-            FieldLength::Three => Some(YearNameLength::Abbreviated),
+            FieldLength::Three | FieldLength::NumericOverride(_) => {
+                Some(YearNameLength::Abbreviated)
+            }
             FieldLength::Four => Some(YearNameLength::Wide),
             FieldLength::Five => Some(YearNameLength::Narrow),
             _ => None,

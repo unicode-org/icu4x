@@ -468,6 +468,7 @@ pub(crate) fn apply_numeric_overrides(
         // no numeric override
         return;
     };
+
     // symbol_to_replace is None when we need to replace *all* symbols
     let (numeric, symbol_to_replace) = match &**numbering_systems {
         "hanidec" => (Hanidec, None),

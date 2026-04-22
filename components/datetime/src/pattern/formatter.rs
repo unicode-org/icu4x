@@ -650,4 +650,34 @@ mod tests {
             Ok(()),
         );
     }
+
+    #[test]
+    fn test_hebrew_numeric_override() {
+        use crate::provider::fields::{
+            Day, Field, FieldLength, FieldNumericOverrides, FieldSymbol,
+        };
+        use crate::provider::pattern::runtime::Pattern;
+        use crate::provider::pattern::PatternItem;
+
+        let locale = icu_locale_core::locale!("he").into();
+
+        let field = Field {
+            symbol: FieldSymbol::Day(Day::DayOfMonth),
+            length: FieldLength::NumericOverride(FieldNumericOverrides::Hebr),
+        };
+        let item = PatternItem::Field(field);
+        let pattern = DateTimePattern::from(Pattern::from(vec![item]));
+
+        let names: FixedCalendarDateTimeNames<Gregorian> =
+            FixedCalendarDateTimeNames::try_new(locale).unwrap();
+
+        let datetime = DateTime {
+            date: Date::try_new_gregorian(2023, 10, 28).unwrap(),
+            time: Time::try_new(15, 0, 55, 0).unwrap(),
+        };
+
+        let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
+
+        assert_try_writeable_eq!(formatted_pattern, "כ״ח", Ok(()),);
+    }
 }
