@@ -796,7 +796,7 @@ impl CollatorOptions {
     ///
     /// Note that some fields that are stored in this bit field are not considered
     /// options in the API sense, but rather are resolved from the locale, through
-    /// metadata. This includes backward_second_level and lithuanian_dot_above.
+    /// metadata. This includes `backward_second_level` and `lithuanian_dot_above`.
     pub(crate) const fn resolve(
         self,
         metadata: CollationMetadata,
