@@ -242,13 +242,6 @@ impl FieldNumericOverrides {
 
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
     fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
-        if number == 0 || number > 31 {
-            debug_assert!(
-                false,
-                "hanidays should only be found in a d context and only supports 1-31"
-            );
-            return number.write_to(w);
-        }
         let han_digits = [
             "", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
         ];
@@ -256,23 +249,33 @@ impl FieldNumericOverrides {
             clippy::indexing_slicing,
             reason = "We are always indexing a 10-element array with a digit"
         )]
-        if number <= 10 {
-            w.write_str("初")?;
-            w.write_str(han_digits[number as usize])?;
-        } else if number < 20 {
-            w.write_str("十")?;
-            w.write_str(han_digits[(number % 10) as usize])?;
-        } else if number == 20 {
-            w.write_str("二十")?;
-        } else if number < 30 {
-            w.write_str("廿")?;
-            w.write_str(han_digits[(number % 20) as usize])?;
-        } else if number == 30 {
-            w.write_str("三十")?;
-        } else {
-            // We checked that number <= 31 above, and all other cases are handled.
-            debug_assert_eq!(number, 31);
-            w.write_str("丗一")?;
+        match number {
+            1..=10 => {
+                w.write_str("初")?;
+                w.write_str(han_digits[number as usize])?;
+            }
+            11..20 => {
+                w.write_str("十")?;
+                w.write_str(han_digits[(number % 10) as usize])?;
+            }
+            20 => w.write_str("二十")?,
+            21..30 => {
+                w.write_str("廿")?;
+                w.write_str(han_digits[(number % 20) as usize])?;
+            }
+            30 => {
+                w.write_str("三十")?;
+            }
+            31 => {
+                w.write_str("丗一")?;
+            }
+            0 | 32.. => {
+                debug_assert!(
+                    false,
+                    "hanidays should only be found in a d context and only supports 1-31"
+                );
+                return number.write_to(w);
+            }
         }
         Ok(())
     }
