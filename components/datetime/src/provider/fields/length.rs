@@ -447,18 +447,15 @@ impl FieldNumericOverrides {
             return number.write_to(w);
         }
 
-        let mut result = String::new();
-
         if thousands > 0 {
             let mut thousands_s = format_hebrew_less_than_1000(thousands);
             apply_hebrew_punctuation(&mut thousands_s);
-            result.push_str(&thousands_s);
+            w.write_str(&thousands_s)?;
 
             if rest == 0 {
                 // Special case for bare thousands (e.g. 5000 -> ה׳ אלפים)
                 // to avoid ambiguity, based on ICU4C behavior.
-                result.push_str(" אלפים");
-                return w.write_str(&result);
+                return w.write_str(" אלפים");
             }
         }
 
@@ -466,10 +463,10 @@ impl FieldNumericOverrides {
 
         if !rest_s.is_empty() {
             apply_hebrew_punctuation(&mut rest_s);
-            result.push_str(&rest_s);
+            w.write_str(&rest_s)?;
         }
 
-        w.write_str(&result)
+        Ok(())
     }
 
     /// Formats a number according to the override system.
