@@ -168,7 +168,7 @@ where
             if let FieldLength::NumericOverride(o) = l {
                 let year_val = year.era_year_or_related_iso();
                 if year_val >= 0 {
-                    let s = o.format_number(year_val as usize);
+                    let s = o.format_number(year_val as u32);
                     w.with_part(PART, |w| w.write_str(&s))?;
                     return Ok(Ok(()));
                 }
@@ -256,7 +256,7 @@ where
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
             if let FieldLength::NumericOverride(o) = l {
-                let s = o.format_number(month.number() as usize);
+                let s = o.format_number(month.number() as u32);
                 w.with_part(PART, |w| w.write_str(&s))?;
                 return Ok(Ok(()));
             }
@@ -361,7 +361,7 @@ where
             const PART: Part = parts::DAY;
             input!(PART, DayOfMonth, day_of_month = input.day_of_month);
             if let FieldLength::NumericOverride(o) = l {
-                let s = o.format_number(day_of_month.0 as usize);
+                let s = o.format_number(day_of_month.0 as u32);
                 w.with_part(PART, |w| w.write_str(&s))?;
                 return Ok(Ok(()));
             }

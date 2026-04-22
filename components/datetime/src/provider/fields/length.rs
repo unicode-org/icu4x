@@ -214,7 +214,7 @@ impl FieldNumericOverrides {
     }
 
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-    fn format_hanidec(number: usize) -> String {
+    fn format_hanidec(number: u32) -> String {
         const HANIDEC_DIGITS: &[char] =
             &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
         if number == 0 {
@@ -241,7 +241,7 @@ impl FieldNumericOverrides {
     }
 
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-    fn format_hanidays(number: usize) -> String {
+    fn format_hanidays(number: u32) -> String {
         if number == 0 || number > 31 {
             debug_assert!(
                 false,
@@ -255,19 +255,19 @@ impl FieldNumericOverrides {
         if number <= 10 {
             let mut s = "初".to_string(); // '初' (chū) for the first decade
             #[allow(clippy::indexing_slicing, reason = "number is <= 10")]
-            s.push_str(han_digits[number]);
+            s.push_str(han_digits[number as usize]);
             s
         } else if number < 20 {
             let mut s = "十".to_string(); // '十' (shí) for ten
             #[allow(clippy::indexing_slicing, reason = "number % 10 < 10")]
-            s.push_str(han_digits[number % 10]);
+            s.push_str(han_digits[(number % 10) as usize]);
             s
         } else if number == 20 {
             "二十".to_string() // '二十' for twenty
         } else if number < 30 {
             let mut s = "廿".to_string(); // '廿' (niàn) for twenty
             #[allow(clippy::indexing_slicing, reason = "number % 20 < 10")]
-            s.push_str(han_digits[number % 20]);
+            s.push_str(han_digits[(number % 20) as usize]);
             s
         } else if number == 30 {
             "三十".to_string() // '三十' for thirty
@@ -278,7 +278,7 @@ impl FieldNumericOverrides {
     }
 
     // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-    fn format_romanlow(number: usize) -> String {
+    fn format_romanlow(number: u32) -> String {
         let mut n = number;
         if n == 0 || n >= 4000 {
             debug_assert!(
@@ -341,8 +341,8 @@ impl FieldNumericOverrides {
     /// This matches the `hebrew` RBNF rule
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>,
     /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-    fn format_hebrew(number: usize) -> String {
-        fn hebrew_units(digit: usize) -> Option<char> {
+    fn format_hebrew(number: u32) -> String {
+        fn hebrew_units(digit: u32) -> Option<char> {
             match digit {
                 1 => Some('א'),
                 2 => Some('ב'),
@@ -357,7 +357,7 @@ impl FieldNumericOverrides {
             }
         }
 
-        fn hebrew_tens(digit: usize) -> Option<char> {
+        fn hebrew_tens(digit: u32) -> Option<char> {
             match digit {
                 1 => Some('י'),
                 2 => Some('כ'),
@@ -372,7 +372,7 @@ impl FieldNumericOverrides {
             }
         }
 
-        fn hebrew_hundreds(digit: usize) -> &'static str {
+        fn hebrew_hundreds(digit: u32) -> &'static str {
             // Hebrew numerals only have unique letters for hundreds up to 400 (ת).
             // Values from 500 to 900 are represented by combining Tav (ת = 400)
             // with another hundred letter (e.g., 500 = 400 + 100 = תק).
@@ -390,7 +390,7 @@ impl FieldNumericOverrides {
             }
         }
 
-        fn format_hebrew_less_than_1000(n: usize) -> String {
+        fn format_hebrew_less_than_1000(n: u32) -> String {
             let mut s = String::new();
             let hundreds = n / 100;
             let rem = n % 100;
@@ -473,7 +473,7 @@ impl FieldNumericOverrides {
     }
 
     /// Formats a number according to the override system.
-    pub fn format_number(self, number: usize) -> String {
+    pub fn format_number(self, number: u32) -> String {
         match self {
             Self::Hanidec => Self::format_hanidec(number),
             // https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16
