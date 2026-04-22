@@ -285,7 +285,7 @@ impl FieldNumericOverrides {
                 false,
                 "romanlow should only be found in an M context and only supports 1-3999"
             );
-            return write!(w, "{}", n);
+            return n.write_to(w);
         }
         let mappings = [
             (1000, "m"),
