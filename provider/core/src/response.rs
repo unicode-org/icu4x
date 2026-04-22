@@ -26,8 +26,7 @@ use alloc::sync::Arc as SelectedRc;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum AltVariantStatus {
-    /// This indicates that this is definitely the standard variant and definitely not an alternative variant.
-    /// A value of `None` means that it is uncertain whether the data is the standard or an alternative variant.
+    /// The data represents the standard variant.
     Standard,
     /// The data represents an alternative variant.
     ///
@@ -44,10 +43,12 @@ pub struct DataResponseMetadata {
     pub locale: Option<DataLocale>,
     /// The format of the buffer for buffer-backed data, if known (for example, JSON).
     pub buffer_format: Option<crate::buf::BufferFormat>,
+    /// An indication of whether the data represents an alternative to the standard data.
+    ///  
+    /// A value of `None` indicates that it is unknown whether the data is the standard or an alternative variant.
+    pub alt_variant_status: Option<AltVariantStatus>,
     /// An optional checksum. This can be used to ensure consistency across different markers.
     pub checksum: Option<u64>,
-    /// An optional indication of whether the data represents an alternative to the standard data.
-    pub alt_variant_status: Option<AltVariantStatus>,
 }
 
 impl DataResponseMetadata {
