@@ -314,6 +314,10 @@ struct Cli {
     #[arg(help = "Obey the alt='ascii' variant for date/time formatting patterns.")]
     #[cfg(feature = "provider")]
     alt_ascii_datetime_formats: bool,
+
+    #[arg(long)]
+    #[arg(help = "Filter out all standard variant data payloads, exporting only alternative variants.")]
+    only_alt_variants: bool,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -638,7 +642,14 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
     let mut driver = ExportDriver::new(locale_families, deduplication_strategy.into(), fallbacker);
 
-    driver = driver.with_markers(markers);
+    use icu_provider_export::AltVariantStrategy;
+    driver = driver
+        .with_markers(markers)
+        .with_alt_variant_strategy(if cli.only_alt_variants {
+            AltVariantStrategy::OnlyAlternative
+        } else {
+            AltVariantStrategy::All
+        });
 
     driver = driver.with_additional_collations(
         cli.include_collations

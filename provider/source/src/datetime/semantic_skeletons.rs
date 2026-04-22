@@ -18,6 +18,7 @@ use icu::datetime::provider::skeleton::*;
 use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
+use icu_provider::{AltVariantStatus, DataResponseMetadata};
 use std::collections::{BTreeMap, HashSet};
 
 #[cfg(test)]
@@ -119,16 +120,31 @@ impl SourceDataProvider {
         Self: IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
-        // let neo_components = from_id_str(req.id.marker_attributes)
-        //     .expect("Skeleton data provider called with unknown skeleton");
+        let data = self.get_dates_resource(req.id.locale, calendar)?;
+        let has_alt_ascii = data.has_alt_ascii();
+
         let packed_skeleton_data = self.make_packed_skeleton_data(
             req.id.locale,
             calendar,
             req.id.marker_attributes,
             to_components_bag,
         )?;
+
+        let alt_variant_status = if has_alt_ascii {
+            Some(if self.use_alt_ascii_datetime_formats {
+                AltVariantStatus::Alternative
+            } else {
+                AltVariantStatus::Standard
+            })
+        } else {
+            None
+        };
+
+        let mut metadata = DataResponseMetadata::default();
+        metadata.alt_variant_status = alt_variant_status;
+
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata,
             payload: DataPayload::from_owned(packed_skeleton_data),
         })
     }

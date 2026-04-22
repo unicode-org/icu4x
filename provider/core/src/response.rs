@@ -22,6 +22,20 @@ use alloc::rc::Rc as SelectedRc;
 #[cfg(feature = "sync")]
 use alloc::sync::Arc as SelectedRc;
 
+/// Status indicating whether the data returned is an alternative variant.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum AltVariantStatus {
+    /// This indicates that this is definitely the standard variant and definitely not an alternative variant.
+    /// A value of `None` means that it is uncertain whether the data is the standard or an alternative variant.
+    Standard,
+    /// The data represents an alternative variant.
+    ///
+    /// For example, in time formatting, `alt="ascii"` variants are designated as `Alternative`
+    /// to signify they replace standard unicode whitespace characters with ASCII equivalents.
+    Alternative,
+}
+
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
 #[non_exhaustive]
@@ -32,6 +46,8 @@ pub struct DataResponseMetadata {
     pub buffer_format: Option<crate::buf::BufferFormat>,
     /// An optional checksum. This can be used to ensure consistency across different markers.
     pub checksum: Option<u64>,
+    /// An optional indication of whether the data represents an alternative to the standard data.
+    pub alt_variant_status: Option<AltVariantStatus>,
 }
 
 impl DataResponseMetadata {
@@ -1114,5 +1130,5 @@ fn test_debug() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234) }, payload: HelloWorld { message: \"Hello World\" } }", format!("{resp:?}"));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234), alt_variant_status: None }, payload: HelloWorld { message: \"Hello World\" } }", format!("{resp:?}"));
 }

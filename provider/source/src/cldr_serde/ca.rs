@@ -284,6 +284,12 @@ pub(crate) struct Dates {
     pub(crate) datetime_formats_at_time: DateTimeFormatsVariant,
 }
 
+impl Dates {
+    pub(crate) fn has_alt_ascii(&self) -> bool {
+        self.datetime_formats.available_formats.0.keys().any(|k| k.contains("-alt-ascii"))
+    }
+}
+
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct DatesCalendars {
     pub(crate) calendars: HashMap<String, Dates>,
