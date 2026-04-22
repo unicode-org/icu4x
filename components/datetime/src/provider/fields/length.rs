@@ -213,6 +213,7 @@ impl FieldNumericOverrides {
         }
     }
 
+    /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
     fn format_hanidec(number: usize) -> String {
         const HANIDEC_DIGITS: &[char] =
             &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
@@ -239,6 +240,7 @@ impl FieldNumericOverrides {
         s
     }
 
+    /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
     fn format_hanidays(number: usize) -> String {
         if number == 0 || number > 31 {
             debug_assert!(
@@ -275,6 +277,7 @@ impl FieldNumericOverrides {
         }
     }
 
+    // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
     fn format_romanlow(number: usize) -> String {
         let mut n = number;
         if n == 0 || n >= 4000 {
@@ -309,6 +312,35 @@ impl FieldNumericOverrides {
         s
     }
 
+    /// Formats a number using traditional Hebrew numerals (Gematria).
+    ///
+    /// Hebrew numerals are a quasi-decimal alphabetic numeral system using the letters of the
+    /// Hebrew alphabet. The system is described at <https://en.wikipedia.org/wiki/Hebrew_numerals>.
+    ///
+    /// The system has unique letters for units (1-9), tens (10-90), and hundreds from 100 to 400.
+    /// Hundreds greater than 400 are formed by adding letters together (e.g., 500 = 400 + 100 = תק,
+    /// 800 = 400 + 400 = תת, 900 = 400 + 400 + 100 = תתק).
+    ///
+    /// Numbers are formed additively by concatenating the representations for hundreds, tens, and units.
+    /// Numbers 15 and 16 are special cases to avoid using letters that form a name of God (יה and יו),
+    /// and are instead written as 9+6 (טו) and 9+7 (טז).
+    ///
+    /// Punctuation rules (Geresh and Gershayim):
+    /// - A single-letter number (e.g., 1 = א) receives a geresh (׳) at the end: א׳.
+    /// - A multi-letter number (e.g., 11 = יא) receives a gershayim (״) before the last letter: י״א.
+    /// - Thousands are separated from the rest with a geresh
+    ///
+    /// This implementation handles numbers up to 999,999 by splitting them into thousands and the
+    /// remainder, formatting each part separately according to the rules for numbers less than 1000.
+    ///
+    /// Quirk: For round thousands (e.g., 1000, 2000, 5000) without hundreds/tens/units,
+    /// it appends the word "thousands" (e.g., "ה׳ אלפים" for 5000) instead of just using the
+    /// letter for thousands, since "aleph geresh" would otherwise ambiguously mean both 1 and
+    /// 1000.
+    ///
+    /// This matches the `hebrew` RBNF rule
+    /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>,
+    /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
     fn format_hebrew(number: usize) -> String {
         fn hebrew_units(digit: usize) -> Option<char> {
             match digit {
@@ -443,7 +475,6 @@ impl FieldNumericOverrides {
     /// Formats a number according to the override system.
     pub fn format_number(self, number: usize) -> String {
         match self {
-            // https://github.com/unicode-org/cldr/blob/main/common/supplemental/numberingSystems.xml#L39
             Self::Hanidec => Self::format_hanidec(number),
             // https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16
             Self::Jpnyear => {
@@ -453,12 +484,8 @@ impl FieldNumericOverrides {
                     number.to_string()
                 }
             }
-            // https://github.com/unicode-org/cldr/blob/main/common/rbnf/zh.xml#L26
             Self::Hanidays => Self::format_hanidays(number),
-            // https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L684
             Self::Romanlow => Self::format_romanlow(number),
-            // https://github.com/unicode-org/cldr/blob/main/common/supplemental/numberingSystems.xml#L41
-            // https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522
             Self::Hebr => Self::format_hebrew(number),
         }
     }
