@@ -6,6 +6,7 @@ use alloc::string::String;
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
 use displaydoc::Display;
+use writeable::Writeable;
 use zerovec::ule::{AsULE, UleError, ULE};
 
 /// An error relating to the length of a field within a date pattern.
