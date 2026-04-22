@@ -306,9 +306,14 @@ struct Cli {
     segmenter_models: Vec<String>,
 
     #[arg(long)]
-    #[arg(help = "Use data from this blob file instead of generating it from sources")]
+    #[arg(help = "Use data data from this blob file instead of generating it from sources")]
     #[cfg(feature = "blob_input")]
     input_blob: Option<PathBuf>,
+
+    #[arg(long)]
+    #[arg(help = "Obey the alt='ascii' variant for date/time formatting patterns.")]
+    #[cfg(feature = "provider")]
+    alt_ascii_datetime_formats: bool,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -493,6 +498,9 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
             if cli.trie_type == TrieType::Fast {
                 p = p.with_fast_tries();
+            }
+            if cli.alt_ascii_datetime_formats {
+                p = p.with_alt_ascii_datetime_formats();
             }
 
             p = match (cli.cldr_root, cli.cldr_tag.as_str()) {

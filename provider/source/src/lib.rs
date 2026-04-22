@@ -103,6 +103,7 @@ pub struct SourceDataProvider {
     ucd_paths: Option<Arc<AbstractFs>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
+    pub(crate) use_alt_ascii_datetime_formats: bool,
     pub(crate) timezone_horizon: time_zones::Timestamp,
     #[expect(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
@@ -188,6 +189,7 @@ impl SourceDataProvider {
             )
             .unwrap(),
             collation_root_han: Default::default(),
+            use_alt_ascii_datetime_formats: false,
             requests_cache: Default::default(),
         }
     }
@@ -482,6 +484,15 @@ impl SourceDataProvider {
                 time: Time::start_of_day(),
                 zone: UtcOffset::zero(),
             },
+            ..self
+        }
+    }
+
+    /// Instruct the provider to use patterns with `alt="ascii"` whenever available
+    /// for datetime formatting.
+    pub fn with_alt_ascii_datetime_formats(self) -> Self {
+        Self {
+            use_alt_ascii_datetime_formats: true,
             ..self
         }
     }

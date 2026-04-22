@@ -10,22 +10,53 @@ use icu::plurals::{PluralCategory, PluralElements};
 use std::collections::BTreeMap;
 use std::convert::TryFrom;
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub(crate) enum AsciiPreferences {
+    PreferAscii,
+    Default,
+}
+
 impl cldr_serde::ca::AvailableFormats {
-    pub fn parse_skeletons(&self) -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
+    pub fn parse_skeletons(
+        &self,
+        ascii_preferences: AsciiPreferences,
+    ) -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
         let mut patterns: BTreeMap<String, BTreeMap<PluralCategory, String>> = BTreeMap::new();
 
         // The CLDR keys for available_formats can have duplicate skeletons with either
         // an additional variant, or with multiple variants for different plurals.
         for (skeleton_str, pattern_str) in self.0.iter() {
+            let is_alt_ascii = skeleton_str.contains("-alt-ascii");
+            if ascii_preferences == AsciiPreferences::Default && is_alt_ascii {
+                continue;
+            }
+
+            let skeleton_str = skeleton_str.replace("-alt-ascii", "");
+
             let (skeleton, plural_category) = match skeleton_str.split_once("-count-") {
                 Some((s, v)) => (s, PluralCategory::get_for_cldr_string(v).unwrap()),
-                None => (skeleton_str.as_ref(), PluralCategory::Other),
+                None => (skeleton_str.as_str(), PluralCategory::Other),
             };
 
-            patterns
+            use std::collections::btree_map::Entry;
+            match patterns
                 .entry(skeleton.to_string())
                 .or_default()
-                .insert(plural_category, pattern_str.to_string());
+                .entry(plural_category)
+            {
+                Entry::Vacant(e) => {
+                    e.insert(pattern_str.to_string());
+                }
+                Entry::Occupied(mut e) if is_alt_ascii => {
+                    // When `use_alt_ascii` is true, we want `alt-ascii` variants to take precedence
+                    // over standard patterns. Since `self.0.iter()` iterates over a HashMap in a
+                    // non-deterministic order, an ASCII variant might be processed before or after
+                    // a standard pattern. We only overwrite existing entries if the current pattern
+                    // being processed is the `alt-ascii` variant.
+                    e.insert(pattern_str.to_string());
+                }
+                Entry::Occupied(_) => {}
+            }
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -81,7 +112,47 @@ mod test {
         let data = provider
             .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))
             .unwrap();
-        data.datetime_formats.available_formats.parse_skeletons()
+        data.datetime_formats
+            .available_formats
+            .parse_skeletons(AsciiPreferences::Default)
+    }
+
+    #[test]
+    fn test_alt_ascii_parsing() {
+        let locale = locale!("en").into();
+        let provider = SourceDataProvider::new_testing();
+        let data = provider
+            .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))
+            .unwrap();
+
+        let skeletons_no_alt = data
+            .datetime_formats
+            .available_formats
+            .parse_skeletons(AsciiPreferences::Default);
+        let skeletons_alt = data
+            .datetime_formats
+            .available_formats
+            .parse_skeletons(AsciiPreferences::PreferAscii);
+
+        let h_skeleton = Skeleton::try_from("h").unwrap();
+
+        let pattern_no_alt = skeletons_no_alt
+            .get(&h_skeleton)
+            .unwrap()
+            .clone()
+            .try_into_other()
+            .unwrap()
+            .to_string();
+        let pattern_alt = skeletons_alt
+            .get(&h_skeleton)
+            .unwrap()
+            .clone()
+            .try_into_other()
+            .unwrap()
+            .to_string();
+
+        assert_eq!(pattern_no_alt.as_str(), "h a");
+        assert_eq!(pattern_alt.as_str(), "h a");
     }
 
     /// This is an initial smoke test to verify the skeleton machinery is working. For more in-depth

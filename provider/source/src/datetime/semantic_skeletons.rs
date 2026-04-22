@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::available_formats::AsciiPreferences;
 use super::DatagenCalendar;
 use crate::debug_provider::DebugProvider;
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
@@ -147,7 +148,13 @@ impl SourceDataProvider {
 
         // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
-        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
+        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons(
+            if self.use_alt_ascii_datetime_formats {
+                AsciiPreferences::PreferAscii
+            } else {
+                AsciiPreferences::Default
+            },
+        );
 
         fn enforce_consistent_field_lengths(
             trio: &mut VariantPatterns,
