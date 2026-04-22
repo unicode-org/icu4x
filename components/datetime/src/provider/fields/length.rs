@@ -221,9 +221,9 @@ impl FieldNumericOverrides {
             return w.write_char('〇');
         }
         let mut n = number;
-        let mut buf = [0u8; 20]; // Max digits for u64 is 20
-        let mut i = 20;
-        #[allow(clippy::indexing_slicing, reason = "i is < 20")]
+        let mut buf = [0u8; 10]; // Max digits for u32 is 10
+        let mut i = 10;
+        #[allow(clippy::indexing_slicing, reason = "i is < 10")]
         while n > 0 && i > 0 {
             i -= 1;
             buf[i] = (n % 10) as u8;
@@ -231,7 +231,7 @@ impl FieldNumericOverrides {
         }
         #[allow(
             clippy::indexing_slicing,
-            reason = "buf is sliced with an index < 20 and digits are within 0-9"
+            reason = "buf is sliced with an index < 10 and digits are within 0-9"
         )]
         for &d in buf[i..].iter() {
             w.write_char(HANIDEC_DIGITS[d as usize])?;
