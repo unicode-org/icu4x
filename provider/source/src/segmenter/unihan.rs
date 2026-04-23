@@ -41,14 +41,7 @@ fn build_unihan_radicals_data(
     let identifier_status = id_builder.build();
 
     let raw_content = unihan.read_to_string("Unihan_IRGSources.txt")?;
-    let mut builder = CodePointTrieBuilder::new(
-        0u8,
-        0u8,
-        match trie_type {
-            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-            crate::TrieType::Small => codepointtrie::TrieType::Small,
-        },
-    );
+    let mut builder = CodePointTrieBuilder::new(0u8, 0u8, trie_type.into());
 
     for line in raw_content.lines() {
         if line.starts_with('#') || line.trim().is_empty() {

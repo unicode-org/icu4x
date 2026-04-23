@@ -195,14 +195,7 @@ fn generate_rule_break_data(
     // the default unassigned values, so it's ok to omit them in the table.
     const CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
-    let mut properties_trie = CodePointTrieBuilder::new(
-        0u8,
-        0,
-        match trie_type {
-            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-            crate::TrieType::Small => codepointtrie::TrieType::Small,
-        },
-    );
+    let mut properties_trie = CodePointTrieBuilder::new(0u8, 0, trie_type.into());
     let mut properties_names = Vec::<String>::new();
     let mut simple_properties_count = 0;
 
@@ -643,14 +636,7 @@ fn generate_rule_break_data_override(
         toml::from_str::<SegmenterRuleTable>(rules_file).expect("The data should be valid!");
 
     const CODEPOINT_TABLE_LEN: usize = 0xE1000;
-    let mut properties_trie = CodePointTrieBuilder::new(
-        0u8,
-        0,
-        match trie_type {
-            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-            crate::TrieType::Small => codepointtrie::TrieType::Small,
-        },
-    );
+    let mut properties_trie = CodePointTrieBuilder::new(0u8, 0, trie_type.into());
     let mut properties_names = Vec::<String>::new();
 
     properties_names.push("Unknown".to_string());

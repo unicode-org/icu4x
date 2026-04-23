@@ -650,6 +650,15 @@ enum TrieType {
     Small,
 }
 
+impl From<TrieType> for icu::collections::codepointtrie::TrieType {
+    fn from(other: TrieType) -> Self {
+        match other {
+            TrieType::Fast => Self::Fast,
+            TrieType::Small => Self::Small,
+        }
+    }
+}
+
 impl std::fmt::Display for TrieType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self {
