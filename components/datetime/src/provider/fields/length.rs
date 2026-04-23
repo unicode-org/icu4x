@@ -479,69 +479,34 @@ mod tests {
 
     #[test]
     fn test_format_number() {
+        use FieldNumericOverrides::*;
         // hanidec
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidec, 2024),
-            "二〇二四"
-        );
-        assert_eq!(format_to_string(FieldNumericOverrides::Hanidec, 0), "〇");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hanidec, 10), "一〇");
+        assert_eq!(format_to_string(Hanidec, 2024), "二〇二四");
+        assert_eq!(format_to_string(Hanidec, 0), "〇");
+        assert_eq!(format_to_string(Hanidec, 10), "一〇");
 
         // hanidays
-        assert_eq!(format_to_string(FieldNumericOverrides::Hanidays, 1), "初一");
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidays, 10),
-            "初十"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidays, 11),
-            "十一"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidays, 19),
-            "十九"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidays, 20),
-            "二十"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidays, 21),
-            "廿一"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidays, 29),
-            "廿九"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidays, 30),
-            "三十"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hanidays, 31),
-            "丗一"
-        );
+        assert_eq!(format_to_string(Hanidays, 1), "初一");
+        assert_eq!(format_to_string(Hanidays, 10), "初十");
+        assert_eq!(format_to_string(Hanidays, 11), "十一");
+        assert_eq!(format_to_string(Hanidays, 19), "十九");
+        assert_eq!(format_to_string(Hanidays, 20), "二十");
+        assert_eq!(format_to_string(Hanidays, 21), "廿一");
+        assert_eq!(format_to_string(Hanidays, 29), "廿九");
+        assert_eq!(format_to_string(Hanidays, 30), "三十");
+        assert_eq!(format_to_string(Hanidays, 31), "丗一");
 
         // jpnyear
-        assert_eq!(format_to_string(FieldNumericOverrides::Jpnyear, 1), "元");
-        assert_eq!(format_to_string(FieldNumericOverrides::Jpnyear, 2), "2");
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Jpnyear, 2024),
-            "2024"
-        );
+        assert_eq!(format_to_string(Jpnyear, 1), "元");
+        assert_eq!(format_to_string(Jpnyear, 2), "2");
+        assert_eq!(format_to_string(Jpnyear, 2024), "2024");
 
         // romanlow
-        assert_eq!(format_to_string(FieldNumericOverrides::Romanlow, 1), "i");
-        assert_eq!(format_to_string(FieldNumericOverrides::Romanlow, 4), "iv");
-        assert_eq!(format_to_string(FieldNumericOverrides::Romanlow, 9), "ix");
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Romanlow, 49),
-            "xlix"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Romanlow, 3999),
-            "mmmcmxcix"
-        );
+        assert_eq!(format_to_string(Romanlow, 1), "i");
+        assert_eq!(format_to_string(Romanlow, 4), "iv");
+        assert_eq!(format_to_string(Romanlow, 9), "ix");
+        assert_eq!(format_to_string(Romanlow, 49), "xlix");
+        assert_eq!(format_to_string(Romanlow, 3999), "mmmcmxcix");
     }
 
     #[test]
@@ -560,41 +525,42 @@ mod tests {
 
     #[test]
     fn test_hebr() {
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1), "א׳");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 10), "י׳");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15), "ט״ו");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 16), "ט״ז");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 17), "י״ז");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 21), "כ״א");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 100), "ק׳");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 101), "ק״א");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 115), "קט״ו");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 400), "ת׳");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 415), "תט״ו");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 419), "תי״ט");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 500), "ת״ק");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 719), "תשי״ט");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 784), "תשפ״ד");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1000), "אלף");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1001), "א׳א׳");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1015), "א׳ט״ו");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1415), "א׳תט״ו");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1419), "א׳תי״ט");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1719), "א׳תשי״ט");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 2000), "אלפיים");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 3000), "ג׳ אלפים");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 4000), "ד׳ אלפים");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 5000), "ה׳ אלפים");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 5783), "ה׳תשפ״ג");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15000), "ט״ו אלפים");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15001), "ט״ו׳א׳");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15015), "ט״ו׳ט״ו");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15400), "ט״ו׳ת׳");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15415), "ט״ו׳תט״ו");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15419), "ט״ו׳תי״ט");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15719), "ט״ו׳תשי״ט");
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 100000), "ק׳ אלפים");
+        use FieldNumericOverrides::Hebr;
+        assert_eq!(format_to_string(Hebr, 1), "א׳");
+        assert_eq!(format_to_string(Hebr, 10), "י׳");
+        assert_eq!(format_to_string(Hebr, 15), "ט״ו");
+        assert_eq!(format_to_string(Hebr, 16), "ט״ז");
+        assert_eq!(format_to_string(Hebr, 17), "י״ז");
+        assert_eq!(format_to_string(Hebr, 21), "כ״א");
+        assert_eq!(format_to_string(Hebr, 100), "ק׳");
+        assert_eq!(format_to_string(Hebr, 101), "ק״א");
+        assert_eq!(format_to_string(Hebr, 115), "קט״ו");
+        assert_eq!(format_to_string(Hebr, 400), "ת׳");
+        assert_eq!(format_to_string(Hebr, 415), "תט״ו");
+        assert_eq!(format_to_string(Hebr, 419), "תי״ט");
+        assert_eq!(format_to_string(Hebr, 500), "ת״ק");
+        assert_eq!(format_to_string(Hebr, 719), "תשי״ט");
+        assert_eq!(format_to_string(Hebr, 784), "תשפ״ד");
+        assert_eq!(format_to_string(Hebr, 1000), "אלף");
+        assert_eq!(format_to_string(Hebr, 1001), "א׳א׳");
+        assert_eq!(format_to_string(Hebr, 1015), "א׳ט״ו");
+        assert_eq!(format_to_string(Hebr, 1415), "א׳תט״ו");
+        assert_eq!(format_to_string(Hebr, 1419), "א׳תי״ט");
+        assert_eq!(format_to_string(Hebr, 1719), "א׳תשי״ט");
+        assert_eq!(format_to_string(Hebr, 2000), "אלפיים");
+        assert_eq!(format_to_string(Hebr, 3000), "ג׳ אלפים");
+        assert_eq!(format_to_string(Hebr, 4000), "ד׳ אלפים");
+        assert_eq!(format_to_string(Hebr, 5000), "ה׳ אלפים");
+        assert_eq!(format_to_string(Hebr, 5783), "ה׳תשפ״ג");
+        assert_eq!(format_to_string(Hebr, 15000), "ט״ו אלפים");
+        assert_eq!(format_to_string(Hebr, 15001), "ט״ו׳א׳");
+        assert_eq!(format_to_string(Hebr, 15015), "ט״ו׳ט״ו");
+        assert_eq!(format_to_string(Hebr, 15400), "ט״ו׳ת׳");
+        assert_eq!(format_to_string(Hebr, 15415), "ט״ו׳תט״ו");
+        assert_eq!(format_to_string(Hebr, 15419), "ט״ו׳תי״ט");
+        assert_eq!(format_to_string(Hebr, 15719), "ט״ו׳תשי״ט");
+        assert_eq!(format_to_string(Hebr, 100000), "ק׳ אלפים");
         // Fallback
-        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1000000), "1000000");
+        assert_eq!(format_to_string(Hebr, 1000000), "1000000");
     }
 }
