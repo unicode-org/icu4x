@@ -667,9 +667,9 @@ pub fn lstm_data() -> AbstractFs {
 }
 
 #[rustfmt::skip]
-pub fn ucd_data() -> AbstractFs {
+pub fn unicode_data() -> AbstractFs {
     include_files!(
-        "../../tests/data/ucd/";
+        "../../tests/data/unicode/";
         "security/IdentifierStatus.txt",
         "ucd/Unihan.zip"
     )

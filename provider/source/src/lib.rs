@@ -36,7 +36,7 @@ use icu::calendar::{Date, Iso};
 use icu::time::zone::UtcOffset;
 use icu::time::Time;
 use icu_provider::prelude::*;
-use source::{AbstractFs, SerdeCache, TzdbCache, UcdCache};
+use source::{AbstractFs, SerdeCache, TzdbCache, UnicodeCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::path::Path;
@@ -99,7 +99,7 @@ pub struct SourceDataProvider {
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
-    ucd_paths: Option<Arc<UcdCache>>,
+    unicode_paths: Option<Arc<UnicodeCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
     pub(crate) timezone_horizon: time_zones::Timestamp,
@@ -178,7 +178,7 @@ impl SourceDataProvider {
             icuexport_paths: None,
             segmenter_lstm_paths: None,
             tzdb_paths: None,
-            ucd_paths: None,
+            unicode_paths: None,
             trie_type: Default::default(),
             timezone_horizon: time_zones::Timestamp::try_offset_only_from_str(
                 "2015-01-01T00:00:00Z",
@@ -221,19 +221,17 @@ impl SourceDataProvider {
     }
 
     /// Adds Unihan source data to the provider. The path should point to the Unihan ZIP file
-    /// <https://unicode.org/Public/{version}/ucd/Unihan.zip>
     /// (see [Unicode Character Database](https://www.unicode.org/ucd/)).
     #[deprecated]
     pub fn with_unihan(self, _root: &Path) -> Result<Self, DataError> {
         panic!("Use `.with_ucd` to set UCD data, which includes Unihan data.");
     }
 
-    /// Adds UCD source data to the provider. The path should point to a directory containing
-    /// the relevant structure from <https://unicode.org/Public/{version}/>
-    /// (see [Unicode Character Database](https://www.unicode.org/ucd/)).
+    /// Adds UCD source data to the provider. The path should point to a
+    /// directory containing `security/IdentifierStatus.txt`.
     pub fn with_ucd(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
-            ucd_paths: Some(Arc::new(UcdCache::new(AbstractFs::new(root)?))),
+            unicode_paths: Some(Arc::new(UnicodeCache::new(AbstractFs::new(root)?))),
             ..self
         })
     }
@@ -325,9 +323,9 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_ucd_for_tag(self, tag: &str) -> Self {
         Self {
-            ucd_paths: Some(Arc::new(UcdCache::new(AbstractFs::new_from_url(format!(
-                "https://www.unicode.org/Public/{tag}/"
-            ))))),
+            unicode_paths: Some(Arc::new(UnicodeCache::new(AbstractFs::new_from_url(
+                format!("https://www.unicode.org/Public/{tag}/"),
+            )))),
             ..self
         }
     }
@@ -417,8 +415,8 @@ impl SourceDataProvider {
     }
 
     #[allow(dead_code)]
-    fn ucd(&self) -> Result<&UcdCache, DataError> {
-        self.ucd_paths.as_deref().ok_or(Self::MISSING_UCD_ERROR)
+    fn unicode(&self) -> Result<&UnicodeCache, DataError> {
+        self.unicode_paths.as_deref().ok_or(Self::MISSING_UCD_ERROR)
     }
 
     fn tzdb(&self) -> Result<&TzdbCache, DataError> {

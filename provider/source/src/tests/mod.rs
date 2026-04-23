@@ -13,7 +13,7 @@ mod make_testdata;
 include!("data.rs");
 
 use crate::cldr_cache::CldrCache;
-use crate::source::{SerdeCache, TzdbCache, UcdCache};
+use crate::source::{SerdeCache, TzdbCache, UnicodeCache};
 use crate::SourceDataProvider;
 use std::sync::{Arc, OnceLock};
 
@@ -27,7 +27,7 @@ impl SourceDataProvider {
                 cldr_paths: Some(Arc::new(CldrCache::new(cldr_data()))),
                 icuexport_paths: Some(Arc::new(SerdeCache::new(icuexport_data()))),
                 segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(lstm_data()))),
-                ucd_paths: Some(Arc::new(UcdCache::new(ucd_data()))),
+                unicode_paths: Some(Arc::new(UnicodeCache::new(unicode_data()))),
                 tzdb_paths: Some(Arc::new(TzdbCache::new(tzdb_data()))),
                 ..SourceDataProvider::new_custom()
             })

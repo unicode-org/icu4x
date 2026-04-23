@@ -206,7 +206,7 @@ const LSTM_GLOB: &[&str] = &[
     "Thai_graphclust_model4_heavy/weights.json",
 ];
 
-const UCD_GLOB: &[&str] = &[
+const UNICODE_GLOB: &[&str] = &[
     "security/IdentifierStatus.txt",
     "ucd/Unihan.zip/Unihan_IRGSources.txt",
 ];
