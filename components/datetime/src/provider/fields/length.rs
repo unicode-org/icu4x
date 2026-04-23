@@ -404,6 +404,13 @@ impl FieldNumericOverrides {
             // traditional system. This *is* reachable for 0 years.
             return w.write_str("0");
         }
+        if number == 1000 {
+            // Separate words for lone thousands
+            return w.write_str("אלף");
+        }
+        if number == 2000 {
+            return w.write_str("אלפיים");
+        }
         let thousands = number / 1000;
         let rest = number % 1000;
 
@@ -421,6 +428,10 @@ impl FieldNumericOverrides {
                 // Special case for bare thousands (e.g. 5000 -> ה׳ אלפים)
                 // to avoid ambiguity, based on ICU4C behavior.
                 return w.write_str(" אלפים");
+            // Geresh is a thousands separator, but apply_hebrew_punctuation
+            // may already have applied a geresh. Don't duplicate it.
+            } else if !thousands_s.ends_with('׳') {
+                w.write_str("׳")?;
             }
         }
 
@@ -559,28 +570,31 @@ mod tests {
         assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 101), "ק״א");
         assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 115), "קט״ו");
         assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 400), "ת׳");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 415), "תט״ו");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 419), "תי״ט");
         assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 500), "ת״ק");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 719), "תשי״ט");
         assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 784), "תשפ״ד");
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hebr, 1000),
-            "א׳ אלפים"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hebr, 5000),
-            "ה׳ אלפים"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hebr, 5783),
-            "ה׳תשפ״ג"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hebr, 100000),
-            "ק׳ אלפים"
-        );
-        assert_eq!(
-            format_to_string(FieldNumericOverrides::Hebr, 1000000),
-            "1000000"
-        );
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1000), "אלף");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1001), "א׳א׳");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1015), "א׳ט״ו");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1415), "א׳תט״ו");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1419), "א׳תי״ט");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1719), "א׳תשי״ט");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 2000), "אלפיים");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 3000), "ג׳ אלפים");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 4000), "ד׳ אלפים");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 5000), "ה׳ אלפים");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 5783), "ה׳תשפ״ג");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15000), "ט״ו אלפים");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15001), "ט״ו׳א׳");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15015), "ט״ו׳ט״ו");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15400), "ט״ו׳ת׳");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15415), "ט״ו׳תט״ו");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15419), "ט״ו׳תי״ט");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 15719), "ט״ו׳תשי״ט");
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 100000), "ק׳ אלפים");
         // Fallback
+        assert_eq!(format_to_string(FieldNumericOverrides::Hebr, 1000000), "1000000");
     }
 }
