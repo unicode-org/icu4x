@@ -86,7 +86,7 @@ impl FieldNumericOverrides {
         ];
         #[allow(
             clippy::indexing_slicing,
-            reason = "We are always indexing a 10-element array with a digit"
+            reason = "We are always indexing an 11-element array with a digit"
         )]
         match number {
             1..=10 => {
@@ -247,7 +247,6 @@ impl FieldNumericOverrides {
                             wrote_gershayim = true;
                         } else {
                             w.write_char(x)?;
-                            // w.write_char('׳')?;
                         }
                     }
                     (h, None, None) => {
@@ -255,11 +254,8 @@ impl FieldNumericOverrides {
                         if let Some(last) = chars.next_back() {
                             if chars.as_str().is_empty() {
                                 w.write_char(last)?;
-                                // w.write_char('׳')?;
                             } else {
-                                for c in chars {
-                                    w.write_char(c)?;
-                                }
+                                w.write_str(chars.as_str())?;
                                 w.write_char('״')?;
                                 w.write_char(last)?;
                                 wrote_gershayim = true;
