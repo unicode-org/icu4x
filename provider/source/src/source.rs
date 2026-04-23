@@ -540,7 +540,7 @@ impl TzdbCache {
 
 // A cache representing https://unicode.org/Public/{version}/
 #[derive(Debug)]
-pub(crate) struct UnicodeCache {
+pub(crate) struct UcdCache {
     root: AbstractFs,
     // The UCD contains zip files, which we let callers transparently access as
     // directories. We cache the parsed zip files.
@@ -549,7 +549,7 @@ pub(crate) struct UnicodeCache {
     file_cache: FrozenMap<String, String>,
 }
 
-impl UnicodeCache {
+impl UcdCache {
     pub fn new(root: AbstractFs) -> Self {
         Self {
             root,

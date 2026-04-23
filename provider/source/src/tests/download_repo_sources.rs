@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::source::{AbstractFs, UnicodeCache};
+use crate::source::{AbstractFs, UcdCache};
 use crate::SourceDataProvider;
 use icu::locale::{langid, LanguageIdentifier};
 use icu_provider::DataError;
@@ -38,7 +38,7 @@ impl AbstractFs {
     }
 }
 
-impl UnicodeCache {
+impl UcdCache {
     pub fn dump(
         &self,
         target: &Path,
@@ -141,12 +141,12 @@ fn download_repo_sources() {
         )
         .unwrap();
 
-    let unicode_files = provider
-        .unicode_paths
+    let ucd_files = provider
+        .ucd_paths
         .unwrap()
         .dump(
-            &out_root.join("unicode"),
-            UNICODE_GLOB.iter().copied().map(String::from).collect(),
+            &out_root.join("ucd"),
+            UCD_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
 
@@ -190,11 +190,11 @@ fn download_repo_sources() {
     tzdb_files.remove("Makefile");
     tzdb_files.remove("ziguard.awk");
 
-    let [cldr_files, icuexport_files, lstm_files, unicode_files, tzdb_files] = [
+    let [cldr_files, icuexport_files, lstm_files, ucd_files, tzdb_files] = [
         cldr_files,
         icuexport_files,
         lstm_files,
-        unicode_files,
+        ucd_files,
         tzdb_files,
     ]
     .map(|files| {
@@ -243,10 +243,10 @@ pub fn lstm_data() -> AbstractFs {{
 }}
 
 #[rustfmt::skip]
-pub fn unicode_data() -> AbstractFs {{
+pub fn ucd_data() -> AbstractFs {{
     include_files!(
-        \"../../tests/data/unicode/\";
-        {unicode_files}
+        \"../../tests/data/ucd/\";
+        {ucd_files}
     )
 }}
 
