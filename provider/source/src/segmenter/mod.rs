@@ -93,64 +93,12 @@ fn generate_rule_break_data(
     provider: &SourceDataProvider,
     rules_file: &str,
     trie_type: crate::TrieType,
-) -> RuleBreakData<'static> {
+) -> Result<RuleBreakData<'static>, DataError> {
     use icu::properties::{props::ExtendedPictographic, PropertyParser};
     use icu_codepointtrie_builder::CodePointTrieBuilder;
 
     let segmenter =
         toml::from_str::<SegmenterRuleTable>(rules_file).expect("The data should be valid!");
-
-    let data = CodePointMapData::<WordBreak>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let wb = data.as_borrowed();
-
-    let data = CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let gb = data.as_borrowed();
-
-    let data = CodePointMapData::<SentenceBreak>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let sb = data.as_borrowed();
-
-    let data = CodePointMapData::<LineBreak>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let lb = data.as_borrowed();
-
-    let data = CodePointMapData::<EastAsianWidth>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let eaw = data.as_borrowed();
-
-    let data = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let gc = data.as_borrowed();
-
-    let data =
-        CodePointMapData::<Script>::try_new_unstable(provider).expect("The data should be valid");
-    let script = data.as_borrowed();
-
-    let data = CodePointSetData::try_new_unstable::<ExtendedPictographic>(provider)
-        .expect("The data should be valid!");
-    let extended_pictographic = data.as_borrowed();
-
-    let data = CodePointMapData::<IndicConjunctBreak>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let incb = data.as_borrowed();
-
-    let data = PropertyParser::<GraphemeClusterBreak>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let gcb_name_to_enum = data.as_borrowed();
-
-    let data =
-        PropertyParser::<LineBreak>::try_new_unstable(provider).expect("The data should be valid!");
-    let lb_name_to_enum = data.as_borrowed();
-
-    let data = PropertyParser::<SentenceBreak>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let sb_name_to_enum = data.as_borrowed();
-
-    let data =
-        PropertyParser::<WordBreak>::try_new_unstable(provider).expect("The data should be valid!");
-    let wb_name_to_enum = data.as_borrowed();
 
     fn set_break_state(
         break_state_table: &mut [Option<BreakState>],
@@ -200,25 +148,36 @@ fn generate_rule_break_data(
     properties_names.push("Unknown".to_string());
     simple_properties_count += 1;
 
-    for p in &segmenter.tables {
-        let property_index = if !properties_names.contains(&p.name) {
-            properties_names.push(p.name.clone());
-            (properties_names.len() - 1).try_into().unwrap()
-        } else {
-            continue;
-        };
+    match &*segmenter.segmenter_type {
+        "word" => {
+            let wb = CodePointMapData::<WordBreak>::try_new_unstable(provider)?;
+            let wb = wb.as_borrowed();
+            let extended_pictographic =
+                CodePointSetData::try_new_unstable::<ExtendedPictographic>(provider)?;
+            let extended_pictographic = extended_pictographic.as_borrowed();
+            let script = CodePointMapData::<Script>::try_new_unstable(provider)?;
+            let script = script.as_borrowed();
+            let lb = CodePointMapData::<LineBreak>::try_new_unstable(provider)?;
+            let lb = lb.as_borrowed();
+            let wb_name_to_enum = PropertyParser::<WordBreak>::try_new_unstable(provider)?;
+            let wb_name_to_enum = wb_name_to_enum.as_borrowed();
 
-        if p.left.is_none() && p.right.is_none() {
-            // If any values aren't set, this is builtin type.
-            simple_properties_count += 1;
+            for p in &segmenter.tables {
+                let property_index = if !properties_names.contains(&p.name) {
+                    properties_names.push(p.name.clone());
+                    (properties_names.len() - 1).try_into().unwrap()
+                } else {
+                    continue;
+                };
 
-            if p.as_simple_property.is_some() {
-                // defined as simple property. It means that we move the marker to the next property.
-                continue;
-            }
+                if p.left.is_none() && p.right.is_none() {
+                    // If any values aren't set, this is builtin type.
+                    simple_properties_count += 1;
 
-            match &*segmenter.segmenter_type {
-                "word" => {
+                    if p.as_simple_property.is_some() {
+                        // defined as simple property. It means that we move the marker to the next property.
+                        continue;
+                    }
                     if p.name == "Extended_Pictographic" {
                         // :Word_Break=ALetter: includes Extended_Pictographic. So we want to
                         // exlude ALetter.
@@ -304,8 +263,37 @@ fn generate_rule_break_data(
 
                     continue;
                 }
+            }
+        }
 
-                "grapheme" => {
+        "grapheme" => {
+            let extended_pictographic =
+                CodePointSetData::try_new_unstable::<ExtendedPictographic>(provider)?;
+            let extended_pictographic = extended_pictographic.as_borrowed();
+            let incb = CodePointMapData::<IndicConjunctBreak>::try_new_unstable(provider)?;
+            let incb = incb.as_borrowed();
+            let gcb_name_to_enum =
+                PropertyParser::<GraphemeClusterBreak>::try_new_unstable(provider)?;
+            let gcb_name_to_enum = gcb_name_to_enum.as_borrowed();
+            let gb = CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(provider)?;
+            let gb = gb.as_borrowed();
+
+            for p in &segmenter.tables {
+                let property_index = if !properties_names.contains(&p.name) {
+                    properties_names.push(p.name.clone());
+                    (properties_names.len() - 1).try_into().unwrap()
+                } else {
+                    continue;
+                };
+
+                if p.left.is_none() && p.right.is_none() {
+                    // If any values aren't set, this is builtin type.
+                    simple_properties_count += 1;
+
+                    if p.as_simple_property.is_some() {
+                        // defined as simple property. It means that we move the marker to the next property.
+                        continue;
+                    }
                     // Extended_Pictographic isn't a part of grapheme break property
                     if p.name == "Extended_Pictographic" {
                         for range in extended_pictographic.iter_ranges() {
@@ -345,8 +333,31 @@ fn generate_rule_break_data(
                     }
                     continue;
                 }
+            }
+        }
 
-                "sentence" => {
+        "sentence" => {
+            let sb = CodePointMapData::<SentenceBreak>::try_new_unstable(provider)?;
+            let sb = sb.as_borrowed();
+            let sb_name_to_enum = PropertyParser::<SentenceBreak>::try_new_unstable(provider)?;
+            let sb_name_to_enum = sb_name_to_enum.as_borrowed();
+
+            for p in &segmenter.tables {
+                let property_index = if !properties_names.contains(&p.name) {
+                    properties_names.push(p.name.clone());
+                    (properties_names.len() - 1).try_into().unwrap()
+                } else {
+                    continue;
+                };
+
+                if p.left.is_none() && p.right.is_none() {
+                    // If any values aren't set, this is builtin type.
+                    simple_properties_count += 1;
+
+                    if p.as_simple_property.is_some() {
+                        // defined as simple property. It means that we move the marker to the next property.
+                        continue;
+                    }
                     let prop = sb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
@@ -355,8 +366,38 @@ fn generate_rule_break_data(
                     }
                     continue;
                 }
+            }
+        }
 
-                "line" => {
+        "line" => {
+            let lb = CodePointMapData::<LineBreak>::try_new_unstable(provider)?;
+            let lb = lb.as_borrowed();
+            let eaw = CodePointMapData::<EastAsianWidth>::try_new_unstable(provider)?;
+            let eaw = eaw.as_borrowed();
+            let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?;
+            let gc = gc.as_borrowed();
+            let extended_pictographic =
+                CodePointSetData::try_new_unstable::<ExtendedPictographic>(provider)?;
+            let extended_pictographic = extended_pictographic.as_borrowed();
+            let lb_name_to_enum = PropertyParser::<LineBreak>::try_new_unstable(provider)?;
+            let lb_name_to_enum = lb_name_to_enum.as_borrowed();
+
+            for p in &segmenter.tables {
+                let property_index = if !properties_names.contains(&p.name) {
+                    properties_names.push(p.name.clone());
+                    (properties_names.len() - 1).try_into().unwrap()
+                } else {
+                    continue;
+                };
+
+                if p.left.is_none() && p.right.is_none() {
+                    // If any values aren't set, this is builtin type.
+                    simple_properties_count += 1;
+
+                    if p.as_simple_property.is_some() {
+                        // defined as simple property. It means that we move the marker to the next property.
+                        continue;
+                    }
                     if p.name == "CP_EA"
                         || p.name == "OP_OP30"
                         || p.name == "OP_EA"
@@ -473,11 +514,11 @@ fn generate_rule_break_data(
                     }
                     continue;
                 }
-
-                _ => {
-                    panic!("unknown built-in segmenter type");
-                }
             }
+        }
+
+        _ => {
+            panic!("unknown built-in segmenter type");
         }
     }
 
@@ -588,7 +629,7 @@ fn generate_rule_break_data(
         }
     }
 
-    RuleBreakData {
+    Ok(RuleBreakData {
         property_table: properties_trie.build(),
         break_state_table: break_state_table
             .into_iter()
@@ -619,7 +660,7 @@ fn generate_rule_break_data(
             .unwrap_or(127)
             .try_into()
             .unwrap(),
-    }
+    })
 }
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -679,7 +720,7 @@ fn generate_rule_break_data_override(
 }
 
 macro_rules! implement {
-    ($marker:ident, $rules:literal) => {
+    ($marker:ident, $rules:literal, $provider:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
@@ -691,10 +732,10 @@ macro_rules! implement {
                 return {
                     self.check_req::<$marker>(req)?;
                     let data = generate_rule_break_data(
-                        &hardcoded_segmenter_provider(),
+                        ($provider)(self),
                         include_str!(concat!("../../data/segmenter/", $rules)),
                         self.trie_type(),
-                    );
+                    )?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
@@ -725,7 +766,7 @@ macro_rules! implement_override {
                 return {
                     self.check_req::<$marker>(req)?;
                     let data = generate_rule_break_data_override(
-                        &hardcoded_segmenter_provider(),
+                        self,
                         include_str!(concat!("../../data/segmenter/", $rules)),
                         self.trie_type(),
                     );
@@ -750,33 +791,26 @@ macro_rules! implement_override {
     }
 }
 
-fn hardcoded_segmenter_provider() -> SourceDataProvider {
+fn unicode_15_1() -> &'static SourceDataProvider {
     // Singleton so that all instantiations share the same cache.
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
-    SINGLETON
-        .get_or_init(|| {
-            let mut provider = SourceDataProvider::new_custom();
-            provider.icuexport_paths = Some(std::sync::Arc::new(SerdeCache::new(include_files!(
-                "../../data/segmenter/";
-                "uprops/small/ea.toml",
-                "uprops/small/ExtPict.toml",
-                "uprops/small/gc.toml",
-                "uprops/small/GCB.toml",
-                "uprops/small/InCB.toml",
-                "uprops/small/lb.toml",
-                "uprops/small/SB.toml",
-                "uprops/small/sc.toml",
-                "uprops/small/WB.toml",
-            ))));
-            provider
-        })
-        .clone()
+    SINGLETON.get_or_init(|| {
+        let mut provider = SourceDataProvider::new_custom();
+        provider.icuexport_paths = Some(std::sync::Arc::new(SerdeCache::new(include_files!(
+            "../../data/segmenter/icuexportdata74/";
+            "uprops/small/ea.toml",
+            "uprops/small/ExtPict.toml",
+            "uprops/small/gc.toml",
+            "uprops/small/lb.toml",
+        ))));
+        provider
+    })
 }
 
-implement!(SegmenterBreakLineV1, "line.toml");
-implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml");
-implement!(SegmenterBreakWordV1, "word.toml");
-implement!(SegmenterBreakSentenceV1, "sentence.toml");
+implement!(SegmenterBreakLineV1, "line.toml", |_| unicode_15_1());
+implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml", |s| s);
+implement!(SegmenterBreakWordV1, "word.toml", |s| s);
+implement!(SegmenterBreakSentenceV1, "sentence.toml", |s| s);
 implement_override!(SegmenterBreakWordOverrideV1, "word.toml", ["fi", "sv"]);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
