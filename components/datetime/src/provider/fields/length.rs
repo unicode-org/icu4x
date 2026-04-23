@@ -2,13 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::String;
-use core::cmp::{Ord, PartialOrd};
-use core::fmt;
-use displaydoc::Display;
-use writeable::Writeable;
-use zerovec::ule::{AsULE, UleError, ULE};
 use super::FieldNumericOverrides;
+use core::cmp::{Ord, PartialOrd};
+use displaydoc::Display;
+use zerovec::ule::{AsULE, UleError, ULE};
 
 /// An error relating to the length of a field within a date pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
@@ -168,5 +165,3 @@ unsafe impl ULE for FieldLengthULE {
         Ok(())
     }
 }
-
-
