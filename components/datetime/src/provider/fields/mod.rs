@@ -7,10 +7,12 @@
 #![allow(clippy::exhaustive_structs)] // Field and FieldULE part of data struct
 
 mod length;
+mod numeric_override;
 pub(crate) mod symbols;
 
 use displaydoc::Display;
-pub use length::{FieldLength, FieldNumericOverrides, LengthError};
+pub use length::{FieldLength, LengthError};
+pub use numeric_override::FieldNumericOverrides;
 pub use symbols::*;
 use writeable::Writeable;
 
