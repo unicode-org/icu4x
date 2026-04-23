@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::LengthError;
-use alloc::string::String;
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
 use writeable::Writeable;
@@ -191,52 +190,92 @@ impl FieldNumericOverrides {
         // with another hundred letter (e.g., 500 = 400 + 100 = תק).
         const HEBREW_HUNDREDS: [&str; 9] = ["ק", "ר", "ש", "ת", "תק", "תר", "תש", "תת", "תתק"];
 
-        fn format_hebrew_less_than_1000(n: u32) -> String {
-            let mut s = String::new();
+        /// Format a hebrew number < 1000, including punctuation
+        ///
+        /// The `force_geresh` mark forces a geresh even if a gershayim has been
+        /// written. This is in the case we are writing the thousands+ part.
+        fn format_hebrew_less_than_1000<W: fmt::Write + ?Sized>(
+            n: u32,
+            w: &mut W,
+            force_geresh: bool,
+        ) -> fmt::Result {
             let hundreds = n / 100;
             let rem = n % 100;
 
-            if let Some(&str) = HEBREW_HUNDREDS.get((hundreds as usize).wrapping_sub(1)) {
-                s.push_str(str);
-            }
+            let hundreds_str = HEBREW_HUNDREDS
+                .get((hundreds as usize).wrapping_sub(1))
+                .copied()
+                .unwrap_or_default();
+
+            // Did we write a gershayim? The gershayim is
+            // stuck *before* the last letter and is used
+            // for numbers with more than one letter in them.
+            let mut wrote_gershayim = false;
 
             if rem == 15 {
-                s.push_str("טו");
+                w.write_str(hundreds_str)?;
+                w.write_char('ט')?;
+                w.write_char('״')?;
+                w.write_char('ו')?;
+                wrote_gershayim = true;
             } else if rem == 16 {
-                s.push_str("טז");
+                w.write_str(hundreds_str)?;
+                w.write_char('ט')?;
+                w.write_char('״')?;
+                w.write_char('ז')?;
+                wrote_gershayim = true;
             } else {
                 let tens = rem / 10;
                 let units = rem % 10;
 
-                if let Some(&c) = HEBREW_TENS.get((tens as usize).wrapping_sub(1)) {
-                    s.push(c);
-                }
-                if let Some(&c) = HEBREW_UNITS.get((units as usize).wrapping_sub(1)) {
-                    s.push(c);
-                }
-            }
-            s
-        }
+                let tens_char = HEBREW_TENS.get((tens as usize).wrapping_sub(1));
+                let units_char = HEBREW_UNITS.get((units as usize).wrapping_sub(1));
 
-        /// Applies Hebrew punctuation (geresh or gershayim) to a string of Hebrew numerals.
-        ///
-        /// The rules are:
-        /// - Single-letter numbers (e.g., units like "א", tens like "י", or hundreds like "ק")
-        ///   get a geresh (׳) at the end to indicate they are numerals.
-        /// - Multi-letter numbers (e.g., "טו" or "קא") get a gershayim (״) before the last letter.
-        ///
-        /// This follows standard conventions for Hebrew Gematria numerals, ensuring that
-        /// every numeral string has either a geresh or a gershayim, and is consistent
-        /// with how ICU4C formats dates with Hebrew numbering.
-        fn apply_hebrew_punctuation(s: &mut String) {
-            let count = s.chars().count();
-            if count == 1 {
-                s.push('׳');
-            } else if count > 1 {
-                if let Some((i, _)) = s.char_indices().last() {
-                    s.insert(i, '״');
+                match (hundreds_str, tens_char, units_char) {
+                    (h, Some(&t), Some(&u)) => {
+                        w.write_str(h)?;
+                        w.write_char(t)?;
+                        w.write_char('״')?;
+                        w.write_char(u)?;
+                        wrote_gershayim = true;
+                    }
+                    (h, Some(&x), None) | (h, None, Some(&x)) => {
+                        if !h.is_empty() {
+                            w.write_str(h)?;
+                            w.write_char('״')?;
+                            w.write_char(x)?;
+                            wrote_gershayim = true;
+                        } else {
+                            w.write_char(x)?;
+                            // w.write_char('׳')?;
+                        }
+                    }
+                    (h, None, None) => {
+                        let mut chars = h.chars();
+                        if let Some(last) = chars.next_back() {
+                            if chars.as_str().is_empty() {
+                                w.write_char(last)?;
+                                // w.write_char('׳')?;
+                            } else {
+                                for c in chars {
+                                    w.write_char(c)?;
+                                }
+                                w.write_char('״')?;
+                                w.write_char(last)?;
+                                wrote_gershayim = true;
+                            }
+                        }
+                    }
                 }
             }
+
+            // We need to write a geresh if we didn't write a gershayim
+            // (one-letter numbers), or if asked to force one (for thousands+ places)
+            if !wrote_gershayim || force_geresh {
+                w.write_char('׳')?;
+            }
+
+            Ok(())
         }
 
         if number == 0 {
@@ -260,22 +299,27 @@ impl FieldNumericOverrides {
         }
 
         if thousands > 0 {
-            let mut thousands_s = format_hebrew_less_than_1000(thousands);
-            apply_hebrew_punctuation(&mut thousands_s);
-            w.write_str(&thousands_s)?;
+            // We force a geresh here, since the geresh is also
+            // a thousands separator. We do not force a geresh if we are
+            // formatting a bare thousand (below), since it's formatted as the word
+            // "X thousands", and we use the regular < 9999 logic for
+            // formatting X.
+            format_hebrew_less_than_1000(thousands, w, rest > 0)?;
 
             if rest == 0 {
                 // Special case for bare thousands (e.g. 5000 -> ה׳ אלפים)
                 // to avoid ambiguity, based on ICU4C behavior.
+                //
+                // Without this, 5000 and 5 would both format to ה׳, since the
+                // geresh does double duty as a thousands mark and a "this is a number"
+                // indicator.
                 return w.write_str(" אלפים");
-            } else if !thousands_s.ends_with('׳') {
-                w.write_str("׳")?;
             }
         }
 
-        let mut rest_s = format_hebrew_less_than_1000(rest);
-        apply_hebrew_punctuation(&mut rest_s);
-        w.write_str(&rest_s)?;
+        if rest > 0 {
+            format_hebrew_less_than_1000(rest, w, false)?;
+        }
 
         Ok(())
     }
