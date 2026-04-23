@@ -4,5 +4,6 @@
 
 pub(crate) mod datetime;
 mod input;
+pub(crate) mod numeric_override;
 pub(crate) mod time_zone;
 pub use input::DateTimeInputUnchecked;

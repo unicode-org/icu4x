@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::FieldNumericOverrides;
 use core::cmp::{Ord, PartialOrd};
+use core::fmt;
 use displaydoc::Display;
 use zerovec::ule::{AsULE, UleError, ULE};
 
@@ -163,5 +163,63 @@ unsafe impl ULE for FieldLengthULE {
             Self::validate_byte(*byte)?;
         }
         Ok(())
+    }
+}
+
+/// Various numeric overrides for datetime patterns
+/// as found in CLDR
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum FieldNumericOverrides {
+    /// `hanidec`
+    Hanidec = 0,
+    /// `hanidays`
+    Hanidays = 1,
+    /// `hebr`
+    Hebr = 2,
+    /// `romanlow`
+    Romanlow = 3,
+    /// `jpnyear`
+    Jpnyear = 4,
+}
+
+impl TryFrom<u8> for FieldNumericOverrides {
+    type Error = LengthError;
+    fn try_from(other: u8) -> Result<Self, LengthError> {
+        Ok(match other {
+            0 => Self::Hanidec,
+            1 => Self::Hanidays,
+            2 => Self::Hebr,
+            3 => Self::Romanlow,
+            4 => Self::Jpnyear,
+            _ => return Err(LengthError::InvalidLength),
+        })
+    }
+}
+
+impl FieldNumericOverrides {
+    /// Convert this to the corresponding string code
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Hanidec => "hanidec",
+            Self::Hanidays => "hanidays",
+            Self::Hebr => "hebr",
+            Self::Romanlow => "romanlow",
+            Self::Jpnyear => "jpnyear",
+        }
+    }
+
+    /// Formats a number according to the override system.
+    pub fn format_number<W: fmt::Write + ?Sized>(self, number: u32, w: &mut W) -> fmt::Result {
+        crate::format::numeric_override::format(self, number, w)
+    }
+}
+
+impl fmt::Display for FieldNumericOverrides {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.as_str().fmt(f)
     }
 }
