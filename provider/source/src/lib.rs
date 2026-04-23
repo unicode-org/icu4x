@@ -163,6 +163,7 @@ impl SourceDataProvider {
                     .with_icuexport_for_tag(Self::TESTED_ICUEXPORT_TAG)
                     .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
                     .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
+                    .with_ucd_for_tag(Self::TESTED_UCD_TAG)
                     .with_unihan_for_tag(Self::TESTED_UCD_TAG)
             })
             .clone()
@@ -258,7 +259,7 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_cldr_for_tag(self, tag: &str) -> Self {
         Self {
-                cldr_paths: Some(Arc::new(CldrCache::new(AbstractFs::new_from_url(format!(
+                cldr_paths: Some(Arc::new(CldrCache::new(AbstractFs::new_zip_from_url(format!(
                     "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
                 ))))),
                 ..self
@@ -285,7 +286,7 @@ impl SourceDataProvider {
             )
         };
         Self {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(url)))),
+            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_zip_from_url(url)))),
             ..self
         }
     }
@@ -299,7 +300,7 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Self {
         Self {
-            segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
+            segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_zip_from_url(format!(
                 "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{tag}/models.zip"
             ))))),
             ..self
@@ -315,7 +316,7 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_unihan_for_tag(self, tag: &str) -> Self {
         Self {
-            unihan_paths: Some(Arc::new(AbstractFs::new_from_url(format!(
+            unihan_paths: Some(Arc::new(AbstractFs::new_zip_from_url(format!(
                 "https://www.unicode.org/Public/{tag}/ucd/Unihan.zip"
             )))),
             ..self
@@ -347,9 +348,9 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_tzdb_for_tag(self, tag: &str) -> Self {
         Self {
-            tzdb_paths: Some(Arc::new(TzdbCache::new(AbstractFs::new_from_url(format!(
-                "https://www.iana.org/time-zones/repository/releases/tzdata{tag}.tar.gz",
-            ))))),
+            tzdb_paths: Some(Arc::new(TzdbCache::new(AbstractFs::new_tar_from_url(
+                format!("https://www.iana.org/time-zones/repository/releases/tzdata{tag}.tar.gz",),
+            )))),
             ..self
         }
     }

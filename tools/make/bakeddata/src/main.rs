@@ -76,8 +76,6 @@ fn main() {
     };
 
     let source = SourceDataProvider::new()
-        .with_ucd(Path::new("provider/source/tests/data/ucd"))
-        .unwrap()
         .with_tzdb(Path::new("provider/source/tests/data/tzdb"))
         .unwrap();
 

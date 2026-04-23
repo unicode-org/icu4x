@@ -111,6 +111,8 @@ pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipData, String>>),
     Tar(RwLock<Result<TarArchive, String>>),
+    #[cfg(feature = "networking")]
+    Http(String),
     Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
@@ -160,43 +162,85 @@ impl AbstractFs {
     }
 
     #[cfg(feature = "networking")]
+    pub fn new_zip_from_url(path: String) -> Self {
+        Self::Zip(RwLock::new(Err(path)))
+    }
+
+    #[cfg(feature = "networking")]
+    pub fn new_tar_from_url(path: String) -> Self {
+        Self::Tar(RwLock::new(Err(path)))
+    }
+
+    fn new_zip_from_bytes(bytes: Vec<u8>) -> Result<Self, DataError> {
+        let archive = ZipArchive::new(Cursor::new(bytes))
+            .map_err(|e| DataError::custom("Invalid ZIP file").with_display_context(&e))?;
+
+        let file_list = archive.file_names().map(String::from).collect();
+        Ok(Self::Zip(RwLock::new(Ok(ZipData { archive, file_list }))))
+    }
+
+    #[cfg_attr(not(feature = "networking"), allow(dead_code))]
+    fn new_tar_from_bytes(bytes: Vec<u8>) -> Result<Self, DataError> {
+        use std::io::Read;
+        let mut archive = Vec::new();
+        flate2::read::GzDecoder::new(Cursor::new(bytes)).read_to_end(&mut archive)?;
+        let file_list = tar::Archive::new(Cursor::new(&archive))
+            .entries_with_seek()
+            .map(|e| {
+                e.into_iter()
+                    .filter_map(|e| Some(e.ok()?.path().ok()?.as_os_str().to_str()?.to_string()))
+            })?
+            .collect::<HashSet<_>>();
+        Ok(Self::Tar(RwLock::new(Ok(TarArchive {
+            archive,
+            file_list,
+        }))))
+    }
+
+    #[cfg(feature = "networking")]
     pub fn new_from_url(path: String) -> Self {
-        if path.ends_with(".zip") {
-            Self::Zip(RwLock::new(Err(path)))
-        } else {
-            Self::Tar(RwLock::new(Err(path)))
+        // We store the path without trailing / and add them ourselves
+        Self::Http(path.trim_end_matches('/').to_string())
+    }
+
+    #[cfg(feature = "networking")]
+    fn download(resource: &String) -> Result<PathBuf, DataError> {
+        let root = std::env::var_os("ICU4X_SOURCE_CACHE")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
+            .join(resource.rsplit("//").next().unwrap());
+        if root.exists() {
+            return Ok(root);
         }
+        static LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+        let _one_download_at_a_time = LOCK.lock().unwrap();
+        if root.exists() {
+            return Ok(root);
+        }
+        log::info!("Downloading {resource}");
+        std::fs::create_dir_all(root.parent().unwrap())?;
+        let mut retry = 5;
+        let mut response = loop {
+            match ureq::get(resource).call() {
+                Ok(r) => break r.into_body().into_reader(),
+                Err(e) if retry > 0 => {
+                    log::warn!("Download error {e:?}, retrying...");
+                    std::thread::sleep(std::time::Duration::from_secs(2));
+                    retry -= 1;
+                }
+                Err(e) => return Err(DataError::custom("Download").with_display_context(&e)),
+            }
+        };
+        // Cannot write directly to the final path because we don't want other threads to read the partial file
+        std::io::copy(
+            &mut response,
+            &mut BufWriter::new(File::create(root.with_extension("tmp"))?),
+        )?;
+        std::fs::rename(root.with_extension("tmp"), &root)?;
+        Ok(root)
     }
 
     fn init(&self) -> Result<(), DataError> {
-        #[cfg(feature = "networking")]
-        fn download(resource: &String) -> Result<PathBuf, DataError> {
-            let root = std::env::var_os("ICU4X_SOURCE_CACHE")
-                .map(PathBuf::from)
-                .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
-                .join(resource.rsplit("//").next().unwrap());
-            if !root.exists() {
-                log::info!("Downloading {resource}");
-                std::fs::create_dir_all(root.parent().unwrap())?;
-                let mut retry = 5;
-                let mut response = loop {
-                    match ureq::get(resource).call() {
-                        Ok(r) => break r.into_body().into_reader(),
-                        Err(e) if retry > 0 => {
-                            log::warn!("Download error {e:?}, retrying...");
-                            std::thread::sleep(std::time::Duration::from_secs(2));
-                            retry -= 1;
-                        }
-                        Err(e) => {
-                            return Err(DataError::custom("Download").with_display_context(&e))
-                        }
-                    }
-                };
-                std::io::copy(&mut response, &mut BufWriter::new(File::create(&root)?))?;
-            }
-            Ok(root)
-        }
-
         #[cfg(feature = "networking")]
         if let Self::Zip(lock) = self {
             if lock.read().expect("poison").is_ok() {
@@ -209,17 +253,16 @@ impl AbstractFs {
                 return Ok(());
             };
 
-            let root = download(resource)?;
+            let root = Self::download(resource)?;
+            let bytes = std::fs::read(&root)?;
 
-            let archive = ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
-                DataError::custom("Invalid ZIP file")
-                    .with_display_context(&e)
-                    .with_path_context(&root)
-            })?;
+            let Self::Zip(zip) =
+                Self::new_zip_from_bytes(bytes).map_err(|e| e.with_path_context(&root))?
+            else {
+                unreachable!()
+            };
 
-            let file_list = archive.file_names().map(String::from).collect();
-
-            *lock = Ok(ZipData { archive, file_list });
+            *lock = zip.into_inner().expect("poison");
         } else if let Self::Tar(lock) = self {
             if lock.read().expect("poison").is_ok() {
                 return Ok(());
@@ -231,24 +274,16 @@ impl AbstractFs {
                 return Ok(());
             };
 
-            use std::io::Read;
-            let mut data = Vec::new();
-            flate2::read::GzDecoder::new(Cursor::new(std::fs::read(&download(resource)?)?))
-                .read_to_end(&mut data)?;
+            let path = &Self::download(resource)?;
+            let inner = std::fs::read(path)?;
 
-            let file_list = tar::Archive::new(Cursor::new(&data))
-                .entries_with_seek()
-                .map(|e| {
-                    e.into_iter().filter_map(|e| {
-                        Some(e.ok()?.path().ok()?.as_os_str().to_str()?.to_string())
-                    })
-                })?
-                .collect::<HashSet<_>>();
+            let Self::Tar(tar) =
+                Self::new_tar_from_bytes(inner).map_err(|e| e.with_path_context(path))?
+            else {
+                unreachable!()
+            };
 
-            *lock = Ok(TarArchive {
-                archive: data,
-                file_list,
-            })
+            *lock = tar.into_inner().expect("poison");
         }
         Ok(())
     }
@@ -304,6 +339,8 @@ impl AbstractFs {
                         .with_display_context(path)
                 })
             }
+            #[cfg(feature = "networking")]
+            Self::Http(url) => Ok(std::fs::read(Self::download(&format!("{url}/{path}"))?)?),
             Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
                 DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
             }),
@@ -352,6 +389,12 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+            #[cfg(feature = "networking")]
+            Self::Http(url) => {
+                return Err(
+                    DataError::custom("Cannot list HTTP directories").with_display_context(url)
+                )
+            }
             Self::Memory(map) => map
                 .keys()
                 .copied()
@@ -383,6 +426,8 @@ impl AbstractFs {
                 .unwrap() // init called
                 .file_list
                 .contains(path),
+            #[cfg(feature = "networking")]
+            Self::Http(url) => Self::download(&format!("{url}/{path}")).is_ok(),
             Self::Memory(map) => map.contains_key(path),
         })
     }

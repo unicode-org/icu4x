@@ -116,27 +116,14 @@ fn download_repo_sources() {
     )
     .unwrap();
 
-    // Cannot use AbstractFs::dump because UCD is not a functioning data source
-    std::fs::remove_dir_all(out_root.join("ucd")).unwrap();
-    let mut ucd_files = BTreeSet::new();
-    for spath in UCD_GLOB {
-        let path = out_root.join("ucd").join(spath);
-        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-        std::io::copy(
-            &mut ureq::get(&format!(
-                "https://www.unicode.org/Public/{}/security/IdentifierStatus.txt",
-                SourceDataProvider::TESTED_UCD_TAG,
-            ))
-            .call()
-            .map_err(|e| DataError::custom("Download").with_display_context(&e))
-            .unwrap()
-            .into_body()
-            .into_reader(),
-            &mut crlify::BufWriterWithLineEndingFix::new(File::create(path).unwrap()),
+    let ucd_files = provider
+        .ucd_paths
+        .unwrap()
+        .dump(
+            &out_root.join("ucd"),
+            UCD_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
-        ucd_files.insert(spath.to_string());
-    }
     let identifier_status_path = out_root.join("ucd/security/IdentifierStatus.txt");
     std::io::copy(
         &mut BufReader::new(File::open(&identifier_status_path).unwrap())
