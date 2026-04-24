@@ -30,8 +30,7 @@ pub(crate) fn format<W: fmt::Write + ?Sized>(
 
 /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
 fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
-    const HANIDEC_DIGITS: &[char] =
-        &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+    const HANIDEC_DIGITS: &[char] = &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
     if number == 0 {
         return w.write_char('〇');
     }
