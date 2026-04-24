@@ -1,6 +1,12 @@
 # Changelog
 
 
+## Unreleased
+
+- Components
+    - `icu_experimental`
+        - `personnames`: `derive_missing_initials` now caps derived initials at two for multi-part given names; the `initial_sequence_pattern` is a two-slot pattern, so further initials would overflow the intended display width (unicode-org#3077)
+
 ## icu 2.2.x
 
 Several crates have had patch releases in the 2.2 stream:

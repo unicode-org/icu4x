@@ -34,7 +34,10 @@ pub fn derive_missing_initials(
                 modifier: requested_field.modifier.with_length(FieldLength::Auto),
             })
             .split(' ')
-            .filter_map(|s| s.trim().chars().next());
+            .filter_map(|s| s.trim().chars().next())
+            // Cap at two initials: `initial_sequence_pattern` is a two-slot pattern, and
+            // interpolating further initials would append beyond the intended display width.
+            .take(2);
 
         let mut interpolated_initials =
             initials.map(|initial| initial_pattern.interpolate((initial,)));
@@ -129,8 +132,7 @@ mod tests {
         let result =
             super::derive_missing_initials(&person_name, requested_field, "{0}.", "{0} {1}");
 
-        // TODO(#3077): broken, this should be equal
-        assert_ne!(result, "M. J.");
+        assert_eq!(result, "M. J.");
         Ok(())
     }
 }
