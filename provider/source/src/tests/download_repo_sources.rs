@@ -30,7 +30,8 @@ impl AbstractFs {
             }
 
             std::fs::create_dir_all(target.join(&file).parent().unwrap())?;
-            std::fs::write(target.join(&file), self.read_to_buf(&file)?)?;
+            crlify::BufWriterWithLineEndingFix::new(File::create(target.join(&file))?)
+                .write_all(&self.read_to_buf(&file)?)?;
         }
 
         Ok(files)
