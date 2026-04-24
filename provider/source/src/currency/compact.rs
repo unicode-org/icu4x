@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::cldr_serde::numbers::NumberPattern;
 use crate::cldr_serde::numbers::NumberPatternItem;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
@@ -20,6 +21,54 @@ use icu_pattern::PatternItemCow;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use itertools::Itertools;
+
+fn parse_short_compact_currency_subpattern(
+    items: &[NumberPatternItem],
+) -> Result<Box<DoublePlaceholderPattern>, DataError> {
+    DoublePlaceholderPattern::try_from_items(
+        items
+            .iter()
+            .map(|i| match i {
+                NumberPatternItem::MandatoryDigit => {
+                    PatternItemCow::Placeholder(DoublePlaceholderKey::Place0)
+                }
+                NumberPatternItem::Currency => {
+                    PatternItemCow::Placeholder(DoublePlaceholderKey::Place1)
+                }
+                i => PatternItemCow::Literal(Cow::Borrowed(i.as_str())),
+            })
+            .dedup(),
+    )
+    .map_err(|e| DataError::custom("pattern").with_display_context(&e))
+}
+
+fn warn_if_compact_currency_negative_differs(
+    locale: &DataLocale,
+    number_pattern: &NumberPattern,
+    parsed_positive: &DoublePlaceholderPattern,
+) {
+    let Some(negative) = number_pattern.negative.as_deref() else {
+        return;
+    };
+    match parse_short_compact_currency_subpattern(negative) {
+        Ok(parsed_negative) => {
+            if parsed_negative.as_ref() != parsed_positive {
+                log::warn!(
+                    "Compact currency negative subpattern differs from positive (unicode-org#6064); negative is ignored for locale={} pattern={}",
+                    locale,
+                    number_pattern
+                );
+            }
+        }
+        Err(_) => {
+            log::warn!(
+                "Compact currency pattern has a negative subpattern that could not be parsed with the same rules as positive (unicode-org#6064): locale={} pattern={}",
+                locale,
+                number_pattern
+            );
+        }
+    }
+}
 
 impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ShortCurrencyCompactV1>, DataError> {
@@ -73,51 +122,35 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
             ),
         ] {
             for (&log10_type, pattern) in source {
-                let pattern = pattern.as_ref().try_map(|pattern| {
-
-                if pattern.negative.is_some() {
-                    log::warn!(
-                        "Unexpected negative pattern for {}: {}",
+                let pattern = pattern.as_ref().try_map(|number_pattern: &NumberPattern| {
+                    let parsed =
+                        parse_short_compact_currency_subpattern(&number_pattern.positive)?;
+                    warn_if_compact_currency_negative_differs(
                         req.id.locale,
-                        pattern
+                        number_pattern,
+                        &parsed,
                     );
-                }
 
-                let number_of_0s = Some(
-                    pattern.positive
-                        .iter()
-                        .filter(|&i| *i == NumberPatternItem::MandatoryDigit)
-                        .count() as u8,
-                )
-                .filter(|&n| n != 0);
+                    let number_of_0s = Some(
+                        number_pattern
+                            .positive
+                            .iter()
+                            .filter(|&i| *i == NumberPatternItem::MandatoryDigit)
+                            .count() as u8,
+                    )
+                    .filter(|&n| n != 0);
 
-                let parsed = DoublePlaceholderPattern::try_from_items(
-                    pattern.positive
-                        .iter()
-                        .map(|i| match i {
-                            NumberPatternItem::MandatoryDigit => {
-                                PatternItemCow::Placeholder(DoublePlaceholderKey::Place0)
-                            }
-                            NumberPatternItem::Currency => {
-                                PatternItemCow::Placeholder(DoublePlaceholderKey::Place1)
-                            }
-                            i => PatternItemCow::Literal(Cow::Borrowed(i.as_str())),
-                        })
-                        .dedup(),
-                )
-                .map_err(|e| DataError::custom("pattern").with_display_context(&e))?;
+                    if log10_type < number_of_0s.unwrap_or_default() {
+                        return Err(DataError::custom("pattern").with_display_context(&format!(
+                            "Too many 0s in type 10^{}, ({}, implying nonpositive exponent c={}), pattern = {:?}",
+                            log10_type,
+                            number_of_0s.unwrap_or_default(),
+                            log10_type as i8 - number_of_0s.unwrap_or_default() as i8 + 1,
+                            number_pattern
+                        )));
+                    }
 
-                if log10_type < number_of_0s.unwrap_or_default() {
-                    return Err(DataError::custom("pattern").with_display_context(&format!(
-                        "Too many 0s in type 10^{}, ({}, implying nonpositive exponent c={}), pattern = {:?}",
-                        log10_type,
-                        number_of_0s.unwrap_or_default(),
-                        log10_type as i8 - number_of_0s.unwrap_or_default() as i8 + 1,
-                        pattern
-                    )));
-                }
-
-                Ok((number_of_0s, parsed))
+                    Ok((number_of_0s, parsed))
                 })?;
 
                 let other_number_of_0s = pattern.other().0.ok_or_else(|| {

@@ -1,6 +1,12 @@
 # Changelog
 
 
+## Unreleased
+
+- Data
+    - `icu_provider_source`: `currency_pattern_selection` now considers the optional CLDR negative subpattern alongside the positive one; when the two arms disagree, a single `PatternSelection` is chosen so negative amounts render consistently (unicode-org#6064)
+    - `icu_provider_source`: short compact currency datagen parses the optional negative subpattern with the same rules as positive and only logs when they mismatch or fail to parse, instead of warning whenever a negative subpattern is present (unicode-org#6064)
+
 ## icu 2.2.x
 
 Several crates have had patch releases in the 2.2 stream:
