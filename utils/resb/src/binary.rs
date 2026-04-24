@@ -387,6 +387,7 @@ pub struct BinaryDeserializerError {
 
 impl BinaryDeserializerError {
     /// TODO
+    #[inline]
     pub const fn invalid_data(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::InvalidData,
@@ -395,6 +396,7 @@ impl BinaryDeserializerError {
     }
 
     /// TODO
+    #[inline]
     pub const fn resource_type_mismatch(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::ResourceTypeMismatch,
@@ -403,6 +405,7 @@ impl BinaryDeserializerError {
     }
 
     /// TODO
+    #[inline]
     pub const fn unsupported_format(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::UnsupportedFormat,
@@ -411,6 +414,7 @@ impl BinaryDeserializerError {
     }
 
     /// TODO
+    #[inline]
     pub const fn unknown(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::Unknown,

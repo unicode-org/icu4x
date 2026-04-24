@@ -139,6 +139,10 @@ impl Locale {
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
+    /// Note: Support for the legacy `_` separator has been dropped since 2.0.0.
+    /// Users of ICU4X need to convert the `_` to `-` before calling the
+    /// function.
+    ///
     /// # Examples
     ///
     /// ```
@@ -162,7 +166,7 @@ impl Locale {
 
     /// Normalize the locale (operating on UTF-8 formatted byte slices)
     ///
-    /// This operation will normalize casing and the separator.
+    /// This operation will normalize casing.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
@@ -184,7 +188,7 @@ impl Locale {
 
     /// Normalize the locale (operating on strings)
     ///
-    /// This operation will normalize casing and the separator.
+    /// This operation will normalize casing.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///

@@ -6,6 +6,32 @@
 //!
 //! Most tests should either be in-module unit tests or integration tests.
 
+#[cfg(feature = "networking")]
+mod download_repo_sources;
 mod make_testdata;
 
-mod data;
+include!("data.rs");
+
+use crate::cldr_cache::CldrCache;
+use crate::source::{SerdeCache, TzdbCache};
+use crate::SourceDataProvider;
+use std::sync::{Arc, OnceLock};
+
+impl SourceDataProvider {
+    // This is equivalent to `new` for the files defined in `tools/testdata-scripts/globs.rs.data`.
+    pub(crate) fn new_testing() -> Self {
+        // Singleton so that all instantiations share the same caches.
+        static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
+        SINGLETON
+            .get_or_init(|| Self {
+                cldr_paths: Some(Arc::new(CldrCache::new(cldr_data()))),
+                icuexport_paths: Some(Arc::new(SerdeCache::new(icuexport_data()))),
+                segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(lstm_data()))),
+                unihan_paths: Some(Arc::new(unihan_data())),
+                ucd_paths: Some(Arc::new(ucd_data())),
+                tzdb_paths: Some(Arc::new(TzdbCache::new(tzdb_data()))),
+                ..SourceDataProvider::new_custom()
+            })
+            .clone()
+    }
+}

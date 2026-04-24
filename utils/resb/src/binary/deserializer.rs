@@ -71,6 +71,8 @@ impl<'de> ResourceTreeDeserializer<'de> {
     /// Creates a new deserializer from the header and index of the resource
     /// bundle.
     fn from_bytes(input: &'de [u32]) -> Result<Self, BinaryDeserializerError> {
+        // Safety: All valid u32 slices are also valid u8 slices since u32 is plain-old-data.
+        // We're using size_of_val to directly get the length of the underlying data.
         let input =
             unsafe { core::slice::from_raw_parts(input.as_ptr() as *const u8, size_of_val(input)) };
 
@@ -105,17 +107,23 @@ impl<'de> ResourceTreeDeserializer<'de> {
         let index = BinIndex::try_from(index)?;
 
         // Keys begin at the start of the body.
-        let keys = get_subslice(body, ..(index.keys_end as usize) * size_of::<u32>())?;
+        let keys_subslice_len = (index.keys_end as usize)
+            .checked_mul(size_of::<u32>())
+            .ok_or(BinaryDeserializerError::invalid_data("Too many keys"))?;
+        let keys = get_subslice(body, ..keys_subslice_len)?;
 
         let data_16_bit = if header.repr_info.format_version < FormatVersion::V2_0 {
             // The 16-bit data area was not introduced until format version 2.0.
             None
         } else if let Some(data_16_bit_end) = index.data_16_bit_end {
-            let data_16_bit = get_subslice(
-                body,
-                (index.keys_end as usize) * size_of::<u32>()
-                    ..(data_16_bit_end as usize) * size_of::<u32>(),
-            )?;
+            let start = (index.keys_end as usize)
+                .checked_mul(size_of::<u32>())
+                .ok_or(BinaryDeserializerError::invalid_data("Offset overflow"))?;
+            let end = (data_16_bit_end as usize)
+                .checked_mul(size_of::<u32>())
+                .ok_or(BinaryDeserializerError::invalid_data("Offset overflow"))?;
+
+            let data_16_bit = get_subslice(body, start..end)?;
             Some(data_16_bit)
         } else {
             return Err(BinaryDeserializerError::invalid_data(

@@ -58,10 +58,28 @@ icu_provider::data_struct!(CurrencyFractions<'_>, #[cfg(feature = "datagen")]);
 pub struct FractionInfo {
     /// Number of decimal digits for standard formatting
     pub digits: u8,
-    /// Rounding increment (0 = no special rounding)
-    pub rounding: u8,
+    /// Rounding increment
+    pub rounding: Rounding,
     /// Number of decimal digits for cash transactions (if different)
     pub cash_digits: Option<u8>,
     /// Rounding increment for cash transactions (if different)
-    pub cash_rounding: Option<u8>,
+    pub cash_rounding: Option<Rounding>,
+}
+
+/// Currency rounding mode
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::fractions))]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
+#[non_exhaustive]
+pub enum Rounding {
+    /// No rounding
+    #[default]
+    R1,
+    /// Round to 5 smallest units
+    R5,
+    /// Round to 20 smallest units
+    R20,
+    /// Round to 50 smallest units
+    R50,
 }

@@ -63295,7 +63295,7 @@ currency/extended/data/v1, zu/ZAR, 45B, 22B, b41d10033141372c
 currency/extended/data/v1, zu/ZMK, 55B, 32B, 556373753497cd9f
 currency/extended/data/v1, zu/ZMW, 41B, 18B, 5df40b65221c99b7
 currency/extended/data/v1, zu/ZWG, -> en/ZWG
-currency/fractions/v1, <singleton>, 406B, 358B, 9586200a5c88484d
+currency/fractions/v1, <singleton>, 406B, 358B, 63bf9b07c8e1921e
 currency/patterns/data/v1, <lookup>, 110B, 16 identifiers
 currency/patterns/data/v1, <total>, 248B, 64B, 8 unique payloads
 currency/patterns/data/v1, blo, 28B, 5B, 62a8398982cad180

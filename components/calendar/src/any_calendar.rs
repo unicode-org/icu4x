@@ -403,6 +403,7 @@ make_any_calendar!(
     Japanese(Japanese),
     #[deprecated(since = "2.2.0", note = "see `Japanese`")]
     JapaneseExtended(Japanese),
+    Julian(Julian),
     Persian(Persian),
     Roc(Roc),
 );
@@ -420,6 +421,7 @@ make_any_calendar_impls!(
     Indian(Indian),
     Iso(Iso),
     Japanese(Japanese),
+    Julian(Julian),
     Persian(Persian),
     Roc(Roc),
     HijriSimulated(Hijri<hijri::AstronomicalSimulation>),
@@ -471,6 +473,7 @@ impl AnyCalendar {
             AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => {
                 AnyCalendar::Japanese(Japanese::new())
             }
+            AnyCalendarKind::Julian => AnyCalendar::Julian(Julian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         }
@@ -523,6 +526,7 @@ impl AnyCalendar {
             AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => {
                 AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
             }
+            AnyCalendarKind::Julian => AnyCalendar::Julian(Julian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         })
@@ -571,6 +575,7 @@ impl AnyCalendar {
             AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => {
                 AnyCalendar::Japanese(Japanese::try_new_unstable(provider)?)
             }
+            AnyCalendarKind::Julian => AnyCalendar::Julian(Julian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         })
@@ -618,6 +623,7 @@ impl AnyCalendar {
             AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => {
                 AnyCalendar::Japanese(Japanese::default())
             }
+            AnyCalendarKind::Julian => AnyCalendar::Julian(Julian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         }
@@ -653,6 +659,7 @@ impl AnyCalendar {
             Self::Iso(_) => AnyCalendarKind::Iso,
             #[allow(deprecated)]
             Self::Japanese(_) | Self::JapaneseExtended(_) => AnyCalendarKind::Japanese,
+            Self::Julian(_) => AnyCalendarKind::Julian,
             Self::Persian(_) => AnyCalendarKind::Persian,
             Self::Roc(_) => AnyCalendarKind::Roc,
         }
@@ -726,6 +733,8 @@ pub enum AnyCalendarKind {
     /// Deprecated, use `Japanese`.
     #[deprecated(since = "2.2.0", note = "use `Japanese`")]
     JapaneseExtended,
+    /// The kind of a [`Julian`] calendar
+    Julian,
     /// The kind of a [`Persian`] calendar
     ///
     /// This corresponds to the `"persian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).

@@ -8,27 +8,24 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
-use icu::collections::codepointtrie::CodePointTrie;
 use icu::locale::{
     locale,
     subtags::{language, script},
 };
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-use std::convert::TryFrom;
-use writeable::Writeable;
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use zerovec::ZeroVec;
 
 mod collator_serde;
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     let mut s = if id.locale.is_unknown() {
         "root".to_owned()
     } else {
         id.locale
-            .write_to_string()
+            .to_string()
             .replace('-', "_")
             .replace("posix", "POSIX")
     };
@@ -103,37 +100,8 @@ fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
     r
 }
 
-#[test]
-fn test_all_fallback_overrides_handled() {
-    let provider = SourceDataProvider::new_testing();
-    let required_overrides = provider
-        .cldr()
-        .unwrap()
-        .core()
-        .read_and_parse::<super::cldr_serde::parent_locales::Resource>(
-            "supplemental/parentLocales.json",
-        )
-        .unwrap()
-        .supplemental
-        .parent_locales
-        .collations
-        .keys()
-        .collect::<Vec<_>>();
-
-    let handled_overrides = [
-        // We ignore this one, see https://unicode-org.atlassian.net/browse/CLDR-19386
-        "sr-Cyrl-ME",
-        "yue",
-        "yue-CN",
-        "yue-Hans",
-        "yue-Hans-CN",
-        "yue-Hant",
-    ];
-
-    assert_eq!(required_overrides, handled_overrides);
-}
-
 impl SourceDataProvider {
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load_toml<T>(&self, id: DataIdentifierBorrowed, suffix: &str) -> Result<&T, DataError>
     where
         for<'de> T: serde::Deserialize<'de> + 'static + Send + Sync,
@@ -157,6 +125,8 @@ impl SourceDataProvider {
         Ok(self
             .icuexport()?
             .list(&format!("collation/{}", self.collation_root_han()))?
+            // Root data should not be listed for tailorings
+            .filter(|p| !p.ends_with("root_standard_data.toml"))
             .filter_map(|mut file_name| {
                 file_name.truncate(file_name.len() - ".toml".len());
                 file_name.ends_with(suffix).then(|| {
@@ -170,7 +140,7 @@ impl SourceDataProvider {
 }
 
 macro_rules! collation_provider {
-    ($(($marker:ident, $serde_struct:ident, $suffix:literal,),)+) => {
+    ($(($marker:ident, $serde_struct:ident),)+) => {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
@@ -185,7 +155,7 @@ macro_rules! collation_provider {
 
                         Ok(DataResponse {
                             metadata: Default::default(),
-                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, $suffix).and_then(TryInto::try_into).map_err(|e| e.with_req(<$marker>::INFO, req))?),
+                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, <collator_serde::$serde_struct>::suffix()).and_then(|s| s.convert()).map_err(|e| e.with_req(<$marker>::INFO, req))?),
                         })
                     }
                 }
@@ -193,78 +163,91 @@ macro_rules! collation_provider {
 
             impl IterableDataProviderCached<$marker> for SourceDataProvider {
                 fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                    self.list_ids($suffix)
+                    self.list_ids(<collator_serde::$serde_struct>::suffix())
                 }
             }
         )+
+
+        #[test]
+        fn test_all_fallback_overrides_handled() {
+            let provider = SourceDataProvider::new_testing();
+            let fallback_provider = icu_provider_adapters::fallback::LocaleFallbackProvider::new(
+                &provider,
+                icu::locale::LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+            );
+
+            let required_overrides = &provider
+                .cldr()
+                .unwrap()
+                .core()
+                .read_and_parse::<super::cldr_serde::parent_locales::Resource>(
+                    "supplemental/parentLocales.json",
+                )
+                .unwrap()
+                .supplemental
+                .parent_locales
+                .collations;
+
+            for (locale, parent) in required_overrides {
+                // We ignore this one, see https://unicode-org.atlassian.net/browse/CLDR-19386
+                if (locale, parent) == (&locale!("sr-Cyrl-ME").id, &locale!("sr-ME").id) {
+                    continue;
+                }
+
+                let locale = locale.into();
+                let parent = parent.into();
+
+                $(
+                    if !$marker::INFO.is_singleton {
+                        for attribute in IterableDataProvider::<$marker>::iter_ids(&provider)
+                            .unwrap()
+                            .into_iter()
+                            .filter(|id| id.locale == locale)
+                            .map(|id| id.marker_attributes)
+                            .collect::<HashSet<_>>()
+                        {
+                            let locale = DataIdentifierBorrowed::for_marker_attributes_and_locale(&*attribute, &locale);
+                            let parent = DataIdentifierBorrowed::for_marker_attributes_and_locale(&*attribute, &parent);
+                            assert_eq!(
+                                DataProvider::<$marker>::load(&fallback_provider, DataRequest { id: locale, ..Default::default() })
+                                    .as_ref()
+                                    .map(|response| response.payload.get()),
+                                DataProvider::<$marker>::load(&fallback_provider, DataRequest { id: parent, ..Default::default() })
+                                    .as_ref()
+                                    .map(|response| response.payload.get()),
+                                "{locale:?} should match {parent:?} for {:?}", $marker::INFO
+                            );
+                        }
+                    }
+                )+
+            }
+        }
     };
 }
 
 collation_provider!(
-    (CollationDiacriticsV1, CollationDiacritics, "_dia",),
-    (CollationJamoV1, CollationJamo, "_jamo",),
-    (CollationMetadataV1, CollationMetadata, "_meta",),
-    (CollationReorderingV1, CollationReordering, "_reord",),
-    (
-        CollationSpecialPrimariesV1,
-        CollationSpecialPrimaries,
-        "_prim",
-    ),
+    (CollationDiacriticsV1, CollationDiacritics),
+    (CollationJamoV1, CollationJamo),
+    (CollationMetadataV1, CollationMetadata),
+    (CollationReorderingV1, CollationReordering),
+    (CollationSpecialPrimariesV1, CollationSpecialPrimaries),
+    (CollationRootV1, CollationData),
+    (CollationTailoringV1, CollationData),
 );
 
-impl DataProvider<CollationRootV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationRootV1>, DataError> {
-        self.check_req::<CollationRootV1>(req)?;
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(
-                self.load_toml::<collator_serde::CollationData>(Default::default(), "_data")
-                    .map_err(|e| e.with_req(CollationRootV1::INFO, req))?
-                    .try_into()?,
-            ),
-        })
+impl collator_serde::CollationData {
+    fn suffix() -> &'static str {
+        "_data"
     }
-}
 
-impl IterableDataProviderCached<CollationRootV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-impl DataProvider<CollationTailoringV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationTailoringV1>, DataError> {
-        self.check_req::<CollationTailoringV1>(req)?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(
-                self.load_toml::<collator_serde::CollationData>(req.id, "_data")
-                    .and_then(TryInto::try_into)
-                    .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?,
-            ),
-        })
-    }
-}
-
-impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .list_ids("_data")?
-            .into_iter()
-            .filter(|s| *s != Default::default())
-            .collect())
-    }
-}
-
-fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
-    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-    {
-        let _ = trie;
-        unreachable!("Should have errored out earlier");
-    }
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    {
+    fn convert(&self) -> Result<CollationData<'static>, DataError> {
+        use icu::collections::codepointtrie::CodePointTrie;
+        use icu_codepointtrie_builder::CodePointTrieBuilder;
+
+        let trie = CodePointTrie::<u32>::try_from(&self.trie)
+            .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
+
         let mut builder = CodePointTrieBuilder::new(
             trie.get('\u{10FFFF}'),
             trie.get32(u32::MAX),
@@ -285,19 +268,8 @@ fn rebuild_data(trie: CodePointTrie<u32>) -> CodePointTrie<u32> {
             builder.set_value(i, trie.get32(i));
         }
 
-        builder.build()
-    }
-}
-
-impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
-    type Error = DataError;
-
-    fn try_into(self) -> Result<CollationData<'static>, Self::Error> {
         Ok(CollationData {
-            trie: rebuild_data(
-                CodePointTrie::<u32>::try_from(&self.trie)
-                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
-            ),
+            trie: builder.build(),
             contexts: ZeroVec::alloc_from_slice(&self.contexts),
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
             ces: self.ces.iter().map(|i| *i as u64).collect(),
@@ -305,38 +277,54 @@ impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
     }
 }
 
-impl TryInto<CollationDiacritics<'static>> for &collator_serde::CollationDiacritics {
-    type Error = DataError;
+impl collator_serde::CollationDiacritics {
+    fn suffix() -> &'static str {
+        "_dia"
+    }
 
-    fn try_into(self) -> Result<CollationDiacritics<'static>, Self::Error> {
+    #[allow(clippy::unnecessary_wraps)]
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    fn convert(&self) -> Result<CollationDiacritics<'static>, DataError> {
         Ok(CollationDiacritics {
             secondaries: ZeroVec::alloc_from_slice(&self.secondaries),
         })
     }
 }
 
-impl TryInto<CollationJamo<'static>> for &collator_serde::CollationJamo {
-    type Error = DataError;
+impl collator_serde::CollationJamo {
+    fn suffix() -> &'static str {
+        "_jamo"
+    }
 
-    fn try_into(self) -> Result<CollationJamo<'static>, Self::Error> {
+    #[allow(clippy::unnecessary_wraps)]
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    fn convert(&self) -> Result<CollationJamo<'static>, DataError> {
         Ok(CollationJamo {
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
         })
     }
 }
 
-impl TryInto<CollationMetadata> for &collator_serde::CollationMetadata {
-    type Error = DataError;
+impl collator_serde::CollationMetadata {
+    fn suffix() -> &'static str {
+        "_meta"
+    }
 
-    fn try_into(self) -> Result<CollationMetadata, Self::Error> {
+    #[allow(clippy::unnecessary_wraps)]
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    fn convert(&self) -> Result<CollationMetadata, DataError> {
         Ok(CollationMetadata { bits: self.bits })
     }
 }
 
-impl TryInto<CollationReordering<'static>> for &collator_serde::CollationReordering {
-    type Error = DataError;
+impl collator_serde::CollationReordering {
+    fn suffix() -> &'static str {
+        "_reord"
+    }
 
-    fn try_into(self) -> Result<CollationReordering<'static>, Self::Error> {
+    #[allow(clippy::unnecessary_wraps)]
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    fn convert(&self) -> Result<CollationReordering<'static>, DataError> {
         Ok(CollationReordering {
             min_high_no_reorder: self.min_high_no_reorder,
             reorder_table: ZeroVec::alloc_from_slice(&self.reorder_table),
@@ -345,10 +333,14 @@ impl TryInto<CollationReordering<'static>> for &collator_serde::CollationReorder
     }
 }
 
-impl TryInto<CollationSpecialPrimaries<'static>> for &collator_serde::CollationSpecialPrimaries {
-    type Error = DataError;
+impl collator_serde::CollationSpecialPrimaries {
+    fn suffix() -> &'static str {
+        "_prim"
+    }
 
-    fn try_into(self) -> Result<CollationSpecialPrimaries<'static>, Self::Error> {
+    #[allow(clippy::unnecessary_wraps)]
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    fn convert(&self) -> Result<CollationSpecialPrimaries<'static>, DataError> {
         // Note, at least for icu4x/2025-05-01/77.x, both `implicithan` and `unihan` have the same `compressible_bytes`.
         let compressible_bytes = self.compressible_bytes.as_deref().unwrap_or(&[
             false, false, false, false, false, false, false, false, false, false, false, false,

@@ -143,9 +143,10 @@ where
 
 impl<B: PatternBackend> Pattern<B> {
     #[cfg(feature = "alloc")]
-    pub(crate) const fn from_boxed_store_unchecked(store: Box<B::Store>) -> Box<Self> {
-        // Safety: Pattern is repr(transparent) over B::Store
-        unsafe { core::mem::transmute::<Box<B::Store>, Box<Self>>(store) }
+    pub(crate) fn from_boxed_store_unchecked(store: Box<B::Store>) -> Box<Self> {
+        // Safety: Box::into_raw fulfils Box::from_raw's requirements, as Pattern<B> is
+        // repr(transparent) over B::Store, and does not have further validity constraints
+        unsafe { Box::from_raw(Box::into_raw(store) as *mut Self) }
     }
 
     #[doc(hidden)] // databake

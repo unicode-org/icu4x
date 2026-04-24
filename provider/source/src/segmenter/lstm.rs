@@ -5,7 +5,6 @@
 //! This module contains provider implementations backed by LSTM segmentation data.
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
-use icu::locale::langid;
 use icu::segmenter::provider::{
     LstmData, LstmDataFloat32, LstmMatrix1, LstmMatrix2, LstmMatrix3, ModelType,
     SegmenterLstmAutoV1,
@@ -208,15 +207,11 @@ impl DataProvider<SegmenterLstmAutoV1> for SourceDataProvider {
 
 impl IterableDataProviderCached<SegmenterLstmAutoV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        const SUPPORTED: [&DataMarkerAttributes; 4] = [
-            DataMarkerAttributes::from_str_or_panic("Burmese_codepoints_exclusive_model4_heavy"),
-            DataMarkerAttributes::from_str_or_panic("Khmer_codepoints_exclusive_model4_heavy"),
-            DataMarkerAttributes::from_str_or_panic("Lao_codepoints_exclusive_model4_heavy"),
-            DataMarkerAttributes::from_str_or_panic("Thai_codepoints_exclusive_model4_heavy"),
-        ];
-        Ok(SUPPORTED
-            .into_iter()
-            .map(DataIdentifierCow::from_marker_attributes)
+        Ok(self
+            .segmenter_lstm()?
+            .list("")?
+            .filter_map(|p| DataMarkerAttributes::try_from_string(p).ok())
+            .map(DataIdentifierCow::from_marker_attributes_owned)
             .collect())
     }
 }

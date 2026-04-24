@@ -92,7 +92,6 @@ members = [
     "tools/make/depcheck",
     "tools/make/diplomat-coverage",
     "tools/make/diplomat-gen",
-    "tools/make/download-repo-sources",
     "tools/md-tests",
     "tools/noalloctest",
     "tools/changelog",

@@ -54,6 +54,8 @@ pub mod ffi {
         HijriTabularTypeIIThursday = 14,
         /// The kind of a Hijri Umm al-Qura calendar
         HijriUmmAlQura = 15,
+        /// The kind of a Julian calendar,
+        Julian = 19,
         /// The kind of a Persian calendar
         Persian = 16,
         /// The kind of a Roc calendar

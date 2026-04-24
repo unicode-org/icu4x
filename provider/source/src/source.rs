@@ -253,7 +253,7 @@ impl AbstractFs {
         Ok(())
     }
 
-    fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+    pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         self.init()?;
         match self {
             Self::Fs(root) => {
@@ -363,7 +363,7 @@ impl AbstractFs {
         })
     }
 
-    fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+    pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
         self.init()?;
         Ok(match self {
             Self::Fs(root) => root.join(path).is_file(),
@@ -410,6 +410,13 @@ pub(crate) struct Tzdb {
 }
 
 impl TzdbCache {
+    pub(crate) fn new(root: AbstractFs) -> Self {
+        Self {
+            root,
+            transitions: Default::default(),
+        }
+    }
+
     pub(crate) fn parsed(&self) -> Result<&Tzdb, DataError> {
         self.transitions
             .get_or_init(|| {
@@ -485,3 +492,14 @@ impl TzdbCache {
             .map_err(|&e| e)
     }
 }
+
+macro_rules! include_files {
+    ($base:literal; $($file:literal),* $(,)?) => {
+        crate::source::AbstractFs::Memory([
+            $(
+                ($file, include_bytes!(concat!($base, $file)).as_slice()),
+            )*
+        ].into_iter().collect())
+    };
+}
+pub(crate) use include_files;

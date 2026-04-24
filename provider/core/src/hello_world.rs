@@ -106,6 +106,26 @@ data_marker!(
 ///
 /// assert_eq!("Olleh Dlrow", reverse_hello_world.payload.get().message);
 /// ```
+///
+/// Load the nested string using an auxiliary key:
+///
+/// ```
+/// use icu_locale_core::langid;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+///
+/// let nested_hello_world: DataResponse<HelloWorldV1> = HelloWorldProvider
+///     .load(DataRequest {
+///         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+///             DataMarkerAttributes::from_str_or_panic("nested/part"),
+///             &langid!("en").into(),
+///         ),
+///         ..Default::default()
+///     })
+///     .expect("Loading should succeed");
+///
+/// assert_eq!("Hello Nested", nested_hello_world.payload.get().message);
+/// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider;
 
@@ -134,6 +154,7 @@ impl HelloWorldProvider {
         // ENGLAND
         ("en-GB-u-sd-gbeng", "", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"),
         ("en", "lowercase", "hello world"),
+        ("en", "nested/part", "Hello Nested"),
         ("en", "reverse", "Olleh Dlrow"),
         ("en", "rotate1", "dHello Worl"),
         ("en", "rotate2", "ldHello Wor"),

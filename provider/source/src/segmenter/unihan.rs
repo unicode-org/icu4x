@@ -4,12 +4,9 @@
 
 //! This module contains provider implementations for Unihan radicals.
 
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use crate::AbstractFs;
 use crate::{IterableDataProviderCached, SourceDataProvider};
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
-use icu::collections::codepointtrie;
 use icu::segmenter::provider::radical::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
@@ -41,14 +38,7 @@ fn build_unihan_radicals_data(
     let identifier_status = id_builder.build();
 
     let raw_content = unihan.read_to_string("Unihan_IRGSources.txt")?;
-    let mut builder = CodePointTrieBuilder::new(
-        0u8,
-        0u8,
-        match trie_type {
-            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-            crate::TrieType::Small => codepointtrie::TrieType::Small,
-        },
-    );
+    let mut builder = CodePointTrieBuilder::new(0u8, 0u8, trie_type.into());
 
     for line in raw_content.lines() {
         if line.starts_with('#') || line.trim().is_empty() {
@@ -113,12 +103,9 @@ impl IterableDataProviderCached<SegmenterUnihanRadicalV1> for SourceDataProvider
     }
 }
 
-#[cfg(all(test, any(feature = "use_wasm", feature = "use_icu4c")))]
+#[cfg(test)]
 mod tests {
-    use super::build_unihan_radicals_data;
-    use crate::SourceDataProvider;
-    use icu::segmenter::provider::radical::SegmenterUnihanRadicalV1;
-    use icu_provider::prelude::*;
+    use super::*;
 
     #[test]
     fn test_chinese_radical_values_trie() {

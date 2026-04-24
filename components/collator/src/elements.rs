@@ -1502,16 +1502,7 @@ where
                 if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
                     // The character is its own decomposition
                     let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
-                    // Attribute belongs on an inner expression, but
-                    // https://github.com/rust-lang/rust/issues/15701
-                    #[expect(clippy::indexing_slicing)]
-                    if jamo_index >= self.jamo.len() {
-                        ce32 = data.ce32_for_char(c);
-                        if ce32 == FALLBACK_CE32 {
-                            data = self.root;
-                            ce32 = data.ce32_for_char(c);
-                        }
-                    } else {
+                    if let Some(&jamo) = self.jamo.get(jamo_index) {
                         // The purpose of reading the CE32 from the jamo table instead
                         // of the trie even in this case is to make it unnecessary
                         // for all search collation tries to carry a copy of the Hangul
@@ -1531,7 +1522,13 @@ where
                         data = self.root;
                         // Index in range by construction above. Not using `get` with
                         // `if let` in order to put the likely branch first.
-                        ce32 = CollationElement32::new_from_ule(self.jamo[jamo_index]);
+                        ce32 = CollationElement32::new_from_ule(jamo);
+                    } else {
+                        ce32 = data.ce32_for_char(c);
+                        if ce32 == FALLBACK_CE32 {
+                            data = self.root;
+                            ce32 = data.ce32_for_char(c);
+                        }
                     }
                     if self.is_next_decomposition_starts_with_starter() {
                         if let Some(ce) = ce32.to_ce_simple_or_long_primary() {

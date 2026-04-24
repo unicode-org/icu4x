@@ -31,6 +31,8 @@
 //! - [`IdentiferNotFoundPredicate`]
 
 use alloc::vec::Vec;
+#[cfg(doc)]
+use icu_provider::prelude::*;
 
 mod by_error;
 
@@ -48,8 +50,12 @@ use predicates::MarkerNotFoundPredicate;
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of markers.
 ///
-/// [`ForkByMarkerProvider`] does not support forking between [`DataProvider`]s. However, it
-/// supports forking between [`BufferProvider`], and [`DynamicDataProvider`].
+/// This provider supports any data provider trait as long as it is implemented by both
+/// child providers.
+///
+/// Some traits like [`BufferProvider`] work on all markers. However, [`DataProvider<M>`]
+/// is specific to a single marker type `M`. For this reason, [`DataProvider<M>`] is only
+/// implemented if both child providers implement it for the same `M`.
 ///
 /// # Examples
 ///
@@ -154,8 +160,12 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of markers.
 ///
-/// [`MultiForkByMarkerProvider`] does not support forking between [`DataProvider`]s. However, it
-/// supports forking between [`BufferProvider`], and [`DynamicDataProvider`].
+/// This provider supports any data provider trait as long as it is implemented by all
+/// child providers.
+///
+/// Some traits like [`BufferProvider`] work on all markers. However, [`DataProvider<M>`]
+/// is specific to a single marker type `M`. For this reason, [`DataProvider<M>`] is only
+/// implemented if all child providers implement it for the same `M`.
 ///
 /// # Examples
 ///

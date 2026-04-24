@@ -21,20 +21,19 @@ use crate::elements::FALLBACK_CE32;
 use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
     char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
-    HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, JAMO_COUNT, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
+    HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
     NO_CE_QUATERNARY, NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT,
     QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
-use crate::options::{
-    AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength,
-};
+use crate::options::{AlternateHandling, CollatorOptions, ResolvedCollatorOptions, Strength};
 use crate::preferences::{CollationCaseFirst, CollationNumericOrdering, CollationType};
 use crate::provider::CollationData;
 use crate::provider::CollationDiacritics;
 use crate::provider::CollationDiacriticsV1;
 use crate::provider::CollationJamo;
 use crate::provider::CollationJamoV1;
+use crate::provider::CollationMetadata;
 use crate::provider::CollationMetadataV1;
 use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
@@ -43,7 +42,7 @@ use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
-use core::convert::{Infallible, TryFrom};
+use core::convert::Infallible;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
@@ -55,7 +54,6 @@ use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
-use zerovec::ule::AsULE;
 
 // Special sort key bytes for all levels.
 const LEVEL_SEPARATOR_BYTE: u8 = 1;
@@ -382,8 +380,7 @@ struct LocaleSpecificDataHolder {
     tailoring: Option<DataPayload<CollationTailoringV1>>,
     diacritics: DataPayload<CollationDiacriticsV1>,
     reordering: Option<DataPayload<CollationReorderingV1>>,
-    merged_options: CollatorOptionsBitField,
-    lithuanian_dot_above: bool,
+    metadata: CollationMetadata,
 }
 
 icu_locale_core::preferences::define_preferences!(
@@ -422,11 +419,7 @@ icu_locale_core::preferences::define_preferences!(
 
 impl LocaleSpecificDataHolder {
     /// The constructor code reused between owned and borrowed cases.
-    fn try_new_unstable_internal<D>(
-        provider: &D,
-        prefs: CollatorPreferences,
-        options: CollatorOptions,
-    ) -> Result<Self, DataError>
+    fn try_new_unstable<D>(provider: &D, prefs: CollatorPreferences) -> Result<Self, DataError>
     where
         D: DataProvider<CollationTailoringV1>
             + DataProvider<CollationDiacriticsV1>
@@ -467,7 +460,7 @@ impl LocaleSpecificDataHolder {
             .or_else(|_| provider.load(fallback_req))?
             .payload;
 
-        let metadata = metadata_payload.get();
+        let metadata = *metadata_payload.get();
 
         let tailoring: Option<DataPayload<CollationTailoringV1>> = if metadata.tailored() {
             Some(
@@ -519,29 +512,11 @@ impl LocaleSpecificDataHolder {
             return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1::INFO));
         }
 
-        let mut altered_defaults = CollatorOptionsBitField::default();
-
-        if metadata.alternate_shifted() {
-            altered_defaults.set_alternate_handling(Some(AlternateHandling::Shifted));
-        }
-        if metadata.backward_second_level() {
-            altered_defaults.set_backward_second_level(Some(true));
-        }
-
-        altered_defaults.set_case_first(Some(metadata.case_first()));
-        altered_defaults.set_max_variable(Some(metadata.max_variable()));
-
-        let mut merged_options = CollatorOptionsBitField::from(options);
-        merged_options.set_case_first(prefs.case_first);
-        merged_options.set_numeric_from_enum(prefs.numeric_ordering);
-        merged_options.set_defaults(altered_defaults);
-
         Ok(LocaleSpecificDataHolder {
             tailoring,
             diacritics,
-            merged_options,
+            metadata,
             reordering,
-            lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }
 }
@@ -558,7 +533,6 @@ pub struct Collator {
     reordering: Option<DataPayload<CollationReorderingV1>>,
     decompositions: DataPayload<NormalizerNfdDataV1>,
     tables: DataPayload<NormalizerNfdTablesV1>,
-    lithuanian_dot_above: bool,
 }
 
 impl Collator {
@@ -574,7 +548,6 @@ impl Collator {
             reordering: self.reordering.as_ref().map(|s| s.get()),
             decompositions: self.decompositions.get(),
             tables: self.tables.get(),
-            lithuanian_dot_above: self.lithuanian_dot_above,
         }
     }
 
@@ -646,53 +619,25 @@ impl Collator {
             + DataProvider<CollationReorderingV1>
             + ?Sized,
     {
-        let locale_dependent =
-            LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
+        let LocaleSpecificDataHolder {
+            tailoring,
+            diacritics,
+            reordering,
+            metadata,
+        } = LocaleSpecificDataHolder::try_new_unstable(provider, prefs)?;
 
-        // TODO: redesign Korean search collation handling
-        if jamo.get().ce32s.len() != JAMO_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
-        }
-
-        // `variant_count` isn't stable yet:
-        // https://github.com/rust-lang/rust/issues/73662
-        if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
-        }
-        let special_primaries = special_primaries.map_project(|csp, _| {
-            let compressible_bytes = (csp.last_primaries.len()
-                == MaxVariable::Currency as usize + 16)
-                .then(|| {
-                    csp.last_primaries
-                        .as_maybe_borrowed()?
-                        .as_ule_slice()
-                        .get((MaxVariable::Currency as usize)..)?
-                        .try_into()
-                        .ok()
-                })
-                .flatten()
-                .unwrap_or(
-                    CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK,
-                );
-
-            CollationSpecialPrimariesValidated {
-                last_primaries: csp.last_primaries.truncated(MaxVariable::Currency as usize),
-                numeric_primary: csp.numeric_primary,
-                compressible_bytes,
-            }
-        });
+        let special_primaries = special_primaries.map_project(|csp, _| csp.validated());
 
         Ok(Collator {
             special_primaries,
             root,
-            tailoring: locale_dependent.tailoring,
+            tailoring,
             jamo,
-            diacritics: locale_dependent.diacritics,
-            options: locale_dependent.merged_options,
-            reordering: locale_dependent.reordering,
+            diacritics,
+            options: options.resolve(metadata, prefs.case_first, prefs.numeric_ordering),
+            reordering,
             decompositions,
             tables,
-            lithuanian_dot_above: locale_dependent.lithuanian_dot_above,
         })
     }
 }
@@ -736,7 +681,6 @@ pub struct CollatorBorrowed<'a> {
     reordering: Option<&'a CollationReordering<'a>>,
     decompositions: &'a DecompositionData<'a>,
     tables: &'a DecompositionTables<'a>,
-    lithuanian_dot_above: bool,
 }
 
 impl CollatorBorrowed<'static> {
@@ -746,102 +690,79 @@ impl CollatorBorrowed<'static> {
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError> {
-        // These are assigned to locals in order to keep the code after these assignments
-        // copypaste-compatible with `Collator::try_new_unstable_internal`.
-
         let provider = &crate::provider::Baked;
+
         let decompositions = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1;
         let tables = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1;
         let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
         let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
 
-        let locale_dependent =
-            LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
-
-        // TODO: redesign Korean search collation handling
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1
-                .ce32s
-                .as_slice()
-                .len()
-                == JAMO_COUNT
-        );
-
-        // `variant_count` isn't stable yet:
-        // https://github.com/rust-lang/rust/issues/73662
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-                .last_primaries
-                .as_slice()
-                .len()
-                > (MaxVariable::Currency as usize)
-        );
-
         let special_primaries = const {
-            &CollationSpecialPrimariesValidated {
-                last_primaries: zerovec::ZeroSlice::from_ule_slice(
-                    crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-                        .last_primaries
-                        .as_slice()
-                        .as_ule_slice()
-                        .split_at(MaxVariable::Currency as usize)
-                        .0,
-                )
-                .as_zerovec(),
-                numeric_primary: crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-                    .numeric_primary,
-                compressible_bytes: {
-                    const C: &[<u16 as AsULE>::ULE] =
-                        crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
-                            .last_primaries
-                            .as_slice()
-                            .as_ule_slice();
-                    if C.len() == MaxVariable::Currency as usize + 16 {
-                        let i = MaxVariable::Currency as usize;
-                        #[allow(clippy::indexing_slicing)] // protected, const
-                        &[
-                            C[i],
-                            C[i + 1],
-                            C[i + 2],
-                            C[i + 3],
-                            C[i + 4],
-                            C[i + 5],
-                            C[i + 6],
-                            C[i + 7],
-                            C[i + 8],
-                            C[i + 9],
-                            C[i + 10],
-                            C[i + 11],
-                            C[i + 12],
-                            C[i + 13],
-                            C[i + 14],
-                            C[i + 15],
-                        ]
-                    } else {
-                        CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK
-                    }
-                },
-            }
+            &crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1.const_validated()
         };
 
-        // Attribute belongs closer to `unwrap`, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[expect(clippy::unwrap_used)]
+        let locale_dependent = LocaleSpecificDataHolder::try_new_unstable(provider, prefs)?;
+        #[expect(clippy::unwrap_used)] // baked provider
+        let tailoring = locale_dependent.tailoring.map(|s| s.get_static().unwrap());
+        #[expect(clippy::unwrap_used)] // baked provider
+        let diacritics = locale_dependent.diacritics.get_static().unwrap();
+        #[expect(clippy::unwrap_used)] // baked provider
+        let reordering = locale_dependent.reordering.map(|s| s.get_static().unwrap());
+        let metadata = locale_dependent.metadata;
+
         Ok(CollatorBorrowed {
             special_primaries,
             root,
-            // Unwrap is OK, because we know we have the baked provider.
-            tailoring: locale_dependent.tailoring.map(|s| s.get_static().unwrap()),
+            tailoring,
             jamo,
-            // Unwrap is OK, because we know we have the baked provider.
-            diacritics: locale_dependent.diacritics.get_static().unwrap(),
-            options: locale_dependent.merged_options,
-            // Unwrap is OK, because we know we have the baked provider.
-            reordering: locale_dependent.reordering.map(|s| s.get_static().unwrap()),
+            diacritics,
+            options: options.resolve(metadata, prefs.case_first, prefs.numeric_ordering),
+            reordering,
             decompositions,
             tables,
-            lithuanian_dot_above: locale_dependent.lithuanian_dot_above,
         })
+    }
+
+    /// This creates a root collator using baked data only.
+    ///
+    /// ✨ *Enabled with the `unstable` and `compiled_data` Cargo features.*
+    #[cfg(feature = "compiled_data")]
+    #[cfg(feature = "unstable")]
+    pub const fn new_root(options: CollatorOptions) -> Self {
+        let decompositions = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1;
+        let tables = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1;
+        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
+        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
+        let special_primaries = const {
+            &crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1.const_validated()
+        };
+
+        const METADATA: CollationMetadata = *crate::provider::Baked::COLLATION_METADATA_V1_UND;
+        const _: () = assert!(!METADATA.tailored());
+        let tailoring = None;
+        const _: () = assert!(!METADATA.tailored_diacritics());
+        const _: () = assert!(
+            crate::provider::Baked::COLLATION_DIACRITICS_V1_UND
+                .secondaries
+                .as_slice()
+                .len()
+                == OPTIMIZED_DIACRITICS_MAX_COUNT
+        );
+        let diacritics = crate::provider::Baked::COLLATION_DIACRITICS_V1_UND;
+        const _: () = assert!(!METADATA.reordering());
+        let reordering = None;
+
+        Self {
+            special_primaries,
+            root,
+            tailoring,
+            jamo,
+            diacritics,
+            options: options.resolve(METADATA, None, None),
+            reordering,
+            decompositions,
+            tables,
+        }
     }
 
     /// Cheaply converts a [`CollatorBorrowed<'static>`] into a [`Collator`].
@@ -869,32 +790,11 @@ impl CollatorBorrowed<'static> {
             },
             decompositions: DataPayload::from_static_ref(self.decompositions),
             tables: DataPayload::from_static_ref(self.tables),
-            lithuanian_dot_above: self.lithuanian_dot_above,
         }
     }
 }
 
-macro_rules! collation_elements {
-    ($self:expr, $chars:expr, $tailoring:expr, $numeric_primary:expr) => {{
-        let jamo = <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from($self.jamo.ce32s.as_ule_slice());
-
-        let jamo = jamo.unwrap();
-
-        CollationElements::new(
-            $chars,
-            $self.root,
-            $tailoring,
-            jamo,
-            &$self.diacritics.secondaries,
-            $self.decompositions,
-            $self.tables,
-            $numeric_primary,
-            $self.lithuanian_dot_above,
-        )
-    }};
-}
-
-impl CollatorBorrowed<'_> {
+impl<'a> CollatorBorrowed<'a> {
     /// The resolved options showing how the default options, the requested options,
     /// and the options from locale data were combined.
     pub fn resolved_options(&self) -> ResolvedCollatorOptions {
@@ -971,7 +871,7 @@ impl CollatorBorrowed<'_> {
     );
 
     #[inline(always)]
-    fn tailoring_or_root(&self) -> &CollationData<'_> {
+    fn tailoring_or_root(&self) -> &'a CollationData<'a> {
         if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {
@@ -1052,8 +952,30 @@ impl CollatorBorrowed<'_> {
 
         let tailoring = self.tailoring_or_root();
         let numeric_primary = self.numeric_primary();
-        let mut left = collation_elements!(self, left_chars, tailoring, numeric_primary);
-        let mut right = collation_elements!(self, right_chars, tailoring, numeric_primary);
+        let jamo = self.jamo.as_array();
+        let lithuanian_dot_above = self.options.lithuanian_dot_above();
+        let mut left = CollationElements::new(
+            left_chars,
+            self.root,
+            tailoring,
+            jamo,
+            &self.diacritics.secondaries,
+            self.decompositions,
+            self.tables,
+            numeric_primary,
+            lithuanian_dot_above,
+        );
+        let mut right = CollationElements::new(
+            right_chars,
+            self.root,
+            tailoring,
+            jamo,
+            &self.diacritics.secondaries,
+            self.decompositions,
+            self.tables,
+            numeric_primary,
+            lithuanian_dot_above,
+        );
 
         // Start identical prefix
 
@@ -1921,8 +1843,17 @@ impl CollatorBorrowed<'_> {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
         let levels = self.sort_key_levels();
 
-        let mut iter =
-            collation_elements!(self, iter, self.tailoring_or_root(), self.numeric_primary());
+        let mut iter = CollationElements::new(
+            iter,
+            self.root,
+            self.tailoring_or_root(),
+            self.jamo.as_array(),
+            &self.diacritics.secondaries,
+            self.decompositions,
+            self.tables,
+            self.numeric_primary(),
+            self.options.lithuanian_dot_above(),
+        );
         iter.init();
         let variable_top = self.variable_top();
 
