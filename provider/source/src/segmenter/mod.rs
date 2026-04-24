@@ -4,11 +4,13 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-#![allow(dead_code)]
-#![allow(unused_imports)]
+#![cfg_attr(
+    not(any(feature = "use_wasm", feature = "use_icu4c")),
+    allow(dead_code, unused_imports)
+)]
 
+use crate::source::{include_files, SerdeCache};
 use crate::SourceDataProvider;
-use icu::collections::codepointtrie;
 use icu::properties::{
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
@@ -19,12 +21,9 @@ use icu::properties::{
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_provider::prelude::*;
-use std::cmp;
 use std::collections::HashSet;
 use std::fmt::Debug;
-use std::ops::RangeInclusive;
 use std::sync::OnceLock;
-use zerovec::ZeroVec;
 
 mod dictionary;
 mod lstm;
@@ -98,11 +97,8 @@ fn generate_rule_break_data(
     use icu::properties::{props::ExtendedPictographic, PropertyParser};
     use icu_codepointtrie_builder::CodePointTrieBuilder;
 
-    let segmenter = provider
-        .icuexport()
-        .unwrap()
-        .read_and_parse_toml::<SegmenterRuleTable>(rules_file)
-        .expect("The data should be valid!");
+    let segmenter =
+        toml::from_str::<SegmenterRuleTable>(rules_file).expect("The data should be valid!");
 
     let data = CodePointMapData::<WordBreak>::try_new_unstable(provider)
         .expect("The data should be valid!");
@@ -197,14 +193,7 @@ fn generate_rule_break_data(
     // the default unassigned values, so it's ok to omit them in the table.
     const CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
-    let mut properties_trie = CodePointTrieBuilder::new(
-        0u8,
-        0,
-        match trie_type {
-            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-            crate::TrieType::Small => codepointtrie::TrieType::Small,
-        },
-    );
+    let mut properties_trie = CodePointTrieBuilder::new(0u8, 0, trie_type.into());
     let mut properties_names = Vec::<String>::new();
     let mut simple_properties_count = 0;
 
@@ -635,27 +624,16 @@ fn generate_rule_break_data(
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn generate_rule_break_data_override(
-    provider: &SourceDataProvider,
+    _provider: &SourceDataProvider,
     rules_file: &str,
     trie_type: crate::TrieType,
 ) -> RuleBreakDataOverride<'static> {
     use icu_codepointtrie_builder::CodePointTrieBuilder;
 
-    let segmenter = provider
-        .icuexport()
-        .unwrap()
-        .read_and_parse_toml::<SegmenterRuleTable>(rules_file)
-        .expect("The data should be valid!");
+    let segmenter =
+        toml::from_str::<SegmenterRuleTable>(rules_file).expect("The data should be valid!");
 
-    const CODEPOINT_TABLE_LEN: usize = 0xE1000;
-    let mut properties_trie = CodePointTrieBuilder::new(
-        0u8,
-        0,
-        match trie_type {
-            crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-            crate::TrieType::Small => codepointtrie::TrieType::Small,
-        },
-    );
+    let mut properties_trie = CodePointTrieBuilder::new(0u8, 0, trie_type.into());
     let mut properties_names = Vec::<String>::new();
 
     properties_names.push("Unknown".to_string());
@@ -714,7 +692,7 @@ macro_rules! implement {
                     self.check_req::<$marker>(req)?;
                     let data = generate_rule_break_data(
                         &hardcoded_segmenter_provider(),
-                        $rules,
+                        include_str!(concat!("../../data/segmenter/", $rules)),
                         self.trie_type(),
                     );
 
@@ -748,7 +726,7 @@ macro_rules! implement_override {
                     self.check_req::<$marker>(req)?;
                     let data = generate_rule_break_data_override(
                         &hardcoded_segmenter_provider(),
-                        $rules,
+                        include_str!(concat!("../../data/segmenter/", $rules)),
                         self.trie_type(),
                     );
 
@@ -773,95 +751,34 @@ macro_rules! implement_override {
 }
 
 fn hardcoded_segmenter_provider() -> SourceDataProvider {
-    use crate::{
-        source::{AbstractFs, SerdeCache},
-        SourceDataProvider,
-    };
     // Singleton so that all instantiations share the same cache.
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
     SINGLETON
         .get_or_init(|| {
             let mut provider = SourceDataProvider::new_custom();
-            provider.icuexport_paths =
-                Some(std::sync::Arc::new(SerdeCache::new(AbstractFs::Memory(
-                    [
-                        (
-                            "uprops/small/ea.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/ea.toml").as_slice(),
-                        ),
-                        (
-                            "uprops/small/ExtPict.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/ExtPict.toml")
-                                .as_slice(),
-                        ),
-                        (
-                            "uprops/small/gc.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/gc.toml").as_slice(),
-                        ),
-                        (
-                            "uprops/small/GCB.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/GCB.toml").as_slice(),
-                        ),
-                        (
-                            "uprops/small/InCB.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/InCB.toml")
-                                .as_slice(),
-                        ),
-                        (
-                            "uprops/small/lb.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/lb.toml").as_slice(),
-                        ),
-                        (
-                            "uprops/small/SB.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/SB.toml").as_slice(),
-                        ),
-                        (
-                            "uprops/small/sc.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/sc.toml").as_slice(),
-                        ),
-                        (
-                            "uprops/small/WB.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/WB.toml").as_slice(),
-                        ),
-                        (
-                            "segmenter/grapheme.toml",
-                            include_bytes!("../../data/segmenter/grapheme.toml").as_slice(),
-                        ),
-                        (
-                            "segmenter/line.toml",
-                            include_bytes!("../../data/segmenter/line.toml").as_slice(),
-                        ),
-                        (
-                            "segmenter/sentence.toml",
-                            include_bytes!("../../data/segmenter/sentence.toml").as_slice(),
-                        ),
-                        (
-                            "segmenter/word.toml",
-                            include_bytes!("../../data/segmenter/word.toml").as_slice(),
-                        ),
-                    ]
-                    .into_iter()
-                    .collect(),
-                ))));
+            provider.icuexport_paths = Some(std::sync::Arc::new(SerdeCache::new(include_files!(
+                "../../data/segmenter/";
+                "uprops/small/ea.toml",
+                "uprops/small/ExtPict.toml",
+                "uprops/small/gc.toml",
+                "uprops/small/GCB.toml",
+                "uprops/small/InCB.toml",
+                "uprops/small/lb.toml",
+                "uprops/small/SB.toml",
+                "uprops/small/sc.toml",
+                "uprops/small/WB.toml",
+            ))));
             provider
         })
         .clone()
 }
 
-implement!(SegmenterBreakLineV1, "segmenter/line.toml");
-implement!(SegmenterBreakGraphemeClusterV1, "segmenter/grapheme.toml");
-implement!(SegmenterBreakWordV1, "segmenter/word.toml");
-implement!(SegmenterBreakSentenceV1, "segmenter/sentence.toml");
-implement_override!(
-    SegmenterBreakWordOverrideV1,
-    "segmenter/word.toml",
-    ["fi", "sv"]
-);
-implement_override!(
-    SegmenterBreakSentenceOverrideV1,
-    "segmenter/sentence.toml",
-    ["el"]
-);
+implement!(SegmenterBreakLineV1, "line.toml");
+implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml");
+implement!(SegmenterBreakWordV1, "word.toml");
+implement!(SegmenterBreakSentenceV1, "sentence.toml");
+implement_override!(SegmenterBreakWordOverrideV1, "word.toml", ["fi", "sv"]);
+implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
 #[cfg(test)]
 mod tests {

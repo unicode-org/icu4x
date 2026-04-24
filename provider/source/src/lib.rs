@@ -197,9 +197,7 @@ impl SourceDataProvider {
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     pub fn with_cldr(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(
-                AbstractFs::new(root)?,
-            )))),
+            cldr_paths: Some(Arc::new(CldrCache::new(AbstractFs::new(root)?))),
             ..self
         })
     }
@@ -246,10 +244,7 @@ impl SourceDataProvider {
     /// `tz` directory or ZIP file (see [GitHub](https://github.com/eggert/tz)).
     pub fn with_tzdb(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
-            tzdb_paths: Some(Arc::new(TzdbCache {
-                root: AbstractFs::new(root)?,
-                transitions: Default::default(),
-            })),
+            tzdb_paths: Some(Arc::new(TzdbCache::new(AbstractFs::new(root)?))),
             ..self
         })
     }
@@ -263,9 +258,9 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_cldr_for_tag(self, tag: &str) -> Self {
         Self {
-                cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::new_from_url(format!(
+                cldr_paths: Some(Arc::new(CldrCache::new(AbstractFs::new_from_url(format!(
                     "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
-                )))))),
+                ))))),
                 ..self
         }
     }
@@ -352,12 +347,9 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_tzdb_for_tag(self, tag: &str) -> Self {
         Self {
-            tzdb_paths: Some(Arc::new(TzdbCache {
-                root: AbstractFs::new_from_url(format!(
-                    "https://www.iana.org/time-zones/repository/releases/tzdata{tag}.tar.gz",
-                )),
-                transitions: Default::default(),
-            })),
+            tzdb_paths: Some(Arc::new(TzdbCache::new(AbstractFs::new_from_url(format!(
+                "https://www.iana.org/time-zones/repository/releases/tzdata{tag}.tar.gz",
+            ))))),
             ..self
         }
     }
@@ -656,6 +648,15 @@ enum TrieType {
     #[serde(rename = "small")]
     #[default]
     Small,
+}
+
+impl From<TrieType> for icu::collections::codepointtrie::TrieType {
+    fn from(other: TrieType) -> Self {
+        match other {
+            TrieType::Fast => Self::Fast,
+            TrieType::Small => Self::Small,
+        }
+    }
 }
 
 impl std::fmt::Display for TrieType {

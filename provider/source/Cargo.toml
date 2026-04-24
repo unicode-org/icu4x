@@ -80,6 +80,7 @@ simple_logger = { workspace = true }
 icu = { path = "../../components/icu", default-features = false, features = ["unstable"] }
 num-bigint = { workspace = true }
 num-rational = { workspace = true }
+crlify = { workspace = true }
 
 [features]
 default = ["use_wasm", "networking"]

@@ -9,10 +9,16 @@ description = "Download fresh source testing data into the icu_provider_export c
 category = "ICU4X Data"
 command = "cargo"
 args = [
-    "run",
-    "--manifest-path=tools/make/download-repo-sources/Cargo.toml",
+    "test",
+    "-p",
+    "icu_provider_source",
+    "--lib",
+    "--all-features",
     "--",
-    "-v",
+    "tests::download_repo_sources::download_repo_sources",
+    "--exact",
+    "--nocapture",
+    "--include-ignored" 
 ]
 
 [tasks.testdata]
