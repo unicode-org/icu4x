@@ -69,7 +69,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/source/data/debug provider/fs/tests/data provider/blob/tests/data provider/baked/tests/data provider/adapters/tests/data provider/source/src/tests/data.rs
+output = exec git status --porcelain=v1 provider/source/data/debug provider/source/tests/data provider/fs/tests/data provider/blob/tests/data provider/baked/tests/data provider/adapters/tests/data provider/source/src/tests/data.rs
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
