@@ -38,7 +38,7 @@ define_preferences!(
 /// let display_name = RegionDisplayNames::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
-/// assert_eq!(display_name.of(region!("AE")), Some("United Arab Emirates"));
+/// assert_eq!(display_name.of(region!("AE")).as_deref(), Some("United Arab Emirates"));
 /// ```
 #[derive(Default, Debug)]
 pub struct RegionDisplayNames {
@@ -79,14 +79,24 @@ impl RegionDisplayNames {
     }
 
     /// Returns the display name of a region.
-    pub fn of(&self, region: Region) -> Option<&str> {
+    ///
+    /// When no localized name exists, [`DisplayNamesOptions::fallback`](crate::DisplayNamesOptions::fallback)
+    /// controls whether this returns the region subtag as an owned string ([`Fallback::Code`]) or
+    /// [`None`] ([`Fallback::None`]).
+    pub fn of(&self, region: Region) -> Option<Cow<'_, str>> {
         let data = self.region_data.get();
-        match self.options.style {
+        let name = match self.options.style {
             Some(Style::Short) => data.short_names.get(&region.to_tinystr().to_unvalidated()),
             _ => None,
         }
-        .or_else(|| data.names.get(&region.to_tinystr().to_unvalidated()))
-        // TODO: Respect options.fallback
+        .or_else(|| data.names.get(&region.to_tinystr().to_unvalidated()));
+        match name {
+            Some(s) => Some(Cow::Borrowed(s)),
+            None => match self.options.fallback {
+                Fallback::Code => Some(Cow::Owned(region.as_str().into())),
+                Fallback::None => None,
+            },
+        }
     }
 }
 
@@ -105,7 +115,10 @@ impl RegionDisplayNames {
 /// let display_name = ScriptDisplayNames::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
-/// assert_eq!(display_name.of(script!("Maya")), Some("Mayan hieroglyphs"));
+/// assert_eq!(
+///     display_name.of(script!("Maya")).as_deref(),
+///     Some("Mayan hieroglyphs")
+/// );
 /// ```
 #[derive(Default, Debug)]
 pub struct ScriptDisplayNames {
@@ -146,14 +159,22 @@ impl ScriptDisplayNames {
     }
 
     /// Returns the display name of a script.
-    pub fn of(&self, script: Script) -> Option<&str> {
+    ///
+    /// When no localized name exists, behavior follows [`DisplayNamesOptions::fallback`](crate::DisplayNamesOptions::fallback).
+    pub fn of(&self, script: Script) -> Option<Cow<'_, str>> {
         let data = self.script_data.get();
-        match self.options.style {
+        let name = match self.options.style {
             Some(Style::Short) => data.short_names.get(&script.to_tinystr().to_unvalidated()),
             _ => None,
         }
-        .or_else(|| data.names.get(&script.to_tinystr().to_unvalidated()))
-        // TODO: Respect options.fallback
+        .or_else(|| data.names.get(&script.to_tinystr().to_unvalidated()));
+        match name {
+            Some(s) => Some(Cow::Borrowed(s)),
+            None => match self.options.fallback {
+                Fallback::Code => Some(Cow::Owned(script.as_str().into())),
+                Fallback::None => None,
+            },
+        }
     }
 }
 
@@ -172,11 +193,13 @@ impl ScriptDisplayNames {
 /// let display_name = VariantDisplayNames::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
-/// assert_eq!(display_name.of(variant!("POSIX")), Some("Computer"));
+/// assert_eq!(
+///     display_name.of(variant!("POSIX")).as_deref(),
+///     Some("Computer")
+/// );
 /// ```
 #[derive(Default, Debug)]
 pub struct VariantDisplayNames {
-    #[allow(dead_code)] //TODO: Add DisplayNamesOptions support for Variants.
     options: DisplayNamesOptions,
     variant_data: DataPayload<VariantDisplayNamesV1>,
 }
@@ -214,10 +237,18 @@ impl VariantDisplayNames {
     }
 
     /// Returns the display name of a variant.
-    pub fn of(&self, variant: Variant) -> Option<&str> {
+    ///
+    /// When no localized name exists, behavior follows [`DisplayNamesOptions::fallback`](crate::DisplayNamesOptions::fallback).
+    pub fn of(&self, variant: Variant) -> Option<Cow<'_, str>> {
         let data = self.variant_data.get();
-        data.names.get(&variant.to_tinystr().to_unvalidated())
-        // TODO: Respect options.fallback
+        let name = data.names.get(&variant.to_tinystr().to_unvalidated());
+        match name {
+            Some(s) => Some(Cow::Borrowed(s)),
+            None => match self.options.fallback {
+                Fallback::Code => Some(Cow::Owned(variant.as_str().into())),
+                Fallback::None => None,
+            },
+        }
     }
 }
 
@@ -236,7 +267,10 @@ impl VariantDisplayNames {
 /// let display_name = LanguageDisplayNames::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
-/// assert_eq!(display_name.of(language!("de")), Some("German"));
+/// assert_eq!(
+///     display_name.of(language!("de")).as_deref(),
+///     Some("German")
+/// );
 /// ```
 #[derive(Default, Debug)]
 pub struct LanguageDisplayNames {
@@ -277,18 +311,25 @@ impl LanguageDisplayNames {
     }
 
     /// Returns the display name of a language.
-    pub fn of(&self, language: Language) -> Option<&str> {
+    ///
+    /// When no localized name exists, behavior follows [`DisplayNamesOptions::fallback`](crate::DisplayNamesOptions::fallback).
+    pub fn of(&self, language: Language) -> Option<Cow<'_, str>> {
         let data = self.language_data.get();
-        match self.options.style {
-            Some(Style::Short) => data
-                .short_names
-                .get(&language.to_tinystr().to_unvalidated()),
-            Some(Style::Long) => data.long_names.get(&language.to_tinystr().to_unvalidated()),
-            Some(Style::Menu) => data.menu_names.get(&language.to_tinystr().to_unvalidated()),
+        let key = language.to_tinystr().to_unvalidated();
+        let name = match self.options.style {
+            Some(Style::Short) => data.short_names.get(&key),
+            Some(Style::Long) => data.long_names.get(&key),
+            Some(Style::Menu) => data.menu_names.get(&key),
             _ => None,
         }
-        .or_else(|| data.names.get(&language.to_tinystr().to_unvalidated()))
-        // TODO: Respect options.fallback
+        .or_else(|| data.names.get(&key));
+        match name {
+            Some(s) => Some(Cow::Borrowed(s)),
+            None => match self.options.fallback {
+                Fallback::Code => Some(Cow::Owned(language.as_str().into())),
+                Fallback::None => None,
+            },
+        }
     }
 }
 

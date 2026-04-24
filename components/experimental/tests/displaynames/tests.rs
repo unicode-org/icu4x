@@ -2,8 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_experimental::displaynames::{multi::LocaleDisplayNamesFormatter, DisplayNamesOptions};
+use icu_experimental::displaynames::{
+    multi::{LocaleDisplayNamesFormatter, RegionDisplayNames},
+    DisplayNamesOptions, Fallback,
+};
 use icu_locale_core::locale;
+use icu_locale_core::subtags::region;
 use icu_locale_core::Locale;
 use std::borrow::Cow;
 
@@ -96,4 +100,27 @@ fn test_concatenate() {
             assert_eq!(result.capacity(), result.len());
         }
     }
+}
+
+#[test]
+fn region_display_fallback_code_uses_subtag() {
+    let display_name =
+        RegionDisplayNames::try_new(locale!("en").into(), DisplayNamesOptions::default())
+            .expect("Data should load successfully");
+    let r = region!("AA");
+    assert_eq!(
+        display_name.of(r).as_deref(),
+        Some("AA"),
+        "with Fallback::Code, missing data should return the region code"
+    );
+}
+
+#[test]
+fn region_display_fallback_none_returns_none() {
+    let mut options = DisplayNamesOptions::default();
+    options.fallback = Fallback::None;
+    let display_name = RegionDisplayNames::try_new(locale!("en").into(), options)
+        .expect("Data should load successfully");
+    let r = region!("AA");
+    assert!(display_name.of(r).is_none());
 }

@@ -1,6 +1,12 @@
 # Changelog
 
 
+## Unreleased
+
+- Components
+    - `icu_experimental`
+        - **Breaking:** `displaynames`: `RegionDisplayNames::of`, `ScriptDisplayNames::of`, `LanguageDisplayNames::of`, and `VariantDisplayNames::of` now return `Option<Cow<'_, str>>` and honor `DisplayNamesOptions::fallback` (`Fallback::Code` returns the subtag as an owned string; `Fallback::None` returns `None`). Doctests, FFI (`icu_capi`), and example updated accordingly.
+
 ## icu 2.2.x
 
 Several crates have had patch releases in the 2.2 stream:
