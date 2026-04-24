@@ -110,7 +110,8 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
-        let result = extract_currency_essentials(self, currencies_resource, numbers_resource);
+        let result =
+            extract_currency_essentials(self, req.id.locale, currencies_resource, numbers_resource);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -132,20 +133,31 @@ impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
 
 fn extract_currency_essentials<'data>(
     provider: &SourceDataProvider,
+    locale: &DataLocale,
     currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
 ) -> Result<CurrencyEssentials<'data>, DataError> {
     let currencies = &currencies_resource.main.value.numbers.currencies;
 
-    // TODO(#3838): these patterns might be numbering system dependent.
-    let currency_formats = &&numbers_resource
-        .main
-        .value
-        .numbers
+    let numbers = &numbers_resource.main.value.numbers;
+    let mut default_numbering_system = numbers.default_numbering_system.as_str();
+
+    // https://github.com/unicode-org/icu4x/issues/5374
+    if *locale == DataLocale::from(icu::locale::locale!("sd")) {
+        default_numbering_system = "latn";
+    }
+
+    // unicode-org#3838: `currencyFormats` are keyed by numbering system; use the locale default
+    // (same idea as `currency/patterns.rs`), then fall back to `latn` if the map has no entry.
+    let currency_formats = numbers
         .numsys_data
         .currency_patterns
-        .get("latn")
-        .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
+        .get(default_numbering_system)
+        .or_else(|| numbers.numsys_data.currency_patterns.get("latn"))
+        .ok_or_else(|| {
+            DataError::custom("Could not find currencyFormats for numbering system")
+                .with_display_context(default_numbering_system)
+        })?;
 
     let standard = &currency_formats.standard;
     let standard_alpha_next_to_number = currency_formats

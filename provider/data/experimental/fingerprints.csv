@@ -31495,7 +31495,7 @@ currency/displayname/v1, zu/ZMK, 54B, 31B, abe05b241d692995
 currency/displayname/v1, zu/ZMW, 40B, 17B, 15b95ba727a96fd5
 currency/displayname/v1, zu/ZWG, -> ceb/ZWG
 currency/essentials/v1, <lookup>, 1775B, 355 identifiers
-currency/essentials/v1, <total>, 381600B, 343035B, 311 unique payloads
+currency/essentials/v1, <total>, 381598B, 343033B, 311 unique payloads
 currency/essentials/v1, af, 1111B, 987B, 7696b773dd86e22a
 currency/essentials/v1, af-NA, 1111B, 987B, ef78bd2710e13aa
 currency/essentials/v1, ak, 1129B, 1005B, b35651a617ebfc8d
@@ -31648,7 +31648,7 @@ currency/essentials/v1, es-UY, 1099B, 975B, 59070515ae2eb7d1
 currency/essentials/v1, es-VE, 1094B, 970B, e790268ca7afe9e6
 currency/essentials/v1, et, 1113B, 989B, da837119cdbe0bcc
 currency/essentials/v1, eu, 1128B, 1004B, 77bdc06c7c5e9b97
-currency/essentials/v1, fa, 1147B, 1023B, eea86f2c62452339
+currency/essentials/v1, fa, 1145B, 1021B, c8cfb12caf4bfdb9
 currency/essentials/v1, fa-AF, 1141B, 1017B, c0e941f93217b79d
 currency/essentials/v1, ff-Adlm, 1223B, 1099B, 8719bea368213778
 currency/essentials/v1, ff-Adlm-BF, 1219B, 1095B, 12ff31035cebcc13

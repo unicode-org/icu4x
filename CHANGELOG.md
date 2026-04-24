@@ -1,6 +1,12 @@
 # Changelog
 
 
+## Unreleased
+
+- Data
+    - `icu_provider_source`: `CurrencyEssentials` now keys `currencyFormats` off the locale's default numbering system (matching `currency/patterns.rs`), with the Sindhi `latn` override (unicode-org#5374) and a `latn` fallback when the default key is missing (unicode-org#3838)
+    - Rebake `CurrencyEssentialsV1` baked data to pick up the new payloads (unicode-org#3838)
+
 ## icu 2.2.x
 
 Several crates have had patch releases in the 2.2 stream:
