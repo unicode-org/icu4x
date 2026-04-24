@@ -1,6 +1,14 @@
 # Changelog
 
 
+## Unreleased
+
+- Components
+    - `icu_calendar`
+        - Document `Ord` vs `PartialOrd` semantics on `Date` when calendar instances are incompatible: `Ord` falls back to comparing the raw `DateInner` representations to satisfy the trait contract; `PartialOrd` remains the semantic ordering and returns `None` when calendars disagree.
+- Utils
+    - `calendrical_calculations`: fix spelling in `TODO(#3709)` comment.
+
 ## icu 2.2.x
 
 Several crates have had patch releases in the 2.2 stream:
