@@ -106,16 +106,15 @@ fn download_repo_sources() {
     let irg_path = out_root.join("unihan/Unihan_IRGSources.txt");
     std::io::copy(
         &mut BufReader::new(File::open(&irg_path).unwrap())
-                .lines()
-                .map_while(Result::ok)
-                .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
-                .collect::<Vec<_>>()
-                .join("\n")
+            .lines()
+            .map_while(Result::ok)
+            .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
+            .collect::<Vec<_>>()
+            .join("\n")
             .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(&irg_path).unwrap(),
-        ),
-    ).unwrap();
+        &mut crlify::BufWriterWithLineEndingFix::new(File::create(&irg_path).unwrap()),
+    )
+    .unwrap();
 
     // Cannot use AbstractFs::dump because UCD is not a functioning data source
     std::fs::remove_dir_all(out_root.join("ucd")).unwrap();
@@ -150,7 +149,8 @@ fn download_repo_sources() {
         &mut crlify::BufWriterWithLineEndingFix::new(
             File::create(&identifier_status_path).unwrap(),
         ),
-    ).unwrap();
+    )
+    .unwrap();
 
     let mut tzdb_files = provider
         .tzdb_paths
