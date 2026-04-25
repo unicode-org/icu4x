@@ -360,6 +360,9 @@ macro_rules! expand {
                     }
                     let trie = map
                         .into_iter()
+                        // Filter CCC's numeric names.
+                        // TODO: Don't
+                        .filter(|(k, _)| k.parse::<usize>().is_err())
                         .map(|(k, v)| (k, v as usize))
                         .collect::<ZeroTrieSimpleAscii<_>>()
                         .convert_store();
