@@ -168,6 +168,8 @@ unsafe impl ULE for FieldLengthULE {
 
 /// Various numeric overrides for datetime patterns
 /// as found in CLDR
+///
+// Formatting code for this is in `format/numeric_overrides.rs`
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
@@ -210,11 +212,6 @@ impl FieldNumericOverrides {
             Self::Romanlow => "romanlow",
             Self::Jpnyear => "jpnyear",
         }
-    }
-
-    /// Formats a number according to the override system.
-    pub fn format_number<W: fmt::Write + ?Sized>(self, number: u32, w: &mut W) -> fmt::Result {
-        crate::format::numeric_override::format(self, number, w)
     }
 }
 

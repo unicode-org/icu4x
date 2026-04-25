@@ -4,7 +4,7 @@
 
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
 use crate::error::ErrorField;
-use crate::format::DateTimeInputUnchecked;
+use crate::format::{numeric_override, DateTimeInputUnchecked};
 use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
@@ -165,29 +165,24 @@ where
         (FieldSymbol::Year(Year::Calendar), l) => {
             const PART: Part = parts::YEAR;
             input!(PART, Year, year = input.year);
-            // We don't want to write this code with early returns.
-            // This allows us to write "exit early" code without using `return`.
-            let mut done_formatting = false;
-            if let FieldLength::NumericOverride(o) = l {
-                let year_val = year.era_year_or_related_iso();
 
+            let year_val = year.era_year_or_related_iso();
+            match l {
                 // We only support overriding for positive numbers.
                 // For negative numbers RBNF coverage is spotty and often not actually
                 // what you want in years, so we fall back.
-                if year_val >= 0 {
-                    w.with_part(PART, |w| o.format_number(year_val as u32, w))?;
-                    done_formatting = true;
+                FieldLength::NumericOverride(o) if year_val >= 0 => {
+                    w.with_part(PART, |w| numeric_override::format(o, year_val as u32, w))?;
+                    Ok(())
                 }
-            }
-            if !done_formatting {
-                let mut year = Decimal::from(year.era_year_or_related_iso());
-                if matches!(l, FieldLength::Two) {
-                    // 'yy' and 'YY' truncate
-                    year.set_max_position(2);
+                _ => {
+                    let mut year = Decimal::from(year.era_year_or_related_iso());
+                    if matches!(l, FieldLength::Two) {
+                        // 'yy' and 'YY' truncate
+                        year.set_max_position(2);
+                    }
+                    try_write_number(PART, w, decimal_formatter, year, l)?
                 }
-                try_write_number(PART, w, decimal_formatter, year, l)?
-            } else {
-                Ok(())
             }
         }
         (FieldSymbol::Year(Year::Cyclic), l) => {
@@ -267,7 +262,9 @@ where
         (FieldSymbol::Month(_), FieldLength::NumericOverride(o)) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
-            w.with_part(PART, |w| o.format_number(month.number() as u32, w))?;
+            w.with_part(PART, |w| {
+                numeric_override::format(o, month.number() as u32, w)
+            })?;
             Ok(())
         }
         (FieldSymbol::Month(symbol), l) => {
@@ -368,16 +365,14 @@ where
         (FieldSymbol::Day(fields::Day::DayOfMonth), FieldLength::NumericOverride(o)) => {
             const PART: Part = parts::DAY;
             input!(PART, DayOfMonth, day_of_month = input.day_of_month);
-            w.with_part(PART, |w| o.format_number(day_of_month.0 as u32, w))?;
+            w.with_part(PART, |w| {
+                numeric_override::format(o, day_of_month.0 as u32, w)
+            })?;
             Ok(())
         }
         (FieldSymbol::Day(fields::Day::DayOfMonth), l) => {
             const PART: Part = parts::DAY;
             input!(PART, DayOfMonth, day_of_month = input.day_of_month);
-            if let FieldLength::NumericOverride(o) = l {
-                w.with_part(PART, |w| o.format_number(day_of_month.0 as u32, w))?;
-                return Ok(Ok(()));
-            }
             try_write_number(PART, w, decimal_formatter, day_of_month.0.into(), l)?
         }
         (FieldSymbol::Day(fields::Day::DayOfWeekInMonth), l) => {
