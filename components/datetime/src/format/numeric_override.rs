@@ -14,17 +14,20 @@ pub(crate) fn format<W: fmt::Write + ?Sized>(
 ) -> fmt::Result {
     match overrides {
         FieldNumericOverrides::Hanidec => format_hanidec(number, w),
-        // https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16
-        FieldNumericOverrides::Jpnyear => {
-            if number == 1 {
-                w.write_str("元")
-            } else {
-                number.write_to(w)
-            }
-        }
+        //
+        FieldNumericOverrides::Jpnyear => format_jpan(number, w),
         FieldNumericOverrides::Hanidays => format_hanidays(number, w),
         FieldNumericOverrides::Romanlow => format_romanlow(number, w),
         FieldNumericOverrides::Hebr => format_hebrew(number, w),
+    }
+}
+
+/// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16>
+fn format_jpan<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
+    if number == 1 {
+        w.write_str("元")
+    } else {
+        number.write_to(w)
     }
 }
 
