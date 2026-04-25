@@ -92,19 +92,19 @@ fn test_en_year_patterns() {
 }
 
 #[test]
-fn test_haw_month_overrides() {
+fn test_hebr_override() {
     use icu::datetime::provider::fields::{FieldLength, FieldNumericOverrides, FieldSymbol};
     use icu::datetime::provider::pattern::PatternItem;
     use icu::locale::locale;
 
-    // This test verifies that Hawaiian locale ("haw") applies Roman numeral overrides
-    // to the month field in datetime patterns, as specified in CLDR.
+    // This test verifies that the ja-u-ca-japanese has jpanyear overrides
+    // for the yead field in datetime patterns, as specified in CLDR.
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<DatetimePatternsDateGregorianV1> = provider
+    let payload: DataPayload<DatetimePatternsDateJapaneseV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ym0d"),
-                &locale!("haw").into(),
+                &locale!("ja").into(),
             ),
             metadata: Default::default(),
         })
@@ -112,18 +112,18 @@ fn test_haw_month_overrides() {
         .payload;
 
     let elements = &payload.get().elements;
-    let mut found_roman_month = false;
+    let mut found_jpan = false;
 
     for element in elements.iter() {
         let (_metadata, items) = element.get_default();
         for item in items.iter() {
             if let PatternItem::Field(field) = item {
-                if let FieldSymbol::Month(_) = field.symbol {
+                if let FieldSymbol::Year(_) = field.symbol {
                     if matches!(
                         field.length,
-                        FieldLength::NumericOverride(FieldNumericOverrides::Romanlow)
+                        FieldLength::NumericOverride(FieldNumericOverrides::Jpnyear)
                     ) {
-                        found_roman_month = true;
+                        found_jpan = true;
                     }
                 }
             }
@@ -131,8 +131,8 @@ fn test_haw_month_overrides() {
     }
 
     assert!(
-        found_roman_month,
-        "Should have found month field with romanlow override"
+        found_jpan,
+        "Should have found year field with jpanyear override"
     );
 }
 
