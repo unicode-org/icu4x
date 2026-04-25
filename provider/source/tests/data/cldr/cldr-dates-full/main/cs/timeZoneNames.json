@@ -1,0 +1,1797 @@
+{
+  "main": {
+    "cs": {
+      "identity": {
+        "language": "cs"
+      },
+      "dates": {
+        "timeZoneNames": {
+          "hourFormat": "+H:mm;-H:mm",
+          "gmtFormat": "GMT{0}",
+          "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
+          "regionFormat": "časové pásmo {0}",
+          "regionFormat-type-daylight": "{0} (+1)",
+          "regionFormat-type-standard": "{0} (+0)",
+          "fallbackFormat": "{1} ({0})",
+          "zone": {
+            "Pacific": {
+              "Honolulu": {
+                "_type": "zone",
+                "exemplarCity": "Honolulu"
+              },
+              "Easter": {
+                "_type": "zone",
+                "exemplarCity": "Velikonoční ostrov"
+              },
+              "Galapagos": {
+                "_type": "zone",
+                "exemplarCity": "Galapágy"
+              },
+              "Fiji": {
+                "_type": "zone",
+                "exemplarCity": "Fidži"
+              },
+              "Truk": {
+                "_type": "zone",
+                "exemplarCity": "Chuukské ostrovy"
+              },
+              "Ponape": {
+                "_type": "zone",
+                "exemplarCity": "Pohnpei"
+              },
+              "Enderbury": {
+                "_type": "zone",
+                "exemplarCity": "Kanton (ostrov)"
+              },
+              "Noumea": {
+                "_type": "zone",
+                "exemplarCity": "Nouméa"
+              },
+              "Chatham": {
+                "_type": "zone",
+                "exemplarCity": "Chathamské ostrovy"
+              },
+              "Marquesas": {
+                "_type": "zone",
+                "exemplarCity": "Markézy"
+              },
+              "Gambier": {
+                "_type": "zone",
+                "exemplarCity": "Gambierovy ostrovy"
+              },
+              "Pitcairn": {
+                "_type": "zone",
+                "exemplarCity": "Pitcairnovy ostrovy"
+              },
+              "Efate": {
+                "_type": "zone",
+                "exemplarCity": "Éfaté"
+              },
+              "Wallis": {
+                "_type": "zone",
+                "exemplarCity": "Wallis & Futuna"
+              }
+            },
+            "Etc": {
+              "UTC": {
+                "_type": "zone",
+                "long": {
+                  "standard": "koordinovaný světový čas"
+                },
+                "short": {
+                  "standard": "UTC"
+                }
+              },
+              "Unknown": {
+                "_type": "zone",
+                "exemplarCity": "neznámé město"
+              }
+            },
+            "Asia": {
+              "Dubai": {
+                "_type": "zone",
+                "exemplarCity": "Dubaj"
+              },
+              "Kabul": {
+                "_type": "zone",
+                "exemplarCity": "Kábul"
+              },
+              "Yerevan": {
+                "_type": "zone",
+                "exemplarCity": "Jerevan"
+              },
+              "Dhaka": {
+                "_type": "zone",
+                "exemplarCity": "Dháka"
+              },
+              "Bahrain": {
+                "_type": "zone",
+                "exemplarCity": "Bahrajn"
+              },
+              "Brunei": {
+                "_type": "zone",
+                "exemplarCity": "Brunej"
+              },
+              "Thimphu": {
+                "_type": "zone",
+                "exemplarCity": "Thimbú"
+              },
+              "Urumqi": {
+                "_type": "zone",
+                "exemplarCity": "Urumči"
+              },
+              "Shanghai": {
+                "_type": "zone",
+                "exemplarCity": "Šanghaj"
+              },
+              "Nicosia": {
+                "_type": "zone",
+                "exemplarCity": "Nikósie"
+              },
+              "Hong_Kong": {
+                "_type": "zone",
+                "exemplarCity": "Hongkong"
+              },
+              "Jerusalem": {
+                "_type": "zone",
+                "exemplarCity": "Jeruzalém"
+              },
+              "Calcutta": {
+                "_type": "zone",
+                "exemplarCity": "Kalkata"
+              },
+              "Baghdad": {
+                "_type": "zone",
+                "exemplarCity": "Bagdád"
+              },
+              "Tehran": {
+                "_type": "zone",
+                "exemplarCity": "Teherán"
+              },
+              "Amman": {
+                "_type": "zone",
+                "exemplarCity": "Ammán"
+              },
+              "Tokyo": {
+                "_type": "zone",
+                "exemplarCity": "Tokio"
+              },
+              "Bishkek": {
+                "_type": "zone",
+                "exemplarCity": "Biškek"
+              },
+              "Phnom_Penh": {
+                "_type": "zone",
+                "exemplarCity": "Phnompenh"
+              },
+              "Pyongyang": {
+                "_type": "zone",
+                "exemplarCity": "Pchjongjang"
+              },
+              "Seoul": {
+                "_type": "zone",
+                "exemplarCity": "Soul"
+              },
+              "Kuwait": {
+                "_type": "zone",
+                "exemplarCity": "Kuvajt"
+              },
+              "Aqtau": {
+                "_type": "zone",
+                "exemplarCity": "Aktau"
+              },
+              "Oral": {
+                "_type": "zone",
+                "exemplarCity": "Uralsk"
+              },
+              "Aqtobe": {
+                "_type": "zone",
+                "exemplarCity": "Aktobe"
+              },
+              "Qostanay": {
+                "_type": "zone",
+                "exemplarCity": "Kostanaj"
+              },
+              "Qyzylorda": {
+                "_type": "zone",
+                "exemplarCity": "Kyzylorda"
+              },
+              "Beirut": {
+                "_type": "zone",
+                "exemplarCity": "Bejrút"
+              },
+              "Colombo": {
+                "_type": "zone",
+                "exemplarCity": "Kolombo"
+              },
+              "Rangoon": {
+                "_type": "zone",
+                "exemplarCity": "Rangún"
+              },
+              "Hovd": {
+                "_type": "zone",
+                "exemplarCity": "Khovd"
+              },
+              "Ulaanbaatar": {
+                "_type": "zone",
+                "exemplarCity": "Ulánbátar"
+              },
+              "Macau": {
+                "_type": "zone",
+                "exemplarCity": "Macao"
+              },
+              "Kuching": {
+                "_type": "zone",
+                "exemplarCity": "Kučing"
+              },
+              "Katmandu": {
+                "_type": "zone",
+                "exemplarCity": "Káthmándú"
+              },
+              "Muscat": {
+                "_type": "zone",
+                "exemplarCity": "Maskat"
+              },
+              "Karachi": {
+                "_type": "zone",
+                "exemplarCity": "Karáčí"
+              },
+              "Qatar": {
+                "_type": "zone",
+                "exemplarCity": "Katar"
+              },
+              "Yekaterinburg": {
+                "_type": "zone",
+                "exemplarCity": "Jekatěrinburg"
+              },
+              "Novokuznetsk": {
+                "_type": "zone",
+                "exemplarCity": "Novokuzněck"
+              },
+              "Krasnoyarsk": {
+                "_type": "zone",
+                "exemplarCity": "Krasnojarsk"
+              },
+              "Chita": {
+                "_type": "zone",
+                "exemplarCity": "Čita"
+              },
+              "Yakutsk": {
+                "_type": "zone",
+                "exemplarCity": "Jakutsk"
+              },
+              "Khandyga": {
+                "_type": "zone",
+                "exemplarCity": "Chandyga"
+              },
+              "Sakhalin": {
+                "_type": "zone",
+                "exemplarCity": "Sachalin"
+              },
+              "Srednekolymsk": {
+                "_type": "zone",
+                "exemplarCity": "Sredněkolymsk"
+              },
+              "Kamchatka": {
+                "_type": "zone",
+                "exemplarCity": "Kamčatka"
+              },
+              "Riyadh": {
+                "_type": "zone",
+                "exemplarCity": "Rijád"
+              },
+              "Singapore": {
+                "_type": "zone",
+                "exemplarCity": "Singapur"
+              },
+              "Damascus": {
+                "_type": "zone",
+                "exemplarCity": "Damašek"
+              },
+              "Dushanbe": {
+                "_type": "zone",
+                "exemplarCity": "Dušanbe"
+              },
+              "Ashgabat": {
+                "_type": "zone",
+                "exemplarCity": "Ašchabad"
+              },
+              "Taipei": {
+                "_type": "zone",
+                "exemplarCity": "Tchaj-pej"
+              },
+              "Tashkent": {
+                "_type": "zone",
+                "exemplarCity": "Taškent"
+              },
+              "Saigon": {
+                "_type": "zone",
+                "exemplarCity": "Ho Či Minovo město"
+              }
+            },
+            "Europe": {
+              "Tirane": {
+                "_type": "zone",
+                "exemplarCity": "Tirana"
+              },
+              "Vienna": {
+                "_type": "zone",
+                "exemplarCity": "Vídeň"
+              },
+              "Brussels": {
+                "_type": "zone",
+                "exemplarCity": "Brusel"
+              },
+              "Sofia": {
+                "_type": "zone",
+                "exemplarCity": "Sofie"
+              },
+              "Zurich": {
+                "_type": "zone",
+                "exemplarCity": "Curych"
+              },
+              "Prague": {
+                "_type": "zone",
+                "exemplarCity": "Praha"
+              },
+              "Busingen": {
+                "_type": "zone",
+                "exemplarCity": "Büsingen"
+              },
+              "Berlin": {
+                "_type": "zone",
+                "exemplarCity": "Berlín"
+              },
+              "Copenhagen": {
+                "_type": "zone",
+                "exemplarCity": "Kodaň"
+              },
+              "Helsinki": {
+                "_type": "zone",
+                "exemplarCity": "Helsinky"
+              },
+              "Paris": {
+                "_type": "zone",
+                "exemplarCity": "Paříž"
+              },
+              "London": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "britský letní čas"
+                },
+                "exemplarCity": "Londýn"
+              },
+              "Athens": {
+                "_type": "zone",
+                "exemplarCity": "Athény"
+              },
+              "Zagreb": {
+                "_type": "zone",
+                "exemplarCity": "Záhřeb"
+              },
+              "Budapest": {
+                "_type": "zone",
+                "exemplarCity": "Budapešť"
+              },
+              "Dublin": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "irský letní čas"
+                }
+              },
+              "Isle_of_Man": {
+                "_type": "zone",
+                "exemplarCity": "Ostrov Man"
+              },
+              "Rome": {
+                "_type": "zone",
+                "exemplarCity": "Řím"
+              },
+              "Luxembourg": {
+                "_type": "zone",
+                "exemplarCity": "Lucemburk"
+              },
+              "Monaco": {
+                "_type": "zone",
+                "exemplarCity": "Monako"
+              },
+              "Chisinau": {
+                "_type": "zone",
+                "exemplarCity": "Kišiněv"
+              },
+              "Warsaw": {
+                "_type": "zone",
+                "exemplarCity": "Varšava"
+              },
+              "Lisbon": {
+                "_type": "zone",
+                "exemplarCity": "Lisabon"
+              },
+              "Bucharest": {
+                "_type": "zone",
+                "exemplarCity": "Bukurešť"
+              },
+              "Belgrade": {
+                "_type": "zone",
+                "exemplarCity": "Bělehrad"
+              },
+              "Moscow": {
+                "_type": "zone",
+                "exemplarCity": "Moskva"
+              },
+              "Astrakhan": {
+                "_type": "zone",
+                "exemplarCity": "Astrachaň"
+              },
+              "Ulyanovsk": {
+                "_type": "zone",
+                "exemplarCity": "Uljanovsk"
+              },
+              "Ljubljana": {
+                "_type": "zone",
+                "exemplarCity": "Lublaň"
+              },
+              "Kiev": {
+                "_type": "zone",
+                "exemplarCity": "Kyjev"
+              },
+              "Vatican": {
+                "_type": "zone",
+                "exemplarCity": "Vatikán"
+              }
+            },
+            "Antarctica": {
+              "Syowa": {
+                "_type": "zone",
+                "exemplarCity": "Showa"
+              },
+              "DumontDUrville": {
+                "_type": "zone",
+                "exemplarCity": "Dumont-d’Urville"
+              }
+            },
+            "America": {
+              "Argentina": {
+                "Rio_Gallegos": {
+                  "_type": "zone",
+                  "exemplarCity": "Río Gallegos"
+                },
+                "Tucuman": {
+                  "_type": "zone",
+                  "exemplarCity": "Tucumán"
+                }
+              },
+              "Cordoba": {
+                "_type": "zone",
+                "exemplarCity": "Córdoba"
+              },
+              "St_Barthelemy": {
+                "_type": "zone",
+                "exemplarCity": "Svatý Bartoloměj"
+              },
+              "Eirunepe": {
+                "_type": "zone",
+                "exemplarCity": "Eirunepé"
+              },
+              "Cuiaba": {
+                "_type": "zone",
+                "exemplarCity": "Cuiabá"
+              },
+              "Santarem": {
+                "_type": "zone",
+                "exemplarCity": "Santarém"
+              },
+              "Belem": {
+                "_type": "zone",
+                "exemplarCity": "Belém"
+              },
+              "Araguaina": {
+                "_type": "zone",
+                "exemplarCity": "Araguaína"
+              },
+              "Sao_Paulo": {
+                "_type": "zone",
+                "exemplarCity": "São Paulo"
+              },
+              "Bahia": {
+                "_type": "zone",
+                "exemplarCity": "Bahía"
+              },
+              "Maceio": {
+                "_type": "zone",
+                "exemplarCity": "Maceió"
+              },
+              "Noronha": {
+                "_type": "zone",
+                "exemplarCity": "Fernando de Noronha"
+              },
+              "Coral_Harbour": {
+                "_type": "zone",
+                "exemplarCity": "Atikokan"
+              },
+              "St_Johns": {
+                "_type": "zone",
+                "exemplarCity": "St. John’s"
+              },
+              "Bogota": {
+                "_type": "zone",
+                "exemplarCity": "Bogotá"
+              },
+              "Costa_Rica": {
+                "_type": "zone",
+                "exemplarCity": "Kostarika"
+              },
+              "Curacao": {
+                "_type": "zone",
+                "exemplarCity": "Curaçao"
+              },
+              "Dominica": {
+                "_type": "zone",
+                "exemplarCity": "Dominika"
+              },
+              "Godthab": {
+                "_type": "zone",
+                "exemplarCity": "Nuuk"
+              },
+              "Scoresbysund": {
+                "_type": "zone",
+                "exemplarCity": "Ittoqqortoormiit"
+              },
+              "Jamaica": {
+                "_type": "zone",
+                "exemplarCity": "Jamajka"
+              },
+              "St_Kitts": {
+                "_type": "zone",
+                "exemplarCity": "Svatý Kryštof"
+              },
+              "Cayman": {
+                "_type": "zone",
+                "exemplarCity": "Kajmanské ostrovy"
+              },
+              "St_Lucia": {
+                "_type": "zone",
+                "exemplarCity": "Svatá Lucie"
+              },
+              "Martinique": {
+                "_type": "zone",
+                "exemplarCity": "Martinik"
+              },
+              "Ciudad_Juarez": {
+                "_type": "zone",
+                "exemplarCity": "Ciudad Juárez"
+              },
+              "Mazatlan": {
+                "_type": "zone",
+                "exemplarCity": "Mazatlán"
+              },
+              "Bahia_Banderas": {
+                "_type": "zone",
+                "exemplarCity": "Bahia Banderas"
+              },
+              "Mexico_City": {
+                "_type": "zone",
+                "exemplarCity": "Ciudad de México"
+              },
+              "Merida": {
+                "_type": "zone",
+                "exemplarCity": "Merida"
+              },
+              "Cancun": {
+                "_type": "zone",
+                "exemplarCity": "Cancún"
+              },
+              "Miquelon": {
+                "_type": "zone",
+                "exemplarCity": "Saint-Pierre"
+              },
+              "Puerto_Rico": {
+                "_type": "zone",
+                "exemplarCity": "Portoriko"
+              },
+              "Asuncion": {
+                "_type": "zone",
+                "exemplarCity": "Asunción"
+              },
+              "El_Salvador": {
+                "_type": "zone",
+                "exemplarCity": "Salvador"
+              },
+              "Lower_Princes": {
+                "_type": "zone",
+                "exemplarCity": "Lower Prince’s Quarter"
+              },
+              "North_Dakota": {
+                "Beulah": {
+                  "_type": "zone",
+                  "exemplarCity": "Beulah, Severní Dakota"
+                },
+                "New_Salem": {
+                  "_type": "zone",
+                  "exemplarCity": "New Salem, Severní Dakota"
+                },
+                "Center": {
+                  "_type": "zone",
+                  "exemplarCity": "Center, Severní Dakota"
+                }
+              },
+              "Indiana": {
+                "Vincennes": {
+                  "_type": "zone",
+                  "exemplarCity": "Vincennes, Indiana"
+                },
+                "Petersburg": {
+                  "_type": "zone",
+                  "exemplarCity": "Petersburg, Indiana"
+                },
+                "Tell_City": {
+                  "_type": "zone",
+                  "exemplarCity": "Tell City, Indiana"
+                },
+                "Knox": {
+                  "_type": "zone",
+                  "exemplarCity": "Knox, Indiana"
+                },
+                "Winamac": {
+                  "_type": "zone",
+                  "exemplarCity": "Winamac, Indiana"
+                },
+                "Marengo": {
+                  "_type": "zone",
+                  "exemplarCity": "Marengo, Indiana"
+                },
+                "Vevay": {
+                  "_type": "zone",
+                  "exemplarCity": "Vevay, Indiana"
+                }
+              },
+              "Kentucky": {
+                "Monticello": {
+                  "_type": "zone",
+                  "exemplarCity": "Monticello, Kentucky"
+                }
+              },
+              "St_Vincent": {
+                "_type": "zone",
+                "exemplarCity": "Svatý Vincenc"
+              },
+              "St_Thomas": {
+                "_type": "zone",
+                "exemplarCity": "Svatý Tomáš (Karibik)"
+              }
+            },
+            "Atlantic": {
+              "Bermuda": {
+                "_type": "zone",
+                "exemplarCity": "Bermudy"
+              },
+              "Cape_Verde": {
+                "_type": "zone",
+                "exemplarCity": "Kapverdy"
+              },
+              "Canary": {
+                "_type": "zone",
+                "exemplarCity": "Kanárské ostrovy"
+              },
+              "Faeroe": {
+                "_type": "zone",
+                "exemplarCity": "Faerské ostrovy"
+              },
+              "South_Georgia": {
+                "_type": "zone",
+                "exemplarCity": "Jižní Georgie"
+              },
+              "Reykjavik": {
+                "_type": "zone",
+                "exemplarCity": "Reykjavík"
+              },
+              "Azores": {
+                "_type": "zone",
+                "exemplarCity": "Azorské ostrovy"
+              },
+              "St_Helena": {
+                "_type": "zone",
+                "exemplarCity": "Svatá Helena"
+              }
+            },
+            "Indian": {
+              "Cocos": {
+                "_type": "zone",
+                "exemplarCity": "Kokosové ostrovy"
+              },
+              "Christmas": {
+                "_type": "zone",
+                "exemplarCity": "Vánoční ostrov"
+              },
+              "Comoro": {
+                "_type": "zone",
+                "exemplarCity": "Komory"
+              },
+              "Mauritius": {
+                "_type": "zone",
+                "exemplarCity": "Mauricius"
+              },
+              "Maldives": {
+                "_type": "zone",
+                "exemplarCity": "Maledivy"
+              },
+              "Reunion": {
+                "_type": "zone",
+                "exemplarCity": "Réunion"
+              },
+              "Mahe": {
+                "_type": "zone",
+                "exemplarCity": "Mahé"
+              },
+              "Kerguelen": {
+                "_type": "zone",
+                "exemplarCity": "Kerguelenovy ostrovy"
+              }
+            },
+            "Africa": {
+              "Abidjan": {
+                "_type": "zone",
+                "exemplarCity": "Abidžan"
+              },
+              "Djibouti": {
+                "_type": "zone",
+                "exemplarCity": "Džibuti"
+              },
+              "Algiers": {
+                "_type": "zone",
+                "exemplarCity": "Alžír"
+              },
+              "Cairo": {
+                "_type": "zone",
+                "exemplarCity": "Káhira"
+              },
+              "El_Aaiun": {
+                "_type": "zone",
+                "exemplarCity": "El Aaiún"
+              },
+              "Asmera": {
+                "_type": "zone",
+                "exemplarCity": "Asmara"
+              },
+              "Addis_Ababa": {
+                "_type": "zone",
+                "exemplarCity": "Addis Abeba"
+              },
+              "Tripoli": {
+                "_type": "zone",
+                "exemplarCity": "Tripolis"
+              },
+              "Nouakchott": {
+                "_type": "zone",
+                "exemplarCity": "Nuakšott"
+              },
+              "Khartoum": {
+                "_type": "zone",
+                "exemplarCity": "Chartúm"
+              },
+              "Mogadishu": {
+                "_type": "zone",
+                "exemplarCity": "Mogadišu"
+              },
+              "Sao_Tome": {
+                "_type": "zone",
+                "exemplarCity": "Svatý Tomáš"
+              },
+              "Ndjamena": {
+                "_type": "zone",
+                "exemplarCity": "Ndžamena"
+              },
+              "Lome": {
+                "_type": "zone",
+                "exemplarCity": "Lomé"
+              }
+            }
+          },
+          "metazone": {
+            "Acre": {
+              "long": {
+                "generic": "acrejský čas",
+                "standard": "acrejský standardní čas",
+                "daylight": "acrejský letní čas"
+              }
+            },
+            "Afghanistan": {
+              "long": {
+                "standard": "afghánský čas"
+              }
+            },
+            "Africa_Central": {
+              "long": {
+                "standard": "středoafrický čas"
+              }
+            },
+            "Africa_Eastern": {
+              "long": {
+                "standard": "východoafrický čas"
+              }
+            },
+            "Africa_Southern": {
+              "long": {
+                "standard": "jihoafrický čas"
+              }
+            },
+            "Africa_Western": {
+              "long": {
+                "standard": "západoafrický čas"
+              }
+            },
+            "Alaska": {
+              "long": {
+                "generic": "aljašský čas",
+                "standard": "aljašský standardní čas",
+                "daylight": "aljašský letní čas"
+              },
+              "short": {
+                "generic": "AKT",
+                "standard": "AKST",
+                "daylight": "AKDT"
+              }
+            },
+            "Almaty": {
+              "long": {
+                "generic": "Almatský čas",
+                "standard": "Almatský standardní čas",
+                "daylight": "Almatský letní čas"
+              }
+            },
+            "Amazon": {
+              "long": {
+                "generic": "amazonský čas",
+                "standard": "amazonský standardní čas",
+                "daylight": "amazonský letní čas"
+              }
+            },
+            "America_Central": {
+              "long": {
+                "generic": "severoamerický centrální čas",
+                "standard": "severoamerický centrální standardní čas",
+                "daylight": "severoamerický centrální letní čas"
+              },
+              "short": {
+                "generic": "CT",
+                "standard": "CST",
+                "daylight": "CDT"
+              }
+            },
+            "America_Eastern": {
+              "long": {
+                "generic": "severoamerický východní čas",
+                "standard": "severoamerický východní standardní čas",
+                "daylight": "severoamerický východní letní čas"
+              },
+              "short": {
+                "generic": "ET",
+                "standard": "EST",
+                "daylight": "EDT"
+              }
+            },
+            "America_Mountain": {
+              "long": {
+                "generic": "severoamerický horský čas",
+                "standard": "severoamerický horský standardní čas",
+                "daylight": "severoamerický horský letní čas"
+              },
+              "short": {
+                "generic": "MT",
+                "standard": "MST",
+                "daylight": "MDT"
+              }
+            },
+            "America_Pacific": {
+              "long": {
+                "generic": "severoamerický pacifický čas",
+                "standard": "severoamerický pacifický standardní čas",
+                "daylight": "severoamerický pacifický letní čas"
+              },
+              "short": {
+                "generic": "PT",
+                "standard": "PST",
+                "daylight": "PDT"
+              }
+            },
+            "Anadyr": {
+              "long": {
+                "generic": "anadyrský čas",
+                "standard": "anadyrský standardní čas",
+                "daylight": "anadyrský letní čas"
+              }
+            },
+            "Apia": {
+              "long": {
+                "generic": "apijský čas",
+                "standard": "apijský standardní čas",
+                "daylight": "apijský letní čas"
+              }
+            },
+            "Aqtau": {
+              "long": {
+                "generic": "Aktauský čas",
+                "standard": "Aktauský standardní čas",
+                "daylight": "Aktauský letní čas"
+              }
+            },
+            "Aqtobe": {
+              "long": {
+                "generic": "Aktobský čas",
+                "standard": "Aktobský standardní čas",
+                "daylight": "Aktobský letní čas"
+              }
+            },
+            "Arabian": {
+              "long": {
+                "generic": "arabský čas",
+                "standard": "arabský standardní čas",
+                "daylight": "arabský letní čas"
+              }
+            },
+            "Argentina": {
+              "long": {
+                "generic": "argentinský čas",
+                "standard": "argentinský standardní čas",
+                "daylight": "argentinský letní čas"
+              }
+            },
+            "Argentina_Western": {
+              "long": {
+                "generic": "západoargentinský čas",
+                "standard": "západoargentinský standardní čas",
+                "daylight": "západoargentinský letní čas"
+              }
+            },
+            "Armenia": {
+              "long": {
+                "generic": "arménský čas",
+                "standard": "arménský standardní čas",
+                "daylight": "arménský letní čas"
+              }
+            },
+            "Atlantic": {
+              "long": {
+                "generic": "atlantický čas",
+                "standard": "atlantický standardní čas",
+                "daylight": "atlantický letní čas"
+              },
+              "short": {
+                "generic": "AT",
+                "standard": "AST",
+                "daylight": "ADT"
+              }
+            },
+            "Australia_Central": {
+              "long": {
+                "generic": "středoaustralský čas",
+                "standard": "středoaustralský standardní čas",
+                "daylight": "středoaustralský letní čas"
+              }
+            },
+            "Australia_CentralWestern": {
+              "long": {
+                "generic": "středozápadní australský čas",
+                "standard": "středozápadní australský standardní čas",
+                "daylight": "středozápadní australský letní čas"
+              }
+            },
+            "Australia_Eastern": {
+              "long": {
+                "generic": "východoaustralský čas",
+                "standard": "východoaustralský standardní čas",
+                "daylight": "východoaustralský letní čas"
+              }
+            },
+            "Australia_Western": {
+              "long": {
+                "generic": "západoaustralský čas",
+                "standard": "západoaustralský standardní čas",
+                "daylight": "západoaustralský letní čas"
+              }
+            },
+            "Azerbaijan": {
+              "long": {
+                "generic": "ázerbájdžánský čas",
+                "standard": "ázerbájdžánský standardní čas",
+                "daylight": "ázerbájdžánský letní čas"
+              }
+            },
+            "Azores": {
+              "long": {
+                "generic": "azorský čas",
+                "standard": "azorský standardní čas",
+                "daylight": "azorský letní čas"
+              }
+            },
+            "Bangladesh": {
+              "long": {
+                "generic": "bangladéšský čas",
+                "standard": "bangladéšský standardní čas",
+                "daylight": "bangladéšský letní čas"
+              }
+            },
+            "Bhutan": {
+              "long": {
+                "standard": "bhútánský čas"
+              }
+            },
+            "Bolivia": {
+              "long": {
+                "standard": "bolivijský čas"
+              }
+            },
+            "Brasilia": {
+              "long": {
+                "generic": "brasilijský čas",
+                "standard": "brasilijský standardní čas",
+                "daylight": "brasilijský letní čas"
+              }
+            },
+            "Brunei": {
+              "long": {
+                "standard": "brunejský čas"
+              }
+            },
+            "Cape_Verde": {
+              "long": {
+                "generic": "kapverdský čas",
+                "standard": "kapverdský standardní čas",
+                "daylight": "kapverdský letní čas"
+              }
+            },
+            "Casey": {
+              "long": {
+                "standard": "čas Caseyho stanice"
+              }
+            },
+            "Chamorro": {
+              "long": {
+                "standard": "chamorrský čas"
+              }
+            },
+            "Chatham": {
+              "long": {
+                "generic": "chathamský čas",
+                "standard": "chathamský standardní čas",
+                "daylight": "chathamský letní čas"
+              }
+            },
+            "Chile": {
+              "long": {
+                "generic": "chilský čas",
+                "standard": "chilský standardní čas",
+                "daylight": "chilský letní čas"
+              }
+            },
+            "China": {
+              "long": {
+                "generic": "čínský čas",
+                "standard": "čínský standardní čas",
+                "daylight": "čínský letní čas"
+              }
+            },
+            "Christmas": {
+              "long": {
+                "standard": "čas Vánočního ostrova"
+              }
+            },
+            "Cocos": {
+              "long": {
+                "standard": "čas Kokosových ostrovů"
+              }
+            },
+            "Colombia": {
+              "long": {
+                "generic": "kolumbijský čas",
+                "standard": "kolumbijský standardní čas",
+                "daylight": "kolumbijský letní čas"
+              }
+            },
+            "Cook": {
+              "long": {
+                "generic": "čas Cookových ostrovů",
+                "standard": "standardní čas Cookových ostrovů",
+                "daylight": "letní čas Cookových ostrovů"
+              }
+            },
+            "Cuba": {
+              "long": {
+                "generic": "kubánský čas",
+                "standard": "kubánský standardní čas",
+                "daylight": "kubánský letní čas"
+              }
+            },
+            "Davis": {
+              "long": {
+                "standard": "čas Davisovy stanice"
+              }
+            },
+            "DumontDUrville": {
+              "long": {
+                "standard": "čas stanice Dumonta d’Urvilla"
+              }
+            },
+            "East_Timor": {
+              "long": {
+                "standard": "východotimorský čas"
+              }
+            },
+            "Easter": {
+              "long": {
+                "generic": "čas Velikonočního ostrova",
+                "standard": "standardní čas Velikonočního ostrova",
+                "daylight": "letní čas Velikonočního ostrova"
+              }
+            },
+            "Ecuador": {
+              "long": {
+                "standard": "ekvádorský čas"
+              }
+            },
+            "Europe_Central": {
+              "long": {
+                "generic": "středoevropský čas",
+                "standard": "středoevropský standardní čas",
+                "daylight": "středoevropský letní čas"
+              },
+              "short": {
+                "generic": "SEČ",
+                "standard": "SEČ",
+                "daylight": "SELČ"
+              }
+            },
+            "Europe_Eastern": {
+              "long": {
+                "generic": "východoevropský čas",
+                "standard": "východoevropský standardní čas",
+                "daylight": "východoevropský letní čas"
+              }
+            },
+            "Europe_Further_Eastern": {
+              "long": {
+                "standard": "dálněvýchodoevropský čas"
+              }
+            },
+            "Europe_Western": {
+              "long": {
+                "generic": "západoevropský čas",
+                "standard": "západoevropský standardní čas",
+                "daylight": "západoevropský letní čas"
+              }
+            },
+            "Falkland": {
+              "long": {
+                "generic": "falklandský čas",
+                "standard": "falklandský standardní čas",
+                "daylight": "falklandský letní čas"
+              }
+            },
+            "Fiji": {
+              "long": {
+                "generic": "fidžijský čas",
+                "standard": "fidžijský standardní čas",
+                "daylight": "fidžijský letní čas"
+              }
+            },
+            "French_Guiana": {
+              "long": {
+                "standard": "francouzskoguyanský čas"
+              }
+            },
+            "French_Southern": {
+              "long": {
+                "standard": "čas Francouzských jižních a antarktických území"
+              }
+            },
+            "Galapagos": {
+              "long": {
+                "standard": "galapážský čas"
+              }
+            },
+            "Gambier": {
+              "long": {
+                "standard": "gambierský čas"
+              }
+            },
+            "Georgia": {
+              "long": {
+                "generic": "gruzínský čas",
+                "standard": "gruzínský standardní čas",
+                "daylight": "gruzínský letní čas"
+              }
+            },
+            "Gilbert_Islands": {
+              "long": {
+                "standard": "čas Gilbertových ostrovů"
+              }
+            },
+            "GMT": {
+              "long": {
+                "standard": "greenwichský střední čas"
+              }
+            },
+            "Greenland_Eastern": {
+              "long": {
+                "generic": "východogrónský čas",
+                "standard": "východogrónský standardní čas",
+                "daylight": "východogrónský letní čas"
+              }
+            },
+            "Greenland_Western": {
+              "long": {
+                "generic": "západogrónský čas",
+                "standard": "západogrónský standardní čas",
+                "daylight": "západogrónský letní čas"
+              }
+            },
+            "Guam": {
+              "long": {
+                "standard": "Guamský čas"
+              }
+            },
+            "Gulf": {
+              "long": {
+                "standard": "standardní čas Perského zálivu"
+              }
+            },
+            "Guyana": {
+              "long": {
+                "standard": "guyanský čas"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "havajsko-aleutský standardní čas"
+              }
+            },
+            "Hawaii_Aleutian": {
+              "long": {
+                "generic": "havajsko-aleutský čas",
+                "standard": "havajsko-aleutský standardní čas",
+                "daylight": "havajsko-aleutský letní čas"
+              }
+            },
+            "Hong_Kong": {
+              "long": {
+                "generic": "hongkongský čas",
+                "standard": "hongkongský standardní čas",
+                "daylight": "hongkongský letní čas"
+              }
+            },
+            "Hovd": {
+              "long": {
+                "generic": "hovdský čas",
+                "standard": "hovdský standardní čas",
+                "daylight": "hovdský letní čas"
+              }
+            },
+            "India": {
+              "long": {
+                "standard": "indický čas"
+              }
+            },
+            "Indian_Ocean": {
+              "long": {
+                "standard": "indickooceánský čas"
+              }
+            },
+            "Indochina": {
+              "long": {
+                "standard": "indočínský čas"
+              }
+            },
+            "Indonesia_Central": {
+              "long": {
+                "standard": "středoindonéský čas"
+              }
+            },
+            "Indonesia_Eastern": {
+              "long": {
+                "standard": "východoindonéský čas"
+              }
+            },
+            "Indonesia_Western": {
+              "long": {
+                "standard": "západoindonéský čas"
+              }
+            },
+            "Iran": {
+              "long": {
+                "generic": "íránský čas",
+                "standard": "íránský standardní čas",
+                "daylight": "íránský letní čas"
+              }
+            },
+            "Irkutsk": {
+              "long": {
+                "generic": "irkutský čas",
+                "standard": "irkutský standardní čas",
+                "daylight": "irkutský letní čas"
+              }
+            },
+            "Israel": {
+              "long": {
+                "generic": "izraelský čas",
+                "standard": "izraelský standardní čas",
+                "daylight": "izraelský letní čas"
+              }
+            },
+            "Japan": {
+              "long": {
+                "generic": "japonský čas",
+                "standard": "japonský standardní čas",
+                "daylight": "japonský letní čas"
+              }
+            },
+            "Kamchatka": {
+              "long": {
+                "generic": "petropavlovsko-kamčatský čas",
+                "standard": "petropavlovsko-kamčatský standardní čas",
+                "daylight": "petropavlovsko-kamčatský letní čas"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "kazachstánský čas"
+              }
+            },
+            "Kazakhstan_Eastern": {
+              "long": {
+                "standard": "východokazachstánský čas"
+              }
+            },
+            "Kazakhstan_Western": {
+              "long": {
+                "standard": "západokazachstánský čas"
+              }
+            },
+            "Korea": {
+              "long": {
+                "generic": "korejský čas",
+                "standard": "korejský standardní čas",
+                "daylight": "korejský letní čas"
+              }
+            },
+            "Kosrae": {
+              "long": {
+                "standard": "kosrajský čas"
+              }
+            },
+            "Krasnoyarsk": {
+              "long": {
+                "generic": "krasnojarský čas",
+                "standard": "krasnojarský standardní čas",
+                "daylight": "krasnojarský letní čas"
+              }
+            },
+            "Kyrgystan": {
+              "long": {
+                "standard": "kyrgyzský čas"
+              }
+            },
+            "Lanka": {
+              "long": {
+                "standard": "Srílanský čas"
+              }
+            },
+            "Line_Islands": {
+              "long": {
+                "standard": "čas Rovníkových ostrovů"
+              }
+            },
+            "Lord_Howe": {
+              "long": {
+                "generic": "čas ostrova lorda Howa",
+                "standard": "standardní čas ostrova lorda Howa",
+                "daylight": "letní čas ostrova lorda Howa"
+              }
+            },
+            "Macau": {
+              "long": {
+                "generic": "Macajský čas",
+                "standard": "Macajský standardní čas",
+                "daylight": "Macajský letní čas"
+              }
+            },
+            "Magadan": {
+              "long": {
+                "generic": "magadanský čas",
+                "standard": "magadanský standardní čas",
+                "daylight": "magadanský letní čas"
+              }
+            },
+            "Malaysia": {
+              "long": {
+                "standard": "malajský čas"
+              }
+            },
+            "Maldives": {
+              "long": {
+                "standard": "maledivský čas"
+              }
+            },
+            "Marquesas": {
+              "long": {
+                "standard": "markézský čas"
+              }
+            },
+            "Marshall_Islands": {
+              "long": {
+                "standard": "čas Marshallových ostrovů"
+              }
+            },
+            "Mauritius": {
+              "long": {
+                "generic": "mauricijský čas",
+                "standard": "mauricijský standardní čas",
+                "daylight": "mauricijský letní čas"
+              }
+            },
+            "Mawson": {
+              "long": {
+                "standard": "čas Mawsonovy stanice"
+              }
+            },
+            "Mexico_Pacific": {
+              "long": {
+                "generic": "mexický pacifický čas",
+                "standard": "mexický pacifický standardní čas",
+                "daylight": "mexický pacifický letní čas"
+              }
+            },
+            "Mongolia": {
+              "long": {
+                "generic": "ulánbátarský čas",
+                "standard": "ulánbátarský standardní čas",
+                "daylight": "ulánbátarský letní čas"
+              }
+            },
+            "Moscow": {
+              "long": {
+                "generic": "moskevský čas",
+                "standard": "moskevský standardní čas",
+                "daylight": "moskevský letní čas"
+              }
+            },
+            "Myanmar": {
+              "long": {
+                "standard": "myanmarský čas"
+              }
+            },
+            "Nauru": {
+              "long": {
+                "standard": "naurský čas"
+              }
+            },
+            "Nepal": {
+              "long": {
+                "standard": "nepálský čas"
+              }
+            },
+            "New_Caledonia": {
+              "long": {
+                "generic": "novokaledonský čas",
+                "standard": "novokaledonský standardní čas",
+                "daylight": "novokaledonský letní čas"
+              }
+            },
+            "New_Zealand": {
+              "long": {
+                "generic": "novozélandský čas",
+                "standard": "novozélandský standardní čas",
+                "daylight": "novozélandský letní čas"
+              }
+            },
+            "Newfoundland": {
+              "long": {
+                "generic": "newfoundlandský čas",
+                "standard": "newfoundlandský standardní čas",
+                "daylight": "newfoundlandský letní čas"
+              }
+            },
+            "Niue": {
+              "long": {
+                "standard": "niuejský čas"
+              }
+            },
+            "Norfolk": {
+              "long": {
+                "generic": "norfolkský čas",
+                "standard": "norfolkský standardní čas",
+                "daylight": "norfolkský letní čas"
+              }
+            },
+            "Noronha": {
+              "long": {
+                "generic": "čas souostroví Fernando de Noronha",
+                "standard": "standardní čas souostroví Fernando de Noronha",
+                "daylight": "letní čas souostroví Fernando de Noronha"
+              }
+            },
+            "North_Mariana": {
+              "long": {
+                "standard": "Severomariánský čas"
+              }
+            },
+            "Novosibirsk": {
+              "long": {
+                "generic": "novosibirský čas",
+                "standard": "novosibirský standardní čas",
+                "daylight": "novosibirský letní čas"
+              }
+            },
+            "Omsk": {
+              "long": {
+                "generic": "omský čas",
+                "standard": "omský standardní čas",
+                "daylight": "omský letní čas"
+              }
+            },
+            "Pakistan": {
+              "long": {
+                "generic": "pákistánský čas",
+                "standard": "pákistánský standardní čas",
+                "daylight": "pákistánský letní čas"
+              }
+            },
+            "Palau": {
+              "long": {
+                "standard": "palauský čas"
+              }
+            },
+            "Papua_New_Guinea": {
+              "long": {
+                "standard": "čas Papuy-Nové Guiney"
+              }
+            },
+            "Paraguay": {
+              "long": {
+                "generic": "paraguayský čas",
+                "standard": "paraguayský standardní čas",
+                "daylight": "paraguayský letní čas"
+              }
+            },
+            "Peru": {
+              "long": {
+                "generic": "peruánský čas",
+                "standard": "peruánský standardní čas",
+                "daylight": "peruánský letní čas"
+              }
+            },
+            "Philippines": {
+              "long": {
+                "generic": "filipínský čas",
+                "standard": "filipínský standardní čas",
+                "daylight": "filipínský letní čas"
+              }
+            },
+            "Phoenix_Islands": {
+              "long": {
+                "standard": "čas Fénixových ostrovů"
+              }
+            },
+            "Pierre_Miquelon": {
+              "long": {
+                "generic": "pierre-miquelonský čas",
+                "standard": "pierre-miquelonský standardní čas",
+                "daylight": "pierre-miquelonský letní čas"
+              }
+            },
+            "Pitcairn": {
+              "long": {
+                "standard": "čas Pitcairnových ostrovů"
+              }
+            },
+            "Ponape": {
+              "long": {
+                "standard": "ponapský čas"
+              }
+            },
+            "Pyongyang": {
+              "long": {
+                "standard": "pchjongjangský čas"
+              }
+            },
+            "Qyzylorda": {
+              "long": {
+                "generic": "Kyzylordský čas",
+                "standard": "Kyzylordský standardní čas",
+                "daylight": "Kyzylordský letní čas"
+              }
+            },
+            "Reunion": {
+              "long": {
+                "standard": "réunionský čas"
+              }
+            },
+            "Rothera": {
+              "long": {
+                "standard": "čas Rotherovy stanice"
+              }
+            },
+            "Sakhalin": {
+              "long": {
+                "generic": "sachalinský čas",
+                "standard": "sachalinský standardní čas",
+                "daylight": "sachalinský letní čas"
+              }
+            },
+            "Samara": {
+              "long": {
+                "generic": "samarský čas",
+                "standard": "samarský standardní čas",
+                "daylight": "samarský letní čas"
+              }
+            },
+            "Samoa": {
+              "long": {
+                "generic": "samojský čas",
+                "standard": "samojský standardní čas",
+                "daylight": "samojský letní čas"
+              }
+            },
+            "Seychelles": {
+              "long": {
+                "standard": "seychelský čas"
+              }
+            },
+            "Singapore": {
+              "long": {
+                "standard": "singapurský čas"
+              }
+            },
+            "Solomon": {
+              "long": {
+                "standard": "čas Šalamounových ostrovů"
+              }
+            },
+            "South_Georgia": {
+              "long": {
+                "standard": "čas Jižní Georgie"
+              }
+            },
+            "Suriname": {
+              "long": {
+                "standard": "surinamský čas"
+              }
+            },
+            "Syowa": {
+              "long": {
+                "standard": "čas stanice Šówa"
+              }
+            },
+            "Tahiti": {
+              "long": {
+                "standard": "tahitský čas"
+              }
+            },
+            "Taipei": {
+              "long": {
+                "generic": "tchajpejský čas",
+                "standard": "tchajpejský standardní čas",
+                "daylight": "tchajpejský letní čas"
+              }
+            },
+            "Tajikistan": {
+              "long": {
+                "standard": "tádžický čas"
+              }
+            },
+            "Tokelau": {
+              "long": {
+                "standard": "tokelauský čas"
+              }
+            },
+            "Tonga": {
+              "long": {
+                "generic": "tonžský čas",
+                "standard": "tonžský standardní čas",
+                "daylight": "tonžský letní čas"
+              }
+            },
+            "Truk": {
+              "long": {
+                "standard": "chuukský čas"
+              }
+            },
+            "Turkey": {
+              "long": {
+                "generic": "Turecký čas",
+                "standard": "Turecký standardní čas",
+                "daylight": "Turecký letní čas"
+              }
+            },
+            "Turkmenistan": {
+              "long": {
+                "generic": "turkmenský čas",
+                "standard": "turkmenský standardní čas",
+                "daylight": "turkmenský letní čas"
+              }
+            },
+            "Tuvalu": {
+              "long": {
+                "standard": "tuvalský čas"
+              }
+            },
+            "Uruguay": {
+              "long": {
+                "generic": "uruguayský čas",
+                "standard": "uruguayský standardní čas",
+                "daylight": "uruguayský letní čas"
+              }
+            },
+            "Uzbekistan": {
+              "long": {
+                "generic": "uzbecký čas",
+                "standard": "uzbecký standardní čas",
+                "daylight": "uzbecký letní čas"
+              }
+            },
+            "Vanuatu": {
+              "long": {
+                "generic": "vanuatský čas",
+                "standard": "vanuatský standardní čas",
+                "daylight": "vanuatský letní čas"
+              }
+            },
+            "Venezuela": {
+              "long": {
+                "standard": "venezuelský čas"
+              }
+            },
+            "Vladivostok": {
+              "long": {
+                "generic": "vladivostocký čas",
+                "standard": "vladivostocký standardní čas",
+                "daylight": "vladivostocký letní čas"
+              }
+            },
+            "Volgograd": {
+              "long": {
+                "generic": "volgogradský čas",
+                "standard": "volgogradský standardní čas",
+                "daylight": "volgogradský letní čas"
+              }
+            },
+            "Vostok": {
+              "long": {
+                "standard": "čas stanice Vostok"
+              }
+            },
+            "Wake": {
+              "long": {
+                "standard": "čas ostrova Wake"
+              }
+            },
+            "Wallis": {
+              "long": {
+                "standard": "čas ostrovů Wallis a Futuna"
+              }
+            },
+            "Yakutsk": {
+              "long": {
+                "generic": "jakutský čas",
+                "standard": "jakutský standardní čas",
+                "daylight": "jakutský letní čas"
+              }
+            },
+            "Yekaterinburg": {
+              "long": {
+                "generic": "jekatěrinburský čas",
+                "standard": "jekatěrinburský standardní čas",
+                "daylight": "jekatěrinburský letní čas"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "yukonský čas"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
