@@ -304,28 +304,89 @@ impl<'a> core::ops::Deref for DecimalSymbols<'a> {
     }
 }
 
+const UND_LATN_DECIMAL_SYMBOLS_BYTES: &[u8] = &[
+    1, 1, 2, 2, 3, 4, b'-', b'+', b'.', b',', b'l', b'a', b't', b'n',
+];
+
 impl DecimalSymbols<'static> {
+    /// The symbols for the default locale in the default numbering system.
+    pub const UND_LATN: Self = Self {
+        // Safety: well-formedness tested in `test_decimal_symbols_und_latn_safety`
+        strings: unsafe { VarZeroCow::from_bytes_unchecked(UND_LATN_DECIMAL_SYMBOLS_BYTES) },
+        grouping_sizes: GroupingSizes {
+            primary: 3,
+            secondary: 3,
+            min_grouping: 1,
+        },
+    };
+
     /// Create a new en-US format for use in testing
     #[cfg(feature = "datagen")]
     pub fn new_en_for_testing() -> Self {
-        let strings = DecimalSymbolStrsBuilder {
-            minus_sign_prefix: VarZeroCow::new_borrowed("-"),
-            minus_sign_suffix: VarZeroCow::new_borrowed(""),
-            plus_sign_prefix: VarZeroCow::new_borrowed("+"),
-            plus_sign_suffix: VarZeroCow::new_borrowed(""),
-            decimal_separator: VarZeroCow::new_borrowed("."),
-            grouping_separator: VarZeroCow::new_borrowed(","),
-            numsys: VarZeroCow::new_borrowed("latn"),
-        };
-        Self {
-            strings: VarZeroCow::from_encodeable(&strings),
-            grouping_sizes: GroupingSizes {
-                primary: 3,
-                secondary: 3,
-                min_grouping: 1,
-            },
+        Self::UND_LATN
+    }
+
+    /// Infallibly create a formatter with these symbols and the specified digits.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::decimal::provider::DecimalSymbols;
+    /// use icu::decimal::provider::DIGITS_HANIDEC;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = DecimalSymbols::UND_LATN.make_formatter_unstable(DIGITS_HANIDEC, Default::default());
+    /// let decimal = 12345678.into();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&decimal),
+    ///     "一二,三四五,六七八"
+    /// );
+    /// ```
+    pub fn make_formatter_unstable(
+        self,
+        digits: [char; 10],
+        options: crate::options::DecimalFormatterOptions,
+    ) -> crate::DecimalFormatter {
+        crate::DecimalFormatter {
+            options,
+            symbols: DataPayload::from_owned(self),
+            digits: DataPayload::from_owned(digits),
         }
     }
+}
+
+#[test]
+fn test_decimal_symbols_und_latn_safety() {
+    let actual_und_latn: DataResponse<DecimalSymbolsV1> = Baked
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&DataLocale::default()),
+            metadata: Default::default(),
+        })
+        .unwrap();
+    assert_eq!(&DecimalSymbols::UND_LATN, actual_und_latn.payload.get());
+    assert_eq!(
+        UND_LATN_DECIMAL_SYMBOLS_BYTES,
+        actual_und_latn.payload.get().strings.as_bytes()
+    );
+}
+
+/// The digits of the `hanidec` numbering system.
+///
+/// Compatible with [`DecimalDigitsV1`].
+pub const DIGITS_HANIDEC: [char; 10] = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+
+#[test]
+fn test_hanidec_consistency() {
+    let actual_hanidec_digits: DataResponse<DecimalDigitsV1> = Baked
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes(
+                DataMarkerAttributes::from_str_or_panic("hanidec"),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap();
+    assert_eq!(&DIGITS_HANIDEC, actual_hanidec_digits.payload.get());
 }
 
 #[cfg(feature = "unstable")]

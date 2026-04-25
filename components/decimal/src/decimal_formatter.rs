@@ -34,9 +34,9 @@ size_test!(DecimalFormatter, decimal_formatter_size, 96);
 #[doc = decimal_formatter_size!()]
 #[derive(Debug, Clone)]
 pub struct DecimalFormatter {
-    options: DecimalFormatterOptions,
-    symbols: DataPayload<DecimalSymbolsV1>,
-    digits: DataPayload<DecimalDigitsV1>,
+    pub(crate) options: DecimalFormatterOptions,
+    pub(crate) symbols: DataPayload<DecimalSymbolsV1>,
+    pub(crate) digits: DataPayload<DecimalDigitsV1>,
 }
 
 impl AsRef<DecimalFormatter> for DecimalFormatter {
