@@ -8,7 +8,7 @@ use icu::locale::{langid, LanguageIdentifier};
 use icu_provider::DataError;
 use std::collections::BTreeSet;
 use std::fs::File;
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::Command;
 
@@ -30,7 +30,8 @@ impl AbstractFs {
             }
 
             std::fs::create_dir_all(target.join(&file).parent().unwrap())?;
-            std::fs::write(target.join(&file), self.read_to_buf(&file)?)?;
+            crlify::BufWriterWithLineEndingFix::new(File::create(target.join(&file))?)
+                .write_all(&self.read_to_buf(&file)?)?;
         }
 
         Ok(files)
@@ -103,14 +104,15 @@ fn download_repo_sources() {
         )
         .unwrap();
     let irg_path = out_root.join("unihan/Unihan_IRGSources.txt");
-    std::fs::write(
-        &irg_path,
-        BufReader::new(File::open(&irg_path).unwrap())
+    std::io::copy(
+        &mut BufReader::new(File::open(&irg_path).unwrap())
             .lines()
             .map_while(Result::ok)
             .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
             .collect::<Vec<_>>()
-            .join("\n"),
+            .join("\n")
+            .as_bytes(),
+        &mut crlify::BufWriterWithLineEndingFix::new(File::create(&irg_path).unwrap()),
     )
     .unwrap();
 
@@ -130,20 +132,23 @@ fn download_repo_sources() {
             .unwrap()
             .into_body()
             .into_reader(),
-            &mut BufWriter::new(File::create(path).unwrap()),
+            &mut crlify::BufWriterWithLineEndingFix::new(File::create(path).unwrap()),
         )
         .unwrap();
         ucd_files.insert(spath.to_string());
     }
     let identifier_status_path = out_root.join("ucd/security/IdentifierStatus.txt");
-    std::fs::write(
-        &identifier_status_path,
-        BufReader::new(File::open(&identifier_status_path).unwrap())
+    std::io::copy(
+        &mut BufReader::new(File::open(&identifier_status_path).unwrap())
             .lines()
             .map_while(Result::ok)
             .filter(|l| l.contains("CJK") || l.starts_with('#'))
             .collect::<Vec<_>>()
-            .join("\n"),
+            .join("\n")
+            .as_bytes(),
+        &mut crlify::BufWriterWithLineEndingFix::new(
+            File::create(&identifier_status_path).unwrap(),
+        ),
     )
     .unwrap();
 
@@ -164,6 +169,24 @@ fn download_repo_sources() {
         .status()
         .unwrap();
     tzdb_files.extend(gen_files);
+    std::io::copy(
+        &mut std::fs::read_to_string(out_root.join("tzdb/rearguard.zi"))
+            .unwrap()
+            .as_bytes(),
+        &mut crlify::BufWriterWithLineEndingFix::new(
+            File::create(out_root.join("tzdb/rearguard.zi")).unwrap(),
+        ),
+    )
+    .unwrap();
+    std::io::copy(
+        &mut std::fs::read_to_string(out_root.join("tzdb/vanguard.zi"))
+            .unwrap()
+            .as_bytes(),
+        &mut crlify::BufWriterWithLineEndingFix::new(
+            File::create(out_root.join("tzdb/vanguard.zi")).unwrap(),
+        ),
+    )
+    .unwrap();
     std::fs::remove_file(out_root.join("tzdb/Makefile")).unwrap();
     std::fs::remove_file(out_root.join("tzdb/ziguard.awk")).unwrap();
     tzdb_files.remove("Makefile");
