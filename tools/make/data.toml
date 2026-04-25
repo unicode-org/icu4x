@@ -31,6 +31,7 @@ args = [
     "-p=icu_provider_source",
     "--no-default-features",
     "--features=use_wasm,unstable",
+    "--release",
     "--",
     "--nocapture",
     "make_testdata",

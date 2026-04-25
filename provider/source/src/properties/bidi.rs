@@ -34,10 +34,10 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
                 core::str::from_utf8(BidiMirroringGlyph::NAME).unwrap(),
                 core::str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap(),
             )?
-            .build_codepointtrie()?;
+            .build_codepointtrie('\0')?;
 
         let bpt = self.get_enumerated_prop("Bidi_Paired_Bracket_Type", "bpt")?;
-        let bpt_trie = bpt.build_codepointtrie::<u16>()?;
+        let bpt_trie = bpt.build_codepointtrie::<u16>(0)?;
         let bpt_lookup = bpt.values_to_names_long();
 
         let mut builder = CodePointTrieBuilder::new(
