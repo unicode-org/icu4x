@@ -36,6 +36,8 @@ macro_rules! create_const_array {
     (
         $ ( #[$meta:meta] )*
         impl $enum_ty:ident {
+            #[default]
+            $(#[$default_meta:meta])* $dv:vis const $di:ident: $dt:ty = $de:expr;
             $( $(#[$const_meta:meta])* $v:vis const $i:ident: $t:ty = $e:expr; )*
         }
         #[test]
@@ -43,6 +45,8 @@ macro_rules! create_const_array {
     ) => {
         $( #[$meta] )*
         impl $enum_ty {
+            $(#[$default_meta])*
+            $dv const $di: $dt = $de;
             $(
                 $(#[$const_meta])*
                 $v const $i: $t = $e;
@@ -51,8 +55,15 @@ macro_rules! create_const_array {
             /// All possible values of this enum in the Unicode version
             /// from this ICU4X release.
             pub const ALL_VALUES: &'static [$enum_ty] = &[
+                $enum_ty::$di,
                 $($enum_ty::$i),*
             ];
+        }
+
+        impl Default for $enum_ty {
+            fn default() -> Self {
+                Self::$di
+            }
         }
 
         #[cfg(feature = "datagen")]
@@ -60,6 +71,7 @@ macro_rules! create_const_array {
             fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                 env.insert("icu_properties");
                 match *self {
+                    $enum_ty::$di => databake::quote!(icu_properties::props::$enum_ty::$di),
                     $(
                         Self::$i => databake::quote!(icu_properties::props::$enum_ty::$i),
                     )*
@@ -78,6 +90,10 @@ macro_rules! create_const_array {
 
         #[test]
         fn $consts_test() {
+            assert_eq!(
+                crate::names::PropertyNamesLong::<$enum_ty>::new().get($enum_ty::$di).unwrap().replace('_', ""),
+                stringify!($di)
+            );
             $(
                 assert_eq!(
                     crate::names::PropertyNamesLong::<$enum_ty>::new().get($enum_ty::$i).unwrap()
@@ -174,6 +190,7 @@ impl BidiClass {
 create_const_array! {
 #[allow(non_upper_case_globals)]
 impl BidiClass {
+    #[default]
     /// (`L`) any strong left-to-right character
     pub const LeftToRight: BidiClass = BidiClass(0);
     /// (`R`) any strong right-to-left (non-Arabic-type) character
@@ -273,6 +290,7 @@ impl NumericType {
 create_const_array! {
 #[allow(non_upper_case_globals)]
 impl NumericType {
+    #[default]
     /// Characters without numeric value
     pub const None: NumericType = NumericType(0);
     /// (`De`) Characters of positional decimal systems
@@ -327,7 +345,7 @@ pub(crate) mod gc {
     ///     GeneralCategory::OtherSymbol
     /// ); // U+1F383 JACK-O-LANTERN
     /// ```
-    #[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash)]
+    #[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash, Default)]
     #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
     #[cfg_attr(feature = "datagen", derive(databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
@@ -336,6 +354,7 @@ pub(crate) mod gc {
     #[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV))]
     #[repr(u8)]
     pub enum GeneralCategory {
+        #[default]
         /// (`Cn`) A reserved unassigned code point or a noncharacter
         Unassigned = 0,
 
@@ -823,6 +842,8 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl Script {
+    #[default]
+    pub const Unknown: Script = Script(103);
     pub const Adlam: Script = Script(167);
     pub const Ahom: Script = Script(161);
     pub const AnatolianHieroglyphs: Script = Script(156);
@@ -991,7 +1012,6 @@ impl Script {
     pub const Toto: Script = Script(196);
     pub const TuluTigalari: Script = Script(207);
     pub const Ugaritic: Script = Script(53);
-    pub const Unknown: Script = Script(103);
     pub const Vai: Script = Script(99);
     pub const Vithkuqi: Script = Script(197);
     pub const Wancho: Script = Script(188);
@@ -1083,6 +1103,7 @@ impl HangulSyllableType {
 create_const_array! {
 #[allow(non_upper_case_globals)]
 impl HangulSyllableType {
+    #[default]
     /// (`NA`) not applicable (e.g. not a Hangul code point).
     pub const NotApplicable: HangulSyllableType = HangulSyllableType(0);
     /// (`L`) a conjoining leading consonant Jamo.
@@ -1150,6 +1171,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl EastAsianWidth {
+    #[default]
     pub const Neutral: EastAsianWidth = EastAsianWidth(0); //name="N"
     pub const Ambiguous: EastAsianWidth = EastAsianWidth(1); //name="A"
     pub const Halfwidth: EastAsianWidth = EastAsianWidth(2); //name="H"
@@ -1214,6 +1236,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl LineBreak {
+    #[default]
     pub const Unknown: LineBreak = LineBreak(0); // name="XX"
     pub const Ambiguous: LineBreak = LineBreak(1); // name="AI"
     pub const Alphabetic: LineBreak = LineBreak(2); // name="AL"
@@ -1324,6 +1347,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl GraphemeClusterBreak {
+    #[default]
     pub const Other: GraphemeClusterBreak = GraphemeClusterBreak(0); // name="XX"
     pub const Control: GraphemeClusterBreak = GraphemeClusterBreak(1); // name="CN"
     pub const CR: GraphemeClusterBreak = GraphemeClusterBreak(2); // name="CR"
@@ -1403,6 +1427,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl WordBreak {
+    #[default]
     pub const Other: WordBreak = WordBreak(0); // name="XX"
     pub const ALetter: WordBreak = WordBreak(1); // name="LE"
     pub const Format: WordBreak = WordBreak(2); // name="FO"
@@ -1487,6 +1512,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl SentenceBreak {
+    #[default]
     pub const Other: SentenceBreak = SentenceBreak(0); // name="XX"
     pub const ATerm: SentenceBreak = SentenceBreak(1); // name="AT"
     pub const Close: SentenceBreak = SentenceBreak(2); // name="CL"
@@ -1567,6 +1593,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl CanonicalCombiningClass {
+    #[default]
     pub const NotReordered: CanonicalCombiningClass = CanonicalCombiningClass(0); // name="NR"
     pub const Overlay: CanonicalCombiningClass = CanonicalCombiningClass(1); // name="OV"
     pub const HanReading: CanonicalCombiningClass = CanonicalCombiningClass(6); // name="HANR"
@@ -1686,6 +1713,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl IndicConjunctBreak {
+    #[default]
     pub const None: IndicConjunctBreak = IndicConjunctBreak(0);
     pub const Consonant: IndicConjunctBreak = IndicConjunctBreak(1);
     pub const Extend: IndicConjunctBreak = IndicConjunctBreak(2);
@@ -1743,6 +1771,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl IndicSyllabicCategory {
+    #[default]
     pub const Other: IndicSyllabicCategory = IndicSyllabicCategory(0);
     pub const Avagraha: IndicSyllabicCategory = IndicSyllabicCategory(1);
     pub const Bindu: IndicSyllabicCategory = IndicSyllabicCategory(2);
@@ -1832,6 +1861,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl JoiningGroup {
+    #[default]
     pub const NoJoiningGroup: JoiningGroup = JoiningGroup(0);
     pub const Ain: JoiningGroup = JoiningGroup(1);
     pub const Alaph: JoiningGroup = JoiningGroup(2);
@@ -1992,6 +2022,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl JoiningType {
+    #[default]
     pub const NonJoining: JoiningType = JoiningType(0); // name="U"
     pub const JoinCausing: JoiningType = JoiningType(1); // name="C"
     pub const DualJoining: JoiningType = JoiningType(2); // name="D"
@@ -2060,6 +2091,7 @@ create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl VerticalOrientation {
+    #[default]
     pub const Rotated: VerticalOrientation = VerticalOrientation(0); // name="R"
     pub const TransformedRotated: VerticalOrientation = VerticalOrientation(1); // name="Tr"
     pub const TransformedUpright: VerticalOrientation = VerticalOrientation(2); // name="Tu"

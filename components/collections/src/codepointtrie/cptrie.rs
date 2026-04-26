@@ -80,16 +80,10 @@ pub trait TrieValue: Copy + Eq + PartialEq + AsULE + 'static {
     /// This method is allowed to have GIGO behavior when fed a value that has
     /// no corresponding `u32` (since such values cannot be stored in the trie)
     fn to_u32(self) -> u32;
-
-    /// The default value for trie storage.
-    fn default() -> Self {
-        #[allow(clippy::unwrap_used)] // for lack of a better option
-        Self::try_from_u32(0).ok().unwrap()
-    }
 }
 
 macro_rules! impl_primitive_trie_value {
-    ($primitive:ty, $error:ty, $default:expr) => {
+    ($primitive:ty, $error:ty) => {
         impl TrieValue for $primitive {
             type TryFromU32Error = $error;
             fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -102,21 +96,17 @@ macro_rules! impl_primitive_trie_value {
                 // when not the same size
                 self as u32
             }
-
-            fn default() -> Self {
-                $default
-            }
         }
     };
 }
 
-impl_primitive_trie_value!(u8, TryFromIntError, 0);
-impl_primitive_trie_value!(u16, TryFromIntError, 0);
-impl_primitive_trie_value!(u32, Infallible, 0);
-impl_primitive_trie_value!(i8, TryFromIntError, 0);
-impl_primitive_trie_value!(i16, TryFromIntError, 0);
-impl_primitive_trie_value!(i32, TryFromIntError, 0);
-impl_primitive_trie_value!(char, CharTryFromError, '\n');
+impl_primitive_trie_value!(u8, TryFromIntError);
+impl_primitive_trie_value!(u16, TryFromIntError);
+impl_primitive_trie_value!(u32, Infallible);
+impl_primitive_trie_value!(i8, TryFromIntError);
+impl_primitive_trie_value!(i16, TryFromIntError);
+impl_primitive_trie_value!(i32, TryFromIntError);
+impl_primitive_trie_value!(char, CharTryFromError);
 
 /// Helper function used by [`get_range`]. Converts occurrences of trie's null
 /// value into the provided `null_value`.

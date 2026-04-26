@@ -388,7 +388,7 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
 /// </div>
 ///
 /// [`TR44`]: https://www.unicode.org/reports/tr44
-pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
+pub trait EnumeratedProperty: crate::private::Sealed + TrieValue + Default {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyCodePointMap<'static, Self>>;
     #[doc(hidden)]

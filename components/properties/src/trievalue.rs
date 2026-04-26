@@ -28,10 +28,6 @@ impl TrieValue for CanonicalCombiningClass {
     fn to_u32(self) -> u32 {
         u32::from(self.0)
     }
-
-    fn default() -> Self {
-        Self::NotReordered
-    }
 }
 
 impl TrieValue for NumericType {
@@ -44,10 +40,6 @@ impl TrieValue for NumericType {
     fn to_u32(self) -> u32 {
         u32::from(self.0)
     }
-
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 impl TrieValue for BidiClass {
@@ -59,10 +51,6 @@ impl TrieValue for BidiClass {
 
     fn to_u32(self) -> u32 {
         u32::from(self.0)
-    }
-
-    fn default() -> Self {
-        Self::LeftToRight
     }
 }
 
@@ -78,10 +66,6 @@ impl TrieValue for GeneralCategory {
     fn to_u32(self) -> u32 {
         u32::from(self as u8)
     }
-
-    fn default() -> Self {
-        Self::Unassigned
-    }
 }
 
 impl TrieValue for Script {
@@ -93,10 +77,6 @@ impl TrieValue for Script {
 
     fn to_u32(self) -> u32 {
         u32::from(self.0)
-    }
-
-    fn default() -> Self {
-        Self::Unknown
     }
 }
 
@@ -110,10 +90,6 @@ impl TrieValue for HangulSyllableType {
     fn to_u32(self) -> u32 {
         u32::from(self.0)
     }
-
-    fn default() -> Self {
-        Self::NotApplicable
-    }
 }
 
 impl TrieValue for ScriptWithExt {
@@ -125,10 +101,6 @@ impl TrieValue for ScriptWithExt {
 
     fn to_u32(self) -> u32 {
         u32::from(self.0)
-    }
-
-    fn default() -> Self {
-        Self::Unknown
     }
 }
 
@@ -142,10 +114,6 @@ impl TrieValue for EastAsianWidth {
     fn to_u32(self) -> u32 {
         u32::from(self.0)
     }
-
-    fn default() -> Self {
-        Self::Neutral
-    }
 }
 
 impl TrieValue for LineBreak {
@@ -157,10 +125,6 @@ impl TrieValue for LineBreak {
 
     fn to_u32(self) -> u32 {
         u32::from(self.0)
-    }
-
-    fn default() -> Self {
-        Self::Unknown
     }
 }
 
@@ -174,10 +138,6 @@ impl TrieValue for GraphemeClusterBreak {
     fn to_u32(self) -> u32 {
         u32::from(self.0)
     }
-
-    fn default() -> Self {
-        Self::Other
-    }
 }
 
 impl TrieValue for WordBreak {
@@ -189,10 +149,6 @@ impl TrieValue for WordBreak {
 
     fn to_u32(self) -> u32 {
         u32::from(self.0)
-    }
-
-    fn default() -> Self {
-        Self::Other
     }
 }
 
@@ -206,10 +162,6 @@ impl TrieValue for SentenceBreak {
     fn to_u32(self) -> u32 {
         u32::from(self.0)
     }
-
-    fn default() -> Self {
-        Self::Other
-    }
 }
 
 impl TrieValue for IndicConjunctBreak {
@@ -221,10 +173,6 @@ impl TrieValue for IndicConjunctBreak {
 
     fn to_u32(self) -> u32 {
         u32::from(self.0)
-    }
-
-    fn default() -> Self {
-        Self::None
     }
 }
 
@@ -238,10 +186,6 @@ impl TrieValue for IndicSyllabicCategory {
     fn to_u32(self) -> u32 {
         u32::from(self.0)
     }
-
-    fn default() -> Self {
-        Self::Other
-    }
 }
 
 impl TrieValue for VerticalOrientation {
@@ -253,10 +197,6 @@ impl TrieValue for VerticalOrientation {
 
     fn to_u32(self) -> u32 {
         u32::from(self.0)
-    }
-
-    fn default() -> Self {
-        Self::Rotated
     }
 }
 
@@ -333,10 +273,6 @@ impl TrieValue for GeneralCategoryGroup {
     fn to_u32(self) -> u32 {
         u32::from(gcg_to_packed_u16(self))
     }
-
-    fn default() -> Self {
-        Self::Other
-    }
 }
 
 impl TrieValue for BidiMirroringGlyph {
@@ -375,14 +311,6 @@ impl TrieValue for BidiMirroringGlyph {
                 crate::bidi::BidiPairedBracketType::Close => 2,
             } << 22)
     }
-
-    fn default() -> Self {
-        Self {
-            mirrored: false,
-            mirroring_glyph: None,
-            paired_bracket_type: crate::bidi::BidiPairedBracketType::None,
-        }
-    }
 }
 
 impl TrieValue for JoiningType {
@@ -395,10 +323,6 @@ impl TrieValue for JoiningType {
     fn to_u32(self) -> u32 {
         u32::from(self.0)
     }
-
-    fn default() -> Self {
-        Self::NonJoining
-    }
 }
 
 impl TrieValue for JoiningGroup {
@@ -409,9 +333,5 @@ impl TrieValue for JoiningGroup {
     }
     fn to_u32(self) -> u32 {
         u32::from(self.0)
-    }
-
-    fn default() -> Self {
-        Self::NoJoiningGroup
     }
 }

@@ -70,11 +70,12 @@ impl SourceDataProvider {
     }
 
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    pub(super) fn build_enumerated_prop<T: TrieValue>(
+    pub(super) fn build_enumerated_prop<T: EnumeratedProperty>(
         &self,
-        name: &str,
-        short_name: &str,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
+        let name = core::str::from_utf8(T::NAME).unwrap();
+        let short_name = core::str::from_utf8(T::SHORT_NAME).unwrap();
+
         self.validate_property_name(name, short_name)?;
 
         let discriminants = self.enumerated_prop_names(name, short_name)?.0;
@@ -322,10 +323,7 @@ macro_rules! expand {
                             and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
                             t
                         } else {
-                            let trie = self.build_enumerated_prop(
-                                core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
-                                core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
-                            )?;
+                            let trie = self.build_enumerated_prop::<$prop>()?;
 
                             self.unicode()?.cpt_cache
                                 .insert(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));

@@ -288,10 +288,6 @@ impl TrieValue for CaseMapData {
     fn to_u32(self) -> u32 {
         u32::from(self.to_unaligned().0.as_unsigned_int())
     }
-
-    fn default() -> Self {
-        Self::from_unaligned(CaseMapDataULE(0u16.to_unaligned()))
-    }
 }
 
 /// Packed casemappingdata type
