@@ -207,6 +207,22 @@ fn hebrew_numbering() {
     assert_writeable_eq!(formatted_datetime, "י״ז בכסלו ה׳תשע״א");
 }
 
+/// User numeric overrides should be preferred over calendar numeric overrides
+#[test]
+fn hebrew_thai_numbering() {
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new("he-u-ca-hebrew-nu-thai".parse::<Locale>().unwrap().into(), fieldsets::YMD::long())
+            .unwrap();
+
+    let formatted_datetime = formatter.format(
+        &Date::try_new_hebrew_v2(5771, 3.into(), 17)
+            .unwrap()
+            .to_calendar(Hebrew),
+    );
+
+    assert_writeable_eq!(formatted_datetime, "י״ז בכסלו ה׳תשע״א");
+}
+
 #[test]
 fn hanidec_numbering() {
     let formatter =
