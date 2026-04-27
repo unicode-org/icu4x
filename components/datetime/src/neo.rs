@@ -129,7 +129,7 @@ macro_rules! gen_buffer_constructors_with_external_loader {
     };
 }
 
-size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldsets::YMD>, typed_neo_year_month_day_formatter_size, 336);
+size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldsets::YMD>, typed_neo_year_month_day_formatter_size, 328);
 
 /// [`FixedCalendarDateTimeFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -395,7 +395,7 @@ where
 size_test!(
     DateTimeFormatter<crate::fieldsets::YMD>,
     neo_year_month_day_formatter_size,
-    344
+    336
 );
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting dates and/or times from

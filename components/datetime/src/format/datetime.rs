@@ -172,18 +172,8 @@ where
                 // For negative numbers RBNF coverage is spotty and often not actually
                 // what you want in years, so we fall back.
                 FieldLength::NumericOverride(o) if year_val >= 0 => {
-                    if datetime_names.has_user_numeric_override {
-                        try_write_number(
-                            PART,
-                            w,
-                            decimal_formatter,
-                            year_val.into(),
-                            FieldLength::One,
-                        )?
-                    } else {
-                        w.with_part(PART, |w| numeric_override::format(o, year_val as u32, w))?;
-                        Ok(())
-                    }
+                    w.with_part(PART, |w| numeric_override::format(o, year_val as u32, w))?;
+                    Ok(())
                 }
                 _ => {
                     let mut year = Decimal::from(year.era_year_or_related_iso());
@@ -272,20 +262,10 @@ where
         (FieldSymbol::Month(_), FieldLength::NumericOverride(o)) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
-            if datetime_names.has_user_numeric_override {
-                try_write_number(
-                    PART,
-                    w,
-                    decimal_formatter,
-                    month.number().into(),
-                    FieldLength::One,
-                )?
-            } else {
-                w.with_part(PART, |w| {
-                    numeric_override::format(o, month.number() as u32, w)
-                })?;
-                Ok(())
-            }
+            w.with_part(PART, |w| {
+                numeric_override::format(o, month.number() as u32, w)
+            })?;
+            Ok(())
         }
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
@@ -385,20 +365,10 @@ where
         (FieldSymbol::Day(fields::Day::DayOfMonth), FieldLength::NumericOverride(o)) => {
             const PART: Part = parts::DAY;
             input!(PART, DayOfMonth, day_of_month = input.day_of_month);
-            if datetime_names.has_user_numeric_override {
-                try_write_number(
-                    PART,
-                    w,
-                    decimal_formatter,
-                    day_of_month.0.into(),
-                    FieldLength::One,
-                )?
-            } else {
-                w.with_part(PART, |w| {
-                    numeric_override::format(o, day_of_month.0 as u32, w)
-                })?;
-                Ok(())
-            }
+            w.with_part(PART, |w| {
+                numeric_override::format(o, day_of_month.0 as u32, w)
+            })?;
+            Ok(())
         }
         (FieldSymbol::Day(fields::Day::DayOfMonth), l) => {
             const PART: Part = parts::DAY;

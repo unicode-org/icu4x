@@ -207,7 +207,7 @@ fn hebrew_numbering() {
     assert_writeable_eq!(formatted_datetime, "י״ז בכסלו ה׳תשע״א");
 }
 
-/// User numeric overrides should be preferred over calendar numeric overrides
+/// Pattern numeric overrides should be preferred over user numeric overrides
 #[test]
 fn hebrew_thai_numbering() {
     let formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -222,7 +222,7 @@ fn hebrew_thai_numbering() {
             .to_calendar(Hebrew),
     );
 
-    assert_writeable_eq!(formatted_datetime, "๑๗ בכסלו ๕๗๗๑");
+    assert_writeable_eq!(formatted_datetime, "י״ז בכסלו ה׳תשע״א");
 }
 
 #[test]
