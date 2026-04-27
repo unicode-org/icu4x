@@ -98,7 +98,7 @@ fn test_hebr_override() {
     use icu::locale::locale;
 
     // This test verifies that the ja-u-ca-japanese has jpanyear overrides
-    // for the yead field in datetime patterns, as specified in CLDR.
+    // for the year field in datetime patterns, as specified in CLDR.
     let provider = SourceDataProvider::new_testing();
     let payload: DataPayload<DatetimePatternsDateJapaneseV1> = provider
         .load(DataRequest {
