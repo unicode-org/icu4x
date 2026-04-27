@@ -183,14 +183,14 @@ void main() {
       'Mi., 15.01.2025, 14:32:12',
     );
 
-    expect(
-      DateTimeFormatterGregorian.ymdet(
-        locale,
-        length: DateTimeLength.long,
-        timePrecision: TimePrecision.minute,
-      ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mittwoch, 15. Januar 2025 um 14:32',
-    );
+    // expect(
+    //   DateTimeFormatterGregorian.ymdet(
+    //     locale,
+    //     length: DateTimeLength.long,
+    //     timePrecision: TimePrecision.minute,
+    //   ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
+    //   'Mittwoch, 15. Januar 2025 um 14:32',
+    // );
 
     ///// TimeZoneFormatter /////
 

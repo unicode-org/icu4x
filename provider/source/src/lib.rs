@@ -251,13 +251,12 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn with_cldr_for_tag(self, tag: &str) -> Self {
-        Self {
-                cldr_paths: Some(Arc::new(CldrCache::new(AbstractFs::new_zip_from_url(format!(
-                    "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
-                ))))),
-                ..self
-        }
+    pub fn with_cldr_for_tag(self, _tag: &str) -> Self {
+        self.with_cldr(Path::new(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../cldr-49.0.0-dev-json-full.zip"
+        )))
+        .unwrap()
     }
 
     /// Adds ICU export source data to the provider. The data will be downloaded from GitHub

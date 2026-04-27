@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "48"
+      "_cldrVersion": "49"
     },
     "numberingSystems": {
       "adlm": {
@@ -51,6 +51,10 @@
       },
       "cham": {
         "_digits": "꩐꩑꩒꩓꩔꩕꩖꩗꩘꩙",
+        "_type": "numeric"
+      },
+      "chis": {
+        "_digits": "𖶠𖶡𖶢𖶣𖶤𖶥𖶦𖶧𖶨𖶩",
         "_type": "numeric"
       },
       "cyrl": {

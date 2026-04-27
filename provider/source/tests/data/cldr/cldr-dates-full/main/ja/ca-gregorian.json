@@ -334,6 +334,10 @@
               "short": "Hmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "-",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1} {0}",
               "long": "{1} {0}",
               "medium": "{1} {0}",
@@ -360,8 +364,15 @@
                 "GyMEd": "Gy/M/d(E)",
                 "GyMMM": "Gy年M月",
                 "GyMMMd": "Gy年M月d日",
+                "GyMMMddd": "G y MMM ddd",
                 "GyMMMEd": "Gy年M月d日(E)",
+                "GyMMMEddd": "G y MMM ddd, E",
                 "GyMMMEEEEd": "Gy年M月d日EEEE",
+                "GyMMMM": "G y MMMM",
+                "GyMMMMd": "G y MMMM d",
+                "GyMMMMddd": "G y MMMM ddd",
+                "GyMMMMEd": "G y MMMM d, E",
+                "GyMMMMEddd": "G y MMMM ddd, E",
                 "h": "aK時",
                 "H": "H時",
                 "hm": "aK:mm",
@@ -380,9 +391,14 @@
                 "MEEEEd": "M/dEEEE",
                 "MMM": "M月",
                 "MMMd": "M月d日",
+                "MMMddd": "MMM ddd",
                 "MMMEd": "M月d日(E)",
+                "MMMEddd": "MMM ddd, E",
                 "MMMEEEEd": "M月d日EEEE",
                 "MMMMd": "M月d日",
+                "MMMMddd": "MMMM ddd",
+                "MMMMEd": "MMMM d, E",
+                "MMMMEddd": "MMMM ddd, E",
                 "MMMMW-count-other": "M月第W週",
                 "ms": "mm:ss",
                 "y": "y年",
@@ -393,27 +409,40 @@
                 "yMM": "y/MM",
                 "yMMM": "y年M月",
                 "yMMMd": "y年M月d日",
+                "yMMMddd": "y MMM ddd",
                 "yMMMEd": "y年M月d日(E)",
+                "yMMMEddd": "y MMM ddd, E",
                 "yMMMEEEEd": "y年M月d日EEEE",
                 "yMMMM": "y年M月",
+                "yMMMMd": "y MMMM d",
+                "yMMMMddd": "y MMMM ddd",
+                "yMMMMEd": "y MMMM d, E",
+                "yMMMMEddd": "y MMMM ddd, E",
                 "yQQQ": "y/QQQ",
                 "yQQQQ": "y年QQQQ",
                 "yw-count-other": "Y年第w週"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
+                "Day-Of-Week": "{1} {0}",
                 "Era": "{1} {0}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1} {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0} – {1}",
+                  "non-numeric": "{0}–{1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0}～{1}",
                 "Bh": {
                   "B": "BK時～BK時",
@@ -521,6 +550,10 @@
                 },
                 "MMMM": {
                   "M": "M月～M月"
+                },
+                "MMMMd": {
+                  "d": "MMMM d–d",
+                  "M": "MMMM d – MMMM d"
                 },
                 "y": {
                   "y": "y年～y年"

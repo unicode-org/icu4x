@@ -90,10 +90,6 @@ impl SourceDataProvider {
 fn process_era_dates_map(
     mut data: BTreeMap<String, cldr_serde::eras::CalendarData>,
 ) -> BTreeMap<String, cldr_serde::eras::CalendarData> {
-    data.get_mut(DatagenCalendar::Japanese.cldr_name())
-        .unwrap()
-        .eras
-        .retain(|_, era| !era.code.is_empty());
     // Meiji needs an offset of 5
     data.get_mut(DatagenCalendar::Japanese.cldr_name())
         .unwrap()

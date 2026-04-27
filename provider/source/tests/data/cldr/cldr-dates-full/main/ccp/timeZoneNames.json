@@ -8,8 +8,11 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT {0}",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtZeroFormat": "GMT",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "{0} 𑄃𑄧𑄇𑄴𑄖𑄧",
           "regionFormat-type-daylight": "{0} 𑄘𑄨𑄝𑄪𑄌𑄴𑄎𑄳𑄠 𑄃𑄧𑄇𑄴𑄖𑄧𑄖𑄴",
           "regionFormat-type-standard": "{0} 𑄟𑄚𑄧𑄇𑄴 𑄃𑄧𑄇𑄴𑄖𑄧𑄖𑄴",
@@ -2446,9 +2449,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "𑄥𑄟𑄮𑄠 𑄃𑄧𑄇𑄴𑄖𑄧",
-                "standard": "𑄥𑄟𑄮𑄠 𑄟𑄚𑄧𑄇𑄴 𑄃𑄧𑄇𑄴𑄖𑄧",
-                "daylight": "𑄥𑄟𑄮𑄠 𑄉𑄧𑄢𑄧𑄟𑄴𑄇𑄣𑄧𑄢𑄴 𑄃𑄧𑄇𑄴𑄖𑄧"
+                "standard": "𑄥𑄟𑄮𑄠 𑄟𑄚𑄧𑄇𑄴 𑄃𑄧𑄇𑄴𑄖𑄧"
               }
             },
             "Seychelles": {

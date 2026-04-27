@@ -240,6 +240,12 @@
       "cash_digits": null,
       "cash_rounding": null
     },
+    "MRU": {
+      "digits": 2,
+      "rounding": "R1",
+      "cash_digits": 2,
+      "cash_rounding": "R20"
+    },
     "MUR": {
       "digits": 2,
       "rounding": "R1",

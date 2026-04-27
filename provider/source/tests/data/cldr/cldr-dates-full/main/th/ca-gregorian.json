@@ -340,6 +340,10 @@
               "short": "HHmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "-",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1} {0}",
               "long": "{1} {0}",
               "medium": "{1} {0}",
@@ -365,8 +369,15 @@
                 "GyMEd": "E d/M/G y",
                 "GyMMM": "MMM G y",
                 "GyMMMd": "d MMM G y",
+                "GyMMMddd": "G y MMM ddd",
                 "GyMMMEd": "E d MMM G y",
+                "GyMMMEddd": "G y MMM ddd, E",
                 "GyMMMEEEEd": "EEEEที่ d MMM G y",
+                "GyMMMM": "G y MMMM",
+                "GyMMMMd": "G y MMMM d",
+                "GyMMMMddd": "G y MMMM ddd",
+                "GyMMMMEd": "G y MMMM d, E",
+                "GyMMMMEddd": "G y MMMM ddd, E",
                 "h": "h a",
                 "H": "HH",
                 "hm": "h:mm a",
@@ -384,10 +395,14 @@
                 "MEd": "E d/M",
                 "MMM": "LLL",
                 "MMMd": "d MMM",
+                "MMMddd": "MMM ddd",
                 "MMMEd": "E d MMM",
+                "MMMEddd": "MMM ddd, E",
                 "MMMEEEEd": "EEEEที่ d MMM",
                 "MMMMd": "d MMMM",
+                "MMMMddd": "MMMM ddd",
                 "MMMMEd": "E d MMMM",
+                "MMMMEddd": "MMMM ddd, E",
                 "MMMMEEEEd": "EEEEที่ d MMMM",
                 "MMMMW-count-other": "สัปดาห์ที่ W ของเดือนMMMM",
                 "mmss": "mm:ss",
@@ -398,30 +413,41 @@
                 "yMEd": "E d/M/y",
                 "yMMM": "MMM y",
                 "yMMMd": "d MMM y",
+                "yMMMddd": "y MMM ddd",
                 "yMMMEd": "E d MMM y",
+                "yMMMEddd": "y MMM ddd, E",
                 "yMMMEEEEd": "EEEEที่ d MMM y",
                 "yMMMM": "MMMM y",
                 "yMMMMd": "d MMMM y",
+                "yMMMMddd": "y MMMM ddd",
                 "yMMMMEd": "E d MMMM y",
+                "yMMMMEddd": "y MMMM ddd, E",
                 "yMMMMEEEEd": "EEEEที่ d MMMM y",
                 "yQQQ": "QQQ y",
                 "yQQQQ": "QQQQ G y",
                 "yw-count-other": "สัปดาห์ที่ w ของปี Y"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
+                "Day-Of-Week": "{1} {0}",
                 "Era": "{1} {0}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1} {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0} – {1}",
+                  "non-numeric": "{0}–{1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0} – {1}",
                 "Bh": {
                   "B": "h B – h B",
@@ -530,6 +556,10 @@
                 "MMMEEEEd": {
                   "d": "EEEEที่ d – EEEEที่ d MMM",
                   "M": "EEEEที่ d MMM – EEEEที่ d MMM"
+                },
+                "MMMMd": {
+                  "d": "MMMM d–d",
+                  "M": "MMMM d – MMMM d"
                 },
                 "y": {
                   "y": "y–y"

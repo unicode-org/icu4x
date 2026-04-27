@@ -10,10 +10,10 @@
     6
   ],
   "elements": [
-    "d MMMM y",
+    "y MMMM d",
     "dd‏/MM‏/y",
     "d‏/M‏/y",
-    "d MMMM y GGG",
+    "GGG y MMMM d",
     "dd-MM-y GGG",
     "d-M-y GGG"
   ]

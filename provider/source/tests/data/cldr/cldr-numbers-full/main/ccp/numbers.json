@@ -238,8 +238,7 @@
         },
         "minimalPairs": {
           "pluralMinimalPairs-count-one": "𑄥𑄧𑄥𑄬{0}𑄑𑄨 𑄃𑄛𑄬𑄣𑄴 𑄈𑄬𑄣𑄧, 𑄥𑄨𑄠𑄚𑄴 𑄉𑄧𑄟𑄴",
-          "pluralMinimalPairs-count-other": "𑄥𑄧𑄥𑄬{0}𑄑𑄨 𑄃𑄛𑄬𑄣𑄴 𑄈𑄬𑄣𑄧, 𑄥𑄨𑄉𑄪𑄚𑄴 𑄉𑄧𑄟𑄴",
-          "other": "{0}?"
+          "pluralMinimalPairs-count-other": "𑄥𑄧𑄥𑄬{0}𑄑𑄨 𑄃𑄛𑄬𑄣𑄴 𑄈𑄬𑄣𑄧, 𑄥𑄨𑄉𑄪𑄚𑄴 𑄉𑄧𑄟𑄴"
         }
       }
     }

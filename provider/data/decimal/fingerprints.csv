@@ -446,8 +446,8 @@ decimal/digits/v1, und/telu, 40B, 40B, 4084dfba70dc949
 decimal/digits/v1, und/thai, 40B, 40B, 470541c261160c5a
 decimal/digits/v1, und/tibt, 40B, 40B, a199e0054f3d55b9
 decimal/digits/v1, und/vaii, 40B, 40B, f3247f156118e197
-decimal/symbols/v1, <lookup>, 1392B, 273 identifiers
-decimal/symbols/v1, <total>, 2307B, 963B, 48 unique payloads
+decimal/symbols/v1, <lookup>, 1393B, 273 identifiers
+decimal/symbols/v1, <total>, 2313B, 969B, 48 unique payloads
 decimal/symbols/v1, af, 47B, 19B, 3e51d5d2bbc1f2d7
 decimal/symbols/v1, ar, 52B, 24B, c3d6103c042fed33
 decimal/symbols/v1, ar-BH, 52B, 24B, 2f8a9cd9917f6d84
@@ -523,7 +523,7 @@ decimal/symbols/v1, cv, -> af
 decimal/symbols/v1, da, -> ast
 decimal/symbols/v1, de, -> ast
 decimal/symbols/v1, de-AT, -> af
-decimal/symbols/v1, de-CH, 46B, 18B, df28d3acc02789f5
+decimal/symbols/v1, de-CH, 48B, 20B, bda34ae4018ae00c
 decimal/symbols/v1, de-LI, -> de-CH
 decimal/symbols/v1, doi/deva, -> bgc
 decimal/symbols/v1, dsb, -> ast
@@ -578,9 +578,10 @@ decimal/symbols/v1, fi, 49B, 21B, 6bbabd47c5fe3c2c
 decimal/symbols/v1, fo, -> eu
 decimal/symbols/v1, fr, -> en-FR
 decimal/symbols/v1, fr-CA, -> af
-decimal/symbols/v1, fr-CH, 46B, 18B, acadb0fc0beb0701
+decimal/symbols/v1, fr-CH, 48B, 20B, c9b0f46a4c4330ba
 decimal/symbols/v1, fr-LU, -> ast
 decimal/symbols/v1, fr-MA, -> ast
+decimal/symbols/v1, fr-RW, -> bgc/latn
 decimal/symbols/v1, fy, -> ast
 decimal/symbols/v1, gl, -> ast
 decimal/symbols/v1, gu, -> as/latn
@@ -598,7 +599,7 @@ decimal/symbols/v1, id, -> ast
 decimal/symbols/v1, ie, -> be
 decimal/symbols/v1, is, -> ast
 decimal/symbols/v1, it, -> es
-decimal/symbols/v1, it-CH, 46B, 18B, bc0d56e6e1b33439
+decimal/symbols/v1, it-CH, 48B, 20B, 58dec55af215139c
 decimal/symbols/v1, jv, -> ast
 decimal/symbols/v1, jv/java, 46B, 18B, bf61d3593419f8ee
 decimal/symbols/v1, ka, -> be
@@ -666,7 +667,6 @@ decimal/symbols/v1, rm, -> en-FR
 decimal/symbols/v1, ro, -> ast
 decimal/symbols/v1, ru, -> af
 decimal/symbols/v1, ru-UA, -> be
-decimal/symbols/v1, rw, -> ast
 decimal/symbols/v1, sa, -> brx/deva
 decimal/symbols/v1, sa/latn, -> as/latn
 decimal/symbols/v1, sah, -> af

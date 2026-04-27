@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "48"
+      "_cldrVersion": "49"
     },
     "metaZones": {
       "metazoneInfo": {
@@ -7666,6 +7666,10 @@
           "_longId": "Tonga",
           "_since": "40"
         },
+        "trky": {
+          "_longId": "Turkey",
+          "_since": "40"
+        },
         "truk": {
           "_longId": "Truk",
           "_since": "40"
@@ -7676,6 +7680,10 @@
         },
         "tuva": {
           "_longId": "Tuvalu",
+          "_since": "40"
+        },
+        "urqi": {
+          "_longId": "Urumqi",
           "_since": "40"
         },
         "urug": {

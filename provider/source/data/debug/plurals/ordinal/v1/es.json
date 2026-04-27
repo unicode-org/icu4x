@@ -1,6 +1,6 @@
 {
   "zero": null,
-  "one": null,
+  "one": "n % 10 = 1, 3 and n % 100 != 11",
   "two": null,
   "few": null,
   "many": null

@@ -115,10 +115,6 @@
           "atLeast": "≥{0}",
           "atMost": "≤{0}",
           "range": "{0}–{1}"
-        },
-        "minimalPairs": {
-          "pluralMinimalPairs-count-other": "{0}?",
-          "other": "{0}?"
         }
       }
     }

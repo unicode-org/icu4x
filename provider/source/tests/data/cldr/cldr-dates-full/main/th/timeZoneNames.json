@@ -8,8 +8,11 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtZeroFormat": "GMT",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "เวลา{0}",
           "regionFormat-type-daylight": "เวลาออมแสง{0}",
           "regionFormat-type-standard": "เวลามาตรฐาน{0}",
@@ -2541,9 +2544,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "เวลาซามัว",
-                "standard": "เวลามาตรฐานซามัว",
-                "daylight": "เวลาฤดูร้อนซามัว"
+                "standard": "เวลามาตรฐานซามัว"
               }
             },
             "Seychelles": {

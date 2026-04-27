@@ -8,8 +8,11 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT {0}",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtZeroFormat": "GMT",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "{0} সময়",
           "regionFormat-type-daylight": "{0} দিবালোক সময়",
           "regionFormat-type-standard": "{0} মানক সময়",
@@ -2489,9 +2492,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "সামোয়া সময়",
-                "standard": "সামোয়া মানক সময়",
-                "daylight": "সামোয়া দিবালোক সময়"
+                "standard": "সামোয়া মানক সময়"
               }
             },
             "Seychelles": {

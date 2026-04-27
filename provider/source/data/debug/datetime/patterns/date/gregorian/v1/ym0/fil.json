@@ -14,7 +14,7 @@
     "MMM y",
     "M/yy",
     "M/y",
-    "MMMM y GGG",
+    "GGG y MMMM",
     "MMM y GGG",
     "M/y GGG"
   ]

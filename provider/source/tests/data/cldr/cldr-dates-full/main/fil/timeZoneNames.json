@@ -8,8 +8,11 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtZeroFormat": "GMT",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "Oras sa {0}",
           "regionFormat-type-daylight": "Daylight Time ng {0}",
           "regionFormat-type-standard": "Standard na Oras sa {0}",
@@ -1113,9 +1116,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "Oras sa Samoa",
-                "standard": "Standard na Oras sa Samoa",
-                "daylight": "Daylight Time sa Samoa"
+                "standard": "Standard na Oras sa Samoa"
               }
             },
             "Seychelles": {

@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 195647B for the lookup data structure (31417 data identifiers)
-/// * 2052140B[^1] for the actual data (28938 unique structs)
+/// * 2052160B[^1] for the actual data (28938 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -5920,7 +5920,7 @@ macro_rules! __impl_currency_extended_data_v1 {
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0\xE4\xB8\xAD\xE5\x9B\xBD\xE4\xBA\xBA\xE6\xB0\x91\xE9\x8A\x80\xE8\xA1\x8C\xE3\x83\x89\xE3\x83\xAB") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\x80.N\xC3\xB3rar v\xE1\xBA\xBDnhkar m\xE1\xBB\xB9 m\xC3\xA1ko m\xC4\xA9 S\xC4\xA9n\xE1\xBB\xB9 t\xC3\xA1 ag\x01\0\x10N\xC3\xB3rar v\xE1\xBA\xBDnhkar m\xE1\xBB\xB9 m\xC3\xA1ko m\xC4\xA9 S\xC4\xA9n\xE1\xBB\xB9 t\xC3\xA1") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\x80 dolar\xC3\xAAn Banka Xelk\xC3\xAE ya \xC3\xA7\xC3\xAEn\xC3\xAE\x01\0\x10dolar\xC3\xAA Banka Xelk\xC3\xAE ya \xC3\xA7\xC3\xAEn\xC3\xAE") },
-                    unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\x80\x1FKinijos \"People\" banko doleri\xC5\xB3\x03\0\x1F\0?\0\x10Kinijos \"People\" banko doleris0Kinijos \"People\" banko doleriai@Kinijos \"People\" banko dolerio") },
+                    unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\x80#Kinijos \xE2\x80\x9CPeople\xE2\x80\x9D banko doleri\xC5\xB3\x03\0#\0G\0\x10Kinijos \xE2\x80\x9CPeople\xE2\x80\x9D banko doleris0Kinijos \xE2\x80\x9CPeople\xE2\x80\x9D banko doleriai@Kinijos \xE2\x80\x9CPeople\xE2\x80\x9D banko dolerio") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0dollar van de Chinese Volksbank") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0Kinas folkebank dollar") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\x80\"D\xC3\xB3lares do Banco Popular da China\x01\0\x10D\xC3\xB3lar do Banco Popular da China") },
@@ -8188,7 +8188,7 @@ macro_rules! __impl_currency_extended_data_v1 {
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0\xE0\xB9\x80\xE0\xB8\x9B\xE0\xB9\x80\xE0\xB8\x8B\xE0\xB8\x95\xE0\xB8\xB2\xE0\xB8\xAA\xE0\xB9\x80\xE0\xB8\x9B\xE0\xB8\x99 (\xE0\xB8\x9A\xE0\xB8\xB1\xE0\xB8\x8D\xE0\xB8\x8A\xE0\xB8\xB5\xE0\xB9\x80\xE0\xB8\xAD)") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0\xC4\xB0spanyol Pezetas\xC4\xB1 (A hesab\xC4\xB1)") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0\xD8\xA6\xD9\x89\xD8\xB3\xD9\xBE\xD8\xA7\xD9\x86\xD9\x89\xD9\x8A\xDB\x95 \xD9\xBE\xDB\x90\xD8\xB3\xDB\x90\xD8\xAA\xD8\xA7\xD8\xB3\xD9\x89 (A \xDA\xBE\xDB\x90\xD8\xB3\xD8\xA7\xD8\xA8\xD8\xA7\xD8\xAA)") },
-                    unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0\xD1\x96\xD1\x81\xD0\xBF\xD0\xB0\xD0\xBD\xD1\x81\xD1\x8C\xD0\xBA\xD0\xB0 \xD0\xBF\xD0\xB5\xD1\x81\xD0\xB5\xD1\x82\xD0\xB0 (\"\xD0\x90\" \xD1\x80\xD0\xB0\xD1\x85\xD1\x83\xD0\xBD\xD0\xBE\xD0\xBA)") },
+                    unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0\xD1\x96\xD1\x81\xD0\xBF\xD0\xB0\xD0\xBD\xD1\x81\xD1\x8C\xD0\xBA\xD0\xB0 \xD0\xBF\xD0\xB5\xD1\x81\xD0\xB5\xD1\x82\xD0\xB0 (\xE2\x80\x9C\xD0\x90\xE2\x80\x9D \xD1\x80\xD0\xB0\xD1\x85\xD1\x83\xD0\xBD\xD0\xBE\xD0\xBA)") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0\xC4\x90\xE1\xBB\x93ng Peseta T\xC3\xA2y Ban Nha (T\xC3\xA0i kho\xE1\xBA\xA3n)") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\x80!Peseta-ita Isip\xC3\xA3yawara (k\xC3\xA3ta A)\x01\0\x10Peseta Isip\xC3\xA3yawara (k\xC3\xA3ta A)") },
                     unsafe { icu::experimental::dimension::provider::currency::extended::CurrencyExtendedData::from_bytes_unchecked(b"\0\xE8\xA5\xBF\xE7\x8F\xAD\xE7\x89\x99\xE6\xAF\x94\xE5\xA1\x9E\xE5\xA1\x94\xEF\xBC\x88\xE6\x9C\x83\xE8\xA8\x88\xE5\x96\xAE\xE4\xBD\x8D\xEF\xBC\x89") },

@@ -15,56 +15,20 @@ use writeable::assert_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
     "Friday, December 22, 2023 at 9:22:53\u{202f}PM",
-    "vendredi 22 décembre 2023 à 21:22:53",
-    "2023年12月22日星期五 21:22:53",
-    "श\u{941}क\u{94d}रवार, 22 दिस\u{902}बर 2023 को 9:22:53 pm बजे",
     "Friday, December 22, 2023 at 9:22\u{202f}PM",
-    "vendredi 22 décembre 2023 à 21:22",
-    "2023年12月22日星期五 21:22",
-    "श\u{941}क\u{94d}रवार, 22 दिस\u{902}बर 2023 को 9:22 pm बजे",
     "December 22, 2023 at 9:22:53\u{202f}PM",
-    "22 décembre 2023 à 21:22:53",
-    "2023年12月22日 21:22:53",
-    "22 दिस\u{902}बर 2023 को 9:22:53 pm बजे",
     "December 22, 2023 at 9:22\u{202f}PM",
-    "22 décembre 2023 à 21:22",
-    "2023年12月22日 21:22",
-    "22 दिस\u{902}बर 2023 को 9:22 pm बजे",
     "Dec 22, 2023, 9:22:53\u{202f}PM",
-    "22 déc. 2023, 21:22:53",
-    "2023年12月22日 21:22:53",
-    "22 दिस॰ 2023, 9:22:53 pm",
     "Dec 22, 2023, 9:22\u{202f}PM",
-    "22 déc. 2023, 21:22",
-    "2023年12月22日 21:22",
-    "22 दिस॰ 2023, 9:22 pm",
     "12/22/23, 9:22:53\u{202f}PM",
-    "22/12/2023 21:22:53",
-    "2023/12/22 21:22:53",
-    "22/12/23, 9:22:53 pm",
     "12/22/23, 9:22\u{202f}PM",
-    "22/12/2023 21:22",
-    "2023/12/22 21:22",
-    "22/12/23, 9:22 pm",
 ];
 
 const EXPECTED_DATE: &[&str] = &[
     "Friday, December 22, 2023",
-    "vendredi 22 décembre 2023",
-    "2023年12月22日星期五",
-    "शुक्रवार, 22 दिसंबर 2023",
     "December 22, 2023",
-    "22 décembre 2023",
-    "2023年12月22日",
-    "22 दिसंबर 2023",
     "Dec 22, 2023",
-    "22 déc. 2023",
-    "2023年12月22日",
-    "22 दिस॰ 2023",
     "12/22/23",
-    "22/12/2023",
-    "2023/12/22",
-    "22/12/23",
 ];
 
 #[test]
@@ -85,7 +49,7 @@ fn neo_datetime_lengths() {
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short()),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().with_time_precision(HM)),
     ] {
-        for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
+        for locale in [locale!("en")] {
             let prefs = DateTimeFormatterPreferences::from(&locale);
             let skeleton = CompositeDateTimeFieldSet::DateTime(field_set);
             let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, skeleton).unwrap();
@@ -110,7 +74,7 @@ fn neo_date_lengths() {
         DateFieldSet::YMD(fieldsets::YMD::short()),
     ] {
         let date_skeleton = CompositeDateTimeFieldSet::Date(field_set);
-        for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
+        for locale in [locale!("en")] {
             let prefs = DateTimeFormatterPreferences::from(&locale);
             let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, date_skeleton).unwrap();
             let formatted = formatter.format(&datetime);

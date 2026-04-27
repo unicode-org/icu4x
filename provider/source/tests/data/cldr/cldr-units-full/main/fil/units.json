@@ -3131,8 +3131,8 @@
           },
           "pressure-inch-ofhg": {
             "displayName": "″ Hg",
-            "unitPattern-count-one": "{0}\" Hg",
-            "unitPattern-count-other": "{0}\" Hg"
+            "unitPattern-count-one": "{0}″ Hg",
+            "unitPattern-count-other": "{0}″ Hg"
           },
           "pressure-bar": {
             "displayName": "bar",

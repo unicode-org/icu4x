@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "48"
+      "_cldrVersion": "49"
     },
     "currencyData": {
       "fractions": {
@@ -187,6 +187,12 @@
         "MRO": {
           "_rounding": "0",
           "_digits": "0"
+        },
+        "MRU": {
+          "_rounding": "0",
+          "_digits": "2",
+          "_cashRounding": "20",
+          "_cashDigits": "2"
         },
         "MUR": {
           "_rounding": "0",

@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 1124B for the lookup data structure (223 data identifiers)
-/// * 1009597B[^1] for the actual data (209 unique structs)
+/// * 1009537B[^1] for the actual data (209 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -420,7 +420,7 @@ macro_rules! __impl_timezone_names_locations_override_v1 {
                     icu::datetime::provider::time_zones::Locations {
                         locations: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"casjf\0\0\0gpmsb\0\0\0gpsbh\0\0\0knbas\0\0\0lccas\0\0\0pmmqc\0\0\0shshn\0\0\0vcsvd\0\0\0vistt\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x0B\0\x14\0\"\x002\0:\0N\0W\0r\0St John\xE2\x80\x99sSt MartinSt Barth\xC3\xA9lemySt Kitts & NevisSt LuciaSt Pierre & MiquelonSt HelenaSt Vincent & the GrenadinesUS Virgin Islands") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"casjf\0\0\0gpmsb\0\0\0gpsbh\0\0\0knbas\0\0\0lccas\0\0\0pmmqc\0\0\0vcsvd\0\0\0vistt\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x0B\0\x14\0\"\x002\0:\0N\0i\0St John\xE2\x80\x99sSt MartinSt Barth\xC3\xA9lemySt Kitts & NevisSt LuciaSt Pierre & MiquelonSt Vincent & the GrenadinesUS Virgin Islands") })
                         },
                         pattern_generic: alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::SinglePlaceholder>::from_ref_store_unchecked("\u{1} Time")),
                         pattern_standard: alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::SinglePlaceholder>::from_ref_store_unchecked("\u{1} Standard Time")),
@@ -430,7 +430,7 @@ macro_rules! __impl_timezone_names_locations_override_v1 {
                     icu::datetime::provider::time_zones::Locations {
                         locations: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"aganu\0\0\0casjf\0\0\0gpmsb\0\0\0gpsbh\0\0\0gsgrv\0\0\0knbas\0\0\0lccas\0\0\0pmmqc\0\0\0shshn\0\0\0sjlyr\0\0\0sttms\0\0\0tcgdt\0\0\0ttpos\0\0\0vcsvd\0\0\0vistt\0\0\0wfmau\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x10\0\x13\0\x1E\0'\x005\0]\0o\0w\0\x8D\0\x96\0\xAC\0\xC4\0\xDC\0\xEF\0\x0C\x01\x1D\x01Antigua and BarbudaSt John\xE2\x80\x99sSt MartinSt Barth\xC3\xA9lemySouth Georgia and South Sandwich IslandsSt Kitts and NevisSt LuciaSt Pierre and MiquelonSt HelenaSvalbard and Jan MayenS\xC3\xA3o Tom\xC3\xA9 and Pr\xC3\xADncipeTurks and Caicos IslandsTrinidad and TobagoSt Vincent and the GrenadinesUS Virgin IslandsWallis and Futuna") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"aganu\0\0\0casjf\0\0\0gpmsb\0\0\0gpsbh\0\0\0gsgrv\0\0\0knbas\0\0\0lccas\0\0\0pmmqc\0\0\0sjlyr\0\0\0sttms\0\0\0tcgdt\0\0\0ttpos\0\0\0vcsvd\0\0\0vistt\0\0\0wfmau\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0F\0\x13\0\x1E\0'\x005\0]\0o\0w\0\x8D\0\xA3\0\xBB\0\xD3\0\xE6\0\x03\x01\x14\x01Antigua and BarbudaSt John\xE2\x80\x99sSt MartinSt Barth\xC3\xA9lemySouth Georgia and South Sandwich IslandsSt Kitts and NevisSt LuciaSt Pierre and MiquelonSvalbard and Jan MayenS\xC3\xA3o Tom\xC3\xA9 and Pr\xC3\xADncipeTurks and Caicos IslandsTrinidad and TobagoSt Vincent and the GrenadinesUS Virgin IslandsWallis and Futuna") })
                         },
                         pattern_generic: alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::SinglePlaceholder>::from_ref_store_unchecked("\u{1} Time")),
                         pattern_standard: alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::SinglePlaceholder>::from_ref_store_unchecked("\u{1} Standard Time")),
@@ -440,7 +440,7 @@ macro_rules! __impl_timezone_names_locations_override_v1 {
                     icu::datetime::provider::time_zones::Locations {
                         locations: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"aganu\0\0\0casjf\0\0\0gpmsb\0\0\0gpsbh\0\0\0gsgrv\0\0\0knbas\0\0\0lccas\0\0\0momfm\0\0\0pmmqc\0\0\0shshn\0\0\0sjlyr\0\0\0sttms\0\0\0tcgdt\0\0\0ttpos\0\0\0vcsvd\0\0\0vistt\0\0\0wfmau\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x11\0\x13\0!\0-\0>\0f\0{\0\x86\0\x8B\0\xA3\0\xAF\0\xC5\0\xDD\0\xF5\0\x08\x01(\x019\x01Antigua and BarbudaSaint John\xE2\x80\x99sSaint MartinSaint-Barth\xC3\xA9lemySouth Georgia and South Sandwich IslandsSaint Kitts and NevisSaint LuciaMacauSaint-Pierre-et-MiquelonSaint HelenaSvalbard and Jan MayenS\xC3\xA3o Tom\xC3\xA9 and Pr\xC3\xADncipeTurks and Caicos IslandsTrinidad and TobagoSaint Vincent and the GrenadinesUS Virgin IslandsWallis and Futuna") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"aganu\0\0\0casjf\0\0\0gpmsb\0\0\0gpsbh\0\0\0gsgrv\0\0\0knbas\0\0\0lccas\0\0\0momfm\0\0\0pmmqc\0\0\0sjlyr\0\0\0sttms\0\0\0tcgdt\0\0\0ttpos\0\0\0vcsvd\0\0\0vistt\0\0\0wfmau\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x10\0\x13\0!\0-\0>\0f\0{\0\x86\0\x8B\0\xA3\0\xB9\0\xD1\0\xE9\0\xFC\0\x1C\x01-\x01Antigua and BarbudaSaint John\xE2\x80\x99sSaint MartinSaint-Barth\xC3\xA9lemySouth Georgia and South Sandwich IslandsSaint Kitts and NevisSaint LuciaMacauSaint-Pierre-et-MiquelonSvalbard and Jan MayenS\xC3\xA3o Tom\xC3\xA9 and Pr\xC3\xADncipeTurks and Caicos IslandsTrinidad and TobagoSaint Vincent and the GrenadinesUS Virgin IslandsWallis and Futuna") })
                         },
                         pattern_generic: alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::SinglePlaceholder>::from_ref_store_unchecked("\u{1} Time")),
                         pattern_standard: alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::SinglePlaceholder>::from_ref_store_unchecked("\u{1} Standard Time")),

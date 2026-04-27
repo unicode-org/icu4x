@@ -9,8 +9,11 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtZeroFormat": "GMT",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "{0} Time",
           "regionFormat-type-daylight": "{0} Daylight Time",
           "regionFormat-type-standard": "{0} Standard Time",
@@ -545,9 +548,9 @@
             },
             "Apia": {
               "long": {
-                "generic": "Samoa Time",
-                "standard": "Samoa Standard Time",
-                "daylight": "Samoa Daylight Time"
+                "generic": "West Samoa Time",
+                "standard": "West Samoa Standard Time",
+                "daylight": "West Samoa Daylight Time"
               }
             },
             "Aqtau": {
@@ -813,7 +816,7 @@
             },
             "French_Southern": {
               "long": {
-                "standard": "French Southern & Antarctic Time"
+                "standard": "French Southern Territories Time"
               }
             },
             "Galapagos": {
@@ -1268,9 +1271,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "American Samoa Time",
-                "standard": "American Samoa Standard Time",
-                "daylight": "American Samoa Daylight Time"
+                "standard": "American Samoa Time"
               }
             },
             "Seychelles": {

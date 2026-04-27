@@ -340,6 +340,10 @@
               "short": "HHmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "-",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1} {0}",
               "long": "{1} {0}",
               "medium": "{1} {0}",
@@ -365,7 +369,14 @@
                 "GyMEd": "G dd.MM.y E",
                 "GyMMM": "G MMM y",
                 "GyMMMd": "G d MMM y",
+                "GyMMMddd": "G y MMM ddd",
                 "GyMMMEd": "G d MMM y E",
+                "GyMMMEddd": "G y MMM ddd, E",
+                "GyMMMM": "G y MMMM",
+                "GyMMMMd": "G y MMMM d",
+                "GyMMMMddd": "G y MMMM ddd",
+                "GyMMMMEd": "G y MMMM d, E",
+                "GyMMMMEddd": "G y MMMM ddd, E",
                 "h": "a h",
                 "H": "HH",
                 "hm": "a h:mm",
@@ -383,9 +394,13 @@
                 "MEd": "d/M E",
                 "MMM": "LLL",
                 "MMMd": "d MMM",
+                "MMMddd": "MMM ddd",
                 "MMMEd": "d MMM E",
+                "MMMEddd": "MMM ddd, E",
                 "MMMMd": "d MMMM",
+                "MMMMddd": "MMMM ddd",
                 "MMMMEd": "d MMMM E",
+                "MMMMEddd": "MMMM ddd, E",
                 "MMMMW-count-one": "MMMM 'ayının' W. 'haftası'",
                 "MMMMW-count-other": "MMMM 'ayının' W. 'haftası'",
                 "mmss": "mm:ss",
@@ -397,27 +412,40 @@
                 "yMM": "MM.y",
                 "yMMM": "MMM y",
                 "yMMMd": "d MMM y",
+                "yMMMddd": "y MMM ddd",
                 "yMMMEd": "d MMM y E",
+                "yMMMEddd": "y MMM ddd, E",
                 "yMMMM": "MMMM y",
+                "yMMMMd": "y MMMM d",
+                "yMMMMddd": "y MMMM ddd",
+                "yMMMMEd": "y MMMM d, E",
+                "yMMMMEddd": "y MMMM ddd, E",
                 "yQQQ": "y QQQ",
                 "yQQQQ": "y QQQQ",
                 "yw-count-one": "Y 'yılının' w. 'haftası'",
                 "yw-count-other": "Y 'yılının' w. 'haftası'"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
+                "Day-Of-Week": "{1} {0}",
                 "Era": "{1} {0}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1} {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0} – {1}",
+                  "non-numeric": "{0}–{1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0} – {1}",
                 "Bh": {
                   "B": "B h – B h",
@@ -522,6 +550,10 @@
                 "MMMEd": {
                   "d": "d MMM E – d MMM E",
                   "M": "d MMM E – d MMM E"
+                },
+                "MMMMd": {
+                  "d": "MMMM d–d",
+                  "M": "MMMM d – MMMM d"
                 },
                 "y": {
                   "y": "y–y"

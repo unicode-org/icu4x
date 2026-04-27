@@ -2818,7 +2818,7 @@
           },
           "pressure-inch-ofhg": {
             "displayName": "水銀柱インチ",
-            "unitPattern-count-other": "{0}\" Hg"
+            "unitPattern-count-other": "{0}″ Hg"
           },
           "pressure-bar": {
             "displayName": "バール",

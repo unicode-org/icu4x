@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 133B for the lookup data structure (26 data identifiers)
+/// * 137B for the lookup data structure (27 data identifiers)
 /// * 524B[^1] for the actual data (10 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
@@ -23,7 +23,7 @@ macro_rules! __impl_plurals_ranges_v1 {
         #[clippy::msrv = "1.86"]
         impl $provider {
             const DATA_PLURALS_RANGES_V1: icu_provider::baked::zerotrie::Data<icu::plurals::provider::PluralsRangesV1> = {
-                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD0abcefhiklmnoprsu\t\x0B\r\x19\x1F!#%')+-02>\xC3fkr\x01\x02\x80\x81\x82g\x80a\x80\xC4nstu\x01\x02\x03\x80\x80\x80\x80\xC2ai\x01\x81\x80e\x83a\x80a\x84v\x85k\x86o\x80r\x81cm\x80o\x87\xC4dilv\x01\x02\x03\x81\x80\x88\x80\xC2nr\x02d\x89\x80" };
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD1abcefhiklmnoprsuv\t\x0B\r\x19\x1F!#%')+-02>E\xC3fkr\x01\x02\x80\x81\x82g\x80a\x80\xC4nstu\x01\x02\x03\x80\x80\x80\x80\xC2ai\x01\x81\x80e\x83a\x80a\x84v\x85k\x86o\x80r\x81cm\x80o\x87\xC4dilv\x01\x02\x03\x81\x80\x88\x80\xC2nr\x02d\x89\x80i\x80" };
                 const VALUES: &'static [<icu::plurals::provider::PluralsRangesV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[
                     icu::plurals::provider::PluralRanges {
                         ranges: unsafe {

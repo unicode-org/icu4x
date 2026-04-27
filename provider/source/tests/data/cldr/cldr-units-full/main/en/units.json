@@ -2350,9 +2350,9 @@
             "unitPattern-count-other": "{0} fl oz Imp."
           },
           "volume-tablespoon": {
-            "displayName": "tbsp",
-            "unitPattern-count-one": "{0} tbsp",
-            "unitPattern-count-other": "{0} tbsp"
+            "displayName": "Tbsp",
+            "unitPattern-count-one": "{0} Tbsp",
+            "unitPattern-count-other": "{0} Tbsp"
           },
           "volume-teaspoon": {
             "displayName": "tsp",
@@ -3654,9 +3654,9 @@
             "unitPattern-count-other": "{0}fl oz Im"
           },
           "volume-tablespoon": {
-            "displayName": "tbsp",
-            "unitPattern-count-one": "{0}tbsp",
-            "unitPattern-count-other": "{0}tbsp"
+            "displayName": "Tbsp",
+            "unitPattern-count-one": "{0}Tbsp",
+            "unitPattern-count-other": "{0}Tbsp"
           },
           "volume-teaspoon": {
             "displayName": "tsp",

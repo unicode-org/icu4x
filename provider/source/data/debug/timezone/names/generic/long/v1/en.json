@@ -7,6 +7,7 @@
     "10": "Eastern Time",
     "11": "Mountain Time",
     "12": "Pacific Time",
+    "13": "West Samoa Time",
     "14": "Arabian Time",
     "15": "Argentina Time",
     "17": "Atlantic Time",
@@ -37,7 +38,6 @@
     "101": "Newfoundland Time",
     "112": "Philippine Time",
     "120": "Samara Time",
-    "121": "American Samoa Time",
     "139": "Uzbekistan Time",
     "142": "Vladivostok Time",
     "147": "Yakutsk Time"

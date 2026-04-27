@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 196089B for the lookup data structure (31494 data identifiers)
-/// * 1450110B[^1] for the actual data (28234 unique structs)
+/// * 1450118B[^1] for the actual data (28234 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -5789,7 +5789,7 @@ macro_rules! __impl_currency_displayname_v1 {
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("中国人民銀行ドル") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("Nórar vẽnhkar mỹ máko mĩ Sĩnỹ tá") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("dolarê Banka Xelkî ya çînî") },
-                    icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("Kinijos \"People\" banko doleris") },
+                    icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("Kinijos “People” banko doleris") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("dollar van de Chinese Volksbank") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("Kinas folkebank dollar") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("Dólar do Banco Popular da China") },
@@ -8022,7 +8022,7 @@ macro_rules! __impl_currency_displayname_v1 {
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("เปเซตาสเปน (บ\u{e31}ญช\u{e35}เอ)") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("İspanyol Pezetası (A hesabı)") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("ئىسپانىيە پېسېتاسى (A ھېسابات)") },
-                    icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("іспанська песета (\"А\" рахунок)") },
+                    icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("іспанська песета (“А” рахунок)") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("Đồng Peseta Tây Ban Nha (Tài khoản)") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("Peseta Isipãyawara (kãta A)") },
                     icu::experimental::dimension::provider::currency::displayname::CurrencyDisplayname { display_name: alloc::borrow::Cow::Borrowed("西班牙比塞塔（會計單位）") },
