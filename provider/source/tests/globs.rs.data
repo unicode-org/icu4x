@@ -208,7 +208,10 @@ const LSTM_GLOB: &[&str] = &[
 
 const UNICODE_GLOB: &[&str] = &[
     "security/IdentifierStatus.txt",
-    "ucd/Unihan.zip/Unihan_IRGSources.txt",
+    // WARNING: This file is manually filtered in download_repo_sources.rs to only include
+    // the data that is needed by current implementations. If you need this file for other
+    // logic, adapt/remove the filtering.
+    "ucd/unihan/Unihan_IRGSources.txt",
 ];
 
 const TZDB_GLOB: &[&str] = &[

@@ -671,7 +671,7 @@ pub fn unicode_data() -> AbstractFs {
     include_files!(
         "../../tests/data/unicode/";
         "security/IdentifierStatus.txt",
-        "ucd/Unihan.zip"
+        "ucd/unihan/Unihan_IRGSources.txt"
     )
 }
 

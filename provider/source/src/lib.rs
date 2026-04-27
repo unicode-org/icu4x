@@ -231,7 +231,7 @@ impl SourceDataProvider {
     /// directory containing `security/IdentifierStatus.txt`.
     pub fn with_ucd(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
-            unicode_paths: Some(Arc::new(UnicodeCache::new(AbstractFs::new(root)?))),
+            unicode_paths: Some(Arc::new(UnicodeCache::new_local(AbstractFs::new(root)?))),
             ..self
         })
     }
@@ -323,9 +323,7 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_ucd_for_tag(self, tag: &str) -> Self {
         Self {
-            unicode_paths: Some(Arc::new(UnicodeCache::new(AbstractFs::new_from_url(
-                format!("https://www.unicode.org/Public/{tag}/"),
-            )))),
+            unicode_paths: Some(Arc::new(UnicodeCache::new_remote(tag))),
             ..self
         }
     }

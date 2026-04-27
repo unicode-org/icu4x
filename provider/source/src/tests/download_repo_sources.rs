@@ -8,7 +8,7 @@ use icu::locale::{langid, LanguageIdentifier};
 use icu_provider::DataError;
 use std::collections::BTreeSet;
 use std::fs::File;
-use std::io::Write;
+use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::Command;
 
@@ -52,32 +52,9 @@ impl UnicodeCache {
                 continue;
             }
 
-            if let Some((zip_path, path)) = file.split_once(".zip/") {
-                files.remove(&file);
-                files.insert(format!("{zip_path}.zip"));
-
-                use std::io::Write;
-                use zip::write::SimpleFileOptions;
-                use zip::ZipWriter;
-
-                let zip_path = target.join(zip_path).with_extension("zip");
-                let mut zip_write = if std::fs::exists(&zip_path).unwrap() {
-                    ZipWriter::new_append(File::open(&zip_path).unwrap()).unwrap()
-                } else {
-                    std::fs::create_dir_all(zip_path.parent().unwrap())?;
-                    ZipWriter::new(File::create_new(zip_path).unwrap())
-                };
-
-                zip_write
-                    .start_file(path, SimpleFileOptions::default())
-                    .unwrap();
-                zip_write.write_all(self.read_to_string(&file)?.as_bytes())?;
-                zip_write.finish().unwrap();
-            } else {
-                std::fs::create_dir_all(target.join(&file).parent().unwrap())?;
-                crlify::BufWriterWithLineEndingFix::new(File::create(target.join(&file))?)
-                    .write_all(self.read_to_string(&file)?.as_bytes())?;
-            }
+            std::fs::create_dir_all(target.join(&file).parent().unwrap())?;
+            crlify::BufWriterWithLineEndingFix::new(File::create(target.join(&file))?)
+                .write_all(self.read_to_string(&file)?.as_bytes())?;
         }
 
         Ok(files)
@@ -149,6 +126,18 @@ fn download_repo_sources() {
             UNICODE_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
+    let irg_path = out_root.join("unicode/ucd/unihan/Unihan_IRGSources.txt");
+    std::io::copy(
+        &mut BufReader::new(File::open(&irg_path).unwrap())
+            .lines()
+            .map_while(Result::ok)
+            .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
+            .collect::<Vec<_>>()
+            .join("\n")
+            .as_bytes(),
+        &mut crlify::BufWriterWithLineEndingFix::new(File::create(&irg_path).unwrap()),
+    )
+    .unwrap();
 
     let mut tzdb_files = provider
         .tzdb_paths

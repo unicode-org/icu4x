@@ -102,9 +102,35 @@ pub(crate) struct ZipData {
     file_list: HashSet<String>,
 }
 
+impl ZipData {
+    fn try_new(bytes: Vec<u8>) -> Result<Self, DataError> {
+        let archive = ZipArchive::new(Cursor::new(bytes))
+            .map_err(|e| DataError::custom("Invalid ZIP file").with_display_context(&e))?;
+
+        let file_list = archive.file_names().map(String::from).collect();
+        Ok(Self { archive, file_list })
+    }
+}
+
 pub(crate) struct TarArchive {
     archive: Vec<u8>,
     file_list: HashSet<String>,
+}
+
+impl TarArchive {
+    fn try_new(bytes: Vec<u8>) -> Result<Self, DataError> {
+        use std::io::Read;
+        let mut archive = Vec::new();
+        flate2::read::GzDecoder::new(Cursor::new(bytes)).read_to_end(&mut archive)?;
+        let file_list = tar::Archive::new(Cursor::new(&archive))
+            .entries_with_seek()
+            .map(|e| {
+                e.into_iter()
+                    .filter_map(|e| Some(e.ok()?.path().ok()?.as_os_str().to_str()?.to_string()))
+            })?
+            .collect::<HashSet<_>>();
+        Ok(TarArchive { archive, file_list })
+    }
 }
 
 pub(crate) enum AbstractFs {
@@ -130,32 +156,13 @@ impl AbstractFs {
         {
             Ok(Self::Fs(root.to_path_buf()))
         } else if root.extension().is_some_and(|ext| ext == "zip") {
-            let archive = ZipArchive::new(Cursor::new(std::fs::read(root)?)).map_err(|e| {
-                DataError::custom("Invalid ZIP file")
-                    .with_display_context(&e)
-                    .with_path_context(root)
-            })?;
-            let file_list = archive.file_names().map(String::from).collect();
-            Ok(Self::Zip(RwLock::new(Ok(ZipData { archive, file_list }))))
-        } else if root.ends_with(".tar.gz") {
-            use std::io::Read;
-            let mut data = Vec::new();
-            flate2::read::GzDecoder::new(Cursor::new(std::fs::read(root)?))
-                .read_to_end(&mut data)?;
-
-            let file_list = tar::Archive::new(Cursor::new(&data))
-                .entries_with_seek()
-                .map(|e| {
-                    e.into_iter().filter_map(|e| {
-                        Some(e.ok()?.path().ok()?.as_os_str().to_str()?.to_string())
-                    })
-                })?
-                .collect::<HashSet<_>>();
-
-            Ok(Self::Tar(RwLock::new(Ok(TarArchive {
-                archive: data,
-                file_list,
-            }))))
+            Ok(Self::Zip(RwLock::new(Ok(ZipData::try_new(
+                std::fs::read(root)?,
+            )?))))
+        } else if root.extension().is_some_and(|ext| ext == "gz") {
+            Ok(Self::Tar(RwLock::new(Ok(TarArchive::try_new(
+                std::fs::read(root)?,
+            )?))))
         } else {
             Err(DataError::custom("unsupported archive type").with_display_context(&root.display()))
         }
@@ -169,32 +176,6 @@ impl AbstractFs {
     #[cfg(feature = "networking")]
     pub fn new_tar_from_url(path: String) -> Self {
         Self::Tar(RwLock::new(Err(path)))
-    }
-
-    fn new_zip_from_bytes(bytes: Vec<u8>) -> Result<Self, DataError> {
-        let archive = ZipArchive::new(Cursor::new(bytes))
-            .map_err(|e| DataError::custom("Invalid ZIP file").with_display_context(&e))?;
-
-        let file_list = archive.file_names().map(String::from).collect();
-        Ok(Self::Zip(RwLock::new(Ok(ZipData { archive, file_list }))))
-    }
-
-    #[cfg_attr(not(feature = "networking"), allow(dead_code))]
-    fn new_tar_from_bytes(bytes: Vec<u8>) -> Result<Self, DataError> {
-        use std::io::Read;
-        let mut archive = Vec::new();
-        flate2::read::GzDecoder::new(Cursor::new(bytes)).read_to_end(&mut archive)?;
-        let file_list = tar::Archive::new(Cursor::new(&archive))
-            .entries_with_seek()
-            .map(|e| {
-                e.into_iter()
-                    .filter_map(|e| Some(e.ok()?.path().ok()?.as_os_str().to_str()?.to_string()))
-            })?
-            .collect::<HashSet<_>>();
-        Ok(Self::Tar(RwLock::new(Ok(TarArchive {
-            archive,
-            file_list,
-        }))))
     }
 
     #[cfg(feature = "networking")]
@@ -254,15 +235,10 @@ impl AbstractFs {
             };
 
             let root = Self::download(resource)?;
-            let bytes = std::fs::read(&root)?;
 
-            let Self::Zip(zip) =
-                Self::new_zip_from_bytes(bytes).map_err(|e| e.with_path_context(&root))?
-            else {
-                unreachable!()
-            };
-
-            *lock = zip.into_inner().expect("poison");
+            *lock =
+                Ok(ZipData::try_new(std::fs::read(&root)?)
+                    .map_err(|e| e.with_path_context(&root))?);
         } else if let Self::Tar(lock) = self {
             if lock.read().expect("poison").is_ok() {
                 return Ok(());
@@ -274,16 +250,10 @@ impl AbstractFs {
                 return Ok(());
             };
 
-            let path = &Self::download(resource)?;
-            let inner = std::fs::read(path)?;
+            let root = Self::download(resource)?;
 
-            let Self::Tar(tar) =
-                Self::new_tar_from_bytes(inner).map_err(|e| e.with_path_context(path))?
-            else {
-                unreachable!()
-            };
-
-            *lock = tar.into_inner().expect("poison");
+            *lock = Ok(TarArchive::try_new(std::fs::read(&root)?)
+                .map_err(|e| e.with_path_context(&root))?);
         }
         Ok(())
     }
@@ -542,18 +512,47 @@ impl TzdbCache {
 #[derive(Debug)]
 pub(crate) struct UnicodeCache {
     root: AbstractFs,
-    // The UCD contains zip files, which we let callers transparently access as
-    // directories. We cache the parsed zip files.
-    zip_cache: FrozenMap<String, Box<AbstractFs>>,
+    // The `ucd/UCD.zip` file. Requests matching `ucd/[^unihan]` will be resolved through
+    // the ZIP file instead of downloading individual files.
+    ucd_zip: Option<AbstractFs>,
+    // The `ucd/Unihan.zip` file. Requests matching `ucd/unihan/` will be resolved through
+    // the ZIP file instead of downloading individual files.
+    unihan_zip: Option<AbstractFs>,
+    // The `security/uts39-data-X.0.0.zip`` file. Requests matching `security/` will be
+    // resolved through the ZIP file instead of downloading individual files.
+    uts_35_zip: Option<AbstractFs>,
     // Cached file contents. It's all text files, so we cache them as strings.
     file_cache: FrozenMap<String, String>,
 }
 
 impl UnicodeCache {
-    pub fn new(root: AbstractFs) -> Self {
+    #[cfg(feature = "networking")]
+    pub fn new_remote(version: &str) -> Self {
+        let root = AbstractFs::new_from_url(format!("https://www.unicode.org/Public/{version}/"));
+        let ucd_zip = AbstractFs::new_zip_from_url(format!(
+            "https://www.unicode.org/Public/{version}/ucd/UCD.zip"
+        ));
+        let unihan_zip = AbstractFs::new_zip_from_url(format!(
+            "https://www.unicode.org/Public/{version}/ucd/Unihan.zip"
+        ));
+        let uts_35_zip = AbstractFs::new_zip_from_url(format!(
+            "https://www.unicode.org/Public/{version}/security/uts39-data-{version}.zip"
+        ));
         Self {
             root,
-            zip_cache: FrozenMap::new(),
+            ucd_zip: Some(ucd_zip),
+            unihan_zip: Some(unihan_zip),
+            uts_35_zip: Some(uts_35_zip),
+            file_cache: FrozenMap::new(),
+        }
+    }
+
+    pub fn new_local(root: AbstractFs) -> Self {
+        Self {
+            root,
+            ucd_zip: None,
+            unihan_zip: None,
+            uts_35_zip: None,
             file_cache: FrozenMap::new(),
         }
     }
@@ -564,17 +563,18 @@ impl UnicodeCache {
             return Ok(true);
         }
 
-        if let Some((zip_path, path)) = file.split_once(".zip/") {
-            let zip_fs = if let Some(zip) = self.zip_cache.get(zip_path) {
-                zip
-            } else {
-                let zip = AbstractFs::new_zip_from_bytes(
-                    self.root.read_to_buf(&format!("{zip_path}.zip"))?,
-                )?;
-                self.zip_cache.insert(zip_path.to_string(), Box::new(zip))
-            };
-
-            Ok(zip_fs.file_exists(path)?)
+        if let (Some(unihan_zip), Some(unihan_path)) =
+            (self.unihan_zip.as_ref(), file.strip_prefix("ucd/unihan/"))
+        {
+            Ok(unihan_zip.file_exists(unihan_path)?)
+        } else if let (Some(ucd_zip), Some(ucd_path)) =
+            (self.ucd_zip.as_ref(), file.strip_prefix("ucd/"))
+        {
+            Ok(ucd_zip.file_exists(ucd_path)?)
+        } else if let (Some(uts_35_zip), Some(uts_35_path)) =
+            (self.uts_35_zip.as_ref(), file.strip_prefix("security/"))
+        {
+            Ok(uts_35_zip.file_exists(uts_35_path)?)
         } else {
             Ok(self.root.file_exists(file)?)
         }
@@ -586,19 +586,24 @@ impl UnicodeCache {
             return Ok(x);
         }
 
-        if let Some((zip_path, path)) = file.split_once(".zip/") {
-            let zip_fs = if let Some(zip) = self.zip_cache.get(zip_path) {
-                zip
-            } else {
-                let zip = AbstractFs::new_zip_from_bytes(
-                    self.root.read_to_buf(&format!("{zip_path}.zip"))?,
-                )?;
-                self.zip_cache.insert(zip_path.to_string(), Box::new(zip))
-            };
-
+        if let (Some(unihan_zip), Some(unihan_path)) =
+            (self.unihan_zip.as_ref(), file.strip_prefix("ucd/unihan/"))
+        {
             Ok(self
                 .file_cache
-                .insert(file.into(), zip_fs.read_to_string(path)?))
+                .insert(file.to_string(), unihan_zip.read_to_string(unihan_path)?))
+        } else if let (Some(ucd_zip), Some(ucd_path)) =
+            (self.ucd_zip.as_ref(), file.strip_prefix("ucd/"))
+        {
+            Ok(self
+                .file_cache
+                .insert(file.to_string(), ucd_zip.read_to_string(ucd_path)?))
+        } else if let (Some(uts_35_zip), Some(uts_35_path)) =
+            (self.uts_35_zip.as_ref(), file.strip_prefix("security/"))
+        {
+            Ok(self
+                .file_cache
+                .insert(file.to_string(), uts_35_zip.read_to_string(uts_35_path)?))
         } else {
             Ok(self
                 .file_cache
