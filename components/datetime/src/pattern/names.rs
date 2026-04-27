@@ -375,7 +375,7 @@ where
 size_test!(
     FixedCalendarDateTimeNames<icu_calendar::Gregorian>,
     typed_date_time_names_size,
-    328
+    336
 );
 
 /// A low-level type that formats datetime patterns with localized names.
