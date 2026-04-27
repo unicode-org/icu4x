@@ -173,7 +173,13 @@ where
                 // what you want in years, so we fall back.
                 FieldLength::NumericOverride(o) if year_val >= 0 => {
                     if datetime_names.has_user_numeric_override {
-                        try_write_number(PART, w, decimal_formatter, year_val.into(), FieldLength::One)?
+                        try_write_number(
+                            PART,
+                            w,
+                            decimal_formatter,
+                            year_val.into(),
+                            FieldLength::One,
+                        )?
                     } else {
                         w.with_part(PART, |w| numeric_override::format(o, year_val as u32, w))?;
                         Ok(())
@@ -267,7 +273,13 @@ where
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
             if datetime_names.has_user_numeric_override {
-                try_write_number(PART, w, decimal_formatter, month.number().into(), FieldLength::One)?
+                try_write_number(
+                    PART,
+                    w,
+                    decimal_formatter,
+                    month.number().into(),
+                    FieldLength::One,
+                )?
             } else {
                 w.with_part(PART, |w| {
                     numeric_override::format(o, month.number() as u32, w)
@@ -374,7 +386,13 @@ where
             const PART: Part = parts::DAY;
             input!(PART, DayOfMonth, day_of_month = input.day_of_month);
             if datetime_names.has_user_numeric_override {
-                try_write_number(PART, w, decimal_formatter, day_of_month.0.into(), FieldLength::One)?
+                try_write_number(
+                    PART,
+                    w,
+                    decimal_formatter,
+                    day_of_month.0.into(),
+                    FieldLength::One,
+                )?
             } else {
                 w.with_part(PART, |w| {
                     numeric_override::format(o, day_of_month.0 as u32, w)

@@ -210,9 +210,11 @@ fn hebrew_numbering() {
 /// User numeric overrides should be preferred over calendar numeric overrides
 #[test]
 fn hebrew_thai_numbering() {
-    let formatter =
-        FixedCalendarDateTimeFormatter::try_new("he-u-ca-hebrew-nu-thai".parse::<Locale>().unwrap().into(), fieldsets::YMD::long())
-            .unwrap();
+    let formatter = FixedCalendarDateTimeFormatter::try_new(
+        "he-u-ca-hebrew-nu-thai".parse::<Locale>().unwrap().into(),
+        fieldsets::YMD::long(),
+    )
+    .unwrap();
 
     let formatted_datetime = formatter.format(
         &Date::try_new_hebrew_v2(5771, 3.into(), 17)

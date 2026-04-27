@@ -691,6 +691,7 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     mz_periods: <FSet::MetazoneLookup as NamesContainer<tz::MzPeriodV1, ()>>::Container,
     // TODO(#4340): Make the DecimalFormatter optional
     decimal_formatter: Option<DecimalFormatter>,
+    /// Did the user override the numbering system via `-u-nu` in the locale?
     pub(crate) has_user_numeric_override: bool,
     _marker: PhantomData<FSet>,
 }
@@ -715,6 +716,7 @@ impl<FSet: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<FSet> {
             .field("mz_specific_short", &self.mz_specific_short)
             .field("mz_periods", &self.mz_periods)
             .field("decimal_formatter", &self.decimal_formatter)
+            .field("has_user_numeric_override", &self.has_user_numeric_override)
             .finish()
     }
 }
