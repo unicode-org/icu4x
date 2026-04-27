@@ -691,6 +691,7 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     mz_periods: <FSet::MetazoneLookup as NamesContainer<tz::MzPeriodV1, ()>>::Container,
     // TODO(#4340): Make the DecimalFormatter optional
     decimal_formatter: Option<DecimalFormatter>,
+    pub(crate) has_user_numeric_override: bool,
     _marker: PhantomData<FSet>,
 }
 
@@ -737,6 +738,7 @@ impl<FSet: DateTimeNamesMarker> Clone for RawDateTimeNames<FSet> {
             mz_specific_short: self.mz_specific_short.clone(),
             mz_periods: self.mz_periods.clone(),
             decimal_formatter: self.decimal_formatter.clone(),
+            has_user_numeric_override: self.has_user_numeric_override,
             _marker: PhantomData,
         }
     }
@@ -761,6 +763,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             mz_specific_short: FSet2::map_zone_specific_short(self.mz_specific_short),
             mz_periods: FSet2::map_metazone_lookup(self.mz_periods),
             decimal_formatter: self.decimal_formatter,
+            has_user_numeric_override: self.has_user_numeric_override,
             _marker: PhantomData,
         }
     }
@@ -784,6 +787,7 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     mz_specific_short: OptionalNames<(), &'l tz::MzSpecific<'l>>,
     mz_periods: OptionalNames<(), &'l tz::MzPeriod<'l>>,
     pub(crate) decimal_formatter: Option<&'l DecimalFormatter>,
+    pub(crate) has_user_numeric_override: bool,
 }
 
 impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
@@ -2919,6 +2923,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 (),
             >>::Container::new_empty(),
             decimal_formatter: None,
+            has_user_numeric_override: false,
             _marker: PhantomData,
         }
     }
@@ -2941,6 +2946,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             mz_specific_short: self.mz_specific_short.get().inner,
             mz_periods: self.mz_periods.get().inner,
             decimal_formatter: self.decimal_formatter.as_ref(),
+            has_user_numeric_override: self.has_user_numeric_override,
         }
     }
 
@@ -3538,6 +3544,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         pattern_items: impl Iterator<Item = PatternItem>,
         names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<(), PatternLoadError> {
+        self.has_user_numeric_override = prefs.numbering_system.is_some();
         let mut numeric_field = None;
 
         for item in pattern_items {

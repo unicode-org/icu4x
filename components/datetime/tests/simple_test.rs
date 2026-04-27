@@ -220,7 +220,7 @@ fn hebrew_thai_numbering() {
             .to_calendar(Hebrew),
     );
 
-    assert_writeable_eq!(formatted_datetime, "י״ז בכסלו ה׳תשע״א");
+    assert_writeable_eq!(formatted_datetime, "๑๗ בכסלו ๕๗๗๑");
 }
 
 #[test]
