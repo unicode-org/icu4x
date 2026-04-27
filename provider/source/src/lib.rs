@@ -220,15 +220,14 @@ impl SourceDataProvider {
         })
     }
 
-    /// Adds Unihan source data to the provider. The path should point to the Unihan ZIP file
-    /// (see [Unicode Character Database](https://www.unicode.org/ucd/)).
-    #[deprecated]
+    /// Deprecated, see [`Self::with_ucd`].
+    #[deprecated(since = "2.3.0", note = "use .with_ucd")]
     pub fn with_unihan(self, _root: &Path) -> Result<Self, DataError> {
         panic!("Use `.with_ucd` to set UCD data, which includes Unihan data.");
     }
 
-    /// Adds UCD source data to the provider. The path should point to a
-    /// directory containing `security/IdentifierStatus.txt`.
+    /// Adds Unicode source data to the provider. The path should point to a
+    /// directory structure matching <https://www.unicode.org/Public/{version}/>.
     pub fn with_ucd(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
             unicode_paths: Some(Arc::new(UnicodeCache::new_local(AbstractFs::new(root)?))),
@@ -302,20 +301,17 @@ impl SourceDataProvider {
         }
     }
 
-    /// Adds UCD Unihan source data to the provider. The data will be downloaded from unicode.org
-    /// using the given version tag (see [Unicode Character Database](https://www.unicode.org/ucd/)).
-    ///
-    /// Also see: [`TESTED_UCD_TAG`](Self::TESTED_UCD_TAG)
+    /// Deprecated, see [`Self::with_ucd_for_tag`].
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    #[deprecated]
+    #[deprecated(since = "2.3.0", note = "use .with_ucd_for_tag")]
     pub fn with_unihan_for_tag(self, _tag: &str) -> Self {
         panic!("Use `.with_ucd_for_tag` to set UCD data, which includes Unihan data.");
     }
 
-    /// Adds UCD source data to the provider. The data will be downloaded from unicode.org
-    /// using the given version tag (see [Unicode Character Database](https://www.unicode.org/ucd/)).
+    /// Adds Unicode source data to the provider. The data will be downloaded from
+    /// <https://unicode.org/Public> using the given version tag.
     ///
     /// Also see: [`TESTED_UCD_TAG`](Self::TESTED_UCD_TAG)
     ///
