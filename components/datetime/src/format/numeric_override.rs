@@ -265,10 +265,7 @@ fn format_hebrew<W: fmt::Write + ?Sized>(
         w.write_str("אלפיים")?;
         return Ok(Ok(()));
     }
-    let thousands = number / 1000;
-    let rest = number % 1000;
-
-    if thousands >= 1000 {
+    if number >= 1000000 {
         // Fallback to latn numbers in the out-of-bounds case
         //
         // This is not unreachable, but would only be reached
@@ -277,18 +274,19 @@ fn format_hebrew<W: fmt::Write + ?Sized>(
         return Ok(Ok(()));
     }
 
-    if thousands > 0 {
+    if number > 1000 {
+      let thousands = number / 1000;
+      let rest = number % 1000;
         format_hebrew_less_than_1000(thousands, w, rest > 0)?;
 
         if rest == 0 {
             w.write_str(" אלפים")?;
-            return Ok(Ok(()));
+        } else {
+            format_hebrew_less_than_1000(rest, w, false)?;
         }
-    }
-
-    if rest > 0 {
-        format_hebrew_less_than_1000(rest, w, false)?;
-    }
+    } else if number > 0 {
+        format_hebrew_less_than_1000(number, w, false)?;
+    };
 
     Ok(Ok(()))
 }
