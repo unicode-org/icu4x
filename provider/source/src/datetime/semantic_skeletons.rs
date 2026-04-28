@@ -164,18 +164,9 @@ impl SourceDataProvider {
                     // load data for a pattern without errors. Each evaluation of the loop will
                     // reduce the number of errors by 1.
                     loop {
-                        let mut pattern_items = reference::Pattern::from(&*pattern).into_items();
-                        for item in pattern_items.iter_mut() {
-                            if let PatternItem::Field(field) = item {
-                                // Replace NumericOverride with One for the purpose of checking conflicting fields.
-                                // names.load_for_pattern only understands standard field lengths, and numbering
-                                // system overrides do not affect name loading.
-                                if let FieldLength::NumericOverride(_) = field.length {
-                                    field.length = FieldLength::One;
-                                }
-                            }
-                        }
-                        let pattern_for_check = runtime::Pattern::from(pattern_items);
+                        let pattern_for_check = runtime::Pattern::from(
+                            reference::Pattern::from(&*pattern).into_items(),
+                        );
                         match names.load_for_pattern(
                             &DebugProvider,
                             &DateTimePattern::from(pattern_for_check),
@@ -199,11 +190,7 @@ impl SourceDataProvider {
                                         continue; // nothing to do: not a Field
                                     };
                                     if field.symbol == requested_field.symbol
-                                        && (field.length == requested_field.length
-                                            || (matches!(
-                                                field.length,
-                                                FieldLength::NumericOverride(_)
-                                            ) && requested_field.length == FieldLength::One))
+                                        && field.length == requested_field.length
                                     {
                                         *field = previous_field;
                                     }
