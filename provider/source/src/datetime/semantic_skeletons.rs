@@ -191,7 +191,7 @@ impl SourceDataProvider {
             }
         }
 
-        let trios = [Length::Long, Length::Medium, Length::Short]
+        let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
             .map(|length| {
                 let components = to_components_bag(length, attributes, data);
                 let preferred_hour_cycle = preferred_hour_cycle(data, locale);
@@ -294,7 +294,6 @@ impl SourceDataProvider {
                 });
                 trio
             });
-        let [long, medium, short] = trios;
 
         let builder = PackedPatternsBuilder {
             standard: LengthPluralElements {
