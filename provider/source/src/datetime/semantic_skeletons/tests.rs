@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use icu::datetime::provider::fields;
 
 use crate::SourceDataProvider;
 
