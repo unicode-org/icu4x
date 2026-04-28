@@ -69,7 +69,7 @@ fn format_hanidec<W: fmt::Write + ?Sized>(
     w: &mut W,
 ) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
     if number == 0 {
-        w.write_char('〇')?;
+        w.write_char(HANIDEC_DIGITS[0])?;
         return Ok(Ok(()));
     }
     let mut n = number;
