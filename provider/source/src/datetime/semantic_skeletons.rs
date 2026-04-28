@@ -301,9 +301,9 @@ impl SourceDataProvider {
             .enumerate()
         {
             let lp = match length {
-                Length::Long => &data.date_skeletons.long,
-                Length::Medium => &data.date_skeletons.medium,
-                Length::Short => &data.date_skeletons.short,
+                Length::Long => &data.date_formats.long,
+                Length::Medium => &data.date_formats.medium,
+                Length::Short => &data.date_formats.short,
                 _ => unreachable!(),
             };
             for variant in trios[i].iter_in_quality_order_mut() {
@@ -526,19 +526,12 @@ fn gen_date_components(
 ) -> components::Bag {
     // Pull the field lengths from the date length patterns, and then use
     // those lengths for classical skeleton datetime pattern generation.
-    let mut date_pattern: runtime::Pattern = match length {
+    let date_pattern: runtime::Pattern = match length {
         Length::Long => data.date_skeletons.long.get_pattern().parse().unwrap(),
         Length::Medium => data.date_skeletons.medium.get_pattern().parse().unwrap(),
         Length::Short => data.date_skeletons.short.get_pattern().parse().unwrap(),
         _ => unreachable!(),
     };
-    let lp = match length {
-        Length::Long => &data.date_skeletons.long,
-        Length::Medium => &data.date_skeletons.medium,
-        Length::Short => &data.date_skeletons.short,
-        _ => unreachable!(),
-    };
-    crate::datetime::names::apply_numeric_overrides(lp, &mut date_pattern);
     let date_pattern_ref: reference::Pattern = (&date_pattern).into();
     let date_bag = components::Bag::from(&date_pattern_ref);
     let mut filtered_components = components::Bag::empty();
