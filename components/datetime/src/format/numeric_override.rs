@@ -30,6 +30,11 @@ fn format_jpan<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     if number == 1 {
         w.write_str("元")
     } else {
+        // <https://github.com/unicode-org/cldr/blob/main/common/supplemental/numberingSystems.xml#L50>
+        // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16>
+        //
+        // This rule has `latn` in the name and the RBNF syntax falls back to
+        // decimal formatting, so we should use Latin decimal formatting here.
         number.write_to(w)
     }
 }
@@ -92,6 +97,7 @@ fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Resul
                 false,
                 "hanidays should only be found in a d context and only supports 1-31"
             );
+            // Fallback to latn numbers in the error case
             return number.write_to(w);
         }
     }
@@ -106,6 +112,7 @@ fn format_romanlow<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Resul
             false,
             "romanlow should only be found in an M context and only supports 1-3999"
         );
+        // Fallback to latn numbers in the error case
         return n.write_to(w);
     }
     let mappings = [
@@ -229,6 +236,10 @@ fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result 
     let rest = number % 1000;
 
     if thousands >= 1000 {
+        // Fallback to latn numbers in the out-of-bounds case
+        //
+        // This is not unreachable, but would only be reached
+        // for basically irrelevant very-large dates.
         return number.write_to(w);
     }
 

@@ -34,6 +34,7 @@ where
         w.with_part(part, |w| fdf.format(&num).write_to_parts(w))?;
         Ok(Ok(()))
     } else {
+        // Fallback behavior in the error case.
         w.with_part(part, |w| {
             w.with_part(Part::ERROR, |r| num.write_to_parts(r))
         })?;
@@ -60,6 +61,7 @@ where
         fdf.format(&num).write_to(w)?;
         Ok(Ok(()))
     } else {
+        // Fallback behavior in the error case.
         w.with_part(Part::ERROR, |r| num.write_to(r))?;
         Ok(Err(
             FormattedDateTimePatternError::DecimalFormatterNotLoaded,
