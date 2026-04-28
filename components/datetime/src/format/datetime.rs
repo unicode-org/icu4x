@@ -174,8 +174,7 @@ where
                 // For negative numbers RBNF coverage is spotty and often not actually
                 // what you want in years, so we fall back.
                 FieldLength::NumericOverride(o) if year_val >= 0 => {
-                    w.with_part(PART, |w| numeric_override::format(o, year_val as u32, w))?;
-                    Ok(())
+                    numeric_override::format(PART, w, year_val as u32, o)?
                 }
                 _ => {
                     let mut year = Decimal::from(year.era_year_or_related_iso());
@@ -264,10 +263,7 @@ where
         (FieldSymbol::Month(_), FieldLength::NumericOverride(o)) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
-            w.with_part(PART, |w| {
-                numeric_override::format(o, u32::from(month.number()), w)
-            })?;
-            Ok(())
+            numeric_override::format(PART, w, u32::from(month.number()), o)?
         }
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
@@ -367,10 +363,7 @@ where
         (FieldSymbol::Day(fields::Day::DayOfMonth), FieldLength::NumericOverride(o)) => {
             const PART: Part = parts::DAY;
             input!(PART, DayOfMonth, day_of_month = input.day_of_month);
-            w.with_part(PART, |w| {
-                numeric_override::format(o, u32::from(day_of_month.0), w)
-            })?;
-            Ok(())
+            numeric_override::format(PART, w, u32::from(day_of_month.0), o)?
         }
         (FieldSymbol::Day(fields::Day::DayOfMonth), l) => {
             const PART: Part = parts::DAY;

@@ -2,47 +2,72 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::pattern::FormattedDateTimePatternError;
 use crate::provider::fields::FieldNumericOverrides;
 use core::fmt;
-use writeable::Writeable;
+use writeable::{Part, PartsWrite, Writeable};
 
 pub(crate) const HANIDEC_DIGITS: &[char] =
     &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
 
 /// Formats a number according to the override system.
-pub(crate) fn format<W: fmt::Write + ?Sized>(
-    overrides: FieldNumericOverrides,
-    number: u32,
+pub(crate) fn format<W: PartsWrite + ?Sized>(
+    part: Part,
     w: &mut W,
-) -> fmt::Result {
-    match overrides {
-        FieldNumericOverrides::Hanidec => format_hanidec(number, w),
-        //
-        FieldNumericOverrides::Jpnyear => format_jpan(number, w),
-        FieldNumericOverrides::Hanidays => format_hanidays(number, w),
-        FieldNumericOverrides::Romanlow => format_romanlow(number, w),
-        FieldNumericOverrides::Hebr => format_hebrew(number, w),
-    }
+    number: u32,
+    overrides: FieldNumericOverrides,
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
+    let mut inner_res = Ok(());
+    w.with_part(part, |w| {
+        let res = match overrides {
+            FieldNumericOverrides::Hanidec => format_hanidec(number, w),
+            //
+            FieldNumericOverrides::Jpnyear => format_jpan(number, w),
+            FieldNumericOverrides::Hanidays => format_hanidays(number, w),
+            FieldNumericOverrides::Romanlow => format_romanlow(number, w),
+            FieldNumericOverrides::Hebr => format_hebrew(number, w),
+        };
+        // Unfortunately with_part doesn't allow returning anything, so
+        // we need to smuggle out the error
+        match res {
+            Ok(Ok(())) => Ok(()),
+            Ok(Err(e)) => {
+                inner_res = Err(e);
+                w.with_part(Part::ERROR, |w| number.write_to(w))?;
+                Ok(())
+            }
+            Err(e) => Err(e),
+        }
+    })?;
+    Ok(inner_res)
 }
 
 /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16>
-fn format_jpan<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
+fn format_jpan<W: fmt::Write + ?Sized>(
+    number: u32,
+    w: &mut W,
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
     if number == 1 {
-        w.write_str("元")
+        w.write_str("元")?;
     } else {
         // <https://github.com/unicode-org/cldr/blob/main/common/supplemental/numberingSystems.xml#L50>
         // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16>
         //
         // This rule has `latn` in the name and the RBNF syntax falls back to
         // decimal formatting, so we should use Latin decimal formatting here.
-        number.write_to(w)
+        number.write_to(w)?;
     }
+    Ok(Ok(()))
 }
 
 /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
+fn format_hanidec<W: fmt::Write + ?Sized>(
+    number: u32,
+    w: &mut W,
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
     if number == 0 {
-        return w.write_char('〇');
+        w.write_char('〇')?;
+        return Ok(Ok(()));
     }
     let mut n = number;
     let mut buf = [0u8; u32::MAX.ilog10() as usize + 1];
@@ -60,11 +85,14 @@ fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result
     for &d in buf[i..].iter() {
         w.write_char(HANIDEC_DIGITS[d as usize])?;
     }
-    Ok(())
+    Ok(Ok(()))
 }
 
 /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
+fn format_hanidays<W: fmt::Write + ?Sized>(
+    number: u32,
+    w: &mut W,
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
     let han_digits = [
         "", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
     ];
@@ -77,12 +105,12 @@ fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Resul
             w.write_str("初")?;
             w.write_str(han_digits[number as usize])?;
         }
-        11..20 => {
+        11..=19 => {
             w.write_str("十")?;
             w.write_str(han_digits[(number % 10) as usize])?;
         }
         20 => w.write_str("二十")?,
-        21..30 => {
+        21..=29 => {
             w.write_str("廿")?;
             w.write_str(han_digits[(number % 20) as usize])?;
         }
@@ -93,27 +121,24 @@ fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Resul
             w.write_str("丗一")?;
         }
         0 | 32.. => {
-            debug_assert!(
-                false,
-                "hanidays should only be found in a d context and only supports 1-31"
-            );
-            // Fallback to latn numbers in the error case
-            return number.write_to(w);
+            return Ok(Err(
+                FormattedDateTimePatternError::DecimalFormatterNotLoaded,
+            ));
         }
     }
-    Ok(())
+    Ok(Ok(()))
 }
 
 // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-fn format_romanlow<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
+fn format_romanlow<W: fmt::Write + ?Sized>(
+    number: u32,
+    w: &mut W,
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
     let mut n = number;
     if n == 0 || n >= 4000 {
-        debug_assert!(
-            false,
-            "romanlow should only be found in an M context and only supports 1-3999"
-        );
-        // Fallback to latn numbers in the error case
-        return n.write_to(w);
+        return Ok(Err(
+            FormattedDateTimePatternError::DecimalFormatterNotLoaded,
+        ));
     }
     let mappings = [
         (1000, "m"),
@@ -136,10 +161,13 @@ fn format_romanlow<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Resul
             n -= value;
         }
     }
-    Ok(())
+    Ok(Ok(()))
 }
 
-fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
+fn format_hebrew<W: fmt::Write + ?Sized>(
+    number: u32,
+    w: &mut W,
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
     const HEBREW_UNITS: [char; 9] = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט'];
     const HEBREW_TENS: [char; 9] = ['י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ'];
     const HEBREW_HUNDREDS: [&str; 9] = ["ק", "ר", "ש", "ת", "תק", "תר", "תש", "תת", "תתק"];
@@ -224,13 +252,16 @@ fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result 
     }
 
     if number == 0 {
-        return w.write_str("0");
+        w.write_str("0")?;
+        return Ok(Ok(()));
     }
     if number == 1000 {
-        return w.write_str("אלף");
+        w.write_str("אלף")?;
+        return Ok(Ok(()));
     }
     if number == 2000 {
-        return w.write_str("אלפיים");
+        w.write_str("אלפיים")?;
+        return Ok(Ok(()));
     }
     let thousands = number / 1000;
     let rest = number % 1000;
@@ -240,14 +271,16 @@ fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result 
         //
         // This is not unreachable, but would only be reached
         // for basically irrelevant very-large dates.
-        return number.write_to(w);
+        number.write_to(w)?;
+        return Ok(Ok(()));
     }
 
     if thousands > 0 {
         format_hebrew_less_than_1000(thousands, w, rest > 0)?;
 
         if rest == 0 {
-            return w.write_str(" אלפים");
+            w.write_str(" אלפים")?;
+            return Ok(Ok(()));
         }
     }
 
@@ -255,7 +288,7 @@ fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result 
         format_hebrew_less_than_1000(rest, w, false)?;
     }
 
-    Ok(())
+    Ok(Ok(()))
 }
 
 #[cfg(test)]
@@ -265,7 +298,8 @@ mod tests {
 
     fn format_to_string(o: FieldNumericOverrides, n: u32) -> String {
         let mut s = String::new();
-        format(o, n, &mut s).unwrap();
+        let mut w = writeable::adapters::CoreWriteAsPartsWrite(&mut s);
+        format(Part::ERROR, &mut w, n, o).unwrap().unwrap();
         s
     }
 
@@ -297,18 +331,65 @@ mod tests {
         assert_eq!(format_to_string(Romanlow, 3999), "mmmcmxcix");
     }
 
+    struct TestWriter {
+        string: String,
+        parts: Vec<(usize, usize, Part)>,
+    }
+    impl fmt::Write for TestWriter {
+        fn write_str(&mut self, s: &str) -> fmt::Result {
+            self.string.write_str(s)
+        }
+    }
+    impl PartsWrite for TestWriter {
+        type SubPartsWrite = Self;
+        fn with_part(
+            &mut self,
+            part: Part,
+            mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+        ) -> fmt::Result {
+            let start = self.string.len();
+            f(self)?;
+            let end = self.string.len();
+            if start < end {
+                self.parts.push((start, end, part));
+            }
+            Ok(())
+        }
+    }
+
+    const TEST_PART: Part = Part {
+        category: "foo",
+        value: "bar",
+    };
+
     #[test]
-    #[cfg(debug_assertions)]
-    #[should_panic(expected = "hanidays should only be found in a d context")]
     fn test_hanidays_invalid() {
-        format_to_string(FieldNumericOverrides::Hanidays, 32);
+        let mut w = TestWriter {
+            string: String::new(),
+            parts: Vec::new(),
+        };
+        let res = format(TEST_PART, &mut w, 32, FieldNumericOverrides::Hanidays).unwrap();
+        assert_eq!(
+            res,
+            Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded)
+        );
+        assert_eq!(w.string, "32");
+        assert_eq!(w.parts, vec![(0, 2, Part::ERROR), (0, 2, TEST_PART)]);
     }
 
     #[test]
-    #[cfg(debug_assertions)]
-    #[should_panic(expected = "romanlow should only be found in an M context")]
     fn test_romanlow_invalid() {
-        format_to_string(FieldNumericOverrides::Romanlow, 4000);
+        let mut w = TestWriter {
+            string: String::new(),
+            parts: Vec::new(),
+        };
+        let res = format(TEST_PART, &mut w, 4000, FieldNumericOverrides::Romanlow).unwrap();
+        assert_eq!(
+            res,
+            Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded)
+        );
+        assert_eq!(w.string, "4000");
+        assert_eq!(w.parts, vec![(0, 4, Part::ERROR), (0, 4, TEST_PART)]);
     }
 
     #[test]
