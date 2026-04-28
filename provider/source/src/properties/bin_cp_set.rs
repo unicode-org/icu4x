@@ -200,7 +200,6 @@ impl SourceDataProvider {
             };
 
             for line in self.unicode()?.read_to_string(file)?.lines() {
-                let line = line.strip_prefix("# @missing: ").unwrap_or(line);
                 let line = line.split('#').next().unwrap().trim();
                 if line.is_empty() {
                     continue;
