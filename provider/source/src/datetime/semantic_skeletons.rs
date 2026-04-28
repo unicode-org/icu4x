@@ -203,7 +203,7 @@ impl SourceDataProvider {
             }
         }
 
-        let mut trios = [Length::Long, Length::Medium, Length::Short]
+        let trios = [Length::Long, Length::Medium, Length::Short]
             .map(|length| {
                 let components = to_components_bag(length, attributes, data);
                 let preferred_hour_cycle = preferred_hour_cycle(data, locale);
@@ -215,7 +215,7 @@ impl SourceDataProvider {
                     &length_combinations_v1,
                 );
 
-                match components {
+                let mut variant_patterns = match components {
                     components::Bag {
                         era: None,
                         year: Some(_),
@@ -271,7 +271,24 @@ impl SourceDataProvider {
                         variant0: None,
                         variant1: None,
                     },
+                };
+
+                // Because we infer the field lengths from the stock date format
+                // skeletons, we will inherit the numbering system override from
+                // the stock patterns. This is non-standard behavior! See:
+                // <https://unicode-org.atlassian.net/browse/CLDR-19423>
+                let lp = match length {
+                    Length::Long => &data.date_formats.long,
+                    Length::Medium => &data.date_formats.medium,
+                    Length::Short => &data.date_formats.short,
+                    _ => unreachable!(),
+                };
+                for variant in variant_patterns.iter_in_quality_order_mut() {
+                    variant.inner.for_each_mut(|p| {
+                        crate::datetime::names::apply_numeric_overrides(lp, p);
+                    });
                 }
+                variant_patterns
             })
             .map(|mut trio| {
                 enforce_consistent_field_lengths(&mut trio, |previous_field, field, distance| {
@@ -289,29 +306,6 @@ impl SourceDataProvider {
                 });
                 trio
             });
-
-        // Apply numeric overrides to the patterns in a separate iteration.
-        // This applies the numbering system overrides found in length patterns (e.g. yMMM)
-        // to the skeletons we selected.
-        //
-        // This isn't quite correct, but there isn't a better way to do this right now:
-        // <https://unicode-org.atlassian.net/browse/CLDR-19423>
-        for (i, length) in [Length::Long, Length::Medium, Length::Short]
-            .iter()
-            .enumerate()
-        {
-            let lp = match length {
-                Length::Long => &data.date_formats.long,
-                Length::Medium => &data.date_formats.medium,
-                Length::Short => &data.date_formats.short,
-                _ => unreachable!(),
-            };
-            for variant in trios[i].iter_in_quality_order_mut() {
-                variant.inner.for_each_mut(|p| {
-                    crate::datetime::names::apply_numeric_overrides(lp, p);
-                });
-            }
-        }
         let [long, medium, short] = trios;
 
         let builder = PackedPatternsBuilder {
