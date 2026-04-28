@@ -6,6 +6,9 @@ use crate::provider::fields::FieldNumericOverrides;
 use core::fmt;
 use writeable::Writeable;
 
+pub(crate) const HANIDEC_DIGITS: &[char] =
+    &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+
 /// Formats a number according to the override system.
 pub(crate) fn format<W: fmt::Write + ?Sized>(
     overrides: FieldNumericOverrides,
@@ -33,7 +36,6 @@ fn format_jpan<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
 
 /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
 fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
-    const HANIDEC_DIGITS: &[char] = &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
     if number == 0 {
         return w.write_char('〇');
     }
@@ -336,5 +338,25 @@ mod tests {
         assert_eq!(format_to_string(Hebr, 15719), "ט״ו׳תשי״ט");
         assert_eq!(format_to_string(Hebr, 100000), "ק׳ אלפים");
         assert_eq!(format_to_string(Hebr, 1000000), "1000000");
+    }
+
+    #[test]
+    #[cfg(feature = "compiled_data")]
+    fn test_hanidec_digits() {
+        use icu_decimal::provider::{Baked, DecimalDigitsV1};
+        use icu_provider::prelude::*;
+        let response = DataProvider::<DecimalDigitsV1>::load(
+            &Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("hanidec"),
+                    &Default::default(),
+                ),
+                metadata: Default::default(),
+            },
+        )
+        .expect("Loaded baked data for hanidec digits");
+        let baked_digits: &[char] = response.payload.get();
+        assert_eq!(HANIDEC_DIGITS, baked_digits);
     }
 }
