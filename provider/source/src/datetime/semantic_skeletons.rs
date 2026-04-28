@@ -293,6 +293,9 @@ impl SourceDataProvider {
         // Apply numeric overrides to the patterns in a separate iteration.
         // This applies the numbering system overrides found in length patterns (e.g. yMMM)
         // to the skeletons we selected.
+        //
+        // This isn't quite correct, but there isn't a better way to do this right now:
+        // <https://unicode-org.atlassian.net/browse/CLDR-19423>
         for (i, length) in [Length::Long, Length::Medium, Length::Short]
             .iter()
             .enumerate()

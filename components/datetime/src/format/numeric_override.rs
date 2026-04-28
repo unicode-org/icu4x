@@ -55,6 +55,9 @@ fn format_jpan<W: fmt::Write + ?Sized>(
         //
         // This rule has `latn` in the name and the RBNF syntax falls back to
         // decimal formatting, so we should use Latin decimal formatting here.
+        //
+        // Open CLDR issue:
+        // <https://unicode-org.atlassian.net/browse/CLDR-19424>
         number.write_to(w)?;
     }
     Ok(Ok(()))
