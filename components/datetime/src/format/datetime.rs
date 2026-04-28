@@ -368,7 +368,7 @@ where
             const PART: Part = parts::DAY;
             input!(PART, DayOfMonth, day_of_month = input.day_of_month);
             w.with_part(PART, |w| {
-                numeric_override::format(o, day_of_month.0 as u32, w)
+                numeric_override::format(o, u32::from(day_of_month.0), w)
             })?;
             Ok(())
         }
