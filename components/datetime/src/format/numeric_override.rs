@@ -96,9 +96,12 @@ fn format_hanidays<W: fmt::Write + ?Sized>(
     number: u32,
     w: &mut W,
 ) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
-    let han_digits = [
-        "", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
-    ];
+    // Note that the 0th element is han digit 1!
+    const HAN_DIGITS: [char; 10] = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+    const TWENTY: &str = "二十";
+    const TWENTY_ABBR: char = '廿';
+    const THIRTY: &str = "三十";
+    const THIRTY_ONE: &str = "丗一";
     #[allow(
         clippy::indexing_slicing,
         reason = "We are always indexing a 10-element array with a digit"
@@ -106,22 +109,22 @@ fn format_hanidays<W: fmt::Write + ?Sized>(
     match number {
         1..=10 => {
             w.write_str("初")?;
-            w.write_str(han_digits[number as usize])?;
+            w.write_char(HAN_DIGITS[number as usize - 1])?;
         }
         11..=19 => {
-            w.write_str("十")?;
-            w.write_str(han_digits[(number % 10) as usize])?;
+            w.write_char(HAN_DIGITS[9])?;
+            w.write_char(HAN_DIGITS[(number - 11) as usize])?;
         }
-        20 => w.write_str("二十")?,
+        20 => w.write_str(TWENTY)?,
         21..=29 => {
-            w.write_str("廿")?;
-            w.write_str(han_digits[(number % 20) as usize])?;
+            w.write_char(TWENTY_ABBR)?;
+            w.write_char(HAN_DIGITS[(number - 21) as usize])?;
         }
         30 => {
-            w.write_str("三十")?;
+            w.write_str(THIRTY)?;
         }
         31 => {
-            w.write_str("丗一")?;
+            w.write_str(THIRTY_ONE)?;
         }
         0 | 32.. => {
             return Ok(Err(
@@ -275,8 +278,8 @@ fn format_hebrew<W: fmt::Write + ?Sized>(
     }
 
     if number > 1000 {
-      let thousands = number / 1000;
-      let rest = number % 1000;
+        let thousands = number / 1000;
+        let rest = number % 1000;
         format_hebrew_less_than_1000(thousands, w, rest > 0)?;
 
         if rest == 0 {
@@ -296,6 +299,8 @@ mod tests {
     use super::*;
     use crate::provider::fields::FieldNumericOverrides;
 
+    use writeable::assert_try_writeable_parts_eq;
+    use writeable::TryWriteable;
     fn format_to_string(o: FieldNumericOverrides, n: u32) -> String {
         let mut s = String::new();
         let mut w = writeable::adapters::CoreWriteAsPartsWrite(&mut s);
@@ -331,65 +336,41 @@ mod tests {
         assert_eq!(format_to_string(Romanlow, 3999), "mmmcmxcix");
     }
 
-    struct TestWriter {
-        string: String,
-        parts: Vec<(usize, usize, Part)>,
-    }
-    impl fmt::Write for TestWriter {
-        fn write_str(&mut self, s: &str) -> fmt::Result {
-            self.string.write_str(s)
-        }
-    }
-    impl PartsWrite for TestWriter {
-        type SubPartsWrite = Self;
-        fn with_part(
-            &mut self,
-            part: Part,
-            mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
-        ) -> fmt::Result {
-            let start = self.string.len();
-            f(self)?;
-            let end = self.string.len();
-            if start < end {
-                self.parts.push((start, end, part));
-            }
-            Ok(())
-        }
-    }
-
     const TEST_PART: Part = Part {
         category: "foo",
         value: "bar",
     };
 
+    struct FormatWriteable(u32, FieldNumericOverrides);
+
+    impl TryWriteable for FormatWriteable {
+        type Error = FormattedDateTimePatternError;
+        fn try_write_to_parts<S: PartsWrite + ?Sized>(
+            &self,
+            sink: &mut S,
+        ) -> Result<Result<(), Self::Error>, fmt::Error> {
+            format(TEST_PART, sink, self.0, self.1)
+        }
+    }
+
     #[test]
     fn test_hanidays_invalid() {
-        let mut w = TestWriter {
-            string: String::new(),
-            parts: Vec::new(),
-        };
-        let res = format(TEST_PART, &mut w, 32, FieldNumericOverrides::Hanidays).unwrap();
-        assert_eq!(
-            res,
-            Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded)
+        assert_try_writeable_parts_eq!(
+            FormatWriteable(32, FieldNumericOverrides::Hanidays),
+            "32",
+            Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded),
+            [(0, 2, Part::ERROR), (0, 2, TEST_PART)]
         );
-        assert_eq!(w.string, "32");
-        assert_eq!(w.parts, vec![(0, 2, Part::ERROR), (0, 2, TEST_PART)]);
     }
 
     #[test]
     fn test_romanlow_invalid() {
-        let mut w = TestWriter {
-            string: String::new(),
-            parts: Vec::new(),
-        };
-        let res = format(TEST_PART, &mut w, 4000, FieldNumericOverrides::Romanlow).unwrap();
-        assert_eq!(
-            res,
-            Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded)
+        assert_try_writeable_parts_eq!(
+            FormatWriteable(4000, FieldNumericOverrides::Romanlow),
+            "4000",
+            Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded),
+            [(0, 4, Part::ERROR), (0, 4, TEST_PART)]
         );
-        assert_eq!(w.string, "4000");
-        assert_eq!(w.parts, vec![(0, 4, Part::ERROR), (0, 4, TEST_PART)]);
     }
 
     #[test]
