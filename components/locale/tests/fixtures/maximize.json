@@ -196,6 +196,18 @@
     "output": "fa-Arab-AF"
   },
   {
+    "input": "und-XZ",
+    "output": "en-Latn-XZ"
+  },
+  {
+    "input": "und-Qaaz",
+    "output": "en-Qaaz-US"
+  },
+  {
+    "input": "und-Qaaz-XZ",
+    "output": "en-Qaaz-XZ"
+  },
+  {
     "input": "qaa",
     "output": "qaa"
   },
