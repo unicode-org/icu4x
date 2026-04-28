@@ -134,10 +134,9 @@ fn format_hanidays<W: fmt::Write + ?Sized>(
 
 // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
 fn format_romanlow<W: fmt::Write + ?Sized>(
-    number: u32,
+    mut n: u32,
     w: &mut W,
 ) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
-    let mut n = number;
     if n == 0 || n >= 4000 {
         return Ok(Err(
             FormattedDateTimePatternError::DecimalFormatterNotLoaded,
