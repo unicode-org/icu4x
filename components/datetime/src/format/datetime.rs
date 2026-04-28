@@ -265,7 +265,7 @@ where
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
             w.with_part(PART, |w| {
-                numeric_override::format(o, month.number() as u32, w)
+                numeric_override::format(o, u32::from(month.number()), w)
             })?;
             Ok(())
         }
