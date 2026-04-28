@@ -7,7 +7,7 @@ use crate::provider::fields::FieldNumericOverrides;
 use core::fmt;
 use writeable::{Part, PartsWrite, Writeable};
 
-pub(crate) const HANIDEC_DIGITS: &[char] =
+pub(crate) const HANIDEC_DIGITS: &[char; 10] =
     &['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
 
 /// Formats a number according to the override system.
