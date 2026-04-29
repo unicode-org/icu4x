@@ -17,36 +17,18 @@ pub(crate) fn format<W: PartsWrite + ?Sized>(
     number: u32,
     overrides: FieldNumericOverrides,
 ) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
-    let mut inner_res = Ok(());
-    w.with_part(part, |w| {
-        let res = match overrides {
-            FieldNumericOverrides::Hanidec => format_hanidec(number, w),
-            //
-            FieldNumericOverrides::Jpnyear => format_jpan(number, w),
-            FieldNumericOverrides::Hanidays => format_hanidays(number, w),
-            FieldNumericOverrides::Romanlow => format_romanlow(number, w),
-            FieldNumericOverrides::Hebr => format_hebrew(number, w),
-        };
-        // Unfortunately with_part doesn't allow returning anything, so
-        // we need to smuggle out the error
-        match res {
-            Ok(Ok(())) => Ok(()),
-            Ok(Err(e)) => {
-                inner_res = Err(e);
-                w.with_part(Part::ERROR, |w| number.write_to(w))?;
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
+    w.with_part(part, |w| match overrides {
+        FieldNumericOverrides::Hanidec => format_hanidec(number, w),
+        FieldNumericOverrides::Jpnyear => format_jpan(number, w),
+        FieldNumericOverrides::Hanidays => format_hanidays(number, w),
+        FieldNumericOverrides::Romanlow => format_romanlow(number, w),
+        FieldNumericOverrides::Hebr => format_hebrew(number, w),
     })?;
-    Ok(inner_res)
+    Ok(Ok(()))
 }
 
 /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16>
-fn format_jpan<W: fmt::Write + ?Sized>(
-    number: u32,
-    w: &mut W,
-) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
+fn format_jpan<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     if number == 1 {
         w.write_str("元")?;
     } else {
@@ -60,17 +42,14 @@ fn format_jpan<W: fmt::Write + ?Sized>(
         // <https://unicode-org.atlassian.net/browse/CLDR-19424>
         number.write_to(w)?;
     }
-    Ok(Ok(()))
+    Ok(())
 }
 
 /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-fn format_hanidec<W: fmt::Write + ?Sized>(
-    number: u32,
-    w: &mut W,
-) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
+fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     if number == 0 {
         w.write_char(HANIDEC_DIGITS[0])?;
-        return Ok(Ok(()));
+        return Ok(());
     }
     let mut n = number;
     let mut buf = [0u8; u32::MAX.ilog10() as usize + 1];
@@ -88,62 +67,72 @@ fn format_hanidec<W: fmt::Write + ?Sized>(
     for &d in buf[i..].iter() {
         w.write_char(HANIDEC_DIGITS[d as usize])?;
     }
-    Ok(Ok(()))
+    Ok(())
 }
 
 /// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-fn format_hanidays<W: fmt::Write + ?Sized>(
-    number: u32,
-    w: &mut W,
-) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
+fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     // Note that the 0th element is han digit 1!
     const HAN_DIGITS: [char; 10] = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
     const TWENTY: &str = "二十";
     const TWENTY_ABBR: char = '廿';
     const THIRTY: &str = "三十";
-    const THIRTY_ONE: &str = "丗一";
+    const THIRTY_ABBR: char = '丗';
+    const FORTY: &str = "四十";
+    const FORTY_ABBR: char = '卌';
     #[allow(
         clippy::indexing_slicing,
         reason = "We are always indexing a 10-element array with a digit"
     )]
     match number {
+        0 => w.write_char('〇'),
         1..=10 => {
             w.write_str("初")?;
-            w.write_char(HAN_DIGITS[number as usize - 1])?;
+            w.write_char(HAN_DIGITS[number as usize - 1])
         }
         11..=19 => {
             w.write_char(HAN_DIGITS[9])?;
-            w.write_char(HAN_DIGITS[(number - 11) as usize])?;
+            w.write_char(HAN_DIGITS[(number - 11) as usize])
         }
-        20 => w.write_str(TWENTY)?,
+        20 => w.write_str(TWENTY),
         21..=29 => {
             w.write_char(TWENTY_ABBR)?;
-            w.write_char(HAN_DIGITS[(number - 21) as usize])?;
+            w.write_char(HAN_DIGITS[(number - 21) as usize])
         }
-        30 => {
-            w.write_str(THIRTY)?;
+        30 => w.write_str(THIRTY),
+        31..=39 => {
+            w.write_char(THIRTY_ABBR)?;
+            w.write_char(HAN_DIGITS[(number - 31) as usize])
         }
-        31 => {
-            w.write_str(THIRTY_ONE)?;
+        40 => w.write_str(FORTY),
+        41..=49 => {
+            w.write_char(FORTY_ABBR)?;
+            w.write_char(HAN_DIGITS[(number - 41) as usize])
         }
-        0 | 32.. => {
-            return Ok(Err(
-                FormattedDateTimePatternError::DecimalFormatterNotLoaded,
-            ));
+        50.. => {
+            // TODO (https://github.com/unicode-org/icu4x/issues/7922)
+            // This falls back to spellout numbering
+            // This branch should *only* be hit with custom input types, so it's
+            // not actually important to implement spellout rules here.
+            number.write_to(w)
         }
     }
-    Ok(Ok(()))
 }
 
 // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
-fn format_romanlow<W: fmt::Write + ?Sized>(
-    mut n: u32,
-    w: &mut W,
-) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
-    if n == 0 || n >= 4000 {
-        return Ok(Err(
-            FormattedDateTimePatternError::DecimalFormatterNotLoaded,
-        ));
+fn format_romanlow<W: fmt::Write + ?Sized>(mut n: u32, w: &mut W) -> fmt::Result {
+    if n == 0 {
+        return w.write_char('n'); // null
+    }
+    if n >= 5000 {
+        // romanlow falls back to the default past 5000.
+        // This does mean 4000 is `mmmm`.
+        //
+        // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L719>
+        //
+        // We may wish to fall back to the DecimalFormatter here:
+        // <https://unicode-org.atlassian.net/browse/CLDR-19424>
+        return n.write_to(w);
     }
     let mappings = [
         (1000, "m"),
@@ -166,13 +155,10 @@ fn format_romanlow<W: fmt::Write + ?Sized>(
             n -= value;
         }
     }
-    Ok(Ok(()))
+    Ok(())
 }
 
-fn format_hebrew<W: fmt::Write + ?Sized>(
-    number: u32,
-    w: &mut W,
-) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error> {
+fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     const HEBREW_UNITS: [char; 9] = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט'];
     const HEBREW_TENS: [char; 9] = ['י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ'];
     const HEBREW_HUNDREDS: [&str; 9] = ["ק", "ר", "ש", "ת", "תק", "תר", "תש", "תת", "תתק"];
@@ -258,23 +244,32 @@ fn format_hebrew<W: fmt::Write + ?Sized>(
 
     if number == 0 {
         w.write_str("0")?;
-        return Ok(Ok(()));
+        return Ok(());
     }
     if number == 1000 {
         w.write_str("אלף")?;
-        return Ok(Ok(()));
+        return Ok(());
     }
     if number == 2000 {
         w.write_str("אלפיים")?;
-        return Ok(Ok(()));
+        return Ok(());
     }
-    if number >= 1000000 {
+    if number == 1_000_000 {
+        w.write_str("אלף אלפים")?;
+        return Ok(());
+    }
+    if number > 1_000_000 {
         // Fallback to latn numbers in the out-of-bounds case
+        // as noted in the spec
+        // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L577>
         //
         // This is not unreachable, but would only be reached
         // for basically irrelevant very-large dates.
+        //
+        // We may wish to fall back to the DecimalFormatter here:
+        // <https://unicode-org.atlassian.net/browse/CLDR-19424>
         number.write_to(w)?;
-        return Ok(Ok(()));
+        return Ok(());
     }
 
     if number > 1000 {
@@ -291,7 +286,7 @@ fn format_hebrew<W: fmt::Write + ?Sized>(
         format_hebrew_less_than_1000(number, w, false)?;
     };
 
-    Ok(Ok(()))
+    Ok(())
 }
 
 #[cfg(test)]
@@ -299,8 +294,6 @@ mod tests {
     use super::*;
     use crate::provider::fields::FieldNumericOverrides;
 
-    use writeable::assert_try_writeable_parts_eq;
-    use writeable::TryWriteable;
     fn format_to_string(o: FieldNumericOverrides, n: u32) -> String {
         let mut s = String::new();
         let mut w = writeable::adapters::CoreWriteAsPartsWrite(&mut s);
@@ -329,48 +322,13 @@ mod tests {
         assert_eq!(format_to_string(Jpnyear, 2), "2");
         assert_eq!(format_to_string(Jpnyear, 2024), "2024");
 
+        assert_eq!(format_to_string(Romanlow, 0), "n");
         assert_eq!(format_to_string(Romanlow, 1), "i");
         assert_eq!(format_to_string(Romanlow, 4), "iv");
         assert_eq!(format_to_string(Romanlow, 9), "ix");
         assert_eq!(format_to_string(Romanlow, 49), "xlix");
         assert_eq!(format_to_string(Romanlow, 3999), "mmmcmxcix");
-    }
-
-    const TEST_PART: Part = Part {
-        category: "foo",
-        value: "bar",
-    };
-
-    struct FormatWriteable(u32, FieldNumericOverrides);
-
-    impl TryWriteable for FormatWriteable {
-        type Error = FormattedDateTimePatternError;
-        fn try_write_to_parts<S: PartsWrite + ?Sized>(
-            &self,
-            sink: &mut S,
-        ) -> Result<Result<(), Self::Error>, fmt::Error> {
-            format(TEST_PART, sink, self.0, self.1)
-        }
-    }
-
-    #[test]
-    fn test_hanidays_invalid() {
-        assert_try_writeable_parts_eq!(
-            FormatWriteable(32, FieldNumericOverrides::Hanidays),
-            "32",
-            Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded),
-            [(0, 2, Part::ERROR), (0, 2, TEST_PART)]
-        );
-    }
-
-    #[test]
-    fn test_romanlow_invalid() {
-        assert_try_writeable_parts_eq!(
-            FormatWriteable(4000, FieldNumericOverrides::Romanlow),
-            "4000",
-            Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded),
-            [(0, 4, Part::ERROR), (0, 4, TEST_PART)]
-        );
+        assert_eq!(format_to_string(Romanlow, 4000), "mmmm");
     }
 
     #[test]
@@ -410,7 +368,8 @@ mod tests {
         assert_eq!(format_to_string(Hebr, 15419), "ט״ו׳תי״ט");
         assert_eq!(format_to_string(Hebr, 15719), "ט״ו׳תשי״ט");
         assert_eq!(format_to_string(Hebr, 100000), "ק׳ אלפים");
-        assert_eq!(format_to_string(Hebr, 1000000), "1000000");
+        assert_eq!(format_to_string(Hebr, 1000000), "אלף אלפים");
+        assert_eq!(format_to_string(Hebr, 1000001), "1000001");
     }
 
     #[test]
