@@ -27,13 +27,13 @@ pub(crate) fn format<W: PartsWrite + ?Sized>(
     Ok(Ok(()))
 }
 
-/// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16>
+/// <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/rbnf/ja.xml#L16>
 fn format_jpan<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     if number == 1 {
         w.write_str("元")?;
     } else {
-        // <https://github.com/unicode-org/cldr/blob/main/common/supplemental/numberingSystems.xml#L50>
-        // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/ja.xml#L16>
+        // <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/supplemental/numberingSystems.xml#L50>
+        // <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/rbnf/ja.xml#L16>
         //
         // This rule has `latn` in the name and the RBNF syntax falls back to
         // decimal formatting, so we should use Latin decimal formatting here.
@@ -45,7 +45,7 @@ fn format_jpan<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     Ok(())
 }
 
-/// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
+/// <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/rbnf/root.xml#L522>
 fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     if number == 0 {
         w.write_char(HANIDEC_DIGITS[0])?;
@@ -70,7 +70,7 @@ fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result
     Ok(())
 }
 
-/// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
+/// <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/rbnf/root.xml#L522>
 fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     // Note that the 0th element is han digit 1!
     const HAN_DIGITS: [char; 10] = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
@@ -119,7 +119,7 @@ fn format_hanidays<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Resul
     }
 }
 
-// <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L522>
+// <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/rbnf/root.xml#L522>
 fn format_romanlow<W: fmt::Write + ?Sized>(mut n: u32, w: &mut W) -> fmt::Result {
     if n == 0 {
         return w.write_char('n'); // null
@@ -128,7 +128,7 @@ fn format_romanlow<W: fmt::Write + ?Sized>(mut n: u32, w: &mut W) -> fmt::Result
         // romanlow falls back to the default past 5000.
         // This does mean 4000 is `mmmm`.
         //
-        // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L719>
+        // <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/rbnf/root.xml#L719>
         //
         // We may wish to fall back to the DecimalFormatter here:
         // <https://unicode-org.atlassian.net/browse/CLDR-19424>
@@ -261,7 +261,7 @@ fn format_hebrew<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result 
     if number > 1_000_000 {
         // Fallback to latn numbers in the out-of-bounds case
         // as noted in the spec
-        // <https://github.com/unicode-org/cldr/blob/main/common/rbnf/root.xml#L577>
+        // <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/rbnf/root.xml#L577>
         //
         // This is not unreachable, but would only be reached
         // for basically irrelevant very-large dates.
