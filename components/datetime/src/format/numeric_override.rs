@@ -45,7 +45,7 @@ fn format_jpan<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     Ok(())
 }
 
-/// <https://github.com/unicode-org/cldr/blob/fb0b4f0cb809cac10e8539dcba669c1d27d8e70c/common/rbnf/root.xml#L522>
+/// <https://github.com/unicode-org/cldr/blob/c6d4b3579d2ee196ad0f9c3a9adb608a55ddf99b/common/supplemental/numberingSystems.xml#L39>
 fn format_hanidec<W: fmt::Write + ?Sized>(number: u32, w: &mut W) -> fmt::Result {
     if number == 0 {
         w.write_char(HANIDEC_DIGITS[0])?;
