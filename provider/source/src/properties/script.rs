@@ -68,7 +68,7 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
                     let values = fields.next().unwrap().trim();
                     let mut value = values
                         .split_ascii_whitespace()
-                        .map(|s| script_parser.as_borrowed().get_strict(s).unwrap())
+                        .filter_map(|s| script_parser.as_borrowed().get_strict(s))
                         .collect::<Vec<_>>();
                     // Sort in discriminant order
                     value.sort();

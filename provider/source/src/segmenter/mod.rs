@@ -9,7 +9,7 @@
     allow(dead_code, unused_imports)
 )]
 
-use crate::source::{include_files, SerdeCache, UnicodeCache};
+use crate::source::{include_files, UnicodeCache};
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
@@ -854,13 +854,6 @@ fn unicode_15_1() -> &'static SourceDataProvider {
                 "ucd/PropList.txt",
             ),
         )));
-        provider.icuexport_paths = Some(std::sync::Arc::new(SerdeCache::new(include_files!(
-            "../../data/segmenter/icuexportdata74/";
-            "uprops/small/ea.toml",
-            "uprops/small/gc.toml",
-            "uprops/small/gcm.toml",
-            "uprops/small/lb.toml",
-        ))));
         provider
     })
 }

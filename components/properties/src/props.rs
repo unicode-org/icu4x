@@ -37,8 +37,11 @@ macro_rules! create_const_array {
         $ ( #[$meta:meta] )*
         impl $enum_ty:ident {
             #[default]
-            $(#[$default_meta:meta])* $dv:vis const $di:ident: $dt:ty = $de:expr;
-            $( $(#[$const_meta:meta])* $v:vis const $i:ident: $t:ty = $e:expr; )*
+            $(#[$default_meta:meta])* $dv:vis const $di:ident: $dt:ty = $de:expr; / $default_short_name:literal
+            $( $(#[$const_meta:meta])* $v:vis const $i:ident: $t:ty = $e:expr; / $short_name:literal )*
+            $(
+                $additional_name:literal => $additonal_discriminant:expr;
+            )*
         }
         #[test]
         fn $consts_test:ident();
@@ -85,6 +88,22 @@ macro_rules! create_const_array {
             #[allow(trivial_numeric_casts)]
             fn from(other: $enum_ty) -> Self {
                 other.0 as u16
+            }
+        }
+
+        impl $enum_ty {
+            #[cfg(feature = "datagen")]
+            #[doc(hidden)]
+            pub fn names() -> impl Iterator<Item = (&'static str, Self)> {
+                [
+                    ($default_short_name, Self::$di),
+                    $(
+                        ($short_name, Self::$i),
+                    )*
+                    $(
+                        ($additional_name, Self($additonal_discriminant)),
+                    )*
+                ].into_iter()
             }
         }
 
@@ -192,51 +211,51 @@ create_const_array! {
 impl BidiClass {
     #[default]
     /// (`L`) any strong left-to-right character
-    pub const LeftToRight: BidiClass = BidiClass(0);
+    pub const LeftToRight: BidiClass = BidiClass(0); / "L"
     /// (`R`) any strong right-to-left (non-Arabic-type) character
-    pub const RightToLeft: BidiClass = BidiClass(1);
+    pub const RightToLeft: BidiClass = BidiClass(1); / "R"
     /// (`EN`) any ASCII digit or Eastern Arabic-Indic digit
-    pub const EuropeanNumber: BidiClass = BidiClass(2);
+    pub const EuropeanNumber: BidiClass = BidiClass(2); / "EN"
     /// (`ES`) plus and minus signs
-    pub const EuropeanSeparator: BidiClass = BidiClass(3);
+    pub const EuropeanSeparator: BidiClass = BidiClass(3); / "ES"
     /// (`ET`) a terminator in a numeric format context, includes currency signs
-    pub const EuropeanTerminator: BidiClass = BidiClass(4);
+    pub const EuropeanTerminator: BidiClass = BidiClass(4); / "ET"
     /// (`AN`) any Arabic-Indic digit
-    pub const ArabicNumber: BidiClass = BidiClass(5);
+    pub const ArabicNumber: BidiClass = BidiClass(5); / "AN"
     /// (`CS`) commas, colons, and slashes
-    pub const CommonSeparator: BidiClass = BidiClass(6);
+    pub const CommonSeparator: BidiClass = BidiClass(6); / "CS"
     /// (`B`) various newline characters
-    pub const ParagraphSeparator: BidiClass = BidiClass(7);
+    pub const ParagraphSeparator: BidiClass = BidiClass(7); / "B"
     /// (`S`) various segment-related control codes
-    pub const SegmentSeparator: BidiClass = BidiClass(8);
+    pub const SegmentSeparator: BidiClass = BidiClass(8); / "S"
     /// (`WS`) spaces
-    pub const WhiteSpace: BidiClass = BidiClass(9);
+    pub const WhiteSpace: BidiClass = BidiClass(9); / "WS"
     /// (`ON`) most other symbols and punctuation marks
-    pub const OtherNeutral: BidiClass = BidiClass(10);
+    pub const OtherNeutral: BidiClass = BidiClass(10); / "ON"
     /// (`LRE`) U+202A: the LR embedding control
-    pub const LeftToRightEmbedding: BidiClass = BidiClass(11);
+    pub const LeftToRightEmbedding: BidiClass = BidiClass(11); / "LRE"
     /// (`LRO`) U+202D: the LR override control
-    pub const LeftToRightOverride: BidiClass = BidiClass(12);
+    pub const LeftToRightOverride: BidiClass = BidiClass(12); / "LRO"
     /// (`AL`) any strong right-to-left (Arabic-type) character
-    pub const ArabicLetter: BidiClass = BidiClass(13);
+    pub const ArabicLetter: BidiClass = BidiClass(13); / "AL"
     /// (`RLE`) U+202B: the RL embedding control
-    pub const RightToLeftEmbedding: BidiClass = BidiClass(14);
+    pub const RightToLeftEmbedding: BidiClass = BidiClass(14); / "RLE"
     /// (`RLO`) U+202E: the RL override control
-    pub const RightToLeftOverride: BidiClass = BidiClass(15);
+    pub const RightToLeftOverride: BidiClass = BidiClass(15); / "RLO"
     /// (`PDF`) U+202C: terminates an embedding or override control
-    pub const PopDirectionalFormat: BidiClass = BidiClass(16);
+    pub const PopDirectionalFormat: BidiClass = BidiClass(16); / "PDF"
     /// (`NSM`) any nonspacing mark
-    pub const NonspacingMark: BidiClass = BidiClass(17);
+    pub const NonspacingMark: BidiClass = BidiClass(17); / "NSM"
     /// (`BN`) most format characters, control codes, or noncharacters
-    pub const BoundaryNeutral: BidiClass = BidiClass(18);
+    pub const BoundaryNeutral: BidiClass = BidiClass(18); / "BN"
     /// (`FSI`) U+2068: the first strong isolate control
-    pub const FirstStrongIsolate: BidiClass = BidiClass(19);
+    pub const FirstStrongIsolate: BidiClass = BidiClass(19); / "FSI"
     /// (`LRI`) U+2066: the LR isolate control
-    pub const LeftToRightIsolate: BidiClass = BidiClass(20);
+    pub const LeftToRightIsolate: BidiClass = BidiClass(20); / "LRI"
     /// (`RLI`) U+2067: the RL isolate control
-    pub const RightToLeftIsolate: BidiClass = BidiClass(21);
+    pub const RightToLeftIsolate: BidiClass = BidiClass(21); / "RLI"
     /// (`PDI`) U+2069: terminates an isolate control
-    pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
+    pub const PopDirectionalIsolate: BidiClass = BidiClass(22); / "PDI"
 }
 #[test]
 fn bidi_props_consts();
@@ -292,19 +311,19 @@ create_const_array! {
 impl NumericType {
     #[default]
     /// Characters without numeric value
-    pub const None: NumericType = NumericType(0);
+    pub const None: NumericType = NumericType(0); / "None"
     /// (`De`) Characters of positional decimal systems
     ///
     /// These are coextensive with [`GeneralCategory::DecimalNumber`].
-    pub const Decimal: NumericType = NumericType(1);
+    pub const Decimal: NumericType = NumericType(1); / "De"
     /// (`Di`) Variants of positional or sequences thereof.
     ///
     /// The distinction between [`NumericType::Digit`] and [`NumericType::Numeric`]
     /// has not proven to be useful, so no further characters will be added to
     /// this type.
-    pub const Digit: NumericType = NumericType(2);
+    pub const Digit: NumericType = NumericType(2); / "Di"
     /// (`Nu`) Other characters with numeric value
-    pub const Numeric: NumericType = NumericType(3);
+    pub const Numeric: NumericType = NumericType(3); / "Nu"
 }
 #[test]
 fn numeric_type_consts();
@@ -461,6 +480,44 @@ impl GeneralCategory {
         GeneralCategory::ModifierSymbol,
         GeneralCategory::OtherSymbol,
     ];
+
+    #[cfg(feature = "datagen")]
+    #[doc(hidden)]
+    pub fn names() -> impl Iterator<Item = (&'static str, Self)> {
+        [
+            ("Cn", Self::Unassigned),
+            ("Lu", Self::UppercaseLetter),
+            ("Ll", Self::LowercaseLetter),
+            ("Lt", Self::TitlecaseLetter),
+            ("Lm", Self::ModifierLetter),
+            ("Lo", Self::OtherLetter),
+            ("Mn", Self::NonspacingMark),
+            ("Mc", Self::SpacingMark),
+            ("Me", Self::EnclosingMark),
+            ("Nd", Self::DecimalNumber),
+            ("Nl", Self::LetterNumber),
+            ("No", Self::OtherNumber),
+            ("Zs", Self::SpaceSeparator),
+            ("Zl", Self::LineSeparator),
+            ("Zp", Self::ParagraphSeparator),
+            ("Cc", Self::Control),
+            ("Cf", Self::Format),
+            ("Co", Self::PrivateUse),
+            ("Cs", Self::Surrogate),
+            ("Pd", Self::DashPunctuation),
+            ("Ps", Self::OpenPunctuation),
+            ("Pe", Self::ClosePunctuation),
+            ("Pc", Self::ConnectorPunctuation),
+            ("Pi", Self::InitialPunctuation),
+            ("Pf", Self::FinalPunctuation),
+            ("Po", Self::OtherPunctuation),
+            ("Sm", Self::MathSymbol),
+            ("Sc", Self::CurrencySymbol),
+            ("Sk", Self::ModifierSymbol),
+            ("So", Self::OtherSymbol),
+        ]
+        .into_iter()
+    }
 }
 
 #[test]
@@ -549,9 +606,9 @@ impl GeneralCategoryGroup {
 
     /// (`Mn`) A nonspacing combining mark (zero advance width)
     pub const NonspacingMark: GeneralCategoryGroup = GCG(1 << (GC::NonspacingMark as u32));
-    /// (`Mc`) A spacing combining mark (positive advance width)
-    pub const EnclosingMark: GeneralCategoryGroup = GCG(1 << (GC::EnclosingMark as u32));
     /// (`Me`) An enclosing combining mark
+    pub const EnclosingMark: GeneralCategoryGroup = GCG(1 << (GC::EnclosingMark as u32));
+    /// (`Mc`) A spacing combining mark (positive advance width)
     pub const SpacingMark: GeneralCategoryGroup = GCG(1 << (GC::SpacingMark as u32));
     /// (`M`) The union of all mark categories
     pub const Mark: GeneralCategoryGroup = GCG((1 << (GC::NonspacingMark as u32))
@@ -636,6 +693,52 @@ impl GeneralCategoryGroup {
         | (1 << (GC::OtherSymbol as u32)));
 
     const ALL: u32 = (1 << (GC::FinalPunctuation as u32 + 1)) - 1;
+
+    #[cfg(feature = "datagen")]
+    #[doc(hidden)]
+    pub fn names() -> impl Iterator<Item = (&'static str, Self)> {
+        [
+            ("Lu", Self::UppercaseLetter),
+            ("Ll", Self::LowercaseLetter),
+            ("Lt", Self::TitlecaseLetter),
+            ("Lm", Self::ModifierLetter),
+            ("Lo", Self::OtherLetter),
+            ("LC", Self::CasedLetter),
+            ("L", Self::Letter),
+            ("Mn", Self::NonspacingMark),
+            ("Me", Self::EnclosingMark),
+            ("Mc", Self::SpacingMark),
+            ("M", Self::Mark),
+            ("Nd", Self::DecimalNumber),
+            ("Nl", Self::LetterNumber),
+            ("No", Self::OtherNumber),
+            ("N", Self::Number),
+            ("Zs", Self::SpaceSeparator),
+            ("Zl", Self::LineSeparator),
+            ("Zp", Self::ParagraphSeparator),
+            ("Z", Self::Separator),
+            ("Cc", Self::Control),
+            ("Cf", Self::Format),
+            ("Co", Self::PrivateUse),
+            ("Cs", Self::Surrogate),
+            ("Cn", Self::Unassigned),
+            ("C", Self::Other),
+            ("Pd", Self::DashPunctuation),
+            ("Ps", Self::OpenPunctuation),
+            ("Pe", Self::ClosePunctuation),
+            ("Pc", Self::ConnectorPunctuation),
+            ("Pi", Self::InitialPunctuation),
+            ("Pf", Self::FinalPunctuation),
+            ("Po", Self::OtherPunctuation),
+            ("P", Self::Punctuation),
+            ("Sm", Self::MathSymbol),
+            ("Sc", Self::CurrencySymbol),
+            ("Sk", Self::ModifierSymbol),
+            ("So", Self::OtherSymbol),
+            ("S", Self::Symbol),
+        ]
+        .into_iter()
+    }
 
     /// Return whether the code point belongs in the provided multi-value category.
     ///
@@ -843,182 +946,225 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl Script {
     #[default]
-    pub const Unknown: Script = Script(103);
-    pub const Adlam: Script = Script(167);
-    pub const Ahom: Script = Script(161);
-    pub const AnatolianHieroglyphs: Script = Script(156);
-    pub const Arabic: Script = Script(2);
-    pub const Armenian: Script = Script(3);
-    pub const Avestan: Script = Script(117);
-    pub const Balinese: Script = Script(62);
-    pub const Bamum: Script = Script(130);
-    pub const BassaVah: Script = Script(134);
-    pub const Batak: Script = Script(63);
-    pub const Bengali: Script = Script(4);
-    pub const BeriaErfe: Script = Script(208);
-    pub const Bhaiksuki: Script = Script(168);
-    pub const Bopomofo: Script = Script(5);
-    pub const Brahmi: Script = Script(65);
-    pub const Braille: Script = Script(46);
-    pub const Buginese: Script = Script(55);
-    pub const Buhid: Script = Script(44);
-    pub const CanadianAboriginal: Script = Script(40);
-    pub const Carian: Script = Script(104);
-    pub const CaucasianAlbanian: Script = Script(159);
-    pub const Chakma: Script = Script(118);
-    pub const Cham: Script = Script(66);
-    pub const Cherokee: Script = Script(6);
-    pub const Chorasmian: Script = Script(189);
-    pub const Common: Script = Script(0);
-    pub const Coptic: Script = Script(7);
-    pub const Cuneiform: Script = Script(101);
-    pub const Cypriot: Script = Script(47);
-    pub const CyproMinoan: Script = Script(193);
-    pub const Cyrillic: Script = Script(8);
-    pub const Deseret: Script = Script(9);
-    pub const Devanagari: Script = Script(10);
-    pub const DivesAkuru: Script = Script(190);
-    pub const Dogra: Script = Script(178);
-    pub const Duployan: Script = Script(135);
-    pub const EgyptianHieroglyphs: Script = Script(71);
-    pub const Elbasan: Script = Script(136);
-    pub const Elymaic: Script = Script(185);
-    pub const Ethiopian: Script = Script(11);
-    pub const Garay: Script = Script(201);
-    pub const Georgian: Script = Script(12);
-    pub const Glagolitic: Script = Script(56);
-    pub const Gothic: Script = Script(13);
-    pub const Grantha: Script = Script(137);
-    pub const Greek: Script = Script(14);
-    pub const Gujarati: Script = Script(15);
-    pub const GunjalaGondi: Script = Script(179);
-    pub const Gurmukhi: Script = Script(16);
-    pub const GurungKhema: Script = Script(202);
-    pub const Han: Script = Script(17);
-    pub const Hangul: Script = Script(18);
-    pub const HanifiRohingya: Script = Script(182);
-    pub const Hanunoo: Script = Script(43);
-    pub const Hatran: Script = Script(162);
-    pub const Hebrew: Script = Script(19);
-    pub const Hiragana: Script = Script(20);
-    pub const ImperialAramaic: Script = Script(116);
-    pub const Inherited: Script = Script(1);
-    pub const InscriptionalPahlavi: Script = Script(122);
-    pub const InscriptionalParthian: Script = Script(125);
-    pub const Javanese: Script = Script(78);
-    pub const Kaithi: Script = Script(120);
-    pub const Kannada: Script = Script(21);
-    pub const Katakana: Script = Script(22);
-    pub const Kawi: Script = Script(198);
-    pub const KayahLi: Script = Script(79);
-    pub const Kharoshthi: Script = Script(57);
-    pub const KhitanSmallScript: Script = Script(191);
-    pub const Khmer: Script = Script(23);
-    pub const Khojki: Script = Script(157);
-    pub const Khudawadi: Script = Script(145);
-    pub const KiratRai: Script = Script(203);
-    pub const Lao: Script = Script(24);
-    pub const Latin: Script = Script(25);
-    pub const Lepcha: Script = Script(82);
-    pub const Limbu: Script = Script(48);
-    pub const LinearA: Script = Script(83);
-    pub const LinearB: Script = Script(49);
-    pub const Lisu: Script = Script(131);
-    pub const Lycian: Script = Script(107);
-    pub const Lydian: Script = Script(108);
-    pub const Mahajani: Script = Script(160);
-    pub const Makasar: Script = Script(180);
-    pub const Malayalam: Script = Script(26);
-    pub const Mandaic: Script = Script(84);
-    pub const Manichaean: Script = Script(121);
-    pub const Marchen: Script = Script(169);
-    pub const MasaramGondi: Script = Script(175);
-    pub const Medefaidrin: Script = Script(181);
-    pub const MeeteiMayek: Script = Script(115);
-    pub const MendeKikakui: Script = Script(140);
-    pub const MeroiticCursive: Script = Script(141);
-    pub const MeroiticHieroglyphs: Script = Script(86);
-    pub const Miao: Script = Script(92);
-    pub const Modi: Script = Script(163);
-    pub const Mongolian: Script = Script(27);
-    pub const Mro: Script = Script(149);
-    pub const Multani: Script = Script(164);
-    pub const Myanmar: Script = Script(28);
-    pub const Nabataean: Script = Script(143);
-    pub const NagMundari: Script = Script(199);
-    pub const Nandinagari: Script = Script(187);
-    pub const Nastaliq: Script = Script(200);
-    pub const Newa: Script = Script(170);
-    pub const NewTaiLue: Script = Script(59);
-    pub const Nko: Script = Script(87);
-    pub const Nushu: Script = Script(150);
-    pub const NyiakengPuachueHmong: Script = Script(186);
-    pub const Ogham: Script = Script(29);
-    pub const OlChiki: Script = Script(109);
-    pub const OldHungarian: Script = Script(76);
-    pub const OldItalic: Script = Script(30);
-    pub const OldNorthArabian: Script = Script(142);
-    pub const OldPermic: Script = Script(89);
-    pub const OldPersian: Script = Script(61);
-    pub const OldSogdian: Script = Script(184);
-    pub const OldSouthArabian: Script = Script(133);
-    pub const OldTurkic: Script = Script(88);
-    pub const OldUyghur: Script = Script(194);
-    pub const OlOnal: Script = Script(204);
-    pub const Oriya: Script = Script(31);
-    pub const Osage: Script = Script(171);
-    pub const Osmanya: Script = Script(50);
-    pub const PahawhHmong: Script = Script(75);
-    pub const Palmyrene: Script = Script(144);
-    pub const PauCinHau: Script = Script(165);
-    pub const PhagsPa: Script = Script(90);
-    pub const Phoenician: Script = Script(91);
-    pub const PsalterPahlavi: Script = Script(123);
-    pub const Rejang: Script = Script(110);
-    pub const Runic: Script = Script(32);
-    pub const Samaritan: Script = Script(126);
-    pub const Saurashtra: Script = Script(111);
-    pub const Sharada: Script = Script(151);
-    pub const Shavian: Script = Script(51);
-    pub const Siddham: Script = Script(166);
-    pub const Sidetic: Script = Script(209);
-    pub const SignWriting: Script = Script(112);
-    pub const Sinhala: Script = Script(33);
-    pub const Sogdian: Script = Script(183);
-    pub const SoraSompeng: Script = Script(152);
-    pub const Soyombo: Script = Script(176);
-    pub const Sundanese: Script = Script(113);
-    pub const Sunuwar: Script = Script(205);
-    pub const SylotiNagri: Script = Script(58);
-    pub const Syriac: Script = Script(34);
-    pub const Tagalog: Script = Script(42);
-    pub const Tagbanwa: Script = Script(45);
-    pub const TaiLe: Script = Script(52);
-    pub const TaiTham: Script = Script(106);
-    pub const TaiViet: Script = Script(127);
-    pub const TaiYo: Script = Script(210);
-    pub const Takri: Script = Script(153);
-    pub const Tamil: Script = Script(35);
-    pub const Tangsa: Script = Script(195);
-    pub const Tangut: Script = Script(154);
-    pub const Telugu: Script = Script(36);
-    pub const Thaana: Script = Script(37);
-    pub const Thai: Script = Script(38);
-    pub const Tibetan: Script = Script(39);
-    pub const Tifinagh: Script = Script(60);
-    pub const Tirhuta: Script = Script(158);
-    pub const Todhri: Script = Script(206);
-    pub const TolongSiki: Script = Script(211);
-    pub const Toto: Script = Script(196);
-    pub const TuluTigalari: Script = Script(207);
-    pub const Ugaritic: Script = Script(53);
-    pub const Vai: Script = Script(99);
-    pub const Vithkuqi: Script = Script(197);
-    pub const Wancho: Script = Script(188);
-    pub const WarangCiti: Script = Script(146);
-    pub const Yezidi: Script = Script(192);
-    pub const Yi: Script = Script(41);
-    pub const ZanabazarSquare: Script = Script(177);
+    pub const Unknown: Script = Script(103); / "Zzzz"
+    pub const Adlam: Script = Script(167); / "Adlm"
+    pub const Ahom: Script = Script(161); / "Ahom"
+    pub const AnatolianHieroglyphs: Script = Script(156); / "Hluw"
+    pub const Arabic: Script = Script(2); / "Arab"
+    pub const Armenian: Script = Script(3); / "Armn"
+    pub const Avestan: Script = Script(117); / "Avst"
+    pub const Balinese: Script = Script(62); / "Bali"
+    pub const Bamum: Script = Script(130); / "Bamu"
+    pub const BassaVah: Script = Script(134); / "Bass"
+    pub const Batak: Script = Script(63); / "Batk"
+    pub const Bengali: Script = Script(4); / "Beng"
+    pub const BeriaErfe: Script = Script(208); / "Berf"
+    pub const Bhaiksuki: Script = Script(168); / "Bhks"
+    pub const Bopomofo: Script = Script(5); / "Bopo"
+    pub const Brahmi: Script = Script(65); / "Brah"
+    pub const Braille: Script = Script(46); / "Brai"
+    pub const Buginese: Script = Script(55); / "Bugi"
+    pub const Buhid: Script = Script(44); / "Buhd"
+    pub const CanadianAboriginal: Script = Script(40); / "Cans"
+    pub const Carian: Script = Script(104); / "Cari"
+    pub const CaucasianAlbanian: Script = Script(159); / "Aghb"
+    pub const Chakma: Script = Script(118); / "Cakm"
+    pub const Cham: Script = Script(66); / "Cham"
+    pub const Cherokee: Script = Script(6); / "Cher"
+    pub const Chorasmian: Script = Script(189); / "Chrs"
+    pub const Common: Script = Script(0); / "Zyyy"
+    pub const Coptic: Script = Script(7); / "Copt"
+    pub const Cuneiform: Script = Script(101); / "Xsux"
+    pub const Cypriot: Script = Script(47); / "Cprt"
+    pub const CyproMinoan: Script = Script(193); / "Cpmn"
+    pub const Cyrillic: Script = Script(8); / "Cyrl"
+    pub const Deseret: Script = Script(9); / "Dsrt"
+    pub const Devanagari: Script = Script(10); / "Deva"
+    pub const DivesAkuru: Script = Script(190); / "Diak"
+    pub const Dogra: Script = Script(178); / "Dogr"
+    pub const Duployan: Script = Script(135); / "Dupl"
+    pub const EgyptianHieroglyphs: Script = Script(71); / "Egyp"
+    pub const Elbasan: Script = Script(136); / "Elba"
+    pub const Elymaic: Script = Script(185); / "Elym"
+    pub const Ethiopian: Script = Script(11); / "Ethi"
+    pub const Garay: Script = Script(201); / "Gara"
+    pub const Georgian: Script = Script(12); / "Geor"
+    pub const Glagolitic: Script = Script(56); / "Glag"
+    pub const Gothic: Script = Script(13); / "Goth"
+    pub const Grantha: Script = Script(137); / "Gran"
+    pub const Greek: Script = Script(14); / "Grek"
+    pub const Gujarati: Script = Script(15); / "Gujr"
+    pub const GunjalaGondi: Script = Script(179); / "Gong"
+    pub const Gurmukhi: Script = Script(16); / "Guru"
+    pub const GurungKhema: Script = Script(202); / "Gukh"
+    pub const Han: Script = Script(17); / "Hani"
+    pub const Hangul: Script = Script(18); / "Hang"
+    pub const HanifiRohingya: Script = Script(182); / "Rohg"
+    pub const Hanunoo: Script = Script(43); / "Hano"
+    pub const Hatran: Script = Script(162); / "Hatr"
+    pub const Hebrew: Script = Script(19); / "Hebr"
+    pub const Hiragana: Script = Script(20); / "Hira"
+    pub const ImperialAramaic: Script = Script(116); / "Armi"
+    pub const Inherited: Script = Script(1); / "Zinh"
+    pub const InscriptionalPahlavi: Script = Script(122); / "Phli"
+    pub const InscriptionalParthian: Script = Script(125); / "Prti"
+    pub const Javanese: Script = Script(78); / "Java"
+    pub const Kaithi: Script = Script(120); / "Kthi"
+    pub const Kannada: Script = Script(21); / "Knda"
+    pub const Katakana: Script = Script(22); / "Kana"
+    pub const Kawi: Script = Script(198); / "Kawi"
+    pub const KayahLi: Script = Script(79); / "Kali"
+    pub const Kharoshthi: Script = Script(57); / "Khar"
+    pub const KhitanSmallScript: Script = Script(191); / "Kits"
+    pub const Khmer: Script = Script(23); / "Khmr"
+    pub const Khojki: Script = Script(157); / "Khoj"
+    pub const Khudawadi: Script = Script(145); / "Sind"
+    pub const KiratRai: Script = Script(203); / "Krai"
+    pub const Lao: Script = Script(24); / "Laoo"
+    pub const Latin: Script = Script(25); / "Latn"
+    pub const Lepcha: Script = Script(82); / "Lepc"
+    pub const Limbu: Script = Script(48); / "Limb"
+    pub const LinearA: Script = Script(83); / "Lina"
+    pub const LinearB: Script = Script(49); / "Linb"
+    pub const Lisu: Script = Script(131); / "Lisu"
+    pub const Lycian: Script = Script(107); / "Lyci"
+    pub const Lydian: Script = Script(108); / "Lydi"
+    pub const Mahajani: Script = Script(160); / "Mahj"
+    pub const Makasar: Script = Script(180); / "Maka"
+    pub const Malayalam: Script = Script(26); / "Mlym"
+    pub const Mandaic: Script = Script(84); / "Mand"
+    pub const Manichaean: Script = Script(121); / "Mani"
+    pub const Marchen: Script = Script(169); / "Marc"
+    pub const MasaramGondi: Script = Script(175); / "Gonm"
+    pub const Medefaidrin: Script = Script(181); / "Medf"
+    pub const MeeteiMayek: Script = Script(115); / "Mtei"
+    pub const MendeKikakui: Script = Script(140); / "Mend"
+    pub const MeroiticCursive: Script = Script(141); / "Merc"
+    pub const MeroiticHieroglyphs: Script = Script(86); / "Mero"
+    pub const Miao: Script = Script(92); / "Plrd"
+    pub const Modi: Script = Script(163); / "Modi"
+    pub const Mongolian: Script = Script(27); / "Mong"
+    pub const Mro: Script = Script(149); / "Mroo"
+    pub const Multani: Script = Script(164); / "Mult"
+    pub const Myanmar: Script = Script(28); / "Mymr"
+    pub const Nabataean: Script = Script(143); / "Nbat"
+    pub const NagMundari: Script = Script(199); / "Nagm"
+    pub const Nandinagari: Script = Script(187); / "Nand"
+    pub const Newa: Script = Script(170); / "Newa"
+    pub const NewTaiLue: Script = Script(59); / "Talu"
+    pub const Nko: Script = Script(87); / "Nkoo"
+    pub const Nushu: Script = Script(150); / "Nshu"
+    pub const NyiakengPuachueHmong: Script = Script(186); / "Hmnp"
+    pub const Ogham: Script = Script(29); / "Ogam"
+    pub const OlChiki: Script = Script(109); / "Olck"
+    pub const OldHungarian: Script = Script(76); / "Hung"
+    pub const OldItalic: Script = Script(30); / "Ital"
+    pub const OldNorthArabian: Script = Script(142); / "Narb"
+    pub const OldPermic: Script = Script(89); / "Perm"
+    pub const OldPersian: Script = Script(61); / "Xpeo"
+    pub const OldSogdian: Script = Script(184); / "Sogo"
+    pub const OldSouthArabian: Script = Script(133); / "Sarb"
+    pub const OldTurkic: Script = Script(88); / "Orkh"
+    pub const OldUyghur: Script = Script(194); / "Ougr"
+    pub const OlOnal: Script = Script(204); / "Onao"
+    pub const Oriya: Script = Script(31); / "Orya"
+    pub const Osage: Script = Script(171); / "Osge"
+    pub const Osmanya: Script = Script(50); / "Osma"
+    pub const PahawhHmong: Script = Script(75); / "Hmng"
+    pub const Palmyrene: Script = Script(144); / "Palm"
+    pub const PauCinHau: Script = Script(165); / "Pauc"
+    pub const PhagsPa: Script = Script(90); / "Phag"
+    pub const Phoenician: Script = Script(91); / "Phnx"
+    pub const PsalterPahlavi: Script = Script(123); / "Phlp"
+    pub const Rejang: Script = Script(110); / "Rjng"
+    pub const Runic: Script = Script(32); / "Runr"
+    pub const Samaritan: Script = Script(126); / "Samr"
+    pub const Saurashtra: Script = Script(111); / "Saur"
+    pub const Sharada: Script = Script(151); / "Shrd"
+    pub const Shavian: Script = Script(51); / "Shaw"
+    pub const Siddham: Script = Script(166); / "Sidd"
+    pub const Sidetic: Script = Script(209); / "Sidt"
+    pub const SignWriting: Script = Script(112); / "Sgnw"
+    pub const Sinhala: Script = Script(33); / "Sinh"
+    pub const Sogdian: Script = Script(183); / "Sogd"
+    pub const SoraSompeng: Script = Script(152); / "Sora"
+    pub const Soyombo: Script = Script(176); / "Soyo"
+    pub const Sundanese: Script = Script(113); / "Sund"
+    pub const Sunuwar: Script = Script(205); / "Sunu"
+    pub const SylotiNagri: Script = Script(58); / "Sylo"
+    pub const Syriac: Script = Script(34); / "Syrc"
+    pub const Tagalog: Script = Script(42); / "Tglg"
+    pub const Tagbanwa: Script = Script(45); / "Tagb"
+    pub const TaiLe: Script = Script(52); / "Tale"
+    pub const TaiTham: Script = Script(106); / "Lana"
+    pub const TaiViet: Script = Script(127); / "Tavt"
+    pub const TaiYo: Script = Script(210); / "Tayo"
+    pub const Takri: Script = Script(153); / "Takr"
+    pub const Tamil: Script = Script(35); / "Taml"
+    pub const Tangsa: Script = Script(195); / "Tnsa"
+    pub const Tangut: Script = Script(154); / "Tang"
+    pub const Telugu: Script = Script(36); / "Telu"
+    pub const Thaana: Script = Script(37); / "Thaa"
+    pub const Thai: Script = Script(38); / "Thai"
+    pub const Tibetan: Script = Script(39); / "Tibt"
+    pub const Tifinagh: Script = Script(60); / "Tfng"
+    pub const Tirhuta: Script = Script(158); / "Tirh"
+    pub const Todhri: Script = Script(206); / "Todr"
+    pub const TolongSiki: Script = Script(211); / "Tols"
+    pub const Toto: Script = Script(196); / "Toto"
+    pub const TuluTigalari: Script = Script(207); / "Tutg"
+    pub const Ugaritic: Script = Script(53); / "Ugar"
+    pub const Vai: Script = Script(99); / "Vaii"
+    pub const Vithkuqi: Script = Script(197); / "Vith"
+    pub const Wancho: Script = Script(188); / "Wcho"
+    pub const WarangCiti: Script = Script(146); / "Wara"
+    pub const Yezidi: Script = Script(192); / "Yezi"
+    pub const Yi: Script = Script(41); / "Yiii"
+    pub const ZanabazarSquare: Script = Script(177); / "Zanb"
+
+    // These 38 scripts are scripts that ICU defines but Unicode
+    // doesn't. We define them for parity with ICU, and so
+    // that our short name map can be dense.
+    // It's unclear why we have exposed an identifier for
+    // Nastaliq but not for any of the others.
+    pub const Nastaliq: Script = Script(200); / "Aran"
+    "Afak" => 147;
+    "Blis" => 64;
+    "Cirt" => 67;
+    "Cyrs" => 68;
+    "Egyd" => 69;
+    "Egyh" => 70;
+    "Geok" => 72;
+    "Hanb" => 172;
+    "Hans" => 73;
+    "Hant" => 74;
+    "Hntl" => 212;
+    "Hrkt" => 54;
+    "Inds" => 77;
+    "Jamo" => 173;
+    "Jpan" => 105;
+    "Jurc" => 148;
+    "Kore" => 119;
+    "Kpel" => 138;
+    "Latf" => 80;
+    "Latg" => 81;
+    "Loma" => 139;
+    "Maya" => 85;
+    "Moon" => 114;
+    "Nkgb" => 132;
+    "Phlv" => 124;
+    "Roro" => 93;
+    "Sara" => 94;
+    "Syre" => 95;
+    "Syrj" => 96;
+    "Syrn" => 97;
+    "Teng" => 98;
+    "Visp" => 100;
+    "Wole" => 155;
+    "Zmth" => 128;
+    "Zsye" => 174;
+    "Zsym" => 129;
+    "Zxxx" => 102;
 }
 #[test]
 fn script_consts();
@@ -1105,17 +1251,17 @@ create_const_array! {
 impl HangulSyllableType {
     #[default]
     /// (`NA`) not applicable (e.g. not a Hangul code point).
-    pub const NotApplicable: HangulSyllableType = HangulSyllableType(0);
+    pub const NotApplicable: HangulSyllableType = HangulSyllableType(0); / "NA"
     /// (`L`) a conjoining leading consonant Jamo.
-    pub const LeadingJamo: HangulSyllableType = HangulSyllableType(1);
+    pub const LeadingJamo: HangulSyllableType = HangulSyllableType(1); / "L"
     /// (`V`) a conjoining vowel Jamo.
-    pub const VowelJamo: HangulSyllableType = HangulSyllableType(2);
+    pub const VowelJamo: HangulSyllableType = HangulSyllableType(2); / "V"
     /// (`T`) a conjoining trailing consonant Jamo.
-    pub const TrailingJamo: HangulSyllableType = HangulSyllableType(3);
+    pub const TrailingJamo: HangulSyllableType = HangulSyllableType(3); / "T"
     /// (`LV`) a precomposed syllable with a leading consonant and a vowel.
-    pub const LeadingVowelSyllable: HangulSyllableType = HangulSyllableType(4);
+    pub const LeadingVowelSyllable: HangulSyllableType = HangulSyllableType(4); / "LV"
     /// (`LVT`) a precomposed syllable with a leading consonant, a vowel, and a trailing consonant.
-    pub const LeadingVowelTrailingSyllable: HangulSyllableType = HangulSyllableType(5);
+    pub const LeadingVowelTrailingSyllable: HangulSyllableType = HangulSyllableType(5); / "LVT"
 }
 #[test]
 fn hangul_syllable_type_consts();
@@ -1172,12 +1318,12 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl EastAsianWidth {
     #[default]
-    pub const Neutral: EastAsianWidth = EastAsianWidth(0); //name="N"
-    pub const Ambiguous: EastAsianWidth = EastAsianWidth(1); //name="A"
-    pub const Halfwidth: EastAsianWidth = EastAsianWidth(2); //name="H"
-    pub const Fullwidth: EastAsianWidth = EastAsianWidth(3); //name="F"
-    pub const Narrow: EastAsianWidth = EastAsianWidth(4); //name="Na"
-    pub const Wide: EastAsianWidth = EastAsianWidth(5); //name="W"
+    pub const Neutral: EastAsianWidth = EastAsianWidth(0); / "N"
+    pub const Ambiguous: EastAsianWidth = EastAsianWidth(1); / "A"
+    pub const Halfwidth: EastAsianWidth = EastAsianWidth(2); / "H"
+    pub const Fullwidth: EastAsianWidth = EastAsianWidth(3); / "F"
+    pub const Narrow: EastAsianWidth = EastAsianWidth(4); / "Na"
+    pub const Wide: EastAsianWidth = EastAsianWidth(5); / "W"
 }
 #[test]
 fn east_asian_width_consts();
@@ -1237,59 +1383,59 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl LineBreak {
     #[default]
-    pub const Unknown: LineBreak = LineBreak(0); // name="XX"
-    pub const Ambiguous: LineBreak = LineBreak(1); // name="AI"
-    pub const Alphabetic: LineBreak = LineBreak(2); // name="AL"
-    pub const BreakBoth: LineBreak = LineBreak(3); // name="B2"
-    pub const BreakAfter: LineBreak = LineBreak(4); // name="BA"
-    pub const BreakBefore: LineBreak = LineBreak(5); // name="BB"
-    pub const MandatoryBreak: LineBreak = LineBreak(6); // name="BK"
-    pub const ContingentBreak: LineBreak = LineBreak(7); // name="CB"
-    pub const ClosePunctuation: LineBreak = LineBreak(8); // name="CL"
-    pub const CombiningMark: LineBreak = LineBreak(9); // name="CM"
-    pub const CarriageReturn: LineBreak = LineBreak(10); // name="CR"
-    pub const Exclamation: LineBreak = LineBreak(11); // name="EX"
-    pub const Glue: LineBreak = LineBreak(12); // name="GL"
-    pub const Hyphen: LineBreak = LineBreak(13); // name="HY"
-    pub const Ideographic: LineBreak = LineBreak(14); // name="ID"
-    pub const Inseparable: LineBreak = LineBreak(15); // name="IN"
-    pub const InfixNumeric: LineBreak = LineBreak(16); // name="IS"
-    pub const LineFeed: LineBreak = LineBreak(17); // name="LF"
-    pub const Nonstarter: LineBreak = LineBreak(18); // name="NS"
-    pub const Numeric: LineBreak = LineBreak(19); // name="NU"
-    pub const OpenPunctuation: LineBreak = LineBreak(20); // name="OP"
-    pub const PostfixNumeric: LineBreak = LineBreak(21); // name="PO"
-    pub const PrefixNumeric: LineBreak = LineBreak(22); // name="PR"
-    pub const Quotation: LineBreak = LineBreak(23); // name="QU"
-    pub const ComplexContext: LineBreak = LineBreak(24); // name="SA"
-    pub const Surrogate: LineBreak = LineBreak(25); // name="SG"
-    pub const Space: LineBreak = LineBreak(26); // name="SP"
-    pub const BreakSymbols: LineBreak = LineBreak(27); // name="SY"
-    pub const ZWSpace: LineBreak = LineBreak(28); // name="ZW"
-    pub const NextLine: LineBreak = LineBreak(29); // name="NL"
-    pub const WordJoiner: LineBreak = LineBreak(30); // name="WJ"
-    pub const H2: LineBreak = LineBreak(31); // name="H2"
-    pub const H3: LineBreak = LineBreak(32); // name="H3"
-    pub const JL: LineBreak = LineBreak(33); // name="JL"
-    pub const JT: LineBreak = LineBreak(34); // name="JT"
-    pub const JV: LineBreak = LineBreak(35); // name="JV"
-    pub const CloseParenthesis: LineBreak = LineBreak(36); // name="CP"
-    pub const ConditionalJapaneseStarter: LineBreak = LineBreak(37); // name="CJ"
-    pub const HebrewLetter: LineBreak = LineBreak(38); // name="HL"
-    pub const RegionalIndicator: LineBreak = LineBreak(39); // name="RI"
-    pub const EBase: LineBreak = LineBreak(40); // name="EB"
-    pub const EModifier: LineBreak = LineBreak(41); // name="EM"
-    pub const ZWJ: LineBreak = LineBreak(42); // name="ZWJ"
+    pub const Unknown: LineBreak = LineBreak(0); / "XX"
+    pub const Ambiguous: LineBreak = LineBreak(1); / "AI"
+    pub const Alphabetic: LineBreak = LineBreak(2); / "AL"
+    pub const BreakBoth: LineBreak = LineBreak(3); / "B2"
+    pub const BreakAfter: LineBreak = LineBreak(4); / "BA"
+    pub const BreakBefore: LineBreak = LineBreak(5); / "BB"
+    pub const MandatoryBreak: LineBreak = LineBreak(6); / "BK"
+    pub const ContingentBreak: LineBreak = LineBreak(7); / "CB"
+    pub const ClosePunctuation: LineBreak = LineBreak(8); / "CL"
+    pub const CombiningMark: LineBreak = LineBreak(9); / "CM"
+    pub const CarriageReturn: LineBreak = LineBreak(10); / "CR"
+    pub const Exclamation: LineBreak = LineBreak(11); / "EX"
+    pub const Glue: LineBreak = LineBreak(12); / "GL"
+    pub const Hyphen: LineBreak = LineBreak(13); / "HY"
+    pub const Ideographic: LineBreak = LineBreak(14); / "ID"
+    pub const Inseparable: LineBreak = LineBreak(15); / "IN"
+    pub const InfixNumeric: LineBreak = LineBreak(16); / "IS"
+    pub const LineFeed: LineBreak = LineBreak(17); / "LF"
+    pub const Nonstarter: LineBreak = LineBreak(18); / "NS"
+    pub const Numeric: LineBreak = LineBreak(19); / "NU"
+    pub const OpenPunctuation: LineBreak = LineBreak(20); / "OP"
+    pub const PostfixNumeric: LineBreak = LineBreak(21); / "PO"
+    pub const PrefixNumeric: LineBreak = LineBreak(22); / "PR"
+    pub const Quotation: LineBreak = LineBreak(23); / "QU"
+    pub const ComplexContext: LineBreak = LineBreak(24); / "SA"
+    pub const Surrogate: LineBreak = LineBreak(25); / "SG"
+    pub const Space: LineBreak = LineBreak(26); / "SP"
+    pub const BreakSymbols: LineBreak = LineBreak(27); / "SY"
+    pub const ZWSpace: LineBreak = LineBreak(28); / "ZW"
+    pub const NextLine: LineBreak = LineBreak(29); / "NL"
+    pub const WordJoiner: LineBreak = LineBreak(30); / "WJ"
+    pub const H2: LineBreak = LineBreak(31); / "H2"
+    pub const H3: LineBreak = LineBreak(32); / "H3"
+    pub const JL: LineBreak = LineBreak(33); / "JL"
+    pub const JT: LineBreak = LineBreak(34); / "JT"
+    pub const JV: LineBreak = LineBreak(35); / "JV"
+    pub const CloseParenthesis: LineBreak = LineBreak(36); / "CP"
+    pub const ConditionalJapaneseStarter: LineBreak = LineBreak(37); / "CJ"
+    pub const HebrewLetter: LineBreak = LineBreak(38); / "HL"
+    pub const RegionalIndicator: LineBreak = LineBreak(39); / "RI"
+    pub const EBase: LineBreak = LineBreak(40); / "EB"
+    pub const EModifier: LineBreak = LineBreak(41); / "EM"
+    pub const ZWJ: LineBreak = LineBreak(42); / "ZWJ"
 
-    // Added in ICU 74:
-    pub const Aksara: LineBreak = LineBreak(43); // name="AK"
-    pub const AksaraPrebase: LineBreak = LineBreak(44); // name="AP"
-    pub const AksaraStart: LineBreak = LineBreak(45); // name="AS"
-    pub const ViramaFinal: LineBreak = LineBreak(46); // name="VF"
-    pub const Virama: LineBreak = LineBreak(47); // name="VI"
+    // Added in Unicode 15.1:
+    pub const Aksara: LineBreak = LineBreak(43); / "AK"
+    pub const AksaraPrebase: LineBreak = LineBreak(44); / "AP"
+    pub const AksaraStart: LineBreak = LineBreak(45); / "AS"
+    pub const ViramaFinal: LineBreak = LineBreak(46); / "VF"
+    pub const Virama: LineBreak = LineBreak(47); / "VI"
 
-    // Added in ICU 78:
-    pub const UnambiguousHyphen: LineBreak = LineBreak(48); // name="HH"
+    // Added in Unicode 17:
+    pub const UnambiguousHyphen: LineBreak = LineBreak(48); / "HH"
 }
 #[test]
 fn line_break_consts();
@@ -1348,28 +1494,28 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl GraphemeClusterBreak {
     #[default]
-    pub const Other: GraphemeClusterBreak = GraphemeClusterBreak(0); // name="XX"
-    pub const Control: GraphemeClusterBreak = GraphemeClusterBreak(1); // name="CN"
-    pub const CR: GraphemeClusterBreak = GraphemeClusterBreak(2); // name="CR"
-    pub const Extend: GraphemeClusterBreak = GraphemeClusterBreak(3); // name="EX"
-    pub const L: GraphemeClusterBreak = GraphemeClusterBreak(4); // name="L"
-    pub const LF: GraphemeClusterBreak = GraphemeClusterBreak(5); // name="LF"
-    pub const LV: GraphemeClusterBreak = GraphemeClusterBreak(6); // name="LV"
-    pub const LVT: GraphemeClusterBreak = GraphemeClusterBreak(7); // name="LVT"
-    pub const T: GraphemeClusterBreak = GraphemeClusterBreak(8); // name="T"
-    pub const V: GraphemeClusterBreak = GraphemeClusterBreak(9); // name="V"
-    pub const SpacingMark: GraphemeClusterBreak = GraphemeClusterBreak(10); // name="SM"
-    pub const Prepend: GraphemeClusterBreak = GraphemeClusterBreak(11); // name="PP"
-    pub const RegionalIndicator: GraphemeClusterBreak = GraphemeClusterBreak(12); // name="RI"
+    pub const Other: GraphemeClusterBreak = GraphemeClusterBreak(0); / "XX"
+    pub const Control: GraphemeClusterBreak = GraphemeClusterBreak(1); / "CN"
+    pub const CR: GraphemeClusterBreak = GraphemeClusterBreak(2); / "CR"
+    pub const Extend: GraphemeClusterBreak = GraphemeClusterBreak(3); / "EX"
+    pub const L: GraphemeClusterBreak = GraphemeClusterBreak(4); / "L"
+    pub const LF: GraphemeClusterBreak = GraphemeClusterBreak(5); / "LF"
+    pub const LV: GraphemeClusterBreak = GraphemeClusterBreak(6); / "LV"
+    pub const LVT: GraphemeClusterBreak = GraphemeClusterBreak(7); / "LVT"
+    pub const T: GraphemeClusterBreak = GraphemeClusterBreak(8); / "T"
+    pub const V: GraphemeClusterBreak = GraphemeClusterBreak(9); / "V"
+    pub const SpacingMark: GraphemeClusterBreak = GraphemeClusterBreak(10); / "SM"
+    pub const Prepend: GraphemeClusterBreak = GraphemeClusterBreak(11); / "PP"
+    pub const RegionalIndicator: GraphemeClusterBreak = GraphemeClusterBreak(12); / "RI"
     /// This value is obsolete and unused.
-    pub const EBase: GraphemeClusterBreak = GraphemeClusterBreak(13); // name="EB"
+    pub const EBase: GraphemeClusterBreak = GraphemeClusterBreak(13); / "EB"
     /// This value is obsolete and unused.
-    pub const EBaseGAZ: GraphemeClusterBreak = GraphemeClusterBreak(14); // name="EBG"
+    pub const EBaseGAZ: GraphemeClusterBreak = GraphemeClusterBreak(14); / "EBG"
     /// This value is obsolete and unused.
-    pub const EModifier: GraphemeClusterBreak = GraphemeClusterBreak(15); // name="EM"
+    pub const EModifier: GraphemeClusterBreak = GraphemeClusterBreak(15); / "EM"
     /// This value is obsolete and unused.
-    pub const GlueAfterZwj: GraphemeClusterBreak = GraphemeClusterBreak(16); // name="GAZ"
-    pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); // name="ZWJ"
+    pub const GlueAfterZwj: GraphemeClusterBreak = GraphemeClusterBreak(16); / "GAZ"
+    pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); / "ZWJ"
 }
 #[test]
 fn gcb_consts();
@@ -1428,33 +1574,33 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl WordBreak {
     #[default]
-    pub const Other: WordBreak = WordBreak(0); // name="XX"
-    pub const ALetter: WordBreak = WordBreak(1); // name="LE"
-    pub const Format: WordBreak = WordBreak(2); // name="FO"
-    pub const Katakana: WordBreak = WordBreak(3); // name="KA"
-    pub const MidLetter: WordBreak = WordBreak(4); // name="ML"
-    pub const MidNum: WordBreak = WordBreak(5); // name="MN"
-    pub const Numeric: WordBreak = WordBreak(6); // name="NU"
-    pub const ExtendNumLet: WordBreak = WordBreak(7); // name="EX"
-    pub const CR: WordBreak = WordBreak(8); // name="CR"
-    pub const Extend: WordBreak = WordBreak(9); // name="Extend"
-    pub const LF: WordBreak = WordBreak(10); // name="LF"
-    pub const MidNumLet: WordBreak = WordBreak(11); // name="MB"
-    pub const Newline: WordBreak = WordBreak(12); // name="NL"
-    pub const RegionalIndicator: WordBreak = WordBreak(13); // name="RI"
-    pub const HebrewLetter: WordBreak = WordBreak(14); // name="HL"
-    pub const SingleQuote: WordBreak = WordBreak(15); // name="SQ"
-    pub const DoubleQuote: WordBreak = WordBreak(16); // name=DQ
+    pub const Other: WordBreak = WordBreak(0); / "XX"
+    pub const ALetter: WordBreak = WordBreak(1); / "LE"
+    pub const Format: WordBreak = WordBreak(2); / "FO"
+    pub const Katakana: WordBreak = WordBreak(3); / "KA"
+    pub const MidLetter: WordBreak = WordBreak(4); / "ML"
+    pub const MidNum: WordBreak = WordBreak(5); / "MN"
+    pub const Numeric: WordBreak = WordBreak(6); / "NU"
+    pub const ExtendNumLet: WordBreak = WordBreak(7); / "EX"
+    pub const CR: WordBreak = WordBreak(8); / "CR"
+    pub const Extend: WordBreak = WordBreak(9); / "Extend"
+    pub const LF: WordBreak = WordBreak(10); / "LF"
+    pub const MidNumLet: WordBreak = WordBreak(11); / "MB"
+    pub const Newline: WordBreak = WordBreak(12); / "NL"
+    pub const RegionalIndicator: WordBreak = WordBreak(13); / "RI"
+    pub const HebrewLetter: WordBreak = WordBreak(14); / "HL"
+    pub const SingleQuote: WordBreak = WordBreak(15); / "SQ"
+    pub const DoubleQuote: WordBreak = WordBreak(16); / "DQ"
     /// This value is obsolete and unused.
-    pub const EBase: WordBreak = WordBreak(17); // name="EB"
+    pub const EBase: WordBreak = WordBreak(17); / "EB"
     /// This value is obsolete and unused.
-    pub const EBaseGAZ: WordBreak = WordBreak(18); // name="EBG"
+    pub const EBaseGAZ: WordBreak = WordBreak(18); / "EBG"
     /// This value is obsolete and unused.
-    pub const EModifier: WordBreak = WordBreak(19); // name="EM"
+    pub const EModifier: WordBreak = WordBreak(19); / "EM"
     /// This value is obsolete and unused.
-    pub const GlueAfterZwj: WordBreak = WordBreak(20); // name="GAZ"
-    pub const ZWJ: WordBreak = WordBreak(21); // name="ZWJ"
-    pub const WSegSpace: WordBreak = WordBreak(22); // name="WSegSpace"
+    pub const GlueAfterZwj: WordBreak = WordBreak(20); / "GAZ"
+    pub const ZWJ: WordBreak = WordBreak(21); / "ZWJ"
+    pub const WSegSpace: WordBreak = WordBreak(22); / "WSegSpace"
 }
 #[test]
 fn word_break_consts();
@@ -1513,21 +1659,21 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl SentenceBreak {
     #[default]
-    pub const Other: SentenceBreak = SentenceBreak(0); // name="XX"
-    pub const ATerm: SentenceBreak = SentenceBreak(1); // name="AT"
-    pub const Close: SentenceBreak = SentenceBreak(2); // name="CL"
-    pub const Format: SentenceBreak = SentenceBreak(3); // name="FO"
-    pub const Lower: SentenceBreak = SentenceBreak(4); // name="LO"
-    pub const Numeric: SentenceBreak = SentenceBreak(5); // name="NU"
-    pub const OLetter: SentenceBreak = SentenceBreak(6); // name="LE"
-    pub const Sep: SentenceBreak = SentenceBreak(7); // name="SE"
-    pub const Sp: SentenceBreak = SentenceBreak(8); // name="SP"
-    pub const STerm: SentenceBreak = SentenceBreak(9); // name="ST"
-    pub const Upper: SentenceBreak = SentenceBreak(10); // name="UP"
-    pub const CR: SentenceBreak = SentenceBreak(11); // name="CR"
-    pub const Extend: SentenceBreak = SentenceBreak(12); // name="EX"
-    pub const LF: SentenceBreak = SentenceBreak(13); // name="LF"
-    pub const SContinue: SentenceBreak = SentenceBreak(14); // name="SC"
+    pub const Other: SentenceBreak = SentenceBreak(0); / "XX"
+    pub const ATerm: SentenceBreak = SentenceBreak(1); / "AT"
+    pub const Close: SentenceBreak = SentenceBreak(2); / "CL"
+    pub const Format: SentenceBreak = SentenceBreak(3); / "FO"
+    pub const Lower: SentenceBreak = SentenceBreak(4); / "LO"
+    pub const Numeric: SentenceBreak = SentenceBreak(5); / "NU"
+    pub const OLetter: SentenceBreak = SentenceBreak(6); / "LE"
+    pub const Sep: SentenceBreak = SentenceBreak(7); / "SE"
+    pub const Sp: SentenceBreak = SentenceBreak(8); / "SP"
+    pub const STerm: SentenceBreak = SentenceBreak(9); / "ST"
+    pub const Upper: SentenceBreak = SentenceBreak(10); / "UP"
+    pub const CR: SentenceBreak = SentenceBreak(11); / "CR"
+    pub const Extend: SentenceBreak = SentenceBreak(12); / "EX"
+    pub const LF: SentenceBreak = SentenceBreak(13); / "LF"
+    pub const SContinue: SentenceBreak = SentenceBreak(14); / "SC"
 }
 #[test]
 fn sentence_break_consts();
@@ -1594,64 +1740,64 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl CanonicalCombiningClass {
     #[default]
-    pub const NotReordered: CanonicalCombiningClass = CanonicalCombiningClass(0); // name="NR"
-    pub const Overlay: CanonicalCombiningClass = CanonicalCombiningClass(1); // name="OV"
-    pub const HanReading: CanonicalCombiningClass = CanonicalCombiningClass(6); // name="HANR"
-    pub const Nukta: CanonicalCombiningClass = CanonicalCombiningClass(7); // name="NK"
-    pub const KanaVoicing: CanonicalCombiningClass = CanonicalCombiningClass(8); // name="KV"
-    pub const Virama: CanonicalCombiningClass = CanonicalCombiningClass(9); // name="VR"
-    pub const CCC10: CanonicalCombiningClass = CanonicalCombiningClass(10); // name="CCC10"
-    pub const CCC11: CanonicalCombiningClass = CanonicalCombiningClass(11); // name="CCC11"
-    pub const CCC12: CanonicalCombiningClass = CanonicalCombiningClass(12); // name="CCC12"
-    pub const CCC13: CanonicalCombiningClass = CanonicalCombiningClass(13); // name="CCC13"
-    pub const CCC14: CanonicalCombiningClass = CanonicalCombiningClass(14); // name="CCC14"
-    pub const CCC15: CanonicalCombiningClass = CanonicalCombiningClass(15); // name="CCC15"
-    pub const CCC16: CanonicalCombiningClass = CanonicalCombiningClass(16); // name="CCC16"
-    pub const CCC17: CanonicalCombiningClass = CanonicalCombiningClass(17); // name="CCC17"
-    pub const CCC18: CanonicalCombiningClass = CanonicalCombiningClass(18); // name="CCC18"
-    pub const CCC19: CanonicalCombiningClass = CanonicalCombiningClass(19); // name="CCC19"
-    pub const CCC20: CanonicalCombiningClass = CanonicalCombiningClass(20); // name="CCC20"
-    pub const CCC21: CanonicalCombiningClass = CanonicalCombiningClass(21); // name="CCC21"
-    pub const CCC22: CanonicalCombiningClass = CanonicalCombiningClass(22); // name="CCC22"
-    pub const CCC23: CanonicalCombiningClass = CanonicalCombiningClass(23); // name="CCC23"
-    pub const CCC24: CanonicalCombiningClass = CanonicalCombiningClass(24); // name="CCC24"
-    pub const CCC25: CanonicalCombiningClass = CanonicalCombiningClass(25); // name="CCC25"
-    pub const CCC26: CanonicalCombiningClass = CanonicalCombiningClass(26); // name="CCC26"
-    pub const CCC27: CanonicalCombiningClass = CanonicalCombiningClass(27); // name="CCC27"
-    pub const CCC28: CanonicalCombiningClass = CanonicalCombiningClass(28); // name="CCC28"
-    pub const CCC29: CanonicalCombiningClass = CanonicalCombiningClass(29); // name="CCC29"
-    pub const CCC30: CanonicalCombiningClass = CanonicalCombiningClass(30); // name="CCC30"
-    pub const CCC31: CanonicalCombiningClass = CanonicalCombiningClass(31); // name="CCC31"
-    pub const CCC32: CanonicalCombiningClass = CanonicalCombiningClass(32); // name="CCC32"
-    pub const CCC33: CanonicalCombiningClass = CanonicalCombiningClass(33); // name="CCC33"
-    pub const CCC34: CanonicalCombiningClass = CanonicalCombiningClass(34); // name="CCC34"
-    pub const CCC35: CanonicalCombiningClass = CanonicalCombiningClass(35); // name="CCC35"
-    pub const CCC36: CanonicalCombiningClass = CanonicalCombiningClass(36); // name="CCC36"
-    pub const CCC84: CanonicalCombiningClass = CanonicalCombiningClass(84); // name="CCC84"
-    pub const CCC91: CanonicalCombiningClass = CanonicalCombiningClass(91); // name="CCC91"
-    pub const CCC103: CanonicalCombiningClass = CanonicalCombiningClass(103); // name="CCC103"
-    pub const CCC107: CanonicalCombiningClass = CanonicalCombiningClass(107); // name="CCC107"
-    pub const CCC118: CanonicalCombiningClass = CanonicalCombiningClass(118); // name="CCC118"
-    pub const CCC122: CanonicalCombiningClass = CanonicalCombiningClass(122); // name="CCC122"
-    pub const CCC129: CanonicalCombiningClass = CanonicalCombiningClass(129); // name="CCC129"
-    pub const CCC130: CanonicalCombiningClass = CanonicalCombiningClass(130); // name="CCC130"
-    pub const CCC132: CanonicalCombiningClass = CanonicalCombiningClass(132); // name="CCC132"
-    pub const CCC133: CanonicalCombiningClass = CanonicalCombiningClass(133); // name="CCC133" // RESERVED
-    pub const AttachedBelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(200); // name="ATBL"
-    pub const AttachedBelow: CanonicalCombiningClass = CanonicalCombiningClass(202); // name="ATB"
-    pub const AttachedAbove: CanonicalCombiningClass = CanonicalCombiningClass(214); // name="ATA"
-    pub const AttachedAboveRight: CanonicalCombiningClass = CanonicalCombiningClass(216); // name="ATAR"
-    pub const BelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(218); // name="BL"
-    pub const Below: CanonicalCombiningClass = CanonicalCombiningClass(220); // name="B"
-    pub const BelowRight: CanonicalCombiningClass = CanonicalCombiningClass(222); // name="BR"
-    pub const Left: CanonicalCombiningClass = CanonicalCombiningClass(224); // name="L"
-    pub const Right: CanonicalCombiningClass = CanonicalCombiningClass(226); // name="R"
-    pub const AboveLeft: CanonicalCombiningClass = CanonicalCombiningClass(228); // name="AL"
-    pub const Above: CanonicalCombiningClass = CanonicalCombiningClass(230); // name="A"
-    pub const AboveRight: CanonicalCombiningClass = CanonicalCombiningClass(232); // name="AR"
-    pub const DoubleBelow: CanonicalCombiningClass = CanonicalCombiningClass(233); // name="DB"
-    pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
-    pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
+    pub const NotReordered: CanonicalCombiningClass = CanonicalCombiningClass(0); / "NR"
+    pub const Overlay: CanonicalCombiningClass = CanonicalCombiningClass(1); / "OV"
+    pub const HanReading: CanonicalCombiningClass = CanonicalCombiningClass(6); / "HANR"
+    pub const Nukta: CanonicalCombiningClass = CanonicalCombiningClass(7); / "NK"
+    pub const KanaVoicing: CanonicalCombiningClass = CanonicalCombiningClass(8); / "KV"
+    pub const Virama: CanonicalCombiningClass = CanonicalCombiningClass(9); / "VR"
+    pub const CCC10: CanonicalCombiningClass = CanonicalCombiningClass(10); / "CCC10"
+    pub const CCC11: CanonicalCombiningClass = CanonicalCombiningClass(11); / "CCC11"
+    pub const CCC12: CanonicalCombiningClass = CanonicalCombiningClass(12); / "CCC12"
+    pub const CCC13: CanonicalCombiningClass = CanonicalCombiningClass(13); / "CCC13"
+    pub const CCC14: CanonicalCombiningClass = CanonicalCombiningClass(14); / "CCC14"
+    pub const CCC15: CanonicalCombiningClass = CanonicalCombiningClass(15); / "CCC15"
+    pub const CCC16: CanonicalCombiningClass = CanonicalCombiningClass(16); / "CCC16"
+    pub const CCC17: CanonicalCombiningClass = CanonicalCombiningClass(17); / "CCC17"
+    pub const CCC18: CanonicalCombiningClass = CanonicalCombiningClass(18); / "CCC18"
+    pub const CCC19: CanonicalCombiningClass = CanonicalCombiningClass(19); / "CCC19"
+    pub const CCC20: CanonicalCombiningClass = CanonicalCombiningClass(20); / "CCC20"
+    pub const CCC21: CanonicalCombiningClass = CanonicalCombiningClass(21); / "CCC21"
+    pub const CCC22: CanonicalCombiningClass = CanonicalCombiningClass(22); / "CCC22"
+    pub const CCC23: CanonicalCombiningClass = CanonicalCombiningClass(23); / "CCC23"
+    pub const CCC24: CanonicalCombiningClass = CanonicalCombiningClass(24); / "CCC24"
+    pub const CCC25: CanonicalCombiningClass = CanonicalCombiningClass(25); / "CCC25"
+    pub const CCC26: CanonicalCombiningClass = CanonicalCombiningClass(26); / "CCC26"
+    pub const CCC27: CanonicalCombiningClass = CanonicalCombiningClass(27); / "CCC27"
+    pub const CCC28: CanonicalCombiningClass = CanonicalCombiningClass(28); / "CCC28"
+    pub const CCC29: CanonicalCombiningClass = CanonicalCombiningClass(29); / "CCC29"
+    pub const CCC30: CanonicalCombiningClass = CanonicalCombiningClass(30); / "CCC30"
+    pub const CCC31: CanonicalCombiningClass = CanonicalCombiningClass(31); / "CCC31"
+    pub const CCC32: CanonicalCombiningClass = CanonicalCombiningClass(32); / "CCC32"
+    pub const CCC33: CanonicalCombiningClass = CanonicalCombiningClass(33); / "CCC33"
+    pub const CCC34: CanonicalCombiningClass = CanonicalCombiningClass(34); / "CCC34"
+    pub const CCC35: CanonicalCombiningClass = CanonicalCombiningClass(35); / "CCC35"
+    pub const CCC36: CanonicalCombiningClass = CanonicalCombiningClass(36); / "CCC36"
+    pub const CCC84: CanonicalCombiningClass = CanonicalCombiningClass(84); / "CCC84"
+    pub const CCC91: CanonicalCombiningClass = CanonicalCombiningClass(91); / "CCC91"
+    pub const CCC103: CanonicalCombiningClass = CanonicalCombiningClass(103); / "CCC103"
+    pub const CCC107: CanonicalCombiningClass = CanonicalCombiningClass(107); / "CCC107"
+    pub const CCC118: CanonicalCombiningClass = CanonicalCombiningClass(118); / "CCC118"
+    pub const CCC122: CanonicalCombiningClass = CanonicalCombiningClass(122); / "CCC122"
+    pub const CCC129: CanonicalCombiningClass = CanonicalCombiningClass(129); / "CCC129"
+    pub const CCC130: CanonicalCombiningClass = CanonicalCombiningClass(130); / "CCC130"
+    pub const CCC132: CanonicalCombiningClass = CanonicalCombiningClass(132); / "CCC132"
+    pub const CCC133: CanonicalCombiningClass = CanonicalCombiningClass(133); / "CCC133" // RESERVED
+    pub const AttachedBelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(200); / "ATBL"
+    pub const AttachedBelow: CanonicalCombiningClass = CanonicalCombiningClass(202); / "ATB"
+    pub const AttachedAbove: CanonicalCombiningClass = CanonicalCombiningClass(214); / "ATA"
+    pub const AttachedAboveRight: CanonicalCombiningClass = CanonicalCombiningClass(216); / "ATAR"
+    pub const BelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(218); / "BL"
+    pub const Below: CanonicalCombiningClass = CanonicalCombiningClass(220); / "B"
+    pub const BelowRight: CanonicalCombiningClass = CanonicalCombiningClass(222); / "BR"
+    pub const Left: CanonicalCombiningClass = CanonicalCombiningClass(224); / "L"
+    pub const Right: CanonicalCombiningClass = CanonicalCombiningClass(226); / "R"
+    pub const AboveLeft: CanonicalCombiningClass = CanonicalCombiningClass(228); / "AL"
+    pub const Above: CanonicalCombiningClass = CanonicalCombiningClass(230); / "A"
+    pub const AboveRight: CanonicalCombiningClass = CanonicalCombiningClass(232); / "AR"
+    pub const DoubleBelow: CanonicalCombiningClass = CanonicalCombiningClass(233); / "DB"
+    pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); / "DA"
+    pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); / "IS"
 }
 #[test]
 fn ccc_consts();
@@ -1714,10 +1860,10 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl IndicConjunctBreak {
     #[default]
-    pub const None: IndicConjunctBreak = IndicConjunctBreak(0);
-    pub const Consonant: IndicConjunctBreak = IndicConjunctBreak(1);
-    pub const Extend: IndicConjunctBreak = IndicConjunctBreak(2);
-    pub const Linker: IndicConjunctBreak = IndicConjunctBreak(3);
+    pub const None: IndicConjunctBreak = IndicConjunctBreak(0); / "None"
+    pub const Consonant: IndicConjunctBreak = IndicConjunctBreak(1); / "Consonant"
+    pub const Extend: IndicConjunctBreak = IndicConjunctBreak(2); / "Extend"
+    pub const Linker: IndicConjunctBreak = IndicConjunctBreak(3); / "Linker"
 }
 #[test]
 fn indic_conjunct_break_consts();
@@ -1773,42 +1919,42 @@ create_const_array! {
 impl IndicSyllabicCategory {
     #[default]
     pub const Other: IndicSyllabicCategory = IndicSyllabicCategory(0);
-    pub const Avagraha: IndicSyllabicCategory = IndicSyllabicCategory(1);
-    pub const Bindu: IndicSyllabicCategory = IndicSyllabicCategory(2);
-    pub const BrahmiJoiningNumber: IndicSyllabicCategory = IndicSyllabicCategory(3);
-    pub const CantillationMark: IndicSyllabicCategory = IndicSyllabicCategory(4);
-    pub const Consonant: IndicSyllabicCategory = IndicSyllabicCategory(5);
-    pub const ConsonantDead: IndicSyllabicCategory = IndicSyllabicCategory(6);
-    pub const ConsonantFinal: IndicSyllabicCategory = IndicSyllabicCategory(7);
-    pub const ConsonantHeadLetter: IndicSyllabicCategory = IndicSyllabicCategory(8);
-    pub const ConsonantInitialPostfixed: IndicSyllabicCategory = IndicSyllabicCategory(9);
-    pub const ConsonantKiller: IndicSyllabicCategory = IndicSyllabicCategory(10);
-    pub const ConsonantMedial: IndicSyllabicCategory = IndicSyllabicCategory(11);
-    pub const ConsonantPlaceholder: IndicSyllabicCategory = IndicSyllabicCategory(12);
-    pub const ConsonantPrecedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(13);
-    pub const ConsonantPrefixed: IndicSyllabicCategory = IndicSyllabicCategory(14);
-    pub const ConsonantSubjoined: IndicSyllabicCategory = IndicSyllabicCategory(15);
-    pub const ConsonantSucceedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(16);
-    pub const ConsonantWithStacker: IndicSyllabicCategory = IndicSyllabicCategory(17);
-    pub const GeminationMark: IndicSyllabicCategory = IndicSyllabicCategory(18);
-    pub const InvisibleStacker: IndicSyllabicCategory = IndicSyllabicCategory(19);
-    pub const Joiner: IndicSyllabicCategory = IndicSyllabicCategory(20);
-    pub const ModifyingLetter: IndicSyllabicCategory = IndicSyllabicCategory(21);
-    pub const NonJoiner: IndicSyllabicCategory = IndicSyllabicCategory(22);
-    pub const Nukta: IndicSyllabicCategory = IndicSyllabicCategory(23);
-    pub const Number: IndicSyllabicCategory = IndicSyllabicCategory(24);
-    pub const NumberJoiner: IndicSyllabicCategory = IndicSyllabicCategory(25);
-    pub const PureKiller: IndicSyllabicCategory = IndicSyllabicCategory(26);
-    pub const RegisterShifter: IndicSyllabicCategory = IndicSyllabicCategory(27);
-    pub const SyllableModifier: IndicSyllabicCategory = IndicSyllabicCategory(28);
-    pub const ToneLetter: IndicSyllabicCategory = IndicSyllabicCategory(29);
-    pub const ToneMark: IndicSyllabicCategory = IndicSyllabicCategory(30);
-    pub const Virama: IndicSyllabicCategory = IndicSyllabicCategory(31);
-    pub const Visarga: IndicSyllabicCategory = IndicSyllabicCategory(32);
-    pub const Vowel: IndicSyllabicCategory = IndicSyllabicCategory(33);
-    pub const VowelDependent: IndicSyllabicCategory = IndicSyllabicCategory(34);
-    pub const VowelIndependent: IndicSyllabicCategory = IndicSyllabicCategory(35);
-    pub const ReorderingKiller: IndicSyllabicCategory = IndicSyllabicCategory(36);
+ / "Other"    pub const Avagraha: IndicSyllabicCategory = IndicSyllabicCategory(1);
+ / "Avagraha"    pub const Bindu: IndicSyllabicCategory = IndicSyllabicCategory(2);
+ / "Bindu"    pub const BrahmiJoiningNumber: IndicSyllabicCategory = IndicSyllabicCategory(3);
+ / "Brahmi_Joining_Number"    pub const CantillationMark: IndicSyllabicCategory = IndicSyllabicCategory(4);
+ / "Cantillation_Mark"    pub const Consonant: IndicSyllabicCategory = IndicSyllabicCategory(5);
+ / "Consonant"    pub const ConsonantDead: IndicSyllabicCategory = IndicSyllabicCategory(6);
+ / "Consonant_Dead"    pub const ConsonantFinal: IndicSyllabicCategory = IndicSyllabicCategory(7);
+ / "Consonant_Final"    pub const ConsonantHeadLetter: IndicSyllabicCategory = IndicSyllabicCategory(8);
+ / "Consonant_Head_Letter"    pub const ConsonantInitialPostfixed: IndicSyllabicCategory = IndicSyllabicCategory(9);
+ / "Consonant_Initial_Postfixed"    pub const ConsonantKiller: IndicSyllabicCategory = IndicSyllabicCategory(10); / "Consonant_Killer"
+    pub const ConsonantMedial: IndicSyllabicCategory = IndicSyllabicCategory(11); / "Consonant_Medial"
+    pub const ConsonantPlaceholder: IndicSyllabicCategory = IndicSyllabicCategory(12); / "Consonant_Placeholder"
+    pub const ConsonantPrecedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(13); / "Consonant_Preceding_Repha"
+    pub const ConsonantPrefixed: IndicSyllabicCategory = IndicSyllabicCategory(14); / "Consonant_Prefixed"
+    pub const ConsonantSubjoined: IndicSyllabicCategory = IndicSyllabicCategory(15); / "Consonant_Subjoined"
+    pub const ConsonantSucceedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(16); / "Consonant_Succeeding_Repha"
+    pub const ConsonantWithStacker: IndicSyllabicCategory = IndicSyllabicCategory(17); / "Consonant_With_Stacker"
+    pub const GeminationMark: IndicSyllabicCategory = IndicSyllabicCategory(18); / "Gemination_Mark"
+    pub const InvisibleStacker: IndicSyllabicCategory = IndicSyllabicCategory(19); / "Invisible_Stacker"
+    pub const Joiner: IndicSyllabicCategory = IndicSyllabicCategory(20); / "Joiner"
+    pub const ModifyingLetter: IndicSyllabicCategory = IndicSyllabicCategory(21); / "Modifying_Letter"
+    pub const NonJoiner: IndicSyllabicCategory = IndicSyllabicCategory(22); / "Non_Joiner"
+    pub const Nukta: IndicSyllabicCategory = IndicSyllabicCategory(23); / "Nukta"
+    pub const Number: IndicSyllabicCategory = IndicSyllabicCategory(24); / "Number"
+    pub const NumberJoiner: IndicSyllabicCategory = IndicSyllabicCategory(25); / "Number_Joiner"
+    pub const PureKiller: IndicSyllabicCategory = IndicSyllabicCategory(26); / "Pure_Killer"
+    pub const RegisterShifter: IndicSyllabicCategory = IndicSyllabicCategory(27); / "Register_Shifter"
+    pub const SyllableModifier: IndicSyllabicCategory = IndicSyllabicCategory(28); / "Syllable_Modifier"
+    pub const ToneLetter: IndicSyllabicCategory = IndicSyllabicCategory(29); / "Tone_Letter"
+    pub const ToneMark: IndicSyllabicCategory = IndicSyllabicCategory(30); / "Tone_Mark"
+    pub const Virama: IndicSyllabicCategory = IndicSyllabicCategory(31); / "Virama"
+    pub const Visarga: IndicSyllabicCategory = IndicSyllabicCategory(32); / "Visarga"
+    pub const Vowel: IndicSyllabicCategory = IndicSyllabicCategory(33); / "Vowel"
+    pub const VowelDependent: IndicSyllabicCategory = IndicSyllabicCategory(34); / "Vowel_Dependent"
+    pub const VowelIndependent: IndicSyllabicCategory = IndicSyllabicCategory(35); / "Vowel_Independent"
+    pub const ReorderingKiller: IndicSyllabicCategory = IndicSyllabicCategory(36); / "Reordering_Killer"
 }
 #[test]
 fn indic_syllabic_category_consts();
@@ -1862,112 +2008,112 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl JoiningGroup {
     #[default]
-    pub const NoJoiningGroup: JoiningGroup = JoiningGroup(0);
-    pub const Ain: JoiningGroup = JoiningGroup(1);
-    pub const Alaph: JoiningGroup = JoiningGroup(2);
-    pub const Alef: JoiningGroup = JoiningGroup(3);
-    pub const Beh: JoiningGroup = JoiningGroup(4);
-    pub const Beth: JoiningGroup = JoiningGroup(5);
-    pub const Dal: JoiningGroup = JoiningGroup(6);
-    pub const DalathRish: JoiningGroup = JoiningGroup(7);
-    pub const E: JoiningGroup = JoiningGroup(8);
-    pub const Feh: JoiningGroup = JoiningGroup(9);
-    pub const FinalSemkath: JoiningGroup = JoiningGroup(10);
-    pub const Gaf: JoiningGroup = JoiningGroup(11);
-    pub const Gamal: JoiningGroup = JoiningGroup(12);
-    pub const Hah: JoiningGroup = JoiningGroup(13);
-    pub const TehMarbutaGoal: JoiningGroup = JoiningGroup(14);
-    pub const He: JoiningGroup = JoiningGroup(15);
-    pub const Heh: JoiningGroup = JoiningGroup(16);
-    pub const HehGoal: JoiningGroup = JoiningGroup(17);
-    pub const Heth: JoiningGroup = JoiningGroup(18);
-    pub const Kaf: JoiningGroup = JoiningGroup(19);
-    pub const Kaph: JoiningGroup = JoiningGroup(20);
-    pub const KnottedHeh: JoiningGroup = JoiningGroup(21);
-    pub const Lam: JoiningGroup = JoiningGroup(22);
-    pub const Lamadh: JoiningGroup = JoiningGroup(23);
-    pub const Meem: JoiningGroup = JoiningGroup(24);
-    pub const Mim: JoiningGroup = JoiningGroup(25);
-    pub const Noon: JoiningGroup = JoiningGroup(26);
-    pub const Nun: JoiningGroup = JoiningGroup(27);
-    pub const Pe: JoiningGroup = JoiningGroup(28);
-    pub const Qaf: JoiningGroup = JoiningGroup(29);
-    pub const Qaph: JoiningGroup = JoiningGroup(30);
-    pub const Reh: JoiningGroup = JoiningGroup(31);
-    pub const ReversedPe: JoiningGroup = JoiningGroup(32);
-    pub const Sad: JoiningGroup = JoiningGroup(33);
-    pub const Sadhe: JoiningGroup = JoiningGroup(34);
-    pub const Seen: JoiningGroup = JoiningGroup(35);
-    pub const Semkath: JoiningGroup = JoiningGroup(36);
-    pub const Shin: JoiningGroup = JoiningGroup(37);
-    pub const SwashKaf: JoiningGroup = JoiningGroup(38);
-    pub const SyriacWaw: JoiningGroup = JoiningGroup(39);
-    pub const Tah: JoiningGroup = JoiningGroup(40);
-    pub const Taw: JoiningGroup = JoiningGroup(41);
-    pub const TehMarbuta: JoiningGroup = JoiningGroup(42);
-    pub const Teth: JoiningGroup = JoiningGroup(43);
-    pub const Waw: JoiningGroup = JoiningGroup(44);
-    pub const Yeh: JoiningGroup = JoiningGroup(45);
-    pub const YehBarree: JoiningGroup = JoiningGroup(46);
-    pub const YehWithTail: JoiningGroup = JoiningGroup(47);
-    pub const Yudh: JoiningGroup = JoiningGroup(48);
-    pub const YudhHe: JoiningGroup = JoiningGroup(49);
-    pub const Zain: JoiningGroup = JoiningGroup(50);
-    pub const Fe: JoiningGroup = JoiningGroup(51);
-    pub const Khaph: JoiningGroup = JoiningGroup(52);
-    pub const Zhain: JoiningGroup = JoiningGroup(53);
-    pub const BurushaskiYehBarree: JoiningGroup = JoiningGroup(54);
-    pub const FarsiYeh: JoiningGroup = JoiningGroup(55);
-    pub const Nya: JoiningGroup = JoiningGroup(56);
-    pub const RohingyaYeh: JoiningGroup = JoiningGroup(57);
-    pub const ManichaeanAleph: JoiningGroup = JoiningGroup(58);
-    pub const ManichaeanAyin: JoiningGroup = JoiningGroup(59);
-    pub const ManichaeanBeth: JoiningGroup = JoiningGroup(60);
-    pub const ManichaeanDaleth: JoiningGroup = JoiningGroup(61);
-    pub const ManichaeanDhamedh: JoiningGroup = JoiningGroup(62);
-    pub const ManichaeanFive: JoiningGroup = JoiningGroup(63);
-    pub const ManichaeanGimel: JoiningGroup = JoiningGroup(64);
-    pub const ManichaeanHeth: JoiningGroup = JoiningGroup(65);
-    pub const ManichaeanHundred: JoiningGroup = JoiningGroup(66);
-    pub const ManichaeanKaph: JoiningGroup = JoiningGroup(67);
-    pub const ManichaeanLamedh: JoiningGroup = JoiningGroup(68);
-    pub const ManichaeanMem: JoiningGroup = JoiningGroup(69);
-    pub const ManichaeanNun: JoiningGroup = JoiningGroup(70);
-    pub const ManichaeanOne: JoiningGroup = JoiningGroup(71);
-    pub const ManichaeanPe: JoiningGroup = JoiningGroup(72);
-    pub const ManichaeanQoph: JoiningGroup = JoiningGroup(73);
-    pub const ManichaeanResh: JoiningGroup = JoiningGroup(74);
-    pub const ManichaeanSadhe: JoiningGroup = JoiningGroup(75);
-    pub const ManichaeanSamekh: JoiningGroup = JoiningGroup(76);
-    pub const ManichaeanTaw: JoiningGroup = JoiningGroup(77);
-    pub const ManichaeanTen: JoiningGroup = JoiningGroup(78);
-    pub const ManichaeanTeth: JoiningGroup = JoiningGroup(79);
-    pub const ManichaeanThamedh: JoiningGroup = JoiningGroup(80);
-    pub const ManichaeanTwenty: JoiningGroup = JoiningGroup(81);
-    pub const ManichaeanWaw: JoiningGroup = JoiningGroup(82);
-    pub const ManichaeanYodh: JoiningGroup = JoiningGroup(83);
-    pub const ManichaeanZayin: JoiningGroup = JoiningGroup(84);
-    pub const StraightWaw: JoiningGroup = JoiningGroup(85);
-    pub const AfricanFeh: JoiningGroup = JoiningGroup(86);
-    pub const AfricanNoon: JoiningGroup = JoiningGroup(87);
-    pub const AfricanQaf: JoiningGroup = JoiningGroup(88);
-    pub const MalayalamBha: JoiningGroup = JoiningGroup(89);
-    pub const MalayalamJa: JoiningGroup = JoiningGroup(90);
-    pub const MalayalamLla: JoiningGroup = JoiningGroup(91);
-    pub const MalayalamLlla: JoiningGroup = JoiningGroup(92);
-    pub const MalayalamNga: JoiningGroup = JoiningGroup(93);
-    pub const MalayalamNna: JoiningGroup = JoiningGroup(94);
-    pub const MalayalamNnna: JoiningGroup = JoiningGroup(95);
-    pub const MalayalamNya: JoiningGroup = JoiningGroup(96);
-    pub const MalayalamRa: JoiningGroup = JoiningGroup(97);
-    pub const MalayalamSsa: JoiningGroup = JoiningGroup(98);
-    pub const MalayalamTta: JoiningGroup = JoiningGroup(99);
-    pub const HanifiRohingyaKinnaYa: JoiningGroup = JoiningGroup(100);
-    pub const HanifiRohingyaPa: JoiningGroup = JoiningGroup(101);
-    pub const ThinYeh: JoiningGroup = JoiningGroup(102);
-    pub const VerticalTail: JoiningGroup = JoiningGroup(103);
-    pub const KashmiriYeh: JoiningGroup = JoiningGroup(104);
-    pub const ThinNoon: JoiningGroup = JoiningGroup(105);
+    pub const NoJoiningGroup: JoiningGroup = JoiningGroup(0); / "No_Joining_Group"
+    pub const Ain: JoiningGroup = JoiningGroup(1); / "Ain"
+    pub const Alaph: JoiningGroup = JoiningGroup(2); / "Alaph"
+    pub const Alef: JoiningGroup = JoiningGroup(3); / "Alef"
+    pub const Beh: JoiningGroup = JoiningGroup(4); / "Beh"
+    pub const Beth: JoiningGroup = JoiningGroup(5); / "Beth"
+    pub const Dal: JoiningGroup = JoiningGroup(6); / "Dal"
+    pub const DalathRish: JoiningGroup = JoiningGroup(7); / "Dalath_Rish"
+    pub const E: JoiningGroup = JoiningGroup(8); / "E"
+    pub const Feh: JoiningGroup = JoiningGroup(9); / "Feh"
+    pub const FinalSemkath: JoiningGroup = JoiningGroup(10); / "Final_Semkath"
+    pub const Gaf: JoiningGroup = JoiningGroup(11); / "Gaf"
+    pub const Gamal: JoiningGroup = JoiningGroup(12); / "Gamal"
+    pub const Hah: JoiningGroup = JoiningGroup(13); / "Hah"
+    pub const TehMarbutaGoal: JoiningGroup = JoiningGroup(14); / "Teh_Marbuta_Goal"
+    pub const He: JoiningGroup = JoiningGroup(15); / "He"
+    pub const Heh: JoiningGroup = JoiningGroup(16); / "Heh"
+    pub const HehGoal: JoiningGroup = JoiningGroup(17); / "Heh_Goal"
+    pub const Heth: JoiningGroup = JoiningGroup(18); / "Heth"
+    pub const Kaf: JoiningGroup = JoiningGroup(19); / "Kaf"
+    pub const Kaph: JoiningGroup = JoiningGroup(20); / "Kaph"
+    pub const KnottedHeh: JoiningGroup = JoiningGroup(21); / "Knotted_Heh"
+    pub const Lam: JoiningGroup = JoiningGroup(22); / "Lam"
+    pub const Lamadh: JoiningGroup = JoiningGroup(23); / "Lamadh"
+    pub const Meem: JoiningGroup = JoiningGroup(24); / "Meem"
+    pub const Mim: JoiningGroup = JoiningGroup(25); / "Mim"
+    pub const Noon: JoiningGroup = JoiningGroup(26); / "Noon"
+    pub const Nun: JoiningGroup = JoiningGroup(27); / "Nun"
+    pub const Pe: JoiningGroup = JoiningGroup(28); / "Pe"
+    pub const Qaf: JoiningGroup = JoiningGroup(29); / "Qaf"
+    pub const Qaph: JoiningGroup = JoiningGroup(30); / "Qaph"
+    pub const Reh: JoiningGroup = JoiningGroup(31); / "Reh"
+    pub const ReversedPe: JoiningGroup = JoiningGroup(32); / "Reversed_Pe"
+    pub const Sad: JoiningGroup = JoiningGroup(33); / "Sad"
+    pub const Sadhe: JoiningGroup = JoiningGroup(34); / "Sadhe"
+    pub const Seen: JoiningGroup = JoiningGroup(35); / "Seen"
+    pub const Semkath: JoiningGroup = JoiningGroup(36); / "Semkath"
+    pub const Shin: JoiningGroup = JoiningGroup(37); / "Shin"
+    pub const SwashKaf: JoiningGroup = JoiningGroup(38); / "Swash_Kaf"
+    pub const SyriacWaw: JoiningGroup = JoiningGroup(39); / "Syriac_Waw"
+    pub const Tah: JoiningGroup = JoiningGroup(40); / "Tah"
+    pub const Taw: JoiningGroup = JoiningGroup(41); / "Taw"
+    pub const TehMarbuta: JoiningGroup = JoiningGroup(42); / "Teh_Marbuta"
+    pub const Teth: JoiningGroup = JoiningGroup(43); / "Teth"
+    pub const Waw: JoiningGroup = JoiningGroup(44); / "Waw"
+    pub const Yeh: JoiningGroup = JoiningGroup(45); / "Yeh"
+    pub const YehBarree: JoiningGroup = JoiningGroup(46); / "Yeh_Barree"
+    pub const YehWithTail: JoiningGroup = JoiningGroup(47); / "Yeh_With_Tail"
+    pub const Yudh: JoiningGroup = JoiningGroup(48); / "Yudh"
+    pub const YudhHe: JoiningGroup = JoiningGroup(49); / "Yudh_He"
+    pub const Zain: JoiningGroup = JoiningGroup(50); / "Zain"
+    pub const Fe: JoiningGroup = JoiningGroup(51); / "Fe"
+    pub const Khaph: JoiningGroup = JoiningGroup(52); / "Khaph"
+    pub const Zhain: JoiningGroup = JoiningGroup(53); / "Zhain"
+    pub const BurushaskiYehBarree: JoiningGroup = JoiningGroup(54); / "Burushaski_Yeh_Barree"
+    pub const FarsiYeh: JoiningGroup = JoiningGroup(55); / "Farsi_Yeh"
+    pub const Nya: JoiningGroup = JoiningGroup(56); / "Nya"
+    pub const RohingyaYeh: JoiningGroup = JoiningGroup(57); / "Rohingya_Yeh"
+    pub const ManichaeanAleph: JoiningGroup = JoiningGroup(58); / "Manichaean_Aleph"
+    pub const ManichaeanAyin: JoiningGroup = JoiningGroup(59); / "Manichaean_Ayin"
+    pub const ManichaeanBeth: JoiningGroup = JoiningGroup(60); / "Manichaean_Beth"
+    pub const ManichaeanDaleth: JoiningGroup = JoiningGroup(61); / "Manichaean_Daleth"
+    pub const ManichaeanDhamedh: JoiningGroup = JoiningGroup(62); / "Manichaean_Dhamedh"
+    pub const ManichaeanFive: JoiningGroup = JoiningGroup(63); / "Manichaean_Five"
+    pub const ManichaeanGimel: JoiningGroup = JoiningGroup(64); / "Manichaean_Gimel"
+    pub const ManichaeanHeth: JoiningGroup = JoiningGroup(65); / "Manichaean_Heth"
+    pub const ManichaeanHundred: JoiningGroup = JoiningGroup(66); / "Manichaean_Hundred"
+    pub const ManichaeanKaph: JoiningGroup = JoiningGroup(67); / "Manichaean_Kaph"
+    pub const ManichaeanLamedh: JoiningGroup = JoiningGroup(68); / "Manichaean_Lamedh"
+    pub const ManichaeanMem: JoiningGroup = JoiningGroup(69); / "Manichaean_Mem"
+    pub const ManichaeanNun: JoiningGroup = JoiningGroup(70); / "Manichaean_Nun"
+    pub const ManichaeanOne: JoiningGroup = JoiningGroup(71); / "Manichaean_One"
+    pub const ManichaeanPe: JoiningGroup = JoiningGroup(72); / "Manichaean_Pe"
+    pub const ManichaeanQoph: JoiningGroup = JoiningGroup(73); / "Manichaean_Qoph"
+    pub const ManichaeanResh: JoiningGroup = JoiningGroup(74); / "Manichaean_Resh"
+    pub const ManichaeanSadhe: JoiningGroup = JoiningGroup(75); / "Manichaean_Sadhe"
+    pub const ManichaeanSamekh: JoiningGroup = JoiningGroup(76); / "Manichaean_Samekh"
+    pub const ManichaeanTaw: JoiningGroup = JoiningGroup(77); / "Manichaean_Taw"
+    pub const ManichaeanTen: JoiningGroup = JoiningGroup(78); / "Manichaean_Ten"
+    pub const ManichaeanTeth: JoiningGroup = JoiningGroup(79); / "Manichaean_Teth"
+    pub const ManichaeanThamedh: JoiningGroup = JoiningGroup(80); / "Manichaean_Thamedh"
+    pub const ManichaeanTwenty: JoiningGroup = JoiningGroup(81); / "Manichaean_Twenty"
+    pub const ManichaeanWaw: JoiningGroup = JoiningGroup(82); / "Manichaean_Waw"
+    pub const ManichaeanYodh: JoiningGroup = JoiningGroup(83); / "Manichaean_Yodh"
+    pub const ManichaeanZayin: JoiningGroup = JoiningGroup(84); / "Manichaean_Zayin"
+    pub const StraightWaw: JoiningGroup = JoiningGroup(85); / "Straight_Waw"
+    pub const AfricanFeh: JoiningGroup = JoiningGroup(86); / "African_Feh"
+    pub const AfricanNoon: JoiningGroup = JoiningGroup(87); / "African_Noon"
+    pub const AfricanQaf: JoiningGroup = JoiningGroup(88); / "African_Qaf"
+    pub const MalayalamBha: JoiningGroup = JoiningGroup(89); / "Malayalam_Bha"
+    pub const MalayalamJa: JoiningGroup = JoiningGroup(90); / "Malayalam_Ja"
+    pub const MalayalamLla: JoiningGroup = JoiningGroup(91); / "Malayalam_Lla"
+    pub const MalayalamLlla: JoiningGroup = JoiningGroup(92); / "Malayalam_Llla"
+    pub const MalayalamNga: JoiningGroup = JoiningGroup(93); / "Malayalam_Nga"
+    pub const MalayalamNna: JoiningGroup = JoiningGroup(94); / "Malayalam_Nna"
+    pub const MalayalamNnna: JoiningGroup = JoiningGroup(95); / "Malayalam_Nnna"
+    pub const MalayalamNya: JoiningGroup = JoiningGroup(96); / "Malayalam_Nya"
+    pub const MalayalamRa: JoiningGroup = JoiningGroup(97); / "Malayalam_Ra"
+    pub const MalayalamSsa: JoiningGroup = JoiningGroup(98); / "Malayalam_Ssa"
+    pub const MalayalamTta: JoiningGroup = JoiningGroup(99); / "Malayalam_Tta"
+    pub const HanifiRohingyaKinnaYa: JoiningGroup = JoiningGroup(100); / "Hanifi_Rohingya_Kinna_Ya"
+    pub const HanifiRohingyaPa: JoiningGroup = JoiningGroup(101); / "Hanifi_Rohingya_Pa"
+    pub const ThinYeh: JoiningGroup = JoiningGroup(102); / "Thin_Yeh"
+    pub const VerticalTail: JoiningGroup = JoiningGroup(103); / "Vertical_Tail"
+    pub const KashmiriYeh: JoiningGroup = JoiningGroup(104); / "Kashmiri_Yeh"
+    pub const ThinNoon: JoiningGroup = JoiningGroup(105); / "Thin_Noon"
 }
 #[test]
 fn joining_group_consts();
@@ -2023,12 +2169,12 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl JoiningType {
     #[default]
-    pub const NonJoining: JoiningType = JoiningType(0); // name="U"
-    pub const JoinCausing: JoiningType = JoiningType(1); // name="C"
-    pub const DualJoining: JoiningType = JoiningType(2); // name="D"
-    pub const LeftJoining: JoiningType = JoiningType(3); // name="L"
-    pub const RightJoining: JoiningType = JoiningType(4); // name="R"
-    pub const Transparent: JoiningType = JoiningType(5); // name="T"
+    pub const NonJoining: JoiningType = JoiningType(0); / "U"
+    pub const JoinCausing: JoiningType = JoiningType(1); / "C"
+    pub const DualJoining: JoiningType = JoiningType(2); / "D"
+    pub const LeftJoining: JoiningType = JoiningType(3); / "L"
+    pub const RightJoining: JoiningType = JoiningType(4); / "R"
+    pub const Transparent: JoiningType = JoiningType(5); / "T"
 }
 #[test]
 fn joining_type_consts();
@@ -2092,10 +2238,10 @@ create_const_array! {
 #[allow(non_upper_case_globals)]
 impl VerticalOrientation {
     #[default]
-    pub const Rotated: VerticalOrientation = VerticalOrientation(0); // name="R"
-    pub const TransformedRotated: VerticalOrientation = VerticalOrientation(1); // name="Tr"
-    pub const TransformedUpright: VerticalOrientation = VerticalOrientation(2); // name="Tu"
-    pub const Upright: VerticalOrientation = VerticalOrientation(3); // name="U"
+    pub const Rotated: VerticalOrientation = VerticalOrientation(0); / "R"
+    pub const TransformedRotated: VerticalOrientation = VerticalOrientation(1); / "Tr"
+    pub const TransformedUpright: VerticalOrientation = VerticalOrientation(2); / "Tu"
+    pub const Upright: VerticalOrientation = VerticalOrientation(3); / "U"
 }
 #[test]
 fn vertical_orientation_consts();
@@ -3557,132 +3703,4 @@ make_emoji_set! {
     /// assert!(basic_emoji.contains_str("\u{1F6E4}\u{FE0F}")); // railway track
     /// assert!(!basic_emoji.contains_str("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
     /// ```
-}
-
-#[cfg(test)]
-mod test_enumerated_property_completeness {
-    use super::*;
-    use std::collections::BTreeMap;
-
-    fn check_enum<'a, T: NamedEnumeratedProperty>(
-        lookup: &crate::provider::names::PropertyValueNameToEnumMap<'static>,
-        consts: impl IntoIterator<Item = &'a T>,
-    ) where
-        u16: From<T>,
-    {
-        let mut data: BTreeMap<_, _> = lookup
-            .map
-            .iter()
-            .map(|(name, value)| (value, (name, "Data")))
-            .collect();
-
-        let names = crate::PropertyNamesLong::<T>::new();
-        let consts = consts.into_iter().map(|value| {
-            (
-                u16::from(*value) as usize,
-                (
-                    names.get(*value).unwrap_or("<unknown>").to_string(),
-                    "Consts",
-                ),
-            )
-        });
-
-        let mut diff = Vec::new();
-        for t @ (value, _) in consts {
-            if data.remove(&value).is_none() {
-                diff.push(t);
-            }
-        }
-        diff.extend(data);
-
-        let mut fmt_diff = String::new();
-        for (value, (name, source)) in diff {
-            fmt_diff.push_str(&format!("{source}:\t{name} = {value:?}\n"));
-        }
-
-        assert!(
-            fmt_diff.is_empty(),
-            "Values defined in data do not match values defined in consts. Difference:\n{fmt_diff}"
-        );
-    }
-
-    #[test]
-    fn test_ea() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_EAST_ASIAN_WIDTH_V1,
-            EastAsianWidth::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_ccc() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_CANONICAL_COMBINING_CLASS_V1,
-            CanonicalCombiningClass::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_jt() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_JOINING_TYPE_V1,
-            JoiningType::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_insc() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_INDIC_SYLLABIC_CATEGORY_V1,
-            IndicSyllabicCategory::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_sb() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_SENTENCE_BREAK_V1,
-            SentenceBreak::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_wb() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_WORD_BREAK_V1,
-            WordBreak::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_bc() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_BIDI_CLASS_V1,
-            BidiClass::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_nt() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_NUMERIC_TYPE_V1,
-            NumericType::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_hst() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_HANGUL_SYLLABLE_TYPE_V1,
-            HangulSyllableType::ALL_VALUES,
-        );
-    }
-
-    #[test]
-    fn test_vo() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_VERTICAL_ORIENTATION_V1,
-            VerticalOrientation::ALL_VALUES,
-        );
-    }
 }

@@ -14,71 +14,22 @@ use icu::properties::provider::{names::*, *};
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
+use std::fmt::Debug;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 
 impl SourceDataProvider {
-    pub(super) fn get_enumerated_prop<'a>(
-        &'a self,
-        name: &str,
-        short_name: &str,
-    ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
-        let data = self.icuexport()?
-            .read_and_parse_toml::<super::uprops_serde::enumerated::Main>(&format!(
-                "uprops/{}/{}.toml",
-                self.trie_type(),
-                short_name
-            ))?
-            .enum_property
-            .first()
-            .ok_or_else(|| DataError::custom("Loading icuexport property data failed: \
-                                            Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-
-        if name != data.long_name || short_name != data.short_name {
-            return Err(DataError::custom("Property name mismatch").with_display_context(name));
-        }
-
-        Ok(data)
-    }
-
-    fn get_mask_prop<'a>(
-        &'a self,
-        name: &str,
-        short_name: &str,
-        mask_for: &str,
-    ) -> Result<&'a super::uprops_serde::mask::MaskPropertyMap, DataError> {
-        let data = self
-            .icuexport()?
-            .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
-                "uprops/{}/{}.toml",
-                self.trie_type(),
-                short_name
-            ))?
-            .mask_property
-            .first()
-            .ok_or(DataError::custom(
-                "Loading icuexport property data failed: \
-                 Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)",
-            ))?;
-
-        if data.long_name != name || data.short_name != short_name || data.mask_for != mask_for {
-            return Err(DataError::custom("Property name mismatch")
-                .with_marker(PropertyNameParseGeneralCategoryMaskV1::INFO));
-        }
-
-        Ok(data)
-    }
-
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     pub(super) fn build_enumerated_prop<T: EnumeratedProperty>(
         &self,
+        short_name_to_t: BTreeMap<&'static str, T>,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
         let name = core::str::from_utf8(T::NAME).unwrap();
         let short_name = core::str::from_utf8(T::SHORT_NAME).unwrap();
 
         self.validate_property_name(name, short_name)?;
 
-        let discriminants = self.enumerated_prop_names(name, short_name)?.0;
+        let names_to_short_names = self.enumerated_prop_names(short_name)?;
 
         let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
             T::default(),
@@ -128,8 +79,15 @@ impl SourceDataProvider {
                 }
             }
             let value = fields.next().unwrap().trim();
-            let value = discriminants.get(value).copied().expect(value);
-            let value = TrieValue::try_from_u32(value as u32).ok().unwrap();
+            let value = names_to_short_names
+                .get(value)
+                .expect("file should only use names from PropertyValueAliases.txt")
+                .0;
+            let Some(&value) = short_name_to_t.get(value) else {
+                // Don't log an error for every code point, the name data marker code
+                // will log an error that there's an unknown variant.
+                continue;
+            };
 
             if let Some((start, end)) = cp_range.split_once("..") {
                 let start = u32::from_str_radix(start, 16).unwrap();
@@ -147,51 +105,9 @@ impl SourceDataProvider {
     #[allow(clippy::type_complexity)] // just a tuple
     fn enumerated_prop_names<'a>(
         &'a self,
-        name: &str,
-        mut short_name: &str,
-    ) -> Result<
-        (
-            BTreeMap<&'a str, u16>,
-            BTreeMap<u16, &'a str>,
-            BTreeMap<u16, &'a str>,
-        ),
-        DataError,
-    > {
-        let mut short_names = self
-            .get_enumerated_prop(name, short_name)?
-            .values
-            .iter()
-            .map(|value| (value.discr, value.short.as_str()))
-            .collect::<BTreeMap<_, _>>();
-
-        if short_name == "InCB" {
-            // https://unicode-org.atlassian.net/browse/ICU-23383
-            short_names.extend([(1, "Consonant"), (2, "Extend"), (3, "Linker")]);
-        }
-
-        // For the gcm property we want to look up gc names.
-        if short_name == "gcm" {
-            short_name = "gc";
-        }
-
-        let mut discriminants = short_names
-            .iter()
-            .map(|(&d, &n)| (n, d))
-            .collect::<BTreeMap<_, _>>();
-        let mut long_names = BTreeMap::new();
-
-        if short_name == "sc" {
-            // ICU adds a bunch of scripts that don't appear in Unicode,
-            // and hence don't have long names
-            for short in [
-                "Afak", "Aran", "Blis", "Cirt", "Cyrs", "Egyd", "Egyh", "Geok", "Hanb", "Hans",
-                "Hant", "Hntl", "Inds", "Jamo", "Jpan", "Jurc", "Kore", "Kpel", "Latf", "Latg",
-                "Loma", "Maya", "Moon", "Nkgb", "Phlv", "Roro", "Sara", "Syre", "Syrj", "Syrn",
-                "Teng", "Visp", "Wole", "Zmth", "Zsye", "Zsym", "Zxxx",
-            ] {
-                long_names.entry(discriminants[short]).or_insert(short);
-            }
-        }
+        short_name: &str,
+    ) -> Result<BTreeMap<&'a str, (&'a str, NameType)>, DataError> {
+        let mut names = BTreeMap::new();
 
         for line in self
             .unicode()?
@@ -206,40 +122,56 @@ impl SourceDataProvider {
             if parts.next().unwrap().trim() != short_name {
                 continue;
             }
-            let numeric_name = (short_name == "ccc").then(|| parts.next().unwrap());
+            let numeric_name = (short_name.as_bytes()
+                == icu::properties::props::CanonicalCombiningClass::SHORT_NAME)
+                .then(|| parts.next().unwrap());
             let short = parts.next().unwrap();
-            let Some(discriminant) = discriminants.get(short).copied() else {
-                continue;
-            };
             let long = parts.next().unwrap();
-            long_names.insert(discriminant, long);
-            discriminants.insert(long, discriminant);
+            names.insert(short, (short, NameType::Short));
+            names.insert(long, (short, NameType::Long));
             for alias in parts {
-                discriminants.insert(alias, discriminant);
+                names.insert(alias, (short, NameType::Alias));
             }
             if let Some(numeric_name) = numeric_name {
-                discriminants.insert(numeric_name, discriminant);
+                names.insert(numeric_name, (short, NameType::Numeric));
             }
         }
 
-        Ok((discriminants, short_names, long_names))
+        for name in names.keys() {
+            if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
+                return Err(
+                    DataError::custom("Property name contains '-' or whitespace")
+                        .with_display_context(name),
+                );
+            }
+        }
+
+        Ok(names)
     }
 }
 
-fn validate_dense(map: &BTreeMap<u16, &str>) -> Result<(), DataError> {
+#[derive(Debug)]
+enum NameType {
+    Short,
+    Long,
+    Numeric,
+    Alias,
+}
+
+fn validate_dense<T: TrieValue + Ord + Debug>(map: &BTreeMap<T, &str>) -> Result<(), DataError> {
     if let Some((&first, _)) = map.first_key_value() {
-        if first > 0 {
+        if first.to_u32() > 0 {
             return Err(DataError::custom(
                 "Property has nonzero starting discriminant, perhaps consider \
                  storing its names as a sparse map or by specializing this error",
             )
-            .with_display_context(&first));
+            .with_debug_context(&first));
         }
     } else {
         return Err(DataError::custom("Property has no values!"));
     };
     if let Some((&last, _)) = map.last_key_value() {
-        let range = usize::from(1 + last);
+        let range = last.to_u32() as usize + 1;
         let count = map.len();
         let gaps = range - count;
         if gaps > 0 {
@@ -256,16 +188,19 @@ fn validate_dense(map: &BTreeMap<u16, &str>) -> Result<(), DataError> {
 }
 
 #[allow(clippy::unnecessary_wraps)] // signature required by macro
-fn convert_sparse(
-    map: BTreeMap<u16, &str>,
+fn convert_sparse<T: TrieValue + Ord>(
+    map: BTreeMap<T, &str>,
 ) -> Result<PropertyEnumToValueNameSparseMap<'static>, DataError> {
     Ok(PropertyEnumToValueNameSparseMap {
-        map: map.into_iter().collect(),
+        map: map
+            .into_iter()
+            .map(|(k, v)| (u16::try_from(k.to_u32()).unwrap(), v))
+            .collect(),
     })
 }
 
-fn convert_linear(
-    map: BTreeMap<u16, &str>,
+fn convert_linear<T: TrieValue + Ord + Debug>(
+    map: BTreeMap<T, &str>,
 ) -> Result<PropertyEnumToValueNameLinearMap<'static>, DataError> {
     validate_dense(&map)?;
 
@@ -275,7 +210,7 @@ fn convert_linear(
 }
 
 fn convert_script(
-    map: BTreeMap<u16, &str>,
+    map: BTreeMap<icu::properties::props::Script, &str>,
 ) -> Result<PropertyScriptToIcuScriptMap<'static>, DataError> {
     validate_dense(&map)?;
 
@@ -323,7 +258,7 @@ macro_rules! expand {
                             and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
                             t
                         } else {
-                            let trie = self.build_enumerated_prop::<$prop>()?;
+                            let trie = self.build_enumerated_prop::<$prop>(<$prop>::names().collect())?;
 
                             self.unicode()?.cpt_cache
                                 .insert(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
@@ -343,25 +278,29 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$parse_marker>, DataError> {
                     self.check_req::<$parse_marker>(req)?;
-                    let data = self.enumerated_prop_names(
-                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
-                        core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
-                    )?;
-                    let map = data.0;
-                    for name in map.keys() {
-                        if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
-                            return Err(
-                                DataError::custom("Property name contains '-' or whitespace")
-                                    .with_display_context(name),
+
+                    let short_name_to_t = <$prop>::names().collect::<BTreeMap<_, _>>();
+
+                    let names = self.enumerated_prop_names(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?;
+
+                    for (name, _) in &short_name_to_t {
+                        if !names.contains_key(name) && <$prop as EnumeratedProperty>::SHORT_NAME != icu::properties::props::Script::SHORT_NAME {
+                            log::warn!(
+                                "Unicode does not contain {} {name:?}",
+                                core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
                             );
                         }
                     }
-                    let trie = map
+
+                    let trie = names
                         .into_iter()
-                        // Filter CCC's numeric names.
-                        // TODO: Don't
-                        .filter(|(k, _)| k.parse::<usize>().is_err())
-                        .map(|(k, v)| (k, v as usize))
+                        .filter(|(_, (_, ty))| matches!(ty, NameType::Short | NameType::Long | NameType::Alias))
+                        .filter_map(|(name, (short_name, _))| Some((name, short_name_to_t.get(short_name).copied()?)))
+                        // Add short names that are only defined in ICU4X, not in Unicode (Scripts)
+                        .chain(short_name_to_t.clone().into_iter())
+                        .map(|(n, v)| (n, v.to_u32() as usize))
+                        .collect::<BTreeMap<_, _>>()
+                        .into_iter()
                         .collect::<ZeroTrieSimpleAscii<_>>()
                         .convert_store();
 
@@ -376,11 +315,8 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$short_marker>, DataError> {
                     self.check_req::<$short_marker>(req)?;
-                    let data = self.enumerated_prop_names(
-                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
-                        core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
-                    )?;
-                    let map = ($short_convert)(data.1)?;
+
+                    let map = ($short_convert)(<$prop>::names().map(|(k, v)| (v, k)).collect())?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
@@ -393,11 +329,33 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$long_marker>, DataError> {
                     self.check_req::<$long_marker>(req)?;
-                    let data = self.enumerated_prop_names(
-                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(),
-                        core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()
-                    )?;
-                    let map = ($long_convert)(data.2)?;
+                    let short_name_to_t = <$prop>::names().collect::<BTreeMap<_, _>>();
+
+                    let names = self.enumerated_prop_names(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?;
+
+                    let names = short_name_to_t.iter().map(|(&short_name, &t)| (t, short_name))
+                        .chain(names
+                            .iter()
+                            .filter(|(_, (_, ty))| matches!(ty, NameType::Long))
+                            .filter_map(|(&name, (short_name, _))| {
+                                let Some(&t) = short_name_to_t.get(short_name) else {
+                                    if <$prop>::SHORT_NAME == icu::properties::props::GeneralCategory::SHORT_NAME {
+                                        // PropertyValueAliases.txt lists both GeneralCategory and GeneralCategoryGroup
+                                        // values, so this is expected
+                                        return None;
+                                    }
+                                    log::error!(
+                                        "Missing Rust value for {} {name:?} {short_name:?}",
+                                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
+                                    );
+                                    return None;
+                                };
+                                Some((t, name))
+                            })
+                        )
+                        .collect();
+
+                    let map = ($long_convert)(names)?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
@@ -429,7 +387,6 @@ macro_rules! expand {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
-
         )+
     }
 }
@@ -444,44 +401,22 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
 
         self.check_req::<PropertyNameParseGeneralCategoryMaskV1>(req)?;
 
-        let mut discriminants = self
-            .get_mask_prop("General_Category_Mask", "gcm", "General_Category")?
-            .values
-            .iter()
-            .map(|value| {
-                (
-                    value.short.as_str(),
-                    GeneralCategoryGroup::from(value.discr).to_u32() as usize,
-                )
-            })
-            .collect::<BTreeMap<_, _>>();
+        let short_name_to_t = GeneralCategoryGroup::names().collect::<BTreeMap<_, _>>();
 
-        for line in self
-            .unicode()?
-            .read_to_string("ucd/PropertyValueAliases.txt")?
-            .lines()
-        {
-            let line = line.split('#').next().unwrap().trim();
-            if line.is_empty() {
-                continue;
-            }
-            let mut parts = line.split(';').map(str::trim);
-            if parts.next().unwrap() != "gc" {
-                continue;
-            }
-            let short = parts.next().unwrap();
-            let Some(discriminant) = discriminants.get(short).copied() else {
-                continue;
-            };
-            let long = parts.next().unwrap();
-            discriminants.insert(long, discriminant);
-            for alias in parts {
-                discriminants.insert(alias, discriminant);
-            }
-        }
-
-        let trie = discriminants
+        let trie = self
+            .enumerated_prop_names("gc")?
             .into_iter()
+            .filter(|(_, (_, ty))| matches!(ty, NameType::Short | NameType::Long | NameType::Alias))
+            .filter_map(|(name, (short_name, _))| {
+                let Some(&t) = short_name_to_t.get(short_name) else {
+                    log::error!(
+                        "Missing Rust value for GeneralCategoryGroup {name:?} {short_name:?}"
+                    );
+                    return None;
+                };
+                Some((name, t))
+            })
+            .map(|(n, v)| (n, v.to_u32() as usize))
             .collect::<ZeroTrieSimpleAscii<_>>()
             .convert_store();
 

@@ -583,31 +583,12 @@ pub fn icuexport_data() -> AbstractFs {
         "norm/small/uts46d.toml",
         "segmenter/dictionary/thaidict.toml",
         "ucase/small/ucase.toml",
-        "uprops/small/GCB.toml",
-        "uprops/small/InCB.toml",
-        "uprops/small/InSC.toml",
-        "uprops/small/SB.toml",
         "uprops/small/Sensitive.toml",
-        "uprops/small/WB.toml",
-        "uprops/small/bc.toml",
-        "uprops/small/bmg.toml",
-        "uprops/small/bpt.toml",
-        "uprops/small/ccc.toml",
-        "uprops/small/ea.toml",
-        "uprops/small/gc.toml",
-        "uprops/small/gcm.toml",
-        "uprops/small/hst.toml",
-        "uprops/small/jg.toml",
-        "uprops/small/jt.toml",
-        "uprops/small/lb.toml",
         "uprops/small/nfcinert.toml",
         "uprops/small/nfdinert.toml",
         "uprops/small/nfkcinert.toml",
         "uprops/small/nfkdinert.toml",
-        "uprops/small/nt.toml",
-        "uprops/small/sc.toml",
-        "uprops/small/segstart.toml",
-        "uprops/small/vo.toml"
+        "uprops/small/segstart.toml"
     )
 }
 
