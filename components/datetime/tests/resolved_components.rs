@@ -106,3 +106,42 @@ fn test_date_and_time() {
         "en-u-hc-h23".parse::<Locale>().unwrap(),
     );
 }
+
+/// More thorough test of `components::Bag::hour_cycle` across multiple locales,
+/// including region-based defaults and explicit overrides.
+/// Fixes <https://github.com/unicode-org/icu4x/issues/594>.
+#[test]
+fn test_hour_cycle_resolved_components() {
+    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldsets::T::short()));
+
+    let check = |locale_str: &str, expected: HourCycle| {
+        let locale: Locale = locale_str.parse().unwrap();
+        let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton)
+            .unwrap();
+        let datetime = DateTime {
+            date: Date::try_new_gregorian(2024, 1, 15).unwrap(),
+            time: Time::try_new(21, 22, 0, 0).unwrap(),
+        };
+        let bag = components::Bag::from(&dtf.format(&datetime).pattern());
+        assert_eq!(
+            bag.hour_cycle,
+            Some(expected),
+            "{locale_str}: expected {expected:?}, got {:?}",
+            bag.hour_cycle,
+        );
+    };
+
+    // h12 locales
+    check("en", HourCycle::H12);
+    check("ko", HourCycle::H12);
+
+    // h23 locales
+    check("fr", HourCycle::H23);
+    check("ja", HourCycle::H23);
+    check("de", HourCycle::H23);
+    check("en-GB", HourCycle::H23); // same language, different region
+
+    // explicit -u-hc- overrides
+    check("fr-u-hc-h12", HourCycle::H12);
+    check("en-u-hc-h23", HourCycle::H23);
+}

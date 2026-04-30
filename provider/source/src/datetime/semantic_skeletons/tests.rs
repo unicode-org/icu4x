@@ -511,3 +511,35 @@ mod date_skeleton_consistency_tests {
         }
     }
 }
+
+/// Verify that `preferred_hour_cycle()` infers the correct `CoarseHourCycle`
+/// from CLDR time skeleton patterns.
+#[test]
+fn test_preferred_hour_cycle_by_locale() {
+    use icu::datetime::provider::pattern::CoarseHourCycle;
+
+    let provider = SourceDataProvider::new_testing();
+
+    // (locale, expected coarse hour cycle)
+    let cases = [
+        ("en", CoarseHourCycle::H11H12), // US English
+        ("fr", CoarseHourCycle::H23),    // French
+        // en-GB not in test data; en-ZA follows UK conventions (h23)
+        ("en-ZA", CoarseHourCycle::H23),
+        ("ja", CoarseHourCycle::H23), // Japanese
+    ];
+
+    for (locale_str, expected) in cases {
+        let locale = locale_str.parse::<DataLocale>().unwrap();
+        let data = provider
+            .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))
+            .expect("Failed to load dates resource");
+
+        let actual = preferred_hour_cycle(data, &locale);
+
+        assert_eq!(
+            actual, expected,
+            "Locale {locale_str}: expected {expected:?}, got {actual:?}"
+        );
+    }
+}
