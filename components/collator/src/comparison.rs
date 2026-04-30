@@ -2017,19 +2017,20 @@ impl<'a> CollatorBorrowed<'a> {
                         // The backwards secondary level compares secondary weights backwards
                         // within segments separated by the merge separator (U+FFFE).
                         let secs = &mut secondaries.buf;
-                        let last = secs.len() - 1;
-                        if sec_segment_start < last {
-                            let mut q = sec_segment_start;
-                            let mut r = last;
+                        if let Some(last) = secs.len().checked_sub(1) {
+                            if sec_segment_start < last {
+                                let mut q = sec_segment_start;
+                                let mut r = last;
 
-                            // these indices start at valid values and we stop when they cross
-                            #[expect(clippy::indexing_slicing)]
-                            while q < r {
-                                let b = secs[q];
-                                secs[q] = secs[r];
-                                q += 1;
-                                secs[r] = b;
-                                r -= 1;
+                                // these indices start at valid values and we stop when they cross
+                                #[expect(clippy::indexing_slicing)]
+                                while q < r {
+                                    let b = secs[q];
+                                    secs[q] = secs[r];
+                                    q += 1;
+                                    secs[r] = b;
+                                    r -= 1;
+                                }
                             }
                         }
                         let b = if p == NO_CE_PRIMARY {
@@ -2769,6 +2770,16 @@ mod test {
         let mut bk = Vec::new();
         let Ok(()) = collator.write_sort_key_utf16_to(b, &mut bk);
         assert!(ak < bk, "failed: {a:04x?} - {b:04x?}");
+    }
+
+    #[test]
+    fn sort_key_backward_second_level_empty() {
+        let locale = locale!("fr-CA").into();
+        let mut options = CollatorOptions::default();
+        options.strength = Some(Strength::Tertiary);
+        let collator = Collator::try_new(locale, options).unwrap();
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("", &mut k);
     }
 
     #[test]
