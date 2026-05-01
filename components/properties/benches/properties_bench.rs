@@ -17,7 +17,7 @@ fn set_benchmarks(c: &mut Criterion) {
     let s = one_hundred_code_points(SAMPLE_STRING_MIXED);
     let alpha = CodePointSetData::new::<Alphabetic>();
 
-    c.bench_function("icu_properties/set/contains", |b| {
+    c.bench_function("icu_properties/set/contains/alphabetic", |b| {
         b.iter(|| {
             black_box(&s)
                 .chars()
@@ -26,7 +26,7 @@ fn set_benchmarks(c: &mut Criterion) {
         })
     });
 
-    c.bench_function("icu_properties/set/iter_ranges", |b| {
+    c.bench_function("icu_properties/set/iter_ranges/alphabetic", |b| {
         b.iter(|| black_box(&alpha).iter_ranges().count())
     });
 }
@@ -52,10 +52,16 @@ fn map_benchmarks(c: &mut Criterion) {
         })
     });
 
+    let categories = black_box(&[
+        GeneralCategory::UppercaseLetter,
+        GeneralCategory::LowercaseLetter,
+        GeneralCategory::OtherLetter,
+    ]);
     c.bench_function("icu_properties/map/get_set_for_value", |b| {
         b.iter(|| {
-            let set = black_box(&gc).get_set_for_value(GeneralCategory::UppercaseLetter);
-            set.as_borrowed().contains('A')
+            for &cat in categories {
+                black_box(black_box(&gc).get_set_for_value(cat));
+            }
         })
     });
 }
