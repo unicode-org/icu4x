@@ -2520,7 +2520,7 @@ where
     let mut prev = 0i32;
 
     for c in iter {
-        if !(0x4e00..=0xa000).contains(&prev) {
+        if !(0x4e00..0xa000).contains(&prev) {
             prev = (prev & !0x7f) - SLOPE_REACH_NEG_1;
         } else {
             // Unihan U+4e00..U+9fa5:  double-bytes down from the upper end
