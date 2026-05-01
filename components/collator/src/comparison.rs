@@ -161,6 +161,27 @@ const SLOPE_START_POS_3: i32 = SLOPE_START_POS_2 + SLOPE_LEAD_2;
 const SLOPE_START_NEG_2: i32 = SLOPE_MIDDLE + SLOPE_REACH_NEG_1;
 const SLOPE_START_NEG_3: i32 = SLOPE_START_NEG_2 - SLOPE_LEAD_2;
 
+trait Reorder: Copy {
+    fn reorder(self, p: u32) -> u32;
+}
+
+#[derive(Clone, Copy)]
+struct NoReorder;
+
+impl Reorder for NoReorder {
+    #[inline(always)]
+    fn reorder(self, p: u32) -> u32 {
+        p
+    }
+}
+
+impl Reorder for &CollationReordering<'_> {
+    #[inline(always)]
+    fn reorder(self, p: u32) -> u32 {
+        CollationReordering::reorder(self, p)
+    }
+}
+
 struct AnyQuaternaryAccumulator(u32);
 
 impl AnyQuaternaryAccumulator {
@@ -1812,7 +1833,10 @@ impl<'a> CollatorBorrowed<'a> {
         };
 
         let mut state = S::State::default();
-        self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
+        match self.reordering {
+            Some(r) => self.write_sort_key_up_to_quaternary(iter, sink, &mut state, r)?,
+            None => self.write_sort_key_up_to_quaternary(iter, sink, &mut state, NoReorder)?,
+        }
 
         if let Some(iter) = identical {
             let nfd =
@@ -1830,15 +1854,17 @@ impl<'a> CollatorBorrowed<'a> {
     ///
     /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
     /// do not write a terminating zero as with a C string.
-    fn write_sort_key_up_to_quaternary<I, S>(
+    fn write_sort_key_up_to_quaternary<I, S, R>(
         &self,
         iter: I,
         sink: &mut S,
         state: &mut S::State,
+        reorder: R,
     ) -> Result<(), S::Error>
     where
         I: Iterator<Item = char>,
         S: CollationKeySink + ?Sized,
+        R: Reorder,
     {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
         let levels = self.sort_key_levels();
@@ -1891,9 +1917,7 @@ impl<'a> CollatorBorrowed<'a> {
 
                 loop {
                     if levels & QUATERNARY_LEVEL_FLAG != 0 {
-                        if let Some(reordering) = &self.reordering {
-                            p = reordering.reorder(p);
-                        }
+                        p = reorder.reorder(p);
                         if (p >> 24) as u8 >= QUAT_SHIFTED_LIMIT_BYTE {
                             // Prevent shifted primary lead bytes from overlapping with the
                             // common compression range.
@@ -1920,9 +1944,7 @@ impl<'a> CollatorBorrowed<'a> {
             if p > NO_CE_PRIMARY && levels & PRIMARY_LEVEL_FLAG != 0 {
                 // Test the un-reordered primary for compressibility.
                 let is_compressible = self.special_primaries.is_compressible((p >> 24) as _);
-                if let Some(reordering) = &self.reordering {
-                    p = reordering.reorder(p);
-                }
+                p = reorder.reorder(p);
                 let p1 = (p >> 24) as u8;
                 if !is_compressible || p1 != (prev_reordered_primary >> 24) as u8 {
                     if prev_reordered_primary != 0 {
