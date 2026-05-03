@@ -184,6 +184,38 @@ fn lb_class_forbids_break_before(class: u8) -> bool {
     )
 }
 
+/// Returns `true` if `cp` is a complex-script (SA-class) iteration or
+/// abbreviation marker that semantically attaches to the preceding
+/// word and must therefore not have a line break inserted immediately
+/// before it.
+///
+/// These characters are classified `SA` by Unicode (so they are
+/// processed inside the dictionary/LSTM SA chunk rather than at the
+/// SA→next-char seam), but the dict/LSTM may still emit a word
+/// boundary right before them. UAX #14 itself says nothing about
+/// internal SA boundaries; the dict's word list is the source of
+/// truth there. For these specific marks, however, breaking the line
+/// before them is wrong by definition of the character:
+///
+/// * **U+0E46** `ๆ` THAI CHARACTER MAIYAMOK — repetition mark; means
+///   "repeat the previous word."
+/// * **U+0E2F** `ฯ` THAI CHARACTER PAIYANNOI — abbreviation marker;
+///   marks the elided continuation of the preceding word/phrase.
+/// * **U+0EC6** `ໆ` LAO KO LA — Lao repetition mark, analogous to
+///   THAI MAIYAMOK.
+/// * **U+0EAF** `ຯ` LAO ELLIPSIS — Lao abbreviation marker, analogous
+///   to THAI PAIYANNOI.
+/// * **U+17D7** `ៗ` KHMER SIGN LEK TOO — Khmer repetition mark.
+///
+/// This is a typographic correction layered on top of the dict/LSTM
+/// output, not a UAX #14 rule. It is applied only inside the line-
+/// break pipeline; the word segmenter (which uses the word-boundary
+/// entry point, not the line-break one) is unaffected.
+#[inline]
+fn sa_codepoint_must_attach_to_previous(cp: u32) -> bool {
+    matches!(cp, 0x0E2F | 0x0E46 | 0x0EAF | 0x0EC6 | 0x17D7)
+}
+
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line segmenter.
 ///
@@ -1363,6 +1395,20 @@ where
                 options.word_option,
             ))
         });
+    // Drop dict/LSTM-emitted boundaries that fall immediately before an
+    // SA iteration/abbreviation mark (THAI MAIYAMOK ๆ, KHMER LEK TOO ៗ,
+    // etc.). These are typographic corrections layered on top of the
+    // dict's word boundaries; see `sa_codepoint_must_attach_to_previous`.
+    let breaks: Vec<usize> = breaks
+        .into_iter()
+        .filter(|&offset| {
+            offset >= s.len()
+                || !s[offset..]
+                    .chars()
+                    .next()
+                    .is_some_and(|c| sa_codepoint_must_attach_to_previous(c as u32))
+        })
+        .collect();
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -1466,6 +1512,16 @@ impl LineBreakType for Utf16 {
                         options.word_option,
                     ))
                 });
+        // Drop dict/LSTM-emitted boundaries immediately before an SA
+        // iteration/abbreviation mark. All such marks are BMP, so a
+        // single-u16 lookup at the boundary is faithful.
+        let breaks: Vec<usize> = breaks
+            .into_iter()
+            .filter(|&offset| {
+                offset >= s.len()
+                    || !sa_codepoint_must_attach_to_previous(s[offset] as u32)
+            })
+            .collect();
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iterator.result_cache.first()?;
@@ -2185,6 +2241,81 @@ mod tests {
                 punct,
                 *punct as u32,
                 utf16_punct_offset,
+            );
+        }
+    }
+
+    /// SA-internal iteration/abbreviation marks must not have a line
+    /// break inserted immediately before them. These characters are
+    /// classified `SA` by Unicode and are processed inside the SA
+    /// chunk by the dict/LSTM, which may emit a word boundary right
+    /// before them (especially for THAI MAIYAMOK ๆ, whose semantics
+    /// are "repeat the preceding word"). UAX #14 doesn't speak to
+    /// these positions; the `sa_codepoint_must_attach_to_previous`
+    /// post-filter drops them as a typographic correction.
+    ///
+    /// Marks covered (each tested in a Thai/Lao/Khmer host word):
+    ///
+    ///   - U+0E46 `ๆ` THAI MAIYAMOK (repetition)
+    ///   - U+0E2F `ฯ` THAI PAIYANNOI (abbreviation)
+    ///   - U+0EC6 `ໆ` LAO KO LA (repetition)
+    ///   - U+0EAF `ຯ` LAO ELLIPSIS (abbreviation)
+    ///   - U+17D7 `ៗ` KHMER LEK TOO (repetition)
+    #[test]
+    fn complex_script_sa_iteration_marks_no_break_before() {
+        let segmenter = LineSegmenter::new_auto(Default::default());
+        let cases: &[(&str, &str, char)] = &[
+            ("Thai + MAIYAMOK", "ภาษาไทย", '\u{0E46}'),
+            ("Thai + PAIYANNOI", "ภาษาไทย", '\u{0E2F}'),
+            ("Lao + KO LA", "ກ່ຽວກັບ", '\u{0EC6}'),
+            ("Lao + ELLIPSIS", "ກ່ຽວກັບ", '\u{0EAF}'),
+            ("Khmer + LEK TOO", "ខ្មែរ", '\u{17D7}'),
+        ];
+
+        for (label, sa, mark) in cases {
+            let mut text = String::from(*sa);
+            let mark_byte_offset = text.len();
+            text.push(*mark);
+
+            let breaks: Vec<usize> = segmenter.segment_str(&text).collect();
+            assert!(
+                !breaks.contains(&mark_byte_offset),
+                "{label}: unexpected break BEFORE '{}' (U+{:04X}) at byte {}: {breaks:?}",
+                mark,
+                *mark as u32,
+                mark_byte_offset,
+            );
+
+            let utf16: Vec<u16> = text.encode_utf16().collect();
+            let utf16_mark_offset = sa.encode_utf16().count();
+            let utf16_breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+            assert!(
+                !utf16_breaks.contains(&utf16_mark_offset),
+                "{label} (utf16): unexpected break BEFORE '{}' (U+{:04X}) at u16 index {}: {utf16_breaks:?}",
+                mark,
+                *mark as u32,
+                utf16_mark_offset,
+            );
+        }
+    }
+
+    /// The SA-internal mark filter applies only to the *line*
+    /// segmenter, not the word segmenter — UAX #29 word boundaries
+    /// before iteration/abbreviation marks may still be valid (the
+    /// dict/LSTM's word list is the source of truth there).
+    #[test]
+    fn word_segmenter_preserves_sa_iteration_marks() {
+        use crate::options::WordBreakInvariantOptions;
+        use crate::WordSegmenter;
+        let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+        // We don't assert specific positions (the dict's choices are
+        // not part of the contract); we assert only that the
+        // word-segmenter pipeline still functions and doesn't panic.
+        for text in &["ภาษาไทยๆ", "ภาษาฯ", "ខ្មែរៗ"] {
+            let breaks: Vec<usize> = segmenter.segment_str(text).collect();
+            assert!(
+                breaks.first() == Some(&0) && breaks.last() == Some(&text.len()),
+                "word segmenter failed on {text:?}: {breaks:?}",
             );
         }
     }
