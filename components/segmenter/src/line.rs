@@ -133,29 +133,54 @@ const ZWJ: u8 = 54;
 ///
 /// Used by the line-break complex-script pipeline to decide whether the
 /// dict/LSTM's boundary between an SA chunk and the next character is a
-/// valid line-break opportunity. For the classes listed here UAX #14 states
-/// `× class` unconditionally (or unconditionally in all contexts reachable
-/// from SA in practice):
+/// valid line-break opportunity. The predicate runs only at the seam
+/// between an SA chunk and the next character; the *preceding* char at
+/// every callsite is therefore SA-class. For the classes listed below
+/// UAX #14 states `× class` unconditionally in that context:
 ///
-/// * **`LB7`**:  `× SP` — never break before a space.
+/// * **`LB7`**:  `× SP`, `× ZW` — never break before a space or zero-width
+///   space.
 /// * **`LB9`**:  `× CM`, `× ZWJ` — combining marks attach to the preceding char.
 /// * **`LB11`**: `× WJ` — word-joiner is glue.
-/// * **`LB12a`**:`× GL` — non-breaking glue.
+/// * **`LB12a`**:`× GL` — non-breaking glue (the SA-precedes-GL exception
+///   for `SP|BA|HY` does not apply when the previous class is SA).
 /// * **`LB13`**: `× CL`, `× CP`, `× EX`, `× IS`, `× SY`.
+/// * **`LB19`**: `× QU`, `× QU_PI`, `× QU_PF` — never break before a
+///   quotation mark (initial, final, or unspecified). The newer LB19a
+///   East-Asian-context tailoring does not apply when the previous class
+///   is SA.
 /// * **`LB21`**: `× BA`, `× HY`, `× NS` — no break before these after the
 ///   previous non-space char (SA never introduces a space on its
 ///   right, so this simplifies to unconditional `×`).
 /// * **`LB22`**: `× IN`.
 ///
 /// Classes intentionally **not** included here either allow a break
-/// (LB18 `SP ÷`, etc.), require surrounding context that our SA-adjacent
-/// usage cannot produce, or are handled by the mandatory-break rules
-/// (LB4/LB5: BK, CR, LF, NL).
+/// (LB18 `SP ÷`, LB20 `÷ CB`, etc.), require a *preceding-class* context
+/// that SA cannot satisfy (LB14 `OP ×`, LB15 `QU ×`, LB17 `B2 SP* × B2`,
+/// LB30 `(AL|HL|NU) × OP30`, LB30a/b stateful rules — all handled by the
+/// outer line-break state machine, not this seam), or are handled by the
+/// mandatory-break rules (LB4/LB5: BK, CR, LF, NL).
 #[inline]
 fn lb_class_forbids_break_before(class: u8) -> bool {
     matches!(
         class,
-        SP | BA | HY | NS | WJ | GL | CL | CP | EX | IS | SY | IN | ZWJ | CM,
+        SP | ZW
+            | BA
+            | HY
+            | NS
+            | WJ
+            | GL
+            | CL
+            | CP
+            | EX
+            | IS
+            | SY
+            | IN
+            | ZWJ
+            | CM
+            | QU
+            | QU_PI
+            | QU_PF,
     )
 }
 
@@ -2049,6 +2074,137 @@ mod tests {
                 );
             }
         }
+    }
+
+    /// LB7 (`× ZW`) and LB19 (`× QU` / `× QU_PI` / `× QU_PF`) at the
+    /// SA→next-char seam. The dict/LSTM emits a terminal break at the end
+    /// of every SA run; the predicate must drop that break when the next
+    /// character is a zero-width space or any quotation mark form,
+    /// regardless of which complex script the run is in.
+    ///
+    /// Each case exercises the trailing seam in
+    /// `line_handle_complex_language_*` where `next_ext_char` carries the
+    /// punctuation. We assert that the byte position immediately *before*
+    /// the punctuation is **not** in the break list — the offending
+    /// terminal break was correctly suppressed.
+    ///
+    /// Quotation forms covered:
+    ///
+    ///   - U+0022 `"` / U+0027 `'`         → QU      (LB19 × QU)
+    ///   - U+201C `"` / U+201D `"`         → QU_PI / QU_PF
+    ///   - U+2018 `'` / U+2019 `'`         → QU_PI / QU_PF
+    ///   - U+00AB `«` / U+00BB `»`         → QU_PI / QU_PF
+    ///   - U+200B ZERO WIDTH SPACE          → ZW     (LB7 × ZW)
+    #[test]
+    fn complex_script_punctuation_no_break_before() {
+        let segmenter = LineSegmenter::new_auto(Default::default());
+        let cases: &[(&str, &str, char)] = &[
+            // (label, sa_text, trailing_punctuation)
+            ("Thai + ASCII dquote", "ภาษาไทย", '"'),
+            ("Thai + ASCII squote", "ภาษาไทย", '\''),
+            ("Thai + smart-left dquote", "ภาษาไทย", '\u{201C}'),
+            ("Thai + smart-right dquote", "ภาษาไทย", '\u{201D}'),
+            ("Thai + smart-left squote", "ภาษาไทย", '\u{2018}'),
+            ("Thai + smart-right squote", "ภาษาไทย", '\u{2019}'),
+            ("Thai + left guillemet", "ภาษาไทย", '\u{00AB}'),
+            ("Thai + right guillemet", "ภาษาไทย", '\u{00BB}'),
+            ("Thai + ZWSP", "ภาษาไทย", '\u{200B}'),
+            ("Khmer + ASCII dquote", "ខ្មែរ", '"'),
+            ("Khmer + smart-right dquote", "ខ្មែរ", '\u{201D}'),
+            ("Khmer + left guillemet", "ខ្មែរ", '\u{00AB}'),
+            ("Khmer + right guillemet", "ខ្មែរ", '\u{00BB}'),
+            ("Khmer + ZWSP", "ខ្មែរ", '\u{200B}'),
+        ];
+
+        for (label, sa, punct) in cases {
+            let mut text = String::from(*sa);
+            let punct_byte_offset = text.len();
+            text.push(*punct);
+
+            let breaks: Vec<usize> = segmenter.segment_str(&text).collect();
+            assert!(
+                !breaks.contains(&punct_byte_offset),
+                "{label}: unexpected break BEFORE '{}' (U+{:04X}) at byte {}: {breaks:?}",
+                punct,
+                *punct as u32,
+                punct_byte_offset,
+            );
+
+            let utf16: Vec<u16> = text.encode_utf16().collect();
+            let utf16_punct_offset = sa.encode_utf16().count();
+            let utf16_breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+            assert!(
+                !utf16_breaks.contains(&utf16_punct_offset),
+                "{label} (utf16): unexpected break BEFORE '{}' (U+{:04X}) at u16 index {}: {utf16_breaks:?}",
+                punct,
+                *punct as u32,
+                utf16_punct_offset,
+            );
+        }
+    }
+
+    /// LSTM-only complement to `complex_script_punctuation_no_break_before`
+    /// for scripts (Lao, Burmese) whose bundled coverage in `new_auto`
+    /// depends on the LSTM model.
+    #[test]
+    #[cfg(feature = "lstm")]
+    fn complex_script_punctuation_no_break_before_lstm() {
+        let segmenter = LineSegmenter::new_lstm(Default::default());
+        let cases: &[(&str, &str, char)] = &[
+            ("Lao + ASCII dquote", "ກ່ຽວກັບ", '"'),
+            ("Lao + smart-right dquote", "ກ່ຽວກັບ", '\u{201D}'),
+            ("Lao + right guillemet", "ກ່ຽວກັບ", '\u{00BB}'),
+            ("Lao + ZWSP", "ກ່ຽວກັບ", '\u{200B}'),
+            ("Burmese + ASCII squote", "မြန်မာ", '\''),
+            ("Burmese + smart-right dquote", "မြန်မာ", '\u{201D}'),
+            ("Burmese + left guillemet", "မြန်မာ", '\u{00AB}'),
+            ("Burmese + right guillemet", "မြန်မာ", '\u{00BB}'),
+            ("Burmese + ZWSP", "မြန်မာ", '\u{200B}'),
+        ];
+
+        for (label, sa, punct) in cases {
+            let mut text = String::from(*sa);
+            let punct_byte_offset = text.len();
+            text.push(*punct);
+
+            let breaks: Vec<usize> = segmenter.segment_str(&text).collect();
+            assert!(
+                !breaks.contains(&punct_byte_offset),
+                "{label}: unexpected break BEFORE '{}' (U+{:04X}) at byte {}: {breaks:?}",
+                punct,
+                *punct as u32,
+                punct_byte_offset,
+            );
+
+            let utf16: Vec<u16> = text.encode_utf16().collect();
+            let utf16_punct_offset = sa.encode_utf16().count();
+            let utf16_breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+            assert!(
+                !utf16_breaks.contains(&utf16_punct_offset),
+                "{label} (utf16): unexpected break BEFORE '{}' (U+{:04X}) at u16 index {}: {utf16_breaks:?}",
+                punct,
+                *punct as u32,
+                utf16_punct_offset,
+            );
+        }
+    }
+
+    /// Counter-test: confirm the predicate has not been over-broadened.
+    /// Letters (LB class AL) immediately following an SA run *should*
+    /// retain the dict/LSTM's terminal break — there's no UAX #14 rule
+    /// of the form `× AL` at this seam.
+    #[test]
+    fn complex_script_letter_keeps_break_before() {
+        let segmenter = LineSegmenter::new_auto(Default::default());
+        // Thai + Latin letter: dict's terminal break at the end of the
+        // Thai run must survive (no `× AL` rule).
+        let text = "ภาษาไทยabc";
+        let thai_end = "ภาษาไทย".len();
+        let breaks: Vec<usize> = segmenter.segment_str(text).collect();
+        assert!(
+            breaks.contains(&thai_end),
+            "expected break at SA→AL seam (byte {thai_end}): {breaks:?}",
+        );
     }
 
     /// Word segmenter regression: `word.rs` uses
