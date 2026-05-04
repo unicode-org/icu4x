@@ -565,7 +565,6 @@ fn generate_rule_break_data(
                 ("QU_PI", RuleBreakData::LINE_PROPERTY_QU_PI),
                 ("QU", RuleBreakData::LINE_PROPERTY_QU),
                 ("RI", RuleBreakData::LINE_PROPERTY_RI),
-                ("SA", RuleBreakData::LINE_PROPERTY_SA),
                 ("SP", RuleBreakData::LINE_PROPERTY_SP),
                 ("SY", RuleBreakData::LINE_PROPERTY_SY),
                 ("VF", RuleBreakData::LINE_PROPERTY_VF),

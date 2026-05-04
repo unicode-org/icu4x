@@ -39,7 +39,6 @@ impl RuleBreakData<'_> {
     pub const LINE_PROPERTY_NU: u8 = 35;
     pub const LINE_PROPERTY_PO_EAW: u8 = 39;
     pub const LINE_PROPERTY_PR_EAW: u8 = 41;
-    pub const LINE_PROPERTY_SA: u8 = 46;
     pub const LINE_PROPERTY_SP: u8 = 47;
     pub const LINE_PROPERTY_ZW: u8 = 53;
     pub const LINE_PROPERTY_ZWJ: u8 = 54;
@@ -747,7 +746,7 @@ impl RuleBreakData<'_> {
             LineBreakWordOption::Normal,
         );
 
-        line_break_property == RuleBreakData::LINE_PROPERTY_SA
+        line_break_property == self.complex_property
     }
 }
 
@@ -910,11 +909,12 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
             // CSS word-break property handling
             match (self.options.word_option, left_prop, right_prop) {
+                (LineBreakWordOption::BreakAll, p, _) if p == self.data.complex_property => {
+                    left_prop = RuleBreakData::LINE_PROPERTY_ID;
+                }
                 (
                     LineBreakWordOption::BreakAll,
-                    RuleBreakData::LINE_PROPERTY_AL
-                    | RuleBreakData::LINE_PROPERTY_NU
-                    | RuleBreakData::LINE_PROPERTY_SA,
+                    RuleBreakData::LINE_PROPERTY_AL | RuleBreakData::LINE_PROPERTY_NU,
                     _,
                 ) => {
                     left_prop = RuleBreakData::LINE_PROPERTY_ID;
