@@ -25,6 +25,9 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
+    const CAN_CONTAIN_SA: bool;
+
+    #[doc(hidden)]
     fn char_len(ch: Self::CharType) -> usize;
 }
 
@@ -126,7 +129,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
 
             // Some segmenter rules doesn't have language-specific rules, we have to use LSTM (or dictionary) segmenter.
             // If property is marked as SA, use it
-            if right_prop == self.data.complex_property {
+            if Y::CAN_CONTAIN_SA && right_prop == self.data.complex_property {
                 if left_prop != self.data.complex_property {
                     // break before SA
                     self.boundary_property = left_prop;
@@ -285,6 +288,8 @@ impl RuleBreakType for Utf8 {
     type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
+    const CAN_CONTAIN_SA: bool = true;
+
     fn char_len(ch: Self::CharType) -> usize {
         ch.len_utf8()
     }
@@ -300,6 +305,8 @@ impl crate::private::Sealed for PotentiallyIllFormedUtf8 {}
 impl RuleBreakType for PotentiallyIllFormedUtf8 {
     type IterAttr<'s> = Utf8CharIndices<'s>;
     type CharType = char;
+
+    const CAN_CONTAIN_SA: bool = true;
 
     fn char_len(ch: Self::CharType) -> usize {
         ch.len_utf8()
@@ -317,6 +324,8 @@ impl RuleBreakType for Latin1 {
     type IterAttr<'s> = Latin1Indices<'s>;
     type CharType = u8;
 
+    const CAN_CONTAIN_SA: bool = false;
+
     fn char_len(_ch: Self::CharType) -> usize {
         unreachable!()
     }
@@ -332,6 +341,8 @@ impl crate::private::Sealed for Utf16 {}
 impl RuleBreakType for Utf16 {
     type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
+
+    const CAN_CONTAIN_SA: bool = true;
 
     fn char_len(ch: Self::CharType) -> usize {
         if ch >= 0x10000 {

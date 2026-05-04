@@ -707,50 +707,11 @@ impl LineSegmenterBorrowed<'static> {
 }
 
 impl RuleBreakData<'_> {
-    fn get_linebreak_property_utf32_with_rule(
-        &self,
-        codepoint: u32,
-        strictness: LineBreakStrictness,
-        word_option: LineBreakWordOption,
-    ) -> u8 {
-        match (
-            (word_option, strictness),
-            self.property_table.get32(codepoint),
-        ) {
-            // CJ is treated as NS by default, yielding strict line breaking.
-            // https://www.unicode.org/reports/tr14/#CJ
-            (
-                (LineBreakWordOption::BreakAll, _)
-                | (_, LineBreakStrictness::Loose | LineBreakStrictness::Normal),
-                RuleBreakData::LINE_PROPERTY_CJ,
-            ) => RuleBreakData::LINE_PROPERTY_ID, // All CJ's General_Category is Other_Letter (Lo).
-            ((LineBreakWordOption::BreakAll, _), p) if p == self.complex_property => {
-                RuleBreakData::LINE_PROPERTY_ID
-            }
-            (
-                (LineBreakWordOption::BreakAll, _),
-                RuleBreakData::LINE_PROPERTY_AL | RuleBreakData::LINE_PROPERTY_NU,
-            ) => RuleBreakData::LINE_PROPERTY_ID,
-            (_, prop) => prop,
-        }
-    }
-
     #[inline]
     fn get_break_state_from_table(&self, left: u8, right: u8) -> BreakState {
         let idx = (left as usize) * (self.property_count as usize) + (right as usize);
         // We use unwrap_or to fall back to the base case and prevent panics on bad data.
         self.break_state_table.get(idx).unwrap_or(BreakState::Keep)
-    }
-
-    #[inline]
-    fn use_complex_breaking_utf32(&self, codepoint: u32) -> bool {
-        let line_break_property = self.get_linebreak_property_utf32_with_rule(
-            codepoint,
-            LineBreakStrictness::Strict,
-            LineBreakWordOption::Normal,
-        );
-
-        line_break_property == self.complex_property
     }
 }
 
@@ -805,15 +766,6 @@ fn is_break_utf32_by_loose(
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
 pub trait LineBreakType: crate::private::Sealed + Sized + RuleBreakType {
-    #[doc(hidden)]
-    fn use_complex_breaking(iterator: &LineBreakIterator<'_, '_, Self>, c: Self::CharType) -> bool;
-
-    #[doc(hidden)]
-    fn get_linebreak_property_with_rule(
-        iterator: &LineBreakIterator<'_, '_, Self>,
-        c: Self::CharType,
-    ) -> u8;
-
     #[doc(hidden)]
     fn line_handle_complex_language(
         iterator: &mut LineBreakIterator<'_, '_, Self>,
@@ -900,6 +852,18 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
             let left_prop = lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
             let right_prop = self.get_linebreak_property(right_codepoint);
 
+            // UAX14 doesn't have Thai etc, so use another way.
+            if Y::CAN_CONTAIN_SA
+                && self.get_linebreak_property(left_codepoint) == self.data.complex_property
+                && right_prop == self.data.complex_property
+            {
+                let result = Y::line_handle_complex_language(self, left_codepoint);
+                if result.is_some() {
+                    return result;
+                }
+                // I may have to fetch text until non-SA character?.
+            }
+
             let after_zwj = lb8a_after_lb9
                 || (lb9_left.is_none() && left_prop == RuleBreakData::LINE_PROPERTY_ZWJ);
 
@@ -978,18 +942,6 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 }
                 _ => (),
             };
-
-            // UAX14 doesn't have Thai etc, so use another way.
-            if self.options.word_option != LineBreakWordOption::BreakAll
-                && Y::use_complex_breaking(self, left_codepoint)
-                && Y::use_complex_breaking(self, right_codepoint)
-            {
-                let result = Y::line_handle_complex_language(self, left_codepoint);
-                if result.is_some() {
-                    return result;
-                }
-                // I may have to fetch text until non-SA character?.
-            }
 
             // If break_state is equals or grater than 0, it is alias of property.
             match self.data.get_break_state_from_table(left_prop, right_prop) {
@@ -1156,7 +1108,26 @@ impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
     }
 
     fn get_linebreak_property(&self, codepoint: Y::CharType) -> u8 {
-        Y::get_linebreak_property_with_rule(self, codepoint)
+        match (
+            (self.options.word_option, self.options.strictness),
+            self.data.property_table.get32(codepoint.into()),
+        ) {
+            // CJ is treated as NS by default, yielding strict line breaking.
+            // https://www.unicode.org/reports/tr14/#CJ
+            (
+                (LineBreakWordOption::BreakAll, _)
+                | (_, LineBreakStrictness::Loose | LineBreakStrictness::Normal),
+                RuleBreakData::LINE_PROPERTY_CJ,
+            ) => RuleBreakData::LINE_PROPERTY_ID, // All CJ's General_Category is Other_Letter (Lo).
+            ((LineBreakWordOption::BreakAll, _), p) if p == self.data.complex_property => {
+                RuleBreakData::LINE_PROPERTY_ID
+            }
+            (
+                (LineBreakWordOption::BreakAll, _),
+                RuleBreakData::LINE_PROPERTY_AL | RuleBreakData::LINE_PROPERTY_NU,
+            ) => RuleBreakData::LINE_PROPERTY_ID,
+            (_, prop) => prop,
+        }
     }
 
     fn get_current_linebreak_property(&self) -> Option<u8> {
@@ -1166,19 +1137,6 @@ impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
 }
 
 impl LineBreakType for Utf8 {
-    fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
-        iterator.data.get_linebreak_property_utf32_with_rule(
-            c as u32,
-            iterator.options.strictness,
-            iterator.options.word_option,
-        )
-    }
-
-    #[inline]
-    fn use_complex_breaking(iterator: &LineBreakIterator<Self>, c: char) -> bool {
-        iterator.data.use_complex_breaking_utf32(c as u32)
-    }
-
     fn line_handle_complex_language(
         iter: &mut LineBreakIterator<'_, '_, Self>,
         left_codepoint: char,
@@ -1188,19 +1146,6 @@ impl LineBreakType for Utf8 {
 }
 
 impl LineBreakType for PotentiallyIllFormedUtf8 {
-    fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
-        iterator.data.get_linebreak_property_utf32_with_rule(
-            c as u32,
-            iterator.options.strictness,
-            iterator.options.word_option,
-        )
-    }
-
-    #[inline]
-    fn use_complex_breaking(iterator: &LineBreakIterator<Self>, c: char) -> bool {
-        iterator.data.use_complex_breaking_utf32(c as u32)
-    }
-
     fn line_handle_complex_language(
         iter: &mut LineBreakIterator<'_, '_, Self>,
         left_codepoint: char,
@@ -1226,7 +1171,7 @@ where
         s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
         if let Some(current_codepoint) = iter.get_current_codepoint() {
-            if !T::use_complex_breaking(iter, current_codepoint) {
+            if iter.get_linebreak_property(current_codepoint) != iter.data.complex_property {
                 break;
             }
         } else {
@@ -1263,17 +1208,6 @@ where
 }
 
 impl LineBreakType for Latin1 {
-    fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u8) -> u8 {
-        // No CJ on Latin1
-        // Note: Default value is 0 == UNKNOWN
-        iterator.data.property_table.get32(c as u32)
-    }
-
-    #[inline]
-    fn use_complex_breaking(_iterator: &LineBreakIterator<Self>, _c: u8) -> bool {
-        false
-    }
-
     fn line_handle_complex_language(
         _: &mut LineBreakIterator<Self>,
         _: Self::CharType,
@@ -1283,19 +1217,6 @@ impl LineBreakType for Latin1 {
 }
 
 impl LineBreakType for Utf16 {
-    fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u32) -> u8 {
-        iterator.data.get_linebreak_property_utf32_with_rule(
-            c,
-            iterator.options.strictness,
-            iterator.options.word_option,
-        )
-    }
-
-    #[inline]
-    fn use_complex_breaking(iterator: &LineBreakIterator<Self>, c: u32) -> bool {
-        iterator.data.use_complex_breaking_utf32(c)
-    }
-
     fn line_handle_complex_language(
         iterator: &mut LineBreakIterator<Self>,
         left_codepoint: Self::CharType,
@@ -1309,7 +1230,9 @@ impl LineBreakType for Utf16 {
             s.push(iterator.get_current_codepoint()? as u16);
             iterator.advance_iter();
             if let Some(current_codepoint) = iterator.get_current_codepoint() {
-                if !Self::use_complex_breaking(iterator, current_codepoint) {
+                if iterator.get_linebreak_property(current_codepoint)
+                    != iterator.data.complex_property
+                {
                     break;
                 }
             } else {
@@ -1360,72 +1283,63 @@ mod tests {
 
     #[test]
     fn linebreak_property() {
-        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
-            .expect("Loading should succeed!")
-            .payload;
-
-        let get_linebreak_property = |codepoint| {
-            payload.get().get_linebreak_property_utf32_with_rule(
-                codepoint as u32,
-                LineBreakStrictness::Strict,
-                LineBreakWordOption::Normal,
-            )
-        };
+        let segmenter =
+            LineSegmenter::new_for_non_complex_scripts(Default::default()).segment_str("input");
 
         assert_eq!(
-            get_linebreak_property('\u{0020}'),
+            segmenter.get_linebreak_property('\u{0020}'),
             RuleBreakData::LINE_PROPERTY_SP
         );
         assert_eq!(
-            get_linebreak_property('\u{0022}'),
+            segmenter.get_linebreak_property('\u{0022}'),
             RuleBreakData::LINE_PROPERTY_QU
         );
         assert_eq!(
-            get_linebreak_property('('),
+            segmenter.get_linebreak_property('('),
             RuleBreakData::LINE_PROPERTY_OP_OP30
         );
         assert_eq!(
-            get_linebreak_property('\u{0030}'),
+            segmenter.get_linebreak_property('\u{0030}'),
             RuleBreakData::LINE_PROPERTY_NU
         );
         assert_eq!(
-            get_linebreak_property('['),
+            segmenter.get_linebreak_property('['),
             RuleBreakData::LINE_PROPERTY_OP_OP30
         );
         assert_eq!(
-            get_linebreak_property('\u{1f3fb}'),
+            segmenter.get_linebreak_property('\u{1f3fb}'),
             RuleBreakData::LINE_PROPERTY_EM
         );
         assert_eq!(
-            get_linebreak_property('\u{20000}'),
+            segmenter.get_linebreak_property('\u{20000}'),
             RuleBreakData::LINE_PROPERTY_ID
         );
         assert_eq!(
-            get_linebreak_property('\u{e0020}'),
+            segmenter.get_linebreak_property('\u{e0020}'),
             RuleBreakData::LINE_PROPERTY_CM
         );
         assert_eq!(
-            get_linebreak_property('\u{3041}'),
+            segmenter.get_linebreak_property('\u{3041}'),
             RuleBreakData::LINE_PROPERTY_CJ
         );
         assert_eq!(
-            get_linebreak_property('\u{0025}'),
+            segmenter.get_linebreak_property('\u{0025}'),
             RuleBreakData::LINE_PROPERTY_PO
         );
         assert_eq!(
-            get_linebreak_property('\u{00A7}'),
+            segmenter.get_linebreak_property('\u{00A7}'),
             RuleBreakData::LINE_PROPERTY_AI
         );
         assert_eq!(
-            get_linebreak_property('\u{50005}'),
+            segmenter.get_linebreak_property('\u{50005}'),
             RuleBreakData::LINE_PROPERTY_XX
         );
         assert_eq!(
-            get_linebreak_property('\u{17D6}'),
+            segmenter.get_linebreak_property('\u{17D6}'),
             RuleBreakData::LINE_PROPERTY_NS
         );
         assert_eq!(
-            get_linebreak_property('\u{2014}'),
+            segmenter.get_linebreak_property('\u{2014}'),
             RuleBreakData::LINE_PROPERTY_B2
         );
     }
