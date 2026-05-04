@@ -103,3 +103,6 @@ mod private {
 
 #[cfg(feature = "harfbuzz_traits")]
 mod harfbuzz;
+
+#[cfg(feature = "unstable")]
+pub mod unicodeset_parse;

@@ -10,23 +10,23 @@ use alloc::vec::Vec;
 use core::fmt::Display;
 use core::{iter::Peekable, str::CharIndices};
 
-use icu_collections::{
-    codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
-    codepointinvliststringlist::CodePointInversionListAndStringList,
-};
-use icu_properties::script::ScriptWithExtensions;
-use icu_properties::{
+use crate::script::ScriptWithExtensions;
+use crate::{
     props::{
         CanonicalCombiningClass, EastAsianWidth, EnumeratedProperty, GeneralCategory,
         GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
     },
     CodePointMapData,
 };
-use icu_properties::{
+use crate::{
     props::{PatternWhiteSpace, XidContinue, XidStart},
     CodePointSetData,
 };
-use icu_properties::{provider::*, PropertyParser};
+use crate::{provider::*, PropertyParser};
+use icu_collections::{
+    codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
+    codepointinvliststringlist::CodePointInversionListAndStringList,
+};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.

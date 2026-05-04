@@ -1822,12 +1822,14 @@ name = "icu_properties"
 version = "2.2.0"
 dependencies = [
  "databake",
+ "displaydoc",
  "harfbuzz-traits",
  "icu",
  "icu_collections",
  "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
+ "log",
  "serde",
  "unicode-bidi",
  "zerotrie",
