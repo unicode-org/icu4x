@@ -872,6 +872,18 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
         'a: loop {
             debug_assert!(!self.is_eof());
+
+            // NOTE(egg): The special-casing of `LineBreakStrictness::Anywhere` allows us to pass
+            // a test, but eventually that option should just be simplified to call the extended
+            // grapheme cluster segmenter.
+            // TODO(egg): My reading of the CSS standard is that this
+            // should break around extended grapheme clusters, not at
+            // arbitrary code points, so this seems wrong.
+            if self.options.strictness == LineBreakStrictness::Anywhere {
+                self.advance_iter();
+                return Some(self.get_current_position().unwrap_or(self.len));
+            }
+
             let left_codepoint = self.get_current_codepoint()?;
             let mut left_prop =
                 lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
@@ -883,12 +895,8 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 return Some(self.len);
             };
             let right_prop = self.get_linebreak_property(right_codepoint);
-            // NOTE(egg): The special-casing of `LineBreakStrictness::Anywhere` allows us to pass
-            // a test, but eventually that option should just be simplified to call the extended
-            // grapheme cluster segmenter.
             if (right_prop == RuleBreakData::LINE_PROPERTY_CM
-                || (right_prop == RuleBreakData::LINE_PROPERTY_ZWJ
-                    && self.options.strictness != LineBreakStrictness::Anywhere))
+                || right_prop == RuleBreakData::LINE_PROPERTY_ZWJ)
                 && left_prop != RuleBreakData::LINE_PROPERTY_BK
                 && left_prop != RuleBreakData::LINE_PROPERTY_CR
                 && left_prop != RuleBreakData::LINE_PROPERTY_LF
@@ -967,12 +975,6 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                         }
                         continue;
                     }
-                }
-                LineBreakStrictness::Anywhere => {
-                    // TODO(egg): My reading of the CSS standard is that this
-                    // should break around extended grapheme clusters, not at
-                    // arbitrary code points, so this seems wrong.
-                    return self.get_current_position();
                 }
                 _ => (),
             };
