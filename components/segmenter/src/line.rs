@@ -724,6 +724,13 @@ impl RuleBreakData<'_> {
                 | (_, LineBreakStrictness::Loose | LineBreakStrictness::Normal),
                 RuleBreakData::LINE_PROPERTY_CJ,
             ) => RuleBreakData::LINE_PROPERTY_ID, // All CJ's General_Category is Other_Letter (Lo).
+            ((LineBreakWordOption::BreakAll, _), p) if p == self.complex_property => {
+                RuleBreakData::LINE_PROPERTY_ID
+            }
+            (
+                (LineBreakWordOption::BreakAll, _),
+                RuleBreakData::LINE_PROPERTY_AL | RuleBreakData::LINE_PROPERTY_NU,
+            ) => RuleBreakData::LINE_PROPERTY_ID,
             (_, prop) => prop,
         }
     }
@@ -885,16 +892,17 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
             }
 
             let left_codepoint = self.get_current_codepoint()?;
-            let mut left_prop =
-                lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
-            let after_zwj = lb8a_after_lb9
-                || (lb9_left.is_none() && left_prop == RuleBreakData::LINE_PROPERTY_ZWJ);
             self.advance_iter();
-
             let Some(right_codepoint) = self.get_current_codepoint() else {
                 return Some(self.len);
             };
+
+            let left_prop = lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
             let right_prop = self.get_linebreak_property(right_codepoint);
+
+            let after_zwj = lb8a_after_lb9
+                || (lb9_left.is_none() && left_prop == RuleBreakData::LINE_PROPERTY_ZWJ);
+
             if (right_prop == RuleBreakData::LINE_PROPERTY_CM
                 || right_prop == RuleBreakData::LINE_PROPERTY_ZWJ)
                 && left_prop != RuleBreakData::LINE_PROPERTY_BK
@@ -913,46 +921,38 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
             }
 
             // CSS word-break property handling
-            match (self.options.word_option, left_prop, right_prop) {
-                (LineBreakWordOption::BreakAll, p, _) if p == self.data.complex_property => {
-                    left_prop = RuleBreakData::LINE_PROPERTY_ID;
-                }
-                (
-                    LineBreakWordOption::BreakAll,
-                    RuleBreakData::LINE_PROPERTY_AL | RuleBreakData::LINE_PROPERTY_NU,
-                    _,
-                ) => {
-                    left_prop = RuleBreakData::LINE_PROPERTY_ID;
-                }
+            #[allow(clippy::single_match)]
+            if self.options.word_option == LineBreakWordOption::KeepAll {
                 //  typographic letter units shouldn't be break
-                (
-                    LineBreakWordOption::KeepAll,
+                if matches!(
+                    left_prop,
                     RuleBreakData::LINE_PROPERTY_AI
-                    | RuleBreakData::LINE_PROPERTY_AL
-                    | RuleBreakData::LINE_PROPERTY_ID
-                    | RuleBreakData::LINE_PROPERTY_NU
-                    | RuleBreakData::LINE_PROPERTY_HY
-                    | RuleBreakData::LINE_PROPERTY_H2
-                    | RuleBreakData::LINE_PROPERTY_H3
-                    | RuleBreakData::LINE_PROPERTY_JL
-                    | RuleBreakData::LINE_PROPERTY_JV
-                    | RuleBreakData::LINE_PROPERTY_JT
-                    | RuleBreakData::LINE_PROPERTY_CJ,
+                        | RuleBreakData::LINE_PROPERTY_AL
+                        | RuleBreakData::LINE_PROPERTY_ID
+                        | RuleBreakData::LINE_PROPERTY_NU
+                        | RuleBreakData::LINE_PROPERTY_HY
+                        | RuleBreakData::LINE_PROPERTY_H2
+                        | RuleBreakData::LINE_PROPERTY_H3
+                        | RuleBreakData::LINE_PROPERTY_JL
+                        | RuleBreakData::LINE_PROPERTY_JV
+                        | RuleBreakData::LINE_PROPERTY_JT
+                        | RuleBreakData::LINE_PROPERTY_CJ
+                ) && matches!(
+                    right_prop,
                     RuleBreakData::LINE_PROPERTY_AI
-                    | RuleBreakData::LINE_PROPERTY_AL
-                    | RuleBreakData::LINE_PROPERTY_ID
-                    | RuleBreakData::LINE_PROPERTY_NU
-                    | RuleBreakData::LINE_PROPERTY_HY
-                    | RuleBreakData::LINE_PROPERTY_H2
-                    | RuleBreakData::LINE_PROPERTY_H3
-                    | RuleBreakData::LINE_PROPERTY_JL
-                    | RuleBreakData::LINE_PROPERTY_JV
-                    | RuleBreakData::LINE_PROPERTY_JT
-                    | RuleBreakData::LINE_PROPERTY_CJ,
-                ) => {
+                        | RuleBreakData::LINE_PROPERTY_AL
+                        | RuleBreakData::LINE_PROPERTY_ID
+                        | RuleBreakData::LINE_PROPERTY_NU
+                        | RuleBreakData::LINE_PROPERTY_HY
+                        | RuleBreakData::LINE_PROPERTY_H2
+                        | RuleBreakData::LINE_PROPERTY_H3
+                        | RuleBreakData::LINE_PROPERTY_JL
+                        | RuleBreakData::LINE_PROPERTY_JV
+                        | RuleBreakData::LINE_PROPERTY_JT
+                        | RuleBreakData::LINE_PROPERTY_CJ
+                ) {
                     continue;
                 }
-                _ => (),
             }
 
             // CSS line-break property handling
