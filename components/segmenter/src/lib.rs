@@ -158,9 +158,26 @@ pub mod options {
 
 /// Largely-internal scaffolding types (You should very rarely need to reference these directly)
 pub mod scaffold {
-    pub use crate::line::LineBreakType;
+    // TODO: These should have never been public
     pub use crate::rule_segmenter::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
+
+    // TODO: This should have never been public
     pub use crate::word::WordBreakType;
+
+    // TODO: This should have never been public
+    /// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
+    ///
+    /// This is implemented by ICU4X for several common string types.
+    ///
+    /// <div class="stab unstable">
+    /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+    /// trait, please consider using a type from the implementors listed below.
+    /// </div>
+    pub trait LineBreakType: crate::private::Sealed + Sized + RuleBreakType {}
+    impl LineBreakType for Utf8 {}
+    impl LineBreakType for PotentiallyIllFormedUtf8 {}
+    impl LineBreakType for Latin1 {}
+    impl LineBreakType for Utf16 {}
 }
 
 /// Types supporting iteration over segments. Obtained from the segmenter types.

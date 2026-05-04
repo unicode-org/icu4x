@@ -609,6 +609,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             data: self.data,
             options: self.options,
             complex: self.complex,
+            handle_complex_language: line_handle_complex_language_utf8,
         }
     }
     /// Creates a line break iterator for a potentially ill-formed UTF8 string
@@ -628,6 +629,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             data: self.data,
             options: self.options,
             complex: self.complex,
+            handle_complex_language: line_handle_complex_language_utf8,
         }
     }
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
@@ -642,6 +644,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             data: self.data,
             options: self.options,
             complex: self.complex,
+            handle_complex_language: |_, _| None,
         }
     }
 
@@ -657,6 +660,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             data: self.data,
             options: self.options,
             complex: self.complex,
+            handle_complex_language: line_handle_complex_language_utf16,
         }
     }
 }
@@ -748,22 +752,6 @@ fn is_break_utf32_by_loose(
     })
 }
 
-/// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
-///
-/// This is implemented by ICU4X for several common string types.
-///
-/// <div class="stab unstable">
-/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
-/// trait, please consider using a type from the implementors listed below.
-/// </div>
-pub trait LineBreakType: crate::private::Sealed + Sized + RuleBreakType {
-    #[doc(hidden)]
-    fn line_handle_complex_language(
-        iterator: &mut LineBreakIterator<'_, '_, Self>,
-        left_codepoint: Self::CharType,
-    ) -> Option<usize>;
-}
-
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string.
 ///
 /// Lifetimes:
@@ -777,7 +765,7 @@ pub trait LineBreakType: crate::private::Sealed + Sized + RuleBreakType {
 ///
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
-pub struct LineBreakIterator<'data, 's, Y: LineBreakType> {
+pub struct LineBreakIterator<'data, 's, Y: RuleBreakType> {
     iter: Y::IterAttr<'s>,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
@@ -785,9 +773,12 @@ pub struct LineBreakIterator<'data, 's, Y: LineBreakType> {
     data: &'data RuleBreakData<'data>,
     options: ResolvedLineBreakOptions,
     complex: ComplexPayloadsBorrowed<'data>,
+    // Should return None if there is no complex language handling
+    pub(crate) handle_complex_language:
+        fn(&mut LineBreakIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
 }
 
-impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
+impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -848,7 +839,7 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 && self.get_linebreak_property(left_codepoint) == self.data.complex_property
                 && right_prop == self.data.complex_property
             {
-                let result = Y::line_handle_complex_language(self, left_codepoint);
+                let result = (self.handle_complex_language)(self, left_codepoint);
                 if result.is_some() {
                     return result;
                 }
@@ -1059,7 +1050,7 @@ enum StringBoundaryPosType {
     End,
 }
 
-impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
+impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
@@ -1127,30 +1118,12 @@ impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
     }
 }
 
-impl LineBreakType for Utf8 {
-    fn line_handle_complex_language(
-        iter: &mut LineBreakIterator<'_, '_, Self>,
-        left_codepoint: char,
-    ) -> Option<usize> {
-        line_handle_complex_language_utf8(iter, left_codepoint)
-    }
-}
-
-impl LineBreakType for PotentiallyIllFormedUtf8 {
-    fn line_handle_complex_language(
-        iter: &mut LineBreakIterator<'_, '_, Self>,
-        left_codepoint: char,
-    ) -> Option<usize> {
-        line_handle_complex_language_utf8(iter, left_codepoint)
-    }
-}
-
 fn line_handle_complex_language_utf8<T>(
     iter: &mut LineBreakIterator<'_, '_, T>,
     left_codepoint: char,
 ) -> Option<usize>
 where
-    T: LineBreakType<CharType = char>,
+    T: RuleBreakType<CharType = char>,
 {
     // word segmenter doesn't define break rules for some languages such as Thai.
     let start_iter = iter.iter.clone();
@@ -1198,70 +1171,61 @@ where
     }
 }
 
-impl LineBreakType for Latin1 {
-    fn line_handle_complex_language(
-        _: &mut LineBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        unreachable!()
-    }
-}
-
-impl LineBreakType for Utf16 {
-    fn line_handle_complex_language(
-        iterator: &mut LineBreakIterator<Self>,
-        left_codepoint: Self::CharType,
-    ) -> Option<usize> {
-        // word segmenter doesn't define break rules for some languages such as Thai.
-        let start_iter = iterator.iter.clone();
-        let start_point = iterator.current_pos_data;
-        let mut s = vec![left_codepoint as u16];
-        loop {
-            debug_assert!(!iterator.is_eof());
-            s.push(iterator.get_current_codepoint()? as u16);
-            iterator.advance_iter();
-            if let Some(current_codepoint) = iterator.get_current_codepoint() {
-                if iterator.get_linebreak_property(current_codepoint)
-                    != iterator.data.complex_property
-                {
-                    break;
-                }
-            } else {
-                // EOF
+fn line_handle_complex_language_utf16<T>(
+    iterator: &mut LineBreakIterator<'_, '_, T>,
+    left_codepoint: T::CharType,
+) -> Option<usize>
+where
+    T: RuleBreakType<CharType = u32>,
+{
+    // word segmenter doesn't define break rules for some languages such as Thai.
+    let start_iter = iterator.iter.clone();
+    let start_point = iterator.current_pos_data;
+    let mut s = vec![left_codepoint as u16];
+    loop {
+        debug_assert!(!iterator.is_eof());
+        s.push(iterator.get_current_codepoint()? as u16);
+        iterator.advance_iter();
+        if let Some(current_codepoint) = iterator.get_current_codepoint() {
+            if iterator.get_linebreak_property(current_codepoint) != iterator.data.complex_property
+            {
                 break;
             }
+        } else {
+            // EOF
+            break;
         }
+    }
 
-        // Restore iterator to move to head of complex string
-        iterator.iter = start_iter;
-        iterator.current_pos_data = start_point;
-        let breaks = iterator.complex.complex_language_segment_utf16(&s);
-        iterator.result_cache = breaks;
-        // result_cache vector is utf-16 index that is in BMP.
-        let first_pos = *iterator.result_cache.first()?;
-        let mut i = 1;
-        loop {
-            if i == first_pos {
-                // Re-calculate breaking offset
-                iterator.result_cache = iterator
-                    .result_cache
-                    .iter()
-                    .skip(1)
-                    .map(|r| r - i)
-                    .collect();
-                return iterator.get_current_position();
-            }
-            debug_assert!(
-                i < first_pos,
-                "we should always arrive at first_pos: near index {:?}",
-                iterator.get_current_position()
-            );
-            i += 1;
-            iterator.advance_iter();
-            if iterator.is_eof() {
-                iterator.result_cache.clear();
-                return Some(iterator.len);
-            }
+    // Restore iterator to move to head of complex string
+    iterator.iter = start_iter;
+    iterator.current_pos_data = start_point;
+    let breaks = iterator.complex.complex_language_segment_utf16(&s);
+    iterator.result_cache = breaks;
+    // result_cache vector is utf-16 index that is in BMP.
+    let first_pos = *iterator.result_cache.first()?;
+    let mut i = 1;
+    loop {
+        if i == first_pos {
+            // Re-calculate breaking offset
+            iterator.result_cache = iterator
+                .result_cache
+                .iter()
+                .skip(1)
+                .map(|r| r - i)
+                .collect();
+            return iterator.get_current_position();
+        }
+        debug_assert!(
+            i < first_pos,
+            "we should always arrive at first_pos: near index {:?}",
+            iterator.get_current_position()
+        );
+        i += 1;
+        iterator.advance_iter();
+        if iterator.is_eof() {
+            iterator.result_cache.clear();
+            return Some(iterator.len);
         }
     }
 }
