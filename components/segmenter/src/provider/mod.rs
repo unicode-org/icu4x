@@ -185,6 +185,15 @@ pub struct RuleBreakData<'data> {
     pub complex_property: u8,
 }
 
+impl RuleBreakData<'_> {
+    #[inline]
+    pub(crate) fn get_break_state_from_table(&self, left: u8, right: u8) -> BreakState {
+        let idx = (left as usize) * (self.property_count as usize) + (right as usize);
+        // We use unwrap_or to fall back to the base case and prevent panics on bad data.
+        self.break_state_table.get(idx).unwrap_or(BreakState::Keep)
+    }
+}
+
 icu_provider::data_struct!(
     RuleBreakData<'_>,
     #[cfg(feature = "datagen")]

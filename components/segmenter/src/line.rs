@@ -706,15 +706,6 @@ impl LineSegmenterBorrowed<'static> {
     }
 }
 
-impl RuleBreakData<'_> {
-    #[inline]
-    fn get_break_state_from_table(&self, left: u8, right: u8) -> BreakState {
-        let idx = (left as usize) * (self.property_count as usize) + (right as usize);
-        // We use unwrap_or to fall back to the base case and prevent panics on bad data.
-        self.break_state_table.get(idx).unwrap_or(BreakState::Keep)
-    }
-}
-
 fn is_break_utf32_by_normal(codepoint: u32, ja_zh: bool) -> bool {
     matches!(codepoint, 0x301C | 0x30A0 if ja_zh)
 }

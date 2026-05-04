@@ -108,7 +108,8 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
             };
             // SOT x anything
             if matches!(
-                self.get_break_state_from_table(self.data.sot_property, right_prop),
+                self.data
+                    .get_break_state_from_table(self.data.sot_property, right_prop),
                 BreakState::Break | BreakState::NoMatch
             ) {
                 self.boundary_property = 0; // SOT is special type
@@ -141,7 +142,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                 }
             }
 
-            match self.get_break_state_from_table(left_prop, right_prop) {
+            match self.data.get_break_state_from_table(left_prop, right_prop) {
                 BreakState::Keep => continue,
                 BreakState::Break | BreakState::NoMatch => {
                     self.boundary_property = left_prop;
@@ -159,7 +160,9 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                         let Some(prop) = self.get_current_break_property() else {
                             // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                             self.boundary_property = index;
-                            if self.get_break_state_from_table(index, self.data.eot_property)
+                            if (self
+                                .data
+                                .get_break_state_from_table(index, self.data.eot_property))
                                 == BreakState::NoMatch
                             {
                                 self.boundary_property = previous_left_prop;
@@ -174,7 +177,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                         let previous_break_state_is_cp_prop =
                             index <= self.data.last_codepoint_property;
 
-                        match self.get_break_state_from_table(index, prop) {
+                        match self.data.get_break_state_from_table(index, prop) {
                             BreakState::Keep => continue 'a,
                             BreakState::NoMatch => {
                                 self.boundary_property = previous_left_prop;
@@ -242,15 +245,6 @@ impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
             }
         }
         self.data.property_table.get32(codepoint.into())
-    }
-
-    fn get_break_state_from_table(&self, left: u8, right: u8) -> BreakState {
-        let idx = left as usize * self.data.property_count as usize + right as usize;
-        // We use unwrap_or to fall back to the base case and prevent panics on bad data.
-        self.data
-            .break_state_table
-            .get(idx)
-            .unwrap_or(BreakState::Keep)
     }
 
     /// Return the status value of break boundary.
