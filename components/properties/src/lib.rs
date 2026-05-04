@@ -105,4 +105,5 @@ mod private {
 mod harfbuzz;
 
 #[cfg(feature = "unstable")]
+#[cfg(feature = "alloc")]
 pub mod unicodeset_parse;

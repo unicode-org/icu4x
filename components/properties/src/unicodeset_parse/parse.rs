@@ -1554,6 +1554,13 @@ where
     }
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3959">#3959</a>
+/// </div>
+///
 /// Parses a `UnicodeSet` pattern and returns a `UnicodeSet` in the form of a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList),
 /// as well as the number of bytes consumed from the source string.
 ///
@@ -1640,9 +1647,18 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
     parse_unstable(source, &Baked)
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3959">#3959</a>
+/// </div>
+///
 /// Parses a `UnicodeSet` pattern with support for variables enabled.
 ///
 /// See [`parse`] for more information.
+///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
 ///
 /// # Examples
 ///
