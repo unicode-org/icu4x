@@ -800,6 +800,10 @@ impl RuleBreakData<'_> {
     }
 }
 
+fn is_break_utf32_by_normal(codepoint: u32, ja_zh: bool) -> bool {
+    matches!(codepoint, 0x301C | 0x30A0 if ja_zh)
+}
+
 #[inline]
 fn is_break_utf32_by_loose(
     right_codepoint: u32,
@@ -807,59 +811,27 @@ fn is_break_utf32_by_loose(
     right_prop: u8,
     ja_zh: bool,
 ) -> Option<bool> {
-    // breaks before hyphens
-    if right_prop == BA {
-        if left_prop == ID && (right_codepoint == 0x2010 || right_codepoint == 0x2013) {
-            return Some(true);
-        }
-    } else if right_prop == NS {
+    Some(match (right_prop, right_codepoint, left_prop) {
+        // breaks before hyphens
+        (BA, 0x2010 | 0x2013, ID) => true,
         // breaks before certain CJK hyphen-like characters
-        if right_codepoint == 0x301C || right_codepoint == 0x30A0 {
-            return Some(ja_zh);
-        }
-
+        (NS, 0x301C | 0x30A0, _) => ja_zh,
         // breaks before iteration marks
-        if right_codepoint == 0x3005
-            || right_codepoint == 0x303B
-            || right_codepoint == 0x309D
-            || right_codepoint == 0x309E
-            || right_codepoint == 0x30FD
-            || right_codepoint == 0x30FE
-        {
-            return Some(true);
-        }
-
+        (NS, 0x3005 | 0x303B | 0x309D | 0x309E | 0x30FD | 0x30FE, _) => true,
         // breaks before certain centered punctuation marks:
-        if right_codepoint == 0x30FB
-            || right_codepoint == 0xFF1A
-            || right_codepoint == 0xFF1B
-            || right_codepoint == 0xFF65
-            || right_codepoint == 0x203C
-            || (0x2047..=0x2049).contains(&right_codepoint)
-        {
-            return Some(ja_zh);
-        }
-    } else if right_prop == IN {
+        (NS, 0x30FB | 0xFF1A | 0xFF1B | 0xFF65 | 0x203C | 0x2047..=0x2049, _) => ja_zh,
         // breaks between inseparable characters such as U+2025, U+2026 i.e. characters with the Unicode Line Break property IN
-        return Some(true);
-    } else if right_prop == EX {
+        (IN, _, _) => true,
         // breaks before certain centered punctuation marks:
-        if right_codepoint == 0xFF01 || right_codepoint == 0xFF1F {
-            return Some(ja_zh);
-        }
-    }
-
-    // breaks before suffixes:
-    // Characters with the Unicode Line Break property PO and the East Asian Width property
-    if right_prop == PO_EAW {
-        return Some(ja_zh);
-    }
-    // breaks after prefixes:
-    // Characters with the Unicode Line Break property PR and the East Asian Width property
-    if left_prop == PR_EAW {
-        return Some(ja_zh);
-    }
-    None
+        (EX, 0xFF01 | 0xFF1F, _) => ja_zh,
+        // breaks before suffixes:
+        // Characters with the Unicode Line Break property PO and the East Asian Width property
+        (PO_EAW, _, _) => ja_zh,
+        // breaks after prefixes:
+        // Characters with the Unicode Line Break property PR and the East Asian Width property
+        (_, _, PR_EAW) => ja_zh,
+        _ => return None,
+    })
 }
 
 /// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
@@ -994,7 +966,8 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
             // CSS line-break property handling
             match self.options.strictness {
                 LineBreakStrictness::Normal
-                    if self.is_break_by_normal(right_codepoint) && !after_zwj =>
+                    if is_break_utf32_by_normal(right_codepoint.into(), self.options.ja_zh)
+                        && !after_zwj =>
                 {
                     return self.get_current_position();
                 }
@@ -1202,13 +1175,6 @@ impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
     fn get_current_linebreak_property(&self) -> Option<u8> {
         self.get_current_codepoint()
             .map(|c| self.get_linebreak_property(c))
-    }
-
-    fn is_break_by_normal(&self, codepoint: Y::CharType) -> bool {
-        match codepoint.into() {
-            0x301C | 0x30A0 => self.options.ja_zh,
-            _ => false,
-        }
     }
 }
 
