@@ -15,7 +15,7 @@ use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
-#[allow(missing_docs)]
+#[doc(hidden)]
 impl RuleBreakData<'_> {
     pub const LINE_PROPERTY_AI: u8 = 1;
     pub const LINE_PROPERTY_AL: u8 = 3;
@@ -44,6 +44,40 @@ impl RuleBreakData<'_> {
     pub const LINE_PROPERTY_ZW: u8 = 53;
     pub const LINE_PROPERTY_ZWJ: u8 = 54;
 }
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[doc(hidden)]
+impl RuleBreakData<'_> {
+    pub const LINE_PROPERTY_AK: u8 = 2;
+    pub const LINE_PROPERTY_AL_DOTTED_CIRCLE: u8 = 4;
+    pub const LINE_PROPERTY_AP: u8 = 5;
+    pub const LINE_PROPERTY_AS: u8 = 6;
+    pub const LINE_PROPERTY_B2: u8 = 7;
+    pub const LINE_PROPERTY_BB: u8 = 9;
+    pub const LINE_PROPERTY_CB: u8 = 11;
+    pub const LINE_PROPERTY_CL: u8 = 13;
+    pub const LINE_PROPERTY_CP: u8 = 15;
+    pub const LINE_PROPERTY_EB: u8 = 17;
+    pub const LINE_PROPERTY_EM: u8 = 18;
+    pub const LINE_PROPERTY_GL: u8 = 20;
+    pub const LINE_PROPERTY_HL: u8 = 23;
+    pub const LINE_PROPERTY_ID_CN: u8 = 26;
+    pub const LINE_PROPERTY_IS: u8 = 28;
+    pub const LINE_PROPERTY_OP_EA: u8 = 36;
+    pub const LINE_PROPERTY_OP_OP30: u8 = 37;
+    pub const LINE_PROPERTY_PO: u8 = 38;
+    pub const LINE_PROPERTY_PR: u8 = 40;
+    pub const LINE_PROPERTY_QU: u8 = 42;
+    pub const LINE_PROPERTY_QU_PF: u8 = 43;
+    pub const LINE_PROPERTY_QU_PI: u8 = 44;
+    pub const LINE_PROPERTY_RI: u8 = 45;
+    pub const LINE_PROPERTY_SY: u8 = 48;
+    pub const LINE_PROPERTY_VF: u8 = 49;
+    pub const LINE_PROPERTY_VI: u8 = 50;
+    pub const LINE_PROPERTY_WJ: u8 = 51;
+    pub const LINE_PROPERTY_XX: u8 = 52;
+}
+
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line segmenter.
 ///
@@ -1339,20 +1373,62 @@ mod tests {
             )
         };
 
-        assert_eq!(get_linebreak_property('\u{0020}'), SP);
-        assert_eq!(get_linebreak_property('\u{0022}'), QU);
-        assert_eq!(get_linebreak_property('('), OP_OP30);
-        assert_eq!(get_linebreak_property('\u{0030}'), NU);
-        assert_eq!(get_linebreak_property('['), OP_OP30);
-        assert_eq!(get_linebreak_property('\u{1f3fb}'), EM);
-        assert_eq!(get_linebreak_property('\u{20000}'), ID);
-        assert_eq!(get_linebreak_property('\u{e0020}'), CM);
-        assert_eq!(get_linebreak_property('\u{3041}'), CJ);
-        assert_eq!(get_linebreak_property('\u{0025}'), PO);
-        assert_eq!(get_linebreak_property('\u{00A7}'), AI);
-        assert_eq!(get_linebreak_property('\u{50005}'), XX);
-        assert_eq!(get_linebreak_property('\u{17D6}'), NS);
-        assert_eq!(get_linebreak_property('\u{2014}'), B2);
+        assert_eq!(
+            get_linebreak_property('\u{0020}'),
+            RuleBreakData::LINE_PROPERTY_SP
+        );
+        assert_eq!(
+            get_linebreak_property('\u{0022}'),
+            RuleBreakData::LINE_PROPERTY_QU
+        );
+        assert_eq!(
+            get_linebreak_property('('),
+            RuleBreakData::LINE_PROPERTY_OP_OP30
+        );
+        assert_eq!(
+            get_linebreak_property('\u{0030}'),
+            RuleBreakData::LINE_PROPERTY_NU
+        );
+        assert_eq!(
+            get_linebreak_property('['),
+            RuleBreakData::LINE_PROPERTY_OP_OP30
+        );
+        assert_eq!(
+            get_linebreak_property('\u{1f3fb}'),
+            RuleBreakData::LINE_PROPERTY_EM
+        );
+        assert_eq!(
+            get_linebreak_property('\u{20000}'),
+            RuleBreakData::LINE_PROPERTY_ID
+        );
+        assert_eq!(
+            get_linebreak_property('\u{e0020}'),
+            RuleBreakData::LINE_PROPERTY_CM
+        );
+        assert_eq!(
+            get_linebreak_property('\u{3041}'),
+            RuleBreakData::LINE_PROPERTY_CJ
+        );
+        assert_eq!(
+            get_linebreak_property('\u{0025}'),
+            RuleBreakData::LINE_PROPERTY_PO
+        );
+        assert_eq!(
+            get_linebreak_property('\u{00A7}'),
+            RuleBreakData::LINE_PROPERTY_AI
+        );
+        assert_eq!(
+            get_linebreak_property('\u{50005}'),
+            RuleBreakData::LINE_PROPERTY_XX
+        );
+        assert_eq!(
+            get_linebreak_property('\u{17D6}'),
+            RuleBreakData::LINE_PROPERTY_NS
+        );
+        assert_eq!(
+            get_linebreak_property('\u{2014}'),
+            RuleBreakData::LINE_PROPERTY_B2
+        );
     }
 
     #[test]
@@ -1371,89 +1447,431 @@ mod tests {
         };
 
         // LB4
-        assert_eq!(is_break(BK, AL), true);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_BK,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            true
+        );
         // LB5
-        assert_eq!(is_break(CR, LF), false);
-        assert_eq!(is_break(CR, AL), true);
-        assert_eq!(is_break(LF, AL), true);
-        assert_eq!(is_break(NL, AL), true);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_CR,
+                RuleBreakData::LINE_PROPERTY_LF
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_CR,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            true
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_LF,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            true
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_NL,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            true
+        );
         // LB6
-        assert_eq!(is_break(AL, BK), false);
-        assert_eq!(is_break(AL, CR), false);
-        assert_eq!(is_break(AL, LF), false);
-        assert_eq!(is_break(AL, NL), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_BK
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_CR
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_LF
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_NL
+            ),
+            false
+        );
         // LB7
-        assert_eq!(is_break(AL, SP), false);
-        assert_eq!(is_break(AL, ZW), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_SP
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_ZW
+            ),
+            false
+        );
         // LB8
         // LB8a and LB9 omitted: These are handled outside of the state table.
         // LB10
-        assert_eq!(is_break(ZWJ, SP), false);
-        assert_eq!(is_break(SP, CM), true);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_ZWJ,
+                RuleBreakData::LINE_PROPERTY_SP
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_SP,
+                RuleBreakData::LINE_PROPERTY_CM
+            ),
+            true
+        );
         // LB11
-        assert_eq!(is_break(AL, WJ), false);
-        assert_eq!(is_break(WJ, AL), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_WJ
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_WJ,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            false
+        );
         // LB12
-        assert_eq!(is_break(GL, AL), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_GL,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            false
+        );
         // LB12a
-        assert_eq!(is_break(AL, GL), false);
-        assert_eq!(is_break(SP, GL), true);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_GL
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_SP,
+                RuleBreakData::LINE_PROPERTY_GL
+            ),
+            true
+        );
         // LB13
-        assert_eq!(is_break(AL, CL), false);
-        assert_eq!(is_break(AL, CP), false);
-        assert_eq!(is_break(AL, EX), false);
-        assert_eq!(is_break(AL, IS), false);
-        assert_eq!(is_break(AL, SY), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_CL
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_CP
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_EX
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_IS
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_SY
+            ),
+            false
+        );
         // LB18
-        assert_eq!(is_break(SP, AL), true);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_SP,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            true
+        );
         // LB19
-        assert_eq!(is_break(AL, QU), false);
-        assert_eq!(is_break(QU, AL), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_QU
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_QU,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            false
+        );
         // LB20
-        assert_eq!(is_break(AL, CB), true);
-        assert_eq!(is_break(CB, AL), true);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_CB
+            ),
+            true
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_CB,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            true
+        );
         // LB20
-        assert_eq!(is_break(AL, BA), false);
-        assert_eq!(is_break(AL, HY), false);
-        assert_eq!(is_break(AL, NS), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_BA
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_HY
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_NS
+            ),
+            false
+        );
         // LB21
-        assert_eq!(is_break(AL, BA), false);
-        assert_eq!(is_break(BB, AL), false);
-        assert_eq!(is_break(ID, BA), false);
-        assert_eq!(is_break(ID, NS), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_BA
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_BB,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_ID,
+                RuleBreakData::LINE_PROPERTY_BA
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_ID,
+                RuleBreakData::LINE_PROPERTY_NS
+            ),
+            false
+        );
         // LB21a
         // LB21b
-        assert_eq!(is_break(SY, HL), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_SY,
+                RuleBreakData::LINE_PROPERTY_HL
+            ),
+            false
+        );
         // LB22
-        assert_eq!(is_break(AL, IN), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_IN
+            ),
+            false
+        );
         // LB 23
-        assert_eq!(is_break(AL, NU), false);
-        assert_eq!(is_break(HL, NU), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_NU
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_HL,
+                RuleBreakData::LINE_PROPERTY_NU
+            ),
+            false
+        );
         // LB 23a
-        assert_eq!(is_break(PR, ID), false);
-        assert_eq!(is_break(PR, EB), false);
-        assert_eq!(is_break(PR, EM), false);
-        assert_eq!(is_break(ID, PO), false);
-        assert_eq!(is_break(EB, PO), false);
-        assert_eq!(is_break(EM, PO), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_PR,
+                RuleBreakData::LINE_PROPERTY_ID
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_PR,
+                RuleBreakData::LINE_PROPERTY_EB
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_PR,
+                RuleBreakData::LINE_PROPERTY_EM
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_ID,
+                RuleBreakData::LINE_PROPERTY_PO
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_EB,
+                RuleBreakData::LINE_PROPERTY_PO
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_EM,
+                RuleBreakData::LINE_PROPERTY_PO
+            ),
+            false
+        );
         // LB26
-        assert_eq!(is_break(JL, JL), false);
-        assert_eq!(is_break(JL, JV), false);
-        assert_eq!(is_break(JL, H2), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_JL,
+                RuleBreakData::LINE_PROPERTY_JL
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_JL,
+                RuleBreakData::LINE_PROPERTY_JV
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_JL,
+                RuleBreakData::LINE_PROPERTY_H2
+            ),
+            false
+        );
         // LB27
-        assert_eq!(is_break(JL, IN), false);
-        assert_eq!(is_break(JL, PO), false);
-        assert_eq!(is_break(PR, JL), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_JL,
+                RuleBreakData::LINE_PROPERTY_IN
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_JL,
+                RuleBreakData::LINE_PROPERTY_PO
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_PR,
+                RuleBreakData::LINE_PROPERTY_JL
+            ),
+            false
+        );
         // LB28
-        assert_eq!(is_break(AL, AL), false);
-        assert_eq!(is_break(HL, AL), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_AL,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_HL,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            false
+        );
         // LB29
-        assert_eq!(is_break(IS, AL), false);
-        assert_eq!(is_break(IS, HL), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_IS,
+                RuleBreakData::LINE_PROPERTY_AL
+            ),
+            false
+        );
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_IS,
+                RuleBreakData::LINE_PROPERTY_HL
+            ),
+            false
+        );
         // LB30b
-        assert_eq!(is_break(EB, EM), false);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_EB,
+                RuleBreakData::LINE_PROPERTY_EM
+            ),
+            false
+        );
         // LB31
-        assert_eq!(is_break(ID, ID), true);
+        assert_eq!(
+            is_break(
+                RuleBreakData::LINE_PROPERTY_ID,
+                RuleBreakData::LINE_PROPERTY_ID
+            ),
+            true
+        );
     }
 
     #[test]
