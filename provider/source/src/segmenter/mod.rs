@@ -515,6 +515,41 @@ fn generate_rule_break_data(
                     continue;
                 }
             }
+
+            for (name, value) in [
+                ("AI", RuleBreakData::LINE_PROPERTY_AI),
+                ("AL", RuleBreakData::LINE_PROPERTY_AL),
+                ("BA", RuleBreakData::LINE_PROPERTY_BA),
+                ("BK", RuleBreakData::LINE_PROPERTY_BK),
+                ("CJ", RuleBreakData::LINE_PROPERTY_CJ),
+                ("CM", RuleBreakData::LINE_PROPERTY_CM),
+                ("CR", RuleBreakData::LINE_PROPERTY_CR),
+                ("EX", RuleBreakData::LINE_PROPERTY_EX),
+                ("H2", RuleBreakData::LINE_PROPERTY_H2),
+                ("H3", RuleBreakData::LINE_PROPERTY_H3),
+                ("HY", RuleBreakData::LINE_PROPERTY_HY),
+                ("ID", RuleBreakData::LINE_PROPERTY_ID),
+                ("IN", RuleBreakData::LINE_PROPERTY_IN),
+                ("JL", RuleBreakData::LINE_PROPERTY_JL),
+                ("JT", RuleBreakData::LINE_PROPERTY_JT),
+                ("JV", RuleBreakData::LINE_PROPERTY_JV),
+                ("LF", RuleBreakData::LINE_PROPERTY_LF),
+                ("NL", RuleBreakData::LINE_PROPERTY_NL),
+                ("NS", RuleBreakData::LINE_PROPERTY_NS),
+                ("NU", RuleBreakData::LINE_PROPERTY_NU),
+                ("PO_EAW", RuleBreakData::LINE_PROPERTY_PO_EAW),
+                ("PR_EAW", RuleBreakData::LINE_PROPERTY_PR_EAW),
+                ("SA", RuleBreakData::LINE_PROPERTY_SA),
+                ("SP", RuleBreakData::LINE_PROPERTY_SP),
+                ("ZW", RuleBreakData::LINE_PROPERTY_ZW),
+                ("ZWJ", RuleBreakData::LINE_PROPERTY_ZWJ),
+            ] {
+                assert_eq!(
+                    get_index_from_name(&properties_names, name),
+                    Some(value as usize),
+                    "{name} {properties_names:?}"
+                );
+            }
         }
 
         _ => {

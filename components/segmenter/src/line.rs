@@ -15,118 +15,35 @@ use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
-// TODO(#1637): These constants should be data driven.
-#[allow(dead_code)]
-const UNKNOWN: u8 = 0;
-#[allow(dead_code)]
-const AI: u8 = 1;
-#[allow(dead_code)]
-const AK: u8 = 2;
-#[allow(dead_code)]
-const AL: u8 = 3;
-#[allow(dead_code)]
-const AL_DOTTED_CIRCLE: u8 = 4;
-#[allow(dead_code)]
-const AP: u8 = 5;
-#[allow(dead_code)]
-const AS: u8 = 6;
-#[allow(dead_code)]
-const B2: u8 = 7;
-#[allow(dead_code)]
-const BA: u8 = 8;
-#[allow(dead_code)]
-const BB: u8 = 9;
-#[allow(dead_code)]
-const BK: u8 = 10;
-#[allow(dead_code)]
-const CB: u8 = 11;
-#[allow(dead_code)]
-const CJ: u8 = 12;
-#[allow(dead_code)]
-const CL: u8 = 13;
-#[allow(dead_code)]
-const CM: u8 = 14;
-#[allow(dead_code)]
-const CP: u8 = 15;
-#[allow(dead_code)]
-const CR: u8 = 16;
-#[allow(dead_code)]
-const EB: u8 = 17;
-#[allow(dead_code)]
-const EM: u8 = 18;
-#[allow(dead_code)]
-const EX: u8 = 19;
-#[allow(dead_code)]
-const GL: u8 = 20;
-#[allow(dead_code)]
-const H2: u8 = 21;
-#[allow(dead_code)]
-const H3: u8 = 22;
-#[allow(dead_code)]
-const HL: u8 = 23;
-#[allow(dead_code)]
-const HY: u8 = 24;
-#[allow(dead_code)]
-const ID: u8 = 25;
-#[allow(dead_code)]
-const ID_CN: u8 = 26;
-#[allow(dead_code)]
-const IN: u8 = 27;
-#[allow(dead_code)]
-const IS: u8 = 28;
-#[allow(dead_code)]
-const JL: u8 = 29;
-#[allow(dead_code)]
-const JT: u8 = 30;
-#[allow(dead_code)]
-const JV: u8 = 31;
-#[allow(dead_code)]
-const LF: u8 = 32;
-#[allow(dead_code)]
-const NL: u8 = 33;
-#[allow(dead_code)]
-const NS: u8 = 34;
-#[allow(dead_code)]
-const NU: u8 = 35;
-#[allow(dead_code)]
-const OP_EA: u8 = 36;
-#[allow(dead_code)]
-const OP_OP30: u8 = 37;
-#[allow(dead_code)]
-const PO: u8 = 38;
-#[allow(dead_code)]
-const PO_EAW: u8 = 39;
-#[allow(dead_code)]
-const PR: u8 = 40;
-#[allow(dead_code)]
-const PR_EAW: u8 = 41;
-#[allow(dead_code)]
-const QU: u8 = 42;
-#[allow(dead_code)]
-const QU_PF: u8 = 43;
-#[allow(dead_code)]
-const QU_PI: u8 = 44;
-#[allow(dead_code)]
-const RI: u8 = 45;
-#[allow(dead_code)]
-const SA: u8 = 46;
-#[allow(dead_code)]
-const SP: u8 = 47;
-#[allow(dead_code)]
-const SY: u8 = 48;
-#[allow(dead_code)]
-const VF: u8 = 49;
-#[allow(dead_code)]
-const VI: u8 = 50;
-#[allow(dead_code)]
-const WJ: u8 = 51;
-#[allow(dead_code)]
-const XX: u8 = 52;
-#[allow(dead_code)]
-const ZW: u8 = 53;
-#[allow(dead_code)]
-const ZWJ: u8 = 54;
-
+#[allow(missing_docs)]
+impl RuleBreakData<'_> {
+    pub const LINE_PROPERTY_AI: u8 = 1;
+    pub const LINE_PROPERTY_AL: u8 = 3;
+    pub const LINE_PROPERTY_BA: u8 = 8;
+    pub const LINE_PROPERTY_BK: u8 = 10;
+    pub const LINE_PROPERTY_CJ: u8 = 12;
+    pub const LINE_PROPERTY_CM: u8 = 14;
+    pub const LINE_PROPERTY_CR: u8 = 16;
+    pub const LINE_PROPERTY_EX: u8 = 19;
+    pub const LINE_PROPERTY_H2: u8 = 21;
+    pub const LINE_PROPERTY_H3: u8 = 22;
+    pub const LINE_PROPERTY_HY: u8 = 24;
+    pub const LINE_PROPERTY_ID: u8 = 25;
+    pub const LINE_PROPERTY_IN: u8 = 27;
+    pub const LINE_PROPERTY_JL: u8 = 29;
+    pub const LINE_PROPERTY_JT: u8 = 30;
+    pub const LINE_PROPERTY_JV: u8 = 31;
+    pub const LINE_PROPERTY_LF: u8 = 32;
+    pub const LINE_PROPERTY_NL: u8 = 33;
+    pub const LINE_PROPERTY_NS: u8 = 34;
+    pub const LINE_PROPERTY_NU: u8 = 35;
+    pub const LINE_PROPERTY_PO_EAW: u8 = 39;
+    pub const LINE_PROPERTY_PR_EAW: u8 = 41;
+    pub const LINE_PROPERTY_SA: u8 = 46;
+    pub const LINE_PROPERTY_SP: u8 = 47;
+    pub const LINE_PROPERTY_ZW: u8 = 53;
+    pub const LINE_PROPERTY_ZWJ: u8 = 54;
+}
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line segmenter.
 ///
@@ -771,7 +688,7 @@ impl RuleBreakData<'_> {
             || strictness == LineBreakStrictness::Normal
         {
             return match prop {
-                CJ => ID, // All CJ's General_Category is Other_Letter (Lo).
+                RuleBreakData::LINE_PROPERTY_CJ => RuleBreakData::LINE_PROPERTY_ID, // All CJ's General_Category is Other_Letter (Lo).
                 _ => prop,
             };
         }
@@ -796,7 +713,7 @@ impl RuleBreakData<'_> {
             LineBreakWordOption::Normal,
         );
 
-        line_break_property == SA
+        line_break_property == RuleBreakData::LINE_PROPERTY_SA
     }
 }
 
@@ -813,23 +730,31 @@ fn is_break_utf32_by_loose(
 ) -> Option<bool> {
     Some(match (right_prop, right_codepoint, left_prop) {
         // breaks before hyphens
-        (BA, 0x2010 | 0x2013, ID) => true,
+        (RuleBreakData::LINE_PROPERTY_BA, 0x2010 | 0x2013, RuleBreakData::LINE_PROPERTY_ID) => true,
         // breaks before certain CJK hyphen-like characters
-        (NS, 0x301C | 0x30A0, _) => ja_zh,
+        (RuleBreakData::LINE_PROPERTY_NS, 0x301C | 0x30A0, _) => ja_zh,
         // breaks before iteration marks
-        (NS, 0x3005 | 0x303B | 0x309D | 0x309E | 0x30FD | 0x30FE, _) => true,
+        (
+            RuleBreakData::LINE_PROPERTY_NS,
+            0x3005 | 0x303B | 0x309D | 0x309E | 0x30FD | 0x30FE,
+            _,
+        ) => true,
         // breaks before certain centered punctuation marks:
-        (NS, 0x30FB | 0xFF1A | 0xFF1B | 0xFF65 | 0x203C | 0x2047..=0x2049, _) => ja_zh,
+        (
+            RuleBreakData::LINE_PROPERTY_NS,
+            0x30FB | 0xFF1A | 0xFF1B | 0xFF65 | 0x203C | 0x2047..=0x2049,
+            _,
+        ) => ja_zh,
         // breaks between inseparable characters such as U+2025, U+2026 i.e. characters with the Unicode Line Break property IN
-        (IN, _, _) => true,
+        (RuleBreakData::LINE_PROPERTY_IN, _, _) => true,
         // breaks before certain centered punctuation marks:
-        (EX, 0xFF01 | 0xFF1F, _) => ja_zh,
+        (RuleBreakData::LINE_PROPERTY_EX, 0xFF01 | 0xFF1F, _) => ja_zh,
         // breaks before suffixes:
         // Characters with the Unicode Line Break property PO and the East Asian Width property
-        (PO_EAW, _, _) => ja_zh,
+        (RuleBreakData::LINE_PROPERTY_PO_EAW, _, _) => ja_zh,
         // breaks after prefixes:
         // Characters with the Unicode Line Break property PR and the East Asian Width property
-        (_, _, PR_EAW) => ja_zh,
+        (_, _, RuleBreakData::LINE_PROPERTY_PR_EAW) => ja_zh,
         _ => return None,
     })
 }
@@ -920,7 +845,8 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
             let left_codepoint = self.get_current_codepoint()?;
             let mut left_prop =
                 lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
-            let after_zwj = lb8a_after_lb9 || (lb9_left.is_none() && left_prop == ZWJ);
+            let after_zwj = lb8a_after_lb9
+                || (lb9_left.is_none() && left_prop == RuleBreakData::LINE_PROPERTY_ZWJ);
             self.advance_iter();
 
             let Some(right_codepoint) = self.get_current_codepoint() else {
@@ -930,17 +856,18 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
             // NOTE(egg): The special-casing of `LineBreakStrictness::Anywhere` allows us to pass
             // a test, but eventually that option should just be simplified to call the extended
             // grapheme cluster segmenter.
-            if (right_prop == CM
-                || (right_prop == ZWJ && self.options.strictness != LineBreakStrictness::Anywhere))
-                && left_prop != BK
-                && left_prop != CR
-                && left_prop != LF
-                && left_prop != NL
-                && left_prop != SP
-                && left_prop != ZW
+            if (right_prop == RuleBreakData::LINE_PROPERTY_CM
+                || (right_prop == RuleBreakData::LINE_PROPERTY_ZWJ
+                    && self.options.strictness != LineBreakStrictness::Anywhere))
+                && left_prop != RuleBreakData::LINE_PROPERTY_BK
+                && left_prop != RuleBreakData::LINE_PROPERTY_CR
+                && left_prop != RuleBreakData::LINE_PROPERTY_LF
+                && left_prop != RuleBreakData::LINE_PROPERTY_NL
+                && left_prop != RuleBreakData::LINE_PROPERTY_SP
+                && left_prop != RuleBreakData::LINE_PROPERTY_ZW
             {
                 lb9_left = Some(left_prop);
-                lb8a_after_lb9 = right_prop == ZWJ;
+                lb8a_after_lb9 = right_prop == RuleBreakData::LINE_PROPERTY_ZWJ;
                 continue;
             } else {
                 lb9_left = None;
@@ -949,14 +876,40 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
             // CSS word-break property handling
             match (self.options.word_option, left_prop, right_prop) {
-                (LineBreakWordOption::BreakAll, AL | NU | SA, _) => {
-                    left_prop = ID;
+                (
+                    LineBreakWordOption::BreakAll,
+                    RuleBreakData::LINE_PROPERTY_AL
+                    | RuleBreakData::LINE_PROPERTY_NU
+                    | RuleBreakData::LINE_PROPERTY_SA,
+                    _,
+                ) => {
+                    left_prop = RuleBreakData::LINE_PROPERTY_ID;
                 }
                 //  typographic letter units shouldn't be break
                 (
                     LineBreakWordOption::KeepAll,
-                    AI | AL | ID | NU | HY | H2 | H3 | JL | JV | JT | CJ,
-                    AI | AL | ID | NU | HY | H2 | H3 | JL | JV | JT | CJ,
+                    RuleBreakData::LINE_PROPERTY_AI
+                    | RuleBreakData::LINE_PROPERTY_AL
+                    | RuleBreakData::LINE_PROPERTY_ID
+                    | RuleBreakData::LINE_PROPERTY_NU
+                    | RuleBreakData::LINE_PROPERTY_HY
+                    | RuleBreakData::LINE_PROPERTY_H2
+                    | RuleBreakData::LINE_PROPERTY_H3
+                    | RuleBreakData::LINE_PROPERTY_JL
+                    | RuleBreakData::LINE_PROPERTY_JV
+                    | RuleBreakData::LINE_PROPERTY_JT
+                    | RuleBreakData::LINE_PROPERTY_CJ,
+                    RuleBreakData::LINE_PROPERTY_AI
+                    | RuleBreakData::LINE_PROPERTY_AL
+                    | RuleBreakData::LINE_PROPERTY_ID
+                    | RuleBreakData::LINE_PROPERTY_NU
+                    | RuleBreakData::LINE_PROPERTY_HY
+                    | RuleBreakData::LINE_PROPERTY_H2
+                    | RuleBreakData::LINE_PROPERTY_H3
+                    | RuleBreakData::LINE_PROPERTY_JL
+                    | RuleBreakData::LINE_PROPERTY_JV
+                    | RuleBreakData::LINE_PROPERTY_JT
+                    | RuleBreakData::LINE_PROPERTY_CJ,
                 ) => {
                     continue;
                 }
@@ -1038,7 +991,7 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
                     loop {
                         self.advance_iter();
-                        let after_zwj = left_prop_pre_lb9 == ZWJ;
+                        let after_zwj = left_prop_pre_lb9 == RuleBreakData::LINE_PROPERTY_ZWJ;
 
                         let previous_break_state_is_cp_prop =
                             index <= self.data.last_codepoint_property;
@@ -1062,13 +1015,14 @@ impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                             return Some(self.len);
                         };
 
-                        if (prop == CM || prop == ZWJ)
-                            && left_prop_pre_lb9 != BK
-                            && left_prop_pre_lb9 != CR
-                            && left_prop_pre_lb9 != LF
-                            && left_prop_pre_lb9 != NL
-                            && left_prop_pre_lb9 != SP
-                            && left_prop_pre_lb9 != ZW
+                        if (prop == RuleBreakData::LINE_PROPERTY_CM
+                            || prop == RuleBreakData::LINE_PROPERTY_ZWJ)
+                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_BK
+                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_CR
+                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_LF
+                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_NL
+                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_SP
+                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_ZW
                         {
                             left_prop_pre_lb9 = prop;
                             continue;
