@@ -323,6 +323,8 @@ lazy_static::lazy_static! {
         "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
         "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
 
+        "icu::properties::unicodeset_parse",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes

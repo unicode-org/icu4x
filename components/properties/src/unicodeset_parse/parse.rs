@@ -103,7 +103,7 @@ impl ParseError {
     /// # Examples
     ///
     /// ```
-    /// use icu::experimental::unicodeset_parse::*;
+    /// use icu::properties::unicodeset_parse::*;
     ///
     /// let source = "[[abc]-x]";
     /// let set = parse(source);
@@ -116,7 +116,7 @@ impl ParseError {
     /// ```
     ///
     /// ```
-    /// use icu::experimental::unicodeset_parse::*;
+    /// use icu::properties::unicodeset_parse::*;
     ///
     /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
     /// let set = parse(source);
@@ -1588,7 +1588,7 @@ where
 ///
 /// Parse ranges
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let source = "[a-zA-Z0-9]";
 /// let (set, consumed) = parse(source).unwrap();
@@ -1602,7 +1602,7 @@ where
 ///
 /// Parse properties, set operations, inner sets
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let (set, _) =
 ///     parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
@@ -1612,7 +1612,7 @@ where
 ///
 /// Inversions remove strings
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let (set, _) =
 ///     parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
@@ -1623,7 +1623,7 @@ where
 ///
 /// Set operators (including the implicit union) have the same precedence and are left-associative
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let (set, _) = parse("[[ace][bdf] - [abc][def]]").unwrap();
 /// assert!(set.code_points().contains_range('d'..='f'));
@@ -1632,7 +1632,7 @@ where
 ///
 /// Supports partial parses
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let (set, consumed) = parse("[a-c][x-z]").unwrap();
 /// let code_points = set.code_points();
@@ -1663,7 +1663,7 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
 /// # Examples
 ///
 /// ```
-/// use icu::experimental::unicodeset_parse::*;
+/// use icu::properties::unicodeset_parse::*;
 ///
 /// let (my_set, _) = parse("[abc]").unwrap();
 ///
