@@ -713,22 +713,19 @@ impl RuleBreakData<'_> {
         strictness: LineBreakStrictness,
         word_option: LineBreakWordOption,
     ) -> u8 {
-        // Note: Default value is 0 == UNKNOWN
-        let prop = self.property_table.get32(codepoint);
-
-        if word_option == LineBreakWordOption::BreakAll
-            || strictness == LineBreakStrictness::Loose
-            || strictness == LineBreakStrictness::Normal
-        {
-            return match prop {
-                RuleBreakData::LINE_PROPERTY_CJ => RuleBreakData::LINE_PROPERTY_ID, // All CJ's General_Category is Other_Letter (Lo).
-                _ => prop,
-            };
+        match (
+            (word_option, strictness),
+            self.property_table.get32(codepoint),
+        ) {
+            // CJ is treated as NS by default, yielding strict line breaking.
+            // https://www.unicode.org/reports/tr14/#CJ
+            (
+                (LineBreakWordOption::BreakAll, _)
+                | (_, LineBreakStrictness::Loose | LineBreakStrictness::Normal),
+                RuleBreakData::LINE_PROPERTY_CJ,
+            ) => RuleBreakData::LINE_PROPERTY_ID, // All CJ's General_Category is Other_Letter (Lo).
+            (_, prop) => prop,
         }
-
-        // CJ is treated as NS by default, yielding strict line breaking.
-        // https://www.unicode.org/reports/tr14/#CJ
-        prop
     }
 
     #[inline]
