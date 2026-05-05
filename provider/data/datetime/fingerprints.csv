@@ -15777,7 +15777,7 @@ datetime/patterns/date/gregorian/v1, fi/m0de, 74B, 44B, d3a7f6c8be2dfd40
 datetime/patterns/date/gregorian/v1, fi/y, -> af/y
 datetime/patterns/date/gregorian/v1, fi/ym0, 92B, 64B, feb57c1004b23cba
 datetime/patterns/date/gregorian/v1, fi/ym0d, 122B, 94B, e9e576f65a0b2057
-datetime/patterns/date/gregorian/v1, fi/ym0de, 146B, 118B, 258d34b8dd232e3e
+datetime/patterns/date/gregorian/v1, fi/ym0de, 146B, 118B, 4312f8770e488642
 datetime/patterns/date/gregorian/v1, fil/de, -> az/de
 datetime/patterns/date/gregorian/v1, fil/ej, -> ceb/ej
 datetime/patterns/date/gregorian/v1, fil/m0d, -> ceb/m0d
