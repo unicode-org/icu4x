@@ -38,7 +38,7 @@ icu_list = { workspace = true }
 icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
-icu_properties = { workspace = true, features = ["alloc"] }
+icu_properties = { workspace = true, features = ["alloc", "unstable"] }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 either = { workspace = true }

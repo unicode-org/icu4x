@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::unicodeset_parse::{self as icu_unicodeset_parse, VariableMap, VariableValue};
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::string::ToString;
@@ -12,6 +11,7 @@ use core::fmt::{Display, Formatter};
 use core::{iter::Peekable, str::CharIndices};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_properties::unicodeset_parse::{self, VariableMap, VariableValue};
 
 type Result<T> = core::result::Result<T, CompileError>;
 
@@ -922,7 +922,7 @@ where
         Ok(buf)
     }
 
-    // parses all supported escapes. code is somewhat duplicated from icu_unicodeset_parse
+    // parses all supported escapes. code is somewhat duplicated from unicodeset_parse
     // might want to deduplicate this with unicodeset_parse somehow
     fn parse_escaped_char_into_buf(&mut self, buf: &mut String) -> Result<()> {
         self.consume(Self::ESCAPE)?;
@@ -1040,7 +1040,7 @@ where
         // pre_offset is a valid index because self.iter (used in must_peek_index)
         // was created from self.source
         let set_source = &self.source[pre_offset..];
-        let (set, consumed_bytes) = icu_unicodeset_parse::parse_unstable_with_variables(
+        let (set, consumed_bytes) = unicodeset_parse::parse_unstable_with_variables(
             set_source,
             &self.variable_map,
             self.property_provider,
@@ -1067,7 +1067,7 @@ where
             Some(set) => Ok(set.clone()),
             None => {
                 let (set, _) =
-                    icu_unicodeset_parse::parse_unstable(Self::DOT_SET, self.property_provider)
+                    unicodeset_parse::parse_unstable(Self::DOT_SET, self.property_provider)
                         .map_err(|_| CompileErrorKind::Internal("dot set syntax not valid"))?;
                 self.dot_set = Some(set.clone());
                 Ok(set)

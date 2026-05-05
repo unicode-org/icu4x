@@ -34,7 +34,6 @@ pub mod measure;
 pub mod personnames;
 pub mod relativetime;
 pub mod transliterate;
-pub mod unicodeset_parse;
 pub mod units;
 
 #[doc(hidden)] // compiled constructors look for the baked provider here

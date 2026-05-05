@@ -10,23 +10,23 @@ use alloc::vec::Vec;
 use core::fmt::Display;
 use core::{iter::Peekable, str::CharIndices};
 
-use icu_collections::{
-    codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
-    codepointinvliststringlist::CodePointInversionListAndStringList,
-};
-use icu_properties::script::ScriptWithExtensions;
-use icu_properties::{
+use crate::script::ScriptWithExtensions;
+use crate::{
     props::{
         CanonicalCombiningClass, EastAsianWidth, EnumeratedProperty, GeneralCategory,
         GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
     },
     CodePointMapData,
 };
-use icu_properties::{
+use crate::{
     props::{PatternWhiteSpace, XidContinue, XidStart},
     CodePointSetData,
 };
-use icu_properties::{provider::*, PropertyParser};
+use crate::{provider::*, PropertyParser};
+use icu_collections::{
+    codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
+    codepointinvliststringlist::CodePointInversionListAndStringList,
+};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -103,7 +103,7 @@ impl ParseError {
     /// # Examples
     ///
     /// ```
-    /// use icu::experimental::unicodeset_parse::*;
+    /// use icu::properties::unicodeset_parse::*;
     ///
     /// let source = "[[abc]-x]";
     /// let set = parse(source);
@@ -116,7 +116,7 @@ impl ParseError {
     /// ```
     ///
     /// ```
-    /// use icu::experimental::unicodeset_parse::*;
+    /// use icu::properties::unicodeset_parse::*;
     ///
     /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
     /// let set = parse(source);
@@ -1554,6 +1554,13 @@ where
     }
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3959">#3959</a>
+/// </div>
+///
 /// Parses a `UnicodeSet` pattern and returns a `UnicodeSet` in the form of a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList),
 /// as well as the number of bytes consumed from the source string.
 ///
@@ -1581,7 +1588,7 @@ where
 ///
 /// Parse ranges
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let source = "[a-zA-Z0-9]";
 /// let (set, consumed) = parse(source).unwrap();
@@ -1595,7 +1602,7 @@ where
 ///
 /// Parse properties, set operations, inner sets
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let (set, _) =
 ///     parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
@@ -1605,7 +1612,7 @@ where
 ///
 /// Inversions remove strings
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let (set, _) =
 ///     parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
@@ -1616,7 +1623,7 @@ where
 ///
 /// Set operators (including the implicit union) have the same precedence and are left-associative
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let (set, _) = parse("[[ace][bdf] - [abc][def]]").unwrap();
 /// assert!(set.code_points().contains_range('d'..='f'));
@@ -1625,7 +1632,7 @@ where
 ///
 /// Supports partial parses
 /// ```
-/// use icu::experimental::unicodeset_parse::parse;
+/// use icu::properties::unicodeset_parse::parse;
 ///
 /// let (set, consumed) = parse("[a-c][x-z]").unwrap();
 /// let code_points = set.code_points();
@@ -1640,14 +1647,23 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
     parse_unstable(source, &Baked)
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the `unstable` Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3959">#3959</a>
+/// </div>
+///
 /// Parses a `UnicodeSet` pattern with support for variables enabled.
 ///
 /// See [`parse`] for more information.
 ///
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+///
 /// # Examples
 ///
 /// ```
-/// use icu::experimental::unicodeset_parse::*;
+/// use icu::properties::unicodeset_parse::*;
 ///
 /// let (my_set, _) = parse("[abc]").unwrap();
 ///
