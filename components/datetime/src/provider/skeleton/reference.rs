@@ -162,7 +162,17 @@ impl TryFrom<&str> for Skeleton {
             } else {
                 FieldSymbol::try_from(ch)?
             };
-            let field = Field::from((field_symbol, FieldLength::from_idx(field_length)?));
+            let mut field = Field::from((field_symbol, FieldLength::from_idx(field_length)?));
+
+            // CLDR skeletons in 48.2 use 'c' instead of 'E' (e.g. in Finnish).
+            // We treat them as equivalent for matching purposes by normalizing 'c' to 'E' here.
+            // This avoids missing matches when we request 'E' via synthesis in datagen.
+            //
+            // This will be obsoleted by future CLDR releases
+            // <https://github.com/unicode-org/cldr/pull/5524>
+            if let FieldSymbol::Weekday(fields::Weekday::StandAlone) = field.symbol {
+                field.symbol = FieldSymbol::Weekday(fields::Weekday::Format);
+            }
 
             match fields.binary_search(&field) {
                 Ok(_) => return Err(SkeletonError::DuplicateField),

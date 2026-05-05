@@ -29,29 +29,36 @@ impl cldr_serde::ca::AvailableFormats {
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
-        patterns
-            .iter()
-            .filter_map(|(skeleton_str, patterns)| {
-                let skeleton = match Skeleton::try_from(skeleton_str.as_str()) {
-                    Ok(s) => s,
-                    Err(SkeletonError::SymbolUnimplemented(_)) => return None,
-                    Err(SkeletonError::SkeletonHasVariant) => return None,
-                    Err(err) => panic!(
-                        "Unexpected skeleton error while parsing skeleton {skeleton_str:?} {err}"
-                    ),
-                };
+        let mut result = BTreeMap::new();
+        for (skeleton_str, patterns) in patterns.iter() {
+            let skeleton = match Skeleton::try_from(skeleton_str.as_str()) {
+                Ok(s) => s,
+                Err(SkeletonError::SymbolUnimplemented(_)) => continue,
+                Err(SkeletonError::SkeletonHasVariant) => continue,
+                Err(err) => panic!(
+                    "Unexpected skeleton error while parsing skeleton {skeleton_str:?} {err}"
+                ),
+            };
 
-                let patterns = PluralElements::new(&patterns[&PluralCategory::Other])
-                    .with_zero_value(patterns.get(&PluralCategory::Zero))
-                    .with_one_value(patterns.get(&PluralCategory::One))
-                    .with_two_value(patterns.get(&PluralCategory::Two))
-                    .with_few_value(patterns.get(&PluralCategory::Few))
-                    .with_many_value(patterns.get(&PluralCategory::Many))
-                    .map(|s| s.parse().expect(s));
+            let patterns = PluralElements::new(&patterns[&PluralCategory::Other])
+                .with_zero_value(patterns.get(&PluralCategory::Zero))
+                .with_one_value(patterns.get(&PluralCategory::One))
+                .with_two_value(patterns.get(&PluralCategory::Two))
+                .with_few_value(patterns.get(&PluralCategory::Few))
+                .with_many_value(patterns.get(&PluralCategory::Many))
+                .map(|s| s.parse().expect(s));
 
-                Some((skeleton, patterns))
-            })
-            .collect()
+            // CLDR seems to be moving away from `c` in `availableFormats` skeleta.
+            // We don't expect to see both `E` and `c` for the same skeleton, but if we do,
+            // we warn and prefer the one that appeared later in the map (arbitrary).
+            if let Some(_old) = result.insert(skeleton.clone(), patterns) {
+                log::warn!(
+                    "Duplicate skeleton found after normalization: {}. This might happen if CLDR has both 'E' and 'c' forms.",
+                    skeleton
+                );
+            }
+        }
+        result
     }
 }
 

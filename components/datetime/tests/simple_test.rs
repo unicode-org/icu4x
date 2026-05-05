@@ -161,6 +161,30 @@ fn overlap_patterns() {
             skeleton: CompositeDateTimeFieldSet::Date(DateFieldSet::E(fieldsets::E::medium())),
             expected: "пт",
         },
+        // Finnish standalone weekdays tests.
+        // CLDR 48.2 has `yMMMMccccd` skeleton with pattern `cccc d. MMMM y` for Finnish.
+        // We want to make sure it correctly uses the standalone form "perjantai" (Wide Standalone)
+        // instead of "perjantaina" (Wide Format).
+        TestCase {
+            locale: locale!("fi"),
+            skeleton: CompositeDateTimeFieldSet::Date(DateFieldSet::E(fieldsets::E::medium())),
+            expected: "pe",
+        },
+        TestCase {
+            locale: locale!("fi"),
+            skeleton: CompositeDateTimeFieldSet::Date(DateFieldSet::YMDE(fieldsets::YMDE::long())),
+            expected: "perjantai 9. elokuuta 2024",
+        },
+        TestCase {
+            locale: locale!("fi"),
+            skeleton: CompositeDateTimeFieldSet::Date(DateFieldSet::MDE(fieldsets::MDE::long())),
+            expected: "perjantai 9. elokuuta",
+        },
+        TestCase {
+            locale: locale!("fi"),
+            skeleton: CompositeDateTimeFieldSet::Date(DateFieldSet::E(fieldsets::E::long())),
+            expected: "perjantai",
+        },
     ];
     for TestCase {
         locale,
