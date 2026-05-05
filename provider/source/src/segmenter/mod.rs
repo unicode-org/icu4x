@@ -701,7 +701,7 @@ fn generate_rule_break_data(
             // All states are initialized
             .map(|o| o.unwrap())
             .collect(),
-        word_type_table: if segmenter.segmenter_type == "word" {
+        rule_status_table: if segmenter.segmenter_type == "word" {
             segmenter
                 .tables
                 .iter()
@@ -711,7 +711,7 @@ fn generate_rule_break_data(
                         WordType::Letter
                     }
                     _ => WordType::None,
-                })
+                } as u8)
                 .collect()
         } else {
             Default::default()

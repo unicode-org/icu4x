@@ -113,20 +113,3 @@ fn rule_status_th() {
     assert_eq!(iter.word_type(), WordType::None, "none");
     assert!(!iter.is_word_like(), "None is false");
 }
-
-/* The rule status functions are no longer public to non word break iterators.
-#[test]
-fn rule_status_no_word() {
-    let segmenter =
-        SentenceSegmenter::new();
-    let mut iter = segmenter.segment_str("hello");
-
-    assert_eq!(iter.next(), Some(0), "SOT");
-    assert_eq!(iter.rule_status(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "always false");
-
-    assert_eq!(iter.next(), Some(5), "1st sentence");
-    assert_eq!(iter.rule_status(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "always false");
-}
-*/

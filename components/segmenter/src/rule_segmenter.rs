@@ -4,7 +4,6 @@
 
 use crate::complex::ComplexPayloadsBorrowed;
 use crate::indices::{Latin1Indices, Utf16Indices};
-use crate::options::WordType;
 use crate::provider::*;
 use alloc::vec::Vec;
 use core::str::CharIndices;
@@ -52,6 +51,7 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     pub(crate) result_cache: Vec<usize>,
     pub(crate) data: &'data RuleBreakData<'data>,
     pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
+    // The property associated with the previous break
     pub(crate) boundary_property: u8,
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
     // Should return None if there is no complex language handling
@@ -102,7 +102,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                 return Some(0);
             }
             let Some(right_prop) = self.get_current_break_property() else {
-                // iterator already reaches to EOT. Reset boundary property for word-like.
+                // iterator already reaches to EOT. Reset boundary property.
                 self.boundary_property = 0;
                 return None;
             };
@@ -137,6 +137,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                     return self.get_current_position();
                 }
                 let break_offset = (self.handle_complex_language)(self, left_codepoint);
+                self.boundary_property = self.data.complex_property;
                 if break_offset.is_some() {
                     return break_offset;
                 }
@@ -248,26 +249,15 @@ impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
     }
 
     /// Return the status value of break boundary.
-    /// If segmenter isn't word, always return [`WordType::None`]
-    pub fn word_type(&self) -> WordType {
-        if !self.result_cache.is_empty() {
-            // Dictionary type (CJ and East Asian) is letter.
-            return WordType::Letter;
-        }
+    pub(crate) fn rule_status(&self) -> u8 {
         if self.boundary_property == 0 {
             // break position is SOT / Any
-            return WordType::None;
+            return 0;
         }
         self.data
-            .word_type_table
+            .rule_status_table
             .get((self.boundary_property - 1) as usize)
-            .unwrap_or(WordType::None)
-    }
-
-    /// Return true when break boundary is word-like such as letter/number/CJK
-    /// If segmenter isn't word, return false
-    pub fn is_word_like(&self) -> bool {
-        self.word_type().is_word_like()
+            .unwrap_or_default()
     }
 }
 

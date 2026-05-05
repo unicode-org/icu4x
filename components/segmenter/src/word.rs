@@ -98,26 +98,20 @@ pub struct WordBreakIterator<'data, 's, Y: RuleBreakType>(RuleBreakIterator<'dat
 
 derive_usize_iterator_with_type!(WordBreakIterator, 'data);
 
-/// Hide ULE type
-pub(crate) mod inner {
-    /// The word type tag that is returned by [`WordBreakIterator::word_type()`].
-    ///
-    /// [`WordBreakIterator::word_type()`]: super::WordBreakIterator::word_type
-    #[non_exhaustive]
-    #[derive(Copy, Clone, PartialEq, Debug)]
-    #[repr(u8)]
-    #[zerovec::make_ule(WordTypeULE)]
-    pub enum WordType {
-        /// No category tag.
-        None = 0,
-        /// Number category tag.
-        Number = 1,
-        /// Letter category tag, including CJK.
-        Letter = 2,
-    }
+/// The word type tag that is returned by [`WordBreakIterator::word_type()`].
+///
+/// [`WordBreakIterator::word_type()`]: WordBreakIterator::word_type
+#[non_exhaustive]
+#[derive(Copy, Clone, PartialEq, Debug)]
+#[repr(u8)]
+pub enum WordType {
+    /// No category tag.
+    None = 0,
+    /// Number category tag.
+    Number = 1,
+    /// Letter category tag, including CJK.
+    Letter = 2,
 }
-
-pub use inner::WordType;
 
 impl WordType {
     /// Whether the segment is word-like; word-like segments include numbers, as
@@ -131,7 +125,11 @@ impl<'data, 's, Y: RuleBreakType> WordBreakIterator<'data, 's, Y> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
-        self.0.word_type()
+        match self.0.rule_status() {
+            0 => WordType::None,
+            1 => WordType::Number,
+            _ => WordType::Letter,
+        }
     }
 
     /// Returns an iterator over pairs of boundary position and word type.
@@ -158,7 +156,7 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
     type Item = (usize, WordType);
     fn next(&mut self) -> Option<Self::Item> {
         let ret = self.0.next()?;
-        Some((ret, self.0 .0.word_type()))
+        Some((ret, self.0.word_type()))
     }
 }
 

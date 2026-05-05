@@ -20,7 +20,6 @@ pub use lstm::*;
 #[cfg(feature = "unstable")]
 pub mod radical;
 
-use crate::options::WordType;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
@@ -125,8 +124,6 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 
-pub use crate::word::inner::WordTypeULE;
-
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
@@ -163,9 +160,9 @@ pub struct RuleBreakData<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub break_state_table: ZeroVec<'data, BreakState>,
 
-    /// Word type table. Only used for word segmenter.
-    #[cfg_attr(feature = "serde", serde(borrow, rename = "rule_status_table"))]
-    pub word_type_table: ZeroVec<'data, WordType>,
+    /// State status table. Only used for word segmenter.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub rule_status_table: ZeroVec<'data, u8>,
 
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
     pub property_count: u8,
@@ -320,48 +317,6 @@ impl zerovec::ule::AsULE for BreakState {
             254 => BreakState::NoMatch,
             i if (120..253).contains(&i) => BreakState::Intermediate(i - 120),
             i => BreakState::Index(i),
-        }
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl serde::Serialize for WordType {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        if serializer.is_human_readable() {
-            (*self as u8).serialize(serializer)
-        } else {
-            unreachable!("only used as ULE")
-        }
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl databake::Bake for WordType {
-    fn bake(&self, _crate_env: &databake::CrateEnv) -> databake::TokenStream {
-        unreachable!("only used as ULE")
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for WordType {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        if deserializer.is_human_readable() {
-            use serde::de::Error;
-            match u8::deserialize(deserializer) {
-                Ok(0) => Ok(WordType::None),
-                Ok(1) => Ok(WordType::Number),
-                Ok(2) => Ok(WordType::Letter),
-                Ok(_) => Err(D::Error::custom("invalid value")),
-                Err(e) => Err(e),
-            }
-        } else {
-            unreachable!("only used as ULE")
         }
     }
 }

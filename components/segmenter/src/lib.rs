@@ -162,7 +162,8 @@ pub mod scaffold {
     pub use crate::rule_segmenter::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
 
     // TODO: This should have never been public
-    /// A trait allowing for [`WordBreakIterator`] to be generalized to multiple string iteration methods.
+    /// A trait allowing for [`WordBreakIterator`](crate::iterators::WordBreakIterator) to be generalized to multiple
+    /// string iteration methods.
     ///
     /// This is implemented by ICU4X for several common string types.
     ///
