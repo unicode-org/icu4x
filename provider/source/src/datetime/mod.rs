@@ -115,10 +115,7 @@ impl SourceDataProvider {
             let alem = self
                 .cldr()?
                 .dates(cldr_cal)
-                .read_and_parse::<cldr_serde::ca::Resource>(
-                    locale,
-                    &format!("ca-ethiopic-amete-alem.json"),
-                )?
+                .read_and_parse::<cldr_serde::ca::Resource>(locale, "ca-ethiopic-amete-alem.json")?
                 .main
                 .value
                 .dates
