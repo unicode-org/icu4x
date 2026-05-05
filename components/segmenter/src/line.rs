@@ -15,6 +15,9 @@ use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
+#[cfg(test)]
+pub mod neo;
+
 #[doc(hidden)]
 impl RuleBreakData<'_> {
     pub const LINE_PROPERTY_AI: u8 = 1;
