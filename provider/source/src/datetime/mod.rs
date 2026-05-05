@@ -99,7 +99,7 @@ impl SourceDataProvider {
             .map(DatagenCalendar::cldr_name)
             .unwrap_or("generic");
 
-        Ok(self
+        let resource = self
             .cldr()?
             .dates(cldr_cal)
             .read_and_parse::<cldr_serde::ca::Resource>(locale, &format!("ca-{cldr_cal}.json"))?
@@ -108,7 +108,62 @@ impl SourceDataProvider {
             .dates
             .calendars
             .get(cldr_cal)
-            .expect("CLDR file contains the expected calendar"))
+            .expect("CLDR file contains the expected calendar");
+
+        // load ca-ethiopic-amete-alem.json and verify that it matches
+        if calendar == Some(DatagenCalendar::Ethiopic) {
+            let alem = self
+                .cldr()?
+                .dates(cldr_cal)
+                .read_and_parse::<cldr_serde::ca::Resource>(
+                    locale,
+                    &format!("ca-ethiopic-amete-alem.json"),
+                )?
+                .main
+                .value
+                .dates
+                .calendars
+                .get("ethiopic-amete-alem")
+                .expect("CLDR file contains the expected calendar");
+
+            if (
+                &alem.cyclic_name_sets,
+                &alem.date_formats,
+                &alem.date_skeletons,
+                &alem.datetime_formats,
+                &alem.datetime_formats_at_time,
+                &alem.day_periods,
+                &alem.days,
+                &alem
+                    .eras
+                    .as_ref()
+                    .map(|e| (e.abbr.get("0"), e.names.get("0"), e.narrow.get("0"))),
+                &alem.month_patterns,
+                &alem.months,
+                &alem.time_formats,
+                &alem.time_skeletons,
+            ) != (
+                &resource.cyclic_name_sets,
+                &resource.date_formats,
+                &resource.date_skeletons,
+                &resource.datetime_formats,
+                &resource.datetime_formats_at_time,
+                &resource.day_periods,
+                &resource.days,
+                &resource
+                    .eras
+                    .as_ref()
+                    .map(|e| (e.abbr.get("0"), e.names.get("0"), e.narrow.get("0"))),
+                &resource.month_patterns,
+                &resource.months,
+                &resource.time_formats,
+                &resource.time_skeletons,
+            ) {
+                log::warn!("ethiopic/ethiopic-amete-alem data mismatch: {locale}");
+            }
+        }
+
+        Ok(resource)
     }
 }
 

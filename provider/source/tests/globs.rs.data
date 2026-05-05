@@ -11,6 +11,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-cal-coptic-full/main/$LOCALES/ca-coptic.json",
     "cldr-cal-dangi-full/main/$LOCALES/ca-dangi.json",
     "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic.json",
+    "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic-amete-alem.json",
     "cldr-cal-hebrew-full/main/$LOCALES/ca-hebrew.json",
     "cldr-cal-indian-full/main/$LOCALES/ca-indian.json",
     "cldr-cal-islamic-full/main/$LOCALES/ca-islamic.json",
