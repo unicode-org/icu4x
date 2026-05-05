@@ -512,10 +512,10 @@ impl TzdbCache {
 #[derive(Debug)]
 pub(crate) struct UnicodeCache {
     root: AbstractFs,
-    // The `ucd/UCD.zip` file. Requests matching `ucd/[^unihan]` will be resolved through
+    // The `ucd/UCD.zip` file. Requests matching `ucd/[^Unihan]` will be resolved through
     // the ZIP file instead of downloading individual files.
     ucd_zip: Option<AbstractFs>,
-    // The `ucd/Unihan.zip` file. Requests matching `ucd/unihan/` will be resolved through
+    // The `ucd/Unihan.zip` file. Requests matching `ucd/Unihan/` will be resolved through
     // the ZIP file instead of downloading individual files.
     unihan_zip: Option<AbstractFs>,
     // The `security/uts39-data-X.0.0.zip`` file. Requests matching `security/` will be
@@ -571,7 +571,7 @@ impl UnicodeCache {
         }
 
         if let (Some(unihan_zip), Some(unihan_path)) =
-            (self.unihan_zip.as_ref(), file.strip_prefix("ucd/unihan/"))
+            (self.unihan_zip.as_ref(), file.strip_prefix("ucd/Unihan/"))
         {
             Ok(unihan_zip.file_exists(unihan_path)?)
         } else if let (Some(ucd_zip), Some(ucd_path)) =
@@ -594,7 +594,7 @@ impl UnicodeCache {
         }
 
         if let (Some(unihan_zip), Some(unihan_path)) =
-            (self.unihan_zip.as_ref(), file.strip_prefix("ucd/unihan/"))
+            (self.unihan_zip.as_ref(), file.strip_prefix("ucd/Unihan/"))
         {
             Ok(self
                 .file_cache

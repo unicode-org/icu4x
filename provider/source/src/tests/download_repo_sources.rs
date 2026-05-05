@@ -126,7 +126,7 @@ fn download_repo_sources() {
             UNICODE_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
-    let irg_path = out_root.join("unicode/ucd/unihan/Unihan_IRGSources.txt");
+    let irg_path = out_root.join("unicode/ucd/Unihan/Unihan_IRGSources.txt");
     std::io::copy(
         &mut BufReader::new(File::open(&irg_path).unwrap())
             .lines()

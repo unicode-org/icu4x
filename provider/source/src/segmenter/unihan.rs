@@ -36,7 +36,7 @@ fn build_unihan_radicals_data(
     }
     let identifier_status = id_builder.build();
 
-    let raw_content = unicode.read_to_string("ucd/unihan/Unihan_IRGSources.txt")?;
+    let raw_content = unicode.read_to_string("ucd/Unihan/Unihan_IRGSources.txt")?;
     let mut builder = CodePointTrieBuilder::new(0u8, 0u8, trie_type.into());
 
     for line in raw_content.lines() {

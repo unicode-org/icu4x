@@ -171,7 +171,7 @@ const UNICODE_GLOB: &[&str] = &[
     // WARNING: This file is manually filtered in download_repo_sources.rs to only include
     // the data that is needed by current implementations. If you need this file for other
     // logic, adapt/remove the filtering.
-    "ucd/unihan/Unihan_IRGSources.txt",
+    "ucd/Unihan/Unihan_IRGSources.txt",
     "ucd/VerticalOrientation.txt",
 ];
 
