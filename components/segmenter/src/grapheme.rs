@@ -119,7 +119,7 @@ pub struct GraphemeClusterSegmenter {
 /// See [`GraphemeClusterSegmenter`] for examples.
 #[derive(Clone, Debug, Copy)]
 pub struct GraphemeClusterSegmenterBorrowed<'data> {
-    data: &'data RuleBreakData<'data>,
+    pub(crate) data: &'data RuleBreakData<'data>,
 }
 
 impl GraphemeClusterSegmenter {

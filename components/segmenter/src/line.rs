@@ -782,6 +782,25 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
+        if self.options.strictness == LineBreakStrictness::Anywhere {
+            let mut grapheme_iter: RuleBreakIterator<'_, '_, Y> = RuleBreakIterator {
+                iter: self.iter.clone(),
+                len: self.len,
+                current_pos_data: self.current_pos_data,
+                data: self.complex.grapheme.data,
+                result_cache: Default::default(),
+                complex: None,
+                boundary_property: 0,
+                locale_override: None,
+                handle_complex_language: empty_handle_complex_language,
+            };
+            let r = grapheme_iter.next();
+            self.iter = grapheme_iter.iter;
+            self.len = grapheme_iter.len;
+            self.current_pos_data = grapheme_iter.current_pos_data;
+            return r;
+        }
+
         match self.check_eof() {
             StringBoundaryPosType::Start => return Some(0),
             StringBoundaryPosType::End => return None,
@@ -813,17 +832,6 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
         'a: loop {
             debug_assert!(!self.is_eof());
-
-            // NOTE(egg): The special-casing of `LineBreakStrictness::Anywhere` allows us to pass
-            // a test, but eventually that option should just be simplified to call the extended
-            // grapheme cluster segmenter.
-            // TODO(egg): My reading of the CSS standard is that this
-            // should break around extended grapheme clusters, not at
-            // arbitrary code points, so this seems wrong.
-            if self.options.strictness == LineBreakStrictness::Anywhere {
-                self.advance_iter();
-                return Some(self.get_current_position().unwrap_or(self.len));
-            }
 
             let left_codepoint = self.get_current_codepoint()?;
             self.advance_iter();

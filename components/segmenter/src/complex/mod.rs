@@ -59,7 +59,7 @@ pub(crate) struct ComplexPayloads {
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct ComplexPayloadsBorrowed<'data> {
-    grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+    pub(crate) grapheme: GraphemeClusterSegmenterBorrowed<'data>,
     my: Option<DictOrLstmBorrowed<'data>>,
     km: Option<DictOrLstmBorrowed<'data>>,
     lo: Option<DictOrLstmBorrowed<'data>>,

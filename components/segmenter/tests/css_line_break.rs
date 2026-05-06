@@ -8,6 +8,7 @@ use icu_segmenter::options::LineBreakStrictness;
 use icu_segmenter::options::LineBreakWordOption;
 use icu_segmenter::LineSegmenter;
 
+#[track_caller]
 fn check_with_options(
     s: &str,
     mut expect_utf8: Vec<usize>,
@@ -30,6 +31,7 @@ fn check_with_options(
 
 static JA: LanguageIdentifier = langid!("ja");
 
+#[track_caller]
 fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Strict);
@@ -38,6 +40,7 @@ fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
+#[track_caller]
 fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Normal);
@@ -46,6 +49,7 @@ fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
+#[track_caller]
 fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Loose);
@@ -54,6 +58,7 @@ fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
+#[track_caller]
 fn anywhere(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Anywhere);
@@ -200,15 +205,22 @@ fn linebreak_loose() {
 
 #[test]
 fn linebreak_anywhere() {
+    anywhere(
+        "الخيل والليل",
+        false,
+        vec![2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 21, 23],
+        vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    );
+
     // css/css-text/line-break/line-break-anywhere-001.html
     anywhere(
         "aa-a.a)a,a) a\u{00A0}aa\u{2060}a\u{200D}a･a",
         true,
         vec![
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 20, 21, 24, 25, 28, 29,
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 20, 24, 25, 28, 29,
         ],
         vec![
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22,
         ],
     );
 
