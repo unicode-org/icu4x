@@ -206,3 +206,9 @@ pub(crate) mod private {
     /// implemented outside of the segmenter crate.
     pub trait Sealed {}
 }
+
+#[cfg(feature = "unstable")]
+/// Experimental reimplementations
+pub mod neo {
+    pub use super::line::neo::*;
+}

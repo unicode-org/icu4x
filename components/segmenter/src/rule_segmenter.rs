@@ -28,6 +28,12 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 
     #[doc(hidden)]
     fn char_len(ch: Self::CharType) -> usize;
+
+    #[doc(hidden)]
+    fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize;
+
+    #[doc(hidden)]
+    fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool;
 }
 
 /// Implements the [`Iterator`] trait over the segmenter boundaries of the given string.
@@ -277,6 +283,14 @@ impl RuleBreakType for Utf8 {
     fn char_len(ch: Self::CharType) -> usize {
         ch.len_utf8()
     }
+
+    fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
+        iter.offset()
+    }
+
+    fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
+        iter.as_str().is_empty()
+    }
 }
 
 #[derive(Debug)]
@@ -295,6 +309,14 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
     fn char_len(ch: Self::CharType) -> usize {
         ch.len_utf8()
     }
+
+    fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
+        iter.offset()
+    }
+
+    fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
+        iter.as_slice().is_empty()
+    }
 }
 
 #[derive(Debug)]
@@ -312,6 +334,14 @@ impl RuleBreakType for Latin1 {
 
     fn char_len(_ch: Self::CharType) -> usize {
         unreachable!()
+    }
+
+    fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
+        iter.offset()
+    }
+
+    fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
+        iter.as_slice().is_empty()
     }
 }
 
@@ -334,5 +364,13 @@ impl RuleBreakType for Utf16 {
         } else {
             1
         }
+    }
+
+    fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
+        iter.offset()
+    }
+
+    fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
+        iter.as_slice().is_empty()
     }
 }

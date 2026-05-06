@@ -109,9 +109,13 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
             Language::Unknown => None,
         }
     }
-    pub(crate) fn complex_language_segment_str(&self, input: &str) -> Vec<usize> {
+    pub(crate) fn complex_language_segment_str(
+        &self,
+        input: &str,
+    ) -> Result<Vec<usize>, Vec<usize>> {
         let mut result = Vec::new();
         let mut offset = 0;
+        let mut return_ctor = Ok as fn(_) -> _;
         for (slice, lang) in LanguageIterator::new(input) {
             match self.select(lang) {
                 Some(DictOrLstmBorrowed::Dict(dict)) => {
@@ -125,16 +129,21 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                 }
                 None => {
                     result.push(offset + slice.len());
+                    return_ctor = Err;
                 }
             }
             offset += slice.len();
         }
-        result
+        return_ctor(result)
     }
     /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
-    pub(crate) fn complex_language_segment_utf16(&self, input: &[u16]) -> Vec<usize> {
+    pub(crate) fn complex_language_segment_utf16(
+        &self,
+        input: &[u16],
+    ) -> Result<Vec<usize>, Vec<usize>> {
         let mut result = Vec::new();
         let mut offset = 0;
+        let mut return_ctor = Ok as fn(_) -> _;
         for (slice, lang) in LanguageIteratorUtf16::new(input) {
             match self.select(lang) {
                 Some(DictOrLstmBorrowed::Dict(dict)) => {
@@ -148,11 +157,12 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                 }
                 None => {
                     result.push(offset + slice.len());
+                    return_ctor = Err;
                 }
             }
             offset += slice.len();
         }
-        result
+        return_ctor(result)
     }
 }
 impl ComplexPayloadsBorrowed<'static> {
@@ -388,15 +398,21 @@ mod tests {
         dict.with_southeast_asian_dictionaries();
 
         assert_eq!(
-            lstm.complex_language_segment_str(TEST_STR),
+            lstm.complex_language_segment_str(TEST_STR).unwrap(),
             [12, 21, 33, 42]
         );
-        assert_eq!(lstm.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
+        assert_eq!(
+            lstm.complex_language_segment_utf16(&utf16).unwrap(),
+            [4, 7, 11, 14]
+        );
 
         assert_eq!(
-            dict.complex_language_segment_str(TEST_STR),
+            dict.complex_language_segment_str(TEST_STR).unwrap(),
             [12, 21, 33, 42]
         );
-        assert_eq!(dict.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
+        assert_eq!(
+            dict.complex_language_segment_utf16(&utf16).unwrap(),
+            [4, 7, 11, 14]
+        );
     }
 }

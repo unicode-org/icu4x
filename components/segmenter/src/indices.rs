@@ -20,6 +20,14 @@ impl<'a> Latin1Indices<'a> {
             iter: input,
         }
     }
+
+    pub fn as_slice(&self) -> &'a [u8] {
+        self.iter.get(self.front_offset..).unwrap_or_default()
+    }
+
+    pub fn offset(&self) -> usize {
+        self.front_offset
+    }
 }
 
 impl Iterator for Latin1Indices<'_> {
@@ -52,6 +60,14 @@ impl<'a> Utf16Indices<'a> {
             front_offset: 0,
             iter: input,
         }
+    }
+
+    pub fn as_slice(&self) -> &'a [u16] {
+        self.iter.get(self.front_offset..).unwrap_or_default()
+    }
+
+    pub fn offset(&self) -> usize {
+        self.front_offset
     }
 }
 

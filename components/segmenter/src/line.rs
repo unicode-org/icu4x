@@ -15,7 +15,7 @@ use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
-#[cfg(test)]
+#[cfg(feature = "unstable")]
 pub mod neo;
 
 #[doc(hidden)]
@@ -1159,7 +1159,7 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     let breaks = iter.complex.complex_language_segment_str(&s);
-    iter.result_cache = breaks;
+    iter.result_cache = breaks.unwrap_or_else(|b| b);
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
     loop {
@@ -1212,7 +1212,7 @@ where
     iterator.iter = start_iter;
     iterator.current_pos_data = start_point;
     let breaks = iterator.complex.complex_language_segment_utf16(&s);
-    iterator.result_cache = breaks;
+    iterator.result_cache = breaks.unwrap_or_else(|b| b);
     // result_cache vector is utf-16 index that is in BMP.
     let first_pos = *iterator.result_cache.first()?;
     let mut i = 1;
@@ -1755,9 +1755,7 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter = LineSegmenter::try_new_dictionary_unstable(&Baked, Default::default())
-            .expect("Data exists");
-        let segmenter = segmenter.as_borrowed();
+        let segmenter = LineSegmenter::new_dictionary(Default::default());
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(0), iter.next());
