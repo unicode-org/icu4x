@@ -349,6 +349,7 @@ debug = true
 
 [workspace.lints]
 clippy.alloc-instead-of-core = "warn"
+clippy.bool-assert-comparison = "allow" # more readable
 clippy.branches-sharing-code = "warn"
 clippy.collection_is_never_read = "warn"
 clippy.crosspointer_transmute = "warn"
