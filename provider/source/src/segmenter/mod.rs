@@ -938,9 +938,10 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
                     let state = iter.next().unwrap().trim();
                     let accepting = iter.next().unwrap().trim();
                     let lookahead = iter.next().unwrap().trim();
+                    let status = iter.next().unwrap().trim();
                     (
                         state,
-                        (accepting, Some(lookahead).filter(|s| !s.is_empty())),
+                        (accepting, Some(lookahead).filter(|s| !s.is_empty()), status),
                     )
                 })
                 .collect::<BTreeMap<_, _>>();
@@ -959,7 +960,7 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
 
             let lookaheads = states
                 .iter()
-                .flat_map(|(_, &(_, lookahead))| lookahead)
+                .flat_map(|(_, &(_, lookahead, _))| lookahead)
                 .collect::<BTreeSet<_>>();
 
             // Reserve one class for EOT
@@ -969,7 +970,7 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
             // Reserve three values for Acceptance::{Accept, Continue, AcceptMandatory}
             assert!(lookaheads.len() < usize::from(Lookahead::MAX) - 3);
             // Check invariants of the start state
-            assert_eq!(states["START"], ("No", None));
+            assert_eq!(states["START"], ("No", None, ""));
 
             let class_lookup = core::iter::once("eot")
                 .chain(classes.keys().filter(|&&s| s != "eot").copied())
@@ -997,53 +998,14 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
             }
             let classes = builder.build();
 
-            let lb = CodePointMapData::<LineBreak>::try_new_unstable(unicode_15_1()).unwrap();
-            let lb = lb.as_borrowed();
-
-            let mandatory_break_classes = [
-                LineBreak::CarriageReturn,
-                LineBreak::LineFeed,
-                LineBreak::MandatoryBreak,
-                LineBreak::NextLine,
-            ]
-            .into_iter()
-            .flat_map(|l| lb.iter_ranges_for_value(l))
-            .flatten()
-            .map(|c| classes.get32(c))
-            .collect::<BTreeSet<_>>();
-
-            let mandatory_break_states = transitions
-                .iter()
-                .filter_map(|(&(_, class), &right)| {
-                    mandatory_break_classes
-                        .contains(&class_lookup[class])
-                        .then_some(right)
-                })
-                .inspect(|&state| {
-                    // all incoming transitions are mandatory classes
-                    assert!(transitions
-                        .iter()
-                        .all(|(&(_, class), &right)| right != state
-                            || mandatory_break_classes.contains(&class_lookup[class])));
-
-                    // the state is unconditionally accepting
-                    assert_eq!(states[state].0, "Yes");
-
-                    // the state can't be reached by lookahead
-                    assert_eq!(states[state].1, None);
-                })
-                .collect::<BTreeSet<_>>();
-
             let states = states
                 .iter()
-                .map(|(&state, &(accepting, lookahead))| {
+                .map(|(&state, &(accepting, lookahead, status))| {
                     (
                         state_lookup[state],
                         (
                             match accepting {
-                                "Yes" if mandatory_break_states.contains(state) => {
-                                    Acceptance::AcceptMandatory
-                                }
+                                "Yes" if status == "Mandatory" => Acceptance::AcceptMandatory,
                                 "Yes" => Acceptance::Accept,
                                 "No" => Acceptance::Continue,
                                 l => Acceptance::Conditional(lookahead_lookup[l]),
