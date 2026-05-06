@@ -3,8 +3,56 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+use icu_segmenter::{LineSegmenterBorrowed, WordSegmenterBorrowed};
+use itertools::Itertools;
 
 // Additional word segmenter tests with complex string.
+
+#[track_caller]
+fn test_word(segmenter: WordSegmenterBorrowed, s: &str, expected: &[&str]) {
+    let segments = segmenter
+        .segment_str(s)
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected);
+
+    let utf16: Vec<u16> = s.encode_utf16().collect();
+    let expected = expected
+        .iter()
+        .copied()
+        .map(|s| s.encode_utf16().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let iter = segmenter
+        .segment_utf16(&utf16)
+        .tuple_windows()
+        .map(|(a, b)| &utf16[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(iter, expected);
+}
+
+#[track_caller]
+fn test_line(segmenter: LineSegmenterBorrowed, s: &str, expected: &[&str]) {
+    let segments = segmenter
+        .segment_str(s)
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected);
+
+    let utf16: Vec<u16> = s.encode_utf16().collect();
+    let expected = expected
+        .iter()
+        .copied()
+        .map(|s| s.encode_utf16().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let iter = segmenter
+        .segment_utf16(&utf16)
+        .tuple_windows()
+        .map(|(a, b)| &utf16[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(iter, expected);
+}
 
 #[test]
 fn word_break_th() {
@@ -14,29 +62,15 @@ fn word_break_th() {
     ] {
         // http://wpt.live/css/css-text/word-break/word-break-normal-th-000.html
         let s = "ภาษาไทยภาษาไทย";
-        let utf16: Vec<u16> = s.encode_utf16().collect();
-        let iter = segmenter.segment_utf16(&utf16);
-        assert_eq!(
-            iter.collect::<Vec<usize>>(),
-            vec![0, 4, 7, 11, 14],
-            "word segmenter with Thai"
-        );
-        let iter = segmenter.segment_str(s);
-        assert_eq!(
-            iter.collect::<Vec<usize>>(),
-            vec![0, 12, 21, 33, 42],
-            "word segmenter with Thai"
-        );
+        let expected = ["ภาษา", "ไทย", "ภาษา", "ไทย"];
+
+        test_word(segmenter, s, &expected);
 
         // Combine non-Thai and Thai.
         let s = "aภาษาไทยภาษาไทยb";
-        let utf16: Vec<u16> = s.encode_utf16().collect();
-        let iter = segmenter.segment_utf16(&utf16);
-        assert_eq!(
-            iter.collect::<Vec<usize>>(),
-            vec![0, 1, 5, 8, 12, 15, 16],
-            "word segmenter with Thai and ascii"
-        );
+        let expected = ["a", "ภาษา", "ไทย", "ภาษา", "ไทย", "b"];
+
+        test_word(segmenter, s, &expected);
     }
 }
 
@@ -45,13 +79,8 @@ fn word_break_my() {
     let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 
     let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
-    let utf16: Vec<u16> = s.encode_utf16().collect();
-    let iter = segmenter.segment_utf16(&utf16);
-    assert_eq!(
-        iter.collect::<Vec<usize>>(),
-        vec![0, 8, 16, 22, 24],
-        "word segmenter with Burmese"
-    );
+    let expected = ["မြန်မာစာ", "မြန်မာစာ", "မြန်မာ", "စာ"];
+    test_word(segmenter, s, &expected);
 }
 
 #[test]
@@ -61,12 +90,8 @@ fn word_break_hiragana() {
         WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
     ] {
         let s = "うなぎうなじ";
-        let iter = segmenter.segment_str(s);
-        assert_eq!(
-            iter.collect::<Vec<usize>>(),
-            vec![0, 9, 18],
-            "word segmenter with Hiragana"
-        );
+        let expected = ["うなぎ", "うなじ"];
+        test_word(segmenter, s, &expected);
     }
 }
 
@@ -77,12 +102,8 @@ fn word_break_mixed_han() {
         WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
     ] {
         let s = "Welcome龟山岛龟山岛Welcome";
-        let iter = segmenter.segment_str(s);
-        assert_eq!(
-            iter.collect::<Vec<usize>>(),
-            vec![0, 7, 16, 25, 32],
-            "word segmenter with Chinese and letter"
-        );
+        let expected = ["Welcome", "龟山岛", "龟山岛", "Welcome"];
+        test_word(segmenter, s, &expected);
     }
 }
 
@@ -91,53 +112,107 @@ fn word_line_th_wikipedia_auto() {
     use icu_segmenter::LineSegmenter;
 
     let text = "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens";
-    assert_eq!(text.len(), 297);
-    let utf16: Vec<u16> = text.encode_utf16().collect();
-    assert_eq!(utf16.len(), 142);
 
     let segmenter_word_auto = WordSegmenter::new_auto(Default::default());
     let segmenter_line_auto = LineSegmenter::new_auto(Default::default());
 
-    let breakpoints_word_utf8 = segmenter_word_auto.segment_str(text).collect::<Vec<_>>();
-    assert_eq!(
-        breakpoints_word_utf8,
-        [
-            0, 9, 18, 27, 28, 29, 38, 47, 48, 49, 52, 53, 58, 59, 60, 67, 68, 71, 72, 73, 82, 83,
-            84, 90, 93, 94, 95, 104, 113, 114, 115, 120, 121, 131, 132, 133, 148, 166, 175, 187,
-            193, 205, 220, 221, 227, 239, 272, 281, 282, 289, 290, 297
-        ]
+    test_word(
+        segmenter_word_auto,
+        text,
+        &[
+            "แพน",
+            "ด้า",
+            "แดง",
+            " ",
+            "(",
+            "อัง",
+            "กฤษ",
+            ":",
+            " ",
+            "Red",
+            " ",
+            "panda",
+            ",",
+            " ",
+            "Shining",
+            " ",
+            "cat",
+            ";",
+            " ",
+            "จีน",
+            ":",
+            " ",
+            "小熊",
+            "貓",
+            ";",
+            " ",
+            "พิน",
+            "อิน",
+            ":",
+            " ",
+            "Xiǎo",
+            " ",
+            "xióngmāo",
+            ")",
+            " ",
+            "สัตว์",
+            "เลี้ยง",
+            "ลูก",
+            "ด้วย",
+            "นม",
+            "ชนิด",
+            "หนึ่ง",
+            " ",
+            "มี",
+            "ชื่อ",
+            "วิทยาศาสตร์",
+            "ว่า",
+            " ",
+            "Ailurus",
+            " ",
+            "fulgens",
+        ],
     );
-
-    let breakpoints_line_utf8 = segmenter_line_auto.segment_str(text).collect::<Vec<_>>();
-    assert_eq!(
-        breakpoints_line_utf8,
-        [
-            0, 9, 18, 27, 28, 38, 47, 49, 53, 60, 68, 73, 82, 84, 87, 90, 95, 104, 113, 115, 121,
-            133, 148, 166, 175, 187, 193, 205, 220, 221, 227, 239, 272, 281, 282, 290, 297
-        ]
-    );
-
-    let breakpoints_word_utf16 = segmenter_word_auto
-        .segment_utf16(&utf16)
-        .collect::<Vec<_>>();
-    assert_eq!(
-        breakpoints_word_utf16,
-        [
-            0, 3, 6, 9, 10, 11, 14, 17, 18, 19, 22, 23, 28, 29, 30, 37, 38, 41, 42, 43, 46, 47, 48,
-            50, 51, 52, 53, 56, 59, 60, 61, 65, 66, 74, 75, 76, 81, 87, 90, 94, 96, 100, 105, 106,
-            108, 112, 123, 126, 127, 134, 135, 142
-        ]
-    );
-
-    let breakpoints_word_utf16 = segmenter_word_auto
-        .segment_utf16(&utf16)
-        .collect::<Vec<_>>();
-    assert_eq!(
-        breakpoints_word_utf16,
-        [
-            0, 3, 6, 9, 10, 11, 14, 17, 18, 19, 22, 23, 28, 29, 30, 37, 38, 41, 42, 43, 46, 47, 48,
-            50, 51, 52, 53, 56, 59, 60, 61, 65, 66, 74, 75, 76, 81, 87, 90, 94, 96, 100, 105, 106,
-            108, 112, 123, 126, 127, 134, 135, 142
-        ]
+    test_line(
+        segmenter_line_auto,
+        text,
+        &[
+            "แพน",
+            "ด้า",
+            "แดง",
+            " ",
+            "(อัง",
+            "กฤษ",
+            ": ",
+            "Red ",
+            "panda, ",
+            "Shining ",
+            "cat; ",
+            "จีน",
+            ": ",
+            "小",
+            "熊",
+            "貓; ",
+            "พิน",
+            "อิน",
+            ": ",
+            "Xiǎo ",
+            "xióngmāo) ",
+            "สัตว์",
+            "เลี้ยง",
+            "ลูก",
+            "ด้วย",
+            "นม",
+            "ชนิด",
+            "หนึ่ง",
+            " ",
+            "มี",
+            "ชื่อ",
+            "วิทยาศาสตร์",
+            "ว่า",
+            " ",
+            "Ailurus ",
+            "fulgens",
+        ],
     );
 }

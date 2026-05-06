@@ -7,200 +7,200 @@ use icu_segmenter::options::LineBreakOptions;
 use icu_segmenter::options::LineBreakStrictness;
 use icu_segmenter::options::LineBreakWordOption;
 use icu_segmenter::LineSegmenter;
+use itertools::Itertools;
 
 #[track_caller]
-fn check_with_options(
-    s: &str,
-    mut expect_utf8: Vec<usize>,
-    mut expect_utf16: Vec<usize>,
-    options: LineBreakOptions,
-) {
+fn check_with_options(s: &str, expected: &[&str], options: LineBreakOptions) {
     let segmenter = LineSegmenter::new_dictionary(options);
 
-    let iter = segmenter.segment_str(s);
-    let result: Vec<usize> = iter.collect();
-    expect_utf8.insert(0, 0);
-    assert_eq!(expect_utf8, result, "{s}");
+    let segments = segmenter
+        .segment_str(s)
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
 
-    let s_utf16: Vec<u16> = s.encode_utf16().collect();
-    let iter = segmenter.segment_utf16(&s_utf16);
-    let result: Vec<usize> = iter.collect();
-    expect_utf16.insert(0, 0);
-    assert_eq!(expect_utf16, result, "{s}");
+    let utf16: Vec<u16> = s.encode_utf16().collect();
+    let expected = expected
+        .iter()
+        .copied()
+        .map(|s| s.encode_utf16().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let iter = segmenter
+        .segment_utf16(&utf16)
+        .tuple_windows()
+        .map(|(a, b)| &utf16[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(iter, expected, "{s}");
 }
 
 static JA: LanguageIdentifier = langid!("ja");
 
 #[track_caller]
-fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
+fn strict(s: &str, ja_zh: bool, expected: &[&str]) {
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Strict);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expect_utf8, expect_utf16, options);
+    check_with_options(s, expected, options);
 }
 
 #[track_caller]
-fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
+fn normal(s: &str, ja_zh: bool, expected: &[&str]) {
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Normal);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expect_utf8, expect_utf16, options);
+    check_with_options(s, expected, options);
 }
 
 #[track_caller]
-fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
+fn loose(s: &str, ja_zh: bool, expected: &[&str]) {
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Loose);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expect_utf8, expect_utf16, options);
+    check_with_options(s, expected, options);
 }
 
 #[track_caller]
-fn anywhere(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
+fn anywhere(s: &str, ja_zh: bool, expected: &[&str]) {
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Anywhere);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expect_utf8, expect_utf16, options);
+    check_with_options(s, expected, options);
 }
 
 #[test]
 fn linebreak_strict() {
     // from css/css-text/line-break/line-break-*-011.xht
-    strict("サ\u{3041}サ", false, vec![6, 9], vec![2, 3]);
+    strict("サぁサ", false, &["サぁ", "サ"]);
 
     // from css/css-text/line-break/line-break-*-012.xht
-    strict("サ\u{30FC}サ", false, vec![6, 9], vec![2, 3]);
+    strict("サーサ", false, &["サー", "サ"]);
 
     // from css/css-text/line-break/line-break-*-013.xht
-    strict("サ\u{301C}サ", false, vec![6, 9], vec![2, 3]);
+    strict("サ〜サ", false, &["サ〜", "サ"]);
 
     // from css/css-text/line-break/line-break-*-014.xht
-    strict("サ\u{3005}サ", false, vec![6, 9], vec![2, 3]);
+    strict("サ々サ", false, &["サ々", "サ"]);
 
     // from css/css-text/line-break/line-break-*-015a.xht
     // XXX ID x IN in UAX14. But why?
-    strict("サ\u{2025}\u{2025}サ", false, vec![9, 12], vec![3, 4]);
+    strict("サ‥‥サ", false, &["サ‥‥", "サ"]);
 
     // from css/css-text/line-break/line-break-*-016a.xht
-    strict("サ\u{30FB}サ", false, vec![6, 9], vec![2, 3]);
+    strict("サ・サ", false, &["サ・", "サ"]);
 
     // from css/css-text/line-break/line-break-*-017a.xht
-    strict("サ\u{00B0}サ", false, vec![5, 8], vec![2, 3]);
+    strict("サ°サ", false, &["サ°", "サ"]);
 
     // from css/css-text/line-break/line-break-*-018.xht
-    //strict("サ\u{20AC}サ", false, vec![9], vec![3]);
+    // strict("サ€サ", false, vec![9], vec![3]);
 
     // from css/css-text/i18n/ja/css-text-line-break-ja-pr-strict.html
     // TODO: Why ID ÷ ID × PR × ID ÷ ID ?
-    //strict("文文\u{00b1}字字", true, vec![3, 11, 14], vec![1, 4, 5]);
-    //strict("文文\u{20AC}字字", true, vec![3, 11, 14], vec![1, 4, 5]);
-    //strict("文文\u{FF04}字字", true, vec![3, 11, 14], vec![1, 4, 5]);
+    // strict("文文±字字", true, &["文", "文±字", "字"]);
+    // strict("文文€字字", true, &["文", "文€字", "字"]);
+    // strict("文文＄字字", true, &["文", "文＄字", "字"]);
 }
 
 #[test]
 fn linebreak_normal() {
     // from css/css-text/line-break/line-break-*-011.xht
-    normal("サ\u{3041}サ", false, vec![3, 6, 9], vec![1, 2, 3]);
+    normal("サぁサ", false, &["サ", "ぁ", "サ"]);
 
     // from css/css-text/line-break/line-break-*-012.xht
-    normal("サ\u{30FC}サ", false, vec![3, 6, 9], vec![1, 2, 3]);
+    normal("サーサ", false, &["サ", "ー", "サ"]);
 
     // from css/css-text/line-break/line-break-*-013.xht
-    normal("サ\u{301C}サ", true, vec![3, 6, 9], vec![1, 2, 3]);
+    normal("サ〜サ", true, &["サ", "〜", "サ"]);
 
     // from css/css-text/line-break/line-break-*-014.xht
-    normal("サ\u{3005}サ", true, vec![6, 9], vec![2, 3]);
+    normal("サ々サ", true, &["サ々", "サ"]);
 
     // from css/css-text/line-break/line-break-*-015.xht
-    normal("サ\u{2025}\u{2025}サ", true, vec![9, 12], vec![3, 4]);
+    normal("サ‥‥サ", true, &["サ‥‥", "サ"]);
 
     // from css/css-text/line-break/line-break-*-016a.xht
-    normal("サ\u{30FB}サ", true, vec![6, 9], vec![2, 3]);
+    normal("サ・サ", true, &["サ・", "サ"]);
 
     // from css/css-text/line-break/line-break-*-017a.xht
-    normal("サ\u{00B0}サ", true, vec![5, 8], vec![2, 3]);
+    normal("サ°サ", true, &["サ°", "サ"]);
 
     // from css/css-text/line-break/line-break-*-018.xht
-    normal("サ\u{20AC}サ", true, vec![3, 9], vec![1, 3]);
+    normal("サ€サ", true, &["サ", "€サ"]);
 
     // from css/css-text/i18n/unknown-lang/css-text-line-break-pr-normal.html
     // TODO: Why ID ÷ ID × PR × ID ÷ ID ?
-    //normal("文文\u{00b1}字字", false, vec![3, 11, 14], vec![1, 4, 5]);
-    //normal("文文\u{20AC}字字", false, vec![3, 11, 14], vec![1, 4, 5]);
-    //normal("文文\u{2116}字字", false, vec![3, 11, 14], vec![1, 4, 5]);
+    // normal("文文±字字", false, &["文", "文±字", "字"]);
+    // normal("文文€字字", false, &["文", "文€字", "字"]);
+    // normal("文文№字字", false, &["文", "文№字", "字"]);
 }
 
 #[test]
 fn linebreak_loose() {
     // from css/css-text/line-break/line-break-*-011.xht
-    loose("サ\u{3041}サ", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("サぁサ", true, &["サ", "ぁ", "サ"]);
 
     // from css/css-text/line-break/line-break-*-012.xht
-    loose("サ\u{30FC}サ", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("サーサ", true, &["サ", "ー", "サ"]);
 
     // from css/css-text/line-break/line-break-loose-013.xht
-    loose("サ\u{301C}サ", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("サ〜サ", true, &["サ", "〜", "サ"]);
 
     // from css/css-text/line-break/line-break-*-014.xht
-    loose("サ\u{3005}サ", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("サ々サ", true, &["サ", "々", "サ"]);
 
     // from css/css-text/line-break/line-break-*-015.xht
-    loose(
-        "サ\u{2025}\u{2025}サ",
-        true,
-        vec![3, 6, 9, 12],
-        vec![1, 2, 3, 4],
-    );
+    loose("サ‥‥サ", true, &["サ", "‥", "‥", "サ"]);
 
     // from css/css-text/line-break/line-break-*-016a.xht
-    loose("サ\u{30FB}サ", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("サ・サ", true, &["サ", "・", "サ"]);
 
     // from css/css-text/line-break/line-break-*-017a.xht
-    loose("サ\u{00B0}サ", true, vec![3, 5, 8], vec![1, 2, 3]);
+    loose("サ°サ", true, &["サ", "°", "サ"]);
 
     // from css/css-text/line-break/line-break-*-018.xht
-    loose("文\u{20AC}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{2116}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{ff04}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{ffe1}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{ffe5}文", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("文€文", true, &["文", "€", "文"]);
+    loose("文№文", true, &["文", "№", "文"]);
+    loose("文＄文", true, &["文", "＄", "文"]);
+    loose("文￡文", true, &["文", "￡", "文"]);
+    loose("文￥文", true, &["文", "￥", "文"]);
 
     // from css/css-text/i18n/ja/css-text-line-break-ja-pr-loose.html
-    loose("文\u{00b1}文", true, vec![3, 5, 8], vec![1, 2, 3]);
-    loose("文\u{20ac}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{ff04}文", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("文±文", true, &["文", "±", "文"]);
+    loose("文€文", true, &["文", "€", "文"]);
+    loose("文＄文", true, &["文", "＄", "文"]);
 
     // from css/css-text/i18n/unknown-lang/css-text-line-break-in-loose.html
-    loose("文\u{2024}文", false, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{2025}文", false, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{2026}文", false, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{22ef}文", false, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{fe19}文", false, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("文․文", false, &["文", "․", "文"]);
+    loose("文‥文", false, &["文", "‥", "文"]);
+    loose("文…文", false, &["文", "…", "文"]);
+    loose("文⋯文", false, &["文", "⋯", "文"]);
+    loose("文︙文", false, &["文", "︙", "文"]);
 
     // from css/css-text/i18n/unknown-lang/css-text-line-break-pr-loose.html
-    //loose("文\u{00b1}文", false, vec![8], vec![3]);
-    //loose("文\u{20ac}文", false, vec![9], vec![3]);
-    //loose("文\u{2116}文", false, vec![9], vec![3]);
-    //loose("文\u{ff04}文", false, vec![9], vec![3]);
+    // loose("文±文", false, &["文±文"]);
+    // loose("文€文", false, &["文€文"]);
+    // loose("文№文", false, &["文№文"]);
+    // loose("文＄文", false, &["文＄文"]);
 
     // from css/css-text/i18n/zh/css-text-line-break-zh-in-loose.xht
-    loose("文\u{2024}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{2025}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{2026}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{22ef}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{fe19}文", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("文․文", true, &["文", "․", "文"]);
+    loose("文‥文", true, &["文", "‥", "文"]);
+    loose("文…文", true, &["文", "…", "文"]);
+    loose("文⋯文", true, &["文", "⋯", "文"]);
+    loose("文︙文", true, &["文", "︙", "文"]);
 
     // css/css-text/line-break/line-break-loose-hyphens-001.html
-    loose("文\u{2010}文", true, vec![3, 6, 9], vec![1, 2, 3]);
-    loose("文\u{2013}文", true, vec![3, 6, 9], vec![1, 2, 3]);
+    loose("文‐文", true, &["文", "‐", "文"]);
+    loose("文–文", true, &["文", "–", "文"]);
 
     // css/css-text/line-break/line-break-loose-hyphens-003.html
-    loose("aa\u{2010}", false, vec![5], vec![3]);
-    loose("aa\u{2013}", false, vec![5], vec![3]);
+    loose("aa‐", false, &["aa‐"]);
+    loose("aa–", false, &["aa–"]);
 }
 
 #[test]
@@ -208,19 +208,16 @@ fn linebreak_anywhere() {
     anywhere(
         "الخيل والليل",
         false,
-        vec![2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 21, 23],
-        vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        &["ا", "ل", "خ", "ي", "ل", " ", "و", "ا", "ل", "ل", "ي", "ل"],
     );
 
     // css/css-text/line-break/line-break-anywhere-001.html
     anywhere(
-        "aa-a.a)a,a) a\u{00A0}aa\u{2060}a\u{200D}a･a",
+        "aa-a.a)a,a) a aa\u{2060}aa･a",
         true,
-        vec![
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 20, 24, 25, 28, 29,
-        ],
-        vec![
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22,
+        &[
+            "a", "a", "-", "a", ".", "a", ")", "a", ",", "a", ")", " ", "a", " ", "a", "a",
+            "\u{2060}", "a", "a", "･", "a",
         ],
     );
 
@@ -228,103 +225,71 @@ fn linebreak_anywhere() {
     anywhere(
         "no hyphenation",
         false,
-        vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-        vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+        &[
+            "n", "o", " ", "h", "y", "p", "h", "e", "n", "a", "t", "i", "o", "n",
+        ],
     );
 
     // css/css-text/line-break/line-break-anywhere-003.html
-    anywhere("latin", false, vec![1, 2, 3, 4, 5], vec![1, 2, 3, 4, 5]);
+    anywhere("latin", false, &["l", "a", "t", "i", "n"]);
 
     // css/css-text/line-break/line-break-anywhere-004.html
-    anywhere(
-        "XX XXX",
-        false,
-        vec![1, 2, 3, 4, 5, 6],
-        vec![1, 2, 3, 4, 5, 6],
-    );
+    anywhere("XX XXX", false, &["X", "X", " ", "X", "X", "X"]);
 
     // css/css-text/line-break/line-break-anywhere-005.html
-    anywhere("X X", false, vec![1, 2, 3], vec![1, 2, 3]);
+    anywhere("X X", false, &["X", " ", "X"]);
 
     // css/css-text/line-break/line-break-anywhere-006.html
     anywhere(
-        "XXXX\u{00A0}XXXX",
+        "XXXX XXXX",
         false,
-        vec![1, 2, 3, 4, 6, 7, 8, 9, 10],
-        vec![1, 2, 3, 4, 5, 6, 7, 8, 9],
+        &["X", "X", "X", "X", " ", "X", "X", "X", "X"],
     );
 
     // css/css-text/line-break/line-break-anywhere-007.html
-    anywhere(
-        "X XX...",
-        true,
-        vec![1, 2, 3, 4, 5, 6, 7],
-        vec![1, 2, 3, 4, 5, 6, 7],
-    );
+    anywhere("X XX...", true, &["X", " ", "X", "X", ".", ".", "."]);
 
     // css/css-text/line-break/line-break-anywhere-008.html
-    anywhere(
-        "X XX...",
-        true,
-        vec![1, 2, 3, 4, 5, 6, 7],
-        vec![1, 2, 3, 4, 5, 6, 7],
-    );
+    anywhere("X XX...", true, &["X", " ", "X", "X", ".", ".", "."]);
 
     // css/css-text/line-break/line-break-anywhere-009.html
-    anywhere("X\u{00A0}X", true, vec![1, 3, 4], vec![1, 2, 3]);
+    anywhere("X X", true, &["X", " ", "X"]);
 
     // css/css-text/line-break/line-break-anywhere-010.html
     anywhere(
-        "XXXX\u{00A0}XXXX",
+        "XXXX XXXX",
         true,
-        vec![1, 2, 3, 4, 6, 7, 8, 9, 10],
-        vec![1, 2, 3, 4, 5, 6, 7, 8, 9],
+        &["X", "X", "X", "X", " ", "X", "X", "X", "X"],
     );
 
     // css/css-text/line-break/line-break-anywhere-011.html
-    anywhere("XX///", true, vec![1, 2, 3, 4, 5], vec![1, 2, 3, 4, 5]);
+    anywhere("XX///", true, &["X", "X", "/", "/", "/"]);
 
     // css/css-text/line-break/line-break-anywhere-012.html
-    anywhere(
-        "X XX\\\\\\",
-        true,
-        vec![1, 2, 3, 4, 5, 6, 7],
-        vec![1, 2, 3, 4, 5, 6, 7],
-    );
+    anywhere(r#"X XX\\\"#, true, &["X", " ", "X", "X", "\\", "\\", "\\"]);
 
     // css/css-text/line-break/line-break-anywhere-013.html
-    anywhere("XXX/X", true, vec![1, 2, 3, 4, 5], vec![1, 2, 3, 4, 5]);
+    anywhere("XXX/X", true, &["X", "X", "X", "/", "X"]);
 
     // css/css-text/line-break/line-break-anywhere-014.html
-    anywhere("XXX\\X", false, vec![1, 2, 3, 4, 5], vec![1, 2, 3, 4, 5]);
+    anywhere(r#"XXX\X"#, false, &["X", "X", "X", "\\", "X"]);
 
     // css/css-text/line-break/line-break-anywhere-015.html
-    anywhere("XXX\\X", false, vec![1, 2, 3, 4, 5], vec![1, 2, 3, 4, 5]);
+    anywhere(r#"XXX\X"#, false, &["X", "X", "X", "\\", "X"]);
 
     // css/css-text/line-break/line-break-anywhere-016.html
-    anywhere("XXX/X", false, vec![1, 2, 3, 4, 5], vec![1, 2, 3, 4, 5]);
+    anywhere("XXX/X", false, &["X", "X", "X", "/", "X"]);
 
     // css/css-text/line-break/line-break-anywhere-017.html
-    anywhere(
-        "XXXX X",
-        false,
-        vec![1, 2, 3, 4, 5, 6],
-        vec![1, 2, 3, 4, 5, 6],
-    );
+    anywhere("XXXX X", false, &["X", "X", "X", "X", " ", "X"]);
 
     // line-break-anywhere-overrides-uax-behavior-001.htm
-    anywhere(
-        "XX\u{2060}XX",
-        false,
-        vec![1, 2, 5, 6, 7],
-        vec![1, 2, 3, 4, 5],
-    );
+    anywhere("XX\u{2060}XX", false, &["X", "X", "\u{2060}", "X", "X"]);
 
     // line-break-anywhere-overrides-uax-behavior-004.htm
     anywhere(
         "..\u{200B}...X",
         false,
-        vec![1, 2, 5, 6, 7, 8, 9],
-        vec![1, 2, 3, 4, 5, 6, 7],
+        &[".", ".", "\u{200B}", ".", ".", ".", "X"],
     );
 }
