@@ -325,6 +325,8 @@ lazy_static::lazy_static! {
 
         "icu::properties::unicodeset_parse",
 
+        "icu::segmenter::neo",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes

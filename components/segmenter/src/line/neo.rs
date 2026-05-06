@@ -4,13 +4,15 @@
 
 use crate::complex::{ComplexPayloads, ComplexPayloadsBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::line::{LineBreakOptions, ResolvedLineBreakOptions};
 #[cfg(feature = "compiled_data")]
-use crate::line::LineBreakOptions;
-use crate::line::ResolvedLineBreakOptions;
-use crate::provider::{Acceptance, SegmenterStateMachine};
-use crate::provider::{Baked, SegmenterBreakLineV2, SegmenterDictionaryExtendedV1};
-#[cfg(feature = "auto")]
-use crate::provider::{SegmenterBreakGraphemeClusterV1, SegmenterLstmAutoV1};
+use crate::provider::Baked;
+#[cfg(feature = "lstm")]
+use crate::provider::SegmenterLstmAutoV1;
+use crate::provider::{
+    Acceptance, SegmenterBreakGraphemeClusterV1, SegmenterBreakLineV2,
+    SegmenterDictionaryExtendedV1, SegmenterStateMachine,
+};
 use crate::scaffold::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
 use alloc::collections::VecDeque;
 use alloc::{vec, vec::Vec};
