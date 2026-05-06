@@ -23,11 +23,7 @@ fn word_break_with_locale() {
         .tuple_windows()
         .map(|(a, b)| &s[a..b])
         .collect::<Vec<_>>();
-    assert_eq!(
-        segments,
-        &["hello:world"],
-        "word segmenter with Swedish"
-    );
+    assert_eq!(segments, &["hello:world"], "word segmenter with Swedish");
 
     let mut options_en = WordBreakOptions::default();
     let langid = langid!("en");
