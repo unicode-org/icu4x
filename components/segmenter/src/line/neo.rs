@@ -592,6 +592,8 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
         let mut lookahead_positions: Vec<Option<Y::IterAttr<'s>>> =
             alloc::vec![None; self.data.num_lookaheads];
 
+        let mut last_complex_break = None;
+
         self.remaining_input = loop {
             let class = if let Some((_, next)) = iter.clone().peekable().next() {
                 self.data.classes.get32(next.into())
@@ -599,9 +601,9 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
                 SegmenterStateMachine::EOT_CLASS
             };
 
-            if Y::CAN_CONTAIN_SA && self.data.is_class_complex(class) {
+            if Y::CAN_CONTAIN_SA && self.cache.is_empty() && self.data.is_class_complex(class) {
                 let mut past_complex = iter.clone();
-
+                past_complex.next();
                 while past_complex
                     .clone()
                     .peekable()
@@ -614,23 +616,33 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
                     past_complex.next();
                 }
 
-                if let Ok(results) = (self.handle_complex)(&self.complex, &iter, &past_complex) {
-                    let offset = Y::offset(&iter);
+                if let Ok(mut results) = (self.handle_complex)(&self.complex, &iter, &past_complex)
+                {
+                    // ignore the break point at the end – it might not be one and we'll run the state
+                    // machine from the penultimate break point to figure that out
+                    results.pop();
 
-                    self.cache = results
-                        .into_iter()
-                        .map(|i| i + offset)
-                        .filter(|&i| i != 0)
-                        .collect();
+                    if let Some(&last_break) = results.last() {
+                        let offset = Y::offset(&iter);
 
-                    self.remaining_input = past_complex;
+                        self.cache = results
+                            .into_iter()
+                            .map(|i| i + offset)
+                            .filter(|&i| i != 0)
+                            .collect();
 
-                    return if offset != 0 {
-                        // break before SA
-                        Some(offset)
-                    } else {
-                        self.cache.pop_front()
-                    };
+                        // after we return the cache, we need to restart the state machine from from `last_break`
+                        let mut at_last_break = iter.clone();
+                        while at_last_break
+                            .clone()
+                            .peekable()
+                            .next_if(|&(i, _)| i < last_break + offset)
+                            .is_some()
+                        {
+                            at_last_break.next();
+                        }
+                        last_complex_break = Some(at_last_break);
+                    }
                 }
             }
 
@@ -680,10 +692,21 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
             }
         };
 
+        let break_index = Y::offset(&self.remaining_input);
+
+        // We encountered complex text and populated the cache
+        if let Some(last_complex_break) = last_complex_break {
+            self.remaining_input = last_complex_break;
+            // return the complex break if it's before the break we calculated using the state machine
+            if self.cache.front().is_some_and(|&i| i <= break_index) {
+                return self.cache.pop_front();
+            }
+        }
+
         self.last_accepting_mandatory =
             last_accepting_mandatory || Y::is_empty(&self.remaining_input);
 
-        Some(Y::offset(&self.remaining_input))
+        Some(break_index)
     }
 }
 
@@ -704,7 +727,7 @@ impl SegmenterStateMachine<'_> {
 fn test() {
     use alloc::{vec, vec::Vec};
 
-    let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
+    let segmenter = LineSegmenter::new_dictionary(Default::default());
 
     let mut actual_breaks = segmenter.segment_str("this has a mandatory\nline break");
 
