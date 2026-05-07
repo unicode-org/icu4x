@@ -13,7 +13,7 @@ pub(super) enum Language {
 }
 
 // TODO: Use data provider
-fn get_language(codepoint: u32) -> Language {
+pub(super) fn get_language(codepoint: u32) -> Language {
     match codepoint {
         0xe01..=0xe7f => Language::Thai,
         0x0E80..=0x0EFF => Language::Lao,

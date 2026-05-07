@@ -502,7 +502,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
                     .strip_suffix(past_complex.as_slice())
                     .unwrap();
                 let Ok(complex) = core::str::from_utf8(complex) else {
-                    return Err(vec![]);
+                    return vec![complex.len()];
                 };
                 c.complex_language_segment_str(complex)
             },
@@ -563,12 +563,7 @@ pub struct LineBreakIterator<'data, 's, Y: RuleBreakType> {
     cache: VecDeque<usize>,
     remaining_input: Y::IterAttr<'s>,
     last_accepting_mandatory: bool,
-    #[allow(clippy::type_complexity)]
-    handle_complex: fn(
-        &ComplexPayloadsBorrowed,
-        &Y::IterAttr<'s>,
-        &Y::IterAttr<'s>,
-    ) -> Result<Vec<usize>, Vec<usize>>,
+    handle_complex: fn(&ComplexPayloadsBorrowed, &Y::IterAttr<'s>, &Y::IterAttr<'s>) -> Vec<usize>,
 }
 
 impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
@@ -595,54 +590,51 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
         let mut last_complex_break = None;
 
         self.remaining_input = loop {
-            let class = if let Some((_, next)) = iter.clone().peekable().next() {
-                self.data.classes.get32(next.into())
+            let (class, is_complex) = if let Some((_, next)) = iter.clone().peekable().next() {
+                let cp = next.into();
+                (self.data.classes.get32(cp), self.complex.handles(cp))
             } else {
-                SegmenterStateMachine::EOT_CLASS
+                (SegmenterStateMachine::EOT_CLASS, false)
             };
 
-            if Y::CAN_CONTAIN_SA && self.cache.is_empty() && self.data.is_class_complex(class) {
+            if Y::CAN_CONTAIN_SA && self.cache.is_empty() && is_complex {
                 let mut past_complex = iter.clone();
                 past_complex.next();
                 while past_complex
                     .clone()
                     .peekable()
-                    .next_if(|&(_, c)| {
-                        self.data
-                            .is_class_complex(self.data.classes.get32(c.into()))
-                    })
+                    .next_if(|&(_, c)| self.complex.handles(c.into()))
                     .is_some()
                 {
                     past_complex.next();
                 }
 
-                if let Ok(mut results) = (self.handle_complex)(&self.complex, &iter, &past_complex)
-                {
-                    // ignore the break point at the end – it might not be one and we'll run the state
-                    // machine from the penultimate break point to figure that out
-                    results.pop();
+                let mut results = (self.handle_complex)(&self.complex, &iter, &past_complex);
 
-                    if let Some(&last_break) = results.last() {
-                        let offset = Y::offset(&iter);
+                // ignore the break point at the end – it might not be one and we'll run the state
+                // machine from the penultimate break point to figure that out
+                results.pop();
 
-                        self.cache = results
-                            .into_iter()
-                            .map(|i| i + offset)
-                            .filter(|&i| i != 0)
-                            .collect();
+                if let Some(&last_break) = results.last() {
+                    let offset = Y::offset(&iter);
 
-                        // after we return the cache, we need to restart the state machine from from `last_break`
-                        let mut at_last_break = iter.clone();
-                        while at_last_break
-                            .clone()
-                            .peekable()
-                            .next_if(|&(i, _)| i < last_break + offset)
-                            .is_some()
-                        {
-                            at_last_break.next();
-                        }
-                        last_complex_break = Some(at_last_break);
+                    self.cache = results
+                        .into_iter()
+                        .map(|i| i + offset)
+                        .filter(|&i| i != 0)
+                        .collect();
+
+                    // after we return the cache, we need to restart the state machine from from `last_break`
+                    let mut at_last_break = iter.clone();
+                    while at_last_break
+                        .clone()
+                        .peekable()
+                        .next_if(|&(i, _)| i < last_break + offset)
+                        .is_some()
+                    {
+                        at_last_break.next();
                     }
+                    last_complex_break = Some(at_last_break);
                 }
             }
 
@@ -717,17 +709,11 @@ impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     }
 }
 
-impl SegmenterStateMachine<'_> {
-    fn is_class_complex(&self, class: u8) -> bool {
-        self.complex_classes.iter().find(|&c| c == class).is_some()
-    }
-}
-
 #[test]
 fn test() {
     use alloc::{vec, vec::Vec};
 
-    let segmenter = LineSegmenter::new_dictionary(Default::default());
+    let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
 
     let mut actual_breaks = segmenter.segment_str("this has a mandatory\nline break");
 
