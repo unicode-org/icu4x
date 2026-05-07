@@ -334,6 +334,7 @@ where
         + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumIndicConjunctBreakV1>
         + DataProvider<PropertyEnumLineBreakV1>
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
@@ -342,6 +343,7 @@ where
         + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseIndicConjunctBreakV1>
         + DataProvider<PropertyNameParseLineBreakV1>
         + DataProvider<PropertyNameParseScriptV1>
         + DataProvider<PropertyNameParseSentenceBreakV1>
@@ -508,6 +510,7 @@ where
         + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumIndicConjunctBreakV1>
         + DataProvider<PropertyEnumLineBreakV1>
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
@@ -516,6 +519,7 @@ where
         + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseIndicConjunctBreakV1>
         + DataProvider<PropertyNameParseLineBreakV1>
         + DataProvider<PropertyNameParseScriptV1>
         + DataProvider<PropertyNameParseSentenceBreakV1>
