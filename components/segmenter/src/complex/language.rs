@@ -14,29 +14,43 @@ pub(super) enum Language {
 
 // TODO: Use data provider
 pub(super) fn get_language(codepoint: u32) -> Language {
+    // For Thai, Burmese, Lao and Khmer, these are the intersections
+    // of lb=SA with the respective Script
     match codepoint {
-        0xe01..=0xe7f => Language::Thai,
-        0x0E80..=0x0EFF => Language::Lao,
-        0x1000..=0x109f => Language::Burmese,
-        0x1780..=0x17FF => Language::Khmer,
-        0x19E0..=0x19FF => Language::Khmer,
-        0x2E80..=0x2EFF => Language::ChineseOrJapanese,
-        0x2F00..=0x2FDF => Language::ChineseOrJapanese,
-        0x3040..=0x30FF => Language::ChineseOrJapanese,
-        0x31F0..=0x31FF => Language::ChineseOrJapanese,
-        0x32D0..=0x32FE => Language::ChineseOrJapanese,
-        0x3400..=0x4DBF => Language::ChineseOrJapanese,
-        0x4E00..=0x9FFF => Language::ChineseOrJapanese,
-        0xa9e0..=0xa9ff => Language::Burmese,
-        0xaa60..=0xaa7f => Language::Burmese,
-        0xF900..=0xFAFF => Language::ChineseOrJapanese,
-        0xFF66..=0xFF9D => Language::ChineseOrJapanese,
-        0x16FE2..=0x16FE3 => Language::ChineseOrJapanese,
-        0x16FF0..=0x16FF1 => Language::ChineseOrJapanese,
-        0x1AFF0..=0x1B16F => Language::ChineseOrJapanese,
-        0x1F200 => Language::ChineseOrJapanese,
-        0x20000..=0x2FA1F => Language::ChineseOrJapanese,
-        0x30000..=0x3134F => Language::ChineseOrJapanese,
+        0xE01..=0xE3A | 0xE40..=0x0E4E => Language::Thai,
+        0x0E81
+        | 0x0E82
+        | 0x0E84
+        | 0x0E86..=0x0E8A
+        | 0x0E8C..0x0EA3
+        | 0x0EA5
+        | 0x0EA7..=0x0EBD
+        | 0x0EC0..=0x0EC4
+        | 0x0EC6
+        | 0x0EC8..=0x0ECE
+        | 0x0EDC..=0x0EDF => Language::Lao,
+        0x1000..=0x103F
+        | 0x1050..=0x108F
+        | 0x109A..=0x109F
+        | 0xA9E0..=0xA9EF
+        | 0xA9FA..=0xA9FE
+        | 0xAA60..=0xAA7F => Language::Burmese,
+        0x1780..=0x17d3 | 0x17d7 | 0x17dc | 0x17dd => Language::Khmer,
+        0x2E80..=0x2EFF
+        | 0x2F00..=0x2FDF
+        | 0x3040..=0x30FF
+        | 0x31F0..=0x31FF
+        | 0x32D0..=0x32FE
+        | 0x3400..=0x4DBF
+        | 0x4E00..=0x9FFF
+        | 0xF900..=0xFAFF
+        | 0xFF66..=0xFF9D
+        | 0x16FE2..=0x16FE3
+        | 0x16FF0..=0x16FF1
+        | 0x1AFF0..=0x1B16F
+        | 0x1F200
+        | 0x20000..=0x2FA1F
+        | 0x30000..=0x3134F => Language::ChineseOrJapanese,
         _ => Language::Unknown,
     }
 }
