@@ -15,9 +15,6 @@ use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
-#[cfg(feature = "unstable")]
-pub mod neo;
-
 #[doc(hidden)]
 impl RuleBreakData<'_> {
     pub const LINE_PROPERTY_AI: u8 = 1;
@@ -173,14 +170,14 @@ impl LineBreakOptions<'_> {
 }
 
 #[derive(Debug, Clone, Copy)]
-struct ResolvedLineBreakOptions {
+pub(crate) struct ResolvedLineBreakOptions {
     strictness: LineBreakStrictness,
     word_option: LineBreakWordOption,
     ja_zh: bool,
 }
 
 impl LineBreakOptions<'_> {
-    const fn resolve(self) -> ResolvedLineBreakOptions {
+    pub(crate) const fn resolve(self) -> ResolvedLineBreakOptions {
         ResolvedLineBreakOptions {
             strictness: match self.strictness {
                 Some(s) => s,

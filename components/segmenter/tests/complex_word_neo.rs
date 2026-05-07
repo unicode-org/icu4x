@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::{neo::LineSegmenterBorrowed, WordSegmenterBorrowed};
-use icu_segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+use icu_segmenter::{neo::LineSegmenterBorrowed, neo::WordSegmenterBorrowed};
+use icu_segmenter::{neo::WordSegmenter, options::WordBreakInvariantOptions};
 use itertools::Itertools;
 
 // Additional word segmenter tests with complex string.
