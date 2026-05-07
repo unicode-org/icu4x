@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_segmenter::{neo::LineSegmenterBorrowed, WordSegmenterBorrowed};
 use icu_segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-use icu_segmenter::{LineSegmenterBorrowed, WordSegmenterBorrowed};
 use itertools::Itertools;
 
 // Additional word segmenter tests with complex string.
@@ -109,7 +109,7 @@ fn word_break_mixed_han() {
 
 #[test]
 fn word_line_th_wikipedia_auto() {
-    use icu_segmenter::LineSegmenter;
+    use icu_segmenter::neo::LineSegmenter;
 
     let text = "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens";
 
@@ -179,23 +179,19 @@ fn word_line_th_wikipedia_auto() {
         &[
             "แพน",
             "ด้า",
-            "แดง",
-            " ",
+            "แดง ",
             "(อัง",
-            "กฤษ",
-            ": ",
+            "กฤษ: ",
             "Red ",
             "panda, ",
             "Shining ",
             "cat; ",
-            "จีน",
-            ": ",
+            "จีน: ",
             "小",
             "熊",
             "貓; ",
             "พิน",
-            "อิน",
-            ": ",
+            "อิน: ",
             "Xiǎo ",
             "xióngmāo) ",
             "สัตว์",
@@ -204,13 +200,11 @@ fn word_line_th_wikipedia_auto() {
             "ด้วย",
             "นม",
             "ชนิด",
-            "หนึ่ง",
-            " ",
+            "หนึ่ง ",
             "มี",
             "ชื่อ",
             "วิทยาศาสตร์",
-            "ว่า",
-            " ",
+            "ว่า ",
             "Ailurus ",
             "fulgens",
         ],
