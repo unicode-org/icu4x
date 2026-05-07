@@ -110,6 +110,7 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         }
     }
 
+    #[cfg(feature = "unstable")]
     pub(crate) fn handles(&self, cp: u32) -> bool {
         match get_language(cp) {
             Language::Burmese => self.my.is_some(),
