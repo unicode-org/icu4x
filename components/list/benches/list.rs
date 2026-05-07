@@ -21,7 +21,7 @@ fn list_benches(c: &mut Criterion) {
             for locale in black_box(&locales) {
                 let _ = ListFormatter::try_new_and(
                     locale.into(),
-                    ListFormatterOptions::default().with_length(ListLength::Wide),
+                    ListFormatterOptions::default().with_length(black_box(ListLength::Wide)),
                 );
             }
         })
@@ -32,7 +32,7 @@ fn list_benches(c: &mut Criterion) {
             for locale in black_box(&locales) {
                 let _ = ListFormatter::try_new_or(
                     locale.into(),
-                    ListFormatterOptions::default().with_length(ListLength::Short),
+                    ListFormatterOptions::default().with_length(black_box(ListLength::Short)),
                 );
             }
         })
@@ -43,7 +43,7 @@ fn list_benches(c: &mut Criterion) {
             for locale in black_box(&locales) {
                 let _ = ListFormatter::try_new_unit(
                     locale.into(),
-                    ListFormatterOptions::default().with_length(ListLength::Narrow),
+                    ListFormatterOptions::default().with_length(black_box(ListLength::Narrow)),
                 );
             }
         })
