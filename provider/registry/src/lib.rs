@@ -342,7 +342,10 @@ macro_rules! registry(
             icu::experimental::units::provider::UnitsInfoV1: UnitsInfoV1,
             icu::plurals::provider::PluralsRangesV1: PluralsRangesV1,
             icu::segmenter::provider::radical::SegmenterUnihanRadicalV1: SegmenterUnihanRadicalV1,
+            icu::segmenter::provider::SegmenterBreakGraphemeClusterV2: SegmenterBreakGraphemeClusterV2,
             icu::segmenter::provider::SegmenterBreakLineV2: SegmenterBreakLineV2,
+            icu::segmenter::provider::SegmenterBreakSentenceV2: SegmenterBreakSentenceV2,
+            icu::segmenter::provider::SegmenterBreakWordV2: SegmenterBreakWordV2,
         );
     }
 );

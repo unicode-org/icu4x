@@ -1,0 +1,106 @@
+# From state ; class name or eot ; to state
+START ; eot ; eot
+START ; XX ; START
+START ; Sp ; START
+START ; LF ; eot
+START ; CR ; CR
+START ; STerm ; STerm
+START ; Close ; START
+START ; SContinue ; START
+START ; ATerm ; ATerm
+START ; Numeric ; START
+START ; Upper ; Upper
+START ; Lower ; Upper
+START ; Sep ; eot
+START ; Extend|Format ; START
+START ; OLetter ; START
+ATerm XX ; XX ; ATerm XX
+ATerm XX ; Sp ; ATerm XX
+ATerm XX ; Close ; ATerm XX
+ATerm XX ; SContinue ; ATerm XX
+ATerm XX ; Numeric ; ATerm XX
+ATerm XX ; Lower ; Upper
+ATerm XX ; Extend|Format ; ATerm XX
+Upper ; eot ; eot
+Upper ; XX ; START
+Upper ; Sp ; START
+Upper ; LF ; eot
+Upper ; CR ; CR
+Upper ; STerm ; STerm
+Upper ; Close ; START
+Upper ; SContinue ; START
+Upper ; ATerm ; Upper ATerm
+Upper ; Numeric ; START
+Upper ; Upper ; Upper
+Upper ; Lower ; Upper
+Upper ; Sep ; eot
+Upper ; Extend|Format ; Upper
+Upper ; OLetter ; START
+STerm ; Sp ; STerm Sp
+STerm ; LF ; STerm LF
+STerm ; CR ; STerm CR
+STerm ; STerm ; STerm
+STerm ; Close ; STerm
+STerm ; SContinue ; START
+STerm ; ATerm ; ATerm
+STerm ; Sep ; STerm LF
+STerm ; Extend|Format ; STerm
+ATerm ; XX ; ATerm XX
+ATerm ; Sp ; ATerm Sp
+ATerm ; LF ; STerm LF
+ATerm ; CR ; STerm CR
+ATerm ; STerm ; STerm
+ATerm ; Close ; ATerm Close
+ATerm ; SContinue ; START
+ATerm ; ATerm ; ATerm
+ATerm ; Numeric ; START
+ATerm ; Lower ; Upper
+ATerm ; Sep ; STerm LF
+ATerm ; Extend|Format ; ATerm
+STerm Sp ; Sp ; STerm Sp
+STerm Sp ; LF ; STerm LF
+STerm Sp ; CR ; STerm CR
+STerm Sp ; STerm ; STerm
+STerm Sp ; SContinue ; START
+STerm Sp ; ATerm ; ATerm
+STerm Sp ; Sep ; STerm LF
+STerm Sp ; Extend|Format ; STerm Sp
+STerm CR ; LF ; STerm LF
+ATerm Sp ; XX ; ATerm XX
+ATerm Sp ; Sp ; ATerm Sp
+ATerm Sp ; LF ; STerm LF
+ATerm Sp ; CR ; STerm CR
+ATerm Sp ; STerm ; STerm
+ATerm Sp ; Close ; ATerm XX
+ATerm Sp ; SContinue ; START
+ATerm Sp ; ATerm ; ATerm
+ATerm Sp ; Numeric ; ATerm XX
+ATerm Sp ; Lower ; Upper
+ATerm Sp ; Sep ; STerm LF
+ATerm Sp ; Extend|Format ; ATerm Sp
+ATerm Close ; XX ; ATerm XX
+ATerm Close ; Sp ; ATerm Sp
+ATerm Close ; LF ; STerm LF
+ATerm Close ; CR ; STerm CR
+ATerm Close ; STerm ; STerm
+ATerm Close ; Close ; ATerm Close
+ATerm Close ; SContinue ; START
+ATerm Close ; ATerm ; ATerm
+ATerm Close ; Numeric ; ATerm XX
+ATerm Close ; Lower ; Upper
+ATerm Close ; Sep ; STerm LF
+ATerm Close ; Extend|Format ; ATerm Close
+Upper ATerm ; XX ; ATerm XX
+Upper ATerm ; Sp ; ATerm Sp
+Upper ATerm ; LF ; STerm LF
+Upper ATerm ; CR ; STerm CR
+Upper ATerm ; STerm ; STerm
+Upper ATerm ; Close ; ATerm Close
+Upper ATerm ; SContinue ; START
+Upper ATerm ; ATerm ; ATerm
+Upper ATerm ; Numeric ; START
+Upper ATerm ; Upper ; Upper
+Upper ATerm ; Lower ; Upper
+Upper ATerm ; Sep ; STerm LF
+Upper ATerm ; Extend|Format ; Upper ATerm
+CR ; LF ; eot

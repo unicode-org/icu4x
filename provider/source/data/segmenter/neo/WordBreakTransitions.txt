@@ -1,0 +1,182 @@
+# From state ; class name or eot ; to state
+START ; XXmExtPict ; XXmExtPict
+START ; LF ; LF
+START ; Newline ; LF
+START ; CR ; CR
+START ; WSegSpace ; WSegSpace
+START ; Double_Quote ; XXmExtPict
+START ; Single_Quote ; XXmExtPict
+START ; MidNum ; XXmExtPict
+START ; MidNumLet ; XXmExtPict
+START ; Numeric ; Numeric
+START ; MidLetter ; XXmExtPict
+START ; ALettermExtPict ; ALettermExtPict
+START ; ExtendNumLet ; ExtendNumLet
+START ; ExtPictmALetter ; XXmExtPict
+START ; Extend|Format ; XXmExtPict
+START ; Hebrew_Letter ; Hebrew_Letter
+START ; ZWJ ; ZWJ
+START ; ALetter_ExtPict ; ALettermExtPict
+START ; Katakana ; Katakana
+START ; RI ; RI
+Numeric Single_Quote ; Numeric ; Numeric
+Numeric Single_Quote ; Extend|Format ; Numeric Single_Quote
+Numeric Single_Quote ; ZWJ ; Numeric Single_Quote
+ALettermExtPict Single_Quote ; ALettermExtPict ; ALettermExtPict
+ALettermExtPict Single_Quote ; Extend|Format ; ALettermExtPict Single_Quote
+ALettermExtPict Single_Quote ; Hebrew_Letter ; Hebrew_Letter
+ALettermExtPict Single_Quote ; ZWJ ; ALettermExtPict Single_Quote
+ALettermExtPict Single_Quote ; ALetter_ExtPict ; ALettermExtPict
+Hebrew_Letter Double_Quote ; Extend|Format ; Hebrew_Letter Double_Quote
+Hebrew_Letter Double_Quote ; Hebrew_Letter ; Hebrew_Letter
+Hebrew_Letter Double_Quote ; ZWJ ; Hebrew_Letter Double_Quote
+XXmExtPict ; Extend|Format ; XXmExtPict
+XXmExtPict ; ZWJ ; ZWJ
+CR ; LF ; LF
+WSegSpace ; WSegSpace ; WSegSpace
+WSegSpace ; Extend|Format ; XXmExtPict
+WSegSpace ; ZWJ ; ZWJ
+ExtendNumLet ; Numeric ; Numeric
+ExtendNumLet ; ALettermExtPict ; ALettermExtPict
+ExtendNumLet ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+ExtendNumLet ; Extend|Format ; ExtendNumLet
+ExtendNumLet ; Hebrew_Letter ; Hebrew_Letter
+ExtendNumLet ; ZWJ ; ExtendNumLet ZWJ
+ExtendNumLet ; ALetter_ExtPict ; ALettermExtPict
+ExtendNumLet ; Katakana ; Katakana
+ZWJ ; ExtPictmALetter ; XXmExtPict
+ZWJ ; Extend|Format ; XXmExtPict
+ZWJ ; ZWJ ; ZWJ
+ZWJ ; ALetter_ExtPict ; ALettermExtPict
+RI ; Extend|Format ; RI
+RI ; ZWJ ; RI ZWJ
+RI ; RI ; XXmExtPict
+ExtendNumLet ZWJ ; Numeric ; Numeric
+ExtendNumLet ZWJ ; ALettermExtPict ; ALettermExtPict
+ExtendNumLet ZWJ ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+ExtendNumLet ZWJ ; ExtPictmALetter ; XXmExtPict
+ExtendNumLet ZWJ ; Extend|Format ; ExtendNumLet
+ExtendNumLet ZWJ ; Hebrew_Letter ; Hebrew_Letter
+ExtendNumLet ZWJ ; ZWJ ; ExtendNumLet ZWJ
+ExtendNumLet ZWJ ; ALetter_ExtPict ; ALettermExtPict
+ExtendNumLet ZWJ ; Katakana ; Katakana
+RI ZWJ ; ExtPictmALetter ; XXmExtPict
+RI ZWJ ; Extend|Format ; RI
+RI ZWJ ; ZWJ ; RI ZWJ
+RI ZWJ ; ALetter_ExtPict ; ALettermExtPict
+RI ZWJ ; RI ; XXmExtPict
+Hebrew_Letter Single_Quote Extend ; ALettermExtPict ; ALettermExtPict
+Hebrew_Letter Single_Quote Extend ; Extend|Format ; Hebrew_Letter Single_Quote Extend
+Hebrew_Letter Single_Quote Extend ; Hebrew_Letter ; Hebrew_Letter
+Hebrew_Letter Single_Quote Extend ; ZWJ ; Hebrew_Letter Single_Quote ZWJ
+Hebrew_Letter Single_Quote Extend ; ALetter_ExtPict ; ALettermExtPict
+Hebrew_Letter Single_Quote ZWJ ; ALettermExtPict ; ALettermExtPict
+Hebrew_Letter Single_Quote ZWJ ; ExtPictmALetter ; XXmExtPict
+Hebrew_Letter Single_Quote ZWJ ; Extend|Format ; Hebrew_Letter Single_Quote Extend
+Hebrew_Letter Single_Quote ZWJ ; Hebrew_Letter ; Hebrew_Letter
+Hebrew_Letter Single_Quote ZWJ ; ZWJ ; Hebrew_Letter Single_Quote ZWJ
+Hebrew_Letter Single_Quote ZWJ ; ALetter_ExtPict ; ALettermExtPict
+Numeric ; Single_Quote ; Numeric Single_Quote
+Numeric ; MidNum ; Numeric Single_Quote
+Numeric ; MidNumLet ; Numeric Single_Quote
+Numeric ; Numeric ; Numeric
+Numeric ; ALettermExtPict ; ALettermExtPict
+Numeric ; ExtendNumLet ; Numeric ExtendNumLet
+Numeric ; Extend|Format ; Numeric
+Numeric ; Hebrew_Letter ; Hebrew_Letter
+Numeric ; ZWJ ; Numeric ZWJ
+Numeric ; ALetter_ExtPict ; ALettermExtPict
+Numeric ExtendNumLet ; Numeric ; Numeric
+Numeric ExtendNumLet ; ALettermExtPict ; ALettermExtPict
+Numeric ExtendNumLet ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+Numeric ExtendNumLet ; Extend|Format ; ExtendNumLet
+Numeric ExtendNumLet ; Hebrew_Letter ; Hebrew_Letter
+Numeric ExtendNumLet ; ZWJ ; ExtendNumLet ZWJ
+Numeric ExtendNumLet ; ALetter_ExtPict ; ALettermExtPict
+Numeric ExtendNumLet ; Katakana ; Katakana
+Numeric ZWJ ; Single_Quote ; Numeric Single_Quote
+Numeric ZWJ ; MidNum ; Numeric Single_Quote
+Numeric ZWJ ; MidNumLet ; Numeric Single_Quote
+Numeric ZWJ ; Numeric ; Numeric
+Numeric ZWJ ; ALettermExtPict ; ALettermExtPict
+Numeric ZWJ ; ExtendNumLet ; Numeric ExtendNumLet
+Numeric ZWJ ; ExtPictmALetter ; XXmExtPict
+Numeric ZWJ ; Extend|Format ; Numeric
+Numeric ZWJ ; Hebrew_Letter ; Hebrew_Letter
+Numeric ZWJ ; ZWJ ; Numeric ZWJ
+Numeric ZWJ ; ALetter_ExtPict ; ALettermExtPict
+ALettermExtPict ; Single_Quote ; ALettermExtPict Single_Quote
+ALettermExtPict ; MidNumLet ; ALettermExtPict Single_Quote
+ALettermExtPict ; Numeric ; Numeric
+ALettermExtPict ; MidLetter ; ALettermExtPict Single_Quote
+ALettermExtPict ; ALettermExtPict ; ALettermExtPict
+ALettermExtPict ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+ALettermExtPict ; Extend|Format ; ALettermExtPict
+ALettermExtPict ; Hebrew_Letter ; Hebrew_Letter
+ALettermExtPict ; ZWJ ; ALettermExtPict ZWJ
+ALettermExtPict ; ALetter_ExtPict ; ALettermExtPict
+Hebrew_Letter ; Double_Quote ; Hebrew_Letter Double_Quote
+Hebrew_Letter ; Single_Quote ; Hebrew_Letter Single_Quote
+Hebrew_Letter ; MidNumLet ; ALettermExtPict Single_Quote
+Hebrew_Letter ; Numeric ; Numeric
+Hebrew_Letter ; MidLetter ; ALettermExtPict Single_Quote
+Hebrew_Letter ; ALettermExtPict ; ALettermExtPict
+Hebrew_Letter ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+Hebrew_Letter ; Extend|Format ; Hebrew_Letter
+Hebrew_Letter ; Hebrew_Letter ; Hebrew_Letter
+Hebrew_Letter ; ZWJ ; Hebrew_Letter ZWJ
+Hebrew_Letter ; ALetter_ExtPict ; ALettermExtPict
+ALettermExtPict ExtendNumLet ; Numeric ; Numeric
+ALettermExtPict ExtendNumLet ; ALettermExtPict ; ALettermExtPict
+ALettermExtPict ExtendNumLet ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+ALettermExtPict ExtendNumLet ; Extend|Format ; ExtendNumLet
+ALettermExtPict ExtendNumLet ; Hebrew_Letter ; Hebrew_Letter
+ALettermExtPict ExtendNumLet ; ZWJ ; ExtendNumLet ZWJ
+ALettermExtPict ExtendNumLet ; ALetter_ExtPict ; ALettermExtPict
+ALettermExtPict ExtendNumLet ; Katakana ; Katakana
+ALettermExtPict ZWJ ; Single_Quote ; ALettermExtPict Single_Quote
+ALettermExtPict ZWJ ; MidNumLet ; ALettermExtPict Single_Quote
+ALettermExtPict ZWJ ; Numeric ; Numeric
+ALettermExtPict ZWJ ; MidLetter ; ALettermExtPict Single_Quote
+ALettermExtPict ZWJ ; ALettermExtPict ; ALettermExtPict
+ALettermExtPict ZWJ ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+ALettermExtPict ZWJ ; ExtPictmALetter ; XXmExtPict
+ALettermExtPict ZWJ ; Extend|Format ; ALettermExtPict
+ALettermExtPict ZWJ ; Hebrew_Letter ; Hebrew_Letter
+ALettermExtPict ZWJ ; ZWJ ; ALettermExtPict ZWJ
+ALettermExtPict ZWJ ; ALetter_ExtPict ; ALettermExtPict
+Hebrew_Letter Single_Quote ; ALettermExtPict ; ALettermExtPict
+Hebrew_Letter Single_Quote ; Extend|Format ; Hebrew_Letter Single_Quote Extend
+Hebrew_Letter Single_Quote ; Hebrew_Letter ; Hebrew_Letter
+Hebrew_Letter Single_Quote ; ZWJ ; Hebrew_Letter Single_Quote ZWJ
+Hebrew_Letter Single_Quote ; ALetter_ExtPict ; ALettermExtPict
+Hebrew_Letter ZWJ ; Double_Quote ; Hebrew_Letter Double_Quote
+Hebrew_Letter ZWJ ; Single_Quote ; Hebrew_Letter Single_Quote
+Hebrew_Letter ZWJ ; MidNumLet ; ALettermExtPict Single_Quote
+Hebrew_Letter ZWJ ; Numeric ; Numeric
+Hebrew_Letter ZWJ ; MidLetter ; ALettermExtPict Single_Quote
+Hebrew_Letter ZWJ ; ALettermExtPict ; ALettermExtPict
+Hebrew_Letter ZWJ ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+Hebrew_Letter ZWJ ; ExtPictmALetter ; XXmExtPict
+Hebrew_Letter ZWJ ; Extend|Format ; Hebrew_Letter
+Hebrew_Letter ZWJ ; Hebrew_Letter ; Hebrew_Letter
+Hebrew_Letter ZWJ ; ZWJ ; Hebrew_Letter ZWJ
+Hebrew_Letter ZWJ ; ALetter_ExtPict ; ALettermExtPict
+Katakana ; ExtendNumLet ; Katakana ExtendNumLet
+Katakana ; Extend|Format ; Katakana
+Katakana ; ZWJ ; Katakana ZWJ
+Katakana ; Katakana ; Katakana
+Katakana ExtendNumLet ; Numeric ; Numeric
+Katakana ExtendNumLet ; ALettermExtPict ; ALettermExtPict
+Katakana ExtendNumLet ; ExtendNumLet ; ALettermExtPict ExtendNumLet
+Katakana ExtendNumLet ; Extend|Format ; ExtendNumLet
+Katakana ExtendNumLet ; Hebrew_Letter ; Hebrew_Letter
+Katakana ExtendNumLet ; ZWJ ; ExtendNumLet ZWJ
+Katakana ExtendNumLet ; ALetter_ExtPict ; ALettermExtPict
+Katakana ExtendNumLet ; Katakana ; Katakana
+Katakana ZWJ ; ExtendNumLet ; Katakana ExtendNumLet
+Katakana ZWJ ; ExtPictmALetter ; XXmExtPict
+Katakana ZWJ ; Extend|Format ; Katakana
+Katakana ZWJ ; ZWJ ; Katakana ZWJ
+Katakana ZWJ ; ALetter_ExtPict ; ALettermExtPict
+Katakana ZWJ ; Katakana ; Katakana

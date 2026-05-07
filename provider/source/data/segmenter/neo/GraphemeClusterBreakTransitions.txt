@@ -1,0 +1,96 @@
+# From state ; class name or eot ; to state
+START ; Control ; Control
+START ; LF ; Control
+START ; CR ; CR
+START ; XXmLinkingConsonantmExtPict ; XXmLinkingConsonantmExtPict
+START ; ExtPict ; ExtPict
+START ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+START ; Prepend ; Prepend
+START ; SpacingMark ; XXmLinkingConsonantmExtPict
+START ; LinkingConsonant ; LinkingConsonant
+START ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+START ; L ; L
+START ; V ; V
+START ; T ; T
+START ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+START ; ZWJ ; XXmLinkingConsonantmExtPict
+START ; LV ; V
+START ; LVT ; T
+START ; RI ; RI
+CR ; LF ; Control
+XXmLinkingConsonantmExtPict ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+XXmLinkingConsonantmExtPict ; SpacingMark ; XXmLinkingConsonantmExtPict
+XXmLinkingConsonantmExtPict ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+XXmLinkingConsonantmExtPict ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+XXmLinkingConsonantmExtPict ; ZWJ ; XXmLinkingConsonantmExtPict
+ExtPict ; Extend_ConjunctExtendermConjunctLinker ; ExtPict
+ExtPict ; SpacingMark ; XXmLinkingConsonantmExtPict
+ExtPict ; Extend_ConjunctLinker ; ExtPict
+ExtPict ; ExtendmConjunctLinkermConjunctExtender ; ExtPict
+ExtPict ; ZWJ ; ExtPict ZWJ
+LinkingConsonant ; Extend_ConjunctExtendermConjunctLinker ; LinkingConsonant
+LinkingConsonant ; SpacingMark ; XXmLinkingConsonantmExtPict
+LinkingConsonant ; Extend_ConjunctLinker ; LinkingConsonant Extend_ConjunctLinker
+LinkingConsonant ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+LinkingConsonant ; ZWJ ; LinkingConsonant
+Prepend ; XXmLinkingConsonantmExtPict ; XXmLinkingConsonantmExtPict
+Prepend ; ExtPict ; ExtPict
+Prepend ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+Prepend ; Prepend ; Prepend
+Prepend ; SpacingMark ; XXmLinkingConsonantmExtPict
+Prepend ; LinkingConsonant ; LinkingConsonant
+Prepend ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+Prepend ; L ; L
+Prepend ; V ; V
+Prepend ; T ; T
+Prepend ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+Prepend ; ZWJ ; XXmLinkingConsonantmExtPict
+Prepend ; LV ; V
+Prepend ; LVT ; T
+Prepend ; RI ; RI
+L ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+L ; SpacingMark ; XXmLinkingConsonantmExtPict
+L ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+L ; L ; L
+L ; V ; V
+L ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+L ; ZWJ ; XXmLinkingConsonantmExtPict
+L ; LV ; V
+L ; LVT ; T
+V ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+V ; SpacingMark ; XXmLinkingConsonantmExtPict
+V ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+V ; V ; V
+V ; T ; T
+V ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+V ; ZWJ ; XXmLinkingConsonantmExtPict
+T ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+T ; SpacingMark ; XXmLinkingConsonantmExtPict
+T ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+T ; T ; T
+T ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+T ; ZWJ ; XXmLinkingConsonantmExtPict
+RI ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+RI ; SpacingMark ; XXmLinkingConsonantmExtPict
+RI ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+RI ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+RI ; ZWJ ; XXmLinkingConsonantmExtPict
+RI ; RI ; RI RI
+ExtPict ZWJ ; ExtPict ; ExtPict
+ExtPict ZWJ ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+ExtPict ZWJ ; SpacingMark ; XXmLinkingConsonantmExtPict
+ExtPict ZWJ ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+ExtPict ZWJ ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+ExtPict ZWJ ; ZWJ ; XXmLinkingConsonantmExtPict
+LinkingConsonant Extend_ConjunctLinker ; Extend_ConjunctExtendermConjunctLinker ; LinkingConsonant Extend_ConjunctLinker
+LinkingConsonant Extend_ConjunctLinker ; SpacingMark ; XXmLinkingConsonantmExtPict
+LinkingConsonant Extend_ConjunctLinker ; LinkingConsonant ; LinkingConsonant
+LinkingConsonant Extend_ConjunctLinker ; Extend_ConjunctLinker ; LinkingConsonant Extend_ConjunctLinker
+LinkingConsonant Extend_ConjunctLinker ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+LinkingConsonant Extend_ConjunctLinker ; ZWJ ; LinkingConsonant Extend_ConjunctLinker
+RI RI ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
+RI RI ; SpacingMark ; XXmLinkingConsonantmExtPict
+RI RI ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
+RI RI ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
+RI RI ; ZWJ ; XXmLinkingConsonantmExtPict
+RI RI ; RI ; RI RI RI

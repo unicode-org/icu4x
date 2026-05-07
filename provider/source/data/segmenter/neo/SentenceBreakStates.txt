@@ -1,0 +1,14 @@
+# State name ; Accepting (Yes, No, or lookahead name); lookahead name or empty; Break type.
+START ; Yes ;  ; 
+ATerm XX ; No ;  ; 
+Upper ; Yes ;  ; 
+STerm ; Yes ;  ; 
+ATerm ; Yes ;  ; 
+STerm Sp ; Yes ;  ; 
+STerm LF ; Yes ;  ; 
+STerm CR ; Yes ;  ; 
+ATerm Sp ; Yes ;  ; 
+ATerm Close ; Yes ;  ; 
+Upper ATerm ; Yes ;  ; 
+eot ; Yes ;  ; EOL
+CR ; Yes ;  ; EOL

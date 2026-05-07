@@ -64,6 +64,12 @@ const _: () = {
     impl_segmenter_break_sentence_override_v1!(Baked);
     #[cfg(feature = "unstable")]
     impl_segmenter_break_line_v2!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_break_word_v2!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_break_sentence_v2!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_break_grapheme_cluster_v2!(Baked);
 };
 
 icu_provider::data_marker!(
@@ -147,6 +153,12 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     radical::SegmenterUnihanRadicalV1::INFO,
     #[cfg(feature = "unstable")]
     SegmenterBreakLineV2::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterBreakWordV2::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterBreakSentenceV2::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterBreakGraphemeClusterV2::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.

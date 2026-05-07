@@ -81,3 +81,27 @@ icu_provider::data_marker!(
     SegmenterStateMachine<'static>,
     is_singleton = true,
 );
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakWordV2`
+    SegmenterBreakWordV2,
+    "segmenter/break/word/v2",
+    SegmenterStateMachine<'static>,
+    is_singleton = true,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakGraphemeClusterV2`
+    SegmenterBreakGraphemeClusterV2,
+    "segmenter/break/grapheme/cluster/v2",
+    SegmenterStateMachine<'static>,
+    is_singleton = true,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakSentenceV2`
+    SegmenterBreakSentenceV2,
+    "segmenter/break/sentence/v2",
+    SegmenterStateMachine<'static>,
+    is_singleton = true,
+);

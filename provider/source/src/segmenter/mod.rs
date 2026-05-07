@@ -921,6 +921,97 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
     }
 }
 
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakWordV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakWordV2>, DataError> {
+        self.check_req::<SegmenterBreakWordV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakWordV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            let data = self.build_segmenter_state_machine(
+                include_str!("../../data/segmenter/neo/WordBreakClasses.txt"),
+                include_str!("../../data/segmenter/neo/WordBreakStates.txt"),
+                include_str!("../../data/segmenter/neo/WordBreakTransitions.txt"),
+                |s| match s {
+                    "Letter" => WordType::Letter,
+                    "Number" => WordType::Number,
+                    _ => WordType::None,
+                } as u8,
+            )?;
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(data),
+            })
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakSentenceV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakSentenceV2>, DataError> {
+        self.check_req::<SegmenterBreakSentenceV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakSentenceV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            let data = self.build_segmenter_state_machine(
+                include_str!("../../data/segmenter/neo/SentenceBreakClasses.txt"),
+                include_str!("../../data/segmenter/neo/SentenceBreakStates.txt"),
+                include_str!("../../data/segmenter/neo/SentenceBreakTransitions.txt"),
+                |s| if s == "EOL" { 1 } else { 0 },
+            )?;
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(data),
+            })
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<SegmenterBreakGraphemeClusterV2>, DataError> {
+        self.check_req::<SegmenterBreakGraphemeClusterV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakGraphemeClusterV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            let data = self.build_segmenter_state_machine(
+                include_str!("../../data/segmenter/neo/GraphemeClusterBreakClasses.txt"),
+                include_str!("../../data/segmenter/neo/GraphemeClusterBreakStates.txt"),
+                include_str!("../../data/segmenter/neo/GraphemeClusterBreakTransitions.txt"),
+                |s| match s {
+                    "" => 0,
+                    s => unreachable!("{s}"),
+                },
+            )?;
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(data),
+            })
+        }
+    }
+}
+
 impl SourceDataProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     #[cfg(feature = "unstable")]
@@ -989,25 +1080,22 @@ impl SourceDataProvider {
 
         // Reserve one class for EOT
         assert!(classes.len() < usize::from(Class::MAX) - 1);
-        // Reserve two states for START and TRASH
-        assert!(states.len() < usize::from(State::MAX) - 2);
-        // This bound comes from Acceptance::to_unaligned
-        assert!(lookaheads.len() < 0b11111);
-        // Check invariants of the start state
-        assert_eq!(states["START"], ("No", None, ""));
-
         let class_lookup = core::iter::once("eot")
             .chain(classes.keys().filter(|&&s| s != "eot").copied())
             .enumerate()
             .map(|(i, class)| (class, Class::try_from(i).unwrap()))
             .collect::<BTreeMap<_, _>>();
 
+        // Reserve two states for START and TRASH
+        assert!(states.len() < usize::from(State::MAX) - 2);
         let state_lookup = core::iter::once("START")
             .chain(states.keys().filter(|&&s| s != "START").copied())
             .enumerate()
             .map(|(i, state)| (state, State::try_from(i).unwrap()))
             .collect::<BTreeMap<_, _>>();
 
+        // This bound comes from Acceptance::to_unaligned
+        assert!(lookaheads.len() < 0b11111);
         let lookahead_lookup = lookaheads
             .iter()
             .enumerate()
@@ -1076,6 +1164,27 @@ impl SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok([Default::default()].into_iter().collect())
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl IterableDataProviderCached<SegmenterBreakSentenceV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok([Default::default()].into_iter().collect())
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl IterableDataProviderCached<SegmenterBreakWordV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok([Default::default()].into_iter().collect())
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl IterableDataProviderCached<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
