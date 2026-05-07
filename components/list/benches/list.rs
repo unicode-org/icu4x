@@ -54,48 +54,110 @@ fn list_benches(c: &mut Criterion) {
     let list_5 = generate_list(5);
     let list_1000 = generate_list(1000);
 
-    let locales = [
-        (locale!("en"), "en"),
-        (locale!("es"), "es"),
-        (locale!("ar"), "ar"),
-    ];
-
+    let locale = locale!("en");
     let mut result = String::with_capacity(10000);
 
-    for (locale, locale_str) in locales {
-        let formatter = ListFormatter::try_new_and(
-            locale.clone().into(),
-            ListFormatterOptions::default().with_length(ListLength::Wide),
-        )
-        .unwrap();
+    // And
+    let formatter_and = ListFormatter::try_new_and(
+        locale.clone().into(),
+        ListFormatterOptions::default().with_length(ListLength::Wide),
+    )
+    .unwrap();
 
-        group.bench_function(format!("format/and/wide/{locale_str}/2_items"), |b| {
-            b.iter(|| {
-                result.clear();
-                let _ = black_box(&formatter)
-                    .format(black_box(&list_2).iter())
-                    .write_to(&mut result);
-            })
-        });
+    group.bench_function("format/and/wide/2_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_and)
+                .format(black_box(&list_2).iter())
+                .write_to(&mut result);
+        })
+    });
 
-        group.bench_function(format!("format/and/wide/{locale_str}/5_items"), |b| {
-            b.iter(|| {
-                result.clear();
-                let _ = black_box(&formatter)
-                    .format(black_box(&list_5).iter())
-                    .write_to(&mut result);
-            })
-        });
+    group.bench_function("format/and/wide/5_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_and)
+                .format(black_box(&list_5).iter())
+                .write_to(&mut result);
+        })
+    });
 
-        group.bench_function(format!("format/and/wide/{locale_str}/1000_items"), |b| {
-            b.iter(|| {
-                result.clear();
-                let _ = black_box(&formatter)
-                    .format(black_box(&list_1000).iter())
-                    .write_to(&mut result);
-            })
-        });
-    }
+    group.bench_function("format/and/wide/1000_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_and)
+                .format(black_box(&list_1000).iter())
+                .write_to(&mut result);
+        })
+    });
+
+    // Or
+    let formatter_or = ListFormatter::try_new_or(
+        locale.clone().into(),
+        ListFormatterOptions::default().with_length(ListLength::Wide),
+    )
+    .unwrap();
+
+    group.bench_function("format/or/wide/2_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_or)
+                .format(black_box(&list_2).iter())
+                .write_to(&mut result);
+        })
+    });
+
+    group.bench_function("format/or/wide/5_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_or)
+                .format(black_box(&list_5).iter())
+                .write_to(&mut result);
+        })
+    });
+
+    group.bench_function("format/or/wide/1000_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_or)
+                .format(black_box(&list_1000).iter())
+                .write_to(&mut result);
+        })
+    });
+
+    // Unit
+    let formatter_unit = ListFormatter::try_new_unit(
+        locale.clone().into(),
+        ListFormatterOptions::default().with_length(ListLength::Wide),
+    )
+    .unwrap();
+
+    group.bench_function("format/unit/wide/2_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_unit)
+                .format(black_box(&list_2).iter())
+                .write_to(&mut result);
+        })
+    });
+
+    group.bench_function("format/unit/wide/5_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_unit)
+                .format(black_box(&list_5).iter())
+                .write_to(&mut result);
+        })
+    });
+
+    group.bench_function("format/unit/wide/1000_items", |b| {
+        b.iter(|| {
+            result.clear();
+            let _ = black_box(&formatter_unit)
+                .format(black_box(&list_1000).iter())
+                .write_to(&mut result);
+        })
+    });
 
     // Adversarial Spanish Benchmarks (Testing "or" pattern)
     let es_locale = locale!("es");
