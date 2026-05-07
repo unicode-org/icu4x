@@ -171,6 +171,7 @@ impl TryFrom<&str> for Skeleton {
             // This will be obsoleted by future CLDR releases
             // <https://github.com/unicode-org/cldr/pull/5524>
             if let FieldSymbol::Weekday(fields::Weekday::StandAlone) = field.symbol {
+                log::warn!("Found pattern-only weekday field 'c' in skeleton '{skeleton_string}' (see #5892)");
                 field.symbol = FieldSymbol::Weekday(fields::Weekday::Format);
             }
 
