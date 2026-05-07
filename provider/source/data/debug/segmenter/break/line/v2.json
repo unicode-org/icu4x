@@ -17032,9 +17032,5 @@
     72,
     83
   ],
-  "num_lookaheads": 3,
-  "complex_classes": [
-    40,
-    41
-  ]
+  "num_lookaheads": 3
 }

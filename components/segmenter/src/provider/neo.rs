@@ -59,8 +59,6 @@ pub struct SegmenterStateMachine<'data> {
     pub transitions: ZeroVec<'data, State>,
     // The number of lookahead classes, used to size the lookahead_positions vector.
     pub num_lookaheads: usize,
-    // Complex classes
-    pub complex_classes: ZeroVec<'data, Class>,
 }
 
 icu_provider::data_struct!(
