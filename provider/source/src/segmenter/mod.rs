@@ -897,6 +897,8 @@ implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 #[cfg(feature = "unstable")]
 impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakLineV2>, DataError> {
+        self.check_req::<SegmenterBreakLineV2>(req)?;
+
         #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
         return Err(DataError::custom(
             "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
@@ -905,149 +907,170 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            use icu::collections::codepointtrie::TrieType;
-            use icu_codepointtrie_builder::CodePointTrieBuilder;
-            use std::collections::{BTreeMap, BTreeSet};
-
-            self.check_req::<SegmenterBreakLineV2>(req)?;
-
-            let classes = include_str!("../../data/segmenter/neo/LineBreakClasses.txt")
-                .lines()
-                .map(|l| l.split('#').next().unwrap().trim())
-                .filter(|l| !l.is_empty())
-                .map(|line| {
-                    let mut iter = line.split(';');
-                    let class = iter.next().unwrap().trim();
-                    let unicode_set = iter.next().unwrap().trim();
-
-                    let set = icu::properties::unicodeset_parse::parse_unstable(
-                        unicode_set,
-                        unicode_15_1(),
-                    )
-                    .map_err(|e| DataError::custom("unicodeset parse").with_debug_context(&e))?
-                    .0;
-                    Ok((class, set))
-                })
-                .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-            let states = include_str!("../../data/segmenter/neo/LineBreakStates.txt")
-                .lines()
-                .map(|l| l.split('#').next().unwrap().trim())
-                .filter(|l| !l.is_empty())
-                .map(|line| {
-                    let mut iter = line.split(';');
-                    let state = iter.next().unwrap().trim();
-                    let accepting = iter.next().unwrap().trim();
-                    let lookahead = iter.next().unwrap().trim();
-                    let status = iter.next().unwrap().trim();
-                    (
-                        state,
-                        (accepting, Some(lookahead).filter(|s| !s.is_empty()), status),
-                    )
-                })
-                .collect::<BTreeMap<_, _>>();
-            let transitions = include_str!("../../data/segmenter/neo/LineBreakTransitions.txt")
-                .lines()
-                .map(|l| l.split('#').next().unwrap().trim())
-                .filter(|l| !l.is_empty())
-                .map(|line| {
-                    let mut iter = line.split(';');
-                    let state = iter.next().unwrap().trim();
-                    let class = iter.next().unwrap().trim();
-                    let next_state = iter.next().unwrap().trim();
-                    ((state, class), next_state)
-                })
-                .collect::<BTreeMap<_, _>>();
-
-            let lookaheads = states
-                .iter()
-                .flat_map(|(_, &(_, lookahead, _))| lookahead)
-                .collect::<BTreeSet<_>>();
-
-            // Reserve one class for EOT
-            assert!(classes.len() < usize::from(Class::MAX) - 1);
-            // Reserve two states for START and TRASH
-            assert!(states.len() < usize::from(State::MAX) - 2);
-            // Reserve three values for Acceptance::{Accept, Continue, AcceptMandatory}
-            assert!(lookaheads.len() < usize::from(Lookahead::MAX) - 3);
-            // Check invariants of the start state
-            assert_eq!(states["START"], ("No", None, ""));
-
-            let class_lookup = core::iter::once("eot")
-                .chain(classes.keys().filter(|&&s| s != "eot").copied())
-                .enumerate()
-                .map(|(i, class)| (class, Class::try_from(i).unwrap()))
-                .collect::<BTreeMap<_, _>>();
-
-            let state_lookup = core::iter::once("START")
-                .chain(states.keys().filter(|&&s| s != "START").copied())
-                .enumerate()
-                .map(|(i, state)| (state, State::try_from(i).unwrap()))
-                .collect::<BTreeMap<_, _>>();
-
-            let lookahead_lookup = lookaheads
-                .iter()
-                .enumerate()
-                .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
-                .collect::<BTreeMap<_, _>>();
-
-            let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
-            for (&class, set) in &classes {
-                for range in set.code_points().iter_ranges() {
-                    builder.set_range_value(range.clone(), class_lookup[class]);
-                }
-            }
-            let classes = builder.build();
-
-            let states = states
-                .iter()
-                .map(|(&state, &(accepting, lookahead, status))| {
-                    (
-                        state_lookup[state],
-                        (
-                            match accepting {
-                                "Yes" if status == "Mandatory" => Acceptance::AcceptMandatory,
-                                "Yes" => Acceptance::Accept,
-                                "No" => Acceptance::Continue,
-                                l => Acceptance::Conditional(lookahead_lookup[l]),
-                            },
-                            lookahead.as_ref().map(|l| lookahead_lookup[l]),
-                        ),
-                    )
-                })
-                .collect::<BTreeMap<_, _>>()
-                .into_values()
-                .collect();
-
-            let transitions = transitions
-                .iter()
-                .map(|((state, class), next_state)| {
-                    (
-                        usize::from(state_lookup[state])
-                            + state_lookup.len() * usize::from(class_lookup[class]),
-                        *state_lookup.get(next_state).expect(next_state),
-                    )
-                })
-                .collect::<BTreeMap<_, _>>();
-
-            let transitions = (0..=*transitions.last_key_value().unwrap().0)
-                .map(|i| {
-                    transitions
-                        .get(&i)
-                        .copied()
-                        .unwrap_or(SegmenterStateMachine::TRASH_STATE)
-                })
-                .collect();
-
+            let data = unicode_15_1().build_segmenter_state_machine(
+                include_str!("../../data/segmenter/neo/LineBreakClasses.txt"),
+                include_str!("../../data/segmenter/neo/LineBreakStates.txt"),
+                include_str!("../../data/segmenter/neo/LineBreakTransitions.txt"),
+                |s| if s == "Mandatory" { 1 } else { 0 },
+            )?;
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(SegmenterStateMachine {
-                    transitions,
-                    classes,
-                    states,
-                    num_lookaheads: lookahead_lookup.len(),
-                }),
+                payload: DataPayload::from_owned(data),
             })
         }
+    }
+}
+
+impl SourceDataProvider {
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+    #[cfg(feature = "unstable")]
+    fn build_segmenter_state_machine(
+        &self,
+        classes: &str,
+        states: &str,
+        transitions: &str,
+        status_lookup: fn(&str) -> u8,
+    ) -> Result<SegmenterStateMachine<'static>, DataError> {
+        use icu::collections::codepointtrie::TrieType;
+        use icu_codepointtrie_builder::CodePointTrieBuilder;
+        use std::collections::{BTreeMap, BTreeSet};
+
+        let classes = classes
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let class = iter.next().unwrap().trim();
+                let unicode_set = iter.next().unwrap().trim();
+
+                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+                Ok((class, set))
+            })
+            .collect::<Result<BTreeMap<_, _>, DataError>>()?;
+        let states = states
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let state = iter.next().unwrap().trim();
+                let accepting = iter.next().unwrap().trim();
+                let lookahead = iter.next().unwrap().trim();
+                let status = iter.next().unwrap().trim();
+                (
+                    state,
+                    (accepting, Some(lookahead).filter(|s| !s.is_empty()), status),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+        let transitions = transitions
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let state = iter.next().unwrap().trim();
+                let class = iter.next().unwrap().trim();
+                let next_state = iter.next().unwrap().trim();
+                ((state, class), next_state)
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        let lookaheads = states
+            .iter()
+            .flat_map(|(_, &(_, lookahead, _))| lookahead)
+            .collect::<BTreeSet<_>>();
+
+        // Reserve one class for EOT
+        assert!(classes.len() < usize::from(Class::MAX) - 1);
+        // Reserve two states for START and TRASH
+        assert!(states.len() < usize::from(State::MAX) - 2);
+        // This bound comes from Acceptance::to_unaligned
+        assert!(lookaheads.len() < 0b11111);
+        // Check invariants of the start state
+        assert_eq!(states["START"], ("No", None, ""));
+
+        let class_lookup = core::iter::once("eot")
+            .chain(classes.keys().filter(|&&s| s != "eot").copied())
+            .enumerate()
+            .map(|(i, class)| (class, Class::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+
+        let state_lookup = core::iter::once("START")
+            .chain(states.keys().filter(|&&s| s != "START").copied())
+            .enumerate()
+            .map(|(i, state)| (state, State::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+
+        let lookahead_lookup = lookaheads
+            .iter()
+            .enumerate()
+            .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+
+        let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
+        for (&class, set) in &classes {
+            for range in set.code_points().iter_ranges() {
+                builder.set_range_value(range.clone(), class_lookup[class]);
+            }
+        }
+        let classes = builder.build();
+
+        let states = states
+            .iter()
+            .map(|(&state, &(accepting, lookahead, status))| {
+                let status = status_lookup(status);
+                // This bound comes from Acceptance::to_unaligned
+                assert!(status < 0b111);
+
+                let acceptance = match accepting {
+                    "Yes" => Acceptance::Accept(status),
+                    "No" => Acceptance::Continue,
+                    l => Acceptance::Conditional(lookahead_lookup[l], status),
+                };
+
+                (
+                    state_lookup[state],
+                    (acceptance, lookahead.as_ref().map(|l| lookahead_lookup[l])),
+                )
+            })
+            .collect::<BTreeMap<_, _>>()
+            .into_values()
+            .collect();
+
+        let transitions = transitions
+            .iter()
+            .map(|((state, class), next_state)| {
+                (
+                    usize::from(state_lookup[state])
+                        + state_lookup.len() * usize::from(class_lookup[class]),
+                    *state_lookup.get(next_state).expect(next_state),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        let transitions = (0..=*transitions.last_key_value().unwrap().0)
+            .map(|i| {
+                transitions
+                    .get(&i)
+                    .copied()
+                    .unwrap_or(SegmenterStateMachine::TRASH_STATE)
+            })
+            .collect();
+
+        let data = SegmenterStateMachine {
+            transitions,
+            classes,
+            states,
+            num_lookaheads: lookahead_lookup.len(),
+        };
+        Ok(data)
     }
 }
 

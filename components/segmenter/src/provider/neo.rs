@@ -15,10 +15,9 @@ pub type Lookahead = u8;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 pub enum Acceptance {
-    Accept,
     Continue,
-    AcceptMandatory,
-    Conditional(Lookahead),
+    Accept(u8),
+    Conditional(Lookahead, u8),
 }
 
 impl zerovec::ule::AsULE for Acceptance {
@@ -26,19 +25,17 @@ impl zerovec::ule::AsULE for Acceptance {
 
     fn to_unaligned(self) -> Self::ULE {
         match self {
-            Self::Accept => 255,
-            Self::Continue => 254,
-            Self::AcceptMandatory => 253,
-            Self::Conditional(n) => n,
+            Self::Continue => 0b11111 << 3 | 0b111,
+            Self::Accept(status) => 0b11111 << 3 | (status & 0b111),
+            Self::Conditional(n, status) => n << 3 | (status & 0b111),
         }
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        match unaligned {
-            255 => Self::Accept,
-            254 => Self::Continue,
-            253 => Self::AcceptMandatory,
-            n => Self::Conditional(n),
+        match (unaligned >> 3, unaligned & 0b111) {
+            (0b11111, 0b111) => Self::Continue,
+            (0b11111, status) => Self::Accept(status),
+            (n, status) => Self::Conditional(n, status),
         }
     }
 }

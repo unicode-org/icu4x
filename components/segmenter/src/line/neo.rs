@@ -469,7 +469,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             complex: self.complex,
             cache: VecDeque::from_iter([0]),
             remaining_input: input.char_indices(),
-            last_accepting_mandatory: false,
+            last_accepting_status: 0,
             handle_complex: |c, complex, past_complex| {
                 #[allow(clippy::unwrap_used)] // past_complex is a suffix of complex
                 let complex = complex
@@ -494,7 +494,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             complex: self.complex,
             cache: VecDeque::from_iter([0]),
             remaining_input: Utf8CharIndices::new(input),
-            last_accepting_mandatory: false,
+            last_accepting_status: 0,
             handle_complex: |c, complex, past_complex| {
                 #[allow(clippy::unwrap_used)] // past_complex is a suffix of complex
                 let complex = complex
@@ -517,7 +517,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             complex: self.complex,
             cache: VecDeque::from_iter([0]),
             remaining_input: Latin1Indices::new(input),
-            last_accepting_mandatory: false,
+            last_accepting_status: 0,
             handle_complex: |_, _, _| unreachable!(),
         }
     }
@@ -531,7 +531,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             complex: self.complex,
             cache: VecDeque::from_iter([0]),
             remaining_input: Utf16Indices::new(input),
-            last_accepting_mandatory: false,
+            last_accepting_status: 0,
             handle_complex: |c, complex, past_complex| {
                 #[allow(clippy::unwrap_used)] // past_complex is a suffix of complex
                 let complex = complex
@@ -562,7 +562,7 @@ pub struct LineBreakIterator<'data, 's, Y: RuleBreakType> {
     complex: ComplexPayloadsBorrowed<'data>,
     cache: VecDeque<usize>,
     remaining_input: Y::IterAttr<'s>,
-    last_accepting_mandatory: bool,
+    last_accepting_status: u8,
     handle_complex: fn(&ComplexPayloadsBorrowed, &Y::IterAttr<'s>, &Y::IterAttr<'s>) -> Vec<usize>,
 }
 
@@ -583,13 +583,13 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
 
         // Dummy value, we don't use this until it has been replaced
         let mut last_accepting: Y::IterAttr<'s> = iter.clone();
-        let mut last_accepting_mandatory = false;
+        let mut last_accepting_status = 0;
         let mut lookahead_positions: Vec<Option<Y::IterAttr<'s>>> =
             alloc::vec![None; self.data.num_lookaheads];
 
         let mut last_complex_break = None;
 
-        self.remaining_input = loop {
+        (self.remaining_input, self.last_accepting_status) = loop {
             let (class, is_complex) = if let Some((_, next)) = iter.clone().peekable().next() {
                 let cp = next.into();
                 (self.data.classes.get32(cp), self.complex.handles(cp))
@@ -649,7 +649,7 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
                 state = next_state;
             } else {
                 // No transition, the break point is the last accepting state
-                break last_accepting;
+                break (last_accepting, last_accepting_status);
             }
 
             let (acceptance, lookahead) = self
@@ -660,19 +660,15 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
                 .unwrap_or((Acceptance::Continue, None));
 
             match acceptance {
-                Acceptance::Accept => {
-                    last_accepting = iter.clone();
-                    last_accepting_mandatory = false;
-                }
-                Acceptance::AcceptMandatory => {
-                    last_accepting = iter.clone();
-                    last_accepting_mandatory = true;
-                }
                 Acceptance::Continue => (),
-                Acceptance::Conditional(l) => {
+                Acceptance::Accept(status) => {
+                    last_accepting = iter.clone();
+                    last_accepting_status = status;
+                }
+                Acceptance::Conditional(l, status) => {
                     if let Some(Some(last)) = &lookahead_positions.get(usize::from(l)) {
                         // Lookahead hit, the break point is the last position for `l`
-                        break last.clone();
+                        break (last.clone(), status);
                     }
                 }
             }
@@ -695,9 +691,6 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
             }
         }
 
-        self.last_accepting_mandatory =
-            last_accepting_mandatory || Y::is_empty(&self.remaining_input);
-
         Some(break_index)
     }
 }
@@ -705,7 +698,7 @@ impl<'s, Y: RuleBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
 impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     /// Returns whether the last break was mandatory
     pub fn is_mandatory(&self) -> bool {
-        self.last_accepting_mandatory
+        self.last_accepting_status == 1 || Y::is_empty(&self.remaining_input)
     }
 }
 
