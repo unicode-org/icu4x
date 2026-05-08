@@ -3,32 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::indices::{Latin1Indices, Utf16Indices};
-use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::neo::NeoIterator;
 use crate::provider::*;
 use crate::rule_segmenter::*;
 use alloc::collections::VecDeque;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
-
-/// Implements the [`Iterator`] trait over the grapheme cluster boundaries of the given string.
-///
-/// Lifetimes:
-///
-/// - `'data` = lifetime of the segmenter object from which this iterator was created
-/// - `'s` = lifetime of the string being segmented
-///
-/// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
-/// _after_ the boundary (for a boundary at the end of text, this index is the length
-/// of the [`str`] or array of code units).
-///
-/// For examples of use, see [`GraphemeClusterSegmenter`].
-#[derive(Debug)]
-pub struct GraphemeClusterBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<'data, 's, Y>,
-);
-
-derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'data);
 
 /// Segments a string into grapheme clusters.
 ///
