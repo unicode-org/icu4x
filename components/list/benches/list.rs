@@ -50,6 +50,10 @@ fn list_benches(c: &mut Criterion) {
     });
 
     // Benchmark formatting
+    fn generate_list(n: usize) -> Vec<String> {
+        (0..n).map(|i| format!("Item {}", i)).collect()
+    }
+
     let list_2 = generate_list(2);
     let list_5 = generate_list(5);
     let list_1000 = generate_list(1000);
@@ -57,21 +61,18 @@ fn list_benches(c: &mut Criterion) {
     let locale = locale!("en");
     let mut result = String::with_capacity(10000);
 
-    // And
     let formatter_and = ListFormatter::try_new_and(
         locale.clone().into(),
         ListFormatterOptions::default().with_length(ListLength::Wide),
     )
     .unwrap();
 
-    // Or
     let formatter_or = ListFormatter::try_new_or(
         locale.clone().into(),
         ListFormatterOptions::default().with_length(ListLength::Wide),
     )
     .unwrap();
 
-    // Unit
     let formatter_unit = ListFormatter::try_new_unit(
         locale.clone().into(),
         ListFormatterOptions::default().with_length(ListLength::Wide),
@@ -148,10 +149,6 @@ fn list_benches(c: &mut Criterion) {
     });
 
     group.finish();
-}
-
-fn generate_list(n: usize) -> Vec<String> {
-    (0..n).map(|i| format!("Item {}", i)).collect()
 }
 
 criterion_group!(benches, list_benches);
