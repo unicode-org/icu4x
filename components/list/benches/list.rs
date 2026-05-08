@@ -104,10 +104,8 @@ fn list_benches(c: &mut Criterion) {
     }
 
     // Adversarial Spanish Benchmarks (Testing "or" pattern)
-    let es_locale = locale!("es");
-
     let formatter_or = ListFormatter::try_new_or(
-        es_locale.clone().into(),
+        locale!("es").into(),
         ListFormatterOptions::default().with_length(ListLength::Wide),
     )
     .unwrap();
@@ -116,6 +114,9 @@ fn list_benches(c: &mut Criterion) {
     let list_no_match_word = vec!["casa".to_string(), "perro".to_string()];
     let list_long_number = vec![
         "10".to_string(),
+        // The whole number needs to be processed by the DFA, as it
+        // needs to figure out if it starts with "11" (once), 110
+        // (ciento diez), or "1100" (mil cien).
         "11000000000000000000000000000000".to_string(),
     ];
 
