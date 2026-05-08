@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::RuleBreakDataOverride;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
@@ -104,4 +105,18 @@ icu_provider::data_marker!(
     "segmenter/break/sentence/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakWordOverrideV1`
+    SegmenterBreakWordOverrideV2,
+    "segmenter/break/word/override/v2",
+    RuleBreakDataOverride<'static>,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakWordOverrideV1`
+    SegmenterBreakSentenceOverrideV2,
+    "segmenter/break/sentence/override/v2",
+    RuleBreakDataOverride<'static>,
 );

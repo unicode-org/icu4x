@@ -165,9 +165,10 @@ impl GraphemeClusterSegmenter {
 
 impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     /// Creates a grapheme cluster break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'s>(self, input: &'s str) -> NeoIterator<'data, 's, Utf8> {
+    pub fn segment_str<'s>(self, input: &'s str) -> NeoIterator<'data, 's, Utf8, ()> {
         NeoIterator {
             data: self.data,
+            tailoring: (),
             complex: None,
             cache: VecDeque::from_iter([0]),
             remaining_input: input.char_indices(),
@@ -183,9 +184,10 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     pub fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> NeoIterator<'data, 's, PotentiallyIllFormedUtf8> {
+    ) -> NeoIterator<'data, 's, PotentiallyIllFormedUtf8, ()> {
         NeoIterator {
             data: self.data,
+            tailoring: (),
             complex: None,
             cache: VecDeque::from_iter([0]),
             remaining_input: Utf8CharIndices::new(input),
@@ -196,9 +198,10 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     /// Creates a grapheme cluster break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> NeoIterator<'data, 's, Latin1> {
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> NeoIterator<'data, 's, Latin1, ()> {
         NeoIterator {
             data: self.data,
+            tailoring: (),
             complex: None,
             cache: VecDeque::from_iter([0]),
             remaining_input: Latin1Indices::new(input),
@@ -210,9 +213,10 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     /// Creates a grapheme cluster break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> NeoIterator<'data, 's, Utf16> {
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> NeoIterator<'data, 's, Utf16, ()> {
         NeoIterator {
             data: self.data,
+            tailoring: (),
             complex: None,
             cache: VecDeque::from_iter([0]),
             remaining_input: Utf16Indices::new(input),

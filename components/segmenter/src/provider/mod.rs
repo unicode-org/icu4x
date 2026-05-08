@@ -70,6 +70,10 @@ const _: () = {
     impl_segmenter_break_sentence_v2!(Baked);
     #[cfg(feature = "unstable")]
     impl_segmenter_break_grapheme_cluster_v2!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_break_word_override_v2!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_break_sentence_override_v2!(Baked);
 };
 
 icu_provider::data_marker!(
@@ -159,6 +163,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterBreakSentenceV2::INFO,
     #[cfg(feature = "unstable")]
     SegmenterBreakGraphemeClusterV2::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterBreakWordOverrideV2::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterBreakSentenceOverrideV2::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.

@@ -5,12 +5,13 @@
 //! Experimental reimplementations
 
 use crate::complex::ComplexPayloadsBorrowed;
-use crate::provider::{Acceptance, SegmenterStateMachine};
+use crate::provider::{Acceptance, Class, RuleBreakDataOverride, SegmenterStateMachine};
 use crate::scaffold::RuleBreakType;
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
 
 mod line;
+use icu_collections::codepointtrie::CodePointTrie;
 pub use line::*;
 mod grapheme;
 pub use grapheme::*;
@@ -18,6 +19,33 @@ mod sentence;
 pub use sentence::*;
 mod word;
 pub use word::*;
+
+/// TODO
+pub trait Tailoring: crate::private::Sealed {
+    #[doc(hidden)]
+    fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class;
+}
+
+impl crate::private::Sealed for () {}
+impl Tailoring for () {
+    fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class {
+        data.get32(cp)
+    }
+}
+
+impl crate::private::Sealed for Option<&'_ RuleBreakDataOverride<'_>> {}
+impl Tailoring for Option<&'_ RuleBreakDataOverride<'_>> {
+    fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class {
+        if let Some(tailoring) = self {
+            let c = tailoring.property_table_override.get32(cp);
+            if c != SegmenterStateMachine::EOT_CLASS {
+                return c;
+            }
+        }
+
+        data.get32(cp)
+    }
+}
 
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string.
 ///
@@ -32,8 +60,9 @@ pub use word::*;
 ///
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
-pub struct NeoIterator<'data, 's, Y: RuleBreakType> {
+pub struct NeoIterator<'data, 's, Y: RuleBreakType, T: Tailoring> {
     data: &'data SegmenterStateMachine<'data>,
+    tailoring: T,
     complex: Option<ComplexPayloadsBorrowed<'data>>,
     cache: VecDeque<usize>,
     remaining_input: Y::IterAttr<'s>,
@@ -44,7 +73,7 @@ pub struct NeoIterator<'data, 's, Y: RuleBreakType> {
         fn(&ComplexPayloadsBorrowed, &Y::IterAttr<'s>, &Y::IterAttr<'s>) -> (Vec<usize>, bool),
 }
 
-impl<'s, Y: RuleBreakType> Iterator for NeoIterator<'_, 's, Y> {
+impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for NeoIterator<'_, 's, Y, T> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -71,7 +100,7 @@ impl<'s, Y: RuleBreakType> Iterator for NeoIterator<'_, 's, Y> {
             let (class, is_complex) = if let Some((_, next)) = iter.clone().peekable().next() {
                 let cp = next.into();
                 (
-                    self.data.classes.get32(cp),
+                    self.tailoring.class(&self.data.classes, cp),
                     self.complex
                         .as_ref()
                         .map(|c| c.handles(cp))

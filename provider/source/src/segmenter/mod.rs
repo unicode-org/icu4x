@@ -13,6 +13,8 @@ use crate::source::{include_files, SerdeCache, UnicodeCache};
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+#[cfg(feature = "unstable")]
+use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu::properties::{
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
@@ -24,6 +26,8 @@ use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
+#[cfg(feature = "unstable")]
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Debug;
 use std::sync::OnceLock;
 
@@ -1024,83 +1028,15 @@ impl SourceDataProvider {
     ) -> Result<SegmenterStateMachine<'static>, DataError> {
         use icu::collections::codepointtrie::TrieType;
         use icu_codepointtrie_builder::CodePointTrieBuilder;
-        use std::collections::{BTreeMap, BTreeSet};
 
-        let classes = classes
-            .lines()
-            .map(|l| l.split('#').next().unwrap().trim())
-            .filter(|l| !l.is_empty())
-            .map(|line| {
-                let mut iter = line.split(';');
-                let class = iter.next().unwrap().trim();
-                let unicode_set = iter.next().unwrap().trim();
-
-                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
-                    .map_err(|e| {
-                        DataError::custom("unicodeset parse")
-                            .with_display_context(&e.fmt_with_source(unicode_set))
-                    })?
-                    .0;
-                Ok((class, set))
-            })
-            .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-        let states = states
-            .lines()
-            .map(|l| l.split('#').next().unwrap().trim())
-            .filter(|l| !l.is_empty())
-            .map(|line| {
-                let mut iter = line.split(';');
-                let state = iter.next().unwrap().trim();
-                let accepting = iter.next().unwrap().trim();
-                let lookahead = iter.next().unwrap().trim();
-                let status = iter.next().unwrap().trim();
-                (
-                    state,
-                    (accepting, Some(lookahead).filter(|s| !s.is_empty()), status),
-                )
-            })
-            .collect::<BTreeMap<_, _>>();
-        let transitions = transitions
-            .lines()
-            .map(|l| l.split('#').next().unwrap().trim())
-            .filter(|l| !l.is_empty())
-            .map(|line| {
-                let mut iter = line.split(';');
-                let state = iter.next().unwrap().trim();
-                let class = iter.next().unwrap().trim();
-                let next_state = iter.next().unwrap().trim();
-                ((state, class), next_state)
-            })
-            .collect::<BTreeMap<_, _>>();
-
-        let lookaheads = states
-            .iter()
-            .flat_map(|(_, &(_, lookahead, _))| lookahead)
-            .collect::<BTreeSet<_>>();
-
-        // Reserve one class for EOT
-        assert!(classes.len() < usize::from(Class::MAX) - 1);
-        let class_lookup = core::iter::once("eot")
-            .chain(classes.keys().filter(|&&s| s != "eot").copied())
-            .enumerate()
-            .map(|(i, class)| (class, Class::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
-
-        // Reserve two states for START and TRASH
-        assert!(states.len() < usize::from(State::MAX) - 2);
-        let state_lookup = core::iter::once("START")
-            .chain(states.keys().filter(|&&s| s != "START").copied())
-            .enumerate()
-            .map(|(i, state)| (state, State::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
-
-        // This bound comes from Acceptance::to_unaligned
-        assert!(lookaheads.len() < 0b11111);
-        let lookahead_lookup = lookaheads
-            .iter()
-            .enumerate()
-            .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
+        let ParsedNfa {
+            classes,
+            states,
+            transitions,
+            class_lookup,
+            state_lookup,
+            lookahead_lookup,
+        } = ParsedNfa::parse_nfa_files(self, classes, states, transitions)?;
 
         let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
         for (&class, set) in &classes {
@@ -1162,6 +1098,111 @@ impl SourceDataProvider {
     }
 }
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+#[cfg(feature = "unstable")]
+struct ParsedNfa<'a> {
+    classes: BTreeMap<&'a str, CodePointInversionListAndStringList<'static>>,
+    states: BTreeMap<&'a str, (&'a str, Option<&'a str>, &'a str)>,
+    transitions: BTreeMap<(&'a str, &'a str), &'a str>,
+    class_lookup: BTreeMap<&'a str, u8>,
+    state_lookup: BTreeMap<&'a str, u8>,
+    lookahead_lookup: BTreeMap<&'a str, u8>,
+}
+
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+#[cfg(feature = "unstable")]
+impl<'a> ParsedNfa<'a> {
+    fn parse_nfa_files(
+        provider: &SourceDataProvider,
+        classes: &'a str,
+        states: &'a str,
+        transitions: &'a str,
+    ) -> Result<Self, DataError> {
+        let classes = classes
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let class = iter.next().unwrap().trim();
+                let unicode_set = iter.next().unwrap().trim();
+
+                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, provider)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+                Ok((class, set))
+            })
+            .collect::<Result<BTreeMap<_, _>, DataError>>()?;
+        let states = states
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let state = iter.next().unwrap().trim();
+                let accepting = iter.next().unwrap().trim();
+                let lookahead = iter.next().unwrap().trim();
+                let status = iter.next().unwrap().trim();
+                (
+                    state,
+                    (accepting, Some(lookahead).filter(|s| !s.is_empty()), status),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+        let transitions = transitions
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let state = iter.next().unwrap().trim();
+                let class = iter.next().unwrap().trim();
+                let next_state = iter.next().unwrap().trim();
+                ((state, class), next_state)
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        let lookaheads = states
+            .iter()
+            .flat_map(|(_, &(_, lookahead, _))| lookahead)
+            .collect::<BTreeSet<_>>();
+
+        // Reserve one class for EOT
+        assert!(classes.len() < usize::from(Class::MAX) - 1);
+        let class_lookup = core::iter::once("eot")
+            .chain(classes.keys().filter(|&&s| s != "eot").copied())
+            .enumerate()
+            .map(|(i, class)| (class, Class::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+
+        // Reserve two states for START and TRASH
+        assert!(states.len() < usize::from(State::MAX) - 2);
+        let state_lookup = core::iter::once("START")
+            .chain(states.keys().filter(|&&s| s != "START").copied())
+            .enumerate()
+            .map(|(i, state)| (state, State::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+        assert!(lookaheads.len() < 0b11111);
+        let lookahead_lookup = lookaheads
+            .iter()
+            .enumerate()
+            .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+
+        Ok(Self {
+            classes,
+            states,
+            transitions,
+            class_lookup,
+            state_lookup,
+            lookahead_lookup,
+        })
+    }
+}
+
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -1187,6 +1228,133 @@ impl IterableDataProviderCached<SegmenterBreakWordV2> for SourceDataProvider {
 impl IterableDataProviderCached<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok([Default::default()].into_iter().collect())
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakWordOverrideV2> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<SegmenterBreakWordOverrideV2>, DataError> {
+        self.check_req::<SegmenterBreakWordOverrideV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakWordOverrideV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            let ParsedNfa {
+                classes,
+                class_lookup,
+                ..
+            } = ParsedNfa::parse_nfa_files(
+                self,
+                include_str!("../../data/segmenter/neo/WordBreakClasses.txt"),
+                include_str!("../../data/segmenter/neo/WordBreakStates.txt"),
+                include_str!("../../data/segmenter/neo/WordBreakTransitions.txt"),
+            )?;
+
+            let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+                class_lookup["eot"],
+                class_lookup["eot"],
+                self.trie_type.into(),
+            );
+            if req.id == DataIdentifierBorrowed::default() {
+                // Treat colons like semicolon in `und`, but not in `sv` or `fi`
+                let semicolon_class = classes
+                    .iter()
+                    .find_map(|(class, set)| set.contains(';').then_some(class_lookup[class]))
+                    .unwrap();
+
+                builder.set_value(':' as u32, semicolon_class);
+                builder.set_value('﹕' as u32, semicolon_class);
+                builder.set_value('：' as u32, semicolon_class);
+            }
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(RuleBreakDataOverride {
+                    property_table_override: builder.build(),
+                }),
+            })
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl IterableDataProviderCached<SegmenterBreakWordOverrideV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        use icu::locale::locale;
+        Ok([locale!("und"), locale!("sv"), locale!("fi")]
+            .iter()
+            .map(|l| DataIdentifierCow::from_locale(l.into()))
+            .collect())
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<SegmenterBreakSentenceOverrideV2>, DataError> {
+        self.check_req::<SegmenterBreakSentenceOverrideV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakSentenceOverrideV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            let ParsedNfa {
+                classes,
+                class_lookup,
+                ..
+            } = ParsedNfa::parse_nfa_files(
+                self,
+                include_str!("../../data/segmenter/neo/SentenceBreakClasses.txt"),
+                include_str!("../../data/segmenter/neo/SentenceBreakStates.txt"),
+                include_str!("../../data/segmenter/neo/SentenceBreakTransitions.txt"),
+            )?;
+            let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+                class_lookup["eot"],
+                class_lookup["eot"],
+                self.trie_type().into(),
+            );
+
+            // Treat semicolons like exclamation marks in `el`
+
+            let exclamation_mark_class = classes
+                .iter()
+                .find_map(|(class, set)| set.contains('!').then(|| class_lookup[class]))
+                .unwrap();
+
+            builder.set_value(';' as u32, exclamation_mark_class);
+            builder.set_value(';' as u32, exclamation_mark_class);
+
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(RuleBreakDataOverride {
+                    property_table_override: builder.build(),
+                }),
+            })
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        use icu::locale::locale;
+        Ok([locale!("el")]
+            .iter()
+            .map(|l| DataIdentifierCow::from_locale(l.into()))
+            .collect())
     }
 }
 

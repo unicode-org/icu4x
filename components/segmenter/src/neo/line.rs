@@ -6,6 +6,7 @@ use super::NeoIterator;
 use crate::complex::{ComplexPayloads, ComplexPayloadsBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::line::{LineBreakOptions, ResolvedLineBreakOptions};
+use crate::neo::Tailoring;
 #[cfg(feature = "compiled_data")]
 use crate::provider::Baked;
 #[cfg(feature = "lstm")]
@@ -464,9 +465,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// Creates a line break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'s>(self, input: &'s str) -> NeoIterator<'data, 's, Utf8> {
+    pub fn segment_str<'s>(self, input: &'s str) -> NeoIterator<'data, 's, Utf8, ()> {
         NeoIterator {
             data: self.data,
+            tailoring: (),
             complex: Some(self.complex),
             cache: VecDeque::from_iter([0]),
             remaining_input: input.char_indices(),
@@ -489,9 +491,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
     pub fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> NeoIterator<'data, 's, PotentiallyIllFormedUtf8> {
+    ) -> NeoIterator<'data, 's, PotentiallyIllFormedUtf8, ()> {
         NeoIterator {
             data: self.data,
+            tailoring: (),
             complex: Some(self.complex),
             cache: VecDeque::from_iter([0]),
             remaining_input: Utf8CharIndices::new(input),
@@ -512,9 +515,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> NeoIterator<'data, 's, Latin1> {
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> NeoIterator<'data, 's, Latin1, ()> {
         NeoIterator {
             data: self.data,
+            tailoring: (),
             complex: None,
             cache: VecDeque::from_iter([0]),
             remaining_input: Latin1Indices::new(input),
@@ -526,9 +530,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// Creates a line break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> NeoIterator<'data, 's, Utf16> {
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> NeoIterator<'data, 's, Utf16, ()> {
         NeoIterator {
             data: self.data,
+            tailoring: (),
             complex: Some(self.complex),
             cache: VecDeque::from_iter([0]),
             remaining_input: Utf16Indices::new(input),
@@ -545,7 +550,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
     }
 }
 
-impl<Y: RuleBreakType> NeoIterator<'_, '_, Y> {
+impl<Y: RuleBreakType, T: Tailoring> NeoIterator<'_, '_, Y, T> {
     /// Returns whether the last break was mandatory
     pub fn is_mandatory(&self) -> bool {
         self.last_accepting_status == 1 || Y::is_empty(&self.remaining_input)
