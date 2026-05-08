@@ -67,10 +67,10 @@ pub struct NeoIterator<'data, 's, Y: RuleBreakType, T: Tailoring> {
     cache: VecDeque<usize>,
     remaining_input: Y::IterAttr<'s>,
     last_accepting_status: u8,
-    // returns a list of break points, and whether the start/end are considered breaks
+    // returns a list of break points, whether the start/end are considered breaks, and their status
     #[allow(clippy::type_complexity)]
     handle_complex:
-        fn(&ComplexPayloadsBorrowed, &Y::IterAttr<'s>, &Y::IterAttr<'s>) -> (Vec<usize>, bool),
+        fn(&ComplexPayloadsBorrowed, &Y::IterAttr<'s>, &Y::IterAttr<'s>) -> (Vec<usize>, bool, u8),
 }
 
 impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for NeoIterator<'_, 's, Y, T> {
@@ -82,6 +82,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for NeoIterator<'_, 's, Y, T> 
         }
 
         if Y::is_empty(&self.remaining_input) {
+            self.last_accepting_status = 0;
             return None;
         }
 
@@ -125,7 +126,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for NeoIterator<'_, 's, Y, T> 
                     past_complex.next();
                 }
 
-                let (results, break_at_boundaries) =
+                let (results, break_at_boundaries, status) =
                     (self.handle_complex)(complex, &iter, &past_complex);
 
                 let offset = Y::offset(&iter);
@@ -133,6 +134,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for NeoIterator<'_, 's, Y, T> 
 
                 if break_at_boundaries {
                     self.remaining_input = past_complex;
+                    self.last_accepting_status = status;
                     return if offset == 0 {
                         self.cache.pop_front()
                     } else {
@@ -154,7 +156,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for NeoIterator<'_, 's, Y, T> 
                     {
                         at_last_break.next();
                     }
-                    last_complex_break = Some(at_last_break);
+                    last_complex_break = Some((at_last_break, status));
                 }
 
                 // keep running the state machine to let it determine whether the start of the complex
@@ -206,10 +208,11 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for NeoIterator<'_, 's, Y, T> 
         let break_index = Y::offset(&self.remaining_input);
 
         // We encountered complex text and populated the cache
-        if let Some(last_complex_break) = last_complex_break {
+        if let Some((last_complex_break, status)) = last_complex_break {
             self.remaining_input = last_complex_break;
             // return the complex break if it's before the break we calculated using the state machine
             if self.cache.front().is_some_and(|&i| i <= break_index) {
+                self.last_accepting_status = status;
                 return self.cache.pop_front();
             }
         }

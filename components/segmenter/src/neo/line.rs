@@ -479,7 +479,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
                     .as_str()
                     .strip_suffix(past_complex.as_str())
                     .unwrap();
-                (c.complex_language_segment_str(complex), false)
+                (c.complex_language_segment_str(complex), false, false as u8)
             },
         }
     }
@@ -506,9 +506,9 @@ impl<'data> LineSegmenterBorrowed<'data> {
                     .strip_suffix(past_complex.as_slice())
                     .unwrap();
                 let Ok(complex) = core::str::from_utf8(complex) else {
-                    return (vec![complex.len()], false);
+                    return (vec![complex.len()], false, false as u8);
                 };
-                (c.complex_language_segment_str(complex), false)
+                (c.complex_language_segment_str(complex), false, false as u8)
             },
         }
     }
@@ -544,7 +544,11 @@ impl<'data> LineSegmenterBorrowed<'data> {
                     .as_slice()
                     .strip_suffix(past_complex.as_slice())
                     .unwrap();
-                (c.complex_language_segment_utf16(complex), false)
+                (
+                    c.complex_language_segment_utf16(complex),
+                    false,
+                    false as u8,
+                )
             },
         }
     }
@@ -553,7 +557,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
 impl<Y: RuleBreakType, T: Tailoring> NeoIterator<'_, '_, Y, T> {
     /// Returns whether the last break was mandatory
     pub fn is_mandatory(&self) -> bool {
-        self.last_accepting_status == 1 || Y::is_empty(&self.remaining_input)
+        self.last_accepting_status == (true as u8)
     }
 }
 

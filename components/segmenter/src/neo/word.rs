@@ -475,7 +475,11 @@ impl<'data> WordSegmenterBorrowed<'data> {
                     .as_str()
                     .strip_suffix(past_complex.as_str())
                     .unwrap();
-                (c.complex_language_segment_str(complex), true)
+                (
+                    c.complex_language_segment_str(complex),
+                    true,
+                    WordType::Letter as u8,
+                )
             },
         }
     }
@@ -503,9 +507,13 @@ impl<'data> WordSegmenterBorrowed<'data> {
                     .strip_suffix(past_complex.as_slice())
                     .unwrap();
                 let Ok(complex) = core::str::from_utf8(complex) else {
-                    return (vec![complex.len()], true);
+                    return (vec![complex.len()], true, WordType::Letter as u8);
                 };
-                (c.complex_language_segment_str(complex), true)
+                (
+                    c.complex_language_segment_str(complex),
+                    true,
+                    WordType::Letter as u8,
+                )
             },
         }
     }
@@ -542,7 +550,11 @@ impl<'data> WordSegmenterBorrowed<'data> {
                     .as_slice()
                     .strip_suffix(past_complex.as_slice())
                     .unwrap();
-                (c.complex_language_segment_utf16(complex), true)
+                (
+                    c.complex_language_segment_utf16(complex),
+                    true,
+                    WordType::Letter as u8,
+                )
             },
         }
     }
