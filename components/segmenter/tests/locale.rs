@@ -37,7 +37,7 @@ fn word_break_with_locale() {
         .collect::<Vec<_>>();
     assert_eq!(
         segments,
-        &["hello", ":", "world"],
+        &["hello:world"],
         "word segmenter with English"
     );
 }

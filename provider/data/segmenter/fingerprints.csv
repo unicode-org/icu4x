@@ -5,11 +5,7 @@ segmenter/break/sentence/override/v1, <lookup>, 35B, 1 identifiers
 segmenter/break/sentence/override/v1, <total>, 332B, 273B, 1 unique payloads
 segmenter/break/sentence/override/v1, el, 332B, 273B, 745d858a06d47385
 segmenter/break/sentence/v1, <singleton>, 14804B, 14698B, 30687df4b18e0e2e
-segmenter/break/word/override/v1, <lookup>, 40B, 2 identifiers
-segmenter/break/word/override/v1, <total>, 556B, 496B, 1 unique payloads
-segmenter/break/word/override/v1, fi, 556B, 496B, e523305ca615559e
-segmenter/break/word/override/v1, sv, -> fi
-segmenter/break/word/v1, <singleton>, 16762B, 16657B, eb30ba2bb7062f6
+segmenter/break/word/v1, <singleton>, 16762B, 16657B, 79957a2124e76c2f
 segmenter/dictionary/auto/v1, <lookup>, 43B, 1 identifiers
 segmenter/dictionary/auto/v1, <total>, 2007134B, 2007113B, 1 unique payloads
 segmenter/dictionary/auto/v1, und/cjdict, 2007134B, 2007113B, f7552d2848b39b0d
