@@ -109,13 +109,6 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// `SegmenterBreakWordOverrideV1`
-    SegmenterBreakWordOverrideV2,
-    "segmenter/break/word/override/v2",
-    RuleBreakDataOverride<'static>,
-);
-
-icu_provider::data_marker!(
-    /// `SegmenterBreakWordOverrideV1`
     SegmenterBreakSentenceOverrideV2,
     "segmenter/break/sentence/override/v2",
     RuleBreakDataOverride<'static>,

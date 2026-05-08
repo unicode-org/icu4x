@@ -232,22 +232,7 @@ fn generate_rule_break_data(
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
                     for range in wb.iter_ranges_for_value(prop) {
-                        if prop == WordBreak::MidLetter
-                            && (range.contains(&0x003a)
-                                || range.contains(&0xfe55)
-                                || range.contains(&0xff1a))
-                        {
-                            // UAX29 defines the colon as MidLetter, but ICU4C's
-                            // English data doesn't.
-                            // See https://unicode-org.atlassian.net/browse/ICU-22112
-                            //
-                            // TODO: We have to consider this definition from CLDR instead.
-                            for ch in
-                                range.filter(|ch| *ch != 0x003a && *ch != 0xfe55 && *ch != 0xff1a)
-                            {
-                                properties_trie.set_value(ch, property_index);
-                            }
-                        } else if prop == WordBreak::Extend {
+                        if prop == WordBreak::Extend {
                             // [[:Word_Break=Extend:] - [[:Hani:] [:Line_Break=Complex_Context:]]]
                             for ch in range.filter(|ch| {
                                 script.get32(*ch) != Script::Han
@@ -761,17 +746,6 @@ fn generate_rule_break_data_override(
         if p.left.is_none() && p.right.is_none() {
             // If any values aren't set, this is builtin type.
             match &*segmenter.segmenter_type {
-                // UAX29 defines the colon as MidLetter, but ICU4C's
-                // English data doesn't.
-                // See https://unicode-org.atlassian.net/browse/ICU-22112
-                //
-                // TODO: We have to consider this definition from CLDR instead.
-                "word" if p.name == "MidLetter" => {
-                    properties_trie.set_value(0x003a, property_index);
-                    properties_trie.set_value(0xfe55, property_index);
-                    properties_trie.set_value(0xff1a, property_index);
-                }
-
                 // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
                 // Greek data does.
                 //
@@ -895,7 +869,7 @@ implement!(SegmenterBreakLineV1, "line.toml", |_| unicode_15_1());
 implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml", |s| s);
 implement!(SegmenterBreakWordV1, "word.toml", |s| s);
 implement!(SegmenterBreakSentenceV1, "sentence.toml", |s| s);
-implement_override!(SegmenterBreakWordOverrideV1, "word.toml", ["fi", "sv"]);
+implement_override!(SegmenterBreakWordOverrideV1, "word.toml", []);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
 #[cfg(feature = "unstable")]
@@ -1228,70 +1202,6 @@ impl IterableDataProviderCached<SegmenterBreakWordV2> for SourceDataProvider {
 impl IterableDataProviderCached<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok([Default::default()].into_iter().collect())
-    }
-}
-
-#[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakWordOverrideV2> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<SegmenterBreakWordOverrideV2>, DataError> {
-        self.check_req::<SegmenterBreakWordOverrideV2>(req)?;
-
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakWordOverrideV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let ParsedNfa {
-                classes,
-                class_lookup,
-                ..
-            } = ParsedNfa::parse_nfa_files(
-                self,
-                include_str!("../../data/segmenter/neo/WordBreakClasses.txt"),
-                include_str!("../../data/segmenter/neo/WordBreakStates.txt"),
-                include_str!("../../data/segmenter/neo/WordBreakTransitions.txt"),
-            )?;
-
-            let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
-                class_lookup["eot"],
-                class_lookup["eot"],
-                self.trie_type.into(),
-            );
-            if req.id == DataIdentifierBorrowed::default() {
-                // Treat colons like semicolon in `und`, but not in `sv` or `fi`
-                let semicolon_class = classes
-                    .iter()
-                    .find_map(|(class, set)| set.contains(';').then_some(class_lookup[class]))
-                    .unwrap();
-
-                builder.set_value(':' as u32, semicolon_class);
-                builder.set_value('﹕' as u32, semicolon_class);
-                builder.set_value('：' as u32, semicolon_class);
-            }
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(RuleBreakDataOverride {
-                    property_table_override: builder.build(),
-                }),
-            })
-        }
-    }
-}
-
-#[cfg(feature = "unstable")]
-impl IterableDataProviderCached<SegmenterBreakWordOverrideV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        use icu::locale::locale;
-        Ok([locale!("und"), locale!("sv"), locale!("fi")]
-            .iter()
-            .map(|l| DataIdentifierCow::from_locale(l.into()))
-            .collect())
     }
 }
 

@@ -475,6 +475,12 @@ impl Locale {
     }
 }
 
+impl AsRef<LanguageIdentifier> for Locale {
+    fn as_ref(&self) -> &LanguageIdentifier {
+        &self.id
+    }
+}
+
 /// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromStr for Locale {

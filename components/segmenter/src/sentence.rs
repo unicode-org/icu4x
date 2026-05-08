@@ -20,6 +20,36 @@ pub struct SentenceBreakOptions<'a> {
     ///
     /// If you know the language of the text being segmented, provide it here in order to produce
     /// higher quality breakpoints.
+    ///
+    /// # Examples
+    ///
+    /// Normally, a semicolon character ';' is not a sentence separator:
+    ///
+    /// ```rust
+    /// use icu::segmenter::SentenceSegmenter;
+    ///
+    /// let segmenter = SentenceSegmenter::new(Default::default());
+    ///
+    /// let breakpoints: Vec<usize> = segmenter.segment_str("hello; world").collect();
+    /// assert_eq!(&breakpoints, &[0, 12]);
+    /// ```
+    ///
+    /// But not in Greek, where it is used as a question mark:
+    ///
+    /// ```rust
+    /// use icu::locale::langid;
+    /// use icu::segmenter::options::SentenceBreakOptions;
+    /// use icu::segmenter::SentenceSegmenter;
+    ///
+    /// let mut options = SentenceBreakOptions::default();
+    /// let langid = &langid!("el");
+    /// options.content_locale = Some(langid);
+    /// let segmenter = SentenceSegmenter::try_new(options).unwrap();
+    ///
+    /// let breakpoints: Vec<usize> =
+    ///     segmenter.as_borrowed().segment_str("hello; world").collect();
+    /// assert_eq!(&breakpoints, &[0, 7, 12]);
+    /// ```
     pub content_locale: Option<&'a LanguageIdentifier>,
     /// Options independent of the locale
     pub invariant_options: SentenceBreakInvariantOptions,

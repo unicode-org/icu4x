@@ -35,11 +35,7 @@ fn word_break_with_locale() {
         .tuple_windows()
         .map(|(a, b)| &s[a..b])
         .collect::<Vec<_>>();
-    assert_eq!(
-        segments,
-        &["hello", ":", "world"],
-        "word segmenter with English"
-    );
+    assert_eq!(segments, &["hello:world"], "word segmenter with English");
 }
 
 #[test]

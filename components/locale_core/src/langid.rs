@@ -511,6 +511,12 @@ impl LanguageIdentifier {
     }
 }
 
+impl AsRef<LanguageIdentifier> for LanguageIdentifier {
+    fn as_ref(&self) -> &LanguageIdentifier {
+        self
+    }
+}
+
 impl core::fmt::Debug for LanguageIdentifier {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         core::fmt::Display::fmt(&self, f)

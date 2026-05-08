@@ -18,9 +18,7 @@ use alloc::vec;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
-impl<'data, 's, Y: RuleBreakType>
-    NeoIterator<'data, 's, Y, Option<&'data RuleBreakDataOverride<'data>>>
-{
+impl<'data, 's, Y: RuleBreakType> NeoIterator<'data, 's, Y, ()> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
@@ -136,7 +134,6 @@ impl<'data, 's, Y: RuleBreakType>
 pub struct WordSegmenter {
     payload: DataPayload<SegmenterBreakWordV2>,
     complex: ComplexPayloads,
-    payload_locale_override: Option<DataPayload<SegmenterBreakWordOverrideV2>>,
 }
 
 /// Segments a string into words (borrowed version).
@@ -146,7 +143,6 @@ pub struct WordSegmenter {
 pub struct WordSegmenterBorrowed<'data> {
     data: &'data SegmenterStateMachine<'data>,
     complex: ComplexPayloadsBorrowed<'data>,
-    locale_override: Option<&'data RuleBreakDataOverride<'data>>,
 }
 
 impl WordSegmenter {
@@ -188,7 +184,6 @@ impl WordSegmenter {
         WordSegmenterBorrowed {
             data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V2,
             complex,
-            locale_override: None,
         }
     }
 
@@ -207,11 +202,10 @@ impl WordSegmenter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     pub fn try_new_auto_unstable<D>(
         provider: &D,
-        options: WordBreakOptions,
+        _options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterBreakWordOverrideV2>
             + DataProvider<SegmenterDictionaryAutoV1>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
@@ -223,23 +217,6 @@ impl WordSegmenter {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex,
-            payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
-                let req = DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    metadata: {
-                        let mut metadata = DataRequestMetadata::default();
-                        metadata.silent = true;
-                        metadata
-                    },
-                };
-                provider
-                    .load(req)
-                    .allow_identifier_not_found()?
-                    .map(|r| r.payload)
-            } else {
-                None
-            },
         })
     }
 
@@ -304,7 +281,6 @@ impl WordSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterBreakWordOverrideV2>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
@@ -367,7 +343,6 @@ impl WordSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterBreakWordOverrideV2>
             + DataProvider<SegmenterDictionaryAutoV1>
             + DataProvider<SegmenterDictionaryExtendedV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
@@ -391,7 +366,6 @@ impl WordSegmenter {
         WordSegmenterBorrowed {
             data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V2,
             complex: ComplexPayloadsBorrowed::new(),
-            locale_override: None,
         }
     }
 
@@ -408,34 +382,16 @@ impl WordSegmenter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_non_complex_scripts)]
     pub fn try_new_for_non_complex_scripts_unstable<D>(
         provider: &D,
-        options: WordBreakOptions,
+        _options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterBreakWordOverrideV2>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new(provider)?,
-            payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
-                let req = DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    metadata: {
-                        let mut metadata = DataRequestMetadata::default();
-                        metadata.silent = true;
-                        metadata
-                    },
-                };
-                provider
-                    .load(req)
-                    .allow_identifier_not_found()?
-                    .map(|r| r.payload)
-            } else {
-                None
-            },
         })
     }
 
@@ -497,7 +453,6 @@ impl WordSegmenter {
         WordSegmenterBorrowed {
             data: self.payload.get(),
             complex: self.complex.as_borrowed(),
-            locale_override: self.payload_locale_override.as_ref().map(|p| p.get()),
         }
     }
 }
@@ -506,13 +461,10 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'s>(
-        self,
-        input: &'s str,
-    ) -> NeoIterator<'data, 's, Utf8, Option<&'data RuleBreakDataOverride<'data>>> {
+    pub fn segment_str<'s>(self, input: &'s str) -> NeoIterator<'data, 's, Utf8, ()> {
         NeoIterator {
             data: self.data,
-            tailoring: self.locale_override,
+            tailoring: (),
             complex: Some(self.complex),
             cache: VecDeque::from_iter([0]),
             remaining_input: input.char_indices(),
@@ -536,11 +488,10 @@ impl<'data> WordSegmenterBorrowed<'data> {
     pub fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> NeoIterator<'data, 's, PotentiallyIllFormedUtf8, Option<&'data RuleBreakDataOverride<'data>>>
-    {
+    ) -> NeoIterator<'data, 's, PotentiallyIllFormedUtf8, ()> {
         NeoIterator {
             data: self.data,
-            tailoring: self.locale_override,
+            tailoring: (),
             complex: Some(self.complex),
             cache: VecDeque::from_iter([0]),
             remaining_input: Utf8CharIndices::new(input),
@@ -562,13 +513,10 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'s>(
-        self,
-        input: &'s [u8],
-    ) -> NeoIterator<'data, 's, Latin1, Option<&'data RuleBreakDataOverride<'data>>> {
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> NeoIterator<'data, 's, Latin1, ()> {
         NeoIterator {
             data: self.data,
-            tailoring: self.locale_override,
+            tailoring: (),
             complex: None,
             cache: VecDeque::from_iter([0]),
             remaining_input: Latin1Indices::new(input),
@@ -580,13 +528,10 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'s>(
-        self,
-        input: &'s [u16],
-    ) -> NeoIterator<'data, 's, Utf16, Option<&'data RuleBreakDataOverride<'data>>> {
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> NeoIterator<'data, 's, Utf16, ()> {
         NeoIterator {
             data: self.data,
-            tailoring: self.locale_override,
+            tailoring: (),
             complex: Some(self.complex),
             cache: VecDeque::from_iter([0]),
             remaining_input: Utf16Indices::new(input),
@@ -629,11 +574,9 @@ impl WordSegmenterBorrowed<'static> {
     /// Note: Due to branching and indirection, using [`WordSegmenter`] might inhibit some
     /// compile-time optimizations that are possible with [`WordSegmenterBorrowed`].
     pub fn static_to_owned(self) -> WordSegmenter {
-        let payload_locale_override = self.locale_override.map(DataPayload::from_static_ref);
         WordSegmenter {
             payload: DataPayload::from_static_ref(self.data),
             complex: self.complex.static_to_owned(),
-            payload_locale_override,
         }
     }
 }
