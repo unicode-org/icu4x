@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::collections::VecDeque;
 use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
@@ -200,15 +199,11 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'s>(self, input: &'s str) -> SentenceBreakIterator<'data, 's, Utf8> {
-        SentenceBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: self.locale_override,
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: input.char_indices(),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        SentenceBreakIterator(RuleBreakIterator::new_non_complex(
+            input.char_indices(),
+            self.data,
+            self.locale_override,
+        ))
     }
     /// Creates a sentence break iterator for a potentially ill-formed UTF8 string
     ///
@@ -219,44 +214,32 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
         self,
         input: &'s [u8],
     ) -> SentenceBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
-        SentenceBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: self.locale_override,
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Utf8CharIndices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        SentenceBreakIterator(RuleBreakIterator::new_non_complex(
+            Utf8CharIndices::new(input),
+            self.data,
+            self.locale_override,
+        ))
     }
     /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> SentenceBreakIterator<'data, 's, Latin1> {
-        SentenceBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: self.locale_override,
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Latin1Indices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        SentenceBreakIterator(RuleBreakIterator::new_non_complex(
+            Latin1Indices::new(input),
+            self.data,
+            self.locale_override,
+        ))
     }
 
     /// Creates a sentence break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> SentenceBreakIterator<'data, 's, Utf16> {
-        SentenceBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: self.locale_override,
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Utf16Indices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        SentenceBreakIterator(RuleBreakIterator::new_non_complex(
+            Utf16Indices::new(input),
+            self.data,
+            self.locale_override,
+        ))
     }
 }
 

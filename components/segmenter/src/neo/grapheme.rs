@@ -7,7 +7,6 @@ use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::neo::RuleBreakIterator;
 use crate::provider::*;
 use crate::rule_segmenter::*;
-use alloc::collections::VecDeque;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -166,15 +165,11 @@ impl GraphemeClusterSegmenter {
 impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     /// Creates a grapheme cluster break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'s>(self, input: &'s str) -> GraphemeClusterBreakIterator<'data, 's, Utf8> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: (),
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: input.char_indices(),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        GraphemeClusterBreakIterator(RuleBreakIterator::new_non_complex(
+            input.char_indices(),
+            self.data,
+            (),
+        ))
     }
     /// Creates a grapheme cluster break iterator for a potentially ill-formed UTF8 string
     ///
@@ -185,15 +180,11 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         self,
         input: &'s [u8],
     ) -> GraphemeClusterBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: (),
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Utf8CharIndices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        GraphemeClusterBreakIterator(RuleBreakIterator::new_non_complex(
+            Utf8CharIndices::new(input),
+            self.data,
+            (),
+        ))
     }
     /// Creates a grapheme cluster break iterator for a Latin-1 (8-bit) string.
     ///
@@ -202,15 +193,11 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         self,
         input: &'s [u8],
     ) -> GraphemeClusterBreakIterator<'data, 's, Latin1> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: (),
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Latin1Indices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        GraphemeClusterBreakIterator(RuleBreakIterator::new_non_complex(
+            Latin1Indices::new(input),
+            self.data,
+            (),
+        ))
     }
 
     /// Creates a grapheme cluster break iterator for a UTF-16 string.
@@ -220,15 +207,11 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         self,
         input: &'s [u16],
     ) -> GraphemeClusterBreakIterator<'data, 's, Utf16> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: (),
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Utf16Indices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        GraphemeClusterBreakIterator(RuleBreakIterator::new_non_complex(
+            Utf16Indices::new(input),
+            self.data,
+            (),
+        ))
     }
 }
 impl GraphemeClusterSegmenterBorrowed<'static> {

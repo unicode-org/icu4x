@@ -12,8 +12,6 @@ use crate::rule_segmenter::*;
 use crate::word::WordBreakInvariantOptions;
 use crate::word::WordBreakOptions;
 use crate::word::WordType;
-use alloc::collections::VecDeque;
-use alloc::vec;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -495,26 +493,14 @@ impl<'data> WordSegmenterBorrowed<'data> {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'s>(self, input: &'s str) -> WordBreakIterator<'data, 's, Utf8> {
-        WordBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: (),
-            complex: Some(self.complex),
-            cache: VecDeque::from_iter([0]),
-            remaining_input: input.char_indices(),
-            last_accepting_status: 0,
-            handle_complex: |c, complex, past_complex| {
-                #[allow(clippy::unwrap_used)] // past_complex is a suffix of complex
-                let complex = complex
-                    .as_str()
-                    .strip_suffix(past_complex.as_str())
-                    .unwrap();
-                (
-                    c.complex_language_segment_str(complex),
-                    true,
-                    WordType::Letter as u8,
-                )
-            },
-        })
+        WordBreakIterator(RuleBreakIterator::new_with_complex(
+            input.char_indices(),
+            self.data,
+            (),
+            self.complex,
+            true,
+            WordType::Letter as u8,
+        ))
     }
 
     /// Creates a word break iterator for a potentially ill-formed UTF8 string
@@ -526,70 +512,39 @@ impl<'data> WordSegmenterBorrowed<'data> {
         self,
         input: &'s [u8],
     ) -> WordBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
-        WordBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: (),
-            complex: Some(self.complex),
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Utf8CharIndices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |c, complex, past_complex| {
-                #[allow(clippy::unwrap_used)] // past_complex is a suffix of complex
-                let complex = complex
-                    .as_slice()
-                    .strip_suffix(past_complex.as_slice())
-                    .unwrap();
-                let Ok(complex) = core::str::from_utf8(complex) else {
-                    return (vec![complex.len()], true, WordType::Letter as u8);
-                };
-                (
-                    c.complex_language_segment_str(complex),
-                    true,
-                    WordType::Letter as u8,
-                )
-            },
-        })
+        WordBreakIterator(RuleBreakIterator::new_with_complex(
+            Utf8CharIndices::new(input),
+            self.data,
+            (),
+            self.complex,
+            true,
+            WordType::Letter as u8,
+        ))
     }
 
     /// Creates a word break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> WordBreakIterator<'data, 's, Latin1> {
-        WordBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: (),
-            complex: None,
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Latin1Indices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |_, _, _| unreachable!(),
-        })
+        WordBreakIterator(RuleBreakIterator::new_non_complex(
+            Latin1Indices::new(input),
+            self.data,
+            (),
+        ))
     }
 
     /// Creates a word break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> WordBreakIterator<'data, 's, Utf16> {
-        WordBreakIterator(RuleBreakIterator {
-            data: self.data,
-            tailoring: (),
-            complex: Some(self.complex),
-            cache: VecDeque::from_iter([0]),
-            remaining_input: Utf16Indices::new(input),
-            last_accepting_status: 0,
-            handle_complex: |c, complex, past_complex| {
-                #[allow(clippy::unwrap_used)] // past_complex is a suffix of complex
-                let complex = complex
-                    .as_slice()
-                    .strip_suffix(past_complex.as_slice())
-                    .unwrap();
-                (
-                    c.complex_language_segment_utf16(complex),
-                    true,
-                    WordType::Letter as u8,
-                )
-            },
-        })
+        WordBreakIterator(RuleBreakIterator::new_with_complex(
+            Utf16Indices::new(input),
+            self.data,
+            (),
+            self.complex,
+            true,
+            WordType::Letter as u8,
+        ))
     }
 }
 
