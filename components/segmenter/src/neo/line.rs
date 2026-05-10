@@ -582,8 +582,7 @@ fn test() {
     assert_eq!(actual_breaks.next(), Some(26));
     assert_eq!(actual_breaks.is_mandatory(), false);
     assert_eq!(actual_breaks.next(), Some(31));
-    // TODO: EOT should be mandatory, the state machine is missing LB3
-    assert_eq!(actual_breaks.is_mandatory(), false);
+    assert_eq!(actual_breaks.is_mandatory(), true);
     assert_eq!(actual_breaks.next(), None);
 
     for line in include_str!("../../tests/testdata/LineBreakTest.txt").lines() {
