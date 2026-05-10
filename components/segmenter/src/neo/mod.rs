@@ -115,6 +115,7 @@ pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, T: Tailoring> {
     data: &'data SegmenterStateMachine<'data>,
     tailoring: T,
     cache: VecDeque<usize>,
+    lookahead_positions: Vec<Option<Y::IterAttr<'s>>>,
     remaining_input: Y::IterAttr<'s>,
     last_accepting_status: u8,
     complex: Option<ComplexHandling<'data, 's, Y>>,
@@ -132,6 +133,7 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring> RuleBreakIterator<'data, 's, Y, 
             tailoring,
             complex: None,
             cache: VecDeque::from_iter([0]),
+            lookahead_positions: alloc::vec![None; data.num_lookaheads],
             last_accepting_status: 0,
         }
     }
@@ -158,6 +160,7 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring> RuleBreakIterator<'data, 's, Y, 
                 handler: Y::handle,
             }),
             cache: VecDeque::from_iter([0]),
+            lookahead_positions: alloc::vec![None; data.num_lookaheads],
             last_accepting_status: 0,
         }
     }
@@ -182,8 +185,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
         // Dummy value, we don't use this until it has been replaced
         let mut last_accepting: Y::IterAttr<'s> = iter.clone();
         let mut last_accepting_status = 0;
-        let mut lookahead_positions: Vec<Option<Y::IterAttr<'s>>> =
-            alloc::vec![None; self.data.num_lookaheads];
+        self.lookahead_positions.fill(None);
 
         let mut last_complex_break = None;
 
@@ -280,7 +282,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
                     last_accepting_status = status;
                 }
                 Acceptance::Conditional(l, status) => {
-                    if let Some(Some(last)) = &lookahead_positions.get(usize::from(l)) {
+                    if let Some(Some(last)) = self.lookahead_positions.get(usize::from(l)) {
                         // Lookahead hit, the break point is the last position for `l`
                         break (last.clone(), status);
                     }
@@ -288,9 +290,9 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
             }
 
             if let Some(lookahead) = lookahead {
-                if let Some(p) = lookahead_positions.get_mut(usize::from(lookahead)) {
+                if let Some(p) = self.lookahead_positions.get_mut(usize::from(lookahead)) {
                     *p = Some(iter.clone())
-                };
+                }
             }
         };
 
