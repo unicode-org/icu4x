@@ -20,20 +20,16 @@ pub use sentence::*;
 mod word;
 pub use word::*;
 
-/// TODO
-pub trait Tailoring: crate::private::Sealed {
-    #[doc(hidden)]
+pub(crate) trait Tailoring {
     fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class;
 }
 
-impl crate::private::Sealed for () {}
 impl Tailoring for () {
     fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class {
         data.get32(cp)
     }
 }
 
-impl crate::private::Sealed for Option<&'_ RuleBreakDataOverride<'_>> {}
 impl Tailoring for Option<&'_ RuleBreakDataOverride<'_>> {
     fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class {
         if let Some(tailoring) = self {
@@ -60,7 +56,7 @@ impl Tailoring for Option<&'_ RuleBreakDataOverride<'_>> {
 ///
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
-pub struct NeoIterator<'data, 's, Y: RuleBreakType, T: Tailoring> {
+pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, T: Tailoring> {
     data: &'data SegmenterStateMachine<'data>,
     tailoring: T,
     complex: Option<ComplexPayloadsBorrowed<'data>>,
@@ -73,7 +69,7 @@ pub struct NeoIterator<'data, 's, Y: RuleBreakType, T: Tailoring> {
         fn(&ComplexPayloadsBorrowed, &Y::IterAttr<'s>, &Y::IterAttr<'s>) -> (Vec<usize>, bool, u8),
 }
 
-impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for NeoIterator<'_, 's, Y, T> {
+impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, Y, T> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {

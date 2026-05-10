@@ -4,9 +4,8 @@
 
 use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
-#[cfg(doc)]
-use crate::iterators::WordBreakIterator;
-use crate::neo::NeoIterator;
+use crate::iterator_helpers::derive_usize_iterator_with_type;
+use crate::neo::RuleBreakIterator;
 use crate::provider::*;
 use crate::rule_segmenter::*;
 #[cfg(feature = "compiled_data")]
@@ -18,15 +17,39 @@ use alloc::vec;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
-impl<'data, 's, Y: RuleBreakType> NeoIterator<'data, 's, Y, ()> {
+/// Implements the [`Iterator`] trait over the word boundaries of the given string.
+///
+/// Lifetimes:
+///
+/// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'s` = lifetime of the string being segmented
+///
+/// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
+/// _after_ the boundary (for a boundary at the end of text, this index is the length
+/// of the [`str`] or array of code units).
+///
+/// For examples of use, see [`WordSegmenter`].
+#[derive(Debug)]
+pub struct WordBreakIterator<'data, 's, Y: RuleBreakType>(RuleBreakIterator<'data, 's, Y, ()>);
+
+derive_usize_iterator_with_type!(WordBreakIterator, 'data);
+
+impl<'data, 's, Y: RuleBreakType> WordBreakIterator<'data, 's, Y> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
-        match self.last_accepting_status {
+        match self.0.last_accepting_status {
             0 => WordType::None,
             1 => WordType::Number,
             _ => WordType::Letter,
         }
+    }
+
+    /// Returns an iterator over pairs of boundary position and word type.
+    pub fn iter_with_word_type(
+        self,
+    ) -> impl Iterator<Item = (usize, WordType)> + use<'data, 's, Y> {
+        WordBreakIteratorWithWordType(self)
     }
 
     /// Returns `true` when the segment preceding the current boundary is word-like,
@@ -34,6 +57,16 @@ impl<'data, 's, Y: RuleBreakType> NeoIterator<'data, 's, Y, ()> {
     #[inline]
     pub fn is_word_like(&self) -> bool {
         self.word_type().is_word_like()
+    }
+}
+
+struct WordBreakIteratorWithWordType<'data, 's, Y: RuleBreakType>(WordBreakIterator<'data, 's, Y>);
+
+impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
+    type Item = (usize, WordType);
+    fn next(&mut self) -> Option<Self::Item> {
+        let ret = self.0.next()?;
+        Some((ret, self.0.word_type()))
     }
 }
 
@@ -461,8 +494,8 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'s>(self, input: &'s str) -> NeoIterator<'data, 's, Utf8, ()> {
-        NeoIterator {
+    pub fn segment_str<'s>(self, input: &'s str) -> WordBreakIterator<'data, 's, Utf8> {
+        WordBreakIterator(RuleBreakIterator {
             data: self.data,
             tailoring: (),
             complex: Some(self.complex),
@@ -481,7 +514,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                     WordType::Letter as u8,
                 )
             },
-        }
+        })
     }
 
     /// Creates a word break iterator for a potentially ill-formed UTF8 string
@@ -492,8 +525,8 @@ impl<'data> WordSegmenterBorrowed<'data> {
     pub fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> NeoIterator<'data, 's, PotentiallyIllFormedUtf8, ()> {
-        NeoIterator {
+    ) -> WordBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
+        WordBreakIterator(RuleBreakIterator {
             data: self.data,
             tailoring: (),
             complex: Some(self.complex),
@@ -515,14 +548,14 @@ impl<'data> WordSegmenterBorrowed<'data> {
                     WordType::Letter as u8,
                 )
             },
-        }
+        })
     }
 
     /// Creates a word break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> NeoIterator<'data, 's, Latin1, ()> {
-        NeoIterator {
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> WordBreakIterator<'data, 's, Latin1> {
+        WordBreakIterator(RuleBreakIterator {
             data: self.data,
             tailoring: (),
             complex: None,
@@ -530,14 +563,14 @@ impl<'data> WordSegmenterBorrowed<'data> {
             remaining_input: Latin1Indices::new(input),
             last_accepting_status: 0,
             handle_complex: |_, _, _| unreachable!(),
-        }
+        })
     }
 
     /// Creates a word break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> NeoIterator<'data, 's, Utf16, ()> {
-        NeoIterator {
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> WordBreakIterator<'data, 's, Utf16> {
+        WordBreakIterator(RuleBreakIterator {
             data: self.data,
             tailoring: (),
             complex: Some(self.complex),
@@ -556,7 +589,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                     WordType::Letter as u8,
                 )
             },
-        }
+        })
     }
 }
 
