@@ -14,7 +14,7 @@ use crate::source::{include_files, SerdeCache, UnicodeCache};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 #[cfg(feature = "unstable")]
-use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu::collections::codepointinvlist::CodePointInversionList;
 use icu::properties::{
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
@@ -1014,7 +1014,7 @@ impl SourceDataProvider {
 
         let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
         for (&class, set) in &classes {
-            for range in set.code_points().iter_ranges() {
+            for range in set.iter_ranges() {
                 builder.set_range_value(range.clone(), class_lookup[class]);
             }
         }
@@ -1075,7 +1075,7 @@ impl SourceDataProvider {
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 #[cfg(feature = "unstable")]
 struct ParsedNfa<'a> {
-    classes: BTreeMap<&'a str, CodePointInversionListAndStringList<'static>>,
+    classes: BTreeMap<&'a str, CodePointInversionList<'static>>,
     states: BTreeMap<&'a str, (&'a str, Option<&'a str>, &'a str)>,
     transitions: BTreeMap<(&'a str, &'a str), &'a str>,
     class_lookup: BTreeMap<&'a str, u8>,
@@ -1107,6 +1107,8 @@ impl<'a> ParsedNfa<'a> {
                             .with_display_context(&e.fmt_with_source(unicode_set))
                     })?
                     .0;
+                assert!(!set.has_strings());
+                let set = set.code_points().clone();
                 Ok((class, set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
