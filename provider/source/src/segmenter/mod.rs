@@ -885,7 +885,7 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = unicode_15_1().build_segmenter_state_machine(
+            let data = self.build_segmenter_state_machine(
                 include_str!("../../data/segmenter/neo/LineBreakClasses.txt"),
                 include_str!("../../data/segmenter/neo/LineBreakStates.txt"),
                 include_str!("../../data/segmenter/neo/LineBreakTransitions.txt"),

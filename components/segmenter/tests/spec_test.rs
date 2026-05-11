@@ -185,7 +185,7 @@ fn line_break_test(file: &'static str) {
 
 #[test]
 fn run_line_break_test() {
-    line_break_test("./tests/testdata/LineBreakTest.txt");
+    line_break_test("./tests/testdata/LineBreakTest_15.1.txt");
 }
 
 #[test]
@@ -195,7 +195,7 @@ fn run_line_break_extra_test() {
 
 #[test]
 fn run_line_break_random_test() {
-    line_break_test("./tests/testdata/LineBreakRandomTest.txt");
+    line_break_test("./tests/testdata/LineBreakRandomTest_15.1.txt");
 }
 
 fn word_break_test(file: &'static str) {
