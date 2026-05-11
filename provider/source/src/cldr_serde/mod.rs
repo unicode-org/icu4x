@@ -9,6 +9,7 @@
 
 pub(crate) mod aliases;
 pub(crate) mod ca;
+pub(crate) mod day_periods;
 pub(crate) mod coverage_levels;
 #[cfg(feature = "unstable")]
 pub(crate) mod currencies;

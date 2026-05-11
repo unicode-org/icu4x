@@ -11,6 +11,7 @@ mod available_formats;
 mod names;
 mod semantic_skeletons;
 mod week_data;
+mod day_periods;
 
 /// These are the calendars that datetime needs names for. They are roughly the
 /// CLDR calendars, with the Hijri calendars merged.

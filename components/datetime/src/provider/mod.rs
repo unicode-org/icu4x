@@ -19,6 +19,7 @@
 pub(crate) mod compat;
 pub mod fields;
 pub mod names;
+pub mod day_periods;
 pub mod packed_pattern;
 pub mod pattern;
 pub mod semantic_skeletons;
@@ -133,6 +134,11 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::TimezoneNamesEssentialsV1::INFO,
     names::DatetimeNamesWeekdayV1::INFO,
     names::DatetimeNamesDayperiodV1::INFO,
+    day_periods::DayPeriodRulesDesign1V1::INFO,
+    day_periods::DayPeriodRulesDesign2V1::INFO,
+    day_periods::DayPeriodRulesDesign3V1::INFO,
+    day_periods::DayPeriodRulesDesign4V1::INFO,
+    day_periods::DayPeriodRulesDesign5V1::INFO,
     names::DatetimeNamesYearBuddhistV1::INFO,
     names::DatetimeNamesYearChineseV1::INFO,
     names::DatetimeNamesYearCopticV1::INFO,

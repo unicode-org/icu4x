@@ -233,6 +233,7 @@ pub fn cldr_data() -> AbstractFs {
         "cldr-core/supplemental/calendarData.json",
         "cldr-core/supplemental/calendarPreferenceData.json",
         "cldr-core/supplemental/currencyData.json",
+        "cldr-core/supplemental/dayPeriods.json",
         "cldr-core/supplemental/likelySubtags.json",
         "cldr-core/supplemental/metaZones.json",
         "cldr-core/supplemental/numberingSystems.json",
