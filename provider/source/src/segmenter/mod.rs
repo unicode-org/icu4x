@@ -1000,6 +1000,7 @@ impl SourceDataProvider {
         transitions: &str,
         status_lookup: fn(&str) -> u8,
     ) -> Result<SegmenterStateMachine<'static>, DataError> {
+        use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::TrieType;
         use icu_codepointtrie_builder::CodePointTrieBuilder;
 
@@ -1010,14 +1011,20 @@ impl SourceDataProvider {
             class_lookup,
             state_lookup,
             lookahead_lookup,
+            ..
         } = ParsedNfa::parse_nfa_files(self, classes, states, transitions)?;
 
         let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
+        let mut missing_codepoints = CodePointInversionListBuilder::new();
+        missing_codepoints.add_set(&CodePointInversionList::all());
         for (&class, set) in &classes {
             for range in set.iter_ranges() {
+                missing_codepoints.remove_range32(range.clone());
                 builder.set_range_value(range.clone(), class_lookup[class]);
             }
         }
+        let missing_codepoints = missing_codepoints.build();
+        assert!(missing_codepoints.is_empty(), "{missing_codepoints:?}");
         let classes = builder.build();
 
         let states = states
