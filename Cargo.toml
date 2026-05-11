@@ -203,7 +203,7 @@ tinystr = { version = "0.8.3", path = "utils/tinystr", default-features = false 
 writeable = { version = "0.6.1", path = "utils/writeable", default-features = false } # Current version: 0.6.2
 yoke = { version = "0.8.2", path = "utils/yoke", default-features = false }
 yoke-derive = { version = "0.8.2", path = "utils/yoke/derive", default-features = false }
-zerofrom = { version = "0.1.6", path = "utils/zerofrom", default-features = false } # Current version: 0.1.7
+zerofrom = { version = "0.1.6", path = "utils/zerofrom", default-features = false } # Current version: 0.1.8
 zerofrom-derive = { version = "0.1.6", path = "utils/zerofrom/derive", default-features = false } # Current version: 0.1.7
 zerotrie = { version = "0.2.4", path = "utils/zerotrie", default-features = false }
 zerovec = { version = "0.11.6", path = "utils/zerovec", default-features = false }
