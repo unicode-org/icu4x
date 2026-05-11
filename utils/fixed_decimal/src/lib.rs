@@ -49,10 +49,14 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+extern crate alloc;
+
 mod compact;
 mod decimal;
 mod integer;
 mod ops;
+#[cfg(feature = "unstable")]
+pub mod neo;
 #[allow(missing_docs)] // todo
 mod rounding;
 mod scientific;
