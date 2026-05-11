@@ -6,6 +6,9 @@
 
 #![allow(missing_docs, dead_code, unused_variables)]
 
+use core::ops::Deref;
+use core::ops::DerefMut;
+
 use alloc::vec::Vec;
 
 #[derive(Debug, Copy, Clone)]
@@ -18,6 +21,19 @@ pub struct UnsignedInteger<Store> {
 pub struct Signed<Unsigned> {
     unsigned: Unsigned,
     is_negative: bool,
+}
+
+impl<Unsigned> Deref for Signed<Unsigned> {
+    type Target = Unsigned;
+    fn deref(&self) -> &Unsigned {
+        &self.unsigned
+    }
+}
+
+impl<Unsigned> DerefMut for Signed<Unsigned> {
+    fn deref_mut(&mut self) -> &mut Unsigned {
+        &mut self.unsigned
+    }
 }
 
 pub type Integer<Store> = Signed<UnsignedInteger<Store>>;
@@ -44,6 +60,18 @@ pub mod scaffold {
         pub trait Truncate: Count {
             fn digit_store_truncate(&mut self, length: u16);
         }
+
+        impl<const N: usize> Count for [u8; N] {
+            fn digit_store_count(&self) -> u16 {
+                todo!()
+            }
+        }
+
+        impl<const N: usize> Truncate for [u8; N] {
+            fn digit_store_truncate(&mut self, length: u16) {
+                todo!()
+            }
+        }
     }
 }
 
@@ -55,7 +83,10 @@ impl<Store> UnsignedInteger<Store> {
     }
 }
 
-impl<Store> UnsignedInteger<Store> where Store: scaffold::store::Truncate {
+impl<Store> UnsignedInteger<Store>
+where
+    Store: scaffold::store::Truncate,
+{
     /// Decreases the magnitude by 1, truncating if necessary.
     /// For example, 250 -> 25 -> 2
     pub fn decrement_magnitude(&mut self) {
@@ -106,4 +137,16 @@ impl Integer<Vec<u8>> {
     pub fn from_str(value: &str) -> Self {
         todo!()
     }
+}
+
+#[test]
+fn test_no_explicit_generics() {
+    let mut integer = Integer::from_i32(12345);
+    integer.decrement_magnitude();
+    integer.increment_magnitude();
+    integer.negate();
+    fn copy<T: Copy>(value: T) -> T {
+        value
+    }
+    copy(integer);
 }

@@ -54,9 +54,9 @@ extern crate alloc;
 mod compact;
 mod decimal;
 mod integer;
-mod ops;
 #[cfg(feature = "unstable")]
 pub mod neo;
+mod ops;
 #[allow(missing_docs)] // todo
 mod rounding;
 mod scientific;
