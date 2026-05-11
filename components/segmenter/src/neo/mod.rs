@@ -34,7 +34,7 @@ impl Tailoring for Option<&'_ RuleBreakDataOverride<'_>> {
     fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class {
         if let Some(tailoring) = self {
             let c = tailoring.property_table_override.get32(cp);
-            if c != SegmenterStateMachine::EOT_CLASS {
+            if c != SegmenterStateMachine::NO_CLASS {
                 return c;
             }
         }

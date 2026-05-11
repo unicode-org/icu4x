@@ -1144,8 +1144,8 @@ impl<'a> ParsedNfa<'a> {
             .flat_map(|(_, &(_, lookahead, _))| lookahead)
             .collect::<BTreeSet<_>>();
 
-        // Reserve one class for EOT
-        assert!(classes.len() < usize::from(Class::MAX) - 1);
+        // Reserve two classes for EOT and NO_CLASS
+        assert!(classes.len() < usize::from(Class::MAX) - 2);
         let class_lookup = core::iter::once("eot")
             .chain(classes.keys().filter(|&&s| s != "eot").copied())
             .enumerate()
@@ -1232,8 +1232,8 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
                 include_str!("../../data/segmenter/neo/SentenceBreakTransitions.txt"),
             )?;
             let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
-                class_lookup["eot"],
-                class_lookup["eot"],
+                SegmenterStateMachine::NO_CLASS,
+                SegmenterStateMachine::NO_CLASS,
                 self.trie_type().into(),
             );
 

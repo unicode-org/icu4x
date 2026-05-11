@@ -6,8 +6,8 @@ segmenter/break/sentence/override/v1, <lookup>, 35B, 1 identifiers
 segmenter/break/sentence/override/v1, <total>, 332B, 273B, 1 unique payloads
 segmenter/break/sentence/override/v1, el, 332B, 273B, 745d858a06d47385
 segmenter/break/sentence/override/v2, <lookup>, 35B, 1 identifiers
-segmenter/break/sentence/override/v2, <total>, 332B, 273B, 1 unique payloads
-segmenter/break/sentence/override/v2, el, 332B, 273B, ecf7cddc425b5d50
+segmenter/break/sentence/override/v2, <total>, 332B, 274B, 1 unique payloads
+segmenter/break/sentence/override/v2, el, 332B, 274B, cdf65b7bb448b67a
 segmenter/break/sentence/v1, <singleton>, 14804B, 14698B, 30687df4b18e0e2e
 segmenter/break/sentence/v2, <singleton>, 18053B, 17944B, d1407d1e6553eddf
 segmenter/break/word/v1, <singleton>, 16762B, 16657B, 79957a2124e76c2f

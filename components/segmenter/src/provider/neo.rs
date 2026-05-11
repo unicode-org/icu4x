@@ -73,6 +73,8 @@ impl SegmenterStateMachine<'_> {
     /// The end-of-text class. This is a dummy class that only appears at the end of the input,
     /// and allows the state machine to have special transitions on end-of-text.
     pub const EOT_CLASS: Class = 0;
+    /// This is used as the absence of a class in overrides.
+    pub const NO_CLASS: Class = 255;
 }
 
 icu_provider::data_marker!(
