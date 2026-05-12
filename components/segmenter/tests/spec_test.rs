@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale_core::langid;
 use icu_properties::PropertyNamesLong;
-use icu_segmenter::options::WordBreakOptions;
 use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
@@ -106,7 +104,7 @@ fn line_break_test(file: &'static str) {
             .lines()
             .map(|l| l.unwrap()),
     );
-    let segmenter = LineSegmenter::new_dictionary(Default::default());
+    let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
     for (i, mut test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -202,12 +200,7 @@ fn run_line_break_random_test() {
 
 fn word_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
-    // Default word segmenter isn't UAX29 rule. Swedish is UAX29 rule.
-    let mut options = WordBreakOptions::default();
-    let langid = langid!("sv");
-    options.content_locale = Some(&langid);
-    let segmenter = WordSegmenter::try_new_dictionary(options).expect("Loading should succeed!");
-    let segmenter = segmenter.as_borrowed();
+    let segmenter = WordSegmenter::new_for_non_complex_scripts(Default::default());
     for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
