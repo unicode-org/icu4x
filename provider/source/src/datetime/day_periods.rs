@@ -82,7 +82,7 @@ pub(crate) fn compute_day_periods(
         }
     }
 
-    DayPeriodRules::from_cldr_rules(&entries)
+    DayPeriodRules::from_periods(&entries)
 }
 
 impl IterableDataProviderCached<DayPeriodRulesV1> for SourceDataProvider {
@@ -176,16 +176,98 @@ mod tests {
 
         let rules = compute_day_periods(&rules, "test").unwrap();
 
-        // Test lookup for various hours
-        assert_eq!(rules.lookup(0), DayPeriod::Night1);
-        assert_eq!(rules.lookup(5), DayPeriod::Night1);
-        assert_eq!(rules.lookup(6), DayPeriod::Morning1);
-        assert_eq!(rules.lookup(11), DayPeriod::Morning1);
-        assert_eq!(rules.lookup(12), DayPeriod::Afternoon1);
-        assert_eq!(rules.lookup(17), DayPeriod::Afternoon1);
-        assert_eq!(rules.lookup(18), DayPeriod::Evening1);
-        assert_eq!(rules.lookup(20), DayPeriod::Evening1);
-        assert_eq!(rules.lookup(21), DayPeriod::Night1);
-        assert_eq!(rules.lookup(23), DayPeriod::Night1);
+        assert_eq!(
+            rules,
+            DayPeriodRules::from_periods(
+                &[
+                    ((6, 12), DayPeriod::Morning1),
+                    ((12, 18), DayPeriod::Afternoon1),
+                    ((18, 21), DayPeriod::Evening1),
+                    ((21, 6), DayPeriod::Night1),
+                ]
+                .into_iter()
+                .collect()
+            )
+            .unwrap()
+        )
+    }
+
+    #[test]
+    fn test_data() {
+        assert_eq!(
+            DataProvider::<DayPeriodRulesV1>::load(
+                &SourceDataProvider::new_testing(),
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&icu::locale::langid!("en").into()),
+                    ..Default::default()
+                },
+            )
+            .unwrap()
+            .payload
+            .get(),
+            &DayPeriodRules::from_periods(
+                &[
+                    ((0, 12), DayPeriod::Morning1),
+                    ((12, 18), DayPeriod::Afternoon1),
+                    ((18, 21), DayPeriod::Evening1),
+                    ((21, 24), DayPeriod::Night1),
+                ]
+                .into_iter()
+                .collect()
+            )
+            .unwrap()
+        );
+
+        assert_eq!(
+            DataProvider::<DayPeriodRulesV1>::load(
+                &SourceDataProvider::new_testing(),
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&icu::locale::langid!("zh").into()),
+                    ..Default::default()
+                },
+            )
+            .unwrap()
+            .payload
+            .get(),
+            &DayPeriodRules::from_periods(
+                &[
+                    ((0, 5), DayPeriod::Night1),
+                    ((5, 8), DayPeriod::Morning1),
+                    ((8, 12), DayPeriod::Morning2),
+                    ((12, 13), DayPeriod::Afternoon1),
+                    ((13, 19), DayPeriod::Afternoon2),
+                    ((19, 24), DayPeriod::Evening1),
+                ]
+                .into_iter()
+                .collect(),
+            )
+            .unwrap()
+        );
+
+        assert_eq!(
+            DataProvider::<DayPeriodRulesV1>::load(
+                &SourceDataProvider::new_testing(),
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&icu::locale::langid!("de").into()),
+                    ..Default::default()
+                },
+            )
+            .unwrap()
+            .payload
+            .get(),
+            &DayPeriodRules::from_periods(
+                &[
+                    ((0, 5), DayPeriod::Night1),
+                    ((5, 10), DayPeriod::Morning1),
+                    ((10, 12), DayPeriod::Morning2),
+                    ((12, 13), DayPeriod::Afternoon1),
+                    ((13, 18), DayPeriod::Afternoon2),
+                    ((18, 24), DayPeriod::Evening1),
+                ]
+                .into_iter()
+                .collect(),
+            )
+            .unwrap()
+        );
     }
 }
