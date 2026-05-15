@@ -189,10 +189,57 @@ fn weekday_convert(
     ))
 }
 
+/// Checks if the locale needs flexible day periods.
+/// A locale needs them if any of its supported calendars has standard time formats
+/// or available formats containing 'B' (flexible day periods) for non-B skeletons.
+pub(super) fn needs_flexible_day_periods(
+    datagen: &SourceDataProvider,
+    locale: &DataLocale,
+) -> bool {
+    const ALL_CALENDARS: &[DatagenCalendar] = &[
+        DatagenCalendar::Buddhist,
+        DatagenCalendar::Chinese,
+        DatagenCalendar::Coptic,
+        DatagenCalendar::Dangi,
+        DatagenCalendar::Ethiopic,
+        DatagenCalendar::Gregorian,
+        DatagenCalendar::Hebrew,
+        DatagenCalendar::Indian,
+        DatagenCalendar::Hijri,
+        DatagenCalendar::Japanese,
+        DatagenCalendar::Persian,
+        DatagenCalendar::Roc,
+    ];
+
+    fn time_format_has_b(formats: &ca::LengthPatterns) -> bool {
+        formats.full.get_pattern().contains('B')
+            || formats.long.get_pattern().contains('B')
+            || formats.medium.get_pattern().contains('B')
+            || formats.short.get_pattern().contains('B')
+    }
+
+    for &calendar in ALL_CALENDARS {
+        if let Ok(data) = datagen.get_dates_resource(locale, Some(calendar)) {
+            if time_format_has_b(&data.time_formats) {
+                return true;
+            }
+            if time_format_has_b(&data.time_skeletons) {
+                return true;
+            }
+            for (skeleton, pattern) in &data.datetime_formats.available_formats.0 {
+                if pattern.contains('B') && !skeleton.contains('B') {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
 #[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn dayperiods_convert(
-    _datagen: &SourceDataProvider,
-    _locale: &DataLocale,
+    datagen: &SourceDataProvider,
+    locale: &DataLocale,
     data: &ca::Dates,
     _calendar: DatagenCalendar,
     context: Context,
@@ -210,6 +257,31 @@ fn dayperiods_convert(
 
     if let Some(ref midnight) = day_periods.midnight {
         periods.push(midnight)
+    }
+
+    let rules_encoded;
+
+    if needs_flexible_day_periods(datagen, locale) {
+        let rules = datagen
+            .cldr()?
+            .core()
+            .read_and_parse::<crate::cldr_serde::day_periods::Resource>(
+                "supplemental/dayPeriods.json",
+            )?
+            .supplemental
+            .day_period_rule_set
+            .0
+            // Day period rules are stored on a language level, i.e. zh and zh-Hant share rules
+            .get(locale.language.as_str())
+            .expect("day period rules should exist");
+
+        let (rules, mut names) =
+            super::day_periods::compute_day_periods(rules, &day_periods.flexible, *locale)?;
+
+        periods.resize(4, "");
+        rules_encoded = format!("{}{}", rules.encode_to_string(), names.next().unwrap());
+        periods.push(&rules_encoded);
+        periods.extend(names);
     }
 
     Ok(DayPeriodNames {

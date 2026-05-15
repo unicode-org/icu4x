@@ -62,12 +62,10 @@ impl From<fields::SymbolError> for SkeletonError {
             fields::SymbolError::InvalidIndex(_) => unimplemented!(),
             fields::SymbolError::Unknown(ch) => {
                 // NOTE: If you remove a symbol due to it now being supported,
-                //       make sure to regenerate data: cargo make bakeddata components/datetime.
+                //       make sure to regenerate data.
                 match ch {
-                    // TODO(#487) - Flexible day periods
-                    'B'
                     // TODO(#501) - Quarters
-                    | 'Q' | 'q'
+                    'Q' | 'q'
                     // TODO(#5643) - Weeks
                     | 'Y' | 'w' | 'W'
                     => Self::SymbolUnimplemented(ch),

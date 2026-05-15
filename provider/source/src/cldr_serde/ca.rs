@@ -125,6 +125,8 @@ pub(crate) struct DayPeriodSymbols {
     pub(crate) pm: Cow<'static, str>,
     pub(crate) noon: Option<Cow<'static, str>>,
     pub(crate) midnight: Option<Cow<'static, str>>,
+    #[serde(flatten)]
+    pub(crate) flexible: BTreeMap<String, Cow<'static, str>>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]

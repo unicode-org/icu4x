@@ -91,10 +91,9 @@ impl From<&Pattern> for Skeleton {
                     // Only flexible day periods are used in skeletons, ignore all others.
                     FieldSymbol::DayPeriod(fields::DayPeriod::AmPm)
                     | FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight) => continue,
-                    // TODO(#487) - Flexible day periods should be included here.
-                    // FieldSymbol::DayPeriod(fields::DayPeriod::Flexible) => {
-                    //     FieldSymbol::DayPeriod(fields::DayPeriod::Flexible)
-                    // }
+                    FieldSymbol::DayPeriod(fields::DayPeriod::Flexible) => {
+                        FieldSymbol::DayPeriod(fields::DayPeriod::Flexible)
+                    }
 
                     // Only the H12 and H23 symbols are used in skeletons, while the patterns may
                     // contain H11 or H23 depending on the localization.

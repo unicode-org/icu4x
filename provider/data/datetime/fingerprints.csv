@@ -1,5 +1,5 @@
-datetime/names/dayperiod/v1, <lookup>, 4478B, 1035 identifiers
-datetime/names/dayperiod/v1, <total>, 17147B, 9948B, 313 unique payloads
+datetime/names/dayperiod/v1, <lookup>, 4529B, 1047 identifiers
+datetime/names/dayperiod/v1, <total>, 17816B, 10502B, 318 unique payloads
 datetime/names/dayperiod/v1, af/3, 47B, 24B, dc2d3f22238d96ba
 datetime/names/dayperiod/v1, af/3s, -> af/3
 datetime/names/dayperiod/v1, af/4, 36B, 13B, 5fab3f486a766900
@@ -128,15 +128,15 @@ datetime/names/dayperiod/v1, da/4, 40B, 17B, 16f2e8fbdcaf8d1
 datetime/names/dayperiod/v1, da/4s, -> da/3
 datetime/names/dayperiod/v1, da/5, -> da/3
 datetime/names/dayperiod/v1, da/5s, -> da/3
-datetime/names/dayperiod/v1, de-AT/4s, 49B, 26B, 75dc2bd479b9b44a
+datetime/names/dayperiod/v1, de-AT/4s, 98B, 75B, 739f11ffc261161b
 datetime/names/dayperiod/v1, de-LI/4s, -> de-AT/4s
-datetime/names/dayperiod/v1, de-LU/4, 54B, 31B, ecbcd11ed22fa2b2
-datetime/names/dayperiod/v1, de/3, 47B, 24B, 900dc13b5ae88de5
-datetime/names/dayperiod/v1, de/3s, -> de/3
+datetime/names/dayperiod/v1, de-LU/4, 107B, 84B, d1061b9444bb7760
+datetime/names/dayperiod/v1, de/3, 100B, 77B, 932f23b1499469ef
+datetime/names/dayperiod/v1, de/3s, 96B, 73B, 371055c87c8e1edb
 datetime/names/dayperiod/v1, de/4, -> de/3
-datetime/names/dayperiod/v1, de/4s, -> de/3
-datetime/names/dayperiod/v1, de/5, -> de/3
-datetime/names/dayperiod/v1, de/5s, -> de/3
+datetime/names/dayperiod/v1, de/4s, -> de/3s
+datetime/names/dayperiod/v1, de/5, 110B, 87B, 885ee89b56ca95d1
+datetime/names/dayperiod/v1, de/5s, 104B, 81B, a3ca019901b7b82b
 datetime/names/dayperiod/v1, doi/3, 49B, 26B, e21539eddd0b83ab
 datetime/names/dayperiod/v1, doi/3s, -> doi/3
 datetime/names/dayperiod/v1, doi/4, -> doi/3
@@ -1022,18 +1022,30 @@ datetime/names/dayperiod/v1, yue/4s, -> yue/3
 datetime/names/dayperiod/v1, yue/5, -> yue/3
 datetime/names/dayperiod/v1, yue/5s, -> yue/3
 datetime/names/dayperiod/v1, za/5, 47B, 24B, 2ebe22f115f02f
-datetime/names/dayperiod/v1, zh-Hant/3, 50B, 27B, 7732241d1e58b21
+datetime/names/dayperiod/v1, zh-HK/3, 102B, 79B, 5a80afbfd32ef54c
+datetime/names/dayperiod/v1, zh-HK/3s, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-HK/4, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-HK/4s, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-HK/5, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-HK/5s, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-Hant/3, 102B, 79B, cd5641ffb213fc17
 datetime/names/dayperiod/v1, zh-Hant/3s, -> zh-Hant/3
 datetime/names/dayperiod/v1, zh-Hant/4, -> zh-Hant/3
 datetime/names/dayperiod/v1, zh-Hant/4s, -> zh-Hant/3
 datetime/names/dayperiod/v1, zh-Hant/5, -> zh-Hant/3
 datetime/names/dayperiod/v1, zh-Hant/5s, -> zh-Hant/3
-datetime/names/dayperiod/v1, zh/3, -> zh-Hant/3
-datetime/names/dayperiod/v1, zh/3s, -> zh-Hant/3
-datetime/names/dayperiod/v1, zh/4, -> zh-Hant/3
-datetime/names/dayperiod/v1, zh/4s, -> zh-Hant/3
-datetime/names/dayperiod/v1, zh/5, -> zh-Hant/3
-datetime/names/dayperiod/v1, zh/5s, -> zh-Hant/3
+datetime/names/dayperiod/v1, zh-MO/3, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-MO/3s, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-MO/4, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-MO/4s, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-MO/5, -> zh-HK/3
+datetime/names/dayperiod/v1, zh-MO/5s, -> zh-HK/3
+datetime/names/dayperiod/v1, zh/3, 50B, 27B, 7732241d1e58b21
+datetime/names/dayperiod/v1, zh/3s, -> zh/3
+datetime/names/dayperiod/v1, zh/4, -> zh/3
+datetime/names/dayperiod/v1, zh/4s, -> zh/3
+datetime/names/dayperiod/v1, zh/5, -> zh/3
+datetime/names/dayperiod/v1, zh/5s, -> zh/3
 datetime/names/dayperiod/v1, zu/4, -> ast/4
 datetime/names/month/buddhist/v1, <lookup>, 4657B, 1079 identifiers
 datetime/names/month/buddhist/v1, <total>, 71186B, 56360B, 499 unique payloads
@@ -11675,7 +11687,7 @@ datetime/patterns/date/buddhist/v1, yue/y, -> yue-Hans/y
 datetime/patterns/date/buddhist/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/buddhist/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/buddhist/v1, yue/ym0de, -> yue-Hans/ym0de
-datetime/patterns/date/buddhist/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/buddhist/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/buddhist/v1, zh-HK/m0d, 59B, 29B, 4c230f8502ece7f3
 datetime/patterns/date/buddhist/v1, zh-HK/m0de, 89B, 59B, 13e8af644056cda5
 datetime/patterns/date/buddhist/v1, zh-Hans-HK/ej, 158B, 130B, 683bf923701a8336
@@ -11692,7 +11704,7 @@ datetime/patterns/date/buddhist/v1, zh-Hans-MO/ym0d, 77B, 47B, c9e08ad9a694a439
 datetime/patterns/date/buddhist/v1, zh-Hans-MO/ym0de, 113B, 83B, 91964272e5a4f05d
 datetime/patterns/date/buddhist/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/buddhist/v1, zh-Hant/de, -> yue-Hans/de
-datetime/patterns/date/buddhist/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/buddhist/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/buddhist/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/buddhist/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/buddhist/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -12138,7 +12150,7 @@ datetime/patterns/date/chinese/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/chinese/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/chinese/v1, zh-Hant/d, -> yue-Hans/d
 datetime/patterns/date/chinese/v1, zh-Hant/de, 68B, 38B, a7ffc4d4a0547a6d
-datetime/patterns/date/chinese/v1, zh-Hant/ej, 164B, 137B, c4cbd7473d228ecb
+datetime/patterns/date/chinese/v1, zh-Hant/ej, 164B, 137B, 2ede466c76ffba1b
 datetime/patterns/date/chinese/v1, zh-Hant/m0, -> ja/m0
 datetime/patterns/date/chinese/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/chinese/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -13436,7 +13448,7 @@ datetime/patterns/date/coptic/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/coptic/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/coptic/v1, yue/ym0de, -> yue-Hans/ym0de
 datetime/patterns/date/coptic/v1, zh-HK/de, 56B, 26B, de1bf461f78fca5f
-datetime/patterns/date/coptic/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/coptic/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/coptic/v1, zh-HK/m0d, 59B, 29B, d898472754d6a0bd
 datetime/patterns/date/coptic/v1, zh-HK/m0de, 89B, 59B, d443b61c967ce84a
 datetime/patterns/date/coptic/v1, zh-HK/y, 44B, 14B, 1ba03e59ad7aca8f
@@ -13460,7 +13472,7 @@ datetime/patterns/date/coptic/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/coptic/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/coptic/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/coptic/v1, zh-Hant/de, -> bn/de
-datetime/patterns/date/coptic/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/coptic/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/coptic/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/coptic/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/coptic/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -13912,7 +13924,7 @@ datetime/patterns/date/dangi/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/dangi/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/dangi/v1, zh-Hant/d, -> yue-Hans/d
 datetime/patterns/date/dangi/v1, zh-Hant/de, -> yue-Hans/de
-datetime/patterns/date/dangi/v1, zh-Hant/ej, 164B, 137B, c4cbd7473d228ecb
+datetime/patterns/date/dangi/v1, zh-Hant/ej, 164B, 137B, 2ede466c76ffba1b
 datetime/patterns/date/dangi/v1, zh-Hant/m0, -> ja/m0
 datetime/patterns/date/dangi/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/dangi/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -15205,7 +15217,7 @@ datetime/patterns/date/ethiopian/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/ethiopian/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/ethiopian/v1, yue/ym0de, -> yue-Hans/ym0de
 datetime/patterns/date/ethiopian/v1, zh-HK/de, 56B, 26B, de1bf461f78fca5f
-datetime/patterns/date/ethiopian/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/ethiopian/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/ethiopian/v1, zh-HK/m0d, 59B, 29B, d898472754d6a0bd
 datetime/patterns/date/ethiopian/v1, zh-HK/m0de, 89B, 59B, d443b61c967ce84a
 datetime/patterns/date/ethiopian/v1, zh-HK/y, 44B, 14B, 1ba03e59ad7aca8f
@@ -15229,7 +15241,7 @@ datetime/patterns/date/ethiopian/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/ethiopian/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/ethiopian/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/ethiopian/v1, zh-Hant/de, -> bn/de
-datetime/patterns/date/ethiopian/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/ethiopian/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/ethiopian/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/ethiopian/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/ethiopian/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -16721,7 +16733,7 @@ datetime/patterns/date/gregorian/v1, zh-Hans-MO/ym0d, 119B, 91B, 3fb794e3999c19d
 datetime/patterns/date/gregorian/v1, zh-Hans-MO/ym0de, 212B, 185B, dcdab3e2c19d2dba
 datetime/patterns/date/gregorian/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/gregorian/v1, zh-Hant/de, -> az/de
-datetime/patterns/date/gregorian/v1, zh-Hant/ej, 146B, 118B, 754c7943cb755a72
+datetime/patterns/date/gregorian/v1, zh-Hant/ej, 146B, 118B, 77a03590997203c3
 datetime/patterns/date/gregorian/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/gregorian/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/gregorian/v1, zh-Hant/m0de, 89B, 59B, daf74b4c5f922b12
@@ -17958,7 +17970,7 @@ datetime/patterns/date/hebrew/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/hebrew/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/hebrew/v1, yue/ym0de, -> yue-Hans/ym0de
 datetime/patterns/date/hebrew/v1, zh-HK/de, 56B, 26B, de1bf461f78fca5f
-datetime/patterns/date/hebrew/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/hebrew/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/hebrew/v1, zh-HK/m0d, 59B, 29B, d898472754d6a0bd
 datetime/patterns/date/hebrew/v1, zh-HK/m0de, 89B, 59B, d443b61c967ce84a
 datetime/patterns/date/hebrew/v1, zh-HK/y, -> ja/y
@@ -17982,7 +17994,7 @@ datetime/patterns/date/hebrew/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/hebrew/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/hebrew/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/hebrew/v1, zh-Hant/de, -> bn/de
-datetime/patterns/date/hebrew/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/hebrew/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/hebrew/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/hebrew/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/hebrew/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -19284,7 +19296,7 @@ datetime/patterns/date/hijri/v1, yue/y, -> ja/y
 datetime/patterns/date/hijri/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/hijri/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/hijri/v1, yue/ym0de, -> yue-Hans/ym0de
-datetime/patterns/date/hijri/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/hijri/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/hijri/v1, zh-HK/m0d, 59B, 29B, d898472754d6a0bd
 datetime/patterns/date/hijri/v1, zh-HK/m0de, 89B, 59B, d443b61c967ce84a
 datetime/patterns/date/hijri/v1, zh-Hans-HK/ej, 158B, 130B, 683bf923701a8336
@@ -19299,7 +19311,7 @@ datetime/patterns/date/hijri/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/hijri/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/hijri/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/hijri/v1, zh-Hant/de, -> yue-Hans/de
-datetime/patterns/date/hijri/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/hijri/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/hijri/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/hijri/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/hijri/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -20597,7 +20609,7 @@ datetime/patterns/date/indian/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/indian/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/indian/v1, yue/ym0de, -> yue-Hans/ym0de
 datetime/patterns/date/indian/v1, zh-HK/de, 56B, 26B, de1bf461f78fca5f
-datetime/patterns/date/indian/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/indian/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/indian/v1, zh-HK/m0d, 59B, 29B, d898472754d6a0bd
 datetime/patterns/date/indian/v1, zh-HK/m0de, 89B, 59B, d443b61c967ce84a
 datetime/patterns/date/indian/v1, zh-HK/y, 44B, 14B, 1ba03e59ad7aca8f
@@ -20621,7 +20633,7 @@ datetime/patterns/date/indian/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/indian/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/indian/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/indian/v1, zh-Hant/de, -> bn/de
-datetime/patterns/date/indian/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/indian/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/indian/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/indian/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/indian/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -21828,7 +21840,7 @@ datetime/patterns/date/japanese/v1, yue/y, -> yue-Hans/y
 datetime/patterns/date/japanese/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/japanese/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/japanese/v1, yue/ym0de, -> yue-Hans/ym0de
-datetime/patterns/date/japanese/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/japanese/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/japanese/v1, zh-HK/m0d, 59B, 29B, d898472754d6a0bd
 datetime/patterns/date/japanese/v1, zh-HK/m0de, 89B, 59B, d443b61c967ce84a
 datetime/patterns/date/japanese/v1, zh-Hans-HK/ej, 158B, 130B, 683bf923701a8336
@@ -21841,7 +21853,7 @@ datetime/patterns/date/japanese/v1, zh-Hans-HK/ym0de, 113B, 83B, fb4d90fb33696c4
 datetime/patterns/date/japanese/v1, zh-Hans-MO/ej, -> zh-Hans-HK/ej
 datetime/patterns/date/japanese/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/japanese/v1, zh-Hant/de, -> yue-Hans/de
-datetime/patterns/date/japanese/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/japanese/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/japanese/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/japanese/v1, zh-Hant/m0d, -> ja/m0d
 datetime/patterns/date/japanese/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -23141,7 +23153,7 @@ datetime/patterns/date/persian/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/persian/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/persian/v1, yue/ym0de, -> yue-Hans/ym0de
 datetime/patterns/date/persian/v1, zh-HK/de, 56B, 26B, de1bf461f78fca5f
-datetime/patterns/date/persian/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/persian/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/persian/v1, zh-HK/m0d, 59B, 29B, d898472754d6a0bd
 datetime/patterns/date/persian/v1, zh-HK/m0de, 89B, 59B, d443b61c967ce84a
 datetime/patterns/date/persian/v1, zh-HK/y, 44B, 14B, 1ba03e59ad7aca8f
@@ -23165,7 +23177,7 @@ datetime/patterns/date/persian/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/persian/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/persian/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/persian/v1, zh-Hant/de, -> bn/de
-datetime/patterns/date/persian/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/persian/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/persian/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/persian/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/persian/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -24474,7 +24486,7 @@ datetime/patterns/date/roc/v1, yue/ym0, -> yue-Hans/ym0
 datetime/patterns/date/roc/v1, yue/ym0d, -> yue-Hans/ym0d
 datetime/patterns/date/roc/v1, yue/ym0de, -> yue-Hans/ym0de
 datetime/patterns/date/roc/v1, zh-HK/de, 56B, 26B, de1bf461f78fca5f
-datetime/patterns/date/roc/v1, zh-HK/ej, 170B, 143B, bef1f4a5b162a7b
+datetime/patterns/date/roc/v1, zh-HK/ej, 170B, 143B, 69360e3c39cf0932
 datetime/patterns/date/roc/v1, zh-HK/m0d, 59B, 29B, eaa61ad9e34c1b12
 datetime/patterns/date/roc/v1, zh-HK/m0de, 89B, 59B, adc56acd57d613e3
 datetime/patterns/date/roc/v1, zh-Hans-HK/ej, 158B, 130B, 683bf923701a8336
@@ -24495,7 +24507,7 @@ datetime/patterns/date/roc/v1, zh-Hans-MO/ym0d, -> zh-Hans-HK/ym0d
 datetime/patterns/date/roc/v1, zh-Hans-MO/ym0de, -> zh-Hans-HK/ym0de
 datetime/patterns/date/roc/v1, zh-Hant/d, -> ja/d
 datetime/patterns/date/roc/v1, zh-Hant/de, -> bn/de
-datetime/patterns/date/roc/v1, zh-Hant/ej, 164B, 137B, 97b57bcd2409363
+datetime/patterns/date/roc/v1, zh-Hant/ej, 164B, 137B, 25c79edea700e3b5
 datetime/patterns/date/roc/v1, zh-Hant/m0, -> yue-Hans/m0
 datetime/patterns/date/roc/v1, zh-Hant/m0d, -> yue-Hans/m0d
 datetime/patterns/date/roc/v1, zh-Hant/m0de, -> yue-Hans/m0de
@@ -25342,7 +25354,7 @@ datetime/patterns/time/v1, cy/h, -> az/h
 datetime/patterns/time/v1, da/h, 86B, 58B, 8e21898497d02b9d
 datetime/patterns/time/v1, da/h0, 68B, 40B, 81846808a5cb815f
 datetime/patterns/time/v1, da/j, -> da/h0
-datetime/patterns/time/v1, de/h, 98B, 70B, 849b24f10bc64cba
+datetime/patterns/time/v1, de/h, 98B, 70B, 6056be7ce996ebb
 datetime/patterns/time/v1, de/h0, 80B, 52B, 38db3ca8d9255ad3
 datetime/patterns/time/v1, de/j, -> de/h0
 datetime/patterns/time/v1, doi/j, -> am/j
@@ -25598,7 +25610,7 @@ datetime/patterns/time/v1, yue/h0, -> yue-Hant-CN/j
 datetime/patterns/time/v1, yue/j, -> yue/h
 datetime/patterns/time/v1, zh-Hans-HK/j, 80B, 52B, ad9eb59336acbfdf
 datetime/patterns/time/v1, zh-Hans-MO/j, -> zh-Hans-HK/j
-datetime/patterns/time/v1, zh-Hant/h, 80B, 52B, 559bbc314050c953
+datetime/patterns/time/v1, zh-Hant/h, 80B, 52B, fc7b52d88eba4e3b
 datetime/patterns/time/v1, zh-Hant/h0, -> ja/h0
 datetime/patterns/time/v1, zh-Hant/j, -> zh-Hant/h
 datetime/patterns/time/v1, zh-MY/j, -> zh-Hans-HK/j
@@ -25607,92 +25619,6 @@ datetime/patterns/time/v1, zh/h, -> zh-Hans-HK/j
 datetime/patterns/time/v1, zh/h0, 71B, 43B, f8befaefad20667e
 datetime/patterns/time/v1, zh/j, -> zh/h0
 datetime/patterns/time/v1, zu/h, -> az/h
-day/period/rules/v1, <lookup>, 419B, 84 identifiers
-day/period/rules/v1, <total>, 240B, 240B, 60 unique payloads
-day/period/rules/v1, af, 4B, 4B, dc5bc77733b3bca6
-day/period/rules/v1, am, 4B, 4B, 366f55957398a02a
-day/period/rules/v1, ar, 4B, 4B, 5eb3fa7300e25488
-day/period/rules/v1, az, 4B, 4B, 58f2e41076302dfa
-day/period/rules/v1, bg, 4B, 4B, 99152294de499aa0
-day/period/rules/v1, blo, 4B, 4B, 597cf9964050e6aa
-day/period/rules/v1, bn, 4B, 4B, 31b94b4004c9af0d
-day/period/rules/v1, bs, 4B, 4B, 2e3be345390e9db5
-day/period/rules/v1, ca, 4B, 4B, 8746f52b0d4fe347
-day/period/rules/v1, chr, 4B, 4B, 109608b8871f6b98
-day/period/rules/v1, cs, 4B, 4B, 904a1a323e9a63d9
-day/period/rules/v1, cy, 4B, 4B, 4e060fa4f64863d9
-day/period/rules/v1, da, 4B, 4B, 19fa2b85c6bd197a
-day/period/rules/v1, de, 4B, 4B, d7df91389f8bf2c0
-day/period/rules/v1, ee, 4B, 4B, 39498457d8e4fa7b
-day/period/rules/v1, el, 4B, 4B, 795933e2a9fe0f08
-day/period/rules/v1, en, 4B, 4B, 17e8b0b9f0434ec0
-day/period/rules/v1, es, 4B, 4B, 8871996b949da34c
-day/period/rules/v1, es-CO, 4B, 4B, baf7d9187d8c4598
-day/period/rules/v1, et, 4B, 4B, f9e85df7d5eb9bb3
-day/period/rules/v1, eu, 4B, 4B, b15c993d16032fa4
-day/period/rules/v1, fa, 4B, 4B, de7ad1369ed1555c
-day/period/rules/v1, fi, 4B, 4B, db1209fcf94fae2d
-day/period/rules/v1, fil, 4B, 4B, baab6a374e784368
-day/period/rules/v1, fr, 4B, 4B, b69285491d941d5e
-day/period/rules/v1, gl, 4B, 4B, 3c5de0cffc8c168c
-day/period/rules/v1, gu, 4B, 4B, 7675f803a58c0ecc
-day/period/rules/v1, he, 4B, 4B, 103ecf697e2f361d
-day/period/rules/v1, hi, -> gu
-day/period/rules/v1, hi-Latn, -> gu
-day/period/rules/v1, hr, -> bs
-day/period/rules/v1, hu, 4B, 4B, 8239dd82b52318f
-day/period/rules/v1, hy, -> am
-day/period/rules/v1, id, 4B, 4B, c36618099ac4912
-day/period/rules/v1, is, -> am
-day/period/rules/v1, it, -> am
-day/period/rules/v1, ja, 4B, 4B, 5bd310c488a82847
-day/period/rules/v1, ka, 4B, 4B, 69c9e738da6d2b52
-day/period/rules/v1, kgp, 4B, 4B, 2f58735f19635bfc
-day/period/rules/v1, kk, 4B, 4B, 754a9744887ebc6f
-day/period/rules/v1, km, -> en
-day/period/rules/v1, kn, -> kk
-day/period/rules/v1, ko, 4B, 4B, 7663865a480d4270
-day/period/rules/v1, kok, -> gu
-day/period/rules/v1, kok-Latn, -> gu
-day/period/rules/v1, ky, -> kk
-day/period/rules/v1, lij, 4B, 4B, ac897f0aa169be8b
-day/period/rules/v1, lo, 4B, 4B, ecd0e4f6bfa5d600
-day/period/rules/v1, lt, -> am
-day/period/rules/v1, lv, 4B, 4B, d03d49a7dc79680d
-day/period/rules/v1, mk, 4B, 4B, 3c562ece0b71b7e0
-day/period/rules/v1, ml, 4B, 4B, 7fa457e8cf82fb01
-day/period/rules/v1, mn, -> kk
-day/period/rules/v1, mr, 4B, 4B, f717e2f383d2baac
-day/period/rules/v1, ms, 4B, 4B, 90da78df2e2ec25f
-day/period/rules/v1, my, 4B, 4B, c4a75d5b523a23e8
-day/period/rules/v1, ne, 4B, 4B, 4e752b504202bd33
-day/period/rules/v1, nl, -> am
-day/period/rules/v1, no, 4B, 4B, 42de334acc675641
-day/period/rules/v1, pa, 4B, 4B, 3c0cdad03f9f085a
-day/period/rules/v1, pl, 4B, 4B, 8ff57632e9b16c88
-day/period/rules/v1, pt, -> kgp
-day/period/rules/v1, ro, 4B, 4B, 17864f21f5d55e88
-day/period/rules/v1, ru, 4B, 4B, dc7fc30681ff6865
-day/period/rules/v1, scn, -> fr
-day/period/rules/v1, si, 4B, 4B, 37107a15e92f975e
-day/period/rules/v1, sk, -> cs
-day/period/rules/v1, sl, 4B, 4B, 58f72f696dc9bfb4
-day/period/rules/v1, sq, 4B, 4B, 7c1c8f6419ae44fa
-day/period/rules/v1, sr, -> kk
-day/period/rules/v1, sv, -> da
-day/period/rules/v1, sw, 4B, 4B, 9fd4b7b2439e7a76
-day/period/rules/v1, ta, 4B, 4B, 3bf32fba858c4428
-day/period/rules/v1, te, -> kk
-day/period/rules/v1, th, 4B, 4B, 75bf9d7d2c6eb957
-day/period/rules/v1, tr, 4B, 4B, 45fb330de14c4e21
-day/period/rules/v1, uk, -> fr
-day/period/rules/v1, ur, 4B, 4B, c64fdb04d90afc3f
-day/period/rules/v1, uz, 4B, 4B, 58ea1116c3a5c0aa
-day/period/rules/v1, vi, -> bs
-day/period/rules/v1, yrl, -> kgp
-day/period/rules/v1, yue, 4B, 4B, 443481d3deaa8630
-day/period/rules/v1, zh, -> yue
-day/period/rules/v1, zu, 4B, 4B, c3b20adfb7ae534
 timezone/names/cities/override/v1, <lookup>, 865B, 168 identifiers
 timezone/names/cities/override/v1, <total>, 271313B, 264588B, 152 unique payloads
 timezone/names/cities/override/v1, af, 933B, 889B, d7e95f0042cec020

@@ -3,53 +3,35 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::IterableDataProviderCached;
-use crate::SourceDataProvider;
 use icu::datetime::provider::day_periods::*;
 use icu_provider::prelude::*;
-use std::collections::HashSet;
-
-impl DataProvider<DayPeriodRulesV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DayPeriodRulesV1>, DataError> {
-        self.check_req::<DayPeriodRulesV1>(req)?;
-
-        let day_periods: &cldr_serde::day_periods::Resource = self
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/dayPeriods.json")?;
-
-        let langid = icu::locale::LanguageIdentifier::from((
-            req.id.locale.language,
-            req.id.locale.script,
-            req.id.locale.region,
-        ));
-
-        let rules = day_periods
-            .supplemental
-            .day_period_rule_set
-            .0
-            .get(&langid.to_string())
-            .ok_or_else(|| {
-                DataErrorKind::IdentifierNotFound
-                    .with_req(<DayPeriodRulesV1 as DataMarker>::INFO, req)
-            })?;
-
-        let data = compute_day_periods(rules, &req.id.locale.to_string())?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data),
-        })
-    }
-}
+use std::borrow::Cow;
 
 /// Computes `DayPeriodRules` from CLDR supplemental day period rules.
 ///
 /// Returns `None` if the rules are empty or do not contain any flexible day periods.
-pub(crate) fn compute_day_periods(
+pub(crate) fn compute_day_periods<'a>(
     rules: &std::collections::BTreeMap<String, cldr_serde::day_periods::DayPeriodRule>,
-    locale_str: &str,
-) -> Result<DayPeriodRules, DataError> {
+    names: &'a std::collections::BTreeMap<String, Cow<'a, str>>,
+    locale: DataLocale,
+) -> Result<(DayPeriodRules, impl Iterator<Item = &'a str>), DataError> {
+    /// Parses a "HH:MM" time string and returns the hour as a u8.
+    /// Logs a warning if the minute value is non-zero, as precision will be lost.
+    fn parse_hour(s: &str) -> u8 {
+        let mut parts = s.split(':');
+        let hour = parts.next().unwrap().parse().unwrap();
+        if let Some(min_str) = parts.next() {
+            let min: u32 = min_str.parse().unwrap();
+            if min != 0 {
+                log::warn!(
+                    "Non-zero minute found in day period time: {}, precision will be lost",
+                    s
+                );
+            }
+        }
+        hour
+    }
+
     let mut entries = std::collections::BTreeMap::new();
 
     for (period, rule) in rules {
@@ -58,66 +40,27 @@ pub(crate) fn compute_day_periods(
                 period == "noon" || period == "midnight",
                 "Found 'at' rule for non-noon/midnight period: {} in locale {}",
                 period,
-                locale_str
+                locale
             );
         }
-        if let Some(period_enum) = DayPeriod::from_cldr_name(period) {
+        if let Some(name) = names.get(period) {
             if let (Some(from), Some(before)) = (&rule.from, &rule.before) {
                 let start = parse_hour(from);
                 let end = parse_hour(before);
-                entries.insert((start, end), period_enum);
+                entries.insert((start, end), &**name);
             } else {
-                log::warn!(
-                    "Did not have from/before values for rule {period} in locale {locale_str}"
-                )
+                log::warn!("Did not have from/before values for rule {period} in locale {locale}")
             }
         } else if period != "morning" && period != "afternoon" {
-            log::warn!("Unknown range period found {period} in locale {locale_str}");
+            log::warn!("missing name for range {period} in locale {locale}");
         }
     }
 
-    DayPeriodRules::from_periods(&entries)
-        .map_err(|e| DataError::custom("rules").with_display_context(e))
-}
-
-impl IterableDataProviderCached<DayPeriodRulesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let day_periods: &cldr_serde::day_periods::Resource = self
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/dayPeriods.json")?;
-        Ok(day_periods
-            .supplemental
-            .day_period_rule_set
-            .0
-            .iter()
-            .filter_map(|(l, rules)| {
-                let langid: icu::locale::LanguageIdentifier = l.parse().unwrap();
-                if compute_day_periods(rules, l).is_ok() {
-                    Some(DataIdentifierCow::from_locale(DataLocale::from(langid)))
-                } else {
-                    None
-                }
-            })
-            .collect())
-    }
-}
-
-/// Parses a "HH:MM" time string and returns the hour as a u8.
-/// Logs a warning if the minute value is non-zero, as precision will be lost.
-fn parse_hour(s: &str) -> u8 {
-    let mut parts = s.split(':');
-    let hour = parts.next().unwrap().parse().unwrap();
-    if let Some(min_str) = parts.next() {
-        let min: u32 = min_str.parse().unwrap();
-        if min != 0 {
-            log::warn!(
-                "Non-zero minute found in day period time: {}, precision will be lost",
-                s
-            );
-        }
-    }
-    hour
+    DayPeriodRules::from_periods(entries).map_err(|e| {
+        DataError::custom("day period rules")
+            .with_debug_context(&locale)
+            .with_display_context(e)
+    })
 }
 
 #[cfg(test)]
@@ -129,6 +72,7 @@ mod tests {
     #[test]
     fn test_compute_day_periods() {
         let mut rules = BTreeMap::new();
+        let mut names = BTreeMap::new();
 
         // Simulate rules where night extends into morning:
         // morning1: 06:00 - 12:00
@@ -144,6 +88,7 @@ mod tests {
                 at: None,
             },
         );
+        names.insert(String::from("morning1"), Cow::Borrowed("foo"));
         rules.insert(
             "afternoon1".to_string(),
             DayPeriodRule {
@@ -152,6 +97,7 @@ mod tests {
                 at: None,
             },
         );
+        names.insert(String::from("afternoon1"), Cow::Borrowed("bar"));
         rules.insert(
             "evening1".to_string(),
             DayPeriodRule {
@@ -160,6 +106,7 @@ mod tests {
                 at: None,
             },
         );
+        names.insert(String::from("evening1"), Cow::Borrowed("baz"));
         rules.insert(
             "night1".to_string(),
             DayPeriodRule {
@@ -168,22 +115,24 @@ mod tests {
                 at: None,
             },
         );
+        names.insert(String::from("night1"), Cow::Borrowed("qux"));
 
-        let rules = compute_day_periods(&rules, "test").unwrap();
+        let actual = compute_day_periods(&rules, &names, Default::default()).unwrap();
 
-        assert_eq!(
-            rules,
-            DayPeriodRules::from_periods(
-                &[
-                    ((6, 12), DayPeriod::Morning1),
-                    ((12, 18), DayPeriod::Afternoon1),
-                    ((18, 21), DayPeriod::Evening1),
-                    ((21, 6), DayPeriod::Night1),
-                ]
-                .into_iter()
-                .collect()
-            )
-            .unwrap()
+        let expected = DayPeriodRules::from_periods(
+            [
+                ((6, 12), "foo"),
+                ((12, 18), "bar"),
+                ((18, 21), "baz"),
+                ((21, 6), "qux"),
+            ]
+            .into_iter()
+            .collect(),
         )
+        .unwrap();
+
+        assert_eq!(actual.0, expected.0);
+
+        assert_eq!(actual.1.collect::<Vec<_>>(), expected.1.collect::<Vec<_>>());
     }
 }

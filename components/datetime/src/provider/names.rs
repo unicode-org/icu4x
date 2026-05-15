@@ -4,11 +4,13 @@
 
 //! Data structs and markers for datetime names.
 
+use crate::provider::day_periods::DayPeriodRules;
 use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
+use icu_time::Hour;
 #[cfg(feature = "serde")]
 use potential_utf::PotentialUtf8;
 use zerovec::VarZeroVec;
@@ -423,8 +425,8 @@ icu_provider::data_marker!(
     /// `DatetimeNamesDayperiodV1`
     ///
     /// This uses a data marker attribute for length. The value is simply the number of
-    /// characters in the equivalent CLDR field syntax name. For example, `aaa`/`bbb`
-    /// both correspond to `3`.
+    /// characters in the equivalent CLDR field syntax name. For example, `aaa`/`bbb`/`BBB`
+    /// all correspond to `3`.
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
@@ -744,6 +746,9 @@ size_test!(DayPeriodNames, day_period_names_v1_size, 24);
 pub struct DayPeriodNames<'data> {
     /// The elements are in order: AM, PM, (noon), (midnight), where the latter two are optional.
     /// In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
+    /// If the locale has flexible day periods, the day period rules are encoded as the first 4 bytes of the 5th string,
+    /// and the remainder of the 5th string and any remaining strings contain the flexible period names. Noon and
+    /// midnight might be empty in this case.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: VarZeroVec<'data, str>,
 }
@@ -764,13 +769,21 @@ impl DayPeriodNames<'_> {
     }
     /// Gets the 'noon' name.
     pub(crate) fn noon(&self) -> Option<&str> {
-        self.names
-            .get(2)
-            .and_then(|s| if s.is_empty() { None } else { Some(s) })
+        self.names.get(2).filter(|s| !s.is_empty())
     }
     /// Gets the 'midnight' name.
     pub(crate) fn midnight(&self) -> Option<&str> {
-        self.names.get(3)
+        self.names.get(3).filter(|s| !s.is_empty())
+    }
+    /// Gets the name for a flexible day period.
+    pub(crate) fn flexible_day_period(&self, hour: Hour) -> Option<&str> {
+        let (rules, first_name) = self.names.get(4)?.split_at_checked(4)?;
+        let offset = DayPeriodRules::decode_from_str(rules)?.name_offset(hour);
+        if offset == 0 {
+            Some(first_name)
+        } else {
+            self.names.get(4 + offset)
+        }
     }
 }
 
@@ -785,3 +798,50 @@ pub use DatetimeNamesWeekdayV1 as WeekdayNamesV1;
 
 /// Re-export of day period names marker for more consistency
 pub use DatetimeNamesDayperiodV1 as DayPeriodNamesV1;
+
+#[test]
+fn test_dayperiod_names() {
+    let names_zh = DataProvider::<DayPeriodNamesV1>::load(
+        &crate::provider::Baked,
+        DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("5"),
+                &icu_locale::langid!("zh").into(),
+            ),
+            ..Default::default()
+        },
+    )
+    .unwrap()
+    .payload;
+
+    // Simplified Chinese (zh) does not map non-B skeletons to B in CLDR, so it only has standard names
+    assert_eq!(names_zh.get().am(), Some("上午"));
+    assert_eq!(names_zh.get().pm(), Some("下午"));
+    assert_eq!(
+        names_zh.get().flexible_day_period(12u8.try_into().unwrap()),
+        None
+    );
+
+    let names_zh_hant = DataProvider::<DayPeriodNamesV1>::load(
+        &crate::provider::Baked,
+        DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("5"),
+                &icu_locale::langid!("zh-Hant").into(),
+            ),
+            ..Default::default()
+        },
+    )
+    .unwrap()
+    .payload;
+
+    // Traditional Chinese (zh-Hant) maps non-B skeletons to B, so it has flexible names
+    assert_eq!(names_zh_hant.get().am(), Some("上午"));
+    assert_eq!(names_zh_hant.get().pm(), Some("下午"));
+    assert_eq!(
+        names_zh_hant
+            .get()
+            .flexible_day_period(19u8.try_into().unwrap()),
+        Some("晚上")
+    );
+}

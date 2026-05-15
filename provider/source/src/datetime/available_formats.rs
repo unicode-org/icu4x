@@ -198,15 +198,15 @@ mod test {
         "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
         // Time zones
         "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
+        // Flexible day periods
+        "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
     ];
 
     // NOTE: If you are moving this to the SUPPORTED section, make sure to remove the match
     //       on your symbol from impl From<fields::SymbolError> for SkeletonError
-    //       and then regenerate baked data (`cargo make bakeddata components/datetime`)
+    //       and then regenerate data.
     #[rustfmt::skip]
     const UNSUPPORTED_STRING_SKELETONS: &[&str] = &[
-        // TODO(#487) - Flexible day periods
-        "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
         // TODO(#501) - Quarters
         "yQ", "yQQQ", "yQQQQ",
         // TODO(#5643) - Weeks

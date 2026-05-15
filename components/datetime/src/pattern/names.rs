@@ -330,9 +330,9 @@ impl DayPeriodNameLength {
         field_length: FieldLength,
     ) -> Option<Self> {
         use fields::DayPeriod;
-        // Names for 'a' and 'b' are stored in the same data marker
+        // Names for 'a', 'b', and 'B' are stored in the same data marker
         let field_symbol = match field_symbol {
-            DayPeriod::NoonMidnight => DayPeriod::AmPm,
+            DayPeriod::NoonMidnight | DayPeriod::Flexible => DayPeriod::AmPm,
             other => other,
         };
         // UTS 35 says that "a..aaa" and "b..bbb" are all Abbreviated
@@ -3923,20 +3923,44 @@ impl RawDateTimeNamesBorrowed<'_> {
         hour: icu_time::Hour,
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
-        use fields::DayPeriod::NoonMidnight;
+        use fields::DayPeriod::{Flexible, NoonMidnight};
         let day_period_name_length = DayPeriodNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForDayPeriodError::InvalidFieldLength)?;
         let dayperiod_names = self
             .dayperiod_names
             .get_with_variables(day_period_name_length)
             .ok_or(GetNameForDayPeriodError::NotLoaded)?;
-        let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
-            (NoonMidnight, 00, true) => dayperiod_names.midnight().or_else(|| dayperiod_names.am()),
-            (NoonMidnight, 12, true) => dayperiod_names.noon().or_else(|| dayperiod_names.pm()),
-            (_, hour, _) if hour < 12 => dayperiod_names.am(),
-            _ => dayperiod_names.pm(),
-        };
-        option_value.ok_or(GetNameForDayPeriodError::NotLoaded)
+
+        if field_symbol == Flexible {
+            if let Some(name) = dayperiod_names.flexible_day_period(hour) {
+                return Ok(name);
+            } else {
+                // No flexible names for locale, fall through
+            }
+        }
+
+        if field_symbol == NoonMidnight && is_top_of_hour && hour.number() == 0 {
+            if let Some(midnight) = dayperiod_names.midnight() {
+                return Ok(midnight);
+            } else {
+                // No midnight name for locale, fall through
+            }
+        }
+
+        if field_symbol == NoonMidnight && is_top_of_hour && hour.number() == 12 {
+            if let Some(noon) = dayperiod_names.noon() {
+                return Ok(noon);
+            } else {
+                // No noon name for locale, fall through
+            }
+        }
+
+        if hour.number() < 12 {
+            dayperiod_names.am()
+        } else {
+            dayperiod_names.pm()
+        }
+        .ok_or(GetNameForDayPeriodError::NotLoaded)
     }
 }
 

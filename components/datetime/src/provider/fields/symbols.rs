@@ -301,12 +301,13 @@ impl FieldSymbol {
             Self::Weekday(Weekday::StandAlone) => 15,
             Self::DayPeriod(DayPeriod::AmPm) => 16,
             Self::DayPeriod(DayPeriod::NoonMidnight) => 17,
-            Self::Hour(Hour::H11) => 18,
-            Self::Hour(Hour::H12) => 19,
-            Self::Hour(Hour::H23) => 20,
-            Self::Minute => 22,
-            Self::Second(Second::Second) => 23,
-            Self::Second(Second::MillisInDay) => 24,
+            Self::DayPeriod(DayPeriod::Flexible) => 18,
+            Self::Hour(Hour::H11) => 20,
+            Self::Hour(Hour::H12) => 21,
+            Self::Hour(Hour::H23) => 22,
+            Self::Minute => 25,
+            Self::Second(Second::Second) => 26,
+            Self::Second(Second::MillisInDay) => 27,
             Self::DecimalSecond(DecimalSecond::Subsecond1) => 31,
             Self::DecimalSecond(DecimalSecond::Subsecond2) => 32,
             Self::DecimalSecond(DecimalSecond::Subsecond3) => 33,
@@ -838,6 +839,8 @@ field_type!(
         'a' => AmPm = 0,
         /// Field symbol for the am, pm, noon, midnight day period.
         'b' => NoonMidnight = 1,
+        /// Field symbol for the flexible day period.
+        'B' => Flexible = 2,
     };
     Text;
     DayPeriodULE

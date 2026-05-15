@@ -717,4 +717,44 @@ mod tests {
 
         writeable::assert_try_writeable_eq!(formatted, "i", Ok(()));
     }
+
+    #[test]
+    fn test_flexible_dayperiod_formatting() {
+        let formatter = crate::DateTimeFormatter::try_new(
+            icu_locale_core::locale!("zh-HK").into(),
+            crate::fieldsets::T::hm(),
+        )
+        .unwrap();
+
+        for (hour, expected) in (0..24).zip([
+            "凌晨12:00",
+            "凌晨1:00",
+            "凌晨2:00",
+            "凌晨3:00",
+            "凌晨4:00",
+            "早上5:00",
+            "早上6:00",
+            "早上7:00",
+            "上午8:00",
+            "上午9:00",
+            "上午10:00",
+            "上午11:00",
+            "中午12:00",
+            "下午1:00",
+            "下午2:00",
+            "下午3:00",
+            "下午4:00",
+            "下午5:00",
+            "下午6:00",
+            "晚上7:00",
+            "晚上8:00",
+            "晚上9:00",
+            "晚上10:00",
+            "晚上11:00",
+        ]) {
+            let time = Time::try_new(hour, 0, 0, 0).unwrap();
+            let formatted = formatter.format(&time);
+            writeable::assert_writeable_eq!(formatted, expected);
+        }
+    }
 }

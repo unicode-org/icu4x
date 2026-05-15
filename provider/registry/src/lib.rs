@@ -232,7 +232,6 @@ macro_rules! registry(
             icu::time::provider::windows::TimezoneIdentifiersWindowsV1: TimezoneIdentifiersWindowsV1,
             icu::datetime::provider::names::DatetimeNamesWeekdayV1: DatetimeNamesWeekdayV1,
             icu::datetime::provider::names::DatetimeNamesDayperiodV1: DatetimeNamesDayperiodV1,
-            icu::datetime::provider::day_periods::DayPeriodRulesV1: DayPeriodRulesV1,
             icu::datetime::provider::names::DatetimeNamesYearBuddhistV1: DatetimeNamesYearBuddhistV1,
             icu::datetime::provider::names::DatetimeNamesYearChineseV1: DatetimeNamesYearChineseV1,
             icu::datetime::provider::names::DatetimeNamesYearCopticV1: DatetimeNamesYearCopticV1,
