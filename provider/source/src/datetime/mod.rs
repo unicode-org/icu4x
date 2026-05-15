@@ -180,7 +180,7 @@ mod test {
             .unwrap()
             .datetime_formats
             .available_formats
-            .parse_skeletons();
+            .parse_skeletons(available_formats::AsciiPreferences::Default);
 
         assert_eq!(
             Some(&PluralElements::new(

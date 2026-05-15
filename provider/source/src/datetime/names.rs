@@ -86,11 +86,26 @@ impl SourceDataProvider {
     {
         self.check_req::<M>(req)?;
 
-        let data = self.get_dates_resource(req.id.locale, Some(calendar))?;
-        let data = conversion(req.id, data)?;
+        let data_resource = self.get_dates_resource(req.id.locale, Some(calendar))?;
+        let has_alt_ascii = data_resource.has_alt_ascii();
+        let data = conversion(req.id, data_resource)?;
+
+        use icu_provider::{AltVariantStatus, DataResponseMetadata};
+        let alt_variant_status = if has_alt_ascii {
+            Some(if self.use_alt_ascii_datetime_formats {
+                AltVariantStatus::Alternative
+            } else {
+                AltVariantStatus::Standard
+            })
+        } else {
+            None
+        };
+
+        let mut metadata = DataResponseMetadata::default();
+        metadata.alt_variant_status = alt_variant_status;
 
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata,
             payload: DataPayload::from_owned(data),
         })
     }

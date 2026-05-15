@@ -127,6 +127,7 @@ pub struct ExportDriver {
     fallbacker: LocaleFallbacker,
     include_full: bool,
     deduplication_strategy: DeduplicationStrategy,
+    alt_variant_strategy: AltVariantStrategy,
 }
 
 impl core::fmt::Debug for ExportDriver {
@@ -178,6 +179,7 @@ impl ExportDriver {
             include_full,
             fallbacker,
             deduplication_strategy: options.deduplication_strategy,
+            alt_variant_strategy: Default::default(),
         }
         .with_recommended_segmenter_models()
         .with_additional_collations([])
@@ -199,6 +201,14 @@ impl ExportDriver {
             log::warn!("Filter applied to domain '{domain}' multiple times; ignoring all but the last filter");
         }
         self
+    }
+
+    /// Sets the alternative variant strategy for this driver.
+    pub fn with_alt_variant_strategy(self, alt_variant_strategy: AltVariantStrategy) -> Self {
+        Self {
+            alt_variant_strategy,
+            ..self
+        }
     }
 
     /// Sets this driver to generate the given data markers.
@@ -335,6 +345,17 @@ pub enum DeduplicationStrategy {
     RetainBaseLanguages,
     /// Keeps all selected locales in the lookup table.
     None,
+}
+
+/// Choices for determining which variants are included in the exported data payloads.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, Hash)]
+#[non_exhaustive]
+pub enum AltVariantStrategy {
+    /// Includes all data payloads (standard and alternative variants).
+    #[default]
+    All,
+    /// Filters out all standard data payloads, exporting only alternative variants.
+    OnlyAlternative,
 }
 
 /// Options bag configuring locale inclusion and behavior when runtime fallback is enabled.

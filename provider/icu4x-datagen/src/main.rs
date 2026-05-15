@@ -46,6 +46,7 @@ use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1;
 use icu_provider::DataError;
 use icu_provider_export::prelude::*;
+use icu_provider_export::AltVariantStrategy;
 use icu_provider_export::ExportMetadata;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
@@ -309,6 +310,15 @@ struct Cli {
     #[arg(help = "Use data from this blob file instead of generating it from sources")]
     #[cfg(feature = "blob_input")]
     input_blob: Option<PathBuf>,
+
+    #[arg(long)]
+    #[arg(help = "Obey the alt='ascii' variant for date/time formatting patterns.")]
+    #[cfg(feature = "provider")]
+    alt_ascii_datetime_formats: bool,
+
+    #[arg(long)]
+    #[arg(help = "Filter out all standard variant data payloads, exporting only alternative variants.")]
+    only_alt_variants: bool,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -490,6 +500,9 @@ fn run(cli: Cli) -> eyre::Result<()> {
             if cli.trie_type == TrieType::Fast {
                 p = p.with_fast_tries();
             }
+            if cli.alt_ascii_datetime_formats {
+                p = p.with_alt_ascii_datetime_formats();
+            }
 
             p = match (cli.cldr_root, cli.cldr_tag.as_str()) {
                 (Some(path), _) => p.with_cldr(&path)?,
@@ -619,7 +632,9 @@ fn run(cli: Cli) -> eyre::Result<()> {
     let mut driver = ExportDriver::new(locale_families, deduplication_strategy.into(), fallbacker);
 
     driver = driver.with_markers(markers);
-
+    if cli.only_alt_variants {
+        driver = driver.with_alt_variant_strategy(AltVariantStrategy::OnlyAlternative);
+    }
     driver = driver.with_additional_collations(
         cli.include_collations
             .iter()

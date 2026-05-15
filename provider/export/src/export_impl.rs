@@ -39,6 +39,7 @@ impl ExportDriver {
             fallbacker,
             deduplication_strategy,
             attributes_filters,
+            alt_variant_strategy,
         } = self;
 
         let markers = markers.unwrap_or_else(|| provider.supported_markers());
@@ -174,12 +175,25 @@ impl ExportDriver {
                 &fallbacker,
             )?;
 
+            use crate::AltVariantStrategy;
+            use icu_provider::AltVariantStatus;
             let responses = locales_to_export
                 .into_par_iter()
                 .filter_map(|id| {
                     let instant2 = Instant::now();
-                    load_with_fallback(marker, id.as_borrowed())
-                        .map(|r| r.map(move |payload| (id, (payload, instant2.elapsed()))))
+                    match load_with_fallback(marker, id.as_borrowed()) {
+                        Some(Ok(payload)) => {
+                            if alt_variant_strategy == AltVariantStrategy::OnlyAlternative
+                                && payload.metadata.alt_variant_status != Some(AltVariantStatus::Alternative)
+                            {
+                                None
+                            } else {
+                                Some(Ok((id, (payload, instant2.elapsed()))))
+                            }
+                        }
+                        Some(Err(e)) => Some(Err(e)),
+                        None => None,
+                    }
                 })
                 .collect::<Result<HashMap<_, _>, _>>()?;
 

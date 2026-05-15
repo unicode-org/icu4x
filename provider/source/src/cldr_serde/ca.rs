@@ -178,9 +178,17 @@ impl Eras {
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub(crate) struct LengthPatterns {
     pub(crate) full: LengthPattern,
+    #[serde(rename = "full-alt-ascii")]
+    pub(crate) full_alt_ascii: Option<LengthPattern>,
     pub(crate) long: LengthPattern,
+    #[serde(rename = "long-alt-ascii")]
+    pub(crate) long_alt_ascii: Option<LengthPattern>,
     pub(crate) medium: LengthPattern,
+    #[serde(rename = "medium-alt-ascii")]
+    pub(crate) medium_alt_ascii: Option<LengthPattern>,
     pub(crate) short: LengthPattern,
+    #[serde(rename = "short-alt-ascii")]
+    pub(crate) short_alt_ascii: Option<LengthPattern>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
@@ -274,6 +282,12 @@ pub(crate) struct Dates {
     pub(crate) datetime_formats: DateTimeFormats,
     #[serde(rename = "dateTimeFormats-atTime")]
     pub(crate) datetime_formats_at_time: DateTimeFormatsVariant,
+}
+
+impl Dates {
+    pub(crate) fn has_alt_ascii(&self) -> bool {
+        self.datetime_formats.available_formats.0.keys().any(|k| k.contains("-alt-ascii"))
+    }
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

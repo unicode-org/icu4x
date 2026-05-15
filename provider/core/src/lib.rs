@@ -125,7 +125,7 @@ pub use request::{DataLocale, DataMarkerAttributes, DataRequest, DataRequestMeta
 mod response;
 #[doc(hidden)] // TODO(#4467): establish this as an internal API
 pub use response::DataPayloadOr;
-pub use response::{Cart, DataPayload, DataResponse, DataResponseMetadata};
+pub use response::{AltVariantStatus, Cart, DataPayload, DataResponse, DataResponseMetadata};
 
 #[path = "marker.rs"]
 mod marker_full;
@@ -167,6 +167,7 @@ pub mod prelude {
         DataMarker, DataMarkerAttributes, DataMarkerInfo, DataPayload, DataProvider, DataRequest,
         DataRequestMetadata, DataResponse, DataResponseMetadata, DryDataProvider,
         DynamicDataMarker, DynamicDataProvider, DynamicDryDataProvider, ResultDataError,
+        AltVariantStatus,
     };
     #[cfg(feature = "alloc")]
     #[doc(no_inline)]
