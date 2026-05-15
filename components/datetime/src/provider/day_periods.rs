@@ -172,9 +172,9 @@ impl DayPeriodRules {
     )]
     pub fn from_periods(
         entries: &alloc::collections::BTreeMap<(u8, u8), DayPeriod>,
-    ) -> Option<Self> {
+    ) -> Result<Option<Self>, &'static str> {
         if entries.is_empty() {
-            return None;
+            return Ok(None);
         }
 
         let mut presence = 0u8;
@@ -186,11 +186,9 @@ impl DayPeriodRules {
         for (&(start, end), &period) in entries {
             let mut h = start;
             loop {
-                assert!(
-                    hour_periods[h as usize].is_none(),
-                    "Overlapping day period rules detected at hour {}",
-                    h
-                );
+                if hour_periods[h as usize].is_some() {
+                    return Err("overlapping period");
+                }
                 hour_periods[h as usize] = Some(period as u8);
                 h = (h + 1) % 24;
                 if h == end || (h == 0 && end == 24) {
@@ -199,8 +197,13 @@ impl DayPeriodRules {
             }
         }
 
-        let hour_periods =
-            hour_periods.map(|p| p.expect("Gap detected in 24-hour day period coverage"));
+        for p in &hour_periods {
+            if p.is_none() {
+                return Err("gap between periods");
+            }
+        }
+
+        let hour_periods = hour_periods.map(|p| p.unwrap());
 
         let mut current_period = entries
             .values()
@@ -231,10 +234,10 @@ impl DayPeriodRules {
         let bytes = transitions_u32.to_le_bytes();
         let transitions = [bytes[0], bytes[1], bytes[2]];
 
-        Some(DayPeriodRules {
+        Ok(Some(DayPeriodRules {
             presence,
             transitions,
-        })
+        }))
     }
 }
 
@@ -244,7 +247,9 @@ mod tests {
 
     #[track_caller]
     fn test_rules(periods: &[((u8, u8), DayPeriod)]) {
-        let rules = DayPeriodRules::from_periods(&periods.iter().cloned().collect()).unwrap();
+        let rules = DayPeriodRules::from_periods(&periods.iter().cloned().collect())
+            .unwrap()
+            .unwrap();
 
         for &((start, end), period) in periods {
             for hour in start..end {
@@ -298,24 +303,33 @@ mod tests {
 
     #[test]
     fn test_empty() {
-        assert_eq!(DayPeriodRules::from_periods(&Default::default()), None);
+        assert_eq!(
+            DayPeriodRules::from_periods(&Default::default()).unwrap(),
+            None
+        );
     }
 
     #[test]
-    #[should_panic]
     fn test_overlap() {
-        test_rules(&[
-            ((0, 12), DayPeriod::Morning1),
-            ((12, 19), DayPeriod::Afternoon1),
-            // Overlaps
-            ((18, 21), DayPeriod::Evening1),
-            ((21, 24), DayPeriod::Night1),
-        ]);
+        assert!(DayPeriodRules::from_periods(
+            &[
+                ((0, 12), DayPeriod::Morning1),
+                ((12, 19), DayPeriod::Afternoon1),
+                // Overlaps
+                ((18, 21), DayPeriod::Evening1),
+                ((21, 24), DayPeriod::Night1),
+            ]
+            .into_iter()
+            .collect(),
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn test_gap() {
-        test_rules(&[((0, 12), DayPeriod::Morning1)]);
+        assert!(DayPeriodRules::from_periods(
+            &[((0, 12), DayPeriod::Morning1),].into_iter().collect(),
+        )
+        .is_err());
     }
 }

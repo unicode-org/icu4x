@@ -34,7 +34,7 @@ impl DataProvider<DayPeriodRulesV1> for SourceDataProvider {
                     .with_req(<DayPeriodRulesV1 as DataMarker>::INFO, req)
             })?;
 
-        let data = compute_day_periods(rules, &req.id.locale.to_string()).ok_or_else(|| {
+        let data = compute_day_periods(rules, &req.id.locale.to_string())?.ok_or_else(|| {
             DataErrorKind::IdentifierNotFound.with_req(<DayPeriodRulesV1 as DataMarker>::INFO, req)
         })?;
 
@@ -51,9 +51,9 @@ impl DataProvider<DayPeriodRulesV1> for SourceDataProvider {
 pub(crate) fn compute_day_periods(
     rules: &std::collections::BTreeMap<String, cldr_serde::day_periods::DayPeriodRule>,
     locale_str: &str,
-) -> Option<DayPeriodRules> {
+) -> Result<Option<DayPeriodRules>, DataError> {
     if rules.is_empty() {
-        return None;
+        return Ok(None);
     }
 
     let mut entries = std::collections::BTreeMap::new();
@@ -83,6 +83,7 @@ pub(crate) fn compute_day_periods(
     }
 
     DayPeriodRules::from_periods(&entries)
+        .map_err(|e| DataError::custom("rules").with_display_context(e))
 }
 
 impl IterableDataProviderCached<DayPeriodRulesV1> for SourceDataProvider {
@@ -98,7 +99,7 @@ impl IterableDataProviderCached<DayPeriodRulesV1> for SourceDataProvider {
             .iter()
             .filter_map(|(l, rules)| {
                 let langid: icu::locale::LanguageIdentifier = l.parse().unwrap();
-                if compute_day_periods(rules, l).is_some() {
+                if compute_day_periods(rules, l).map_or_else(|_e| true, |r| r.is_some()) {
                     Some(DataIdentifierCow::from_locale(DataLocale::from(langid)))
                 } else {
                     None
@@ -174,7 +175,7 @@ mod tests {
             },
         );
 
-        let rules = compute_day_periods(&rules, "test").unwrap();
+        let rules = compute_day_periods(&rules, "test").unwrap().unwrap();
 
         assert_eq!(
             rules,
@@ -188,6 +189,7 @@ mod tests {
                 .into_iter()
                 .collect()
             )
+            .unwrap()
             .unwrap()
         )
     }
@@ -216,6 +218,7 @@ mod tests {
                 .collect()
             )
             .unwrap()
+            .unwrap()
         );
 
         assert_eq!(
@@ -242,6 +245,7 @@ mod tests {
                 .collect(),
             )
             .unwrap()
+            .unwrap()
         );
 
         assert_eq!(
@@ -267,6 +271,7 @@ mod tests {
                 .into_iter()
                 .collect(),
             )
+            .unwrap()
             .unwrap()
         );
     }
