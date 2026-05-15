@@ -34,9 +34,7 @@ impl DataProvider<DayPeriodRulesV1> for SourceDataProvider {
                     .with_req(<DayPeriodRulesV1 as DataMarker>::INFO, req)
             })?;
 
-        let data = compute_day_periods(rules, &req.id.locale.to_string())?.ok_or_else(|| {
-            DataErrorKind::IdentifierNotFound.with_req(<DayPeriodRulesV1 as DataMarker>::INFO, req)
-        })?;
+        let data = compute_day_periods(rules, &req.id.locale.to_string())?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -51,11 +49,7 @@ impl DataProvider<DayPeriodRulesV1> for SourceDataProvider {
 pub(crate) fn compute_day_periods(
     rules: &std::collections::BTreeMap<String, cldr_serde::day_periods::DayPeriodRule>,
     locale_str: &str,
-) -> Result<Option<DayPeriodRules>, DataError> {
-    if rules.is_empty() {
-        return Ok(None);
-    }
-
+) -> Result<DayPeriodRules, DataError> {
     let mut entries = std::collections::BTreeMap::new();
 
     for (period, rule) in rules {
@@ -99,7 +93,7 @@ impl IterableDataProviderCached<DayPeriodRulesV1> for SourceDataProvider {
             .iter()
             .filter_map(|(l, rules)| {
                 let langid: icu::locale::LanguageIdentifier = l.parse().unwrap();
-                if compute_day_periods(rules, l).map_or_else(|_e| true, |r| r.is_some()) {
+                if compute_day_periods(rules, l).is_ok() {
                     Some(DataIdentifierCow::from_locale(DataLocale::from(langid)))
                 } else {
                     None
@@ -175,7 +169,7 @@ mod tests {
             },
         );
 
-        let rules = compute_day_periods(&rules, "test").unwrap().unwrap();
+        let rules = compute_day_periods(&rules, "test").unwrap();
 
         assert_eq!(
             rules,
@@ -189,7 +183,6 @@ mod tests {
                 .into_iter()
                 .collect()
             )
-            .unwrap()
             .unwrap()
         )
     }

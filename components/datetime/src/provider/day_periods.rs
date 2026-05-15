@@ -172,9 +172,9 @@ impl DayPeriodRules {
     )]
     pub fn from_periods(
         entries: &alloc::collections::BTreeMap<(u8, u8), DayPeriod>,
-    ) -> Result<Option<Self>, &'static str> {
+    ) -> Result<Self, &'static str> {
         if entries.is_empty() {
-            return Ok(None);
+            return Err("empty");
         }
 
         let mut presence = 0u8;
@@ -203,6 +203,7 @@ impl DayPeriodRules {
             }
         }
 
+        #[allow(clippy::unwrap_used)] // just checked
         let hour_periods = hour_periods.map(|p| p.unwrap());
 
         let mut current_period = entries
@@ -234,10 +235,10 @@ impl DayPeriodRules {
         let bytes = transitions_u32.to_le_bytes();
         let transitions = [bytes[0], bytes[1], bytes[2]];
 
-        Ok(Some(DayPeriodRules {
+        Ok(DayPeriodRules {
             presence,
             transitions,
-        }))
+        })
     }
 }
 
@@ -247,9 +248,7 @@ mod tests {
 
     #[track_caller]
     fn test_rules(periods: &[((u8, u8), DayPeriod)]) {
-        let rules = DayPeriodRules::from_periods(&periods.iter().cloned().collect())
-            .unwrap()
-            .unwrap();
+        let rules = DayPeriodRules::from_periods(&periods.iter().cloned().collect()).unwrap();
 
         for &((start, end), period) in periods {
             for hour in start..end {
@@ -303,10 +302,7 @@ mod tests {
 
     #[test]
     fn test_empty() {
-        assert_eq!(
-            DayPeriodRules::from_periods(&Default::default()).unwrap(),
-            None
-        );
+        assert!(DayPeriodRules::from_periods(&Default::default()).is_err());
     }
 
     #[test]
