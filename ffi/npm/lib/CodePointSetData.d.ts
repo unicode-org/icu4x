@@ -1035,6 +1035,8 @@ export class CodePointSetData {
      * Get the `Nfc_Inert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static nfcInertForChar(ch: codepoint): boolean;
 
@@ -1042,6 +1044,8 @@ export class CodePointSetData {
      * Create a set for the `Nfc_Inert` property, using compiled data.
      *
      * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfcInert.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createNfcInert(): CodePointSetData;
 
@@ -1049,6 +1053,8 @@ export class CodePointSetData {
      * Create a set for the `Nfc_Inert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfcInert.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createNfcInertWithProvider(provider: DataProvider): CodePointSetData;
 
@@ -1056,6 +1062,8 @@ export class CodePointSetData {
      * Get the `Nfd_Inert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static nfdInertForChar(ch: codepoint): boolean;
 
@@ -1063,6 +1071,8 @@ export class CodePointSetData {
      * Create a set for the `Nfd_Inert` property, using compiled data.
      *
      * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfdInert.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createNfdInert(): CodePointSetData;
 
@@ -1070,6 +1080,8 @@ export class CodePointSetData {
      * Create a set for the `Nfd_Inert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfdInert.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createNfdInertWithProvider(provider: DataProvider): CodePointSetData;
 
@@ -1077,6 +1089,8 @@ export class CodePointSetData {
      * Get the `Nfkc_Inert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static nfkcInertForChar(ch: codepoint): boolean;
 
@@ -1084,6 +1098,8 @@ export class CodePointSetData {
      * Create a set for the `Nfkc_Inert` property, using compiled data.
      *
      * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkcInert.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createNfkcInert(): CodePointSetData;
 
@@ -1091,6 +1107,8 @@ export class CodePointSetData {
      * Create a set for the `Nfkc_Inert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkcInert.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createNfkcInertWithProvider(provider: DataProvider): CodePointSetData;
 
@@ -1098,6 +1116,8 @@ export class CodePointSetData {
      * Get the `Nfkd_Inert` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static nfkdInertForChar(ch: codepoint): boolean;
 
@@ -1105,6 +1125,8 @@ export class CodePointSetData {
      * Create a set for the `Nfkd_Inert` property, using compiled data.
      *
      * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkdInert.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createNfkdInert(): CodePointSetData;
 
@@ -1112,6 +1134,8 @@ export class CodePointSetData {
      * Create a set for the `Nfkd_Inert` property, using a particular data source.
      *
      * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkdInert.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createNfkdInertWithProvider(provider: DataProvider): CodePointSetData;
 
@@ -1287,6 +1311,8 @@ export class CodePointSetData {
      * Get the `Segment_Starter` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static segmentStarterForChar(ch: codepoint): boolean;
 
@@ -1294,6 +1320,8 @@ export class CodePointSetData {
      * Create a set for the `Segment_Starter` property, using compiled data.
      *
      * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SegmentStarter.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createSegmentStarter(): CodePointSetData;
 
@@ -1301,6 +1329,8 @@ export class CodePointSetData {
      * Create a set for the `Segment_Starter` property, using a particular data source.
      *
      * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SegmentStarter.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createSegmentStarterWithProvider(provider: DataProvider): CodePointSetData;
 
@@ -1308,6 +1338,8 @@ export class CodePointSetData {
      * Get the `Case_Sensitive` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static caseSensitiveForChar(ch: codepoint): boolean;
 
@@ -1315,6 +1347,8 @@ export class CodePointSetData {
      * Create a set for the `Case_Sensitive` property, using compiled data.
      *
      * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseSensitive.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createCaseSensitive(): CodePointSetData;
 
@@ -1322,6 +1356,8 @@ export class CodePointSetData {
      * Create a set for the `Case_Sensitive` property, using a particular data source.
      *
      * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseSensitive.html) for more information.
+     *
+     * @deprecated not a UCD property
      */
     static createCaseSensitiveWithProvider(provider: DataProvider): CodePointSetData;
 

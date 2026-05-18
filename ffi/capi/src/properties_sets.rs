@@ -1501,6 +1501,8 @@ pub mod ffi {
         /// Get the `Nfc_Inert` value for a given character, using compiled data
         #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn nfc_inert_for_char(ch: DiplomatChar) -> bool {
             icu_properties::CodePointSetData::new::<NfcInert>().contains32(ch)
         }
@@ -1508,6 +1510,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfcInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfc_inert")]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_nfc_inert() -> Box<CodePointSetData> {
             Box::new(CodePointSetData(
                 icu_properties::CodePointSetData::new::<NfcInert>().static_to_owned(),
@@ -1518,6 +1522,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfcInert, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfc_inert_with_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_nfc_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
@@ -1531,6 +1537,8 @@ pub mod ffi {
         /// Get the `Nfd_Inert` value for a given character, using compiled data
         #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn nfd_inert_for_char(ch: DiplomatChar) -> bool {
             icu_properties::CodePointSetData::new::<NfdInert>().contains32(ch)
         }
@@ -1538,6 +1546,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfdInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfd_inert")]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_nfd_inert() -> Box<CodePointSetData> {
             Box::new(CodePointSetData(
                 icu_properties::CodePointSetData::new::<NfdInert>().static_to_owned(),
@@ -1548,6 +1558,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfdInert, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd_inert_with_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_nfd_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
@@ -1561,6 +1573,8 @@ pub mod ffi {
         /// Get the `Nfkc_Inert` value for a given character, using compiled data
         #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn nfkc_inert_for_char(ch: DiplomatChar) -> bool {
             icu_properties::CodePointSetData::new::<NfkcInert>().contains32(ch)
         }
@@ -1568,6 +1582,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfkcInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfkc_inert")]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_nfkc_inert() -> Box<CodePointSetData> {
             Box::new(CodePointSetData(
                 icu_properties::CodePointSetData::new::<NfkcInert>().static_to_owned(),
@@ -1578,6 +1594,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfkcInert, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkc_inert_with_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_nfkc_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
@@ -1591,6 +1609,8 @@ pub mod ffi {
         /// Get the `Nfkd_Inert` value for a given character, using compiled data
         #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn nfkd_inert_for_char(ch: DiplomatChar) -> bool {
             icu_properties::CodePointSetData::new::<NfkdInert>().contains32(ch)
         }
@@ -1598,6 +1618,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfkdInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfkd_inert")]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_nfkd_inert() -> Box<CodePointSetData> {
             Box::new(CodePointSetData(
                 icu_properties::CodePointSetData::new::<NfkdInert>().static_to_owned(),
@@ -1608,6 +1630,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfkdInert, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkd_inert_with_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_nfkd_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
@@ -1862,6 +1886,8 @@ pub mod ffi {
         /// Get the `Segment_Starter` value for a given character, using compiled data
         #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn segment_starter_for_char(ch: DiplomatChar) -> bool {
             icu_properties::CodePointSetData::new::<SegmentStarter>().contains32(ch)
         }
@@ -1869,6 +1895,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::SegmentStarter, Struct)]
         #[diplomat::attr(auto, named_constructor = "segment_starter")]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_segment_starter() -> Box<CodePointSetData> {
             Box::new(CodePointSetData(
                 icu_properties::CodePointSetData::new::<SegmentStarter>().static_to_owned(),
@@ -1879,6 +1907,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::SegmentStarter, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "segment_starter_with_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_segment_starter_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
@@ -1892,6 +1922,8 @@ pub mod ffi {
         /// Get the `Case_Sensitive` value for a given character, using compiled data
         #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn case_sensitive_for_char(ch: DiplomatChar) -> bool {
             icu_properties::CodePointSetData::new::<CaseSensitive>().contains32(ch)
         }
@@ -1899,6 +1931,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::CaseSensitive, Struct)]
         #[diplomat::attr(auto, named_constructor = "case_sensitive")]
         #[cfg(feature = "compiled_data")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_case_sensitive() -> Box<CodePointSetData> {
             Box::new(CodePointSetData(
                 icu_properties::CodePointSetData::new::<CaseSensitive>().static_to_owned(),
@@ -1909,6 +1943,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::CaseSensitive, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "case_sensitive_with_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[allow(deprecated)]
+        #[deprecated(note = "not a UCD property")]
         pub fn create_case_sensitive_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {

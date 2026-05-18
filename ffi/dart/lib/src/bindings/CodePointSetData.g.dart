@@ -1423,6 +1423,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Nfc_Inert` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  @core.Deprecated('not a UCD property')
   static bool nfcInertForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_nfc_inert_for_char_mv1(ch);
     return result;
@@ -1431,6 +1432,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Create a set for the `Nfc_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfcInert.html) for more information.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.nfcInert() {
     final result = _icu4x_CodePointSetData_create_nfc_inert_mv1();
     return CodePointSetData._fromFfi(result, []);
@@ -1441,6 +1443,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfcInert.html) for more information.
   ///
   /// Throws [DataError] on failure.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.nfcInertWithProvider(DataProvider provider) {
     final result = _icu4x_CodePointSetData_create_nfc_inert_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
@@ -1452,6 +1455,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Nfd_Inert` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  @core.Deprecated('not a UCD property')
   static bool nfdInertForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_nfd_inert_for_char_mv1(ch);
     return result;
@@ -1460,6 +1464,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Create a set for the `Nfd_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfdInert.html) for more information.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.nfdInert() {
     final result = _icu4x_CodePointSetData_create_nfd_inert_mv1();
     return CodePointSetData._fromFfi(result, []);
@@ -1470,6 +1475,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfdInert.html) for more information.
   ///
   /// Throws [DataError] on failure.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.nfdInertWithProvider(DataProvider provider) {
     final result = _icu4x_CodePointSetData_create_nfd_inert_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
@@ -1481,6 +1487,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Nfkc_Inert` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  @core.Deprecated('not a UCD property')
   static bool nfkcInertForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_nfkc_inert_for_char_mv1(ch);
     return result;
@@ -1489,6 +1496,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Create a set for the `Nfkc_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkcInert.html) for more information.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.nfkcInert() {
     final result = _icu4x_CodePointSetData_create_nfkc_inert_mv1();
     return CodePointSetData._fromFfi(result, []);
@@ -1499,6 +1507,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkcInert.html) for more information.
   ///
   /// Throws [DataError] on failure.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.nfkcInertWithProvider(DataProvider provider) {
     final result = _icu4x_CodePointSetData_create_nfkc_inert_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
@@ -1510,6 +1519,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Nfkd_Inert` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  @core.Deprecated('not a UCD property')
   static bool nfkdInertForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_nfkd_inert_for_char_mv1(ch);
     return result;
@@ -1518,6 +1528,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Create a set for the `Nfkd_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkdInert.html) for more information.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.nfkdInert() {
     final result = _icu4x_CodePointSetData_create_nfkd_inert_mv1();
     return CodePointSetData._fromFfi(result, []);
@@ -1528,6 +1539,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkdInert.html) for more information.
   ///
   /// Throws [DataError] on failure.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.nfkdInertWithProvider(DataProvider provider) {
     final result = _icu4x_CodePointSetData_create_nfkd_inert_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
@@ -1771,6 +1783,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Segment_Starter` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  @core.Deprecated('not a UCD property')
   static bool segmentStarterForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_segment_starter_for_char_mv1(ch);
     return result;
@@ -1779,6 +1792,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Create a set for the `Segment_Starter` property, using compiled data.
   ///
   /// See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SegmentStarter.html) for more information.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.segmentStarter() {
     final result = _icu4x_CodePointSetData_create_segment_starter_mv1();
     return CodePointSetData._fromFfi(result, []);
@@ -1789,6 +1803,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SegmentStarter.html) for more information.
   ///
   /// Throws [DataError] on failure.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.segmentStarterWithProvider(DataProvider provider) {
     final result = _icu4x_CodePointSetData_create_segment_starter_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
@@ -1800,6 +1815,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Get the `Case_Sensitive` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  @core.Deprecated('not a UCD property')
   static bool caseSensitiveForChar(Rune ch) {
     final result = _icu4x_CodePointSetData_case_sensitive_for_char_mv1(ch);
     return result;
@@ -1808,6 +1824,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Create a set for the `Case_Sensitive` property, using compiled data.
   ///
   /// See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseSensitive.html) for more information.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.caseSensitive() {
     final result = _icu4x_CodePointSetData_create_case_sensitive_mv1();
     return CodePointSetData._fromFfi(result, []);
@@ -1818,6 +1835,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseSensitive.html) for more information.
   ///
   /// Throws [DataError] on failure.
+  @core.Deprecated('not a UCD property')
   factory CodePointSetData.caseSensitiveWithProvider(DataProvider provider) {
     final result = _icu4x_CodePointSetData_create_case_sensitive_with_provider_mv1(provider._ffi);
     if (!result.isOk) {

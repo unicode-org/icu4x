@@ -1053,84 +1053,120 @@ public:
    * Get the `Nfc_Inert` value for a given character, using compiled data
    *
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static bool nfc_inert_for_char(char32_t ch);
 
   /**
    * Create a set for the `Nfc_Inert` property, using compiled data.
    *
    * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfcInert.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static std::unique_ptr<icu4x::CodePointSetData> create_nfc_inert();
 
   /**
    * Create a set for the `Nfc_Inert` property, using a particular data source.
    *
    * See the [Rust documentation for `NfcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfcInert.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_nfc_inert_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Get the `Nfd_Inert` value for a given character, using compiled data
    *
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static bool nfd_inert_for_char(char32_t ch);
 
   /**
    * Create a set for the `Nfd_Inert` property, using compiled data.
    *
    * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfdInert.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static std::unique_ptr<icu4x::CodePointSetData> create_nfd_inert();
 
   /**
    * Create a set for the `Nfd_Inert` property, using a particular data source.
    *
    * See the [Rust documentation for `NfdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfdInert.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_nfd_inert_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Get the `Nfkc_Inert` value for a given character, using compiled data
    *
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static bool nfkc_inert_for_char(char32_t ch);
 
   /**
    * Create a set for the `Nfkc_Inert` property, using compiled data.
    *
    * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkcInert.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static std::unique_ptr<icu4x::CodePointSetData> create_nfkc_inert();
 
   /**
    * Create a set for the `Nfkc_Inert` property, using a particular data source.
    *
    * See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkcInert.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_nfkc_inert_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Get the `Nfkd_Inert` value for a given character, using compiled data
    *
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static bool nfkd_inert_for_char(char32_t ch);
 
   /**
    * Create a set for the `Nfkd_Inert` property, using compiled data.
    *
    * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkdInert.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static std::unique_ptr<icu4x::CodePointSetData> create_nfkd_inert();
 
   /**
    * Create a set for the `Nfkd_Inert` property, using a particular data source.
    *
    * See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NfkdInert.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_nfkd_inert_with_provider(const icu4x::DataProvider& provider);
 
   /**
@@ -1305,42 +1341,60 @@ public:
    * Get the `Segment_Starter` value for a given character, using compiled data
    *
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static bool segment_starter_for_char(char32_t ch);
 
   /**
    * Create a set for the `Segment_Starter` property, using compiled data.
    *
    * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SegmentStarter.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static std::unique_ptr<icu4x::CodePointSetData> create_segment_starter();
 
   /**
    * Create a set for the `Segment_Starter` property, using a particular data source.
    *
    * See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SegmentStarter.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_segment_starter_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Get the `Case_Sensitive` value for a given character, using compiled data
    *
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static bool case_sensitive_for_char(char32_t ch);
 
   /**
    * Create a set for the `Case_Sensitive` property, using compiled data.
    *
    * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseSensitive.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static std::unique_ptr<icu4x::CodePointSetData> create_case_sensitive();
 
   /**
    * Create a set for the `Case_Sensitive` property, using a particular data source.
    *
    * See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CaseSensitive.html) for more information.
+   *
+   * \deprecated not a UCD property
    */
+  [[deprecated("not a UCD property")]]
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_case_sensitive_with_provider(const icu4x::DataProvider& provider);
 
   /**
