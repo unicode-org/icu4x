@@ -1,4 +1,4 @@
-# From state ; class name or eot ; to state
+# From state ; class name ; to state
 START ; XXmExtPict ; XXmExtPict
 START ; LF ; LF
 START ; Newline ; LF

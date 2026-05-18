@@ -5,7 +5,7 @@ PRmEastAsian OPmEastAsian ; No ;  ;
 PRmEastAsian OPmEastAsian IS ; No ;  ; 
 AK AK ; No ;  ; 
 SP IS ZWJ ; No ;  ; 
-eot ; Yes ;  ; Mandatory
+BK ; Yes ;  ; Mandatory
 CR ; Yes ;  ; Mandatory
 CM ; Yes ;  ; 
 NU ; Yes ;  ; 

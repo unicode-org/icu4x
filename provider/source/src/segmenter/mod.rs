@@ -1117,6 +1117,7 @@ impl<'a> ParsedNfa<'a> {
         states: &'a str,
         transitions: &'a str,
     ) -> Result<Self, DataError> {
+        let mut eot_class = None;
         let classes = classes
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1132,11 +1133,21 @@ impl<'a> ParsedNfa<'a> {
                             .with_display_context(&e.fmt_with_source(unicode_set))
                     })?
                     .0;
-                assert!(!set.has_strings());
+                for string in set.strings().iter() {
+                    if string == "eot" {
+                        // This class handles the special "end of text" token
+                        assert_eq!(eot_class, None);
+                        eot_class = Some(class);
+                    } else {
+                        panic!("invalid class: classes cannot contain strings, but found {string}");
+                    }
+                }
                 let set = set.code_points().clone();
                 Ok((class, set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
+        let eot_class = eot_class.unwrap();
+
         let states = states
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1173,8 +1184,8 @@ impl<'a> ParsedNfa<'a> {
 
         // Reserve two classes for EOT and NO_CLASS
         assert!(classes.len() < usize::from(Class::MAX) - 2);
-        let class_lookup = core::iter::once("eot")
-            .chain(classes.keys().filter(|&&s| s != "eot").copied())
+        let class_lookup = core::iter::once(eot_class)
+            .chain(classes.keys().filter(|&&s| s != eot_class).copied())
             .enumerate()
             .map(|(i, class)| (class, Class::try_from(i).unwrap()))
             .collect::<BTreeMap<_, _>>();

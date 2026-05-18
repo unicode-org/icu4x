@@ -1,4 +1,5 @@
 # Class name ; Class definition in UnicodeSet notation
+eot ; [{eot}]
 Control ; [\p{Grapheme_Cluster_Break=Control}]
 LF ; [\p{Grapheme_Cluster_Break=LF}]
 CR ; [\p{Grapheme_Cluster_Break=CR}]

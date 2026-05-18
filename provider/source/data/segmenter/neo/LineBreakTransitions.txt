@@ -1,9 +1,8 @@
-# From state ; class name or eot ; to state
-START ; eot ; eot
+# From state ; class name ; to state
+START ; BK|NL|eot ; BK
 START ; CM ; CM
 START ; BAmEastAsian ; BAmEastAsian
-START ; LF ; eot
-START ; BK|NL ; eot
+START ; LF ; BK
 START ; CR ; CR
 START ; SP ; SP
 START ; EXmEastAsian ; EXmEastAsian
@@ -61,10 +60,9 @@ START ; EM ; ID_EastAsian
 START ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 START ; SAmMnmMc ; CM
 START ; SA_Mn|SA_Mc ; CM
-SP QU_Pf ; eot ; eot
+SP QU_Pf ; BK|NL|eot ; BK
 SP QU_Pf ; CM ; SP QU_Pf
-SP QU_Pf ; LF ; eot
-SP QU_Pf ; BK|NL ; eot
+SP QU_Pf ; LF ; BK
 SP QU_Pf ; CR ; CR
 SP QU_Pf ; SP ; SP
 SP QU_Pf ; EXmEastAsian ; EXmEastAsian
@@ -96,11 +94,10 @@ AK AK ; CM ; AK AK
 AK AK ; VF ; EXmEastAsian
 AK AK ; ZWJ ; AK AK
 AK AK ; SA_Mn|SA_Mc ; AK AK
-SP IS ZWJ ; eot ; eot
+SP IS ZWJ ; BK|NL|eot ; BK
 SP IS ZWJ ; CM ; SP IS CM
 SP IS ZWJ ; BAmEastAsian ; BAmEastAsian
-SP IS ZWJ ; LF ; eot
-SP IS ZWJ ; BK|NL ; eot
+SP IS ZWJ ; LF ; BK
 SP IS ZWJ ; CR ; CR
 SP IS ZWJ ; SP ; SP
 SP IS ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -157,12 +154,11 @@ SP IS ZWJ ; EM ; ID_EastAsian
 SP IS ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 SP IS ZWJ ; SAmMnmMc ; CM
 SP IS ZWJ ; SA_Mn|SA_Mc ; SP IS CM
-CR ; LF ; eot
-CM ; eot ; eot
+CR ; LF ; BK
+CM ; BK|NL|eot ; BK
 CM ; CM ; CM
 CM ; BAmEastAsian ; BAmEastAsian
-CM ; LF ; eot
-CM ; BK|NL ; eot
+CM ; LF ; BK
 CM ; CR ; CR
 CM ; SP ; SP
 CM ; EXmEastAsian ; EXmEastAsian
@@ -200,11 +196,10 @@ CM ; GL_EastAsian ; GL_EastAsian
 CM ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 CM ; SAmMnmMc ; CM
 CM ; SA_Mn|SA_Mc ; CM
-NU ; eot ; eot
+NU ; BK|NL|eot ; BK
 NU ; CM ; NU
 NU ; BAmEastAsian ; BAmEastAsian
-NU ; LF ; eot
-NU ; BK|NL ; eot
+NU ; LF ; BK
 NU ; CR ; CR
 NU ; SP ; SP
 NU ; EXmEastAsian ; EXmEastAsian
@@ -242,11 +237,10 @@ NU ; GL_EastAsian ; GL_EastAsian
 NU ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU ; SAmMnmMc ; CM
 NU ; SA_Mn|SA_Mc ; NU
-HL ; eot ; eot
+HL ; BK|NL|eot ; BK
 HL ; CM ; HL
 HL ; BAmEastAsian ; BAmEastAsian
-HL ; LF ; eot
-HL ; BK|NL ; eot
+HL ; LF ; BK
 HL ; CR ; CR
 HL ; SP ; SP
 HL ; EXmEastAsian ; EXmEastAsian
@@ -284,11 +278,10 @@ HL ; GL_EastAsian ; GL_EastAsian
 HL ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 HL ; SAmMnmMc ; CM
 HL ; SA_Mn|SA_Mc ; HL
-BAmEastAsian ; eot ; eot
+BAmEastAsian ; BK|NL|eot ; BK
 BAmEastAsian ; CM ; BAmEastAsian
 BAmEastAsian ; BAmEastAsian ; BAmEastAsian
-BAmEastAsian ; LF ; eot
-BAmEastAsian ; BK|NL ; eot
+BAmEastAsian ; LF ; BK
 BAmEastAsian ; CR ; CR
 BAmEastAsian ; SP ; SP
 BAmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -312,9 +305,8 @@ BAmEastAsian ; NS_EastAsian|CJ ; CJ
 BAmEastAsian ; EX_EastAsian ; CJ
 BAmEastAsian ; IN_EastAsian ; CJ
 BAmEastAsian ; SA_Mn|SA_Mc ; BAmEastAsian
-SP ; eot ; eot
-SP ; LF ; eot
-SP ; BK|NL ; eot
+SP ; BK|NL|eot ; BK
+SP ; LF ; BK
 SP ; CR ; CR
 SP ; SP ; SP
 SP ; EXmEastAsian ; EXmEastAsian
@@ -327,11 +319,10 @@ SP ; ZW ; ZW
 SP ; WJ ; WJ
 SP ; CL_EastAsian ; CL_EastAsian
 SP ; EX_EastAsian ; CJ
-EXmEastAsian ; eot ; eot
+EXmEastAsian ; BK|NL|eot ; BK
 EXmEastAsian ; CM ; EXmEastAsian
 EXmEastAsian ; BAmEastAsian ; BAmEastAsian
-EXmEastAsian ; LF ; eot
-EXmEastAsian ; BK|NL ; eot
+EXmEastAsian ; LF ; BK
 EXmEastAsian ; CR ; CR
 EXmEastAsian ; SP ; SP
 EXmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -357,11 +348,10 @@ EXmEastAsian ; EX_EastAsian ; CJ
 EXmEastAsian ; IN_EastAsian ; CJ
 EXmEastAsian ; GL_EastAsian ; GL_EastAsian
 EXmEastAsian ; SA_Mn|SA_Mc ; EXmEastAsian
-CLmEastAsian ; eot ; eot
+CLmEastAsian ; BK|NL|eot ; BK
 CLmEastAsian ; CM ; CLmEastAsian
 CLmEastAsian ; BAmEastAsian ; BAmEastAsian
-CLmEastAsian ; LF ; eot
-CLmEastAsian ; BK|NL ; eot
+CLmEastAsian ; LF ; BK
 CLmEastAsian ; CR ; CR
 CLmEastAsian ; SP ; CP SP
 CLmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -387,11 +377,10 @@ CLmEastAsian ; EX_EastAsian ; CJ
 CLmEastAsian ; IN_EastAsian ; CJ
 CLmEastAsian ; GL_EastAsian ; GL_EastAsian
 CLmEastAsian ; SA_Mn|SA_Mc ; CLmEastAsian
-QUmPimPf ; eot ; eot
+QUmPimPf ; BK|NL|eot ; BK
 QUmPimPf ; CM ; QUmPimPf
 QUmPimPf ; BAmEastAsian ; BAmEastAsian
-QUmPimPf ; LF ; eot
-QUmPimPf ; BK|NL ; eot
+QUmPimPf ; LF ; BK
 QUmPimPf ; CR ; CR
 QUmPimPf ; SP ; SP
 QUmPimPf ; EXmEastAsian ; EXmEastAsian
@@ -449,11 +438,10 @@ QUmPimPf ; EM ; ID_EastAsian
 QUmPimPf ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 QUmPimPf ; SAmMnmMc ; CM
 QUmPimPf ; SA_Mn|SA_Mc ; QUmPimPf
-WJ ; eot ; eot
+WJ ; BK|NL|eot ; BK
 WJ ; CM ; WJ
 WJ ; BAmEastAsian ; BAmEastAsian
-WJ ; LF ; eot
-WJ ; BK|NL ; eot
+WJ ; LF ; BK
 WJ ; CR ; CR
 WJ ; SP ; SP
 WJ ; EXmEastAsian ; EXmEastAsian
@@ -511,11 +499,10 @@ WJ ; EM ; ID_EastAsian
 WJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 WJ ; SAmMnmMc ; CM
 WJ ; SA_Mn|SA_Mc ; WJ
-OPmEastAsian ; eot ; eot
+OPmEastAsian ; BK|NL|eot ; BK
 OPmEastAsian ; CM ; OPmEastAsian
 OPmEastAsian ; BAmEastAsian ; BAmEastAsian
-OPmEastAsian ; LF ; eot
-OPmEastAsian ; BK|NL ; eot
+OPmEastAsian ; LF ; BK
 OPmEastAsian ; CR ; CR
 OPmEastAsian ; SP ; OPmEastAsian SP
 OPmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -573,11 +560,10 @@ OPmEastAsian ; EM ; ID_EastAsian
 OPmEastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 OPmEastAsian ; SAmMnmMc ; CM
 OPmEastAsian ; SA_Mn|SA_Mc ; OPmEastAsian
-GLmEastAsian ; eot ; eot
+GLmEastAsian ; BK|NL|eot ; BK
 GLmEastAsian ; CM ; GLmEastAsian
 GLmEastAsian ; BAmEastAsian ; BAmEastAsian
-GLmEastAsian ; LF ; eot
-GLmEastAsian ; BK|NL ; eot
+GLmEastAsian ; LF ; BK
 GLmEastAsian ; CR ; CR
 GLmEastAsian ; SP ; SP
 GLmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -635,11 +621,10 @@ GLmEastAsian ; EM ; ID_EastAsian
 GLmEastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 GLmEastAsian ; SAmMnmMc ; CM
 GLmEastAsian ; SA_Mn|SA_Mc ; GLmEastAsian
-ZWJ ; eot ; eot
+ZWJ ; BK|NL|eot ; BK
 ZWJ ; CM ; CM
 ZWJ ; BAmEastAsian ; BAmEastAsian
-ZWJ ; LF ; eot
-ZWJ ; BK|NL ; eot
+ZWJ ; LF ; BK
 ZWJ ; CR ; CR
 ZWJ ; SP ; SP
 ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -697,11 +682,10 @@ ZWJ ; EM ; ID_EastAsian
 ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 ZWJ ; SAmMnmMc ; CM
 ZWJ ; SA_Mn|SA_Mc ; CM
-BAmEastAsian ZWJ ; eot ; eot
+BAmEastAsian ZWJ ; BK|NL|eot ; BK
 BAmEastAsian ZWJ ; CM ; BAmEastAsian
 BAmEastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-BAmEastAsian ZWJ ; LF ; eot
-BAmEastAsian ZWJ ; BK|NL ; eot
+BAmEastAsian ZWJ ; LF ; BK
 BAmEastAsian ZWJ ; CR ; CR
 BAmEastAsian ZWJ ; SP ; SP
 BAmEastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -759,11 +743,10 @@ BAmEastAsian ZWJ ; EM ; ID_EastAsian
 BAmEastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 BAmEastAsian ZWJ ; SAmMnmMc ; CM
 BAmEastAsian ZWJ ; SA_Mn|SA_Mc ; BAmEastAsian
-EXmEastAsian ZWJ ; eot ; eot
+EXmEastAsian ZWJ ; BK|NL|eot ; BK
 EXmEastAsian ZWJ ; CM ; EXmEastAsian
 EXmEastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-EXmEastAsian ZWJ ; LF ; eot
-EXmEastAsian ZWJ ; BK|NL ; eot
+EXmEastAsian ZWJ ; LF ; BK
 EXmEastAsian ZWJ ; CR ; CR
 EXmEastAsian ZWJ ; SP ; SP
 EXmEastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -821,11 +804,10 @@ EXmEastAsian ZWJ ; EM ; ID_EastAsian
 EXmEastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 EXmEastAsian ZWJ ; SAmMnmMc ; CM
 EXmEastAsian ZWJ ; SA_Mn|SA_Mc ; EXmEastAsian
-PRmEastAsian ZWJ ; eot ; eot
+PRmEastAsian ZWJ ; BK|NL|eot ; BK
 PRmEastAsian ZWJ ; CM ; PRmEastAsian
 PRmEastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-PRmEastAsian ZWJ ; LF ; eot
-PRmEastAsian ZWJ ; BK|NL ; eot
+PRmEastAsian ZWJ ; LF ; BK
 PRmEastAsian ZWJ ; CR ; CR
 PRmEastAsian ZWJ ; SP ; SP
 PRmEastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -883,11 +865,10 @@ PRmEastAsian ZWJ ; EM ; ID_EastAsian
 PRmEastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 PRmEastAsian ZWJ ; SAmMnmMc ; CM
 PRmEastAsian ZWJ ; SA_Mn|SA_Mc ; PRmEastAsian
-POmEastAsian ZWJ ; eot ; eot
+POmEastAsian ZWJ ; BK|NL|eot ; BK
 POmEastAsian ZWJ ; CM ; POmEastAsian
 POmEastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-POmEastAsian ZWJ ; LF ; eot
-POmEastAsian ZWJ ; BK|NL ; eot
+POmEastAsian ZWJ ; LF ; BK
 POmEastAsian ZWJ ; CR ; CR
 POmEastAsian ZWJ ; SP ; SP
 POmEastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -945,11 +926,10 @@ POmEastAsian ZWJ ; EM ; ID_EastAsian
 POmEastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 POmEastAsian ZWJ ; SAmMnmMc ; CM
 POmEastAsian ZWJ ; SA_Mn|SA_Mc ; POmEastAsian
-IS ZWJ ; eot ; eot
+IS ZWJ ; BK|NL|eot ; BK
 IS ZWJ ; CM ; IS
 IS ZWJ ; BAmEastAsian ; BAmEastAsian
-IS ZWJ ; LF ; eot
-IS ZWJ ; BK|NL ; eot
+IS ZWJ ; LF ; BK
 IS ZWJ ; CR ; CR
 IS ZWJ ; SP ; SP
 IS ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1007,11 +987,10 @@ IS ZWJ ; EM ; ID_EastAsian
 IS ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 IS ZWJ ; SAmMnmMc ; CM
 IS ZWJ ; SA_Mn|SA_Mc ; IS
-CP ZWJ ; eot ; eot
+CP ZWJ ; BK|NL|eot ; BK
 CP ZWJ ; CM ; CP
 CP ZWJ ; BAmEastAsian ; BAmEastAsian
-CP ZWJ ; LF ; eot
-CP ZWJ ; BK|NL ; eot
+CP ZWJ ; LF ; BK
 CP ZWJ ; CR ; CR
 CP ZWJ ; SP ; CP SP
 CP ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1069,11 +1048,10 @@ CP ZWJ ; EM ; ID_EastAsian
 CP ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 CP ZWJ ; SAmMnmMc ; CM
 CP ZWJ ; SA_Mn|SA_Mc ; CP
-HY ZWJ ; eot ; eot
+HY ZWJ ; BK|NL|eot ; BK
 HY ZWJ ; CM ; HY
 HY ZWJ ; BAmEastAsian ; BAmEastAsian
-HY ZWJ ; LF ; eot
-HY ZWJ ; BK|NL ; eot
+HY ZWJ ; LF ; BK
 HY ZWJ ; CR ; CR
 HY ZWJ ; SP ; SP
 HY ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1131,11 +1109,10 @@ HY ZWJ ; EM ; ID_EastAsian
 HY ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 HY ZWJ ; SAmMnmMc ; CM
 HY ZWJ ; SA_Mn|SA_Mc ; HY
-SY ZWJ ; eot ; eot
+SY ZWJ ; BK|NL|eot ; BK
 SY ZWJ ; CM ; SY
 SY ZWJ ; BAmEastAsian ; BAmEastAsian
-SY ZWJ ; LF ; eot
-SY ZWJ ; BK|NL ; eot
+SY ZWJ ; LF ; BK
 SY ZWJ ; CR ; CR
 SY ZWJ ; SP ; SP
 SY ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1193,11 +1170,10 @@ SY ZWJ ; EM ; ID_EastAsian
 SY ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 SY ZWJ ; SAmMnmMc ; CM
 SY ZWJ ; SA_Mn|SA_Mc ; SY
-NU ZWJ ; eot ; eot
+NU ZWJ ; BK|NL|eot ; BK
 NU ZWJ ; CM ; NU
 NU ZWJ ; BAmEastAsian ; BAmEastAsian
-NU ZWJ ; LF ; eot
-NU ZWJ ; BK|NL ; eot
+NU ZWJ ; LF ; BK
 NU ZWJ ; CR ; CR
 NU ZWJ ; SP ; SP
 NU ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1255,11 +1231,10 @@ NU ZWJ ; EM ; ID_EastAsian
 NU ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU ZWJ ; SAmMnmMc ; CM
 NU ZWJ ; SA_Mn|SA_Mc ; NU
-CLmEastAsian ZWJ ; eot ; eot
+CLmEastAsian ZWJ ; BK|NL|eot ; BK
 CLmEastAsian ZWJ ; CM ; CLmEastAsian
 CLmEastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-CLmEastAsian ZWJ ; LF ; eot
-CLmEastAsian ZWJ ; BK|NL ; eot
+CLmEastAsian ZWJ ; LF ; BK
 CLmEastAsian ZWJ ; CR ; CR
 CLmEastAsian ZWJ ; SP ; CP SP
 CLmEastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1317,11 +1292,10 @@ CLmEastAsian ZWJ ; EM ; ID_EastAsian
 CLmEastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 CLmEastAsian ZWJ ; SAmMnmMc ; CM
 CLmEastAsian ZWJ ; SA_Mn|SA_Mc ; CLmEastAsian
-BB ZWJ ; eot ; eot
+BB ZWJ ; BK|NL|eot ; BK
 BB ZWJ ; CM ; BB
 BB ZWJ ; BAmEastAsian ; BAmEastAsian
-BB ZWJ ; LF ; eot
-BB ZWJ ; BK|NL ; eot
+BB ZWJ ; LF ; BK
 BB ZWJ ; CR ; CR
 BB ZWJ ; SP ; SP
 BB ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1379,11 +1353,10 @@ BB ZWJ ; EM ; ID_EastAsian
 BB ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 BB ZWJ ; SAmMnmMc ; CM
 BB ZWJ ; SA_Mn|SA_Mc ; BB
-HH ZWJ ; eot ; eot
+HH ZWJ ; BK|NL|eot ; BK
 HH ZWJ ; CM ; HH
 HH ZWJ ; BAmEastAsian ; BAmEastAsian
-HH ZWJ ; LF ; eot
-HH ZWJ ; BK|NL ; eot
+HH ZWJ ; LF ; BK
 HH ZWJ ; CR ; CR
 HH ZWJ ; SP ; SP
 HH ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1441,11 +1414,10 @@ HH ZWJ ; EM ; ID_EastAsian
 HH ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 HH ZWJ ; SAmMnmMc ; CM
 HH ZWJ ; SA_Mn|SA_Mc ; HH
-HL ZWJ ; eot ; eot
+HL ZWJ ; BK|NL|eot ; BK
 HL ZWJ ; CM ; HL
 HL ZWJ ; BAmEastAsian ; BAmEastAsian
-HL ZWJ ; LF ; eot
-HL ZWJ ; BK|NL ; eot
+HL ZWJ ; LF ; BK
 HL ZWJ ; CR ; CR
 HL ZWJ ; SP ; SP
 HL ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1503,11 +1475,10 @@ HL ZWJ ; EM ; ID_EastAsian
 HL ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 HL ZWJ ; SAmMnmMc ; CM
 HL ZWJ ; SA_Mn|SA_Mc ; HL
-JV ZWJ ; eot ; eot
+JV ZWJ ; BK|NL|eot ; BK
 JV ZWJ ; CM ; JV
 JV ZWJ ; BAmEastAsian ; BAmEastAsian
-JV ZWJ ; LF ; eot
-JV ZWJ ; BK|NL ; eot
+JV ZWJ ; LF ; BK
 JV ZWJ ; CR ; CR
 JV ZWJ ; SP ; SP
 JV ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1565,11 +1536,10 @@ JV ZWJ ; EM ; ID_EastAsian
 JV ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JV ZWJ ; SAmMnmMc ; CM
 JV ZWJ ; SA_Mn|SA_Mc ; JV
-JT ZWJ ; eot ; eot
+JT ZWJ ; BK|NL|eot ; BK
 JT ZWJ ; CM ; JT
 JT ZWJ ; BAmEastAsian ; BAmEastAsian
-JT ZWJ ; LF ; eot
-JT ZWJ ; BK|NL ; eot
+JT ZWJ ; LF ; BK
 JT ZWJ ; CR ; CR
 JT ZWJ ; SP ; SP
 JT ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1627,11 +1597,10 @@ JT ZWJ ; EM ; ID_EastAsian
 JT ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JT ZWJ ; SAmMnmMc ; CM
 JT ZWJ ; SA_Mn|SA_Mc ; JT
-AK ZWJ ; eot ; eot
+AK ZWJ ; BK|NL|eot ; BK
 AK ZWJ ; CM ; AK
 AK ZWJ ; BAmEastAsian ; BAmEastAsian
-AK ZWJ ; LF ; eot
-AK ZWJ ; BK|NL ; eot
+AK ZWJ ; LF ; BK
 AK ZWJ ; CR ; CR
 AK ZWJ ; SP ; SP
 AK ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1689,11 +1658,10 @@ AK ZWJ ; EM ; ID_EastAsian
 AK ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 AK ZWJ ; SAmMnmMc ; CM
 AK ZWJ ; SA_Mn|SA_Mc ; AK
-IDmEastAsianmExtPictUnassigned ZWJ ; eot ; eot
+IDmEastAsianmExtPictUnassigned ZWJ ; BK|NL|eot ; BK
 IDmEastAsianmExtPictUnassigned ZWJ ; CM ; IDmEastAsianmExtPictUnassigned
 IDmEastAsianmExtPictUnassigned ZWJ ; BAmEastAsian ; BAmEastAsian
-IDmEastAsianmExtPictUnassigned ZWJ ; LF ; eot
-IDmEastAsianmExtPictUnassigned ZWJ ; BK|NL ; eot
+IDmEastAsianmExtPictUnassigned ZWJ ; LF ; BK
 IDmEastAsianmExtPictUnassigned ZWJ ; CR ; CR
 IDmEastAsianmExtPictUnassigned ZWJ ; SP ; SP
 IDmEastAsianmExtPictUnassigned ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1751,11 +1719,10 @@ IDmEastAsianmExtPictUnassigned ZWJ ; EM ; ID_EastAsian
 IDmEastAsianmExtPictUnassigned ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 IDmEastAsianmExtPictUnassigned ZWJ ; SAmMnmMc ; CM
 IDmEastAsianmExtPictUnassigned ZWJ ; SA_Mn|SA_Mc ; IDmEastAsianmExtPictUnassigned
-B2 ZWJ ; eot ; eot
+B2 ZWJ ; BK|NL|eot ; BK
 B2 ZWJ ; CM ; B2
 B2 ZWJ ; BAmEastAsian ; BAmEastAsian
-B2 ZWJ ; LF ; eot
-B2 ZWJ ; BK|NL ; eot
+B2 ZWJ ; LF ; BK
 B2 ZWJ ; CR ; CR
 B2 ZWJ ; SP ; B2 SP
 B2 ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1813,11 +1780,10 @@ B2 ZWJ ; EM ; ID_EastAsian
 B2 ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 B2 ZWJ ; SAmMnmMc ; CM
 B2 ZWJ ; SA_Mn|SA_Mc ; B2
-AL_DottedCircle ZWJ ; eot ; eot
+AL_DottedCircle ZWJ ; BK|NL|eot ; BK
 AL_DottedCircle ZWJ ; CM ; AL_DottedCircle
 AL_DottedCircle ZWJ ; BAmEastAsian ; BAmEastAsian
-AL_DottedCircle ZWJ ; LF ; eot
-AL_DottedCircle ZWJ ; BK|NL ; eot
+AL_DottedCircle ZWJ ; LF ; BK
 AL_DottedCircle ZWJ ; CR ; CR
 AL_DottedCircle ZWJ ; SP ; SP
 AL_DottedCircle ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1875,11 +1841,10 @@ AL_DottedCircle ZWJ ; EM ; ID_EastAsian
 AL_DottedCircle ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 AL_DottedCircle ZWJ ; SAmMnmMc ; CM
 AL_DottedCircle ZWJ ; SA_Mn|SA_Mc ; AL_DottedCircle
-EBmEastAsian ZWJ ; eot ; eot
+EBmEastAsian ZWJ ; BK|NL|eot ; BK
 EBmEastAsian ZWJ ; CM ; EBmEastAsian
 EBmEastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-EBmEastAsian ZWJ ; LF ; eot
-EBmEastAsian ZWJ ; BK|NL ; eot
+EBmEastAsian ZWJ ; LF ; BK
 EBmEastAsian ZWJ ; CR ; CR
 EBmEastAsian ZWJ ; SP ; SP
 EBmEastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1937,11 +1902,10 @@ EBmEastAsian ZWJ ; EM ; ID_EastAsian
 EBmEastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 EBmEastAsian ZWJ ; SAmMnmMc ; CM
 EBmEastAsian ZWJ ; SA_Mn|SA_Mc ; EBmEastAsian
-CB ZWJ ; eot ; eot
+CB ZWJ ; BK|NL|eot ; BK
 CB ZWJ ; CM ; CB
 CB ZWJ ; BAmEastAsian ; BAmEastAsian
-CB ZWJ ; LF ; eot
-CB ZWJ ; BK|NL ; eot
+CB ZWJ ; LF ; BK
 CB ZWJ ; CR ; CR
 CB ZWJ ; SP ; SP
 CB ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -1999,11 +1963,10 @@ CB ZWJ ; EM ; ID_EastAsian
 CB ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 CB ZWJ ; SAmMnmMc ; CM
 CB ZWJ ; SA_Mn|SA_Mc ; CB
-AP ZWJ ; eot ; eot
+AP ZWJ ; BK|NL|eot ; BK
 AP ZWJ ; CM ; AP
 AP ZWJ ; BAmEastAsian ; BAmEastAsian
-AP ZWJ ; LF ; eot
-AP ZWJ ; BK|NL ; eot
+AP ZWJ ; LF ; BK
 AP ZWJ ; CR ; CR
 AP ZWJ ; SP ; SP
 AP ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2061,11 +2024,10 @@ AP ZWJ ; EM ; ID_EastAsian
 AP ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 AP ZWJ ; SAmMnmMc ; CM
 AP ZWJ ; SA_Mn|SA_Mc ; AP
-XX_ExtPictUnassigned ZWJ ; eot ; eot
+XX_ExtPictUnassigned ZWJ ; BK|NL|eot ; BK
 XX_ExtPictUnassigned ZWJ ; CM ; XX_ExtPictUnassigned
 XX_ExtPictUnassigned ZWJ ; BAmEastAsian ; BAmEastAsian
-XX_ExtPictUnassigned ZWJ ; LF ; eot
-XX_ExtPictUnassigned ZWJ ; BK|NL ; eot
+XX_ExtPictUnassigned ZWJ ; LF ; BK
 XX_ExtPictUnassigned ZWJ ; CR ; CR
 XX_ExtPictUnassigned ZWJ ; SP ; SP
 XX_ExtPictUnassigned ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2123,11 +2085,10 @@ XX_ExtPictUnassigned ZWJ ; EM ; ID_EastAsian
 XX_ExtPictUnassigned ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 XX_ExtPictUnassigned ZWJ ; SAmMnmMc ; CM
 XX_ExtPictUnassigned ZWJ ; SA_Mn|SA_Mc ; XX_ExtPictUnassigned
-CM HY ZWJ ; eot ; eot
+CM HY ZWJ ; BK|NL|eot ; BK
 CM HY ZWJ ; CM ; CM HY
 CM HY ZWJ ; BAmEastAsian ; BAmEastAsian
-CM HY ZWJ ; LF ; eot
-CM HY ZWJ ; BK|NL ; eot
+CM HY ZWJ ; LF ; BK
 CM HY ZWJ ; CR ; CR
 CM HY ZWJ ; SP ; SP
 CM HY ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2185,11 +2146,10 @@ CM HY ZWJ ; EM ; ID_EastAsian
 CM HY ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 CM HY ZWJ ; SAmMnmMc ; CM
 CM HY ZWJ ; SA_Mn|SA_Mc ; CM HY
-NU CP ZWJ ; eot ; eot
+NU CP ZWJ ; BK|NL|eot ; BK
 NU CP ZWJ ; CM ; NU CP
 NU CP ZWJ ; BAmEastAsian ; BAmEastAsian
-NU CP ZWJ ; LF ; eot
-NU CP ZWJ ; BK|NL ; eot
+NU CP ZWJ ; LF ; BK
 NU CP ZWJ ; CR ; CR
 NU CP ZWJ ; SP ; CP SP
 NU CP ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2247,11 +2207,10 @@ NU CP ZWJ ; EM ; ID_EastAsian
 NU CP ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU CP ZWJ ; SAmMnmMc ; CM
 NU CP ZWJ ; SA_Mn|SA_Mc ; NU CP
-NU IS ZWJ ; eot ; eot
+NU IS ZWJ ; BK|NL|eot ; BK
 NU IS ZWJ ; CM ; NU IS
 NU IS ZWJ ; BAmEastAsian ; BAmEastAsian
-NU IS ZWJ ; LF ; eot
-NU IS ZWJ ; BK|NL ; eot
+NU IS ZWJ ; LF ; BK
 NU IS ZWJ ; CR ; CR
 NU IS ZWJ ; SP ; SP
 NU IS ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2309,11 +2268,10 @@ NU IS ZWJ ; EM ; ID_EastAsian
 NU IS ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU IS ZWJ ; SAmMnmMc ; CM
 NU IS ZWJ ; SA_Mn|SA_Mc ; NU IS
-NU SY ZWJ ; eot ; eot
+NU SY ZWJ ; BK|NL|eot ; BK
 NU SY ZWJ ; CM ; NU SY
 NU SY ZWJ ; BAmEastAsian ; BAmEastAsian
-NU SY ZWJ ; LF ; eot
-NU SY ZWJ ; BK|NL ; eot
+NU SY ZWJ ; LF ; BK
 NU SY ZWJ ; CR ; CR
 NU SY ZWJ ; SP ; SP
 NU SY ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2371,11 +2329,10 @@ NU SY ZWJ ; EM ; ID_EastAsian
 NU SY ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU SY ZWJ ; SAmMnmMc ; CM
 NU SY ZWJ ; SA_Mn|SA_Mc ; NU SY
-NU CLmEastAsian ZWJ ; eot ; eot
+NU CLmEastAsian ZWJ ; BK|NL|eot ; BK
 NU CLmEastAsian ZWJ ; CM ; NU CLmEastAsian
 NU CLmEastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-NU CLmEastAsian ZWJ ; LF ; eot
-NU CLmEastAsian ZWJ ; BK|NL ; eot
+NU CLmEastAsian ZWJ ; LF ; BK
 NU CLmEastAsian ZWJ ; CR ; CR
 NU CLmEastAsian ZWJ ; SP ; CP SP
 NU CLmEastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2433,11 +2390,10 @@ NU CLmEastAsian ZWJ ; EM ; ID_EastAsian
 NU CLmEastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU CLmEastAsian ZWJ ; SAmMnmMc ; CM
 NU CLmEastAsian ZWJ ; SA_Mn|SA_Mc ; NU CLmEastAsian
-HL HY ZWJ ; eot ; eot
+HL HY ZWJ ; BK|NL|eot ; BK
 HL HY ZWJ ; CM ; HL HY
 HL HY ZWJ ; BAmEastAsian ; BAmEastAsian
-HL HY ZWJ ; LF ; eot
-HL HY ZWJ ; BK|NL ; eot
+HL HY ZWJ ; LF ; BK
 HL HY ZWJ ; CR ; CR
 HL HY ZWJ ; SP ; SP
 HL HY ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2495,11 +2451,10 @@ HL HY ZWJ ; EM ; ID_EastAsian
 HL HY ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 HL HY ZWJ ; SAmMnmMc ; CM
 HL HY ZWJ ; SA_Mn|SA_Mc ; HL HY
-AK VI ZWJ ; eot ; eot
+AK VI ZWJ ; BK|NL|eot ; BK
 AK VI ZWJ ; CM ; AK VI
 AK VI ZWJ ; BAmEastAsian ; BAmEastAsian
-AK VI ZWJ ; LF ; eot
-AK VI ZWJ ; BK|NL ; eot
+AK VI ZWJ ; LF ; BK
 AK VI ZWJ ; CR ; CR
 AK VI ZWJ ; SP ; SP
 AK VI ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -2557,11 +2512,10 @@ AK VI ZWJ ; EM ; ID_EastAsian
 AK VI ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 AK VI ZWJ ; SAmMnmMc ; CM
 AK VI ZWJ ; SA_Mn|SA_Mc ; AK VI
-PRmEastAsian ; eot ; eot
+PRmEastAsian ; BK|NL|eot ; BK
 PRmEastAsian ; CM ; PRmEastAsian
 PRmEastAsian ; BAmEastAsian ; BAmEastAsian
-PRmEastAsian ; LF ; eot
-PRmEastAsian ; BK|NL ; eot
+PRmEastAsian ; LF ; BK
 PRmEastAsian ; CR ; CR
 PRmEastAsian ; SP ; SP
 PRmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -2606,11 +2560,10 @@ PRmEastAsian ; EM ; ID_EastAsian
 PRmEastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 PRmEastAsian ; SAmMnmMc ; CM
 PRmEastAsian ; SA_Mn|SA_Mc ; PRmEastAsian
-POmEastAsian ; eot ; eot
+POmEastAsian ; BK|NL|eot ; BK
 POmEastAsian ; CM ; POmEastAsian
 POmEastAsian ; BAmEastAsian ; BAmEastAsian
-POmEastAsian ; LF ; eot
-POmEastAsian ; BK|NL ; eot
+POmEastAsian ; LF ; BK
 POmEastAsian ; CR ; CR
 POmEastAsian ; SP ; SP
 POmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -2645,11 +2598,10 @@ POmEastAsian ; GL_EastAsian ; GL_EastAsian
 POmEastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 POmEastAsian ; SAmMnmMc ; CM
 POmEastAsian ; SA_Mn|SA_Mc ; POmEastAsian
-CP ; eot ; eot
+CP ; BK|NL|eot ; BK
 CP ; CM ; CP
 CP ; BAmEastAsian ; BAmEastAsian
-CP ; LF ; eot
-CP ; BK|NL ; eot
+CP ; LF ; BK
 CP ; CR ; CR
 CP ; SP ; CP SP
 CP ; EXmEastAsian ; EXmEastAsian
@@ -2682,11 +2634,10 @@ CP ; GL_EastAsian ; GL_EastAsian
 CP ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 CP ; SAmMnmMc ; CM
 CP ; SA_Mn|SA_Mc ; CP
-IS ; eot ; eot
+IS ; BK|NL|eot ; BK
 IS ; CM ; IS
 IS ; BAmEastAsian ; BAmEastAsian
-IS ; LF ; eot
-IS ; BK|NL ; eot
+IS ; LF ; BK
 IS ; CR ; CR
 IS ; SP ; SP
 IS ; EXmEastAsian ; EXmEastAsian
@@ -2719,11 +2670,10 @@ IS ; GL_EastAsian ; GL_EastAsian
 IS ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 IS ; SAmMnmMc ; CM
 IS ; SA_Mn|SA_Mc ; IS
-HY ; eot ; eot
+HY ; BK|NL|eot ; BK
 HY ; CM ; HY
 HY ; BAmEastAsian ; BAmEastAsian
-HY ; LF ; eot
-HY ; BK|NL ; eot
+HY ; LF ; BK
 HY ; CR ; CR
 HY ; SP ; SP
 HY ; EXmEastAsian ; EXmEastAsian
@@ -2754,11 +2704,10 @@ HY ; IN_EastAsian ; CJ
 HY ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 HY ; SAmMnmMc ; CM
 HY ; SA_Mn|SA_Mc ; HY
-SY ; eot ; eot
+SY ; BK|NL|eot ; BK
 SY ; CM ; SY
 SY ; BAmEastAsian ; BAmEastAsian
-SY ; LF ; eot
-SY ; BK|NL ; eot
+SY ; LF ; BK
 SY ; CR ; CR
 SY ; SP ; SP
 SY ; EXmEastAsian ; EXmEastAsian
@@ -2785,11 +2734,10 @@ SY ; EX_EastAsian ; CJ
 SY ; IN_EastAsian ; CJ
 SY ; GL_EastAsian ; GL_EastAsian
 SY ; SA_Mn|SA_Mc ; SY
-BB ; eot ; eot
+BB ; BK|NL|eot ; BK
 BB ; CM ; BB
 BB ; BAmEastAsian ; BAmEastAsian
-BB ; LF ; eot
-BB ; BK|NL ; eot
+BB ; LF ; BK
 BB ; CR ; CR
 BB ; SP ; SP
 BB ; EXmEastAsian ; EXmEastAsian
@@ -2846,11 +2794,10 @@ BB ; EM ; ID_EastAsian
 BB ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 BB ; SAmMnmMc ; CM
 BB ; SA_Mn|SA_Mc ; BB
-HH ; eot ; eot
+HH ; BK|NL|eot ; BK
 HH ; CM ; HH
 HH ; BAmEastAsian ; BAmEastAsian
-HH ; LF ; eot
-HH ; BK|NL ; eot
+HH ; LF ; BK
 HH ; CR ; CR
 HH ; SP ; SP
 HH ; EXmEastAsian ; EXmEastAsian
@@ -2880,11 +2827,10 @@ HH ; IN_EastAsian ; CJ
 HH ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 HH ; SAmMnmMc ; CM
 HH ; SA_Mn|SA_Mc ; HH
-JV ; eot ; eot
+JV ; BK|NL|eot ; BK
 JV ; CM ; JV
 JV ; BAmEastAsian ; BAmEastAsian
-JV ; LF ; eot
-JV ; BK|NL ; eot
+JV ; LF ; BK
 JV ; CR ; CR
 JV ; SP ; SP
 JV ; EXmEastAsian ; EXmEastAsian
@@ -2914,11 +2860,10 @@ JV ; IN_EastAsian ; CJ
 JV ; PO_EastAsian ; PO_EastAsian
 JV ; GL_EastAsian ; GL_EastAsian
 JV ; SA_Mn|SA_Mc ; JV
-JT ; eot ; eot
+JT ; BK|NL|eot ; BK
 JT ; CM ; JT
 JT ; BAmEastAsian ; BAmEastAsian
-JT ; LF ; eot
-JT ; BK|NL ; eot
+JT ; LF ; BK
 JT ; CR ; CR
 JT ; SP ; SP
 JT ; EXmEastAsian ; EXmEastAsian
@@ -2947,11 +2892,10 @@ JT ; IN_EastAsian ; CJ
 JT ; PO_EastAsian ; PO_EastAsian
 JT ; GL_EastAsian ; GL_EastAsian
 JT ; SA_Mn|SA_Mc ; JT
-AK ; eot ; eot
+AK ; BK|NL|eot ; BK
 AK ; CM ; AK
 AK ; BAmEastAsian ; BAmEastAsian
-AK ; LF ; eot
-AK ; BK|NL ; eot
+AK ; LF ; BK
 AK ; CR ; CR
 AK ; SP ; SP
 AK ; EXmEastAsian ; EXmEastAsian
@@ -2982,11 +2926,10 @@ AK ; EX_EastAsian ; CJ
 AK ; IN_EastAsian ; CJ
 AK ; GL_EastAsian ; GL_EastAsian
 AK ; SA_Mn|SA_Mc ; AK
-IDmEastAsianmExtPictUnassigned ; eot ; eot
+IDmEastAsianmExtPictUnassigned ; BK|NL|eot ; BK
 IDmEastAsianmExtPictUnassigned ; CM ; IDmEastAsianmExtPictUnassigned
 IDmEastAsianmExtPictUnassigned ; BAmEastAsian ; BAmEastAsian
-IDmEastAsianmExtPictUnassigned ; LF ; eot
-IDmEastAsianmExtPictUnassigned ; BK|NL ; eot
+IDmEastAsianmExtPictUnassigned ; LF ; BK
 IDmEastAsianmExtPictUnassigned ; CR ; CR
 IDmEastAsianmExtPictUnassigned ; SP ; SP
 IDmEastAsianmExtPictUnassigned ; EXmEastAsian ; EXmEastAsian
@@ -3014,11 +2957,10 @@ IDmEastAsianmExtPictUnassigned ; IN_EastAsian ; CJ
 IDmEastAsianmExtPictUnassigned ; PO_EastAsian ; PO_EastAsian
 IDmEastAsianmExtPictUnassigned ; GL_EastAsian ; GL_EastAsian
 IDmEastAsianmExtPictUnassigned ; SA_Mn|SA_Mc ; IDmEastAsianmExtPictUnassigned
-B2 ; eot ; eot
+B2 ; BK|NL|eot ; BK
 B2 ; CM ; B2
 B2 ; BAmEastAsian ; BAmEastAsian
-B2 ; LF ; eot
-B2 ; BK|NL ; eot
+B2 ; LF ; BK
 B2 ; CR ; CR
 B2 ; SP ; B2 SP
 B2 ; EXmEastAsian ; EXmEastAsian
@@ -3045,11 +2987,10 @@ B2 ; EX_EastAsian ; CJ
 B2 ; IN_EastAsian ; CJ
 B2 ; GL_EastAsian ; GL_EastAsian
 B2 ; SA_Mn|SA_Mc ; B2
-OP_EastAsian ; eot ; eot
+OP_EastAsian ; BK|NL|eot ; BK
 OP_EastAsian ; CM ; OP_EastAsian
 OP_EastAsian ; BAmEastAsian ; BAmEastAsian
-OP_EastAsian ; LF ; eot
-OP_EastAsian ; BK|NL ; eot
+OP_EastAsian ; LF ; BK
 OP_EastAsian ; CR ; CR
 OP_EastAsian ; SP ; OPmEastAsian SP
 OP_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -3107,11 +3048,10 @@ OP_EastAsian ; EM ; ID_EastAsian
 OP_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 OP_EastAsian ; SAmMnmMc ; CM
 OP_EastAsian ; SA_Mn|SA_Mc ; OP_EastAsian
-GL_EastAsian ; eot ; eot
+GL_EastAsian ; BK|NL|eot ; BK
 GL_EastAsian ; CM ; GL_EastAsian
 GL_EastAsian ; BAmEastAsian ; BAmEastAsian
-GL_EastAsian ; LF ; eot
-GL_EastAsian ; BK|NL ; eot
+GL_EastAsian ; LF ; BK
 GL_EastAsian ; CR ; CR
 GL_EastAsian ; SP ; SP
 GL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -3169,11 +3109,10 @@ GL_EastAsian ; EM ; ID_EastAsian
 GL_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 GL_EastAsian ; SAmMnmMc ; CM
 GL_EastAsian ; SA_Mn|SA_Mc ; GL_EastAsian
-AL_DottedCircle ; eot ; eot
+AL_DottedCircle ; BK|NL|eot ; BK
 AL_DottedCircle ; CM ; AL_DottedCircle
 AL_DottedCircle ; BAmEastAsian ; BAmEastAsian
-AL_DottedCircle ; LF ; eot
-AL_DottedCircle ; BK|NL ; eot
+AL_DottedCircle ; LF ; BK
 AL_DottedCircle ; CR ; CR
 AL_DottedCircle ; SP ; SP
 AL_DottedCircle ; EXmEastAsian ; EXmEastAsian
@@ -3215,11 +3154,10 @@ AL_DottedCircle ; GL_EastAsian ; GL_EastAsian
 AL_DottedCircle ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 AL_DottedCircle ; SAmMnmMc ; CM
 AL_DottedCircle ; SA_Mn|SA_Mc ; AL_DottedCircle
-EBmEastAsian ; eot ; eot
+EBmEastAsian ; BK|NL|eot ; BK
 EBmEastAsian ; CM ; EBmEastAsian
 EBmEastAsian ; BAmEastAsian ; BAmEastAsian
-EBmEastAsian ; LF ; eot
-EBmEastAsian ; BK|NL ; eot
+EBmEastAsian ; LF ; BK
 EBmEastAsian ; CR ; CR
 EBmEastAsian ; SP ; SP
 EBmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -3248,10 +3186,9 @@ EBmEastAsian ; PO_EastAsian ; PO_EastAsian
 EBmEastAsian ; GL_EastAsian ; GL_EastAsian
 EBmEastAsian ; EM ; ID_EastAsian
 EBmEastAsian ; SA_Mn|SA_Mc ; EBmEastAsian
-CB ; eot ; eot
+CB ; BK|NL|eot ; BK
 CB ; CM ; CB
-CB ; LF ; eot
-CB ; BK|NL ; eot
+CB ; LF ; BK
 CB ; CR ; CR
 CB ; SP ; SP
 CB ; EXmEastAsian ; EXmEastAsian
@@ -3270,11 +3207,10 @@ CB ; CL_EastAsian ; CL_EastAsian
 CB ; EX_EastAsian ; CJ
 CB ; GL_EastAsian ; GL_EastAsian
 CB ; SA_Mn|SA_Mc ; CB
-AP ; eot ; eot
+AP ; BK|NL|eot ; BK
 AP ; CM ; AP
 AP ; BAmEastAsian ; BAmEastAsian
-AP ; LF ; eot
-AP ; BK|NL ; eot
+AP ; LF ; BK
 AP ; CR ; CR
 AP ; SP ; SP
 AP ; EXmEastAsian ; EXmEastAsian
@@ -3303,11 +3239,10 @@ AP ; EX_EastAsian ; CJ
 AP ; IN_EastAsian ; CJ
 AP ; GL_EastAsian ; GL_EastAsian
 AP ; SA_Mn|SA_Mc ; AP
-RI ; eot ; eot
+RI ; BK|NL|eot ; BK
 RI ; CM ; RI
 RI ; BAmEastAsian ; BAmEastAsian
-RI ; LF ; eot
-RI ; BK|NL ; eot
+RI ; LF ; BK
 RI ; CR ; CR
 RI ; SP ; SP
 RI ; EXmEastAsian ; EXmEastAsian
@@ -3334,11 +3269,10 @@ RI ; IN_EastAsian ; CJ
 RI ; GL_EastAsian ; GL_EastAsian
 RI ; RI ; RI RI
 RI ; SA_Mn|SA_Mc ; RI
-XX_ExtPictUnassigned ; eot ; eot
+XX_ExtPictUnassigned ; BK|NL|eot ; BK
 XX_ExtPictUnassigned ; CM ; XX_ExtPictUnassigned
 XX_ExtPictUnassigned ; BAmEastAsian ; BAmEastAsian
-XX_ExtPictUnassigned ; LF ; eot
-XX_ExtPictUnassigned ; BK|NL ; eot
+XX_ExtPictUnassigned ; LF ; BK
 XX_ExtPictUnassigned ; CR ; CR
 XX_ExtPictUnassigned ; SP ; SP
 XX_ExtPictUnassigned ; EXmEastAsian ; EXmEastAsian
@@ -3377,11 +3311,10 @@ XX_ExtPictUnassigned ; EM ; ID_EastAsian
 XX_ExtPictUnassigned ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 XX_ExtPictUnassigned ; SAmMnmMc ; CM
 XX_ExtPictUnassigned ; SA_Mn|SA_Mc ; XX_ExtPictUnassigned
-CM HY ; eot ; eot
+CM HY ; BK|NL|eot ; BK
 CM HY ; CM ; CM HY
 CM HY ; BAmEastAsian ; BAmEastAsian
-CM HY ; LF ; eot
-CM HY ; BK|NL ; eot
+CM HY ; LF ; BK
 CM HY ; CR ; CR
 CM HY ; SP ; SP
 CM HY ; EXmEastAsian ; EXmEastAsian
@@ -3406,11 +3339,10 @@ CM HY ; NS_EastAsian|CJ ; CJ
 CM HY ; EX_EastAsian ; CJ
 CM HY ; IN_EastAsian ; CJ
 CM HY ; SA_Mn|SA_Mc ; CM HY
-OPmEastAsian SP ; eot ; eot
+OPmEastAsian SP ; BK|NL|eot ; BK
 OPmEastAsian SP ; CM ; CM
 OPmEastAsian SP ; BAmEastAsian ; BAmEastAsian
-OPmEastAsian SP ; LF ; eot
-OPmEastAsian SP ; BK|NL ; eot
+OPmEastAsian SP ; LF ; BK
 OPmEastAsian SP ; CR ; CR
 OPmEastAsian SP ; SP ; OPmEastAsian SP
 OPmEastAsian SP ; EXmEastAsian ; EXmEastAsian
@@ -3468,9 +3400,8 @@ OPmEastAsian SP ; EM ; ID_EastAsian
 OPmEastAsian SP ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 OPmEastAsian SP ; SAmMnmMc ; CM
 OPmEastAsian SP ; SA_Mn|SA_Mc ; CM
-CP SP ; eot ; eot
-CP SP ; LF ; eot
-CP SP ; BK|NL ; eot
+CP SP ; BK|NL|eot ; BK
+CP SP ; LF ; BK
 CP SP ; CR ; CR
 CP SP ; SP ; CP SP
 CP SP ; EXmEastAsian ; EXmEastAsian
@@ -3485,11 +3416,10 @@ CP SP ; WJ ; WJ
 CP SP ; CL_EastAsian ; CL_EastAsian
 CP SP ; NS_EastAsian|CJ ; CJ
 CP SP ; EX_EastAsian ; CJ
-NU CP ; eot ; eot
+NU CP ; BK|NL|eot ; BK
 NU CP ; CM ; NU CP
 NU CP ; BAmEastAsian ; BAmEastAsian
-NU CP ; LF ; eot
-NU CP ; BK|NL ; eot
+NU CP ; LF ; BK
 NU CP ; CR ; CR
 NU CP ; SP ; CP SP
 NU CP ; EXmEastAsian ; EXmEastAsian
@@ -3526,11 +3456,10 @@ NU CP ; GL_EastAsian ; GL_EastAsian
 NU CP ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU CP ; SAmMnmMc ; CM
 NU CP ; SA_Mn|SA_Mc ; NU CP
-NU IS ; eot ; eot
+NU IS ; BK|NL|eot ; BK
 NU IS ; CM ; NU IS
 NU IS ; BAmEastAsian ; BAmEastAsian
-NU IS ; LF ; eot
-NU IS ; BK|NL ; eot
+NU IS ; LF ; BK
 NU IS ; CR ; CR
 NU IS ; SP ; SP
 NU IS ; EXmEastAsian ; EXmEastAsian
@@ -3567,11 +3496,10 @@ NU IS ; GL_EastAsian ; GL_EastAsian
 NU IS ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU IS ; SAmMnmMc ; CM
 NU IS ; SA_Mn|SA_Mc ; NU IS
-NU SY ; eot ; eot
+NU SY ; BK|NL|eot ; BK
 NU SY ; CM ; NU SY
 NU SY ; BAmEastAsian ; BAmEastAsian
-NU SY ; LF ; eot
-NU SY ; BK|NL ; eot
+NU SY ; LF ; BK
 NU SY ; CR ; CR
 NU SY ; SP ; SP
 NU SY ; EXmEastAsian ; EXmEastAsian
@@ -3603,11 +3531,10 @@ NU SY ; IN_EastAsian ; CJ
 NU SY ; PO_EastAsian ; PO_EastAsian
 NU SY ; GL_EastAsian ; GL_EastAsian
 NU SY ; SA_Mn|SA_Mc ; NU SY
-NU CLmEastAsian ; eot ; eot
+NU CLmEastAsian ; BK|NL|eot ; BK
 NU CLmEastAsian ; CM ; NU CLmEastAsian
 NU CLmEastAsian ; BAmEastAsian ; BAmEastAsian
-NU CLmEastAsian ; LF ; eot
-NU CLmEastAsian ; BK|NL ; eot
+NU CLmEastAsian ; LF ; BK
 NU CLmEastAsian ; CR ; CR
 NU CLmEastAsian ; SP ; CP SP
 NU CLmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -3637,11 +3564,10 @@ NU CLmEastAsian ; IN_EastAsian ; CJ
 NU CLmEastAsian ; PO_EastAsian ; PO_EastAsian
 NU CLmEastAsian ; GL_EastAsian ; GL_EastAsian
 NU CLmEastAsian ; SA_Mn|SA_Mc ; NU CLmEastAsian
-HL HY ; eot ; eot
+HL HY ; BK|NL|eot ; BK
 HL HY ; CM ; HL HY
 HL HY ; BAmEastAsian ; BAmEastAsian
-HL HY ; LF ; eot
-HL HY ; BK|NL ; eot
+HL HY ; LF ; BK
 HL HY ; CR ; CR
 HL HY ; SP ; SP
 HL HY ; EXmEastAsian ; EXmEastAsian
@@ -3697,11 +3623,10 @@ HL HY ; EM ; ID_EastAsian
 HL HY ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 HL HY ; SAmMnmMc ; CM
 HL HY ; SA_Mn|SA_Mc ; HL HY
-JL QU_Pi ; eot ; eot
+JL QU_Pi ; BK|NL|eot ; BK
 JL QU_Pi ; CM ; JL QU_Pi
 JL QU_Pi ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi ; LF ; eot
-JL QU_Pi ; BK|NL ; eot
+JL QU_Pi ; LF ; BK
 JL QU_Pi ; CR ; CR
 JL QU_Pi ; SP ; SP
 JL QU_Pi ; EXmEastAsian ; EXmEastAsian
@@ -3759,11 +3684,10 @@ JL QU_Pi ; EM ; JL QU_Pi ID_EastAsian
 JL QU_Pi ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pi ; SAmMnmMc ; CM
 JL QU_Pi ; SA_Mn|SA_Mc ; JL QU_Pi
-JL ZWJ ; eot ; eot
+JL ZWJ ; BK|NL|eot ; BK
 JL ZWJ ; CM ; JL CM
 JL ZWJ ; BAmEastAsian ; BAmEastAsian
-JL ZWJ ; LF ; eot
-JL ZWJ ; BK|NL ; eot
+JL ZWJ ; LF ; BK
 JL ZWJ ; CR ; CR
 JL ZWJ ; SP ; SP
 JL ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -3821,11 +3745,10 @@ JL ZWJ ; EM ; ID_EastAsian
 JL ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL ZWJ ; SAmMnmMc ; CM
 JL ZWJ ; SA_Mn|SA_Mc ; JL CM
-PR_EastAsian ZWJ ; eot ; eot
+PR_EastAsian ZWJ ; BK|NL|eot ; BK
 PR_EastAsian ZWJ ; CM ; PR_EastAsian CM
 PR_EastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-PR_EastAsian ZWJ ; LF ; eot
-PR_EastAsian ZWJ ; BK|NL ; eot
+PR_EastAsian ZWJ ; LF ; BK
 PR_EastAsian ZWJ ; CR ; CR
 PR_EastAsian ZWJ ; SP ; SP
 PR_EastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -3883,11 +3806,10 @@ PR_EastAsian ZWJ ; EM ; ID_EastAsian
 PR_EastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 PR_EastAsian ZWJ ; SAmMnmMc ; CM
 PR_EastAsian ZWJ ; SA_Mn|SA_Mc ; PR_EastAsian CM
-ID_EastAsian ZWJ ; eot ; eot
+ID_EastAsian ZWJ ; BK|NL|eot ; BK
 ID_EastAsian ZWJ ; CM ; ID_EastAsian CM
 ID_EastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-ID_EastAsian ZWJ ; LF ; eot
-ID_EastAsian ZWJ ; BK|NL ; eot
+ID_EastAsian ZWJ ; LF ; BK
 ID_EastAsian ZWJ ; CR ; CR
 ID_EastAsian ZWJ ; SP ; SP
 ID_EastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -3945,11 +3867,10 @@ ID_EastAsian ZWJ ; EM ; ID_EastAsian
 ID_EastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 ID_EastAsian ZWJ ; SAmMnmMc ; CM
 ID_EastAsian ZWJ ; SA_Mn|SA_Mc ; ID_EastAsian CM
-CL_EastAsian ZWJ ; eot ; eot
+CL_EastAsian ZWJ ; BK|NL|eot ; BK
 CL_EastAsian ZWJ ; CM ; CL_EastAsian CM
 CL_EastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-CL_EastAsian ZWJ ; LF ; eot
-CL_EastAsian ZWJ ; BK|NL ; eot
+CL_EastAsian ZWJ ; LF ; BK
 CL_EastAsian ZWJ ; CR ; CR
 CL_EastAsian ZWJ ; SP ; CP SP
 CL_EastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4007,11 +3928,10 @@ CL_EastAsian ZWJ ; EM ; ID_EastAsian
 CL_EastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 CL_EastAsian ZWJ ; SAmMnmMc ; CM
 CL_EastAsian ZWJ ; SA_Mn|SA_Mc ; CL_EastAsian CM
-AL_EastAsian ZWJ ; eot ; eot
+AL_EastAsian ZWJ ; BK|NL|eot ; BK
 AL_EastAsian ZWJ ; CM ; AL_EastAsian CM
 AL_EastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-AL_EastAsian ZWJ ; LF ; eot
-AL_EastAsian ZWJ ; BK|NL ; eot
+AL_EastAsian ZWJ ; LF ; BK
 AL_EastAsian ZWJ ; CR ; CR
 AL_EastAsian ZWJ ; SP ; SP
 AL_EastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4069,11 +3989,10 @@ AL_EastAsian ZWJ ; EM ; ID_EastAsian
 AL_EastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 AL_EastAsian ZWJ ; SAmMnmMc ; CM
 AL_EastAsian ZWJ ; SA_Mn|SA_Mc ; AL_EastAsian CM
-EB_EastAsian ZWJ ; eot ; eot
+EB_EastAsian ZWJ ; BK|NL|eot ; BK
 EB_EastAsian ZWJ ; CM ; EB_EastAsian CM
 EB_EastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-EB_EastAsian ZWJ ; LF ; eot
-EB_EastAsian ZWJ ; BK|NL ; eot
+EB_EastAsian ZWJ ; LF ; BK
 EB_EastAsian ZWJ ; CR ; CR
 EB_EastAsian ZWJ ; SP ; SP
 EB_EastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4131,11 +4050,10 @@ EB_EastAsian ZWJ ; EM ; ID_EastAsian
 EB_EastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 EB_EastAsian ZWJ ; SAmMnmMc ; CM
 EB_EastAsian ZWJ ; SA_Mn|SA_Mc ; EB_EastAsian CM
-BA_EastAsian ZWJ ; eot ; eot
+BA_EastAsian ZWJ ; BK|NL|eot ; BK
 BA_EastAsian ZWJ ; CM ; BA_EastAsian CM
 BA_EastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-BA_EastAsian ZWJ ; LF ; eot
-BA_EastAsian ZWJ ; BK|NL ; eot
+BA_EastAsian ZWJ ; LF ; BK
 BA_EastAsian ZWJ ; CR ; CR
 BA_EastAsian ZWJ ; SP ; SP
 BA_EastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4193,11 +4111,10 @@ BA_EastAsian ZWJ ; EM ; ID_EastAsian
 BA_EastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 BA_EastAsian ZWJ ; SAmMnmMc ; CM
 BA_EastAsian ZWJ ; SA_Mn|SA_Mc ; BA_EastAsian CM
-CJ ZWJ ; eot ; eot
+CJ ZWJ ; BK|NL|eot ; BK
 CJ ZWJ ; CM ; CJ CM
 CJ ZWJ ; BAmEastAsian ; BAmEastAsian
-CJ ZWJ ; LF ; eot
-CJ ZWJ ; BK|NL ; eot
+CJ ZWJ ; LF ; BK
 CJ ZWJ ; CR ; CR
 CJ ZWJ ; SP ; SP
 CJ ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4255,11 +4172,10 @@ CJ ZWJ ; EM ; ID_EastAsian
 CJ ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 CJ ZWJ ; SAmMnmMc ; CM
 CJ ZWJ ; SA_Mn|SA_Mc ; CJ CM
-H2 ZWJ ; eot ; eot
+H2 ZWJ ; BK|NL|eot ; BK
 H2 ZWJ ; CM ; H2 CM
 H2 ZWJ ; BAmEastAsian ; BAmEastAsian
-H2 ZWJ ; LF ; eot
-H2 ZWJ ; BK|NL ; eot
+H2 ZWJ ; LF ; BK
 H2 ZWJ ; CR ; CR
 H2 ZWJ ; SP ; SP
 H2 ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4317,11 +4233,10 @@ H2 ZWJ ; EM ; ID_EastAsian
 H2 ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 H2 ZWJ ; SAmMnmMc ; CM
 H2 ZWJ ; SA_Mn|SA_Mc ; H2 CM
-H3 ZWJ ; eot ; eot
+H3 ZWJ ; BK|NL|eot ; BK
 H3 ZWJ ; CM ; H3 CM
 H3 ZWJ ; BAmEastAsian ; BAmEastAsian
-H3 ZWJ ; LF ; eot
-H3 ZWJ ; BK|NL ; eot
+H3 ZWJ ; LF ; BK
 H3 ZWJ ; CR ; CR
 H3 ZWJ ; SP ; SP
 H3 ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4379,11 +4294,10 @@ H3 ZWJ ; EM ; ID_EastAsian
 H3 ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 H3 ZWJ ; SAmMnmMc ; CM
 H3 ZWJ ; SA_Mn|SA_Mc ; H3 CM
-PO_EastAsian ZWJ ; eot ; eot
+PO_EastAsian ZWJ ; BK|NL|eot ; BK
 PO_EastAsian ZWJ ; CM ; PO_EastAsian CM
 PO_EastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-PO_EastAsian ZWJ ; LF ; eot
-PO_EastAsian ZWJ ; BK|NL ; eot
+PO_EastAsian ZWJ ; LF ; BK
 PO_EastAsian ZWJ ; CR ; CR
 PO_EastAsian ZWJ ; SP ; SP
 PO_EastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4441,11 +4355,10 @@ PO_EastAsian ZWJ ; EM ; ID_EastAsian
 PO_EastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 PO_EastAsian ZWJ ; SAmMnmMc ; CM
 PO_EastAsian ZWJ ; SA_Mn|SA_Mc ; PO_EastAsian CM
-NU CL_EastAsian ZWJ ; eot ; eot
+NU CL_EastAsian ZWJ ; BK|NL|eot ; BK
 NU CL_EastAsian ZWJ ; CM ; NU CL_EastAsian CM
 NU CL_EastAsian ZWJ ; BAmEastAsian ; BAmEastAsian
-NU CL_EastAsian ZWJ ; LF ; eot
-NU CL_EastAsian ZWJ ; BK|NL ; eot
+NU CL_EastAsian ZWJ ; LF ; BK
 NU CL_EastAsian ZWJ ; CR ; CR
 NU CL_EastAsian ZWJ ; SP ; CP SP
 NU CL_EastAsian ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4503,11 +4416,10 @@ NU CL_EastAsian ZWJ ; EM ; ID_EastAsian
 NU CL_EastAsian ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 NU CL_EastAsian ZWJ ; SAmMnmMc ; CM
 NU CL_EastAsian ZWJ ; SA_Mn|SA_Mc ; NU CL_EastAsian CM
-AK VI ; eot ; eot
+AK VI ; BK|NL|eot ; BK
 AK VI ; CM ; AK VI
 AK VI ; BAmEastAsian ; BAmEastAsian
-AK VI ; LF ; eot
-AK VI ; BK|NL ; eot
+AK VI ; LF ; BK
 AK VI ; CR ; CR
 AK VI ; SP ; SP
 AK VI ; EXmEastAsian ; EXmEastAsian
@@ -4535,9 +4447,8 @@ AK VI ; EX_EastAsian ; CJ
 AK VI ; IN_EastAsian ; CJ
 AK VI ; GL_EastAsian ; GL_EastAsian
 AK VI ; SA_Mn|SA_Mc ; AK VI
-B2 SP ; eot ; eot
-B2 SP ; LF ; eot
-B2 SP ; BK|NL ; eot
+B2 SP ; BK|NL|eot ; BK
+B2 SP ; LF ; BK
 B2 SP ; CR ; CR
 B2 SP ; SP ; B2 SP
 B2 SP ; EXmEastAsian ; EXmEastAsian
@@ -4551,11 +4462,10 @@ B2 SP ; B2 ; B2
 B2 SP ; WJ ; WJ
 B2 SP ; CL_EastAsian ; CL_EastAsian
 B2 SP ; EX_EastAsian ; CJ
-RI ZWJ ; eot ; eot
+RI ZWJ ; BK|NL|eot ; BK
 RI ZWJ ; CM ; RI
 RI ZWJ ; BAmEastAsian ; BAmEastAsian
-RI ZWJ ; LF ; eot
-RI ZWJ ; BK|NL ; eot
+RI ZWJ ; LF ; BK
 RI ZWJ ; CR ; CR
 RI ZWJ ; SP ; SP
 RI ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4613,11 +4523,10 @@ RI ZWJ ; EM ; ID_EastAsian
 RI ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 RI ZWJ ; SAmMnmMc ; CM
 RI ZWJ ; SA_Mn|SA_Mc ; RI
-JL CM QU_Pi ; eot ; eot
+JL CM QU_Pi ; BK|NL|eot ; BK
 JL CM QU_Pi ; CM ; JL CM QU_Pi
 JL CM QU_Pi ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi ; LF ; eot
-JL CM QU_Pi ; BK|NL ; eot
+JL CM QU_Pi ; LF ; BK
 JL CM QU_Pi ; CR ; CR
 JL CM QU_Pi ; SP ; SP
 JL CM QU_Pi ; EXmEastAsian ; EXmEastAsian
@@ -4675,11 +4584,10 @@ JL CM QU_Pi ; EM ; JL CM QU_Pi ID_EastAsian
 JL CM QU_Pi ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL CM QU_Pi ; SAmMnmMc ; CM
 JL CM QU_Pi ; SA_Mn|SA_Mc ; JL CM QU_Pi
-JL QU_Pf ZWJ ; eot ; eot
+JL QU_Pf ZWJ ; BK|NL|eot ; BK
 JL QU_Pf ZWJ ; CM ; JL QU_Pf CM
 JL QU_Pf ZWJ ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf ZWJ ; LF ; eot
-JL QU_Pf ZWJ ; BK|NL ; eot
+JL QU_Pf ZWJ ; LF ; BK
 JL QU_Pf ZWJ ; CR ; CR
 JL QU_Pf ZWJ ; SP ; SP
 JL QU_Pf ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4737,11 +4645,10 @@ JL QU_Pf ZWJ ; EM ; ID_EastAsian
 JL QU_Pf ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf ZWJ ; SAmMnmMc ; CM
 JL QU_Pf ZWJ ; SA_Mn|SA_Mc ; JL QU_Pf CM
-RI RI ZWJ ; eot ; eot
+RI RI ZWJ ; BK|NL|eot ; BK
 RI RI ZWJ ; CM ; RI RI CM
 RI RI ZWJ ; BAmEastAsian ; BAmEastAsian
-RI RI ZWJ ; LF ; eot
-RI RI ZWJ ; BK|NL ; eot
+RI RI ZWJ ; LF ; BK
 RI RI ZWJ ; CR ; CR
 RI RI ZWJ ; SP ; SP
 RI RI ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4799,11 +4706,10 @@ RI RI ZWJ ; EM ; ID_EastAsian
 RI RI ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 RI RI ZWJ ; SAmMnmMc ; CM
 RI RI ZWJ ; SA_Mn|SA_Mc ; RI RI CM
-OPmEastAsian SP IS ZWJ ; eot ; eot
+OPmEastAsian SP IS ZWJ ; BK|NL|eot ; BK
 OPmEastAsian SP IS ZWJ ; CM ; OPmEastAsian SP IS CM
 OPmEastAsian SP IS ZWJ ; BAmEastAsian ; BAmEastAsian
-OPmEastAsian SP IS ZWJ ; LF ; eot
-OPmEastAsian SP IS ZWJ ; BK|NL ; eot
+OPmEastAsian SP IS ZWJ ; LF ; BK
 OPmEastAsian SP IS ZWJ ; CR ; CR
 OPmEastAsian SP IS ZWJ ; SP ; SP
 OPmEastAsian SP IS ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4861,11 +4767,10 @@ OPmEastAsian SP IS ZWJ ; EM ; ID_EastAsian
 OPmEastAsian SP IS ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 OPmEastAsian SP IS ZWJ ; SAmMnmMc ; CM
 OPmEastAsian SP IS ZWJ ; SA_Mn|SA_Mc ; OPmEastAsian SP IS CM
-RI ZWJ RI ZWJ ; eot ; eot
+RI ZWJ RI ZWJ ; BK|NL|eot ; BK
 RI ZWJ RI ZWJ ; CM ; RI ZWJ RI CM
 RI ZWJ RI ZWJ ; BAmEastAsian ; BAmEastAsian
-RI ZWJ RI ZWJ ; LF ; eot
-RI ZWJ RI ZWJ ; BK|NL ; eot
+RI ZWJ RI ZWJ ; LF ; BK
 RI ZWJ RI ZWJ ; CR ; CR
 RI ZWJ RI ZWJ ; SP ; SP
 RI ZWJ RI ZWJ ; EXmEastAsian ; EXmEastAsian
@@ -4923,11 +4828,10 @@ RI ZWJ RI ZWJ ; EM ; ID_EastAsian
 RI ZWJ RI ZWJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 RI ZWJ RI ZWJ ; SAmMnmMc ; CM
 RI ZWJ RI ZWJ ; SA_Mn|SA_Mc ; RI ZWJ RI CM
-JL ; eot ; eot
+JL ; BK|NL|eot ; BK
 JL ; CM ; JL CM
 JL ; BAmEastAsian ; BAmEastAsian
-JL ; LF ; eot
-JL ; BK|NL ; eot
+JL ; LF ; BK
 JL ; CR ; CR
 JL ; SP ; SP
 JL ; EXmEastAsian ; EXmEastAsian
@@ -4959,11 +4863,10 @@ JL ; IN_EastAsian ; CJ
 JL ; PO_EastAsian ; PO_EastAsian
 JL ; GL_EastAsian ; GL_EastAsian
 JL ; SA_Mn|SA_Mc ; JL CM
-PR_EastAsian ; eot ; eot
+PR_EastAsian ; BK|NL|eot ; BK
 PR_EastAsian ; CM ; PR_EastAsian CM
 PR_EastAsian ; BAmEastAsian ; BAmEastAsian
-PR_EastAsian ; LF ; eot
-PR_EastAsian ; BK|NL ; eot
+PR_EastAsian ; LF ; BK
 PR_EastAsian ; CR ; CR
 PR_EastAsian ; SP ; SP
 PR_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -5008,11 +4911,10 @@ PR_EastAsian ; EM ; ID_EastAsian
 PR_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 PR_EastAsian ; SAmMnmMc ; CM
 PR_EastAsian ; SA_Mn|SA_Mc ; PR_EastAsian CM
-ID_EastAsian ; eot ; eot
+ID_EastAsian ; BK|NL|eot ; BK
 ID_EastAsian ; CM ; ID_EastAsian CM
 ID_EastAsian ; BAmEastAsian ; BAmEastAsian
-ID_EastAsian ; LF ; eot
-ID_EastAsian ; BK|NL ; eot
+ID_EastAsian ; LF ; BK
 ID_EastAsian ; CR ; CR
 ID_EastAsian ; SP ; SP
 ID_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -5040,11 +4942,10 @@ ID_EastAsian ; IN_EastAsian ; CJ
 ID_EastAsian ; PO_EastAsian ; PO_EastAsian
 ID_EastAsian ; GL_EastAsian ; GL_EastAsian
 ID_EastAsian ; SA_Mn|SA_Mc ; ID_EastAsian CM
-CL_EastAsian ; eot ; eot
+CL_EastAsian ; BK|NL|eot ; BK
 CL_EastAsian ; CM ; CL_EastAsian CM
 CL_EastAsian ; BAmEastAsian ; BAmEastAsian
-CL_EastAsian ; LF ; eot
-CL_EastAsian ; BK|NL ; eot
+CL_EastAsian ; LF ; BK
 CL_EastAsian ; CR ; CR
 CL_EastAsian ; SP ; CP SP
 CL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -5070,11 +4971,10 @@ CL_EastAsian ; EX_EastAsian ; CJ
 CL_EastAsian ; IN_EastAsian ; CJ
 CL_EastAsian ; GL_EastAsian ; GL_EastAsian
 CL_EastAsian ; SA_Mn|SA_Mc ; CL_EastAsian CM
-CJ ; eot ; eot
+CJ ; BK|NL|eot ; BK
 CJ ; CM ; CJ CM
 CJ ; BAmEastAsian ; BAmEastAsian
-CJ ; LF ; eot
-CJ ; BK|NL ; eot
+CJ ; LF ; BK
 CJ ; CR ; CR
 CJ ; SP ; SP
 CJ ; EXmEastAsian ; EXmEastAsian
@@ -5100,11 +5000,10 @@ CJ ; EX_EastAsian ; CJ
 CJ ; IN_EastAsian ; CJ
 CJ ; GL_EastAsian ; GL_EastAsian
 CJ ; SA_Mn|SA_Mc ; CJ CM
-AL_EastAsian ; eot ; eot
+AL_EastAsian ; BK|NL|eot ; BK
 AL_EastAsian ; CM ; AL_EastAsian CM
 AL_EastAsian ; BAmEastAsian ; BAmEastAsian
-AL_EastAsian ; LF ; eot
-AL_EastAsian ; BK|NL ; eot
+AL_EastAsian ; LF ; BK
 AL_EastAsian ; CR ; CR
 AL_EastAsian ; SP ; SP
 AL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -5142,11 +5041,10 @@ AL_EastAsian ; GL_EastAsian ; GL_EastAsian
 AL_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 AL_EastAsian ; SAmMnmMc ; CM
 AL_EastAsian ; SA_Mn|SA_Mc ; AL_EastAsian CM
-EB_EastAsian ; eot ; eot
+EB_EastAsian ; BK|NL|eot ; BK
 EB_EastAsian ; CM ; EB_EastAsian CM
 EB_EastAsian ; BAmEastAsian ; BAmEastAsian
-EB_EastAsian ; LF ; eot
-EB_EastAsian ; BK|NL ; eot
+EB_EastAsian ; LF ; BK
 EB_EastAsian ; CR ; CR
 EB_EastAsian ; SP ; SP
 EB_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -5175,11 +5073,10 @@ EB_EastAsian ; PO_EastAsian ; PO_EastAsian
 EB_EastAsian ; GL_EastAsian ; GL_EastAsian
 EB_EastAsian ; EM ; ID_EastAsian
 EB_EastAsian ; SA_Mn|SA_Mc ; EB_EastAsian CM
-BA_EastAsian ; eot ; eot
+BA_EastAsian ; BK|NL|eot ; BK
 BA_EastAsian ; CM ; BA_EastAsian CM
 BA_EastAsian ; BAmEastAsian ; BAmEastAsian
-BA_EastAsian ; LF ; eot
-BA_EastAsian ; BK|NL ; eot
+BA_EastAsian ; LF ; BK
 BA_EastAsian ; CR ; CR
 BA_EastAsian ; SP ; SP
 BA_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -5203,11 +5100,10 @@ BA_EastAsian ; NS_EastAsian|CJ ; CJ
 BA_EastAsian ; EX_EastAsian ; CJ
 BA_EastAsian ; IN_EastAsian ; CJ
 BA_EastAsian ; SA_Mn|SA_Mc ; BA_EastAsian CM
-H2 ; eot ; eot
+H2 ; BK|NL|eot ; BK
 H2 ; CM ; H2 CM
 H2 ; BAmEastAsian ; BAmEastAsian
-H2 ; LF ; eot
-H2 ; BK|NL ; eot
+H2 ; LF ; BK
 H2 ; CR ; CR
 H2 ; SP ; SP
 H2 ; EXmEastAsian ; EXmEastAsian
@@ -5237,11 +5133,10 @@ H2 ; IN_EastAsian ; CJ
 H2 ; PO_EastAsian ; PO_EastAsian
 H2 ; GL_EastAsian ; GL_EastAsian
 H2 ; SA_Mn|SA_Mc ; H2 CM
-H3 ; eot ; eot
+H3 ; BK|NL|eot ; BK
 H3 ; CM ; H3 CM
 H3 ; BAmEastAsian ; BAmEastAsian
-H3 ; LF ; eot
-H3 ; BK|NL ; eot
+H3 ; LF ; BK
 H3 ; CR ; CR
 H3 ; SP ; SP
 H3 ; EXmEastAsian ; EXmEastAsian
@@ -5270,11 +5165,10 @@ H3 ; IN_EastAsian ; CJ
 H3 ; PO_EastAsian ; PO_EastAsian
 H3 ; GL_EastAsian ; GL_EastAsian
 H3 ; SA_Mn|SA_Mc ; H3 CM
-PO_EastAsian ; eot ; eot
+PO_EastAsian ; BK|NL|eot ; BK
 PO_EastAsian ; CM ; PO_EastAsian CM
 PO_EastAsian ; BAmEastAsian ; BAmEastAsian
-PO_EastAsian ; LF ; eot
-PO_EastAsian ; BK|NL ; eot
+PO_EastAsian ; LF ; BK
 PO_EastAsian ; CR ; CR
 PO_EastAsian ; SP ; SP
 PO_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -5309,11 +5203,10 @@ PO_EastAsian ; GL_EastAsian ; GL_EastAsian
 PO_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 PO_EastAsian ; SAmMnmMc ; CM
 PO_EastAsian ; SA_Mn|SA_Mc ; PO_EastAsian CM
-NU CL_EastAsian ; eot ; eot
+NU CL_EastAsian ; BK|NL|eot ; BK
 NU CL_EastAsian ; CM ; NU CL_EastAsian CM
 NU CL_EastAsian ; BAmEastAsian ; BAmEastAsian
-NU CL_EastAsian ; LF ; eot
-NU CL_EastAsian ; BK|NL ; eot
+NU CL_EastAsian ; LF ; BK
 NU CL_EastAsian ; CR ; CR
 NU CL_EastAsian ; SP ; CP SP
 NU CL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -5343,11 +5236,10 @@ NU CL_EastAsian ; IN_EastAsian ; CJ
 NU CL_EastAsian ; PO_EastAsian ; PO_EastAsian
 NU CL_EastAsian ; GL_EastAsian ; GL_EastAsian
 NU CL_EastAsian ; SA_Mn|SA_Mc ; NU CL_EastAsian CM
-ZW ; eot ; eot
+ZW ; BK|NL|eot ; BK
 ZW ; CM ; ZW CM
 ZW ; BAmEastAsian ; ZW CM
-ZW ; LF ; eot
-ZW ; BK|NL ; eot
+ZW ; LF ; BK
 ZW ; CR ; CR
 ZW ; SP ; ZW SP
 ZW ; EXmEastAsian ; ZW CM
@@ -5405,11 +5297,10 @@ ZW ; EM ; ZW CM
 ZW ; XX_ExtPictUnassigned ; ZW CM
 ZW ; SAmMnmMc ; ZW CM
 ZW ; SA_Mn|SA_Mc ; ZW CM
-ZW SP ; eot ; eot
+ZW SP ; BK|NL|eot ; BK
 ZW SP ; CM ; ZW CM
 ZW SP ; BAmEastAsian ; ZW CM
-ZW SP ; LF ; eot
-ZW SP ; BK|NL ; eot
+ZW SP ; LF ; BK
 ZW SP ; CR ; CR
 ZW SP ; SP ; ZW SP
 ZW SP ; EXmEastAsian ; ZW SP EXmEastAsian
@@ -5467,11 +5358,10 @@ ZW SP ; EM ; ZW CM
 ZW SP ; XX_ExtPictUnassigned ; ZW CM
 ZW SP ; SAmMnmMc ; ZW CM
 ZW SP ; SA_Mn|SA_Mc ; ZW CM
-SP IS ; eot ; eot
+SP IS ; BK|NL|eot ; BK
 SP IS ; CM ; SP IS CM
 SP IS ; BAmEastAsian ; BAmEastAsian
-SP IS ; LF ; eot
-SP IS ; BK|NL ; eot
+SP IS ; LF ; BK
 SP IS ; CR ; CR
 SP IS ; SP ; SP
 SP IS ; EXmEastAsian ; EXmEastAsian
@@ -5528,11 +5418,10 @@ SP IS ; EM ; SP IS PRmEastAsian
 SP IS ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 SP IS ; SAmMnmMc ; CM
 SP IS ; SA_Mn|SA_Mc ; SP IS CM
-JL CM ; eot ; eot
+JL CM ; BK|NL|eot ; BK
 JL CM ; CM ; JL CM
 JL CM ; BAmEastAsian ; BAmEastAsian
-JL CM ; LF ; eot
-JL CM ; BK|NL ; eot
+JL CM ; LF ; BK
 JL CM ; CR ; CR
 JL CM ; SP ; SP
 JL CM ; EXmEastAsian ; EXmEastAsian
@@ -5564,11 +5453,10 @@ JL CM ; IN_EastAsian ; CJ
 JL CM ; PO_EastAsian ; PO_EastAsian
 JL CM ; GL_EastAsian ; GL_EastAsian
 JL CM ; SA_Mn|SA_Mc ; JL CM
-PR_EastAsian CM ; eot ; eot
+PR_EastAsian CM ; BK|NL|eot ; BK
 PR_EastAsian CM ; CM ; PR_EastAsian CM
 PR_EastAsian CM ; BAmEastAsian ; BAmEastAsian
-PR_EastAsian CM ; LF ; eot
-PR_EastAsian CM ; BK|NL ; eot
+PR_EastAsian CM ; LF ; BK
 PR_EastAsian CM ; CR ; CR
 PR_EastAsian CM ; SP ; SP
 PR_EastAsian CM ; EXmEastAsian ; EXmEastAsian
@@ -5613,11 +5501,10 @@ PR_EastAsian CM ; EM ; ID_EastAsian
 PR_EastAsian CM ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 PR_EastAsian CM ; SAmMnmMc ; CM
 PR_EastAsian CM ; SA_Mn|SA_Mc ; PR_EastAsian CM
-ID_EastAsian CM ; eot ; eot
+ID_EastAsian CM ; BK|NL|eot ; BK
 ID_EastAsian CM ; CM ; ID_EastAsian CM
 ID_EastAsian CM ; BAmEastAsian ; BAmEastAsian
-ID_EastAsian CM ; LF ; eot
-ID_EastAsian CM ; BK|NL ; eot
+ID_EastAsian CM ; LF ; BK
 ID_EastAsian CM ; CR ; CR
 ID_EastAsian CM ; SP ; SP
 ID_EastAsian CM ; EXmEastAsian ; EXmEastAsian
@@ -5645,11 +5532,10 @@ ID_EastAsian CM ; IN_EastAsian ; CJ
 ID_EastAsian CM ; PO_EastAsian ; PO_EastAsian
 ID_EastAsian CM ; GL_EastAsian ; GL_EastAsian
 ID_EastAsian CM ; SA_Mn|SA_Mc ; ID_EastAsian CM
-CL_EastAsian CM ; eot ; eot
+CL_EastAsian CM ; BK|NL|eot ; BK
 CL_EastAsian CM ; CM ; CL_EastAsian CM
 CL_EastAsian CM ; BAmEastAsian ; BAmEastAsian
-CL_EastAsian CM ; LF ; eot
-CL_EastAsian CM ; BK|NL ; eot
+CL_EastAsian CM ; LF ; BK
 CL_EastAsian CM ; CR ; CR
 CL_EastAsian CM ; SP ; CP SP
 CL_EastAsian CM ; EXmEastAsian ; EXmEastAsian
@@ -5675,11 +5561,10 @@ CL_EastAsian CM ; EX_EastAsian ; CJ
 CL_EastAsian CM ; IN_EastAsian ; CJ
 CL_EastAsian CM ; GL_EastAsian ; GL_EastAsian
 CL_EastAsian CM ; SA_Mn|SA_Mc ; CL_EastAsian CM
-CJ CM ; eot ; eot
+CJ CM ; BK|NL|eot ; BK
 CJ CM ; CM ; CJ CM
 CJ CM ; BAmEastAsian ; BAmEastAsian
-CJ CM ; LF ; eot
-CJ CM ; BK|NL ; eot
+CJ CM ; LF ; BK
 CJ CM ; CR ; CR
 CJ CM ; SP ; SP
 CJ CM ; EXmEastAsian ; EXmEastAsian
@@ -5705,11 +5590,10 @@ CJ CM ; EX_EastAsian ; CJ
 CJ CM ; IN_EastAsian ; CJ
 CJ CM ; GL_EastAsian ; GL_EastAsian
 CJ CM ; SA_Mn|SA_Mc ; CJ CM
-AL_EastAsian CM ; eot ; eot
+AL_EastAsian CM ; BK|NL|eot ; BK
 AL_EastAsian CM ; CM ; AL_EastAsian CM
 AL_EastAsian CM ; BAmEastAsian ; BAmEastAsian
-AL_EastAsian CM ; LF ; eot
-AL_EastAsian CM ; BK|NL ; eot
+AL_EastAsian CM ; LF ; BK
 AL_EastAsian CM ; CR ; CR
 AL_EastAsian CM ; SP ; SP
 AL_EastAsian CM ; EXmEastAsian ; EXmEastAsian
@@ -5747,11 +5631,10 @@ AL_EastAsian CM ; GL_EastAsian ; GL_EastAsian
 AL_EastAsian CM ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 AL_EastAsian CM ; SAmMnmMc ; CM
 AL_EastAsian CM ; SA_Mn|SA_Mc ; AL_EastAsian CM
-EB_EastAsian CM ; eot ; eot
+EB_EastAsian CM ; BK|NL|eot ; BK
 EB_EastAsian CM ; CM ; EB_EastAsian CM
 EB_EastAsian CM ; BAmEastAsian ; BAmEastAsian
-EB_EastAsian CM ; LF ; eot
-EB_EastAsian CM ; BK|NL ; eot
+EB_EastAsian CM ; LF ; BK
 EB_EastAsian CM ; CR ; CR
 EB_EastAsian CM ; SP ; SP
 EB_EastAsian CM ; EXmEastAsian ; EXmEastAsian
@@ -5780,11 +5663,10 @@ EB_EastAsian CM ; PO_EastAsian ; PO_EastAsian
 EB_EastAsian CM ; GL_EastAsian ; GL_EastAsian
 EB_EastAsian CM ; EM ; ID_EastAsian
 EB_EastAsian CM ; SA_Mn|SA_Mc ; EB_EastAsian CM
-BA_EastAsian CM ; eot ; eot
+BA_EastAsian CM ; BK|NL|eot ; BK
 BA_EastAsian CM ; CM ; BA_EastAsian CM
 BA_EastAsian CM ; BAmEastAsian ; BAmEastAsian
-BA_EastAsian CM ; LF ; eot
-BA_EastAsian CM ; BK|NL ; eot
+BA_EastAsian CM ; LF ; BK
 BA_EastAsian CM ; CR ; CR
 BA_EastAsian CM ; SP ; SP
 BA_EastAsian CM ; EXmEastAsian ; EXmEastAsian
@@ -5808,11 +5690,10 @@ BA_EastAsian CM ; NS_EastAsian|CJ ; CJ
 BA_EastAsian CM ; EX_EastAsian ; CJ
 BA_EastAsian CM ; IN_EastAsian ; CJ
 BA_EastAsian CM ; SA_Mn|SA_Mc ; BA_EastAsian CM
-H2 CM ; eot ; eot
+H2 CM ; BK|NL|eot ; BK
 H2 CM ; CM ; H2 CM
 H2 CM ; BAmEastAsian ; BAmEastAsian
-H2 CM ; LF ; eot
-H2 CM ; BK|NL ; eot
+H2 CM ; LF ; BK
 H2 CM ; CR ; CR
 H2 CM ; SP ; SP
 H2 CM ; EXmEastAsian ; EXmEastAsian
@@ -5842,11 +5723,10 @@ H2 CM ; IN_EastAsian ; CJ
 H2 CM ; PO_EastAsian ; PO_EastAsian
 H2 CM ; GL_EastAsian ; GL_EastAsian
 H2 CM ; SA_Mn|SA_Mc ; H2 CM
-H3 CM ; eot ; eot
+H3 CM ; BK|NL|eot ; BK
 H3 CM ; CM ; H3 CM
 H3 CM ; BAmEastAsian ; BAmEastAsian
-H3 CM ; LF ; eot
-H3 CM ; BK|NL ; eot
+H3 CM ; LF ; BK
 H3 CM ; CR ; CR
 H3 CM ; SP ; SP
 H3 CM ; EXmEastAsian ; EXmEastAsian
@@ -5875,11 +5755,10 @@ H3 CM ; IN_EastAsian ; CJ
 H3 CM ; PO_EastAsian ; PO_EastAsian
 H3 CM ; GL_EastAsian ; GL_EastAsian
 H3 CM ; SA_Mn|SA_Mc ; H3 CM
-PO_EastAsian CM ; eot ; eot
+PO_EastAsian CM ; BK|NL|eot ; BK
 PO_EastAsian CM ; CM ; PO_EastAsian CM
 PO_EastAsian CM ; BAmEastAsian ; BAmEastAsian
-PO_EastAsian CM ; LF ; eot
-PO_EastAsian CM ; BK|NL ; eot
+PO_EastAsian CM ; LF ; BK
 PO_EastAsian CM ; CR ; CR
 PO_EastAsian CM ; SP ; SP
 PO_EastAsian CM ; EXmEastAsian ; EXmEastAsian
@@ -5914,11 +5793,10 @@ PO_EastAsian CM ; GL_EastAsian ; GL_EastAsian
 PO_EastAsian CM ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 PO_EastAsian CM ; SAmMnmMc ; CM
 PO_EastAsian CM ; SA_Mn|SA_Mc ; PO_EastAsian CM
-NU CL_EastAsian CM ; eot ; eot
+NU CL_EastAsian CM ; BK|NL|eot ; BK
 NU CL_EastAsian CM ; CM ; NU CL_EastAsian CM
 NU CL_EastAsian CM ; BAmEastAsian ; BAmEastAsian
-NU CL_EastAsian CM ; LF ; eot
-NU CL_EastAsian CM ; BK|NL ; eot
+NU CL_EastAsian CM ; LF ; BK
 NU CL_EastAsian CM ; CR ; CR
 NU CL_EastAsian CM ; SP ; CP SP
 NU CL_EastAsian CM ; EXmEastAsian ; EXmEastAsian
@@ -5948,11 +5826,10 @@ NU CL_EastAsian CM ; IN_EastAsian ; CJ
 NU CL_EastAsian CM ; PO_EastAsian ; PO_EastAsian
 NU CL_EastAsian CM ; GL_EastAsian ; GL_EastAsian
 NU CL_EastAsian CM ; SA_Mn|SA_Mc ; NU CL_EastAsian CM
-JL QU_Pf ; eot ; eot
+JL QU_Pf ; BK|NL|eot ; BK
 JL QU_Pf ; CM ; JL QU_Pf CM
 JL QU_Pf ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf ; LF ; eot
-JL QU_Pf ; BK|NL ; eot
+JL QU_Pf ; LF ; BK
 JL QU_Pf ; CR ; CR
 JL QU_Pf ; SP ; SP
 JL QU_Pf ; EXmEastAsian ; EXmEastAsian
@@ -6010,11 +5887,10 @@ JL QU_Pf ; EM ; JL QU_Pf ID_EastAsian
 JL QU_Pf ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf ; SAmMnmMc ; CM
 JL QU_Pf ; SA_Mn|SA_Mc ; JL QU_Pf CM
-ZW SP EXmEastAsian ; eot ; eot
+ZW SP EXmEastAsian ; BK|NL|eot ; BK
 ZW SP EXmEastAsian ; CM ; EXmEastAsian
 ZW SP EXmEastAsian ; BAmEastAsian ; BAmEastAsian
-ZW SP EXmEastAsian ; LF ; eot
-ZW SP EXmEastAsian ; BK|NL ; eot
+ZW SP EXmEastAsian ; LF ; BK
 ZW SP EXmEastAsian ; CR ; CR
 ZW SP EXmEastAsian ; SP ; SP
 ZW SP EXmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6040,11 +5916,10 @@ ZW SP EXmEastAsian ; EX_EastAsian ; CJ
 ZW SP EXmEastAsian ; IN_EastAsian ; CJ
 ZW SP EXmEastAsian ; GL_EastAsian ; GL_EastAsian
 ZW SP EXmEastAsian ; SA_Mn|SA_Mc ; EXmEastAsian
-ZW SP CLmEastAsian ; eot ; eot
+ZW SP CLmEastAsian ; BK|NL|eot ; BK
 ZW SP CLmEastAsian ; CM ; CLmEastAsian
 ZW SP CLmEastAsian ; BAmEastAsian ; BAmEastAsian
-ZW SP CLmEastAsian ; LF ; eot
-ZW SP CLmEastAsian ; BK|NL ; eot
+ZW SP CLmEastAsian ; LF ; BK
 ZW SP CLmEastAsian ; CR ; CR
 ZW SP CLmEastAsian ; SP ; CP SP
 ZW SP CLmEastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6070,11 +5945,10 @@ ZW SP CLmEastAsian ; EX_EastAsian ; CJ
 ZW SP CLmEastAsian ; IN_EastAsian ; CJ
 ZW SP CLmEastAsian ; GL_EastAsian ; GL_EastAsian
 ZW SP CLmEastAsian ; SA_Mn|SA_Mc ; CLmEastAsian
-ZW SP CP ; eot ; eot
+ZW SP CP ; BK|NL|eot ; BK
 ZW SP CP ; CM ; CP
 ZW SP CP ; BAmEastAsian ; BAmEastAsian
-ZW SP CP ; LF ; eot
-ZW SP CP ; BK|NL ; eot
+ZW SP CP ; LF ; BK
 ZW SP CP ; CR ; CR
 ZW SP CP ; SP ; CP SP
 ZW SP CP ; EXmEastAsian ; EXmEastAsian
@@ -6107,11 +5981,10 @@ ZW SP CP ; GL_EastAsian ; GL_EastAsian
 ZW SP CP ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 ZW SP CP ; SAmMnmMc ; CM
 ZW SP CP ; SA_Mn|SA_Mc ; CP
-ZW SP SY ; eot ; eot
+ZW SP SY ; BK|NL|eot ; BK
 ZW SP SY ; CM ; SY
 ZW SP SY ; BAmEastAsian ; BAmEastAsian
-ZW SP SY ; LF ; eot
-ZW SP SY ; BK|NL ; eot
+ZW SP SY ; LF ; BK
 ZW SP SY ; CR ; CR
 ZW SP SY ; SP ; SP
 ZW SP SY ; EXmEastAsian ; EXmEastAsian
@@ -6138,10 +6011,9 @@ ZW SP SY ; EX_EastAsian ; CJ
 ZW SP SY ; IN_EastAsian ; CJ
 ZW SP SY ; GL_EastAsian ; GL_EastAsian
 ZW SP SY ; SA_Mn|SA_Mc ; SY
-ZW SP QU_Pf ; eot ; eot
+ZW SP QU_Pf ; BK|NL|eot ; BK
 ZW SP QU_Pf ; CM ; SP QU_Pf
-ZW SP QU_Pf ; LF ; eot
-ZW SP QU_Pf ; BK|NL ; eot
+ZW SP QU_Pf ; LF ; BK
 ZW SP QU_Pf ; CR ; CR
 ZW SP QU_Pf ; SP ; SP
 ZW SP QU_Pf ; EXmEastAsian ; EXmEastAsian
@@ -6160,11 +6032,10 @@ ZW SP QU_Pf ; CL_EastAsian ; CL_EastAsian
 ZW SP QU_Pf ; EX_EastAsian ; CJ
 ZW SP QU_Pf ; GL_EastAsian ; GL_EastAsian
 ZW SP QU_Pf ; SA_Mn|SA_Mc ; SP QU_Pf
-ZW SP WJ ; eot ; eot
+ZW SP WJ ; BK|NL|eot ; BK
 ZW SP WJ ; CM ; WJ
 ZW SP WJ ; BAmEastAsian ; BAmEastAsian
-ZW SP WJ ; LF ; eot
-ZW SP WJ ; BK|NL ; eot
+ZW SP WJ ; LF ; BK
 ZW SP WJ ; CR ; CR
 ZW SP WJ ; SP ; SP
 ZW SP WJ ; EXmEastAsian ; EXmEastAsian
@@ -6222,11 +6093,10 @@ ZW SP WJ ; EM ; ID_EastAsian
 ZW SP WJ ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 ZW SP WJ ; SAmMnmMc ; CM
 ZW SP WJ ; SA_Mn|SA_Mc ; WJ
-RI RI ; eot ; eot
+RI RI ; BK|NL|eot ; BK
 RI RI ; CM ; RI RI CM
 RI RI ; BAmEastAsian ; BAmEastAsian
-RI RI ; LF ; eot
-RI RI ; BK|NL ; eot
+RI RI ; LF ; BK
 RI RI ; CR ; CR
 RI RI ; SP ; SP
 RI RI ; EXmEastAsian ; EXmEastAsian
@@ -6284,11 +6154,10 @@ RI RI ; EM ; RI RI ALmEastAsianmDottedCircle
 RI RI ; XX_ExtPictUnassigned ; RI RI ALmEastAsianmDottedCircle
 RI RI ; SAmMnmMc ; RI RI ALmEastAsianmDottedCircle
 RI RI ; SA_Mn|SA_Mc ; RI RI CM
-SP IS CM ; eot ; eot
+SP IS CM ; BK|NL|eot ; BK
 SP IS CM ; CM ; SP IS CM
 SP IS CM ; BAmEastAsian ; BAmEastAsian
-SP IS CM ; LF ; eot
-SP IS CM ; BK|NL ; eot
+SP IS CM ; LF ; BK
 SP IS CM ; CR ; CR
 SP IS CM ; SP ; SP
 SP IS CM ; EXmEastAsian ; EXmEastAsian
@@ -6345,11 +6214,10 @@ SP IS CM ; EM ; SP IS CM PRmEastAsian
 SP IS CM ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 SP IS CM ; SAmMnmMc ; CM
 SP IS CM ; SA_Mn|SA_Mc ; SP IS CM
-OPmEastAsian SP IS ; eot ; eot
+OPmEastAsian SP IS ; BK|NL|eot ; BK
 OPmEastAsian SP IS ; CM ; OPmEastAsian SP IS CM
 OPmEastAsian SP IS ; BAmEastAsian ; BAmEastAsian
-OPmEastAsian SP IS ; LF ; eot
-OPmEastAsian SP IS ; BK|NL ; eot
+OPmEastAsian SP IS ; LF ; BK
 OPmEastAsian SP IS ; CR ; CR
 OPmEastAsian SP IS ; SP ; SP
 OPmEastAsian SP IS ; EXmEastAsian ; EXmEastAsian
@@ -6407,11 +6275,10 @@ OPmEastAsian SP IS ; EM ; SP IS PRmEastAsian
 OPmEastAsian SP IS ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 OPmEastAsian SP IS ; SAmMnmMc ; CM
 OPmEastAsian SP IS ; SA_Mn|SA_Mc ; OPmEastAsian SP IS CM
-JL QU_Pi JL ; eot ; eot
+JL QU_Pi JL ; BK|NL|eot ; BK
 JL QU_Pi JL ; CM ; JL CM
 JL QU_Pi JL ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi JL ; LF ; eot
-JL QU_Pi JL ; BK|NL ; eot
+JL QU_Pi JL ; LF ; BK
 JL QU_Pi JL ; CR ; CR
 JL QU_Pi JL ; SP ; SP
 JL QU_Pi JL ; EXmEastAsian ; EXmEastAsian
@@ -6443,11 +6310,10 @@ JL QU_Pi JL ; IN_EastAsian ; CJ
 JL QU_Pi JL ; PO_EastAsian ; PO_EastAsian
 JL QU_Pi JL ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi JL ; SA_Mn|SA_Mc ; JL CM
-JL QU_Pi PR_EastAsian ; eot ; eot
+JL QU_Pi PR_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi PR_EastAsian ; CM ; PR_EastAsian CM
 JL QU_Pi PR_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi PR_EastAsian ; LF ; eot
-JL QU_Pi PR_EastAsian ; BK|NL ; eot
+JL QU_Pi PR_EastAsian ; LF ; BK
 JL QU_Pi PR_EastAsian ; CR ; CR
 JL QU_Pi PR_EastAsian ; SP ; SP
 JL QU_Pi PR_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6492,11 +6358,10 @@ JL QU_Pi PR_EastAsian ; EM ; ID_EastAsian
 JL QU_Pi PR_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pi PR_EastAsian ; SAmMnmMc ; CM
 JL QU_Pi PR_EastAsian ; SA_Mn|SA_Mc ; PR_EastAsian CM
-JL QU_Pi ID_EastAsian ; eot ; eot
+JL QU_Pi ID_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi ID_EastAsian ; CM ; ID_EastAsian CM
 JL QU_Pi ID_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi ID_EastAsian ; LF ; eot
-JL QU_Pi ID_EastAsian ; BK|NL ; eot
+JL QU_Pi ID_EastAsian ; LF ; BK
 JL QU_Pi ID_EastAsian ; CR ; CR
 JL QU_Pi ID_EastAsian ; SP ; SP
 JL QU_Pi ID_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6524,11 +6389,10 @@ JL QU_Pi ID_EastAsian ; IN_EastAsian ; CJ
 JL QU_Pi ID_EastAsian ; PO_EastAsian ; PO_EastAsian
 JL QU_Pi ID_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi ID_EastAsian ; SA_Mn|SA_Mc ; ID_EastAsian CM
-JL QU_Pi CL_EastAsian ; eot ; eot
+JL QU_Pi CL_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi CL_EastAsian ; CM ; CL_EastAsian CM
 JL QU_Pi CL_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi CL_EastAsian ; LF ; eot
-JL QU_Pi CL_EastAsian ; BK|NL ; eot
+JL QU_Pi CL_EastAsian ; LF ; BK
 JL QU_Pi CL_EastAsian ; CR ; CR
 JL QU_Pi CL_EastAsian ; SP ; CP SP
 JL QU_Pi CL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6554,11 +6418,10 @@ JL QU_Pi CL_EastAsian ; EX_EastAsian ; CJ
 JL QU_Pi CL_EastAsian ; IN_EastAsian ; CJ
 JL QU_Pi CL_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi CL_EastAsian ; SA_Mn|SA_Mc ; CL_EastAsian CM
-JL QU_Pi CJ ; eot ; eot
+JL QU_Pi CJ ; BK|NL|eot ; BK
 JL QU_Pi CJ ; CM ; CJ CM
 JL QU_Pi CJ ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi CJ ; LF ; eot
-JL QU_Pi CJ ; BK|NL ; eot
+JL QU_Pi CJ ; LF ; BK
 JL QU_Pi CJ ; CR ; CR
 JL QU_Pi CJ ; SP ; SP
 JL QU_Pi CJ ; EXmEastAsian ; EXmEastAsian
@@ -6584,11 +6447,10 @@ JL QU_Pi CJ ; EX_EastAsian ; CJ
 JL QU_Pi CJ ; IN_EastAsian ; CJ
 JL QU_Pi CJ ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi CJ ; SA_Mn|SA_Mc ; CJ CM
-JL QU_Pi AL_EastAsian ; eot ; eot
+JL QU_Pi AL_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi AL_EastAsian ; CM ; AL_EastAsian CM
 JL QU_Pi AL_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi AL_EastAsian ; LF ; eot
-JL QU_Pi AL_EastAsian ; BK|NL ; eot
+JL QU_Pi AL_EastAsian ; LF ; BK
 JL QU_Pi AL_EastAsian ; CR ; CR
 JL QU_Pi AL_EastAsian ; SP ; SP
 JL QU_Pi AL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6626,11 +6488,10 @@ JL QU_Pi AL_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi AL_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pi AL_EastAsian ; SAmMnmMc ; CM
 JL QU_Pi AL_EastAsian ; SA_Mn|SA_Mc ; AL_EastAsian CM
-JL QU_Pi EB_EastAsian ; eot ; eot
+JL QU_Pi EB_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi EB_EastAsian ; CM ; EB_EastAsian CM
 JL QU_Pi EB_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi EB_EastAsian ; LF ; eot
-JL QU_Pi EB_EastAsian ; BK|NL ; eot
+JL QU_Pi EB_EastAsian ; LF ; BK
 JL QU_Pi EB_EastAsian ; CR ; CR
 JL QU_Pi EB_EastAsian ; SP ; SP
 JL QU_Pi EB_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6659,11 +6520,10 @@ JL QU_Pi EB_EastAsian ; PO_EastAsian ; PO_EastAsian
 JL QU_Pi EB_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi EB_EastAsian ; EM ; ID_EastAsian
 JL QU_Pi EB_EastAsian ; SA_Mn|SA_Mc ; EB_EastAsian CM
-JL QU_Pi BA_EastAsian ; eot ; eot
+JL QU_Pi BA_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi BA_EastAsian ; CM ; BA_EastAsian CM
 JL QU_Pi BA_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi BA_EastAsian ; LF ; eot
-JL QU_Pi BA_EastAsian ; BK|NL ; eot
+JL QU_Pi BA_EastAsian ; LF ; BK
 JL QU_Pi BA_EastAsian ; CR ; CR
 JL QU_Pi BA_EastAsian ; SP ; SP
 JL QU_Pi BA_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6687,11 +6547,10 @@ JL QU_Pi BA_EastAsian ; NS_EastAsian|CJ ; CJ
 JL QU_Pi BA_EastAsian ; EX_EastAsian ; CJ
 JL QU_Pi BA_EastAsian ; IN_EastAsian ; CJ
 JL QU_Pi BA_EastAsian ; SA_Mn|SA_Mc ; BA_EastAsian CM
-JL QU_Pi H2 ; eot ; eot
+JL QU_Pi H2 ; BK|NL|eot ; BK
 JL QU_Pi H2 ; CM ; H2 CM
 JL QU_Pi H2 ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi H2 ; LF ; eot
-JL QU_Pi H2 ; BK|NL ; eot
+JL QU_Pi H2 ; LF ; BK
 JL QU_Pi H2 ; CR ; CR
 JL QU_Pi H2 ; SP ; SP
 JL QU_Pi H2 ; EXmEastAsian ; EXmEastAsian
@@ -6721,11 +6580,10 @@ JL QU_Pi H2 ; IN_EastAsian ; CJ
 JL QU_Pi H2 ; PO_EastAsian ; PO_EastAsian
 JL QU_Pi H2 ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi H2 ; SA_Mn|SA_Mc ; H2 CM
-JL QU_Pi H3 ; eot ; eot
+JL QU_Pi H3 ; BK|NL|eot ; BK
 JL QU_Pi H3 ; CM ; H3 CM
 JL QU_Pi H3 ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi H3 ; LF ; eot
-JL QU_Pi H3 ; BK|NL ; eot
+JL QU_Pi H3 ; LF ; BK
 JL QU_Pi H3 ; CR ; CR
 JL QU_Pi H3 ; SP ; SP
 JL QU_Pi H3 ; EXmEastAsian ; EXmEastAsian
@@ -6754,11 +6612,10 @@ JL QU_Pi H3 ; IN_EastAsian ; CJ
 JL QU_Pi H3 ; PO_EastAsian ; PO_EastAsian
 JL QU_Pi H3 ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi H3 ; SA_Mn|SA_Mc ; H3 CM
-JL QU_Pi PO_EastAsian ; eot ; eot
+JL QU_Pi PO_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi PO_EastAsian ; CM ; PO_EastAsian CM
 JL QU_Pi PO_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi PO_EastAsian ; LF ; eot
-JL QU_Pi PO_EastAsian ; BK|NL ; eot
+JL QU_Pi PO_EastAsian ; LF ; BK
 JL QU_Pi PO_EastAsian ; CR ; CR
 JL QU_Pi PO_EastAsian ; SP ; SP
 JL QU_Pi PO_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6793,11 +6650,10 @@ JL QU_Pi PO_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pi PO_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pi PO_EastAsian ; SAmMnmMc ; CM
 JL QU_Pi PO_EastAsian ; SA_Mn|SA_Mc ; PO_EastAsian CM
-JL QU_Pi OP_EastAsian ; eot ; eot
+JL QU_Pi OP_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi OP_EastAsian ; CM ; OP_EastAsian
 JL QU_Pi OP_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi OP_EastAsian ; LF ; eot
-JL QU_Pi OP_EastAsian ; BK|NL ; eot
+JL QU_Pi OP_EastAsian ; LF ; BK
 JL QU_Pi OP_EastAsian ; CR ; CR
 JL QU_Pi OP_EastAsian ; SP ; OPmEastAsian SP
 JL QU_Pi OP_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6855,11 +6711,10 @@ JL QU_Pi OP_EastAsian ; EM ; ID_EastAsian
 JL QU_Pi OP_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pi OP_EastAsian ; SAmMnmMc ; CM
 JL QU_Pi OP_EastAsian ; SA_Mn|SA_Mc ; OP_EastAsian
-JL QU_Pi GL_EastAsian ; eot ; eot
+JL QU_Pi GL_EastAsian ; BK|NL|eot ; BK
 JL QU_Pi GL_EastAsian ; CM ; GL_EastAsian
 JL QU_Pi GL_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pi GL_EastAsian ; LF ; eot
-JL QU_Pi GL_EastAsian ; BK|NL ; eot
+JL QU_Pi GL_EastAsian ; LF ; BK
 JL QU_Pi GL_EastAsian ; CR ; CR
 JL QU_Pi GL_EastAsian ; SP ; SP
 JL QU_Pi GL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -6917,11 +6772,10 @@ JL QU_Pi GL_EastAsian ; EM ; ID_EastAsian
 JL QU_Pi GL_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pi GL_EastAsian ; SAmMnmMc ; CM
 JL QU_Pi GL_EastAsian ; SA_Mn|SA_Mc ; GL_EastAsian
-JL QU_Pf CM ; eot ; eot
+JL QU_Pf CM ; BK|NL|eot ; BK
 JL QU_Pf CM ; CM ; JL QU_Pf CM
 JL QU_Pf CM ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM ; LF ; eot
-JL QU_Pf CM ; BK|NL ; eot
+JL QU_Pf CM ; LF ; BK
 JL QU_Pf CM ; CR ; CR
 JL QU_Pf CM ; SP ; SP
 JL QU_Pf CM ; EXmEastAsian ; EXmEastAsian
@@ -6979,11 +6833,10 @@ JL QU_Pf CM ; EM ; JL QU_Pf CM ID_EastAsian
 JL QU_Pf CM ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf CM ; SAmMnmMc ; CM
 JL QU_Pf CM ; SA_Mn|SA_Mc ; JL QU_Pf CM
-JL QU_Pf JL ; eot ; eot
+JL QU_Pf JL ; BK|NL|eot ; BK
 JL QU_Pf JL ; CM ; JL CM
 JL QU_Pf JL ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf JL ; LF ; eot
-JL QU_Pf JL ; BK|NL ; eot
+JL QU_Pf JL ; LF ; BK
 JL QU_Pf JL ; CR ; CR
 JL QU_Pf JL ; SP ; SP
 JL QU_Pf JL ; EXmEastAsian ; EXmEastAsian
@@ -7015,11 +6868,10 @@ JL QU_Pf JL ; IN_EastAsian ; CJ
 JL QU_Pf JL ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf JL ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf JL ; SA_Mn|SA_Mc ; JL CM
-JL QU_Pf PR_EastAsian ; eot ; eot
+JL QU_Pf PR_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf PR_EastAsian ; CM ; PR_EastAsian CM
 JL QU_Pf PR_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf PR_EastAsian ; LF ; eot
-JL QU_Pf PR_EastAsian ; BK|NL ; eot
+JL QU_Pf PR_EastAsian ; LF ; BK
 JL QU_Pf PR_EastAsian ; CR ; CR
 JL QU_Pf PR_EastAsian ; SP ; SP
 JL QU_Pf PR_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7064,11 +6916,10 @@ JL QU_Pf PR_EastAsian ; EM ; ID_EastAsian
 JL QU_Pf PR_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf PR_EastAsian ; SAmMnmMc ; CM
 JL QU_Pf PR_EastAsian ; SA_Mn|SA_Mc ; PR_EastAsian CM
-JL QU_Pf ID_EastAsian ; eot ; eot
+JL QU_Pf ID_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf ID_EastAsian ; CM ; ID_EastAsian CM
 JL QU_Pf ID_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf ID_EastAsian ; LF ; eot
-JL QU_Pf ID_EastAsian ; BK|NL ; eot
+JL QU_Pf ID_EastAsian ; LF ; BK
 JL QU_Pf ID_EastAsian ; CR ; CR
 JL QU_Pf ID_EastAsian ; SP ; SP
 JL QU_Pf ID_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7096,11 +6947,10 @@ JL QU_Pf ID_EastAsian ; IN_EastAsian ; CJ
 JL QU_Pf ID_EastAsian ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf ID_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf ID_EastAsian ; SA_Mn|SA_Mc ; ID_EastAsian CM
-JL QU_Pf AL_EastAsian ; eot ; eot
+JL QU_Pf AL_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf AL_EastAsian ; CM ; AL_EastAsian CM
 JL QU_Pf AL_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf AL_EastAsian ; LF ; eot
-JL QU_Pf AL_EastAsian ; BK|NL ; eot
+JL QU_Pf AL_EastAsian ; LF ; BK
 JL QU_Pf AL_EastAsian ; CR ; CR
 JL QU_Pf AL_EastAsian ; SP ; SP
 JL QU_Pf AL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7138,11 +6988,10 @@ JL QU_Pf AL_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf AL_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf AL_EastAsian ; SAmMnmMc ; CM
 JL QU_Pf AL_EastAsian ; SA_Mn|SA_Mc ; AL_EastAsian CM
-JL QU_Pf EB_EastAsian ; eot ; eot
+JL QU_Pf EB_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf EB_EastAsian ; CM ; EB_EastAsian CM
 JL QU_Pf EB_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf EB_EastAsian ; LF ; eot
-JL QU_Pf EB_EastAsian ; BK|NL ; eot
+JL QU_Pf EB_EastAsian ; LF ; BK
 JL QU_Pf EB_EastAsian ; CR ; CR
 JL QU_Pf EB_EastAsian ; SP ; SP
 JL QU_Pf EB_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7171,11 +7020,10 @@ JL QU_Pf EB_EastAsian ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf EB_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf EB_EastAsian ; EM ; ID_EastAsian
 JL QU_Pf EB_EastAsian ; SA_Mn|SA_Mc ; EB_EastAsian CM
-JL QU_Pf H2 ; eot ; eot
+JL QU_Pf H2 ; BK|NL|eot ; BK
 JL QU_Pf H2 ; CM ; H2 CM
 JL QU_Pf H2 ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf H2 ; LF ; eot
-JL QU_Pf H2 ; BK|NL ; eot
+JL QU_Pf H2 ; LF ; BK
 JL QU_Pf H2 ; CR ; CR
 JL QU_Pf H2 ; SP ; SP
 JL QU_Pf H2 ; EXmEastAsian ; EXmEastAsian
@@ -7205,11 +7053,10 @@ JL QU_Pf H2 ; IN_EastAsian ; CJ
 JL QU_Pf H2 ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf H2 ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf H2 ; SA_Mn|SA_Mc ; H2 CM
-JL QU_Pf H3 ; eot ; eot
+JL QU_Pf H3 ; BK|NL|eot ; BK
 JL QU_Pf H3 ; CM ; H3 CM
 JL QU_Pf H3 ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf H3 ; LF ; eot
-JL QU_Pf H3 ; BK|NL ; eot
+JL QU_Pf H3 ; LF ; BK
 JL QU_Pf H3 ; CR ; CR
 JL QU_Pf H3 ; SP ; SP
 JL QU_Pf H3 ; EXmEastAsian ; EXmEastAsian
@@ -7238,11 +7085,10 @@ JL QU_Pf H3 ; IN_EastAsian ; CJ
 JL QU_Pf H3 ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf H3 ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf H3 ; SA_Mn|SA_Mc ; H3 CM
-JL QU_Pf PO_EastAsian ; eot ; eot
+JL QU_Pf PO_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf PO_EastAsian ; CM ; PO_EastAsian CM
 JL QU_Pf PO_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf PO_EastAsian ; LF ; eot
-JL QU_Pf PO_EastAsian ; BK|NL ; eot
+JL QU_Pf PO_EastAsian ; LF ; BK
 JL QU_Pf PO_EastAsian ; CR ; CR
 JL QU_Pf PO_EastAsian ; SP ; SP
 JL QU_Pf PO_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7277,11 +7123,10 @@ JL QU_Pf PO_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf PO_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf PO_EastAsian ; SAmMnmMc ; CM
 JL QU_Pf PO_EastAsian ; SA_Mn|SA_Mc ; PO_EastAsian CM
-JL QU_Pf OP_EastAsian ; eot ; eot
+JL QU_Pf OP_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf OP_EastAsian ; CM ; OP_EastAsian
 JL QU_Pf OP_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf OP_EastAsian ; LF ; eot
-JL QU_Pf OP_EastAsian ; BK|NL ; eot
+JL QU_Pf OP_EastAsian ; LF ; BK
 JL QU_Pf OP_EastAsian ; CR ; CR
 JL QU_Pf OP_EastAsian ; SP ; OPmEastAsian SP
 JL QU_Pf OP_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7339,11 +7184,10 @@ JL QU_Pf OP_EastAsian ; EM ; ID_EastAsian
 JL QU_Pf OP_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf OP_EastAsian ; SAmMnmMc ; CM
 JL QU_Pf OP_EastAsian ; SA_Mn|SA_Mc ; OP_EastAsian
-ZW SP IS ; eot ; eot
+ZW SP IS ; BK|NL|eot ; BK
 ZW SP IS ; CM ; SP IS CM
 ZW SP IS ; BAmEastAsian ; BAmEastAsian
-ZW SP IS ; LF ; eot
-ZW SP IS ; BK|NL ; eot
+ZW SP IS ; LF ; BK
 ZW SP IS ; CR ; CR
 ZW SP IS ; SP ; SP
 ZW SP IS ; EXmEastAsian ; EXmEastAsian
@@ -7400,11 +7244,10 @@ ZW SP IS ; EM ; SP IS PRmEastAsian
 ZW SP IS ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 ZW SP IS ; SAmMnmMc ; CM
 ZW SP IS ; SA_Mn|SA_Mc ; SP IS CM
-ZW SP CL_EastAsian ; eot ; eot
+ZW SP CL_EastAsian ; BK|NL|eot ; BK
 ZW SP CL_EastAsian ; CM ; CL_EastAsian CM
 ZW SP CL_EastAsian ; BAmEastAsian ; BAmEastAsian
-ZW SP CL_EastAsian ; LF ; eot
-ZW SP CL_EastAsian ; BK|NL ; eot
+ZW SP CL_EastAsian ; LF ; BK
 ZW SP CL_EastAsian ; CR ; CR
 ZW SP CL_EastAsian ; SP ; CP SP
 ZW SP CL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7430,11 +7273,10 @@ ZW SP CL_EastAsian ; EX_EastAsian ; CJ
 ZW SP CL_EastAsian ; IN_EastAsian ; CJ
 ZW SP CL_EastAsian ; GL_EastAsian ; GL_EastAsian
 ZW SP CL_EastAsian ; SA_Mn|SA_Mc ; CL_EastAsian CM
-ZW SP EX_EastAsian ; eot ; eot
+ZW SP EX_EastAsian ; BK|NL|eot ; BK
 ZW SP EX_EastAsian ; CM ; CJ CM
 ZW SP EX_EastAsian ; BAmEastAsian ; BAmEastAsian
-ZW SP EX_EastAsian ; LF ; eot
-ZW SP EX_EastAsian ; BK|NL ; eot
+ZW SP EX_EastAsian ; LF ; BK
 ZW SP EX_EastAsian ; CR ; CR
 ZW SP EX_EastAsian ; SP ; SP
 ZW SP EX_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7460,11 +7302,10 @@ ZW SP EX_EastAsian ; EX_EastAsian ; CJ
 ZW SP EX_EastAsian ; IN_EastAsian ; CJ
 ZW SP EX_EastAsian ; GL_EastAsian ; GL_EastAsian
 ZW SP EX_EastAsian ; SA_Mn|SA_Mc ; CJ CM
-RI ZWJ RI ; eot ; eot
+RI ZWJ RI ; BK|NL|eot ; BK
 RI ZWJ RI ; CM ; RI ZWJ RI CM
 RI ZWJ RI ; BAmEastAsian ; BAmEastAsian
-RI ZWJ RI ; LF ; eot
-RI ZWJ RI ; BK|NL ; eot
+RI ZWJ RI ; LF ; BK
 RI ZWJ RI ; CR ; CR
 RI ZWJ RI ; SP ; SP
 RI ZWJ RI ; EXmEastAsian ; EXmEastAsian
@@ -7522,11 +7363,10 @@ RI ZWJ RI ; EM ; RI RI ALmEastAsianmDottedCircle
 RI ZWJ RI ; XX_ExtPictUnassigned ; RI RI ALmEastAsianmDottedCircle
 RI ZWJ RI ; SAmMnmMc ; RI RI ALmEastAsianmDottedCircle
 RI ZWJ RI ; SA_Mn|SA_Mc ; RI ZWJ RI CM
-RI RI CM ; eot ; eot
+RI RI CM ; BK|NL|eot ; BK
 RI RI CM ; CM ; RI RI CM
 RI RI CM ; BAmEastAsian ; BAmEastAsian
-RI RI CM ; LF ; eot
-RI RI CM ; BK|NL ; eot
+RI RI CM ; LF ; BK
 RI RI CM ; CR ; CR
 RI RI CM ; SP ; SP
 RI RI CM ; EXmEastAsian ; EXmEastAsian
@@ -7584,11 +7424,10 @@ RI RI CM ; EM ; RI RI CM ALmEastAsianmDottedCircle
 RI RI CM ; XX_ExtPictUnassigned ; RI RI CM ALmEastAsianmDottedCircle
 RI RI CM ; SAmMnmMc ; RI RI CM ALmEastAsianmDottedCircle
 RI RI CM ; SA_Mn|SA_Mc ; RI RI CM
-OPmEastAsian SP IS CM ; eot ; eot
+OPmEastAsian SP IS CM ; BK|NL|eot ; BK
 OPmEastAsian SP IS CM ; CM ; OPmEastAsian SP IS CM
 OPmEastAsian SP IS CM ; BAmEastAsian ; BAmEastAsian
-OPmEastAsian SP IS CM ; LF ; eot
-OPmEastAsian SP IS CM ; BK|NL ; eot
+OPmEastAsian SP IS CM ; LF ; BK
 OPmEastAsian SP IS CM ; CR ; CR
 OPmEastAsian SP IS CM ; SP ; SP
 OPmEastAsian SP IS CM ; EXmEastAsian ; EXmEastAsian
@@ -7646,11 +7485,10 @@ OPmEastAsian SP IS CM ; EM ; SP IS CM PRmEastAsian
 OPmEastAsian SP IS CM ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 OPmEastAsian SP IS CM ; SAmMnmMc ; CM
 OPmEastAsian SP IS CM ; SA_Mn|SA_Mc ; OPmEastAsian SP IS CM
-JL CM QU_Pi JL ; eot ; eot
+JL CM QU_Pi JL ; BK|NL|eot ; BK
 JL CM QU_Pi JL ; CM ; JL CM
 JL CM QU_Pi JL ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi JL ; LF ; eot
-JL CM QU_Pi JL ; BK|NL ; eot
+JL CM QU_Pi JL ; LF ; BK
 JL CM QU_Pi JL ; CR ; CR
 JL CM QU_Pi JL ; SP ; SP
 JL CM QU_Pi JL ; EXmEastAsian ; EXmEastAsian
@@ -7682,11 +7520,10 @@ JL CM QU_Pi JL ; IN_EastAsian ; CJ
 JL CM QU_Pi JL ; PO_EastAsian ; PO_EastAsian
 JL CM QU_Pi JL ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi JL ; SA_Mn|SA_Mc ; JL CM
-JL CM QU_Pi PR_EastAsian ; eot ; eot
+JL CM QU_Pi PR_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi PR_EastAsian ; CM ; PR_EastAsian CM
 JL CM QU_Pi PR_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi PR_EastAsian ; LF ; eot
-JL CM QU_Pi PR_EastAsian ; BK|NL ; eot
+JL CM QU_Pi PR_EastAsian ; LF ; BK
 JL CM QU_Pi PR_EastAsian ; CR ; CR
 JL CM QU_Pi PR_EastAsian ; SP ; SP
 JL CM QU_Pi PR_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7731,11 +7568,10 @@ JL CM QU_Pi PR_EastAsian ; EM ; ID_EastAsian
 JL CM QU_Pi PR_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL CM QU_Pi PR_EastAsian ; SAmMnmMc ; CM
 JL CM QU_Pi PR_EastAsian ; SA_Mn|SA_Mc ; PR_EastAsian CM
-JL CM QU_Pi ID_EastAsian ; eot ; eot
+JL CM QU_Pi ID_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi ID_EastAsian ; CM ; ID_EastAsian CM
 JL CM QU_Pi ID_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi ID_EastAsian ; LF ; eot
-JL CM QU_Pi ID_EastAsian ; BK|NL ; eot
+JL CM QU_Pi ID_EastAsian ; LF ; BK
 JL CM QU_Pi ID_EastAsian ; CR ; CR
 JL CM QU_Pi ID_EastAsian ; SP ; SP
 JL CM QU_Pi ID_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7763,11 +7599,10 @@ JL CM QU_Pi ID_EastAsian ; IN_EastAsian ; CJ
 JL CM QU_Pi ID_EastAsian ; PO_EastAsian ; PO_EastAsian
 JL CM QU_Pi ID_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi ID_EastAsian ; SA_Mn|SA_Mc ; ID_EastAsian CM
-JL CM QU_Pi CL_EastAsian ; eot ; eot
+JL CM QU_Pi CL_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi CL_EastAsian ; CM ; CL_EastAsian CM
 JL CM QU_Pi CL_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi CL_EastAsian ; LF ; eot
-JL CM QU_Pi CL_EastAsian ; BK|NL ; eot
+JL CM QU_Pi CL_EastAsian ; LF ; BK
 JL CM QU_Pi CL_EastAsian ; CR ; CR
 JL CM QU_Pi CL_EastAsian ; SP ; CP SP
 JL CM QU_Pi CL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7793,11 +7628,10 @@ JL CM QU_Pi CL_EastAsian ; EX_EastAsian ; CJ
 JL CM QU_Pi CL_EastAsian ; IN_EastAsian ; CJ
 JL CM QU_Pi CL_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi CL_EastAsian ; SA_Mn|SA_Mc ; CL_EastAsian CM
-JL CM QU_Pi CJ ; eot ; eot
+JL CM QU_Pi CJ ; BK|NL|eot ; BK
 JL CM QU_Pi CJ ; CM ; CJ CM
 JL CM QU_Pi CJ ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi CJ ; LF ; eot
-JL CM QU_Pi CJ ; BK|NL ; eot
+JL CM QU_Pi CJ ; LF ; BK
 JL CM QU_Pi CJ ; CR ; CR
 JL CM QU_Pi CJ ; SP ; SP
 JL CM QU_Pi CJ ; EXmEastAsian ; EXmEastAsian
@@ -7823,11 +7657,10 @@ JL CM QU_Pi CJ ; EX_EastAsian ; CJ
 JL CM QU_Pi CJ ; IN_EastAsian ; CJ
 JL CM QU_Pi CJ ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi CJ ; SA_Mn|SA_Mc ; CJ CM
-JL CM QU_Pi AL_EastAsian ; eot ; eot
+JL CM QU_Pi AL_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi AL_EastAsian ; CM ; AL_EastAsian CM
 JL CM QU_Pi AL_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi AL_EastAsian ; LF ; eot
-JL CM QU_Pi AL_EastAsian ; BK|NL ; eot
+JL CM QU_Pi AL_EastAsian ; LF ; BK
 JL CM QU_Pi AL_EastAsian ; CR ; CR
 JL CM QU_Pi AL_EastAsian ; SP ; SP
 JL CM QU_Pi AL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7865,11 +7698,10 @@ JL CM QU_Pi AL_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi AL_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL CM QU_Pi AL_EastAsian ; SAmMnmMc ; CM
 JL CM QU_Pi AL_EastAsian ; SA_Mn|SA_Mc ; AL_EastAsian CM
-JL CM QU_Pi EB_EastAsian ; eot ; eot
+JL CM QU_Pi EB_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi EB_EastAsian ; CM ; EB_EastAsian CM
 JL CM QU_Pi EB_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi EB_EastAsian ; LF ; eot
-JL CM QU_Pi EB_EastAsian ; BK|NL ; eot
+JL CM QU_Pi EB_EastAsian ; LF ; BK
 JL CM QU_Pi EB_EastAsian ; CR ; CR
 JL CM QU_Pi EB_EastAsian ; SP ; SP
 JL CM QU_Pi EB_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7898,11 +7730,10 @@ JL CM QU_Pi EB_EastAsian ; PO_EastAsian ; PO_EastAsian
 JL CM QU_Pi EB_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi EB_EastAsian ; EM ; ID_EastAsian
 JL CM QU_Pi EB_EastAsian ; SA_Mn|SA_Mc ; EB_EastAsian CM
-JL CM QU_Pi BA_EastAsian ; eot ; eot
+JL CM QU_Pi BA_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi BA_EastAsian ; CM ; BA_EastAsian CM
 JL CM QU_Pi BA_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi BA_EastAsian ; LF ; eot
-JL CM QU_Pi BA_EastAsian ; BK|NL ; eot
+JL CM QU_Pi BA_EastAsian ; LF ; BK
 JL CM QU_Pi BA_EastAsian ; CR ; CR
 JL CM QU_Pi BA_EastAsian ; SP ; SP
 JL CM QU_Pi BA_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -7926,11 +7757,10 @@ JL CM QU_Pi BA_EastAsian ; NS_EastAsian|CJ ; CJ
 JL CM QU_Pi BA_EastAsian ; EX_EastAsian ; CJ
 JL CM QU_Pi BA_EastAsian ; IN_EastAsian ; CJ
 JL CM QU_Pi BA_EastAsian ; SA_Mn|SA_Mc ; BA_EastAsian CM
-JL CM QU_Pi H2 ; eot ; eot
+JL CM QU_Pi H2 ; BK|NL|eot ; BK
 JL CM QU_Pi H2 ; CM ; H2 CM
 JL CM QU_Pi H2 ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi H2 ; LF ; eot
-JL CM QU_Pi H2 ; BK|NL ; eot
+JL CM QU_Pi H2 ; LF ; BK
 JL CM QU_Pi H2 ; CR ; CR
 JL CM QU_Pi H2 ; SP ; SP
 JL CM QU_Pi H2 ; EXmEastAsian ; EXmEastAsian
@@ -7960,11 +7790,10 @@ JL CM QU_Pi H2 ; IN_EastAsian ; CJ
 JL CM QU_Pi H2 ; PO_EastAsian ; PO_EastAsian
 JL CM QU_Pi H2 ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi H2 ; SA_Mn|SA_Mc ; H2 CM
-JL CM QU_Pi H3 ; eot ; eot
+JL CM QU_Pi H3 ; BK|NL|eot ; BK
 JL CM QU_Pi H3 ; CM ; H3 CM
 JL CM QU_Pi H3 ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi H3 ; LF ; eot
-JL CM QU_Pi H3 ; BK|NL ; eot
+JL CM QU_Pi H3 ; LF ; BK
 JL CM QU_Pi H3 ; CR ; CR
 JL CM QU_Pi H3 ; SP ; SP
 JL CM QU_Pi H3 ; EXmEastAsian ; EXmEastAsian
@@ -7993,11 +7822,10 @@ JL CM QU_Pi H3 ; IN_EastAsian ; CJ
 JL CM QU_Pi H3 ; PO_EastAsian ; PO_EastAsian
 JL CM QU_Pi H3 ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi H3 ; SA_Mn|SA_Mc ; H3 CM
-JL CM QU_Pi PO_EastAsian ; eot ; eot
+JL CM QU_Pi PO_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi PO_EastAsian ; CM ; PO_EastAsian CM
 JL CM QU_Pi PO_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi PO_EastAsian ; LF ; eot
-JL CM QU_Pi PO_EastAsian ; BK|NL ; eot
+JL CM QU_Pi PO_EastAsian ; LF ; BK
 JL CM QU_Pi PO_EastAsian ; CR ; CR
 JL CM QU_Pi PO_EastAsian ; SP ; SP
 JL CM QU_Pi PO_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8032,11 +7860,10 @@ JL CM QU_Pi PO_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL CM QU_Pi PO_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL CM QU_Pi PO_EastAsian ; SAmMnmMc ; CM
 JL CM QU_Pi PO_EastAsian ; SA_Mn|SA_Mc ; PO_EastAsian CM
-JL CM QU_Pi OP_EastAsian ; eot ; eot
+JL CM QU_Pi OP_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi OP_EastAsian ; CM ; OP_EastAsian
 JL CM QU_Pi OP_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi OP_EastAsian ; LF ; eot
-JL CM QU_Pi OP_EastAsian ; BK|NL ; eot
+JL CM QU_Pi OP_EastAsian ; LF ; BK
 JL CM QU_Pi OP_EastAsian ; CR ; CR
 JL CM QU_Pi OP_EastAsian ; SP ; OPmEastAsian SP
 JL CM QU_Pi OP_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8094,11 +7921,10 @@ JL CM QU_Pi OP_EastAsian ; EM ; ID_EastAsian
 JL CM QU_Pi OP_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL CM QU_Pi OP_EastAsian ; SAmMnmMc ; CM
 JL CM QU_Pi OP_EastAsian ; SA_Mn|SA_Mc ; OP_EastAsian
-JL CM QU_Pi GL_EastAsian ; eot ; eot
+JL CM QU_Pi GL_EastAsian ; BK|NL|eot ; BK
 JL CM QU_Pi GL_EastAsian ; CM ; GL_EastAsian
 JL CM QU_Pi GL_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL CM QU_Pi GL_EastAsian ; LF ; eot
-JL CM QU_Pi GL_EastAsian ; BK|NL ; eot
+JL CM QU_Pi GL_EastAsian ; LF ; BK
 JL CM QU_Pi GL_EastAsian ; CR ; CR
 JL CM QU_Pi GL_EastAsian ; SP ; SP
 JL CM QU_Pi GL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8156,11 +7982,10 @@ JL CM QU_Pi GL_EastAsian ; EM ; ID_EastAsian
 JL CM QU_Pi GL_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL CM QU_Pi GL_EastAsian ; SAmMnmMc ; CM
 JL CM QU_Pi GL_EastAsian ; SA_Mn|SA_Mc ; GL_EastAsian
-JL QU_Pf CM JL ; eot ; eot
+JL QU_Pf CM JL ; BK|NL|eot ; BK
 JL QU_Pf CM JL ; CM ; JL CM
 JL QU_Pf CM JL ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM JL ; LF ; eot
-JL QU_Pf CM JL ; BK|NL ; eot
+JL QU_Pf CM JL ; LF ; BK
 JL QU_Pf CM JL ; CR ; CR
 JL QU_Pf CM JL ; SP ; SP
 JL QU_Pf CM JL ; EXmEastAsian ; EXmEastAsian
@@ -8192,11 +8017,10 @@ JL QU_Pf CM JL ; IN_EastAsian ; CJ
 JL QU_Pf CM JL ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf CM JL ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf CM JL ; SA_Mn|SA_Mc ; JL CM
-JL QU_Pf CM PR_EastAsian ; eot ; eot
+JL QU_Pf CM PR_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf CM PR_EastAsian ; CM ; PR_EastAsian CM
 JL QU_Pf CM PR_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM PR_EastAsian ; LF ; eot
-JL QU_Pf CM PR_EastAsian ; BK|NL ; eot
+JL QU_Pf CM PR_EastAsian ; LF ; BK
 JL QU_Pf CM PR_EastAsian ; CR ; CR
 JL QU_Pf CM PR_EastAsian ; SP ; SP
 JL QU_Pf CM PR_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8241,11 +8065,10 @@ JL QU_Pf CM PR_EastAsian ; EM ; ID_EastAsian
 JL QU_Pf CM PR_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf CM PR_EastAsian ; SAmMnmMc ; CM
 JL QU_Pf CM PR_EastAsian ; SA_Mn|SA_Mc ; PR_EastAsian CM
-JL QU_Pf CM ID_EastAsian ; eot ; eot
+JL QU_Pf CM ID_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf CM ID_EastAsian ; CM ; ID_EastAsian CM
 JL QU_Pf CM ID_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM ID_EastAsian ; LF ; eot
-JL QU_Pf CM ID_EastAsian ; BK|NL ; eot
+JL QU_Pf CM ID_EastAsian ; LF ; BK
 JL QU_Pf CM ID_EastAsian ; CR ; CR
 JL QU_Pf CM ID_EastAsian ; SP ; SP
 JL QU_Pf CM ID_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8273,11 +8096,10 @@ JL QU_Pf CM ID_EastAsian ; IN_EastAsian ; CJ
 JL QU_Pf CM ID_EastAsian ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf CM ID_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf CM ID_EastAsian ; SA_Mn|SA_Mc ; ID_EastAsian CM
-JL QU_Pf CM AL_EastAsian ; eot ; eot
+JL QU_Pf CM AL_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf CM AL_EastAsian ; CM ; AL_EastAsian CM
 JL QU_Pf CM AL_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM AL_EastAsian ; LF ; eot
-JL QU_Pf CM AL_EastAsian ; BK|NL ; eot
+JL QU_Pf CM AL_EastAsian ; LF ; BK
 JL QU_Pf CM AL_EastAsian ; CR ; CR
 JL QU_Pf CM AL_EastAsian ; SP ; SP
 JL QU_Pf CM AL_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8315,11 +8137,10 @@ JL QU_Pf CM AL_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf CM AL_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf CM AL_EastAsian ; SAmMnmMc ; CM
 JL QU_Pf CM AL_EastAsian ; SA_Mn|SA_Mc ; AL_EastAsian CM
-JL QU_Pf CM EB_EastAsian ; eot ; eot
+JL QU_Pf CM EB_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf CM EB_EastAsian ; CM ; EB_EastAsian CM
 JL QU_Pf CM EB_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM EB_EastAsian ; LF ; eot
-JL QU_Pf CM EB_EastAsian ; BK|NL ; eot
+JL QU_Pf CM EB_EastAsian ; LF ; BK
 JL QU_Pf CM EB_EastAsian ; CR ; CR
 JL QU_Pf CM EB_EastAsian ; SP ; SP
 JL QU_Pf CM EB_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8348,11 +8169,10 @@ JL QU_Pf CM EB_EastAsian ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf CM EB_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf CM EB_EastAsian ; EM ; ID_EastAsian
 JL QU_Pf CM EB_EastAsian ; SA_Mn|SA_Mc ; EB_EastAsian CM
-JL QU_Pf CM H2 ; eot ; eot
+JL QU_Pf CM H2 ; BK|NL|eot ; BK
 JL QU_Pf CM H2 ; CM ; H2 CM
 JL QU_Pf CM H2 ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM H2 ; LF ; eot
-JL QU_Pf CM H2 ; BK|NL ; eot
+JL QU_Pf CM H2 ; LF ; BK
 JL QU_Pf CM H2 ; CR ; CR
 JL QU_Pf CM H2 ; SP ; SP
 JL QU_Pf CM H2 ; EXmEastAsian ; EXmEastAsian
@@ -8382,11 +8202,10 @@ JL QU_Pf CM H2 ; IN_EastAsian ; CJ
 JL QU_Pf CM H2 ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf CM H2 ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf CM H2 ; SA_Mn|SA_Mc ; H2 CM
-JL QU_Pf CM H3 ; eot ; eot
+JL QU_Pf CM H3 ; BK|NL|eot ; BK
 JL QU_Pf CM H3 ; CM ; H3 CM
 JL QU_Pf CM H3 ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM H3 ; LF ; eot
-JL QU_Pf CM H3 ; BK|NL ; eot
+JL QU_Pf CM H3 ; LF ; BK
 JL QU_Pf CM H3 ; CR ; CR
 JL QU_Pf CM H3 ; SP ; SP
 JL QU_Pf CM H3 ; EXmEastAsian ; EXmEastAsian
@@ -8415,11 +8234,10 @@ JL QU_Pf CM H3 ; IN_EastAsian ; CJ
 JL QU_Pf CM H3 ; PO_EastAsian ; PO_EastAsian
 JL QU_Pf CM H3 ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf CM H3 ; SA_Mn|SA_Mc ; H3 CM
-JL QU_Pf CM PO_EastAsian ; eot ; eot
+JL QU_Pf CM PO_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf CM PO_EastAsian ; CM ; PO_EastAsian CM
 JL QU_Pf CM PO_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM PO_EastAsian ; LF ; eot
-JL QU_Pf CM PO_EastAsian ; BK|NL ; eot
+JL QU_Pf CM PO_EastAsian ; LF ; BK
 JL QU_Pf CM PO_EastAsian ; CR ; CR
 JL QU_Pf CM PO_EastAsian ; SP ; SP
 JL QU_Pf CM PO_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8454,11 +8272,10 @@ JL QU_Pf CM PO_EastAsian ; GL_EastAsian ; GL_EastAsian
 JL QU_Pf CM PO_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf CM PO_EastAsian ; SAmMnmMc ; CM
 JL QU_Pf CM PO_EastAsian ; SA_Mn|SA_Mc ; PO_EastAsian CM
-JL QU_Pf CM OP_EastAsian ; eot ; eot
+JL QU_Pf CM OP_EastAsian ; BK|NL|eot ; BK
 JL QU_Pf CM OP_EastAsian ; CM ; OP_EastAsian
 JL QU_Pf CM OP_EastAsian ; BAmEastAsian ; BAmEastAsian
-JL QU_Pf CM OP_EastAsian ; LF ; eot
-JL QU_Pf CM OP_EastAsian ; BK|NL ; eot
+JL QU_Pf CM OP_EastAsian ; LF ; BK
 JL QU_Pf CM OP_EastAsian ; CR ; CR
 JL QU_Pf CM OP_EastAsian ; SP ; OPmEastAsian SP
 JL QU_Pf CM OP_EastAsian ; EXmEastAsian ; EXmEastAsian
@@ -8516,11 +8333,10 @@ JL QU_Pf CM OP_EastAsian ; EM ; ID_EastAsian
 JL QU_Pf CM OP_EastAsian ; XX_ExtPictUnassigned ; XX_ExtPictUnassigned
 JL QU_Pf CM OP_EastAsian ; SAmMnmMc ; CM
 JL QU_Pf CM OP_EastAsian ; SA_Mn|SA_Mc ; OP_EastAsian
-RI ZWJ RI CM ; eot ; eot
+RI ZWJ RI CM ; BK|NL|eot ; BK
 RI ZWJ RI CM ; CM ; RI ZWJ RI CM
 RI ZWJ RI CM ; BAmEastAsian ; BAmEastAsian
-RI ZWJ RI CM ; LF ; eot
-RI ZWJ RI CM ; BK|NL ; eot
+RI ZWJ RI CM ; LF ; BK
 RI ZWJ RI CM ; CR ; CR
 RI ZWJ RI CM ; SP ; SP
 RI ZWJ RI CM ; EXmEastAsian ; EXmEastAsian
@@ -8578,11 +8394,10 @@ RI ZWJ RI CM ; EM ; RI RI CM ALmEastAsianmDottedCircle
 RI ZWJ RI CM ; XX_ExtPictUnassigned ; RI RI CM ALmEastAsianmDottedCircle
 RI ZWJ RI CM ; SAmMnmMc ; RI RI CM ALmEastAsianmDottedCircle
 RI ZWJ RI CM ; SA_Mn|SA_Mc ; RI ZWJ RI CM
-RI ZWJ RI RI ; eot ; eot
+RI ZWJ RI RI ; BK|NL|eot ; BK
 RI ZWJ RI RI ; CM ; RI RI CM
 RI ZWJ RI RI ; BAmEastAsian ; BAmEastAsian
-RI ZWJ RI RI ; LF ; eot
-RI ZWJ RI RI ; BK|NL ; eot
+RI ZWJ RI RI ; LF ; BK
 RI ZWJ RI RI ; CR ; CR
 RI ZWJ RI RI ; SP ; SP
 RI ZWJ RI RI ; EXmEastAsian ; EXmEastAsian
@@ -8640,11 +8455,10 @@ RI ZWJ RI RI ; EM ; RI RI ALmEastAsianmDottedCircle
 RI ZWJ RI RI ; XX_ExtPictUnassigned ; RI RI ALmEastAsianmDottedCircle
 RI ZWJ RI RI ; SAmMnmMc ; RI RI ALmEastAsianmDottedCircle
 RI ZWJ RI RI ; SA_Mn|SA_Mc ; RI RI CM
-RI ZWJ RI CM RI ; eot ; eot
+RI ZWJ RI CM RI ; BK|NL|eot ; BK
 RI ZWJ RI CM RI ; CM ; RI RI CM
 RI ZWJ RI CM RI ; BAmEastAsian ; BAmEastAsian
-RI ZWJ RI CM RI ; LF ; eot
-RI ZWJ RI CM RI ; BK|NL ; eot
+RI ZWJ RI CM RI ; LF ; BK
 RI ZWJ RI CM RI ; CR ; CR
 RI ZWJ RI CM RI ; SP ; SP
 RI ZWJ RI CM RI ; EXmEastAsian ; EXmEastAsian
