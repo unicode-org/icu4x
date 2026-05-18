@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use icu::datetime::provider::fields;
-
 use crate::SourceDataProvider;
 
 #[test]
@@ -224,6 +222,7 @@ mod date_skeleton_consistency_tests {
     use super::*;
     use crate::datetime::DatagenCalendar;
     use crate::CoverageLevel;
+    use icu::datetime::provider::fields;
     use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use std::collections::BTreeMap;
