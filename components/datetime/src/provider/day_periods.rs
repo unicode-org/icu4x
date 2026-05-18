@@ -203,6 +203,8 @@ impl DayPeriodRules {
             }
         }
 
+        // TODO: change this to use array_try_map
+        // <https://github.com/rust-lang/rust/issues/79711>
         #[allow(clippy::unwrap_used)] // just checked
         let hour_periods = hour_periods.map(|p| p.unwrap());
 
