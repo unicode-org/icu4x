@@ -37,9 +37,9 @@ pub mod ffi {
     use crate::unstable::provider::ffi::DataProvider;
 
     {%- for formatter_kind in flavor.formatter_kinds() %}
-    {%- let ffi_type %}
-    {%- let ffi_base_type %}
-    {%- let conversion_fn %}
+    {%- decl ffi_type %}
+    {%- decl ffi_base_type %}
+    {%- decl conversion_fn %}
     {%- if formatter_kind.is_gregorian %}
         {%- let ffi_type = format!("Zoned{}FormatterGregorian", flavor.camel()) %}
         {%- let ffi_base_type = format!("{}FormatterGregorian", flavor.camel()) %}

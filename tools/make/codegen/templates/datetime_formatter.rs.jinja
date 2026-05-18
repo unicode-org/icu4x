@@ -34,7 +34,7 @@ pub mod ffi {
     use crate::unstable::provider::ffi::DataProvider;
 
     {%- for formatter_kind in flavor.formatter_kinds() %}
-    {%- let ffi_type %}
+    {%- decl ffi_type %}
     {%- if formatter_kind.is_gregorian %}
         {%- let ffi_type = format!("{}FormatterGregorian", {{ flavor.camel() }}) %}
     {%- else %}
@@ -59,8 +59,8 @@ pub mod ffi {
     impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for ctor in ConstructorType::VALUES %}
-        {%- let named_constructor %}
-        {%- let named_constructor_full %}
+        {%- decl named_constructor %}
+        {%- decl named_constructor_full %}
         {%- if ctor.is_with_provider() %}
             {%- if variant.is_only_constructor() %}
                 {%- let named_constructor = "with_provider".to_string() %}
