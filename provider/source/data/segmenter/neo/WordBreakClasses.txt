@@ -1,5 +1,4 @@
 # Class name ; Class definition in UnicodeSet notation
-eot ; [{eot}]
 XXmExtPict ; [\p{Word_Break=Other}-\p{Extended_Pictographic=True}]
 LF ; [\p{Word_Break=LF}]
 Newline ; [\p{Word_Break=Newline}]

@@ -1146,7 +1146,7 @@ impl<'a> ParsedNfa<'a> {
                 Ok((class, set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-        let eot_class = eot_class.unwrap();
+        let eot_class = eot_class.unwrap_or("eot");
 
         let states = states
             .lines()
