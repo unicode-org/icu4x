@@ -346,6 +346,7 @@ macro_rules! registry(
             icu::segmenter::provider::SegmenterBreakLineV2: SegmenterBreakLineV2,
             icu::segmenter::provider::SegmenterBreakSentenceV2: SegmenterBreakSentenceV2,
             icu::segmenter::provider::SegmenterBreakWordV2: SegmenterBreakWordV2,
+            icu::segmenter::provider::SegmenterBreakLineOverrideV2: SegmenterBreakLineOverrideV2,
             icu::segmenter::provider::SegmenterBreakSentenceOverrideV2: SegmenterBreakSentenceOverrideV2,
         );
     }

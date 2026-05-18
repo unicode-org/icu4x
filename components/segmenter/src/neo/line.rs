@@ -12,8 +12,8 @@ use crate::provider::Baked;
 #[cfg(feature = "lstm")]
 use crate::provider::SegmenterLstmAutoV1;
 use crate::provider::{
-    SegmenterBreakGraphemeClusterV1, SegmenterBreakLineV2, SegmenterDictionaryExtendedV1,
-    SegmenterStateMachine,
+    RuleBreakDataOverride, SegmenterBreakGraphemeClusterV1, SegmenterBreakLineOverrideV2,
+    SegmenterBreakLineV2, SegmenterDictionaryExtendedV1, SegmenterStateMachine,
 };
 use crate::scaffold::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
 use icu_provider::prelude::*;
@@ -32,7 +32,9 @@ use utf8_iter::Utf8CharIndices;
 ///
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
-pub struct LineBreakIterator<'data, 's, Y: RuleBreakType>(RuleBreakIterator<'data, 's, Y, ()>);
+pub struct LineBreakIterator<'data, 's, Y: RuleBreakType>(
+    RuleBreakIterator<'data, 's, Y, Option<&'data RuleBreakDataOverride<'data>>>,
+);
 
 derive_usize_iterator_with_type!(LineBreakIterator, 'data);
 
@@ -165,6 +167,7 @@ derive_usize_iterator_with_type!(LineBreakIterator, 'data);
 pub struct LineSegmenter {
     options: ResolvedLineBreakOptions,
     payload: DataPayload<SegmenterBreakLineV2>,
+    tailoring: Option<DataPayload<SegmenterBreakLineOverrideV2>>,
     complex: ComplexPayloads,
 }
 
@@ -175,6 +178,7 @@ pub struct LineSegmenter {
 pub struct LineSegmenterBorrowed<'data> {
     options: ResolvedLineBreakOptions,
     data: &'data SegmenterStateMachine<'data>,
+    tailoring: Option<&'data RuleBreakDataOverride<'data>>,
     complex: ComplexPayloadsBorrowed<'data>,
 }
 
@@ -214,6 +218,7 @@ impl LineSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakLineV2>
+            + DataProvider<SegmenterBreakLineOverrideV2>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
@@ -259,6 +264,7 @@ impl LineSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakLineV2>
+            + DataProvider<SegmenterBreakLineOverrideV2>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
@@ -302,6 +308,7 @@ impl LineSegmenter {
     where
         D: DataProvider<SegmenterBreakLineV2>
             + DataProvider<SegmenterDictionaryExtendedV1>
+            + DataProvider<SegmenterBreakLineOverrideV2>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
@@ -323,6 +330,7 @@ impl LineSegmenter {
         LineSegmenterBorrowed {
             options: options.resolve(),
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V2,
+            tailoring: None,
             complex: ComplexPayloadsBorrowed::new(),
         }
     }
@@ -345,12 +353,29 @@ impl LineSegmenter {
     where
         D: DataProvider<SegmenterBreakLineV2>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakLineOverrideV2>
             + ?Sized,
     {
+        let tailoring = if let Some(locale) = options.content_locale {
+            provider
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&DataLocale::from(locale)),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                })
+                .allow_identifier_not_found()?
+                .map(|r| r.payload)
+        } else {
+            None
+        };
         Ok(Self {
             options: options.resolve(),
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new(provider)?,
+            tailoring,
         })
     }
 
@@ -421,6 +446,7 @@ impl LineSegmenter {
         LineSegmenterBorrowed {
             options: self.options,
             data: self.payload.get(),
+            tailoring: self.tailoring.as_ref().map(|d| d.get()),
             complex: self.complex.as_borrowed(),
         }
     }
@@ -465,6 +491,7 @@ impl LineSegmenterBorrowed<'static> {
     pub fn static_to_owned(self) -> LineSegmenter {
         LineSegmenter {
             payload: DataPayload::from_static_ref(self.data),
+            tailoring: self.tailoring.map(DataPayload::from_static_ref),
             complex: self.complex.static_to_owned(),
             options: self.options,
         }
@@ -484,7 +511,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
         LineBreakIterator(RuleBreakIterator::new_with_complex(
             input.char_indices(),
             self.data,
-            (),
+            self.tailoring,
             self.complex,
             false,
             false as u8,
@@ -502,7 +529,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
         LineBreakIterator(RuleBreakIterator::new_with_complex(
             Utf8CharIndices::new(input),
             self.data,
-            (),
+            self.tailoring,
             self.complex,
             false,
             false as u8,
@@ -515,7 +542,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
         LineBreakIterator(RuleBreakIterator::new_non_complex(
             Latin1Indices::new(input),
             self.data,
-            (),
+            self.tailoring,
         ))
     }
 
@@ -526,7 +553,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
         LineBreakIterator(RuleBreakIterator::new_with_complex(
             Utf16Indices::new(input),
             self.data,
-            (),
+            self.tailoring,
             self.complex,
             false,
             false as u8,

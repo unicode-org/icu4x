@@ -71,6 +71,8 @@ const _: () = {
     #[cfg(feature = "unstable")]
     impl_segmenter_break_grapheme_cluster_v2!(Baked);
     #[cfg(feature = "unstable")]
+    impl_segmenter_break_line_override_v2!(Baked);
+    #[cfg(feature = "unstable")]
     impl_segmenter_break_sentence_override_v2!(Baked);
 };
 
@@ -161,6 +163,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterBreakSentenceV2::INFO,
     #[cfg(feature = "unstable")]
     SegmenterBreakGraphemeClusterV2::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterBreakLineOverrideV2::INFO,
     #[cfg(feature = "unstable")]
     SegmenterBreakSentenceOverrideV2::INFO,
 ];

@@ -1289,6 +1289,55 @@ impl IterableDataProviderCached<SegmenterBreakGraphemeClusterV2> for SourceDataP
 }
 
 #[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<SegmenterBreakLineOverrideV2>, DataError> {
+        self.check_req::<SegmenterBreakLineOverrideV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakLineOverrideV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            let property_table_override = ParsedNfa::parse_nfa_files(
+                self,
+                &neo_sources().read_to_string("LineBreakClasses.txt")?,
+                &neo_sources().read_to_string("LineBreakStates.txt")?,
+                &neo_sources().read_to_string("LineBreakTransitions.txt")?,
+            )?
+            .tailoring(
+                self,
+                &neo_sources()
+                    .read_to_string(&format!("LineBreakTailoring_{}.txt", req.id.locale))?,
+            )?;
+
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(RuleBreakDataOverride {
+                    property_table_override,
+                }),
+            })
+        }
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl IterableDataProviderCached<SegmenterBreakLineOverrideV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(neo_sources()
+            .list("LineBreakTailoring_")?
+            .map(|s| icu::locale::Locale::try_from_str(s.strip_suffix(".txt").unwrap()).unwrap())
+            .map(|l| DataIdentifierCow::from_locale(l.into()))
+            .collect())
+    }
+}
+
+#[cfg(feature = "unstable")]
 impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
     fn load(
         &self,
