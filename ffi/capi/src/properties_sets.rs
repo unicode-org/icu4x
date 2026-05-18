@@ -9,6 +9,7 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_properties::props::GeneralCategory;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    #[allow(deprecated)]
     use icu_properties::props::{
         Alnum, Alphabetic, AsciiHexDigit, BidiControl, BidiMirrored, Blank, CaseIgnorable,
         CaseSensitive, Cased, ChangesWhenCasefolded, ChangesWhenCasemapped, ChangesWhenLowercased,
