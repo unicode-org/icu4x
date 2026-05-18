@@ -1015,9 +1015,9 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
     }
 }
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+#[cfg(feature = "unstable")]
 impl<'a> ParsedNfa<'a> {
-    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    #[cfg(feature = "unstable")]
     fn build(&self, status_lookup: fn(&str) -> u8) -> SegmenterStateMachine<'static> {
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::TrieType;
