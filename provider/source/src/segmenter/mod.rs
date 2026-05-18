@@ -873,6 +873,26 @@ implement_override!(SegmenterBreakWordOverrideV1, "word.toml", []);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
 #[cfg(feature = "unstable")]
+fn neo_sources() -> crate::source::AbstractFs {
+    include_files!(
+        "../../data/segmenter/neo/";
+        "GraphemeClusterBreakClasses.txt",
+        "GraphemeClusterBreakStates.txt",
+        "GraphemeClusterBreakTransitions.txt",
+        "LineBreakClasses.txt",
+        "LineBreakStates.txt",
+        "LineBreakTransitions.txt",
+        "SentenceBreakClasses.txt",
+        "SentenceBreakTailoring_el.txt",
+        "SentenceBreakStates.txt",
+        "SentenceBreakTransitions.txt",
+        "WordBreakClasses.txt",
+        "WordBreakStates.txt",
+        "WordBreakTransitions.txt",
+    )
+}
+
+#[cfg(feature = "unstable")]
 impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakLineV2>, DataError> {
         self.check_req::<SegmenterBreakLineV2>(req)?;
@@ -885,12 +905,14 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = self.build_segmenter_state_machine(
-                include_str!("../../data/segmenter/neo/LineBreakClasses.txt"),
-                include_str!("../../data/segmenter/neo/LineBreakStates.txt"),
-                include_str!("../../data/segmenter/neo/LineBreakTransitions.txt"),
-                |s| if s == "Mandatory" { 1 } else { 0 },
-            )?;
+            let data = ParsedNfa::parse_nfa_files(
+                self,
+                &neo_sources().read_to_string("LineBreakClasses.txt")?,
+                &neo_sources().read_to_string("LineBreakStates.txt")?,
+                &neo_sources().read_to_string("LineBreakTransitions.txt")?,
+            )?
+            .build(|s| if s == "Mandatory" { 1 } else { 0 });
+
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(data),
@@ -912,16 +934,17 @@ impl DataProvider<SegmenterBreakWordV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = self.build_segmenter_state_machine(
-                include_str!("../../data/segmenter/neo/WordBreakClasses.txt"),
-                include_str!("../../data/segmenter/neo/WordBreakStates.txt"),
-                include_str!("../../data/segmenter/neo/WordBreakTransitions.txt"),
-                |s| match s {
-                    "Letter" => WordType::Letter,
-                    "Number" => WordType::Number,
-                    _ => WordType::None,
-                } as u8,
-            )?;
+            let data = ParsedNfa::parse_nfa_files(
+                self,
+                &neo_sources().read_to_string("WordBreakClasses.txt")?,
+                &neo_sources().read_to_string("WordBreakStates.txt")?,
+                &neo_sources().read_to_string("WordBreakTransitions.txt")?,
+            )?
+            .build(|s| match s {
+                "Letter" => WordType::Letter,
+                "Number" => WordType::Number,
+                _ => WordType::None,
+            } as u8);
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(data),
@@ -943,12 +966,13 @@ impl DataProvider<SegmenterBreakSentenceV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = self.build_segmenter_state_machine(
-                include_str!("../../data/segmenter/neo/SentenceBreakClasses.txt"),
-                include_str!("../../data/segmenter/neo/SentenceBreakStates.txt"),
-                include_str!("../../data/segmenter/neo/SentenceBreakTransitions.txt"),
-                |s| if s == "EOL" { 1 } else { 0 },
-            )?;
+            let data = ParsedNfa::parse_nfa_files(
+                self,
+                &neo_sources().read_to_string("SentenceBreakClasses.txt")?,
+                &neo_sources().read_to_string("SentenceBreakStates.txt")?,
+                &neo_sources().read_to_string("SentenceBreakTransitions.txt")?,
+            )?
+            .build(|s| if s == "EOL" { 1 } else { 0 });
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(data),
@@ -973,15 +997,16 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = self.build_segmenter_state_machine(
-                include_str!("../../data/segmenter/neo/GraphemeClusterBreakClasses.txt"),
-                include_str!("../../data/segmenter/neo/GraphemeClusterBreakStates.txt"),
-                include_str!("../../data/segmenter/neo/GraphemeClusterBreakTransitions.txt"),
-                |s| match s {
-                    "" => 0,
-                    s => unreachable!("{s}"),
-                },
-            )?;
+            let data = ParsedNfa::parse_nfa_files(
+                self,
+                &neo_sources().read_to_string("GraphemeClusterBreakClasses.txt")?,
+                &neo_sources().read_to_string("GraphemeClusterBreakStates.txt")?,
+                &neo_sources().read_to_string("GraphemeClusterBreakTransitions.txt")?,
+            )?
+            .build(|s| match s {
+                "" => 0,
+                s => unreachable!("{s}"),
+            });
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(data),
@@ -990,16 +1015,10 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
     }
 }
 
-impl SourceDataProvider {
+impl<'a> ParsedNfa<'a> {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     #[cfg(feature = "unstable")]
-    fn build_segmenter_state_machine(
-        &self,
-        classes: &str,
-        states: &str,
-        transitions: &str,
-        status_lookup: fn(&str) -> u8,
-    ) -> Result<SegmenterStateMachine<'static>, DataError> {
+    fn build(&self, status_lookup: fn(&str) -> u8) -> SegmenterStateMachine<'static> {
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::TrieType;
         use icu_codepointtrie_builder::CodePointTrieBuilder;
@@ -1012,12 +1031,12 @@ impl SourceDataProvider {
             state_lookup,
             lookahead_lookup,
             ..
-        } = ParsedNfa::parse_nfa_files(self, classes, states, transitions)?;
+        } = self;
 
         let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
         let mut missing_codepoints = CodePointInversionListBuilder::new();
         missing_codepoints.add_set(&CodePointInversionList::all());
-        for (&class, set) in &classes {
+        for (&class, set) in classes {
             for range in set.iter_ranges() {
                 missing_codepoints.remove_range32(range.clone());
                 builder.set_range_value(range.clone(), class_lookup[class]);
@@ -1069,13 +1088,12 @@ impl SourceDataProvider {
             })
             .collect();
 
-        let data = SegmenterStateMachine {
+        SegmenterStateMachine {
             transitions,
             classes,
             states,
             num_lookaheads: lookahead_lookup.len(),
-        };
-        Ok(data)
+        }
     }
 }
 
@@ -1184,6 +1202,62 @@ impl<'a> ParsedNfa<'a> {
             lookahead_lookup,
         })
     }
+
+    fn tailoring(
+        &self,
+        provider: &SourceDataProvider,
+        tailorings: &str,
+    ) -> Result<icu::collections::codepointtrie::CodePointTrie<'static, Class>, DataError> {
+        let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+            SegmenterStateMachine::NO_CLASS,
+            SegmenterStateMachine::NO_CLASS,
+            icu::collections::codepointtrie::TrieType::Small,
+        );
+
+        for line in tailorings
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+        {
+            let mut iter = line.split(';');
+            let unicode_set = iter.next().unwrap().trim();
+            let target = iter.next().unwrap().trim();
+
+            let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, provider)
+                .map_err(|e| {
+                    DataError::custom("unicodeset parse")
+                        .with_display_context(&e.fmt_with_source(unicode_set))
+                })?
+                .0;
+
+            let target = if let Some(hex) = target.strip_prefix("\\u") {
+                u32::from_str_radix(hex, 16).unwrap()
+            } else {
+                assert_eq!(target.chars().count(), 1);
+                target.chars().next().unwrap() as u32
+            };
+
+            assert!(!set.has_strings());
+
+            let (target_class, target_set) = self
+                .classes
+                .iter()
+                .find(|(_, set)| set.contains32(target))
+                .unwrap();
+
+            let target_class = self.class_lookup[*target_class];
+
+            for range in set.code_points().iter_ranges() {
+                for cp in range {
+                    if !target_set.contains32(cp) {
+                        builder.set_value(cp, target_class);
+                    }
+                }
+            }
+        }
+
+        Ok(builder.build())
+    }
 }
 
 #[cfg(feature = "unstable")]
@@ -1230,36 +1304,22 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let ParsedNfa {
-                classes,
-                class_lookup,
-                ..
-            } = ParsedNfa::parse_nfa_files(
+            let property_table_override = ParsedNfa::parse_nfa_files(
                 self,
-                include_str!("../../data/segmenter/neo/SentenceBreakClasses.txt"),
-                include_str!("../../data/segmenter/neo/SentenceBreakStates.txt"),
-                include_str!("../../data/segmenter/neo/SentenceBreakTransitions.txt"),
+                &neo_sources().read_to_string("SentenceBreakClasses.txt")?,
+                &neo_sources().read_to_string("SentenceBreakStates.txt")?,
+                &neo_sources().read_to_string("SentenceBreakTransitions.txt")?,
+            )?
+            .tailoring(
+                self,
+                &neo_sources()
+                    .read_to_string(&format!("SentenceBreakTailoring_{}.txt", req.id.locale))?,
             )?;
-            let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
-                SegmenterStateMachine::NO_CLASS,
-                SegmenterStateMachine::NO_CLASS,
-                self.trie_type().into(),
-            );
-
-            // Treat semicolons like exclamation marks in `el`
-
-            let exclamation_mark_class = classes
-                .iter()
-                .find_map(|(class, set)| set.contains('!').then(|| class_lookup[class]))
-                .unwrap();
-
-            builder.set_value(';' as u32, exclamation_mark_class);
-            builder.set_value(';' as u32, exclamation_mark_class);
 
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(RuleBreakDataOverride {
-                    property_table_override: builder.build(),
+                    property_table_override,
                 }),
             })
         }
@@ -1269,9 +1329,9 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        use icu::locale::locale;
-        Ok([locale!("el")]
-            .iter()
+        Ok(neo_sources()
+            .list("SentenceBreakTailoring_")?
+            .map(|s| icu::locale::Locale::try_from_str(s.strip_suffix(".txt").unwrap()).unwrap())
             .map(|l| DataIdentifierCow::from_locale(l.into()))
             .collect())
     }
