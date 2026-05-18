@@ -107,3 +107,9 @@ mod harfbuzz;
 #[cfg(feature = "unstable")]
 #[cfg(feature = "alloc")]
 pub mod unicodeset_parse;
+
+#[cfg(not(feature = "unstable"))]
+#[cfg(feature = "alloc")]
+#[doc(hidden)]
+#[path = "unicodeset_parse/mod.rs"]
+pub mod unstable_unicodeset_parse;

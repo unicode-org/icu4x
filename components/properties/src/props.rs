@@ -2126,10 +2126,12 @@ macro_rules! make_binary_property {
         #[non_exhaustive]
         pub struct $ident;
 
+        #[allow(deprecated)]
         impl crate::private::Sealed for $ident {}
 
+        #[allow(deprecated)]
         impl BinaryProperty for $ident {
-        type DataMarker = $data_marker;
+            type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
             const SINGLETON: &'static crate::provider::PropertyCodePointSet<'static> =
                 &crate::provider::Baked::$singleton;
@@ -3083,6 +3085,7 @@ make_binary_property! {
     data_marker: crate::provider::PropertyBinaryNfcInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFC_INERT_V1;
     /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters.
+    #[deprecated(since = "2.3.0", note = "not a UCD property")]
 }
 
 make_binary_property! {
@@ -3092,6 +3095,7 @@ make_binary_property! {
     data_marker: crate::provider::PropertyBinaryNfdInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFD_INERT_V1;
     /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters.
+    #[deprecated(since = "2.3.0", note = "not a UCD property")]
 }
 
 make_binary_property! {
@@ -3101,6 +3105,7 @@ make_binary_property! {
     data_marker: crate::provider::PropertyBinaryNfkcInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFKC_INERT_V1;
     /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters.
+    #[deprecated(since = "2.3.0", note = "not a UCD property")]
 }
 
 make_binary_property! {
@@ -3110,6 +3115,7 @@ make_binary_property! {
     data_marker: crate::provider::PropertyBinaryNfkdInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFKD_INERT_V1;
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters.
+    #[deprecated(since = "2.3.0", note = "not a UCD property")]
 }
 
 make_binary_property! {
@@ -3283,6 +3289,7 @@ make_binary_property! {
     singleton: SINGLETON_PROPERTY_BINARY_SEGMENT_STARTER_V1;
     /// Characters that are starters in terms of Unicode normalization and combining character
     /// sequences.
+    #[deprecated(since = "2.3.0", note = "not a UCD property")]
 }
 
 make_binary_property! {
@@ -3293,6 +3300,7 @@ make_binary_property! {
     singleton: SINGLETON_PROPERTY_BINARY_CASE_SENSITIVE_V1;
     /// Characters that are either the source of a case mapping or in the target of a case
     /// mapping.
+    #[deprecated(since = "2.3.0", note = "not a UCD property")]
 }
 
 make_binary_property! {
