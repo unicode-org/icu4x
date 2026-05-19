@@ -770,8 +770,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     year_names: OptionalNames<YearNameLength, &'l YearNames<'l>>,
     month_names: OptionalNames<MonthNameLength, &'l MonthNames<'l>>,
-    weekday_names: OptionalNames<WeekdayNameLength, &'l LinearNames<'l>>,
-    dayperiod_names: OptionalNames<DayPeriodNameLength, &'l LinearNames<'l>>,
+    weekday_names: OptionalNames<WeekdayNameLength, &'l WeekdayNames<'l>>,
+    dayperiod_names: OptionalNames<DayPeriodNameLength, &'l DayPeriodNames<'l>>,
     zone_essentials: OptionalNames<(), &'l tz::Essentials<'l>>,
     locations_root: OptionalNames<(), &'l tz::Locations<'l>>,
     locations: OptionalNames<(), &'l tz::Locations<'l>>,
@@ -3851,14 +3851,11 @@ impl RawDateTimeNamesBorrowed<'_> {
     ) -> Result<&str, GetNameForWeekdayError> {
         let weekday_name_length = WeekdayNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForWeekdayError::InvalidFieldLength)?;
-        let weekday_names = self
-            .weekday_names
+        self.weekday_names
             .get_with_variables(weekday_name_length)
-            .ok_or(GetNameForWeekdayError::NotLoaded)?;
-        weekday_names
-            .names
-            .get((day as usize) % 7)
-            // Note: LinearNames does not guarantee a length of 7.
+            .ok_or(GetNameForWeekdayError::NotLoaded)?
+            .get(day)
+            // Note: WeekdayNames does not guarantee names for all days
             .ok_or(GetNameForWeekdayError::NotLoaded)
     }
 

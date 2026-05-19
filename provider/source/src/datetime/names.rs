@@ -171,22 +171,22 @@ fn weekday_convert(
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
-) -> Result<LinearNames<'static>, DataError> {
+) -> Result<WeekdayNames<'static>, DataError> {
     let day_symbols = data.days.get_symbols(context, length);
 
-    let days = [
-        &*day_symbols.sun,
-        &*day_symbols.mon,
-        &*day_symbols.tue,
-        &*day_symbols.wed,
-        &*day_symbols.thu,
-        &*day_symbols.fri,
-        &*day_symbols.sat,
-    ];
-
-    Ok(LinearNames {
-        names: (&days).into(),
-    })
+    use icu::calendar::types::Weekday::*;
+    Ok(WeekdayNames::new(
+        [
+            (Sunday, &*day_symbols.sun),
+            (Monday, &*day_symbols.mon),
+            (Tuesday, &*day_symbols.tue),
+            (Wednesday, &*day_symbols.wed),
+            (Thursday, &*day_symbols.thu),
+            (Friday, &*day_symbols.fri),
+            (Saturday, &*day_symbols.sat),
+        ]
+        .into_iter(),
+    ))
 }
 
 #[allow(clippy::unnecessary_wraps)] // signature required by macro
@@ -197,7 +197,7 @@ fn dayperiods_convert(
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
-) -> Result<LinearNames<'static>, DataError> {
+) -> Result<DayPeriodNames<'static>, DataError> {
     let day_periods = data.day_periods.get_symbols(context, length);
 
     let mut periods = vec![&*day_periods.am, &*day_periods.pm];
@@ -212,7 +212,7 @@ fn dayperiods_convert(
         periods.push(midnight)
     }
 
-    Ok(LinearNames {
+    Ok(DayPeriodNames {
         names: (&periods).into(),
     })
 }
@@ -784,6 +784,9 @@ mod tests {
         )
         .unwrap();
 
-        assert_eq!("po", &wd_short.names[1]);
+        assert_eq!(
+            "po",
+            wd_short.get(icu::calendar::types::Weekday::Monday).unwrap()
+        );
     }
 }

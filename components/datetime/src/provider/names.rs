@@ -7,6 +7,7 @@
 use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 #[cfg(feature = "serde")]
 use potential_utf::PotentialUtf8;
@@ -16,6 +17,15 @@ use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice};
 
 icu_provider::data_marker!(
     /// `DatetimeNamesYearBuddhistV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearBuddhistV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -23,6 +33,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearChineseV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearChineseV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -30,6 +49,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearCopticV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearCopticV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -37,6 +65,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearDangiV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearDangiV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -44,6 +81,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearEthiopianV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearEthiopianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -51,6 +97,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearGregorianV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearGregorianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -58,6 +113,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearHebrewV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearHebrewV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -65,6 +129,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearIndianV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearIndianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -72,6 +145,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearHijriV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearHijriV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -79,6 +161,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearJapaneseV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearJapaneseV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -86,6 +177,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearPersianV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearPersianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -93,6 +193,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesYearRocV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name.
+    /// For example, `GGG`/`UUU` both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesYearRocV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -101,6 +210,15 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthBuddhistV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthBuddhistV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -108,6 +226,16 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthChineseV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 1 is "numeric" (only used for months with leap months, like this one)
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthChineseV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -115,6 +243,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthCopticV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthCopticV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -122,6 +259,16 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthDangiV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 1 is "numeric" (only used for months with leap months, like this one)
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthDangiV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -129,6 +276,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthEthiopianV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthEthiopianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -136,6 +292,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthGregorianV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthGregorianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -143,6 +308,16 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthHebrewV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 1 is "numeric" (only used for months with leap months, like this one)
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthHebrewV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -150,6 +325,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthIndianV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthIndianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -157,6 +341,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthHijriV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthHijriV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -164,6 +357,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthJapaneseV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthJapaneseV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -171,6 +373,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthPersianV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthPersianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -178,6 +389,15 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthRocV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `MMM` corresponds to `3`, and `LLL` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesMonthRocV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -186,46 +406,38 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// `DatetimeNamesWeekdayV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name, plus "s" for "standalone" contexts.
+    /// For example, `EEE` corresponds to `3`, and `ccc` to `3s`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
+    /// - 6 is "short"
     DatetimeNamesWeekdayV1,
-    LinearNames<'static>,
+    WeekdayNames<'static>,
 );
 icu_provider::data_marker!(
     /// `DatetimeNamesDayperiodV1`
+    ///
+    /// This uses a data marker attribute for length. The value is simply the number of
+    /// characters in the equivalent CLDR field syntax name. For example, `aaa`/`bbb`
+    /// both correspond to `3`.
+    ///
+    /// The full list is:
+    /// - 3 is "abbreviated"
+    /// - 4 is "narrow"
+    /// - 5 is "wide"
     DatetimeNamesDayperiodV1,
-    LinearNames<'static>,
-);
-// We're not producing or using day names yet, but this is where they would go
-icu_provider::data_marker!(
-    /// `DatetimeNamesDayChineseV1`
-    DatetimeNamesDayChineseV1,
-    LinearNames<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeNamesDayDangiV1`
-    DatetimeNamesDayDangiV1,
-    LinearNames<'static>,
-);
-// for calendars that don't use day names
-icu_provider::data_marker!(
-    /// `DatetimeNamesDayPlaceholderV1`
-    DatetimeNamesDayPlaceholderV1,
-    LinearNames<'static>,
+    DayPeriodNames<'static>,
 );
 
 size_test!(YearNames, year_names_v1_size, 32);
 
 /// Names used for representing the year.
 ///
-/// This uses a data marker attribute for length. The value is simply the number of
-/// characters in the equivalent CLDR field syntax name, plus "s" for standalone contexts. For example,
-/// "abbreviated" (e.g. `MMM`) is `3` or `3s` depending on whether it is format or standalone
-/// respectively.
-///
-/// The full list is:
-/// - 3 is "abbreviated"
-/// - 4 is "narrow"
-/// - 5 is "wide"
-/// - 6 is "short" (weekdays only)
 #[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -319,8 +531,6 @@ size_test!(MonthNames, month_names_v1_size, 32);
 
 /// Names used for representing the month.
 ///
-/// This uses a data marker attribute for length. See [`YearNames`] for more information on the scheme. This
-/// has an additional `1` value used for numeric names, only found for calendars with leap months.
 #[doc = month_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -453,16 +663,10 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-size_test!(LinearNames, linear_names_v1_size, 24);
+size_test!(WeekdayNames, linear_names_v1_size, 24);
 
-/// Names that can be stored as a simple linear array.
+/// Names used for representing the weekday.
 ///
-/// - For weekdays, element 0 is Sunday
-/// - For dayperiods, the elements are in order: AM, PM, (noon), (midnight), where the latter two are optional.
-///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
-/// - For day names element 0 is the first day of the month
-///
-/// This uses a data marker attribute for length. See [`YearNames`] for more information on the scheme.
 #[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -475,52 +679,106 @@ size_test!(LinearNames, linear_names_v1_size, 24);
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LinearNames<'data> {
+pub struct WeekdayNames<'data> {
+    /// Element 0 is Sunday.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// The names, in order. Order specified on the struct docs.
-    // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     pub names: VarZeroVec<'data, str>,
 }
 
 icu_provider::data_struct!(
-    LinearNames<'_>,
+    WeekdayNames<'_>,
     #[cfg(feature = "datagen")]
 );
 
-impl LinearNames<'_> {
-    /// Gets the 'am' name assuming this struct contains day period data.
+impl WeekdayNames<'_> {
+    /// Creates a new [`WeekdayNames`] from an iterator of weekday names.
+    #[cfg(feature = "datagen")]
+    pub fn new<'a>(names: impl Iterator<Item = (icu_calendar::types::Weekday, &'a str)>) -> Self {
+        let mut v = [""; 7];
+        for (day, name) in names {
+            use icu_calendar::types::Weekday::*;
+            *match day {
+                Sunday => &mut v[0],
+                Monday => &mut v[1],
+                Tuesday => &mut v[2],
+                Wednesday => &mut v[3],
+                Thursday => &mut v[4],
+                Friday => &mut v[5],
+                Saturday => &mut v[6],
+            } = name;
+        }
+        Self { names: (&v).into() }
+    }
+
+    /// Returns the name for a weekday, if possible.
+    pub fn get(&self, day: icu_calendar::types::Weekday) -> Option<&str> {
+        use icu_calendar::types::Weekday::*;
+        self.names.get(match day {
+            Sunday => 0,
+            Monday => 1,
+            Tuesday => 2,
+            Wednesday => 3,
+            Thursday => 4,
+            Friday => 5,
+            Saturday => 6,
+        })
+    }
+}
+
+size_test!(DayPeriodNames, day_period_names_v1_size, 24);
+
+/// Names used for representing the day period.
+///
+#[doc = day_period_names_v1_size!()]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct DayPeriodNames<'data> {
+    /// The elements are in order: AM, PM, (noon), (midnight), where the latter two are optional.
+    /// In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub names: VarZeroVec<'data, str>,
+}
+
+icu_provider::data_struct!(
+    DayPeriodNames<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+impl DayPeriodNames<'_> {
+    /// Gets the 'am' name.
     pub(crate) fn am(&self) -> Option<&str> {
         self.names.get(0)
     }
-    /// Gets the 'pm' name assuming this struct contains day period data.
+    /// Gets the 'pm' name.
     pub(crate) fn pm(&self) -> Option<&str> {
         self.names.get(1)
     }
-    /// Gets the 'noon' name assuming this struct contains day period data.
+    /// Gets the 'noon' name.
     pub(crate) fn noon(&self) -> Option<&str> {
         self.names
             .get(2)
             .and_then(|s| if s.is_empty() { None } else { Some(s) })
     }
-    /// Gets the 'midnight' name assuming this struct contains day period data.
+    /// Gets the 'midnight' name.
     pub(crate) fn midnight(&self) -> Option<&str> {
         self.names.get(3)
     }
 }
 
 /// Calendar-agnostic year name data marker
-#[derive(Debug)]
-pub struct YearNamesV1;
-impl DynamicDataMarker for YearNamesV1 {
-    type DataStruct = YearNames<'static>;
-}
+pub type YearNamesV1 = ErasedMarker<YearNames<'static>>;
 
 /// Calendar-agnostic month name data marker
-#[derive(Debug)]
-pub struct MonthNamesV1;
-impl DynamicDataMarker for MonthNamesV1 {
-    type DataStruct = MonthNames<'static>;
-}
+pub type MonthNamesV1 = ErasedMarker<MonthNames<'static>>;
 
 /// Re-export of weekday names marker for more consistency
 pub use DatetimeNamesWeekdayV1 as WeekdayNamesV1;
