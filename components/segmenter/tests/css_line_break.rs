@@ -97,7 +97,7 @@ fn linebreak_strict() {
     strict("サ°サ", false, &["サ°", "サ"]);
 
     // from css/css-text/line-break/line-break-*-018.xht
-    // strict("サ€サ", false, vec![9], vec![3]);
+    strict("サ€サ", false, &["サ", "€サ"]);
 
     // from css/css-text/i18n/ja/css-text-line-break-ja-pr-strict.html
     // TODO: Why ID ÷ ID × PR × ID ÷ ID ?
@@ -133,10 +133,9 @@ fn linebreak_normal() {
     normal("サ€サ", true, &["サ", "€サ"]);
 
     // from css/css-text/i18n/unknown-lang/css-text-line-break-pr-normal.html
-    // TODO: Why ID ÷ ID × PR × ID ÷ ID ?
-    // normal("文文±字字", false, &["文", "文±字", "字"]);
-    // normal("文文€字字", false, &["文", "文€字", "字"]);
-    // normal("文文№字字", false, &["文", "文№字", "字"]);
+    normal("文文±字字", false, &["文", "文", "±字", "字"]);
+    normal("文文€字字", false, &["文", "文", "€字", "字"]);
+    normal("文文№字字", false, &["文", "文", "№字", "字"]);
 }
 
 #[test]
@@ -182,10 +181,10 @@ fn linebreak_loose() {
     loose("文︙文", false, &["文", "︙", "文"]);
 
     // from css/css-text/i18n/unknown-lang/css-text-line-break-pr-loose.html
-    // loose("文±文", false, &["文±文"]);
-    // loose("文€文", false, &["文€文"]);
-    // loose("文№文", false, &["文№文"]);
-    // loose("文＄文", false, &["文＄文"]);
+    loose("文±文", false, &["文", "±文"]);
+    loose("文€文", false, &["文", "€文"]);
+    loose("文№文", false, &["文", "№文"]);
+    loose("文＄文", false, &["文", "＄文"]);
 
     // from css/css-text/i18n/zh/css-text-line-break-zh-in-loose.xht
     loose("文․文", true, &["文", "․", "文"]);
