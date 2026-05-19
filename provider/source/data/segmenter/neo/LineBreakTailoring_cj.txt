@@ -1,0 +1,7 @@
+# =====
+# zh & ja tailorings:
+# -----
+# strict:
+# These should probably be mapped to wide characters, but that is a behaviour change.
+[\u201d] ; [\}]
+[\u201c] ; [\{]

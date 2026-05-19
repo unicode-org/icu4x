@@ -880,6 +880,11 @@ fn neo_sources() -> crate::source::AbstractFs {
         "GraphemeClusterBreakStates.txt",
         "GraphemeClusterBreakTransitions.txt",
         "LineBreakClasses.txt",
+        "LineBreakTailoring_cj.txt",
+        "LineBreakTailoring_loose_cj.txt",
+        "LineBreakTailoring_loose.txt",
+        "LineBreakTailoring_normal_cj.txt",
+        "LineBreakTailoring_normal.txt",
         "LineBreakStates.txt",
         "LineBreakTransitions.txt",
         "SentenceBreakClasses.txt",
@@ -1101,6 +1106,7 @@ impl<'a> ParsedNfa<'a> {
 #[cfg(feature = "unstable")]
 struct ParsedNfa<'a> {
     classes: BTreeMap<&'a str, CodePointInversionList<'static>>,
+    magic_classes: BTreeMap<String, &'a str>,
     states: BTreeMap<&'a str, (&'a str, Option<&'a str>, &'a str)>,
     transitions: BTreeMap<(&'a str, &'a str), &'a str>,
     class_lookup: BTreeMap<&'a str, u8>,
@@ -1117,7 +1123,7 @@ impl<'a> ParsedNfa<'a> {
         states: &'a str,
         transitions: &'a str,
     ) -> Result<Self, DataError> {
-        let mut eot_class = None;
+        let mut magic_classes = BTreeMap::new();
         let classes = classes
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1134,19 +1140,13 @@ impl<'a> ParsedNfa<'a> {
                     })?
                     .0;
                 for string in set.strings().iter() {
-                    if string == "eot" {
-                        // This class handles the special "end of text" token
-                        assert_eq!(eot_class, None);
-                        eot_class = Some(class);
-                    } else {
-                        panic!("invalid class: classes cannot contain strings, but found {string}");
-                    }
+                    assert_eq!(magic_classes.insert(String::from(string), class), None);
                 }
                 let set = set.code_points().clone();
                 Ok((class, set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-        let eot_class = eot_class.unwrap_or("eot");
+        let eot_class = magic_classes.remove("eot").unwrap_or("eot");
 
         let states = states
             .lines()
@@ -1206,6 +1206,7 @@ impl<'a> ParsedNfa<'a> {
 
         Ok(Self {
             classes,
+            magic_classes,
             states,
             transitions,
             class_lookup,
@@ -1241,20 +1242,24 @@ impl<'a> ParsedNfa<'a> {
                 })?
                 .0;
 
-            let target = if let Some(hex) = target.strip_prefix("\\u") {
-                u32::from_str_radix(hex, 16).unwrap()
+            let target = icu::properties::unicodeset_parse::parse_unstable(target, provider)
+                .map_err(|e| {
+                    DataError::custom("unicodeset parse")
+                        .with_display_context(&e.fmt_with_source(unicode_set))
+                })?
+                .0;
+
+            let (target_class, target_set) = if target.has_strings() {
+                let target = target.strings().iter().next().unwrap();
+                let magic = self.magic_classes.get(target).expect(target);
+                (magic, self.classes.get(magic).unwrap())
             } else {
-                assert_eq!(target.chars().count(), 1);
-                target.chars().next().unwrap() as u32
+                let target = target.code_points().iter_chars().next().unwrap();
+                self.classes
+                    .iter()
+                    .find(|(_, set)| set.contains(target))
+                    .unwrap()
             };
-
-            assert!(!set.has_strings());
-
-            let (target_class, target_set) = self
-                .classes
-                .iter()
-                .find(|(_, set)| set.contains32(target))
-                .unwrap();
 
             let target_class = self.class_lookup[*target_class];
 
@@ -1323,8 +1328,10 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
             )?
             .tailoring(
                 self,
-                &neo_sources()
-                    .read_to_string(&format!("LineBreakTailoring_{}.txt", req.id.locale))?,
+                &neo_sources().read_to_string(&format!(
+                    "LineBreakTailoring_{}.txt",
+                    req.id.marker_attributes.as_str()
+                ))?,
             )?;
 
             Ok(DataResponse {
@@ -1342,8 +1349,14 @@ impl IterableDataProviderCached<SegmenterBreakLineOverrideV2> for SourceDataProv
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(neo_sources()
             .list("LineBreakTailoring_")?
-            .map(|s| icu::locale::Locale::try_from_str(s.strip_suffix(".txt").unwrap()).unwrap())
-            .map(|l| DataIdentifierCow::from_locale(l.into()))
+            .map(|mut s| {
+                DataMarkerAttributes::try_from_string({
+                    s.truncate(s.len() - 4);
+                    s
+                })
+                .unwrap()
+            })
+            .map(DataIdentifierCow::from_marker_attributes_owned)
             .collect())
     }
 }

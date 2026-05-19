@@ -41,7 +41,7 @@ use zerovec::ZeroVec;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
-#[allow(unused_imports)]
+#[allow(unused_imports, missing_docs)]
 const _: () = {
     use icu_segmenter_data::*;
     pub mod icu {

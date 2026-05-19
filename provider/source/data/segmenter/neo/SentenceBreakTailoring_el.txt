@@ -1,2 +1,2 @@
 # Unicode set ; character that the set should behave like
-[\u003B \u037E] ; ?
+[\u003B \u037E] ; [?]

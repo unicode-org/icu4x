@@ -1,0 +1,46 @@
+# -----
+# normal:
+\p{lb=CJ} ; [あ]
+# -----
+# loose:
+# Iteration marks out of NS.
+[\u3005 \u303B \u309D \u309E \u30FD \u30FE] ; [{EAST_ASIAN_UNCLASSIFIED}]
+# Three of these ea=Ambiguous, should map to EAST_ASIAN_UNCLASSIFIED.
+# Two ea=Neutral; but even then I am not sure non-EastAsian is useful.
+# But that would be a behaviour change, so not now.
+[[:lb=IN:] - [\p{ea=F}\p{ea=W}\p{ea=H}]] ; [{NON_EAST_ASIAN_LOOSE_IN}]
+[[:lb=IN:] & [\p{ea=F}\p{ea=W}\p{ea=H}]] ; [{EAST_ASIAN_LOOSE_IN}]
+# =====
+# zh & ja tailorings:
+# -----
+# strict:
+# These should probably be mapped to wide characters, but that is a behaviour change.
+[\u201d] ; [\}]
+[\u201c] ; [\{]
+# -----
+# normal:
+# A couple of things out of NS.
+[〜 ゠]   ; [{EAST_ASIAN_UNCLASSIFIED}]
+# -----
+# loose:
+# Fullwidth exclamation and question marks out of EX.
+[！？] ; [{EAST_ASIAN_UNCLASSIFIED}]
+# Pairs of {?,!} out of NS.
+# ea=Neutral, but is that really right in this context
+[⁈ ⁇ ‼ ⁉] ; [{NON_EAST_ASIAN_UNCLASSIFIED}]
+# More things out of NS.
+[・･ ； ：] ; [{EAST_ASIAN_UNCLASSIFIED}]
+# Some ea=Ambiguous PO to NON_EAST_ASIAN_POX.  ea=Ambiguous, so should likely be
+# mapped to EAST_ASIAN_POX in this ja-zh context, rendering NON_EAST_ASIAN_POX
+# redundant, but that is a behaviour change.
+[‰ ′ ″ ‵ ° ℃ ℉] ; [{NON_EAST_ASIAN_POX}]
+# Some $EastAsian PO to EAST_ASIAN_POX
+[％﹪ ￠] ; [{EAST_ASIAN_POX}]
+# Some ea=Ambiguous PR to NON_EAST_ASIAN_PRX.  ea=Ambiguous, so should likely be
+# mapped to EAST_ASIAN_PRX in this ja-zh context, rendering NON_EAST_ASIAN_PRX
+# redundant, but that is a behaviour change.
+[± ¤ € №] ; [{NON_EAST_ASIAN_PRX}]
+# Some $EastAsian PR to EAST_ASIAN_PRX.
+[＄﹩ ￡ ￥ ￦] ; [{EAST_ASIAN_PRX}]
+# HH to LOOSE_DASH. Needs revisiting in 18.0, as EN DASH will move back out of HH.
+[:lb=HH:] ; [{LOOSE_DASH}]

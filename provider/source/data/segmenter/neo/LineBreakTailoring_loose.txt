@@ -1,0 +1,12 @@
+# -----
+# normal:
+\p{lb=CJ} ; [あ]
+# -----
+# loose:
+# Iteration marks out of NS.
+[\u3005 \u303B \u309D \u309E \u30FD \u30FE] ; [{EAST_ASIAN_UNCLASSIFIED}]
+# Three of these ea=Ambiguous, should map to EAST_ASIAN_UNCLASSIFIED.
+# Two ea=Neutral; but even then I am not sure non-EastAsian is useful.
+# But that would be a behaviour change, so not now.
+[[:lb=IN:] - [\p{ea=F}\p{ea=W}\p{ea=H}]] ; [{NON_EAST_ASIAN_LOOSE_IN}]
+[[:lb=IN:] & [\p{ea=F}\p{ea=W}\p{ea=H}]] ; [{EAST_ASIAN_LOOSE_IN}]
