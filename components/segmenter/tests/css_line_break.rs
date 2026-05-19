@@ -87,8 +87,7 @@ fn linebreak_strict() {
     strict("サ々サ", false, &["サ々", "サ"]);
 
     // from css/css-text/line-break/line-break-*-015a.xht
-    // XXX ID x IN in UAX14. But why?
-    strict("サ‥‥サ", false, &["サ‥‥", "サ"]);
+    strict("‥‥サ", false, &["‥‥", "サ"]);
 
     // from css/css-text/line-break/line-break-*-016a.xht
     strict("サ・サ", false, &["サ・", "サ"]);
@@ -121,7 +120,7 @@ fn linebreak_normal() {
     normal("サ々サ", true, &["サ々", "サ"]);
 
     // from css/css-text/line-break/line-break-*-015.xht
-    normal("サ‥‥サ", true, &["サ‥‥", "サ"]);
+    normal("‥‥サ", true, &["‥‥", "サ"]);
 
     // from css/css-text/line-break/line-break-*-016a.xht
     normal("サ・サ", true, &["サ・", "サ"]);
@@ -153,7 +152,7 @@ fn linebreak_loose() {
     loose("サ々サ", true, &["サ", "々", "サ"]);
 
     // from css/css-text/line-break/line-break-*-015.xht
-    loose("サ‥‥サ", true, &["サ", "‥", "‥", "サ"]);
+    loose("‥‥サ", true, &["‥", "‥", "サ"]);
 
     // from css/css-text/line-break/line-break-*-016a.xht
     loose("サ・サ", true, &["サ", "・", "サ"]);
