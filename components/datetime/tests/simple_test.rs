@@ -2,15 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::cal::Hebrew;
+use icu_calendar::cal::{ChineseTraditional, Hebrew};
 use icu_calendar::Date;
 use icu_datetime::fieldsets;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
-use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
+use icu_datetime::input::{DateTime, Time, TimeZone, UtcOffset, ZonedDateTime};
+use icu_datetime::{
+    DateTimeFormatter, DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter,
+};
 use icu_locale_core::{locale, Locale};
-use icu_time::{DateTime, Time};
 use writeable::assert_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
@@ -277,7 +279,6 @@ fn hanidays_numbering() {
 
 #[test]
 fn hanidec_ja_chinese_numbering() {
-    use icu_calendar::cal::ChineseTraditional;
     let formatter =
         FixedCalendarDateTimeFormatter::try_new(locale!("ja").into(), fieldsets::YMD::long())
             .unwrap();
@@ -321,10 +322,6 @@ fn test_5387() {
 
 #[test]
 fn test_vancouver_2026() {
-    use icu_datetime::{fieldsets, DateTimeFormatter};
-    use icu_time::zone::{TimeZone, UtcOffset};
-    use icu_time::ZonedDateTime;
-
     let date = Date::try_new_gregorian(2026, 12, 1).unwrap();
     let time = Time::try_new(12, 0, 0, 0).unwrap();
 
@@ -358,5 +355,42 @@ fn test_vancouver_2026() {
         let zdt = ZonedDateTime { date, time, zone };
 
         assert_writeable_eq!(fmt.format(&zdt), "December 1, 2026 at 12:00\u{202f}PM PDT");
+    }
+}
+
+#[test]
+fn test_flexible_dayperiod_formatting() {
+    let formatter =
+        DateTimeFormatter::try_new(locale!("zh-HK").into(), fieldsets::T::hm()).unwrap();
+
+    for (hour, expected) in (0..24).zip([
+        "凌晨12:00",
+        "凌晨1:00",
+        "凌晨2:00",
+        "凌晨3:00",
+        "凌晨4:00",
+        "早上5:00",
+        "早上6:00",
+        "早上7:00",
+        "上午8:00",
+        "上午9:00",
+        "上午10:00",
+        "上午11:00",
+        "中午12:00",
+        "下午1:00",
+        "下午2:00",
+        "下午3:00",
+        "下午4:00",
+        "下午5:00",
+        "下午6:00",
+        "晚上7:00",
+        "晚上8:00",
+        "晚上9:00",
+        "晚上10:00",
+        "晚上11:00",
+    ]) {
+        let time = Time::try_new(hour, 0, 0, 0).unwrap();
+        let formatted = formatter.format(&time);
+        assert_writeable_eq!(formatted, expected);
     }
 }
