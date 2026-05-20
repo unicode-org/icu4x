@@ -621,6 +621,7 @@ impl UnicodeCache {
 
 macro_rules! include_files {
     ($base:literal; $($file:literal),* $(,)?) => {
+        #[allow(clippy::large_stack_arrays)]
         crate::source::AbstractFs::Memory([
             $(
                 ($file, include_bytes!(concat!($base, $file)).as_slice()),
