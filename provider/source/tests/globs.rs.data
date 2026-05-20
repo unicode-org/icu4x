@@ -112,8 +112,6 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "segmenter/dictionary/thaidict.toml",
     "ucase/small/ucase.toml",
     "uprops/small/bc.toml",
-    "uprops/small/bmg.toml",
-    "uprops/small/bpt.toml",
     "uprops/small/ccc.toml",
     "uprops/small/ea.toml",
     "uprops/small/gc.toml",
