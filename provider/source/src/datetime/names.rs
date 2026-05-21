@@ -18,6 +18,7 @@ use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::ule::vartuple::VarTuple;
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -387,6 +388,31 @@ fn months_convert(
             Context::Format,
             "numeric months only found for Context::Format"
         );
+        if calendar == DatagenCalendar::Hebrew {
+            return Ok(MonthNames::LeapNumericWithBase(
+                (&[
+                    // M05L should be 6a
+                    VarTuple {
+                        sized: 1,
+                        variable: &SinglePlaceholderPattern::try_from_str(
+                            "{0}a",
+                            Default::default(),
+                        )
+                        .unwrap(),
+                    },
+                    // M06 should be 6b after M05L
+                    VarTuple {
+                        sized: 0,
+                        variable: &SinglePlaceholderPattern::try_from_str(
+                            "{0}b",
+                            Default::default(),
+                        )
+                        .unwrap(),
+                    },
+                ])
+                    .into(),
+            ));
+        }
         let Some(ref patterns) = data.month_patterns else {
             panic!("No month_patterns found but numeric months were requested for {calendar:?} with {locale}");
         };
@@ -772,7 +798,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesMonthHebrewV1,
     DatagenCalendar::Hebrew,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(

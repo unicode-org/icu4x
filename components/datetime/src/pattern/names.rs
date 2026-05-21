@@ -3847,7 +3847,28 @@ impl RawDateTimeNamesBorrowed<'_> {
             }
             MonthNames::LeapNumeric(leap_numeric) => {
                 if month.leap_status() == LeapStatus::Leap {
-                    Some(MonthPlaceholderValue::NumericPattern(leap_numeric))
+                    Some(MonthPlaceholderValue::NumericPattern(leap_numeric, 0))
+                } else {
+                    Some(MonthPlaceholderValue::Numeric)
+                }
+            }
+            MonthNames::LeapNumericWithBase(patterns) => {
+                if month.leap_status() == LeapStatus::Leap {
+                    let Some(tuple) = patterns.get(0) else {
+                        return Ok(MonthPlaceholderValue::Numeric);
+                    };
+                    Some(MonthPlaceholderValue::NumericPattern(
+                        &tuple.variable,
+                        tuple.sized,
+                    ))
+                } else if month.leap_status() == LeapStatus::Base {
+                    let Some(tuple) = patterns.get(1) else {
+                        return Ok(MonthPlaceholderValue::Numeric);
+                    };
+                    Some(MonthPlaceholderValue::NumericPattern(
+                        &tuple.variable,
+                        tuple.sized,
+                    ))
                 } else {
                     Some(MonthPlaceholderValue::Numeric)
                 }

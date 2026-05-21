@@ -271,10 +271,10 @@ where
                 Ok(MonthPlaceholderValue::Numeric) => {
                     try_write_number(PART, w, decimal_formatter, month.number().into(), l)?
                 }
-                Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
+                Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern, offset)) => {
                     debug_assert!(l == FieldLength::One);
                     if let Some(formatter) = decimal_formatter {
-                        let mut num = Decimal::from(month.number());
+                        let mut num = Decimal::from(month.number().saturating_add_signed(offset));
                         num.pad_start(l.to_len() as i16);
                         w.with_part(PART, |w| {
                             substitution_pattern

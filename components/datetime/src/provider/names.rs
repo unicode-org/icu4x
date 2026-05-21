@@ -13,6 +13,7 @@ use icu_provider::prelude::*;
 use icu_time::Hour;
 #[cfg(feature = "serde")]
 use potential_utf::PotentialUtf8;
+use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::VarZeroVec;
 #[cfg(feature = "serde")]
 use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice};
@@ -577,6 +578,18 @@ pub enum MonthNames<'data> {
         Cow<'data, SinglePlaceholderPattern>,
     ),
 
+    /// This represents the formatting to apply to numeric values to produce the corresponding
+    /// leap month symbol.
+    ///
+    /// The VZV contains two elements, the pattern for leap months and the pattern for base months. The
+    /// associated `i8` is the offset to apply to the month number before interpolating it into the pattern.
+    ///
+    /// For numeric formatting only, on calendars with leap months.
+    LeapNumericWithBase(
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        VarZeroVec<'data, VarTupleULE<i8, SinglePlaceholderPattern>>,
+    ),
+
     /// This represents the formatting to apply to calendars with leap months.
     /// The last two elements are patterns:
     /// * N-2: `SinglePlaceholderPattern` for leap months
@@ -596,6 +609,7 @@ impl serde::Serialize for MonthNames<'_> {
             Linear(&'a VarZeroVec<'a, str>),
             LeapLinear(&'a VarZeroVec<'a, str>),
             LeapNumeric(&'a Cow<'a, SinglePlaceholderPattern>),
+            LeapNumericWithBase(&'a VarZeroVec<'a, VarTupleULE<i8, SinglePlaceholderPattern>>),
         }
 
         let z;
@@ -604,6 +618,7 @@ impl serde::Serialize for MonthNames<'_> {
             Self::Linear(l) => Raw::Linear(l),
             Self::LeapLinear(l) => Raw::LeapLinear(l),
             Self::LeapNumeric(l) => Raw::LeapNumeric(l),
+            Self::LeapNumericWithBase(l) => Raw::LeapNumericWithBase(l),
             Self::LeapPattern(l) => {
                 use alloc::string::String;
                 use alloc::vec::Vec;

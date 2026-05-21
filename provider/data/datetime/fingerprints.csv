@@ -4058,8 +4058,8 @@ datetime/names/month/gregorian/v1, zu/4, 68B, 38B, 67e07a3abf626b67
 datetime/names/month/gregorian/v1, zu/4s, -> af/4
 datetime/names/month/gregorian/v1, zu/5, 135B, 105B, 7e31381c7df0021f
 datetime/names/month/gregorian/v1, zu/5s, -> zu/5
-datetime/names/month/hebrew/v1, <lookup>, 994B, 228 identifiers
-datetime/names/month/hebrew/v1, <total>, 11029B, 10740B, 62 unique payloads
+datetime/names/month/hebrew/v1, <lookup>, 1005B, 229 identifiers
+datetime/names/month/hebrew/v1, <total>, 11071B, 10752B, 63 unique payloads
 datetime/names/month/hebrew/v1, ar/3, 200B, 197B, fb334304498f6dab
 datetime/names/month/hebrew/v1, ar/3s, -> ar/3
 datetime/names/month/hebrew/v1, ar/5, -> ar/3
@@ -4262,6 +4262,7 @@ datetime/names/month/hebrew/v1, uk/3, 195B, 192B, c395494bb0c0821a
 datetime/names/month/hebrew/v1, uk/3s, -> uk/3
 datetime/names/month/hebrew/v1, uk/5, -> uk/3
 datetime/names/month/hebrew/v1, uk/5s, -> uk/3
+datetime/names/month/hebrew/v1, und/1, 42B, 12B, 89efc71373b6b1fa
 datetime/names/month/hebrew/v1, und/3, -> es-419/3
 datetime/names/month/hebrew/v1, und/3s, -> es-419/3
 datetime/names/month/hebrew/v1, und/4, 81B, 69B, 5b25e2bccd377e01

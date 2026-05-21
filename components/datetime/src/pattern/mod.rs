@@ -73,7 +73,7 @@ pub(crate) enum GetNameForDayPeriodError {
 pub(crate) enum MonthPlaceholderValue<'a> {
     PlainString(&'a str),
     Numeric,
-    NumericPattern(&'a SinglePlaceholderPattern),
+    NumericPattern(&'a SinglePlaceholderPattern, i8),
     StringPattern(&'a str, &'a SinglePlaceholderPattern),
 }
 
