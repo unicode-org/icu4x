@@ -399,66 +399,53 @@ fn test_flexible_dayperiod_formatting() {
 
 #[test]
 fn test_chinese_leap_numeric() {
-    let mut names =
-        FixedCalendarDateTimeNames::<_, DateFieldSet>::try_new(locale!("zh").into()).unwrap();
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(locale!("ja").into(), fieldsets::YMD::short())
+            .unwrap();
 
-    let pattern = DateTimePattern::try_from_pattern_str("d/M U").unwrap();
-    let formatter = names.include_for_pattern(&pattern).unwrap();
-
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_chinese_traditional(2028, Month::new(5), 23).unwrap()),
-        "23/5 戊申",
-        Ok(())
+        "戊申-5-23",
     );
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_chinese_traditional(2028, Month::leap(5), 23).unwrap()),
-        "23/闰5 戊申",
-        Ok(())
+        "戊申-閏5-23",
     );
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_chinese_traditional(2028, Month::new(6), 23).unwrap()),
-        "23/6 戊申",
-        Ok(())
+        "戊申-6-23",
     );
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_chinese_traditional(2028, Month::new(7), 23).unwrap()),
-        "23/7 戊申",
-        Ok(())
+        "戊申-7-23",
     );
 }
 
 #[test]
 fn test_adar_numeric() {
-    let mut names =
-        FixedCalendarDateTimeNames::<_, DateFieldSet>::try_new(locale!("en").into()).unwrap();
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(locale!("ar").into(), fieldsets::YMD::short())
+            .unwrap();
 
-    let pattern = DateTimePattern::try_from_pattern_str("d/M/y G").unwrap();
-    let formatter = names.include_for_pattern(&pattern).unwrap();
-
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5771, Month::new(5), 23).unwrap()),
-        "23/5/5771 AM",
-        Ok(())
+        "23‏/5‏/5771 ص",
     );
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5771, Month::leap(5), 23).unwrap()),
-        "23/6a/5771 AM",
-        Ok(())
+        "23‏/6a‏/5771 ص",
     );
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5771, Month::new(6), 23).unwrap()),
-        "23/6b/5771 AM",
-        Ok(())
+        "23‏/6b‏/5771 ص",
     );
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5771, Month::new(7), 23).unwrap()),
-        "23/7/5771 AM",
-        Ok(())
+        "23‏/7‏/5771 ص",
     );
-    writeable::assert_try_writeable_eq!(
+    writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5772, Month::new(6), 23).unwrap()),
-        "23/6/5772 AM",
-        Ok(())
+        "23‏/6‏/5772 ص",
     );
 }
 
