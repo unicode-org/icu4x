@@ -429,23 +429,23 @@ fn test_adar_numeric() {
 
     writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5771, Month::new(5), 23).unwrap()),
-        "23‏/5‏/5771 ص",
+        "23\u{200f}/5\u{200f}/5771 ص",
     );
     writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5771, Month::leap(5), 23).unwrap()),
-        "23‏/6a‏/5771 ص",
+        "23\u{200f}/6a\u{200f}/5771 ص",
     );
     writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5771, Month::new(6), 23).unwrap()),
-        "23‏/6b‏/5771 ص",
+        "23\u{200f}/6b\u{200f}/5771 ص",
     );
     writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5771, Month::new(7), 23).unwrap()),
-        "23‏/7‏/5771 ص",
+        "23\u{200f}/7\u{200f}/5771 ص",
     );
     writeable::assert_writeable_eq!(
         formatter.format(&Date::try_new_hebrew_v2(5772, Month::new(6), 23).unwrap()),
-        "23‏/6‏/5772 ص",
+        "23\u{200f}/6\u{200f}/5772 ص",
     );
 }
 
