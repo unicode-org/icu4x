@@ -547,6 +547,9 @@ size_test!(MonthNames, month_names_v1_size, 32);
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum MonthNames<'data> {
+    /// Numeric only
+    Numeric,
+
     /// Month codes M01, M02, M03, .. (can allow for M13 onwards)
     ///
     /// Found for solar and pure lunar calendars
@@ -610,11 +613,13 @@ impl serde::Serialize for MonthNames<'_> {
             LeapLinear(&'a VarZeroVec<'a, str>),
             LeapNumeric(&'a Cow<'a, SinglePlaceholderPattern>),
             LeapNumericWithBase(&'a VarZeroVec<'a, VarTupleULE<i8, SinglePlaceholderPattern>>),
+            Numeric,
         }
 
         let z;
 
         match self {
+            Self::Numeric => Raw::Numeric,
             Self::Linear(l) => Raw::Linear(l),
             Self::LeapLinear(l) => Raw::LeapLinear(l),
             Self::LeapNumeric(l) => Raw::LeapNumeric(l),

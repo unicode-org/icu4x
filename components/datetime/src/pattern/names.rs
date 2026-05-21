@@ -1396,7 +1396,6 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             self.prefs,
             length,
             length.to_approximate_error_field(),
-            false,
         )?;
         Ok(self)
     }
@@ -2992,7 +2991,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         length: MonthNameLength,
         error_field: ErrorField,
-        silent: bool,
     ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<MonthNamesV1> + ?Sized,
@@ -3001,11 +2999,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         let locale = provider
             .bound_marker()
             .make_locale(prefs.locale_preferences);
-        let mut metadata = DataRequestMetadata::default();
-        metadata.silent = silent;
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
-            metadata,
+            ..Default::default()
         };
         self.month_names
             .load_put(provider, req, length)
@@ -3607,7 +3603,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         MonthNameLength::from_field(field_symbol, field.length)
                             .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
                         error_field,
-                        false,
                     )?;
                 }
 
@@ -3753,16 +3748,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         MonthNameLength::from_field(m, field.length)
                             .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
                         error_field,
-                        true,
-                    )
-                    .or_else(|e| match e {
-                        PatternLoadError::Data(e, _)
-                            if Err::<(), _>(e).allow_identifier_not_found().is_ok() =>
-                        {
-                            Ok(())
-                        }
-                        _ => Err(e),
-                    })?;
+                    )?;
                     numeric_field = Some(field)
                 }
 
@@ -3825,6 +3811,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         };
         let month_index = usize::from(month.number() - 1);
         match month_names {
+            MonthNames::Numeric => Some(MonthPlaceholderValue::Numeric),
             MonthNames::Linear(linear) => {
                 if month.leap_status() != LeapStatus::Normal {
                     None

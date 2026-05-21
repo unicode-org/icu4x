@@ -376,7 +376,7 @@ fn years_convert(
 #[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn months_convert(
     _datagen: &SourceDataProvider,
-    locale: &DataLocale,
+    _locale: &DataLocale,
     data: &ca::Dates,
     calendar: DatagenCalendar,
     context: Context,
@@ -414,7 +414,7 @@ fn months_convert(
             ));
         }
         let Some(ref patterns) = data.month_patterns else {
-            panic!("No month_patterns found but numeric months were requested for {calendar:?} with {locale}");
+            return Ok(MonthNames::Numeric);
         };
         let pattern = patterns.get_symbols(context, length);
         return Ok(MonthNames::LeapNumeric(Cow::Owned(
@@ -762,7 +762,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesMonthBuddhistV1,
     DatagenCalendar::Buddhist,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
@@ -774,7 +774,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesMonthCopticV1,
     DatagenCalendar::Coptic,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
@@ -786,13 +786,13 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesMonthEthiopianV1,
     DatagenCalendar::Ethiopic,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthGregorianV1,
     DatagenCalendar::Gregorian,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
@@ -804,31 +804,31 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesMonthIndianV1,
     DatagenCalendar::Indian,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthHijriV1,
     DatagenCalendar::Hijri,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthJapaneseV1,
     DatagenCalendar::Japanese,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthPersianV1,
     DatagenCalendar::Persian,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthRocV1,
     DatagenCalendar::Roc,
-    NORMAL_MARKER_LENGTHS,
+    NUMERIC_MONTHS_MARKER_LENGTHS,
     months_convert
 );
 
