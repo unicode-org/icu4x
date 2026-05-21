@@ -155,7 +155,7 @@ macro_rules! collation_provider {
 
                         Ok(DataResponse {
                             metadata: Default::default(),
-                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, <collator_serde::$serde_struct>::suffix()).and_then(|s| s.convert()).map_err(|e| e.with_req(<$marker>::INFO, req))?),
+                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, <collator_serde::$serde_struct>::suffix()).and_then(|s| s.convert(req)).map_err(|e| e.with_req(<$marker>::INFO, req))?),
                         })
                     }
                 }
@@ -241,7 +241,7 @@ impl collator_serde::CollationData {
     }
 
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationData<'static>, DataError> {
+    fn convert(&self, _req: DataRequest) -> Result<CollationData<'static>, DataError> {
         use icu::collections::codepointtrie::CodePointTrie;
         use icu_codepointtrie_builder::CodePointTrieBuilder;
 
@@ -284,7 +284,7 @@ impl collator_serde::CollationDiacritics {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationDiacritics<'static>, DataError> {
+    fn convert(&self, _req: DataRequest) -> Result<CollationDiacritics<'static>, DataError> {
         Ok(CollationDiacritics {
             secondaries: ZeroVec::alloc_from_slice(&self.secondaries),
         })
@@ -298,7 +298,7 @@ impl collator_serde::CollationJamo {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationJamo<'static>, DataError> {
+    fn convert(&self, _req: DataRequest) -> Result<CollationJamo<'static>, DataError> {
         Ok(CollationJamo {
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
         })
@@ -312,8 +312,17 @@ impl collator_serde::CollationMetadata {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationMetadata, DataError> {
-        Ok(CollationMetadata { bits: self.bits })
+    fn convert(&self, req: DataRequest) -> Result<CollationMetadata, DataError> {
+        if req.id.marker_attributes.as_str()
+            == icu::collator::preferences::CollationType::Emoji.as_str()
+        {
+            // ICU seems to not be setting the tailoring bit for emoji data.
+            Ok(CollationMetadata {
+                bits: self.bits | 1 << 3,
+            })
+        } else {
+            Ok(CollationMetadata { bits: self.bits })
+        }
     }
 }
 
@@ -324,7 +333,7 @@ impl collator_serde::CollationReordering {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationReordering<'static>, DataError> {
+    fn convert(&self, _req: DataRequest) -> Result<CollationReordering<'static>, DataError> {
         Ok(CollationReordering {
             min_high_no_reorder: self.min_high_no_reorder,
             reorder_table: ZeroVec::alloc_from_slice(&self.reorder_table),
@@ -340,7 +349,7 @@ impl collator_serde::CollationSpecialPrimaries {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationSpecialPrimaries<'static>, DataError> {
+    fn convert(&self, _req: DataRequest) -> Result<CollationSpecialPrimaries<'static>, DataError> {
         // Note, at least for icu4x/2025-05-01/77.x, both `implicithan` and `unihan` have the same `compressible_bytes`.
         let compressible_bytes = self.compressible_bytes.as_deref().unwrap_or(&[
             false, false, false, false, false, false, false, false, false, false, false, false,
