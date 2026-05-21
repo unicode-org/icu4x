@@ -15,7 +15,7 @@ impl<M: DataMarker> DataProvider<M> for DebugProvider
 where
     M::DataStruct: Clone,
 {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         // Note: would use TypeId::of but it isn't yet stable as a const fn
         use core::any::{type_name, Any, TypeId};
         use icu::datetime::provider::names::*;
@@ -23,6 +23,11 @@ where
         let data: Box<dyn Any> = if type_id == TypeId::of::<YearNames>() {
             Box::new(YearNames::FixedEras(Default::default()))
         } else if type_id == TypeId::of::<MonthNames>() {
+            if matches!(req.id.marker_attributes.as_str(), "1" | "1s" | "2" | "2s") {
+                // Avoid generating patterns with `M` or `MM`, as those suffer from
+                // https://unicode-org.atlassian.net/browse/CLDR-18540
+                return Err(DataErrorKind::IdentifierNotFound.with_req(M::INFO, req));
+            }
             Box::new(MonthNames::Linear(Default::default()))
         } else if type_id == TypeId::of::<WeekdayNames>() {
             Box::new(WeekdayNames {
@@ -38,7 +43,7 @@ where
             Box::new(DecimalSymbols::new_en_for_testing())
         } else {
             panic!(
-                "Don't how how to create for debug: {}",
+                "Don't know how to create for debug: {}",
                 type_name::<M::DataStruct>()
             );
         };
