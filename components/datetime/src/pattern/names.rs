@@ -3801,14 +3801,10 @@ impl RawDateTimeNamesBorrowed<'_> {
     ) -> Result<MonthPlaceholderValue<'_>, GetNameForMonthError> {
         let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForMonthError::InvalidFieldLength)?;
-        let Some(month_names) = self.month_names.get_with_variables(month_name_length) else {
-            if matches!(field_length, FieldLength::One | FieldLength::Two) {
-                // For numeric formats, names are optional
-                return Ok(MonthPlaceholderValue::Numeric);
-            } else {
-                return Err(GetNameForMonthError::NotLoaded);
-            }
-        };
+        let month_names = self
+            .month_names
+            .get_with_variables(month_name_length)
+            .ok_or(GetNameForMonthError::NotLoaded)?;
         let month_index = usize::from(month.number() - 1);
         match month_names {
             MonthNames::Numeric => Some(MonthPlaceholderValue::Numeric),

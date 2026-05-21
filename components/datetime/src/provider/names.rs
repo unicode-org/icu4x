@@ -547,9 +547,6 @@ size_test!(MonthNames, month_names_v1_size, 32);
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum MonthNames<'data> {
-    /// Numeric only
-    Numeric,
-
     /// Month codes M01, M02, M03, .. (can allow for M13 onwards)
     ///
     /// Found for solar and pure lunar calendars
@@ -592,6 +589,9 @@ pub enum MonthNames<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         VarZeroVec<'data, VarTupleULE<i8, SinglePlaceholderPattern>>,
     ),
+
+    /// Numeric only
+    Numeric,
 
     /// This represents the formatting to apply to calendars with leap months.
     /// The last two elements are patterns:
