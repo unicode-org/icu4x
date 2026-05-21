@@ -26,8 +26,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearBuddhistV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -42,8 +42,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearChineseV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -58,8 +58,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearCopticV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -74,8 +74,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearDangiV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -90,8 +90,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearEthiopianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -106,8 +106,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearGregorianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -122,8 +122,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearHebrewV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -138,8 +138,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearIndianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -154,8 +154,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearHijriV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -170,8 +170,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearJapaneseV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -186,8 +186,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearPersianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -202,8 +202,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesYearRocV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
@@ -219,8 +219,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthBuddhistV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -236,8 +236,8 @@ icu_provider::data_marker!(
     /// The full list is:
     /// - 1 is "numeric" (only used for months with leap months, like this one)
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthChineseV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -252,8 +252,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthCopticV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -269,8 +269,8 @@ icu_provider::data_marker!(
     /// The full list is:
     /// - 1 is "numeric" (only used for months with leap months, like this one)
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthDangiV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -285,8 +285,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthEthiopianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -301,8 +301,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthGregorianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -318,8 +318,8 @@ icu_provider::data_marker!(
     /// The full list is:
     /// - 1 is "numeric" (only used for months with leap months, like this one)
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthHebrewV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -334,8 +334,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthIndianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -350,8 +350,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthHijriV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -366,8 +366,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthJapaneseV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -382,8 +382,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthPersianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -398,8 +398,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesMonthRocV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
@@ -415,8 +415,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     /// - 6 is "short"
     DatetimeNamesWeekdayV1,
     WeekdayNames<'static>,
@@ -430,8 +430,8 @@ icu_provider::data_marker!(
     ///
     /// The full list is:
     /// - 3 is "abbreviated"
-    /// - 4 is "narrow"
-    /// - 5 is "wide"
+    /// - 4 is "wide"
+    /// - 5 is "narrow"
     DatetimeNamesDayperiodV1,
     DayPeriodNames<'static>,
 );

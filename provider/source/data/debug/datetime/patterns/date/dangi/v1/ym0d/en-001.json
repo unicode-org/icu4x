@@ -13,6 +13,6 @@
     "d MMMM r(U)",
     "d MMM r",
     "dd/MM/r",
-    "dd MMM r"
+    "dd M r"
   ]
 }

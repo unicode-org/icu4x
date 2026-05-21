@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::cal::{ChineseTraditional, Hebrew};
+use icu_calendar::types::Month;
 use icu_calendar::Date;
 use icu_datetime::fieldsets;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
 use icu_datetime::input::{DateTime, Time, TimeZone, UtcOffset, ZonedDateTime};
+use icu_datetime::pattern::{DateTimePattern, FixedCalendarDateTimeNames};
 use icu_datetime::{
     DateTimeFormatter, DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter,
 };
@@ -393,4 +395,34 @@ fn test_flexible_dayperiod_formatting() {
         let formatted = formatter.format(&time);
         assert_writeable_eq!(formatted, expected);
     }
+}
+
+#[test]
+fn test_chinese_leap_numeric() {
+    let mut names =
+        FixedCalendarDateTimeNames::<_, DateFieldSet>::try_new(locale!("zh").into()).unwrap();
+
+    let pattern = DateTimePattern::try_from_pattern_str("d/M U").unwrap();
+    let formatter = names.include_for_pattern(&pattern).unwrap();
+
+    writeable::assert_try_writeable_eq!(
+        formatter.format(&Date::try_new_chinese_traditional(2028, Month::new(5), 23).unwrap()),
+        "23/5 戊申",
+        Ok(())
+    );
+    writeable::assert_try_writeable_eq!(
+        formatter.format(&Date::try_new_chinese_traditional(2028, Month::leap(5), 23).unwrap()),
+        "23/闰5 戊申",
+        Ok(())
+    );
+    writeable::assert_try_writeable_eq!(
+        formatter.format(&Date::try_new_chinese_traditional(2028, Month::new(6), 23).unwrap()),
+        "23/6 戊申",
+        Ok(())
+    );
+    writeable::assert_try_writeable_eq!(
+        formatter.format(&Date::try_new_chinese_traditional(2028, Month::new(7), 23).unwrap()),
+        "23/7 戊申",
+        Ok(())
+    );
 }

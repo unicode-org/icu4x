@@ -101,6 +101,10 @@ impl YearNameLength {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum MonthNameLength {
+    /// A numeric month for formatting with other fields.
+    ///
+    /// The data here are the leap patterns.
+    Numeric,
     /// An abbreviated calendar-dependent month name for formatting with other fields.
     ///
     /// Example: "Sep"
@@ -113,6 +117,10 @@ pub enum MonthNameLength {
     ///
     /// Example: "S"
     Narrow,
+    /// A numeric month for stand-alone display.
+    ///
+    /// The data here are the leap patterns.
+    StandaloneNumeric,
     /// An abbreviated calendar-dependent month name for stand-alone display.
     ///
     /// Example: "Sep"
@@ -131,12 +139,14 @@ impl MonthNameLength {
     pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
         use marker_attrs::{Context, Length};
         let (context, length) = match self {
+            MonthNameLength::Numeric => (Context::Format, Length::Numeric),
             MonthNameLength::Abbreviated => (Context::Format, Length::Abbr),
             MonthNameLength::Wide => (Context::Format, Length::Wide),
             MonthNameLength::Narrow => (Context::Format, Length::Narrow),
             MonthNameLength::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
             MonthNameLength::StandaloneWide => (Context::Standalone, Length::Wide),
             MonthNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
+            MonthNameLength::StandaloneNumeric => (Context::Standalone, Length::Numeric),
         };
         marker_attrs::name_attr_for(context, length)
     }
@@ -147,9 +157,13 @@ impl MonthNameLength {
     ) -> Option<Self> {
         use fields::Month;
         match (field_symbol, field_length) {
+            (Month::Format, FieldLength::One | FieldLength::Two) => Some(MonthNameLength::Numeric),
             (Month::Format, FieldLength::Three) => Some(MonthNameLength::Abbreviated),
             (Month::Format, FieldLength::Four) => Some(MonthNameLength::Wide),
             (Month::Format, FieldLength::Five) => Some(MonthNameLength::Narrow),
+            (Month::StandAlone, FieldLength::One | FieldLength::Two) => {
+                Some(MonthNameLength::StandaloneNumeric)
+            }
             (Month::StandAlone, FieldLength::Three) => Some(MonthNameLength::StandaloneAbbreviated),
             (Month::StandAlone, FieldLength::Four) => Some(MonthNameLength::StandaloneWide),
             (Month::StandAlone, FieldLength::Five) => Some(MonthNameLength::StandaloneNarrow),
@@ -161,12 +175,14 @@ impl MonthNameLength {
     pub(crate) fn to_approximate_error_field(self) -> ErrorField {
         use fields::Month;
         let (field_symbol, field_length) = match self {
+            MonthNameLength::Numeric => (Month::Format, FieldLength::One),
             MonthNameLength::Abbreviated => (Month::Format, FieldLength::Three),
             MonthNameLength::Wide => (Month::Format, FieldLength::Four),
             MonthNameLength::Narrow => (Month::Format, FieldLength::Five),
             MonthNameLength::StandaloneAbbreviated => (Month::StandAlone, FieldLength::Three),
             MonthNameLength::StandaloneWide => (Month::StandAlone, FieldLength::Four),
             MonthNameLength::StandaloneNarrow => (Month::StandAlone, FieldLength::Five),
+            MonthNameLength::StandaloneNumeric => (Month::StandAlone, FieldLength::One),
         };
         ErrorField(fields::Field {
             symbol: FieldSymbol::Month(field_symbol),
@@ -3725,7 +3741,24 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
 
                 // M..MM, L..LL
-                (FS::Month(_), One | Two) => numeric_field = Some(field),
+                (FS::Month(m), One | Two) => {
+                    self.load_month_names(
+                        month_provider,
+                        prefs,
+                        MonthNameLength::from_field(m, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )
+                    .or_else(|e| match e {
+                        PatternLoadError::Data(e, _)
+                            if Err::<(), _>(e).allow_identifier_not_found().is_ok() =>
+                        {
+                            Ok(())
+                        }
+                        _ => Err(e),
+                    })?;
+                    numeric_field = Some(field)
+                }
 
                 // d..dd
                 (FS::Day(Day::DayOfMonth), One | Two) => numeric_field = Some(field),
@@ -3776,10 +3809,14 @@ impl RawDateTimeNamesBorrowed<'_> {
     ) -> Result<MonthPlaceholderValue<'_>, GetNameForMonthError> {
         let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForMonthError::InvalidFieldLength)?;
-        let month_names = self
-            .month_names
-            .get_with_variables(month_name_length)
-            .ok_or(GetNameForMonthError::NotLoaded)?;
+        let Some(month_names) = self.month_names.get_with_variables(month_name_length) else {
+            if matches!(field_length, FieldLength::One | FieldLength::Two) {
+                // For numeric formats, names are optional
+                return Ok(MonthPlaceholderValue::Numeric);
+            } else {
+                return Err(GetNameForMonthError::NotLoaded);
+            }
+        };
         let month_index = usize::from(month.number() - 1);
         match month_names {
             MonthNames::Linear(linear) => {
@@ -3809,7 +3846,7 @@ impl RawDateTimeNamesBorrowed<'_> {
                 .map(MonthPlaceholderValue::PlainString)
             }
             MonthNames::LeapNumeric(leap_numeric) => {
-                if month.leap_status() != LeapStatus::Normal {
+                if month.leap_status() == LeapStatus::Leap {
                     Some(MonthPlaceholderValue::NumericPattern(leap_numeric))
                 } else {
                     Some(MonthPlaceholderValue::Numeric)

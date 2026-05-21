@@ -13,6 +13,6 @@
     "r(U) MMMM d, EEEE",
     "r MMM d, E",
     "r-MM-dd, E",
-    "r MMM dd, E"
+    "r M dd, E"
   ]
 }
