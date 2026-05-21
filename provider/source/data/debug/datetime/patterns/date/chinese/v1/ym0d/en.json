@@ -7,11 +7,12 @@
     0,
     0,
     0,
-    2
+    4
   ],
   "elements": [
     "MMMM d, r(U)",
     "MMM d, r",
-    "M/d/r"
+    "M/d/r",
+    "M d, r"
   ]
 }

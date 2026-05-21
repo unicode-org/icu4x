@@ -11,6 +11,6 @@
   "elements": [
     "r(U) MMMM d, EEEE",
     "E, dd.MM.y",
-    "E, dd MMM U"
+    "E, dd M U"
   ]
 }
