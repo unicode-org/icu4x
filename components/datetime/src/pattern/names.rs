@@ -884,15 +884,15 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// // (note that the padding is ignored in this fallback mode)
     /// assert_try_writeable_parts_eq!(
     ///     names.with_pattern_unchecked(&pattern).format(&date),
-    ///     "It is: 2024-07-01",
+    ///     "It is: 2024-M07-01",
     ///     Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded),
     ///     [
     ///         (7, 11, Part::ERROR), // 2024
     ///         (7, 11, parts::YEAR), // 2024
-    ///         (12, 14, Part::ERROR), // 07
-    ///         (12, 14, parts::MONTH), // 07
-    ///         (15, 17, Part::ERROR), // 01
-    ///         (15, 17, parts::DAY), // 01
+    ///         (12, 15, Part::ERROR), // M07
+    ///         (12, 15, parts::MONTH), // M07
+    ///         (16, 18, Part::ERROR), // 01
+    ///         (16, 18, parts::DAY), // 01
     ///     ]
     /// );
     /// ```
