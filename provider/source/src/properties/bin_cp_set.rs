@@ -471,9 +471,12 @@ impl DataProvider<PropertyBinaryCaseSensitiveV1> for SourceDataProvider {
                     .then_some(cp)
                     .into_iter()
                     // Target
-                    .chain(lower.into_iter().flat_map(|s| s.chars()))
-                    .chain(upper.into_iter().flat_map(|s| s.chars()))
-                    .chain(title.into_iter().flat_map(|s| s.chars()))
+                    .chain(
+                        [lower, upper, title]
+                            .into_iter()
+                            .flatten()
+                            .flat_map(|s| s.chars()),
+                    )
                     .collect::<Vec<_>>()
                     .into_iter()
             })
