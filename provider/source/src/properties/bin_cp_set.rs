@@ -5,7 +5,7 @@
 use crate::SourceDataProvider;
 use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 use icu::properties::props::BinaryProperty;
-use icu::properties::provider::*;
+use icu::properties::{provider::*, CodePointMapData};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -385,11 +385,53 @@ macro_rules! impl_icu4c_property {
     };
 }
 
+impl DataProvider<PropertyBinarySegmentStarterV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<PropertyBinarySegmentStarterV1>, DataError> {
+        self.check_req::<PropertyBinarySegmentStarterV1>(req)?;
+
+        let decomposer = icu::normalizer::DecomposingNormalizer::try_new_nfd_unstable(&self)?;
+        let decomposer = decomposer.as_borrowed();
+
+        // ccc=0 and do not occur in non-initial position of the canonical decomposition of any character 
+        // https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199a1200d63bfdb0379aa9cdbe8e14d71a26
+        let non_initial_decomposition_characters = (0..(char::MAX as u32))
+            .filter_map(|cp| char::from_u32(cp))
+            .flat_map(|cp| decomposer.normalize_iter([cp].into_iter()).skip(1))
+            .map(|c| c as u32)
+            .collect::<HashSet<_>>();
+
+        let mut builder = CodePointInversionListBuilder::new();
+
+        for range in CodePointMapData::try_new_unstable(&self)?
+            .as_borrowed()
+            .get_set_for_value(icu::properties::props::CanonicalCombiningClass::NotReordered)
+            .as_borrowed()
+            .iter_ranges()
+        {
+            for cp in range {
+                if !non_initial_decomposition_characters.contains(&cp) {
+                    builder.add32(cp);
+                }
+            }
+        }
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(builder.build())),
+        })
+    }
+}
+
+impl crate::IterableDataProviderCached<PropertyBinarySegmentStarterV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
+    }
+}
+
 impl_icu4c_property!(
-    (
-        icu::properties::props::SegmentStarter,
-        PropertyBinarySegmentStarterV1
-    ),
     (
         icu::properties::props::CaseSensitive,
         PropertyBinaryCaseSensitiveV1

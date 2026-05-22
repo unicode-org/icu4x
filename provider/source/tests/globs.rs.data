@@ -134,7 +134,6 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/nt.toml",
     "uprops/small/SB.toml",
     "uprops/small/sc.toml",
-    "uprops/small/segstart.toml",
     "uprops/small/Sensitive.toml",
     "uprops/small/vo.toml",
     "uprops/small/WB.toml",

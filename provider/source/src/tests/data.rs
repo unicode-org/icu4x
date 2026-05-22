@@ -676,7 +676,6 @@ pub fn icuexport_data() -> AbstractFs {
         "uprops/small/nfkdinert.toml",
         "uprops/small/nt.toml",
         "uprops/small/sc.toml",
-        "uprops/small/segstart.toml",
         "uprops/small/vo.toml"
     )
 }
