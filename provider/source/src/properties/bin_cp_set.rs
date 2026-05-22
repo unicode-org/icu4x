@@ -462,26 +462,18 @@ impl DataProvider<PropertyBinaryCaseSensitiveV1> for SourceDataProvider {
                     },
                 );
 
+                let lower = Some(&lower).filter(|l| *l != s);
+                let upper = Some(&upper).filter(|l| *l != s);
+                let title = Some(&title).filter(|l| *l != s);
+
                 // Source
-                (*s != *lower || *s != *upper || *s != *title)
+                (lower.is_some() || upper.is_some() || title.is_some())
                     .then_some(cp)
                     .into_iter()
                     // Target
-                    .chain(
-                        core::iter::once(&lower)
-                            .filter(|l| *l != s)
-                            .flat_map(|s| s.chars()),
-                    )
-                    .chain(
-                        core::iter::once(&upper)
-                            .filter(|l| *l != s)
-                            .flat_map(|s| s.chars()),
-                    )
-                    .chain(
-                        core::iter::once(&title)
-                            .filter(|l| *l != s)
-                            .flat_map(|s| s.chars()),
-                    )
+                    .chain(lower.into_iter().flat_map(|s| s.chars()))
+                    .chain(upper.into_iter().flat_map(|s| s.chars()))
+                    .chain(title.into_iter().flat_map(|s| s.chars()))
                     .collect::<Vec<_>>()
                     .into_iter()
             })
