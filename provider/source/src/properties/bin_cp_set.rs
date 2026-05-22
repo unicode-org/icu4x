@@ -400,7 +400,7 @@ impl DataProvider<PropertyBinarySegmentStarterV1> for SourceDataProvider {
         // ccc=0 and do not occur in non-initial position of the canonical decomposition of any character
         // https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199a1200d63bfdb0379aa9cdbe8e14d71a26
         let non_initial_decomposition_characters = (0..(char::MAX as u32))
-            .filter_map(|cp| char::from_u32(cp))
+            .filter_map(char::from_u32)
             .flat_map(|cp| decomposer.normalize_iter([cp].into_iter()).skip(1))
             .map(|c| c as u32)
             .collect::<HashSet<_>>();
@@ -446,7 +446,7 @@ impl DataProvider<PropertyBinaryCaseSensitiveV1> for SourceDataProvider {
         // Either the source of a case mapping or in the target of a case mapping.
         // https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199ae3156debc89072569efeb31a468c3150
         let set = (0..(char::MAX as u32))
-            .filter_map(|cp| char::from_u32(cp))
+            .filter_map(char::from_u32)
             .flat_map(|cp| {
                 let mut buf = [0; 4];
                 let s = cp.encode_utf8(&mut buf);
