@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
+use icu::casemap::options::TitlecaseOptions;
 use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+use icu::locale::LanguageIdentifier;
 use icu::properties::props::BinaryProperty;
 use icu::properties::{provider::*, CodePointMapData};
 use icu_provider::prelude::*;
@@ -395,7 +397,7 @@ impl DataProvider<PropertyBinarySegmentStarterV1> for SourceDataProvider {
         let decomposer = icu::normalizer::DecomposingNormalizer::try_new_nfd_unstable(&self)?;
         let decomposer = decomposer.as_borrowed();
 
-        // ccc=0 and do not occur in non-initial position of the canonical decomposition of any character 
+        // ccc=0 and do not occur in non-initial position of the canonical decomposition of any character
         // https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199a1200d63bfdb0379aa9cdbe8e14d71a26
         let non_initial_decomposition_characters = (0..(char::MAX as u32))
             .filter_map(|cp| char::from_u32(cp))
@@ -431,11 +433,79 @@ impl crate::IterableDataProviderCached<PropertyBinarySegmentStarterV1> for Sourc
     }
 }
 
+impl DataProvider<PropertyBinaryCaseSensitiveV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<PropertyBinaryCaseSensitiveV1>, DataError> {
+        self.check_req::<PropertyBinaryCaseSensitiveV1>(req)?;
+
+        let mapper = icu::casemap::CaseMapper::try_new_unstable(&self)?;
+        let mapper = mapper.as_borrowed();
+
+        // Either the source of a case mapping or in the target of a case mapping.
+        // https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199ae3156debc89072569efeb31a468c3150
+        let set = (0..(char::MAX as u32))
+            .filter_map(|cp| char::from_u32(cp))
+            .flat_map(|cp| {
+                let mut buf = [0; 4];
+                let s = cp.encode_utf8(&mut buf);
+                let lower = mapper.lowercase_to_string(s, &LanguageIdentifier::UNKNOWN);
+                let upper = mapper.uppercase_to_string(s, &LanguageIdentifier::UNKNOWN);
+                let title = mapper.titlecase_segment_with_only_case_data_to_string(
+                    s,
+                    &LanguageIdentifier::UNKNOWN,
+                    {
+                        let mut o = TitlecaseOptions::default();
+                        o.leading_adjustment = Some(icu::casemap::options::LeadingAdjustment::None);
+                        o
+                    },
+                );
+
+                // Source
+                (*s != *lower || *s != *upper || *s != *title)
+                    .then_some(cp)
+                    .into_iter()
+                    // Target
+                    .chain(
+                        core::iter::once(&lower)
+                            .filter(|l| *l != s)
+                            .flat_map(|s| s.chars()),
+                    )
+                    .chain(
+                        core::iter::once(&upper)
+                            .filter(|l| *l != s)
+                            .flat_map(|s| s.chars()),
+                    )
+                    .chain(
+                        core::iter::once(&title)
+                            .filter(|l| *l != s)
+                            .flat_map(|s| s.chars()),
+                    )
+                    .collect::<Vec<_>>()
+                    .into_iter()
+            })
+            .collect::<HashSet<_>>();
+
+        let mut builder = CodePointInversionListBuilder::new();
+        for c in set {
+            builder.add_char(c);
+        }
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(builder.build())),
+        })
+    }
+}
+
+impl crate::IterableDataProviderCached<PropertyBinaryCaseSensitiveV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
+    }
+}
+
 impl_icu4c_property!(
-    (
-        icu::properties::props::CaseSensitive,
-        PropertyBinaryCaseSensitiveV1
-    ),
     (icu::properties::props::NfcInert, PropertyBinaryNfcInertV1),
     (icu::properties::props::NfdInert, PropertyBinaryNfdInertV1),
     (icu::properties::props::NfkcInert, PropertyBinaryNfkcInertV1),
