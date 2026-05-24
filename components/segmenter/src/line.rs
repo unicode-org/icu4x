@@ -112,38 +112,68 @@ const ZW: u8 = 46;
 #[allow(dead_code)]
 const ZWJ: u8 = 47;
 
-/// Returns `true` if UAX #14 forbids a break immediately before a character
-/// whose line-break class is `class`, regardless of the class that precedes it.
+/// Typographic-attachment classifier for the SA→next-character seam:
+/// returns `true` if a character whose line-break class is `class`
+/// attaches typographically to the preceding text, and therefore the
+/// dict/LSTM's terminal boundary at the SA→`class` seam should be
+/// suppressed by the line-break pipeline.
 ///
-/// Used by the complex-script line-break pipeline to decide whether the
-/// dict/LSTM's boundary between an SA chunk and the next character is a
-/// valid line-break opportunity. The predicate runs only at the seam
-/// between an SA chunk and the next character; the *preceding* char at
-/// every callsite is therefore SA-class. For the classes listed below
-/// UAX #14 states `× class` unconditionally in that context:
+/// **This is not a duplicate of any UAX #14 rule table.** The seam
+/// between an SA-class chunk and the following character is a context
+/// UAX #14 does not directly cover: LB1 resolves SA to AL, but the
+/// AL row of the break-state table is the wrong source of truth for
+/// this position in at least one well-defined way:
 ///
-/// * **`LB7`**:   `× SP`, `× ZW` — never break before a space or zero-width
-///   space.
-/// * **`LB9`**:   `× CM`, `× ZWJ` — combining marks attach to the preceding char.
+/// * **LB28 over-suppression at script transitions.** LB28
+///   `(AL|HL) × (AL|HL)` was written for within-script letter
+///   sequences ("ab" inside one English word). When LB1 resolution
+///   makes a Thai→Latin boundary look like `AL × AL`, LB28's blanket
+///   no-break forbids the dict's *meaningful* script-transition
+///   break. We therefore intentionally omit `AL`, `HL`, and (by
+///   LB23) `NU` from the list: a break before a fresh
+///   letter/digit run after an SA chunk is exactly the kind of break
+///   line layout needs.
+///
+/// (ICU4X 1.5 predates Unicode 15.1's split of `QU` into the
+/// context-dependent LB19a/LB19b variants; 1.5 classifies all
+/// quotation forms as a single `QU` class, so the post-15.1
+/// `× QU_PI` East-Asian-context wrinkle does not apply here.)
+///
+/// The list below is the set of LB classes whose characters
+/// typographically attach to the preceding text under the SA-seam
+/// context. Each entry corresponds to a UAX #14 rule that *does*
+/// hold here:
+///
+/// * **`LB7`**:   `× SP`, `× ZW` — never break before a space or
+///   zero-width space.
+/// * **`LB9`**:   `× CM`, `× ZWJ` — combining marks attach to the
+///   preceding character.
 /// * **`LB11`**:  `× WJ` — word-joiner is glue.
-/// * **`LB12a`**: `× GL` — non-breaking glue (the `SP|BA|HY` exception does
-///   not apply when the previous class is SA).
+/// * **`LB12a`**: `× GL` — non-breaking glue (the `SP|BA|HY`
+///   exception does not apply when the previous class is SA).
 /// * **`LB13`**:  `× CL`, `× CP`, `× EX`, `× IS`, `× SY`.
-/// * **`LB19`**:  `× QU` — never break before a quotation mark. (1.5
-///   classifies all quotation forms — initial `«` `"` `'`, final `»` `"`
-///   `'`, and ambiguous `"` `'` — as `QU`; the newer LB19a East-Asian-
-///   context tailoring does not apply when the previous class is SA.)
-/// * **`LB21`**:  `× BA`, `× HY`, `× NS` — no break before these after the
-///   previous non-space char (SA never introduces a space on its right,
-///   so this simplifies to unconditional `×`).
+/// * **`LB19`**:  `× QU` — never break before a quotation mark
+///   (initial `«` `"` `'`, final `»` `"` `'`, or ambiguous `"` `'`;
+///   all are class `QU` in 1.5).
+/// * **`LB21`**:  `× BA`, `× HY`, `× NS` — no break before these.
 /// * **`LB22`**:  `× IN`.
 ///
-/// Classes intentionally **not** included here either allow a break
-/// (LB18 `SP ÷`, LB20 `÷ CB`, etc.), require a *preceding-class* context
-/// that SA cannot satisfy (LB14 `OP ×`, LB15 `QU ×`, LB17 `B2 SP* × B2`,
-/// LB30 `(AL|HL|NU) × OP30`, LB30a/b stateful rules — all handled by the
-/// outer line-break state machine, not this seam), or are handled by the
-/// mandatory-break rules (LB4/LB5: BK, CR, LF, NL).
+/// Classes intentionally **not** included either allow a break
+/// outright (LB18 `SP ÷`, LB20 `÷ CB`, …), require a *preceding-class*
+/// context that SA cannot satisfy (LB14 `OP ×`, LB15 `QU ×`, LB17,
+/// LB30 — handled by the outer line-break state machine, not this
+/// seam), are mandatory-break classes handled elsewhere (LB4/LB5:
+/// BK, CR, LF, NL), or fall into the deliberately-excluded
+/// LB28/LB23 over-suppression cases discussed above (`AL`, `HL`,
+/// `NU`).
+///
+/// **Long-term resolution** would be either (a) a UAX #14
+/// amendment giving SA-resolved-AL its own row in the break-state
+/// table, or (b) an upstream rewrite of the line segmenter that
+/// integrates dict/LSTM output with the spec's state machine
+/// directly rather than through a post-filter closure. Until one
+/// of those lands, this classifier encodes the typographic intent
+/// we need at the SA seam.
 #[inline]
 fn lb_class_forbids_break_before(class: u8) -> bool {
     matches!(
@@ -152,35 +182,40 @@ fn lb_class_forbids_break_before(class: u8) -> bool {
     )
 }
 
-/// Returns `true` if `cp` is a complex-script (SA-class) iteration or
-/// abbreviation marker that semantically attaches to the preceding
-/// word and must therefore not have a line break inserted immediately
-/// before it.
+/// Override layer: returns `true` for the small set of iteration and
+/// abbreviation marks before which the dict/LSTM word segmenter is
+/// known to emit a boundary that the line-break pipeline must suppress.
 ///
-/// These characters are classified `SA` by Unicode (so they are
-/// processed inside the dictionary/LSTM SA chunk rather than at the
-/// SA→next-char seam), but the dict/LSTM may still emit a word
-/// boundary right before them. UAX #14 itself says nothing about
-/// internal SA boundaries; the dict's word list is the source of
-/// truth there. For these specific marks, however, breaking the line
-/// before them is wrong by definition of the character:
+/// **This is a dict-data correction, not a UAX #14 rule.** All five
+/// characters listed below have line-break class `SA`, which LB1
+/// resolves to `AL`; the break-state table therefore treats the SA→mark
+/// boundary as `AL × AL` and permits a break. UAX #14 has no opinion on
+/// these characters specifically — the spurious boundary comes entirely
+/// from the dictionary's word list (or the LSTM model trained against
+/// equivalent data) treating them as separate words. Since the marks
+/// semantically attach to the preceding syllable, that boundary is
+/// wrong by definition of the character regardless of context.
 ///
-/// * **U+0E46** `ๆ` THAI CHARACTER MAIYAMOK — repetition mark; means
-///   "repeat the previous word."
-/// * **U+0E2F** `ฯ` THAI CHARACTER PAIYANNOI — abbreviation marker;
-///   marks the elided continuation of the preceding word/phrase.
+/// * **U+0E46** `ๆ` THAI CHARACTER MAIYAMOK — repetition mark ("repeat
+///   the previous word").
+/// * **U+0E2F** `ฯ` THAI CHARACTER PAIYANNOI — abbreviation marker for
+///   the elided continuation of the preceding word/phrase.
 /// * **U+0EC6** `ໆ` LAO KO LA — Lao repetition mark, analogous to
 ///   THAI MAIYAMOK.
 /// * **U+0EAF** `ຯ` LAO ELLIPSIS — Lao abbreviation marker, analogous
 ///   to THAI PAIYANNOI.
 /// * **U+17D7** `ៗ` KHMER SIGN LEK TOO — Khmer repetition mark.
 ///
-/// This is a typographic correction layered on top of the dict/LSTM
-/// output, not a UAX #14 rule. It is applied only inside the line-
-/// break pipeline; the word segmenter (which uses the word-boundary
-/// entry point, not the line-break one) is unaffected.
+/// **Long-term fix belongs upstream**, in the dictionary data and/or
+/// LSTM training corpus, so that no word boundary is emitted before
+/// these characters in the first place. This override exists as the
+/// smallest-surface patch the consumer (line segmenter) can apply at
+/// the boundary; once the dict data is corrected, this function and
+/// its callsites can be deleted. Applied only in the line-break
+/// pipeline — the word segmenter uses the word-boundary entry point
+/// and is unaffected.
 #[inline]
-fn sa_codepoint_must_attach_to_previous(cp: u32) -> bool {
+fn dict_boundary_before_iteration_mark_override(cp: u32) -> bool {
     matches!(cp, 0x0E2F | 0x0E46 | 0x0EAF | 0x0EC6 | 0x17D7)
 }
 
@@ -1254,7 +1289,7 @@ where
     // Drop dict/LSTM-emitted boundaries that fall immediately before an
     // SA iteration/abbreviation mark (THAI MAIYAMOK ๆ, KHMER LEK TOO ៗ,
     // etc.). These are typographic corrections layered on top of the
-    // dict's word boundaries; see `sa_codepoint_must_attach_to_previous`.
+    // dict's word boundaries; see `dict_boundary_before_iteration_mark_override`.
     let breaks: Vec<usize> = breaks
         .into_iter()
         .filter(|&offset| {
@@ -1262,7 +1297,7 @@ where
                 || !s[offset..]
                     .chars()
                     .next()
-                    .is_some_and(|c| sa_codepoint_must_attach_to_previous(c as u32))
+                    .is_some_and(|c| dict_boundary_before_iteration_mark_override(c as u32))
         })
         .collect();
     iter.result_cache = breaks;
@@ -1396,7 +1431,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
             .into_iter()
             .filter(|&offset| {
                 offset >= s.len()
-                    || !sa_codepoint_must_attach_to_previous(s[offset] as u32)
+                    || !dict_boundary_before_iteration_mark_override(s[offset] as u32)
             })
             .collect();
         iterator.result_cache = breaks;
