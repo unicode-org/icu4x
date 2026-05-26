@@ -104,6 +104,17 @@ fn list_benches(c: &mut Criterion) {
         }
     }
 
+    for (size_str, list) in &lists {
+        group.bench_function(format!("format/baseline/{size_str}"), |b| {
+            b.iter(|| {
+                result.clear();
+                for item in black_box(list).iter() {
+                    result.push_str(item);
+                }
+            })
+        });
+    }
+
     // Adversarial Spanish Benchmarks (Testing "or" pattern)
     let formatter_or = ListFormatter::try_new_or(
         locale!("es").into(),
