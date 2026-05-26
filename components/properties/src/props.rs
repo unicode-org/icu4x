@@ -3704,3 +3704,90 @@ make_emoji_set! {
     /// assert!(!basic_emoji.contains_str("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
     /// ```
 }
+
+#[test]
+fn test_to_icu4c_value() {
+    for line in include_str!("../tests/data/PropertyDiscrimants.txt").lines() {
+        let line = line.split('#').next().unwrap().trim();
+        if line.is_empty() {
+            continue;
+        }
+        let mut parts = line.split(';').map(str::trim);
+        let prop = parts.next().unwrap();
+        let name = parts.next().unwrap();
+        let expected: u16 = parts.next().unwrap().parse().unwrap();
+        let actual = match prop.as_bytes() {
+            BidiClass::NAME => crate::names::PropertyParser::<BidiClass>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            CanonicalCombiningClass::NAME => {
+                crate::names::PropertyParser::<CanonicalCombiningClass>::new()
+                    .get_strict(name)
+                    .unwrap()
+                    .to_icu4c_value() as u16
+            }
+            EastAsianWidth::NAME => crate::names::PropertyParser::<EastAsianWidth>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            GeneralCategory::NAME => crate::names::PropertyParser::<GeneralCategory>::new()
+                .get_strict(name)
+                .unwrap() as u8 as u16,
+            GraphemeClusterBreak::NAME => {
+                crate::names::PropertyParser::<GraphemeClusterBreak>::new()
+                    .get_strict(name)
+                    .unwrap()
+                    .to_icu4c_value() as u16
+            }
+            HangulSyllableType::NAME => crate::names::PropertyParser::<HangulSyllableType>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            IndicConjunctBreak::NAME => crate::names::PropertyParser::<IndicConjunctBreak>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            IndicSyllabicCategory::NAME => {
+                crate::names::PropertyParser::<IndicSyllabicCategory>::new()
+                    .get_strict(name)
+                    .unwrap()
+                    .to_icu4c_value() as u16
+            }
+            JoiningGroup::NAME => crate::names::PropertyParser::<JoiningGroup>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            JoiningType::NAME => crate::names::PropertyParser::<JoiningType>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            LineBreak::NAME => crate::names::PropertyParser::<LineBreak>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            NumericType::NAME => crate::names::PropertyParser::<NumericType>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            SentenceBreak::NAME => crate::names::PropertyParser::<SentenceBreak>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            VerticalOrientation::NAME => crate::names::PropertyParser::<VerticalOrientation>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            WordBreak::NAME => crate::names::PropertyParser::<WordBreak>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value() as u16,
+            Script::NAME => crate::names::PropertyParser::<Script>::new()
+                .get_strict(name)
+                .unwrap()
+                .to_icu4c_value(),
+            _ => panic!("Unknown property type: {}", prop),
+        };
+        assert_eq!(actual, expected);
+    }
+}
