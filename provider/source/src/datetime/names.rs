@@ -20,10 +20,8 @@ use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::ule::vartuple::VarTuple;
 
-/// Most keys don't have short symbols (except weekdays)
-///
-/// We may further investigate and kick out standalone for some keys
-const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
+/// Lengths for day period data
+const DAY_PERIOD_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -32,8 +30,8 @@ const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::WIDE_STANDALONE,
 ];
 
-/// Lengths for month data (`NORMAL_MARKER_LENGTHS` + numeric)
-const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
+/// Lengths for month data
+const MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -47,8 +45,8 @@ const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
 const YEARS_MARKER_LENGTHS: &[&DataMarkerAttributes] =
     &[marker_attrs::ABBR, marker_attrs::NARROW, marker_attrs::WIDE];
 
-/// All possible non-numeric lengths
-const FULL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
+/// Lengths for weekday data
+const WEEKDAY_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -672,7 +670,7 @@ macro_rules! impl_pattern_datagen {
 impl_symbols_datagen!(
     WeekdayNamesV1,
     DatagenCalendar::Gregorian,
-    FULL_MARKER_LENGTHS,
+    WEEKDAY_MARKER_LENGTHS,
     weekday_convert
 );
 
@@ -680,7 +678,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DayPeriodNamesV1,
     DatagenCalendar::Gregorian,
-    NORMAL_MARKER_LENGTHS,
+    DAY_PERIOD_MARKER_LENGTHS,
     dayperiods_convert
 );
 
@@ -762,73 +760,73 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesMonthBuddhistV1,
     DatagenCalendar::Buddhist,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthChineseV1,
     DatagenCalendar::Chinese,
-    NUMERIC_MONTHS_MARKER_LENGTHS, // has leap month patterns
+    MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthCopticV1,
     DatagenCalendar::Coptic,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthDangiV1,
     DatagenCalendar::Dangi,
-    NUMERIC_MONTHS_MARKER_LENGTHS, // has leap month patterns
+    MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthEthiopianV1,
     DatagenCalendar::Ethiopic,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthGregorianV1,
     DatagenCalendar::Gregorian,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthHebrewV1,
     DatagenCalendar::Hebrew,
-    NUMERIC_MONTHS_MARKER_LENGTHS, // has leap month patterns
+    MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthIndianV1,
     DatagenCalendar::Indian,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthHijriV1,
     DatagenCalendar::Hijri,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthJapaneseV1,
     DatagenCalendar::Japanese,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthPersianV1,
     DatagenCalendar::Persian,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthRocV1,
     DatagenCalendar::Roc,
-    NUMERIC_MONTHS_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 
