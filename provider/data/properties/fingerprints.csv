@@ -102,7 +102,7 @@ property/name/long/sentence/break/v1, <singleton>, 128B, 105B, 5070087b62744fab
 property/name/long/vertical/orientation/v1, <singleton>, 84B, 61B, 36a3f40d2a644910
 property/name/long/word/break/v1, <singleton>, 263B, 241B, 38e07cd0b9cd7476
 property/name/parse/bidi/class/v1, <singleton>, 463B, 442B, 9578fc7e125dcb29
-property/name/parse/canonical/combining/class/v1, <singleton>, 479B, 458B, e9638cadad3a0fff
+property/name/parse/canonical/combining/class/v1, <singleton>, 707B, 686B, 2fff508620e48d19
 property/name/parse/east/asian/width/v1, <singleton>, 86B, 64B, 18889574098a24ca
 property/name/parse/general/category/mask/v1, <singleton>, 744B, 723B, a0acd137df0b5e94
 property/name/parse/general/category/v1, <singleton>, 619B, 598B, fc71812cb4e744a7

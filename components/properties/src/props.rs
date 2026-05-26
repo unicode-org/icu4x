@@ -1725,6 +1725,7 @@ pub struct CanonicalCombiningClass(pub(crate) u8);
 
 impl CanonicalCombiningClass {
     /// Returns an ICU4C `UCanonicalCombiningClass` value.
+    // TODO: this is also the UCD numeric value, so the API should be renamed to reflect that.
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
@@ -3715,6 +3716,7 @@ make_emoji_set! {
 
 #[test]
 fn test_to_icu4c_value() {
+    // Validate discriminants against PropertyDiscriminants.txt, which is shared with ICU4C.
     for line in include_str!("../tests/data/PropertyDiscrimants.txt").lines() {
         let line = line.split('#').next().unwrap().trim();
         if line.is_empty() {
@@ -3729,12 +3731,6 @@ fn test_to_icu4c_value() {
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            CanonicalCombiningClass::NAME => {
-                crate::names::PropertyParser::<CanonicalCombiningClass>::new()
-                    .get_strict(name)
-                    .unwrap()
-                    .to_icu4c_value() as u16
-            }
             EastAsianWidth::NAME => crate::names::PropertyParser::<EastAsianWidth>::new()
                 .get_strict(name)
                 .unwrap()
@@ -3797,5 +3793,18 @@ fn test_to_icu4c_value() {
             _ => panic!("Unknown property type: {}", prop),
         };
         assert_eq!(actual, expected);
+    }
+}
+
+#[test]
+fn test_numeric_value() {
+    // CCC has UCD-defined numeric values, so validate against those.
+    for &value in CanonicalCombiningClass::ALL_VALUES {
+        assert_eq!(
+            crate::names::PropertyParser::<CanonicalCombiningClass>::new()
+                .get_strict(&value.to_icu4c_value().to_string()),
+            Some(value),
+            "{value:?}"
+        );
     }
 }

@@ -294,7 +294,6 @@ macro_rules! expand {
 
                     let trie = names
                         .into_iter()
-                        .filter(|(_, (_, ty))| matches!(ty, NameType::Short | NameType::Long | NameType::Alias))
                         .filter_map(|(name, (short_name, _))| Some((name, short_name_to_t.get(short_name).copied()?)))
                         // Add short names that are only defined in ICU4X, not in Unicode (Scripts)
                         .chain(short_name_to_t.clone().into_iter())
