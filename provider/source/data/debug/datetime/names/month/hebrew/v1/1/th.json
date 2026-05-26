@@ -1,0 +1,26 @@
+{
+  "LeapNumericWithBase": [
+    {
+      "sized": 1,
+      "variable": [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "a"
+        }
+      ]
+    },
+    {
+      "sized": 0,
+      "variable": [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "b"
+        }
+      ]
+    }
+  ]
+}

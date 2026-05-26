@@ -2118,6 +2118,21 @@ fn test_numeric_zeros() {
     assert_eq!(collator.compare(&left, &right), Ordering::Less);
 }
 
+#[test]
+fn emoji() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Secondary);
+    let collator = Collator::try_new(locale!("und-u-co-emoji").into(), options).unwrap();
+    let grinning_face = "😀";
+    let grinning_face_with_big_eyes = "😃";
+    let red_circle = "🔴";
+    assert_eq!(
+        collator.compare(grinning_face, grinning_face_with_big_eyes),
+        Ordering::Less
+    );
+    assert_eq!(collator.compare(grinning_face, red_circle), Ordering::Less);
+}
+
 // TODO: Test languages that map to the root.
 // The languages that map to root without script reordering are:
 // ca (at least for now)

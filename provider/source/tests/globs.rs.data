@@ -14,6 +14,10 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic-amete-alem.json",
     "cldr-cal-hebrew-full/main/$LOCALES/ca-hebrew.json",
     "cldr-cal-indian-full/main/$LOCALES/ca-indian.json",
+    "cldr-cal-islamic-full/main/$LOCALES/ca-islamic-civil.json",
+    "cldr-cal-islamic-full/main/$LOCALES/ca-islamic-rgsa.json",
+    "cldr-cal-islamic-full/main/$LOCALES/ca-islamic-tbla.json",
+    "cldr-cal-islamic-full/main/$LOCALES/ca-islamic-umalqura.json",
     "cldr-cal-islamic-full/main/$LOCALES/ca-islamic.json",
     "cldr-cal-japanese-full/main/$LOCALES/ca-japanese.json",
     "cldr-cal-persian-full/main/$LOCALES/ca-persian.json",
@@ -115,8 +119,6 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/nfdinert.toml",
     "uprops/small/nfkcinert.toml",
     "uprops/small/nfkdinert.toml",
-    "uprops/small/segstart.toml",
-    "uprops/small/Sensitive.toml",
 ];
 
 const LSTM_GLOB: &[&str] = &[

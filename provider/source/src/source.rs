@@ -325,7 +325,7 @@ impl AbstractFs {
         Ok(s)
     }
 
-    fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
+    pub(crate) fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.init()?;
         Ok(match self {
             Self::Fs(root) => std::fs::read_dir(root.join(path))
@@ -621,6 +621,7 @@ impl UnicodeCache {
 
 macro_rules! include_files {
     ($base:literal; $($file:literal),* $(,)?) => {
+        #[allow(clippy::large_stack_arrays)]
         crate::source::AbstractFs::Memory([
             $(
                 ($file, include_bytes!(concat!($base, $file)).as_slice()),

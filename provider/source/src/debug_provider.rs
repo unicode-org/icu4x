@@ -24,8 +24,12 @@ where
             Box::new(YearNames::FixedEras(Default::default()))
         } else if type_id == TypeId::of::<MonthNames>() {
             Box::new(MonthNames::Linear(Default::default()))
-        } else if type_id == TypeId::of::<LinearNames>() {
-            Box::new(LinearNames {
+        } else if type_id == TypeId::of::<WeekdayNames>() {
+            Box::new(WeekdayNames {
+                names: Default::default(),
+            })
+        } else if type_id == TypeId::of::<DayPeriodNames>() {
+            Box::new(DayPeriodNames {
                 names: Default::default(),
             })
         } else if type_id == TypeId::of::<[char; 10]>() {

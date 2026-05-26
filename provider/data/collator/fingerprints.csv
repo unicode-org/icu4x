@@ -111,8 +111,8 @@ collation/metadata/v1, und-Hani/unihan, -> ar
 collation/metadata/v1, und-Hani/zhuyin, -> ar
 collation/metadata/v1, und-Hans, -> ar
 collation/metadata/v1, und-Hant, -> ar
-collation/metadata/v1, und/emoji, -> und
-collation/metadata/v1, und/eor, -> und
+collation/metadata/v1, und/emoji, -> af
+collation/metadata/v1, und/eor, -> af
 collation/metadata/v1, ur, -> ar
 collation/metadata/v1, uz, -> af
 collation/metadata/v1, vi, -> ee

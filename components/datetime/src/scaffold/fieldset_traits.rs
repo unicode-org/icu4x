@@ -59,7 +59,7 @@ pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading month names.
     type MonthNamesV1: DataMarker<DataStruct = MonthNames<'static>>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1: DataMarker<DataStruct = LinearNames<'static>>;
+    type WeekdayNamesV1: DataMarker<DataStruct = WeekdayNames<'static>>;
 }
 
 /// A trait associating types for date formatting in any calendar
@@ -79,7 +79,7 @@ pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for month names.
     type Month: CalMarkers<MonthNamesV1>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1: DataMarker<DataStruct = LinearNames<'static>>;
+    type WeekdayNamesV1: DataMarker<DataStruct = WeekdayNames<'static>>;
 }
 
 /// A trait associating types for time formatting
@@ -103,7 +103,7 @@ pub trait TimeMarkers: UnstableSealed {
     /// Marker for loading time skeleton patterns.
     type TimeSkeletonPatternsV1: DataMarker<DataStruct = PackedPatterns<'static>>;
     /// Marker for loading day period names.
-    type DayPeriodNamesV1: DataMarker<DataStruct = LinearNames<'static>>;
+    type DayPeriodNamesV1: DataMarker<DataStruct = DayPeriodNames<'static>>;
 }
 
 /// A trait associating types for time zone formatting
@@ -529,14 +529,14 @@ impl<C> TypedDateDataMarkers<C> for () {
     type DateSkeletonPatternsV1 = NeverMarker<PackedPatterns<'static>>;
     type YearNamesV1 = NeverMarker<YearNames<'static>>;
     type MonthNamesV1 = NeverMarker<MonthNames<'static>>;
-    type WeekdayNamesV1 = NeverMarker<LinearNames<'static>>;
+    type WeekdayNamesV1 = NeverMarker<WeekdayNames<'static>>;
 }
 
 impl DateDataMarkers for () {
     type Skel = NoDataCalMarkers;
     type Year = NoDataCalMarkers;
     type Month = NoDataCalMarkers;
-    type WeekdayNamesV1 = NeverMarker<LinearNames<'static>>;
+    type WeekdayNamesV1 = NeverMarker<WeekdayNames<'static>>;
 }
 
 impl TimeMarkers for () {
@@ -545,7 +545,7 @@ impl TimeMarkers for () {
     type SecondInput = ();
     type NanosecondInput = ();
     type TimeSkeletonPatternsV1 = NeverMarker<PackedPatterns<'static>>;
-    type DayPeriodNamesV1 = NeverMarker<LinearNames<'static>>;
+    type DayPeriodNamesV1 = NeverMarker<DayPeriodNames<'static>>;
 }
 
 impl ZoneMarkers for () {
@@ -591,7 +591,7 @@ macro_rules! datetime_marker_helper {
         WeekdayNamesV1
     };
     (@weekdays,) => {
-        NeverMarker<LinearNames<'static>>
+        NeverMarker<WeekdayNames<'static>>
     };
     (@dayperiods, yes) => {
         DayPeriodNamesV1

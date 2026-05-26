@@ -232,7 +232,6 @@ macro_rules! registry(
             icu::time::provider::windows::TimezoneIdentifiersWindowsV1: TimezoneIdentifiersWindowsV1,
             icu::datetime::provider::names::DatetimeNamesWeekdayV1: DatetimeNamesWeekdayV1,
             icu::datetime::provider::names::DatetimeNamesDayperiodV1: DatetimeNamesDayperiodV1,
-            icu::datetime::provider::day_periods::DayPeriodRulesV1: DayPeriodRulesV1,
             icu::datetime::provider::names::DatetimeNamesYearBuddhistV1: DatetimeNamesYearBuddhistV1,
             icu::datetime::provider::names::DatetimeNamesYearChineseV1: DatetimeNamesYearChineseV1,
             icu::datetime::provider::names::DatetimeNamesYearCopticV1: DatetimeNamesYearCopticV1,
@@ -347,6 +346,7 @@ macro_rules! registry(
             icu::segmenter::provider::SegmenterBreakLineV2: SegmenterBreakLineV2,
             icu::segmenter::provider::SegmenterBreakSentenceV2: SegmenterBreakSentenceV2,
             icu::segmenter::provider::SegmenterBreakWordV2: SegmenterBreakWordV2,
+            icu::segmenter::provider::SegmenterBreakLineOverrideV2: SegmenterBreakLineOverrideV2,
             icu::segmenter::provider::SegmenterBreakSentenceOverrideV2: SegmenterBreakSentenceOverrideV2,
         );
     }

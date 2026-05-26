@@ -108,7 +108,7 @@ derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 #[derive(Debug)]
 pub struct SentenceSegmenter {
     payload: DataPayload<SegmenterBreakSentenceV2>,
-    payload_locale_override: Option<DataPayload<SegmenterBreakSentenceOverrideV2>>,
+    tailoring: Option<DataPayload<SegmenterBreakSentenceOverrideV2>>,
 }
 
 /// Segments a string into sentences (borrowed version).
@@ -117,7 +117,7 @@ pub struct SentenceSegmenter {
 #[derive(Clone, Debug, Copy)]
 pub struct SentenceSegmenterBorrowed<'data> {
     data: &'data SegmenterStateMachine<'data>,
-    locale_override: Option<&'data RuleBreakDataOverride<'data>>,
+    tailoring: Option<&'data RuleBreakDataOverride<'data>>,
 }
 
 impl SentenceSegmenter {
@@ -133,7 +133,7 @@ impl SentenceSegmenter {
     ) -> SentenceSegmenterBorrowed<'static> {
         SentenceSegmenterBorrowed {
             data: Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V2,
-            locale_override: None,
+            tailoring: None,
         }
     }
 
@@ -159,28 +159,23 @@ impl SentenceSegmenter {
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
-        let payload_locale_override = if let Some(locale) = options.content_locale {
-            let locale = DataLocale::from(locale);
-            let req = DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                metadata: {
-                    let mut metadata = DataRequestMetadata::default();
-                    metadata.silent = true;
-                    metadata
-                },
-            };
+        let tailoring = if let Some(locale) = options.content_locale {
             provider
-                .load(req)
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&DataLocale::from(locale)),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                })
                 .allow_identifier_not_found()?
                 .map(|r| r.payload)
         } else {
             None
         };
 
-        Ok(Self {
-            payload,
-            payload_locale_override,
-        })
+        Ok(Self { payload, tailoring })
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
@@ -189,7 +184,7 @@ impl SentenceSegmenter {
     pub fn as_borrowed(&self) -> SentenceSegmenterBorrowed<'_> {
         SentenceSegmenterBorrowed {
             data: self.payload.get(),
-            locale_override: self.payload_locale_override.as_ref().map(|p| p.get()),
+            tailoring: self.tailoring.as_ref().map(|p| p.get()),
         }
     }
 }
@@ -202,7 +197,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
         SentenceBreakIterator(RuleBreakIterator::new_non_complex(
             input.char_indices(),
             self.data,
-            self.locale_override,
+            self.tailoring,
         ))
     }
     /// Creates a sentence break iterator for a potentially ill-formed UTF8 string
@@ -217,7 +212,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
         SentenceBreakIterator(RuleBreakIterator::new_non_complex(
             Utf8CharIndices::new(input),
             self.data,
-            self.locale_override,
+            self.tailoring,
         ))
     }
     /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
@@ -227,7 +222,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
         SentenceBreakIterator(RuleBreakIterator::new_non_complex(
             Latin1Indices::new(input),
             self.data,
-            self.locale_override,
+            self.tailoring,
         ))
     }
 
@@ -238,7 +233,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
         SentenceBreakIterator(RuleBreakIterator::new_non_complex(
             Utf16Indices::new(input),
             self.data,
-            self.locale_override,
+            self.tailoring,
         ))
     }
 }
@@ -249,14 +244,14 @@ impl SentenceSegmenterBorrowed<'static> {
     /// Note: Due to branching and indirection, using [`SentenceSegmenter`] might inhibit some
     /// compile-time optimizations that are possible with [`SentenceSegmenterBorrowed`].
     pub const fn static_to_owned(self) -> SentenceSegmenter {
-        let payload_locale_override = if let Some(d) = self.locale_override {
+        let tailoring = if let Some(d) = self.tailoring {
             Some(DataPayload::from_static_ref(d))
         } else {
             None
         };
         SentenceSegmenter {
             payload: DataPayload::from_static_ref(self.data),
-            payload_locale_override,
+            tailoring,
         }
     }
 }

@@ -33,7 +33,6 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     // und_Hant -> zh_stroke
     // und_Hans -> zh_pinyin
     // und_Hani/x -> zh_x
-    // sr_Cyrl_ME -> sr_Latn
 
     if s == "und_Hant" {
         return "zh_stroke".into();
@@ -153,9 +152,12 @@ macro_rules! collation_provider {
                     {
                         self.check_req::<$marker>(req)?;
 
+                        let has_tailoring = self.list_ids("_data")?
+                            .contains(&DataIdentifierCow::from_borrowed_and_owned(&req.id.marker_attributes, *req.id.locale));
+
                         Ok(DataResponse {
                             metadata: Default::default(),
-                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, <collator_serde::$serde_struct>::suffix()).and_then(|s| s.convert()).map_err(|e| e.with_req(<$marker>::INFO, req))?),
+                            payload: DataPayload::from_owned(self.load_toml::<collator_serde::$serde_struct>(req.id, <collator_serde::$serde_struct>::suffix()).and_then(|s| s.convert(has_tailoring)).map_err(|e| e.with_req(<$marker>::INFO, req))?),
                         })
                     }
                 }
@@ -189,7 +191,7 @@ macro_rules! collation_provider {
                 .collations;
 
             for (locale, parent) in required_overrides {
-                // We ignore this one, see https://unicode-org.atlassian.net/browse/CLDR-19386
+                // TODO(CLDR49): Remove, https://unicode-org.atlassian.net/browse/CLDR-19386
                 if (locale, parent) == (&locale!("sr-Cyrl-ME").id, &locale!("sr-ME").id) {
                     continue;
                 }
@@ -241,7 +243,7 @@ impl collator_serde::CollationData {
     }
 
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationData<'static>, DataError> {
+    fn convert(&self, _has_tailoring: bool) -> Result<CollationData<'static>, DataError> {
         use icu::collections::codepointtrie::CodePointTrie;
         use icu_codepointtrie_builder::CodePointTrieBuilder;
 
@@ -284,7 +286,7 @@ impl collator_serde::CollationDiacritics {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationDiacritics<'static>, DataError> {
+    fn convert(&self, _has_tailoring: bool) -> Result<CollationDiacritics<'static>, DataError> {
         Ok(CollationDiacritics {
             secondaries: ZeroVec::alloc_from_slice(&self.secondaries),
         })
@@ -298,7 +300,7 @@ impl collator_serde::CollationJamo {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationJamo<'static>, DataError> {
+    fn convert(&self, _has_tailoring: bool) -> Result<CollationJamo<'static>, DataError> {
         Ok(CollationJamo {
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
         })
@@ -312,8 +314,15 @@ impl collator_serde::CollationMetadata {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationMetadata, DataError> {
-        Ok(CollationMetadata { bits: self.bits })
+    fn convert(&self, has_tailoring: bool) -> Result<CollationMetadata, DataError> {
+        if has_tailoring {
+            // ICU seems to not be setting the tailoring bit correctly.
+            Ok(CollationMetadata {
+                bits: self.bits | 1 << 3,
+            })
+        } else {
+            Ok(CollationMetadata { bits: self.bits })
+        }
     }
 }
 
@@ -324,7 +333,7 @@ impl collator_serde::CollationReordering {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationReordering<'static>, DataError> {
+    fn convert(&self, _has_tailoring: bool) -> Result<CollationReordering<'static>, DataError> {
         Ok(CollationReordering {
             min_high_no_reorder: self.min_high_no_reorder,
             reorder_table: ZeroVec::alloc_from_slice(&self.reorder_table),
@@ -340,7 +349,10 @@ impl collator_serde::CollationSpecialPrimaries {
 
     #[allow(clippy::unnecessary_wraps)]
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn convert(&self) -> Result<CollationSpecialPrimaries<'static>, DataError> {
+    fn convert(
+        &self,
+        _has_tailoring: bool,
+    ) -> Result<CollationSpecialPrimaries<'static>, DataError> {
         // Note, at least for icu4x/2025-05-01/77.x, both `implicithan` and `unihan` have the same `compressible_bytes`.
         let compressible_bytes = self.compressible_bytes.as_deref().unwrap_or(&[
             false, false, false, false, false, false, false, false, false, false, false, false,

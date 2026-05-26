@@ -18,11 +18,10 @@ use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::ule::vartuple::VarTuple;
 
-/// Most keys don't have short symbols (except weekdays)
-///
-/// We may further investigate and kick out standalone for some keys
-const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
+/// Lengths for day period data
+const DAY_PERIOD_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -31,8 +30,8 @@ const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::WIDE_STANDALONE,
 ];
 
-/// Lengths for month data (`NORMAL_MARKER_LENGTHS` + numeric)
-const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
+/// Lengths for month data
+const MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -46,8 +45,8 @@ const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
 const YEARS_MARKER_LENGTHS: &[&DataMarkerAttributes] =
     &[marker_attrs::ABBR, marker_attrs::NARROW, marker_attrs::WIDE];
 
-/// All possible non-numeric lengths
-const FULL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
+/// Lengths for weekday data
+const WEEKDAY_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -171,33 +170,80 @@ fn weekday_convert(
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
-) -> Result<LinearNames<'static>, DataError> {
+) -> Result<WeekdayNames<'static>, DataError> {
     let day_symbols = data.days.get_symbols(context, length);
 
-    let days = [
-        &*day_symbols.sun,
-        &*day_symbols.mon,
-        &*day_symbols.tue,
-        &*day_symbols.wed,
-        &*day_symbols.thu,
-        &*day_symbols.fri,
-        &*day_symbols.sat,
+    use icu::calendar::types::Weekday::*;
+    Ok(WeekdayNames::new(
+        [
+            (Sunday, &*day_symbols.sun),
+            (Monday, &*day_symbols.mon),
+            (Tuesday, &*day_symbols.tue),
+            (Wednesday, &*day_symbols.wed),
+            (Thursday, &*day_symbols.thu),
+            (Friday, &*day_symbols.fri),
+            (Saturday, &*day_symbols.sat),
+        ]
+        .into_iter(),
+    ))
+}
+
+/// Checks if the locale needs flexible day periods.
+/// A locale needs them if any of its supported calendars has standard time formats
+/// or available formats containing 'B' (flexible day periods) for non-B skeletons.
+pub(super) fn needs_flexible_day_periods(
+    datagen: &SourceDataProvider,
+    locale: &DataLocale,
+) -> bool {
+    const ALL_CALENDARS: &[DatagenCalendar] = &[
+        DatagenCalendar::Buddhist,
+        DatagenCalendar::Chinese,
+        DatagenCalendar::Coptic,
+        DatagenCalendar::Dangi,
+        DatagenCalendar::Ethiopic,
+        DatagenCalendar::Gregorian,
+        DatagenCalendar::Hebrew,
+        DatagenCalendar::Indian,
+        DatagenCalendar::Hijri,
+        DatagenCalendar::Japanese,
+        DatagenCalendar::Persian,
+        DatagenCalendar::Roc,
     ];
 
-    Ok(LinearNames {
-        names: (&days).into(),
-    })
+    fn time_format_has_b(formats: &ca::LengthPatterns) -> bool {
+        formats.full.get_pattern().contains('B')
+            || formats.long.get_pattern().contains('B')
+            || formats.medium.get_pattern().contains('B')
+            || formats.short.get_pattern().contains('B')
+    }
+
+    for &calendar in ALL_CALENDARS {
+        if let Ok(data) = datagen.get_dates_resource(locale, Some(calendar)) {
+            if time_format_has_b(&data.time_formats) {
+                return true;
+            }
+            if time_format_has_b(&data.time_skeletons) {
+                return true;
+            }
+            for (skeleton, pattern) in &data.datetime_formats.available_formats.0 {
+                if pattern.contains('B') && !skeleton.contains('B') {
+                    return true;
+                }
+            }
+        }
+    }
+    false
 }
 
 #[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn dayperiods_convert(
-    _datagen: &SourceDataProvider,
-    _locale: &DataLocale,
+    datagen: &SourceDataProvider,
+    locale: &DataLocale,
     data: &ca::Dates,
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
-) -> Result<LinearNames<'static>, DataError> {
+) -> Result<DayPeriodNames<'static>, DataError> {
     let day_periods = data.day_periods.get_symbols(context, length);
 
     let mut periods = vec![&*day_periods.am, &*day_periods.pm];
@@ -212,7 +258,32 @@ fn dayperiods_convert(
         periods.push(midnight)
     }
 
-    Ok(LinearNames {
+    let rules_encoded;
+
+    if needs_flexible_day_periods(datagen, locale) {
+        let rules = datagen
+            .cldr()?
+            .core()
+            .read_and_parse::<crate::cldr_serde::day_periods::Resource>(
+                "supplemental/dayPeriods.json",
+            )?
+            .supplemental
+            .day_period_rule_set
+            .0
+            // Day period rules are stored on a language level, i.e. zh and zh-Hant share rules
+            .get(locale.language.as_str())
+            .expect("day period rules should exist");
+
+        let (rules, mut names) =
+            super::day_periods::compute_day_periods(rules, &day_periods.flexible, *locale)?;
+
+        periods.resize(4, "");
+        rules_encoded = format!("{}{}", rules.encode_to_string(), names.next().unwrap());
+        periods.push(&rules_encoded);
+        periods.extend(names);
+    }
+
+    Ok(DayPeriodNames {
         names: (&periods).into(),
     })
 }
@@ -303,7 +374,7 @@ fn years_convert(
 #[allow(clippy::unnecessary_wraps)] // signature required by macro
 fn months_convert(
     _datagen: &SourceDataProvider,
-    locale: &DataLocale,
+    _locale: &DataLocale,
     data: &ca::Dates,
     calendar: DatagenCalendar,
     context: Context,
@@ -315,8 +386,33 @@ fn months_convert(
             Context::Format,
             "numeric months only found for Context::Format"
         );
+        if calendar == DatagenCalendar::Hebrew {
+            return Ok(MonthNames::LeapNumericWithBase(
+                (&[
+                    // M05L should be 6a
+                    VarTuple {
+                        sized: 1,
+                        variable: &SinglePlaceholderPattern::try_from_str(
+                            "{0}a",
+                            Default::default(),
+                        )
+                        .unwrap(),
+                    },
+                    // M06 should be 6b after M05L
+                    VarTuple {
+                        sized: 0,
+                        variable: &SinglePlaceholderPattern::try_from_str(
+                            "{0}b",
+                            Default::default(),
+                        )
+                        .unwrap(),
+                    },
+                ])
+                    .into(),
+            ));
+        }
         let Some(ref patterns) = data.month_patterns else {
-            panic!("No month_patterns found but numeric months were requested for {calendar:?} with {locale}");
+            return Ok(MonthNames::Numeric);
         };
         let pattern = patterns.get_symbols(context, length);
         return Ok(MonthNames::LeapNumeric(Cow::Owned(
@@ -574,7 +670,7 @@ macro_rules! impl_pattern_datagen {
 impl_symbols_datagen!(
     WeekdayNamesV1,
     DatagenCalendar::Gregorian,
-    FULL_MARKER_LENGTHS,
+    WEEKDAY_MARKER_LENGTHS,
     weekday_convert
 );
 
@@ -582,7 +678,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DayPeriodNamesV1,
     DatagenCalendar::Gregorian,
-    NORMAL_MARKER_LENGTHS,
+    DAY_PERIOD_MARKER_LENGTHS,
     dayperiods_convert
 );
 
@@ -664,73 +760,73 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesMonthBuddhistV1,
     DatagenCalendar::Buddhist,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthChineseV1,
     DatagenCalendar::Chinese,
-    NUMERIC_MONTHS_MARKER_LENGTHS, // has leap month patterns
+    MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthCopticV1,
     DatagenCalendar::Coptic,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthDangiV1,
     DatagenCalendar::Dangi,
-    NUMERIC_MONTHS_MARKER_LENGTHS, // has leap month patterns
+    MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthEthiopianV1,
     DatagenCalendar::Ethiopic,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthGregorianV1,
     DatagenCalendar::Gregorian,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthHebrewV1,
     DatagenCalendar::Hebrew,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthIndianV1,
     DatagenCalendar::Indian,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthHijriV1,
     DatagenCalendar::Hijri,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthJapaneseV1,
     DatagenCalendar::Japanese,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthPersianV1,
     DatagenCalendar::Persian,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthRocV1,
     DatagenCalendar::Roc,
-    NORMAL_MARKER_LENGTHS,
+    MONTHS_MARKER_LENGTHS,
     months_convert
 );
 
@@ -784,6 +880,9 @@ mod tests {
         )
         .unwrap();
 
-        assert_eq!("po", &wd_short.names[1]);
+        assert_eq!(
+            "po",
+            wd_short.get(icu::calendar::types::Weekday::Monday).unwrap()
+        );
     }
 }

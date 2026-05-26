@@ -111,6 +111,29 @@ impl SourceDataProvider {
             .get(cldr_cal)
             .expect("CLDR file contains the expected calendar");
 
+        // load other ca-islamic-*.json files and verify that they match
+        if calendar == Some(DatagenCalendar::Hijri) {
+            for variant in &["civil", "rgsa", "tbla", "umalqura"] {
+                let variant_resource = self
+                    .cldr()?
+                    .dates(cldr_cal)
+                    .read_and_parse::<cldr_serde::ca::Resource>(
+                        locale,
+                        &format!("ca-islamic-{variant}.json"),
+                    )?
+                    .main
+                    .value
+                    .dates
+                    .calendars
+                    .get(&format!("islamic-{variant}"))
+                    .expect("CLDR file contains the expected calendar");
+
+                if variant_resource != resource {
+                    log::warn!("islamic/islamic-{variant} data mismatch: {locale}");
+                }
+            }
+        }
+
         // load ca-ethiopic-amete-alem.json and verify that it matches
         if calendar == Some(DatagenCalendar::Ethiopic) {
             let alem = self
