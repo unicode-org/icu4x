@@ -3717,7 +3717,7 @@ make_emoji_set! {
 #[test]
 fn test_to_icu4c_value() {
     // Validate discriminants against PropertyDiscriminants.txt, which is shared with ICU4C.
-    for line in include_str!("../tests/data/PropertyDiscrimants.txt").lines() {
+    for line in include_str!("../tests/data/PropertyDiscriminants.txt").lines() {
         let line = line.split('#').next().unwrap().trim();
         if line.is_empty() {
             continue;
