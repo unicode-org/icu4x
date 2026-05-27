@@ -51,6 +51,30 @@ mod algorithms;
 /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
 /// ```
 ///
+/// # Normalization
+///
+/// While the first element produced here is *usually* the input locale,
+/// the fallback iterator normalizes the input locale first, which may strip implied subtags.
+/// For example, `zh-Hans` normalizes to `zh` because `Hans` is the default script for `zh`.
+/// Therefore, the first element in the fallback chain for `zh-Hans` is `zh`, not `zh-Hans`.
+///
+/// ```
+/// use icu::locale::fallback::LocaleFallbacker;
+/// use icu::locale::locale;
+///
+/// // Set up a LocaleFallbacker with data.
+/// let fallbacker = LocaleFallbacker::new();
+///
+/// let mut fallback_iterator = fallbacker
+///     .for_config(Default::default())
+///     .fallback_for(locale!("zh-Hans").into());
+///
+/// // The origin "zh-Hans" is normalized to "zh" because Hans is the default script.
+/// assert_eq!(fallback_iterator.get(), &locale!("zh").into());
+/// fallback_iterator.step();
+/// assert_eq!(fallback_iterator.get(), &locale!("und").into());
+/// ```
+///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
 #[doc(hidden)] // canonical location in super
