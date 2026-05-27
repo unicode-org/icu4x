@@ -37,7 +37,7 @@ final class GeneralCategoryGroup {
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
   bool contains(GeneralCategory val) {
     final temp = _FinalizedArena();
-    final result = _icu4x_GeneralCategoryGroup_contains_mv1(_toFfi(temp.arena), val._ffi);
+    final result = _icu4x_GeneralCategoryGroup_contains_mv1(_toFfi(temp.arena), val.index);
     return result;
   }
 

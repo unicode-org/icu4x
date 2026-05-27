@@ -20,7 +20,7 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_properties::props::{{prop.name}}, needs_wildcard)]
     #[non_exhaustive]
     pub enum {{prop.name}} {
-        {%- for (variant, discriminant) in prop.variants %}
+        {%- for (discriminant, variant) in prop.variants %}
         #[diplomat::rust_link(
             icu::properties::props::{{prop.name}}::{{variant}},
             {{ prop.variant_kind() }}
@@ -83,7 +83,7 @@ pub mod ffi {
         /// Convert from an integer value from ICU4C or `CodePointMapData`
         pub fn from_integer_value(other: {{ prop.int_type }}) -> Option<Self> {
             Some(match other {
-                {%- for (variant, discriminant) in prop.variants %}
+                {%- for (discriminant, variant) in prop.variants %}
                 {{ discriminant }} => Self::{{variant}},
                 {%- endfor %}
                 _ => return None,

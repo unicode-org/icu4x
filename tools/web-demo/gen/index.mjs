@@ -30,7 +30,7 @@ let termini = Object.assign({
                 name: "val",
                 type: "GeneralCategory",
                 typeUse: "enumerator",
-                values: ["Unassigned", "UppercaseLetter", "LowercaseLetter", "TitlecaseLetter", "ModifierLetter", "OtherLetter", "NonspacingMark", "SpacingMark", "EnclosingMark", "DecimalNumber", "LetterNumber", "OtherNumber", "SpaceSeparator", "LineSeparator", "ParagraphSeparator", "Control", "Format", "PrivateUse", "Surrogate", "DashPunctuation", "OpenPunctuation", "ClosePunctuation", "ConnectorPunctuation", "InitialPunctuation", "FinalPunctuation", "OtherPunctuation", "MathSymbol", "CurrencySymbol", "ModifierSymbol", "OtherSymbol"]
+                values: ["Unassigned", "UppercaseLetter", "LowercaseLetter", "TitlecaseLetter", "ModifierLetter", "OtherLetter", "NonspacingMark", "EnclosingMark", "SpacingMark", "DecimalNumber", "LetterNumber", "OtherNumber", "SpaceSeparator", "LineSeparator", "ParagraphSeparator", "Control", "Format", "PrivateUse", "Surrogate", "DashPunctuation", "OpenPunctuation", "ClosePunctuation", "ConnectorPunctuation", "OtherPunctuation", "MathSymbol", "CurrencySymbol", "ModifierSymbol", "OtherSymbol", "InitialPunctuation", "FinalPunctuation"]
             }
             
         ]

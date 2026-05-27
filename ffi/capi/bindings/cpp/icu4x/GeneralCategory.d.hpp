@@ -27,8 +27,8 @@ namespace capi {
       GeneralCategory_ModifierLetter = 4,
       GeneralCategory_OtherLetter = 5,
       GeneralCategory_NonspacingMark = 6,
-      GeneralCategory_SpacingMark = 8,
       GeneralCategory_EnclosingMark = 7,
+      GeneralCategory_SpacingMark = 8,
       GeneralCategory_DecimalNumber = 9,
       GeneralCategory_LetterNumber = 10,
       GeneralCategory_OtherNumber = 11,
@@ -43,13 +43,13 @@ namespace capi {
       GeneralCategory_OpenPunctuation = 20,
       GeneralCategory_ClosePunctuation = 21,
       GeneralCategory_ConnectorPunctuation = 22,
-      GeneralCategory_InitialPunctuation = 28,
-      GeneralCategory_FinalPunctuation = 29,
       GeneralCategory_OtherPunctuation = 23,
       GeneralCategory_MathSymbol = 24,
       GeneralCategory_CurrencySymbol = 25,
       GeneralCategory_ModifierSymbol = 26,
       GeneralCategory_OtherSymbol = 27,
+      GeneralCategory_InitialPunctuation = 28,
+      GeneralCategory_FinalPunctuation = 29,
     };
 
     typedef struct GeneralCategory_option {union { GeneralCategory ok; }; bool is_ok; } GeneralCategory_option;
@@ -92,13 +92,13 @@ public:
          */
         NonspacingMark = 6,
         /**
-         * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
-         */
-        SpacingMark = 8,
-        /**
          * See the [Rust documentation for `EnclosingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.EnclosingMark) for more information.
          */
         EnclosingMark = 7,
+        /**
+         * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
+         */
+        SpacingMark = 8,
         /**
          * See the [Rust documentation for `DecimalNumber`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.DecimalNumber) for more information.
          */
@@ -156,14 +156,6 @@ public:
          */
         ConnectorPunctuation = 22,
         /**
-         * See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
-         */
-        InitialPunctuation = 28,
-        /**
-         * See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
-         */
-        FinalPunctuation = 29,
-        /**
          * See the [Rust documentation for `OtherPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.OtherPunctuation) for more information.
          */
         OtherPunctuation = 23,
@@ -183,6 +175,14 @@ public:
          * See the [Rust documentation for `OtherSymbol`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.OtherSymbol) for more information.
          */
         OtherSymbol = 27,
+        /**
+         * See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
+         */
+        InitialPunctuation = 28,
+        /**
+         * See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
+         */
+        FinalPunctuation = 29,
     };
 
     GeneralCategory(): value(Value::Unassigned) {}

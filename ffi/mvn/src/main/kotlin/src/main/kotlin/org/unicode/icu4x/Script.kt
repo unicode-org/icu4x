@@ -17,183 +17,183 @@ internal interface ScriptLib: Library {
 /** See the [Rust documentation for `Script`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html) for more information.
 */
 enum class Script(val inner: Int) {
-    Adlam(167),
-    Ahom(161),
-    AnatolianHieroglyphs(156),
+    Common(0),
+    Inherited(1),
     Arabic(2),
     Armenian(3),
-    Avestan(117),
-    Balinese(62),
-    Bamum(130),
-    BassaVah(134),
-    Batak(63),
     Bengali(4),
-    BeriaErfe(208),
-    Bhaiksuki(168),
     Bopomofo(5),
-    Brahmi(65),
-    Braille(46),
-    Buginese(55),
-    Buhid(44),
-    CanadianAboriginal(40),
-    Carian(104),
-    CaucasianAlbanian(159),
-    Chakma(118),
-    Cham(66),
     Cherokee(6),
-    Chisoi(254),
-    Chorasmian(189),
-    Common(0),
     Coptic(7),
-    Cuneiform(101),
-    Cypriot(47),
-    CyproMinoan(193),
     Cyrillic(8),
     Deseret(9),
     Devanagari(10),
-    DivesAkuru(190),
-    Dogra(178),
-    Duployan(135),
-    EgyptianHieroglyphs(71),
-    Elbasan(136),
-    Elymaic(185),
     Ethiopian(11),
-    Garay(201),
     Georgian(12),
-    Glagolitic(56),
     Gothic(13),
-    Grantha(137),
     Greek(14),
     Gujarati(15),
-    GunjalaGondi(179),
     Gurmukhi(16),
-    GurungKhema(202),
     Han(17),
     Hangul(18),
-    HanifiRohingya(182),
-    Hanunoo(43),
-    Hatran(162),
     Hebrew(19),
     Hiragana(20),
-    ImperialAramaic(116),
-    Inherited(1),
-    InscriptionalPahlavi(122),
-    InscriptionalParthian(125),
-    Javanese(78),
-    Kaithi(120),
     Kannada(21),
     Katakana(22),
-    Kawi(198),
-    KayahLi(79),
-    Kharoshthi(57),
-    KhitanSmallScript(191),
     Khmer(23),
-    Khojki(157),
-    Khudawadi(145),
-    KiratRai(203),
     Lao(24),
     Latin(25),
-    Lepcha(82),
-    Limbu(48),
-    LinearA(83),
-    LinearB(49),
-    Lisu(131),
-    Lycian(107),
-    Lydian(108),
-    Mahajani(160),
-    Makasar(180),
     Malayalam(26),
-    Mandaic(84),
-    Manichaean(121),
-    Marchen(169),
-    MasaramGondi(175),
-    Medefaidrin(181),
-    MeeteiMayek(115),
-    MendeKikakui(140),
-    MeroiticCursive(141),
-    MeroiticHieroglyphs(86),
-    Miao(92),
-    Modi(163),
     Mongolian(27),
-    Mro(149),
-    Multani(164),
     Myanmar(28),
-    Nabataean(143),
-    NagMundari(199),
-    Nandinagari(187),
-    Nastaliq(200),
-    NewTaiLue(59),
-    Newa(170),
-    Nko(87),
-    Nushu(150),
-    NyiakengPuachueHmong(186),
     Ogham(29),
-    OlChiki(109),
-    OlOnal(204),
-    OldHungarian(76),
     OldItalic(30),
-    OldNorthArabian(142),
-    OldPermic(89),
-    OldPersian(61),
-    OldSogdian(184),
-    OldSouthArabian(133),
-    OldTurkic(88),
-    OldUyghur(194),
     Oriya(31),
-    Osage(171),
-    Osmanya(50),
-    PahawhHmong(75),
-    Palmyrene(144),
-    PauCinHau(165),
-    PhagsPa(90),
-    Phoenician(91),
-    PsalterPahlavi(123),
-    Rejang(110),
     Runic(32),
-    Samaritan(126),
-    Saurashtra(111),
-    Sharada(151),
-    Shavian(51),
-    Siddham(166),
-    Sidetic(209),
-    SignWriting(112),
     Sinhala(33),
-    Sogdian(183),
-    SoraSompeng(152),
-    Soyombo(176),
-    Sundanese(113),
-    Sunuwar(205),
-    SylotiNagri(58),
     Syriac(34),
-    Tagalog(42),
-    Tagbanwa(45),
-    TaiLe(52),
-    TaiTham(106),
-    TaiViet(127),
-    TaiYo(210),
-    Takri(153),
     Tamil(35),
-    Tangsa(195),
-    Tangut(154),
     Telugu(36),
     Thaana(37),
     Thai(38),
     Tibetan(39),
-    Tifinagh(60),
-    Tirhuta(158),
-    Todhri(206),
-    TolongSiki(211),
-    Toto(196),
-    TuluTigalari(207),
-    Ugaritic(53),
-    Unknown(103),
-    Vai(99),
-    Vithkuqi(197),
-    Wancho(188),
-    WarangCiti(146),
-    Yezidi(192),
+    CanadianAboriginal(40),
     Yi(41),
-    ZanabazarSquare(177);
+    Tagalog(42),
+    Hanunoo(43),
+    Buhid(44),
+    Tagbanwa(45),
+    Braille(46),
+    Cypriot(47),
+    Limbu(48),
+    LinearB(49),
+    Osmanya(50),
+    Shavian(51),
+    TaiLe(52),
+    Ugaritic(53),
+    Buginese(55),
+    Glagolitic(56),
+    Kharoshthi(57),
+    SylotiNagri(58),
+    NewTaiLue(59),
+    Tifinagh(60),
+    OldPersian(61),
+    Balinese(62),
+    Batak(63),
+    Brahmi(65),
+    Cham(66),
+    EgyptianHieroglyphs(71),
+    PahawhHmong(75),
+    OldHungarian(76),
+    Javanese(78),
+    KayahLi(79),
+    Lepcha(82),
+    LinearA(83),
+    Mandaic(84),
+    MeroiticHieroglyphs(86),
+    Nko(87),
+    OldTurkic(88),
+    OldPermic(89),
+    PhagsPa(90),
+    Phoenician(91),
+    Miao(92),
+    Vai(99),
+    Cuneiform(101),
+    Unknown(103),
+    Carian(104),
+    TaiTham(106),
+    Lycian(107),
+    Lydian(108),
+    OlChiki(109),
+    Rejang(110),
+    Saurashtra(111),
+    SignWriting(112),
+    Sundanese(113),
+    MeeteiMayek(115),
+    ImperialAramaic(116),
+    Avestan(117),
+    Chakma(118),
+    Kaithi(120),
+    Manichaean(121),
+    InscriptionalPahlavi(122),
+    PsalterPahlavi(123),
+    InscriptionalParthian(125),
+    Samaritan(126),
+    TaiViet(127),
+    Bamum(130),
+    Lisu(131),
+    OldSouthArabian(133),
+    BassaVah(134),
+    Duployan(135),
+    Elbasan(136),
+    Grantha(137),
+    MendeKikakui(140),
+    MeroiticCursive(141),
+    OldNorthArabian(142),
+    Nabataean(143),
+    Palmyrene(144),
+    Khudawadi(145),
+    WarangCiti(146),
+    Mro(149),
+    Nushu(150),
+    Sharada(151),
+    SoraSompeng(152),
+    Takri(153),
+    Tangut(154),
+    AnatolianHieroglyphs(156),
+    Khojki(157),
+    Tirhuta(158),
+    CaucasianAlbanian(159),
+    Mahajani(160),
+    Ahom(161),
+    Hatran(162),
+    Modi(163),
+    Multani(164),
+    PauCinHau(165),
+    Siddham(166),
+    Adlam(167),
+    Bhaiksuki(168),
+    Marchen(169),
+    Newa(170),
+    Osage(171),
+    MasaramGondi(175),
+    Soyombo(176),
+    ZanabazarSquare(177),
+    Dogra(178),
+    GunjalaGondi(179),
+    Makasar(180),
+    Medefaidrin(181),
+    HanifiRohingya(182),
+    Sogdian(183),
+    OldSogdian(184),
+    Elymaic(185),
+    NyiakengPuachueHmong(186),
+    Nandinagari(187),
+    Wancho(188),
+    Chorasmian(189),
+    DivesAkuru(190),
+    KhitanSmallScript(191),
+    Yezidi(192),
+    CyproMinoan(193),
+    OldUyghur(194),
+    Tangsa(195),
+    Toto(196),
+    Vithkuqi(197),
+    Kawi(198),
+    NagMundari(199),
+    Nastaliq(200),
+    Garay(201),
+    GurungKhema(202),
+    KiratRai(203),
+    OlOnal(204),
+    Sunuwar(205),
+    Todhri(206),
+    TuluTigalari(207),
+    BeriaErfe(208),
+    Sidetic(209),
+    TaiYo(210),
+    TolongSiki(211),
+    Chisoi(254);
 
     fun toNative(): Int {
         return this.inner
@@ -205,189 +205,189 @@ enum class Script(val inner: Int) {
         internal val lib: ScriptLib = Native.load("icu4x", libClass)
         fun fromNative(native: Int): Script {
             return when (native) {
-                167 -> Adlam
-                161 -> Ahom
-                156 -> AnatolianHieroglyphs
+                0 -> Common
+                1 -> Inherited
                 2 -> Arabic
                 3 -> Armenian
-                117 -> Avestan
-                62 -> Balinese
-                130 -> Bamum
-                134 -> BassaVah
-                63 -> Batak
                 4 -> Bengali
-                208 -> BeriaErfe
-                168 -> Bhaiksuki
                 5 -> Bopomofo
-                65 -> Brahmi
-                46 -> Braille
-                55 -> Buginese
-                44 -> Buhid
-                40 -> CanadianAboriginal
-                104 -> Carian
-                159 -> CaucasianAlbanian
-                118 -> Chakma
-                66 -> Cham
                 6 -> Cherokee
-                254 -> Chisoi
-                189 -> Chorasmian
-                0 -> Common
                 7 -> Coptic
-                101 -> Cuneiform
-                47 -> Cypriot
-                193 -> CyproMinoan
                 8 -> Cyrillic
                 9 -> Deseret
                 10 -> Devanagari
-                190 -> DivesAkuru
-                178 -> Dogra
-                135 -> Duployan
-                71 -> EgyptianHieroglyphs
-                136 -> Elbasan
-                185 -> Elymaic
                 11 -> Ethiopian
-                201 -> Garay
                 12 -> Georgian
-                56 -> Glagolitic
                 13 -> Gothic
-                137 -> Grantha
                 14 -> Greek
                 15 -> Gujarati
-                179 -> GunjalaGondi
                 16 -> Gurmukhi
-                202 -> GurungKhema
                 17 -> Han
                 18 -> Hangul
-                182 -> HanifiRohingya
-                43 -> Hanunoo
-                162 -> Hatran
                 19 -> Hebrew
                 20 -> Hiragana
-                116 -> ImperialAramaic
-                1 -> Inherited
-                122 -> InscriptionalPahlavi
-                125 -> InscriptionalParthian
-                78 -> Javanese
-                120 -> Kaithi
                 21 -> Kannada
                 22 -> Katakana
-                198 -> Kawi
-                79 -> KayahLi
-                57 -> Kharoshthi
-                191 -> KhitanSmallScript
                 23 -> Khmer
-                157 -> Khojki
-                145 -> Khudawadi
-                203 -> KiratRai
                 24 -> Lao
                 25 -> Latin
-                82 -> Lepcha
-                48 -> Limbu
-                83 -> LinearA
-                49 -> LinearB
-                131 -> Lisu
-                107 -> Lycian
-                108 -> Lydian
-                160 -> Mahajani
-                180 -> Makasar
                 26 -> Malayalam
-                84 -> Mandaic
-                121 -> Manichaean
-                169 -> Marchen
-                175 -> MasaramGondi
-                181 -> Medefaidrin
-                115 -> MeeteiMayek
-                140 -> MendeKikakui
-                141 -> MeroiticCursive
-                86 -> MeroiticHieroglyphs
-                92 -> Miao
-                163 -> Modi
                 27 -> Mongolian
-                149 -> Mro
-                164 -> Multani
                 28 -> Myanmar
-                143 -> Nabataean
-                199 -> NagMundari
-                187 -> Nandinagari
-                200 -> Nastaliq
-                59 -> NewTaiLue
-                170 -> Newa
-                87 -> Nko
-                150 -> Nushu
-                186 -> NyiakengPuachueHmong
                 29 -> Ogham
-                109 -> OlChiki
-                204 -> OlOnal
-                76 -> OldHungarian
                 30 -> OldItalic
-                142 -> OldNorthArabian
-                89 -> OldPermic
-                61 -> OldPersian
-                184 -> OldSogdian
-                133 -> OldSouthArabian
-                88 -> OldTurkic
-                194 -> OldUyghur
                 31 -> Oriya
-                171 -> Osage
-                50 -> Osmanya
-                75 -> PahawhHmong
-                144 -> Palmyrene
-                165 -> PauCinHau
-                90 -> PhagsPa
-                91 -> Phoenician
-                123 -> PsalterPahlavi
-                110 -> Rejang
                 32 -> Runic
-                126 -> Samaritan
-                111 -> Saurashtra
-                151 -> Sharada
-                51 -> Shavian
-                166 -> Siddham
-                209 -> Sidetic
-                112 -> SignWriting
                 33 -> Sinhala
-                183 -> Sogdian
-                152 -> SoraSompeng
-                176 -> Soyombo
-                113 -> Sundanese
-                205 -> Sunuwar
-                58 -> SylotiNagri
                 34 -> Syriac
-                42 -> Tagalog
-                45 -> Tagbanwa
-                52 -> TaiLe
-                106 -> TaiTham
-                127 -> TaiViet
-                210 -> TaiYo
-                153 -> Takri
                 35 -> Tamil
-                195 -> Tangsa
-                154 -> Tangut
                 36 -> Telugu
                 37 -> Thaana
                 38 -> Thai
                 39 -> Tibetan
-                60 -> Tifinagh
-                158 -> Tirhuta
-                206 -> Todhri
-                211 -> TolongSiki
-                196 -> Toto
-                207 -> TuluTigalari
-                53 -> Ugaritic
-                103 -> Unknown
-                99 -> Vai
-                197 -> Vithkuqi
-                188 -> Wancho
-                146 -> WarangCiti
-                192 -> Yezidi
+                40 -> CanadianAboriginal
                 41 -> Yi
+                42 -> Tagalog
+                43 -> Hanunoo
+                44 -> Buhid
+                45 -> Tagbanwa
+                46 -> Braille
+                47 -> Cypriot
+                48 -> Limbu
+                49 -> LinearB
+                50 -> Osmanya
+                51 -> Shavian
+                52 -> TaiLe
+                53 -> Ugaritic
+                55 -> Buginese
+                56 -> Glagolitic
+                57 -> Kharoshthi
+                58 -> SylotiNagri
+                59 -> NewTaiLue
+                60 -> Tifinagh
+                61 -> OldPersian
+                62 -> Balinese
+                63 -> Batak
+                65 -> Brahmi
+                66 -> Cham
+                71 -> EgyptianHieroglyphs
+                75 -> PahawhHmong
+                76 -> OldHungarian
+                78 -> Javanese
+                79 -> KayahLi
+                82 -> Lepcha
+                83 -> LinearA
+                84 -> Mandaic
+                86 -> MeroiticHieroglyphs
+                87 -> Nko
+                88 -> OldTurkic
+                89 -> OldPermic
+                90 -> PhagsPa
+                91 -> Phoenician
+                92 -> Miao
+                99 -> Vai
+                101 -> Cuneiform
+                103 -> Unknown
+                104 -> Carian
+                106 -> TaiTham
+                107 -> Lycian
+                108 -> Lydian
+                109 -> OlChiki
+                110 -> Rejang
+                111 -> Saurashtra
+                112 -> SignWriting
+                113 -> Sundanese
+                115 -> MeeteiMayek
+                116 -> ImperialAramaic
+                117 -> Avestan
+                118 -> Chakma
+                120 -> Kaithi
+                121 -> Manichaean
+                122 -> InscriptionalPahlavi
+                123 -> PsalterPahlavi
+                125 -> InscriptionalParthian
+                126 -> Samaritan
+                127 -> TaiViet
+                130 -> Bamum
+                131 -> Lisu
+                133 -> OldSouthArabian
+                134 -> BassaVah
+                135 -> Duployan
+                136 -> Elbasan
+                137 -> Grantha
+                140 -> MendeKikakui
+                141 -> MeroiticCursive
+                142 -> OldNorthArabian
+                143 -> Nabataean
+                144 -> Palmyrene
+                145 -> Khudawadi
+                146 -> WarangCiti
+                149 -> Mro
+                150 -> Nushu
+                151 -> Sharada
+                152 -> SoraSompeng
+                153 -> Takri
+                154 -> Tangut
+                156 -> AnatolianHieroglyphs
+                157 -> Khojki
+                158 -> Tirhuta
+                159 -> CaucasianAlbanian
+                160 -> Mahajani
+                161 -> Ahom
+                162 -> Hatran
+                163 -> Modi
+                164 -> Multani
+                165 -> PauCinHau
+                166 -> Siddham
+                167 -> Adlam
+                168 -> Bhaiksuki
+                169 -> Marchen
+                170 -> Newa
+                171 -> Osage
+                175 -> MasaramGondi
+                176 -> Soyombo
                 177 -> ZanabazarSquare
+                178 -> Dogra
+                179 -> GunjalaGondi
+                180 -> Makasar
+                181 -> Medefaidrin
+                182 -> HanifiRohingya
+                183 -> Sogdian
+                184 -> OldSogdian
+                185 -> Elymaic
+                186 -> NyiakengPuachueHmong
+                187 -> Nandinagari
+                188 -> Wancho
+                189 -> Chorasmian
+                190 -> DivesAkuru
+                191 -> KhitanSmallScript
+                192 -> Yezidi
+                193 -> CyproMinoan
+                194 -> OldUyghur
+                195 -> Tangsa
+                196 -> Toto
+                197 -> Vithkuqi
+                198 -> Kawi
+                199 -> NagMundari
+                200 -> Nastaliq
+                201 -> Garay
+                202 -> GurungKhema
+                203 -> KiratRai
+                204 -> OlOnal
+                205 -> Sunuwar
+                206 -> Todhri
+                207 -> TuluTigalari
+                208 -> BeriaErfe
+                209 -> Sidetic
+                210 -> TaiYo
+                211 -> TolongSiki
+                254 -> Chisoi
                 else -> throw RuntimeException("Failed to find variant ${native} of type Script")
             }
         }
 
         fun default(): Script {
-            return Adlam
+            return Common
         }
         @JvmStatic
         

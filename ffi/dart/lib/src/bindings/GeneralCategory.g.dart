@@ -19,10 +19,10 @@ enum GeneralCategory {
   otherLetter,
   /// See the [Rust documentation for `NonspacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.NonspacingMark) for more information.
   nonspacingMark,
-  /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
-  spacingMark,
   /// See the [Rust documentation for `EnclosingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.EnclosingMark) for more information.
   enclosingMark,
+  /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
+  spacingMark,
   /// See the [Rust documentation for `DecimalNumber`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.DecimalNumber) for more information.
   decimalNumber,
   /// See the [Rust documentation for `LetterNumber`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.LetterNumber) for more information.
@@ -51,10 +51,6 @@ enum GeneralCategory {
   closePunctuation,
   /// See the [Rust documentation for `ConnectorPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.ConnectorPunctuation) for more information.
   connectorPunctuation,
-  /// See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
-  initialPunctuation,
-  /// See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
-  finalPunctuation,
   /// See the [Rust documentation for `OtherPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.OtherPunctuation) for more information.
   otherPunctuation,
   /// See the [Rust documentation for `MathSymbol`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.MathSymbol) for more information.
@@ -64,84 +60,23 @@ enum GeneralCategory {
   /// See the [Rust documentation for `ModifierSymbol`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.ModifierSymbol) for more information.
   modifierSymbol,
   /// See the [Rust documentation for `OtherSymbol`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.OtherSymbol) for more information.
-  otherSymbol;
-
-  int get _ffi {
-    switch (this) {
-      case unassigned:
-        return 0;
-      case uppercaseLetter:
-        return 1;
-      case lowercaseLetter:
-        return 2;
-      case titlecaseLetter:
-        return 3;
-      case modifierLetter:
-        return 4;
-      case otherLetter:
-        return 5;
-      case nonspacingMark:
-        return 6;
-      case spacingMark:
-        return 8;
-      case enclosingMark:
-        return 7;
-      case decimalNumber:
-        return 9;
-      case letterNumber:
-        return 10;
-      case otherNumber:
-        return 11;
-      case spaceSeparator:
-        return 12;
-      case lineSeparator:
-        return 13;
-      case paragraphSeparator:
-        return 14;
-      case control:
-        return 15;
-      case format:
-        return 16;
-      case privateUse:
-        return 17;
-      case surrogate:
-        return 18;
-      case dashPunctuation:
-        return 19;
-      case openPunctuation:
-        return 20;
-      case closePunctuation:
-        return 21;
-      case connectorPunctuation:
-        return 22;
-      case initialPunctuation:
-        return 28;
-      case finalPunctuation:
-        return 29;
-      case otherPunctuation:
-        return 23;
-      case mathSymbol:
-        return 24;
-      case currencySymbol:
-        return 25;
-      case modifierSymbol:
-        return 26;
-      case otherSymbol:
-        return 27;
-    }
-  }
+  otherSymbol,
+  /// See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
+  initialPunctuation,
+  /// See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
+  finalPunctuation;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static GeneralCategory forChar(Rune ch) {
     final result = _icu4x_GeneralCategory_for_char_mv1(ch);
-    return GeneralCategory.values.firstWhere((v) => v._ffi == result);
+    return GeneralCategory.values[result];
   }
 
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
   String? longName() {
-    final result = _icu4x_GeneralCategory_long_name_mv1(_ffi);
+    final result = _icu4x_GeneralCategory_long_name_mv1(index);
     if (!result.isOk) {
       return null;
     }
@@ -152,7 +87,7 @@ enum GeneralCategory {
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
   String? shortName() {
-    final result = _icu4x_GeneralCategory_short_name_mv1(_ffi);
+    final result = _icu4x_GeneralCategory_short_name_mv1(index);
     if (!result.isOk) {
       return null;
     }
@@ -163,7 +98,7 @@ enum GeneralCategory {
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
-    final result = _icu4x_GeneralCategory_to_integer_value_mv1(_ffi);
+    final result = _icu4x_GeneralCategory_to_integer_value_mv1(index);
     return result;
   }
 
@@ -175,7 +110,7 @@ enum GeneralCategory {
     if (!result.isOk) {
       return null;
     }
-    return GeneralCategory.values.firstWhere((v) => v._ffi == result.union.ok);
+    return GeneralCategory.values[result.union.ok];
   }
 
   static GeneralCategory? tryFromStr(String s) {
@@ -184,14 +119,14 @@ enum GeneralCategory {
     if (!result.isOk) {
       return null;
     }
-    return GeneralCategory.values.firstWhere((v) => v._ffi == result.union.ok);
+    return GeneralCategory.values[result.union.ok];
   }
 
   /// Produces a `GeneralCategoryGroup` mask that can represent a group of general categories
   ///
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
   GeneralCategoryGroup toGroup() {
-    final result = _icu4x_GeneralCategory_to_group_mv1(_ffi);
+    final result = _icu4x_GeneralCategory_to_group_mv1(index);
     return GeneralCategoryGroup._fromFfi(result);
   }
 

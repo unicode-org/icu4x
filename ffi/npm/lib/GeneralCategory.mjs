@@ -19,8 +19,8 @@ export class GeneralCategory {
         ["ModifierLetter", 4],
         ["OtherLetter", 5],
         ["NonspacingMark", 6],
-        ["SpacingMark", 8],
         ["EnclosingMark", 7],
+        ["SpacingMark", 8],
         ["DecimalNumber", 9],
         ["LetterNumber", 10],
         ["OtherNumber", 11],
@@ -35,13 +35,13 @@ export class GeneralCategory {
         ["OpenPunctuation", 20],
         ["ClosePunctuation", 21],
         ["ConnectorPunctuation", 22],
-        ["InitialPunctuation", 28],
-        ["FinalPunctuation", 29],
         ["OtherPunctuation", 23],
         ["MathSymbol", 24],
         ["CurrencySymbol", 25],
         ["ModifierSymbol", 26],
-        ["OtherSymbol", 27]
+        ["OtherSymbol", 27],
+        ["InitialPunctuation", 28],
+        ["FinalPunctuation", 29]
     ]);
 
     static getAllEntries() {
@@ -79,49 +79,45 @@ export class GeneralCategory {
     }
 
     get value(){
-        for (let entry of GeneralCategory.#values) {
-            if (entry[1] == this.#value) {
-                return entry[0];
-            }
-        }
+        return [...GeneralCategory.#values.keys()][this.#value];
     }
 
     /** @internal */
     get ffiValue(){
         return this.#value;
     }
-    static #objectValues = {
-        [0]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
-        [1]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
-        [2]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
-        [3]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
-        [4]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
-        [5]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
-        [6]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
-        [8]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
-        [7]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
-        [9]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 9),
-        [10]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 10),
-        [11]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 11),
-        [12]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 12),
-        [13]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 13),
-        [14]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 14),
-        [15]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 15),
-        [16]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 16),
-        [17]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 17),
-        [18]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 18),
-        [19]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 19),
-        [20]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 20),
-        [21]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 21),
-        [22]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 22),
-        [28]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 28),
-        [29]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 29),
-        [23]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 23),
-        [24]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 24),
-        [25]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 25),
-        [26]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 26),
-        [27]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 27),
-    };
+    static #objectValues = [
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 9),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 10),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 11),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 12),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 13),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 14),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 15),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 16),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 17),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 18),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 19),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 20),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 21),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 22),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 23),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 24),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 25),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 26),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 27),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 28),
+        new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 29),
+    ];
 
     /**
      * See the [Rust documentation for `Unassigned`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.Unassigned) for more information.
@@ -152,13 +148,13 @@ export class GeneralCategory {
      */
     static NonspacingMark = GeneralCategory.#objectValues[6];
     /**
-     * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
-     */
-    static SpacingMark = GeneralCategory.#objectValues[8];
-    /**
      * See the [Rust documentation for `EnclosingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.EnclosingMark) for more information.
      */
     static EnclosingMark = GeneralCategory.#objectValues[7];
+    /**
+     * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
+     */
+    static SpacingMark = GeneralCategory.#objectValues[8];
     /**
      * See the [Rust documentation for `DecimalNumber`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.DecimalNumber) for more information.
      */
@@ -216,14 +212,6 @@ export class GeneralCategory {
      */
     static ConnectorPunctuation = GeneralCategory.#objectValues[22];
     /**
-     * See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
-     */
-    static InitialPunctuation = GeneralCategory.#objectValues[28];
-    /**
-     * See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
-     */
-    static FinalPunctuation = GeneralCategory.#objectValues[29];
-    /**
      * See the [Rust documentation for `OtherPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.OtherPunctuation) for more information.
      */
     static OtherPunctuation = GeneralCategory.#objectValues[23];
@@ -243,6 +231,14 @@ export class GeneralCategory {
      * See the [Rust documentation for `OtherSymbol`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.OtherSymbol) for more information.
      */
     static OtherSymbol = GeneralCategory.#objectValues[27];
+    /**
+     * See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
+     */
+    static InitialPunctuation = GeneralCategory.#objectValues[28];
+    /**
+     * See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
+     */
+    static FinalPunctuation = GeneralCategory.#objectValues[29];
 
 
     /**

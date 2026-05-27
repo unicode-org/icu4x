@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 use std::{fs::File, path::PathBuf};
 
 use askama::Template;
@@ -32,7 +32,7 @@ struct Prop {
     name: String,
     is_open: bool,
     int_type: &'static str,
-    variants: Vec<(String, u32)>,
+    variants: BTreeMap<u32, String>,
 }
 
 impl Prop {
@@ -53,10 +53,10 @@ impl Prop {
     }
 
     fn is_default(&self, discriminant: u32) -> bool {
-        if let Some(&(_, d)) = self
+        if let Some((&d, _)) = self
             .variants
             .iter()
-            .find(|(n, _)| n == "Unknown" || n == "Unassigned")
+            .find(|&(_, n)| n == "Unknown" || n == "Unassigned")
         {
             discriminant == d
         } else {
@@ -83,18 +83,18 @@ pub fn main() {
     path_buf.push(env!("CARGO_MANIFEST_DIR"));
     path_buf.push("../../../ffi/capi/src");
 
-    fn variants(values: &[impl NamedEnumeratedProperty]) -> Vec<(String, u32)> {
+    fn variants(values: &[impl NamedEnumeratedProperty]) -> BTreeMap<u32, String> {
         values
             .iter()
             .map(|v| {
                 (
+                    v.to_u32(),
                     v.long_name()
                         .replace('_', "")
                         .replace("Ethiopic", "Ethiopian")
                         .replace("Aran", "Nastaliq")
                         .replace("LVSyllable", "LeadingVowelSyllable")
                         .replace("LVTSyllable", "LeadingVowelTrailingSyllable"),
-                    v.to_u32(),
                 )
             })
             .collect()
@@ -180,8 +180,8 @@ pub fn main() {
             #[allow(deprecated)]
             variants: variants(Script::ALL_VALUES)
                 .into_iter()
-                .chain([("Chisoi".into(), 254)])
-                .collect::<BTreeSet<_>>()
+                .chain([(254, "Chisoi".into())])
+                .collect::<BTreeMap<_, _>>()
                 .into_iter()
                 .collect(),
         },

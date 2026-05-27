@@ -17,80 +17,48 @@ internal interface GeneralCategoryLib: Library {
 }
 /** See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
 */
-enum class GeneralCategory(val inner: Int) {
-    Unassigned(0),
-    UppercaseLetter(1),
-    LowercaseLetter(2),
-    TitlecaseLetter(3),
-    ModifierLetter(4),
-    OtherLetter(5),
-    NonspacingMark(6),
-    SpacingMark(8),
-    EnclosingMark(7),
-    DecimalNumber(9),
-    LetterNumber(10),
-    OtherNumber(11),
-    SpaceSeparator(12),
-    LineSeparator(13),
-    ParagraphSeparator(14),
-    Control(15),
-    Format(16),
-    PrivateUse(17),
-    Surrogate(18),
-    DashPunctuation(19),
-    OpenPunctuation(20),
-    ClosePunctuation(21),
-    ConnectorPunctuation(22),
-    InitialPunctuation(28),
-    FinalPunctuation(29),
-    OtherPunctuation(23),
-    MathSymbol(24),
-    CurrencySymbol(25),
-    ModifierSymbol(26),
-    OtherSymbol(27);
+enum class GeneralCategory {
+    Unassigned,
+    UppercaseLetter,
+    LowercaseLetter,
+    TitlecaseLetter,
+    ModifierLetter,
+    OtherLetter,
+    NonspacingMark,
+    EnclosingMark,
+    SpacingMark,
+    DecimalNumber,
+    LetterNumber,
+    OtherNumber,
+    SpaceSeparator,
+    LineSeparator,
+    ParagraphSeparator,
+    Control,
+    Format,
+    PrivateUse,
+    Surrogate,
+    DashPunctuation,
+    OpenPunctuation,
+    ClosePunctuation,
+    ConnectorPunctuation,
+    OtherPunctuation,
+    MathSymbol,
+    CurrencySymbol,
+    ModifierSymbol,
+    OtherSymbol,
+    InitialPunctuation,
+    FinalPunctuation;
 
     fun toNative(): Int {
-        return this.inner
+        return this.ordinal
     }
 
 
     companion object {
         internal val libClass: Class<GeneralCategoryLib> = GeneralCategoryLib::class.java
-        internal val lib: GeneralCategoryLib = Native.load("icu4x", libClass)
+        internal val lib: GeneralCategoryLib = Native.load("icu4x", libClass) 
         fun fromNative(native: Int): GeneralCategory {
-            return when (native) {
-                0 -> Unassigned
-                1 -> UppercaseLetter
-                2 -> LowercaseLetter
-                3 -> TitlecaseLetter
-                4 -> ModifierLetter
-                5 -> OtherLetter
-                6 -> NonspacingMark
-                8 -> SpacingMark
-                7 -> EnclosingMark
-                9 -> DecimalNumber
-                10 -> LetterNumber
-                11 -> OtherNumber
-                12 -> SpaceSeparator
-                13 -> LineSeparator
-                14 -> ParagraphSeparator
-                15 -> Control
-                16 -> Format
-                17 -> PrivateUse
-                18 -> Surrogate
-                19 -> DashPunctuation
-                20 -> OpenPunctuation
-                21 -> ClosePunctuation
-                22 -> ConnectorPunctuation
-                28 -> InitialPunctuation
-                29 -> FinalPunctuation
-                23 -> OtherPunctuation
-                24 -> MathSymbol
-                25 -> CurrencySymbol
-                26 -> ModifierSymbol
-                27 -> OtherSymbol
-                else -> throw RuntimeException("Failed to find variant ${native} of type GeneralCategory")
-            }
+            return GeneralCategory.entries[native]
         }
 
         fun default(): GeneralCategory {

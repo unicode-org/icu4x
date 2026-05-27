@@ -781,15 +781,15 @@ pub mod ffi {
         )]
         NonspacingMark = 6,
         #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::SpacingMark,
-            EnumVariant
-        )]
-        SpacingMark = 8,
-        #[diplomat::rust_link(
             icu::properties::props::GeneralCategory::EnclosingMark,
             EnumVariant
         )]
         EnclosingMark = 7,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::SpacingMark,
+            EnumVariant
+        )]
+        SpacingMark = 8,
         #[diplomat::rust_link(
             icu::properties::props::GeneralCategory::DecimalNumber,
             EnumVariant
@@ -861,16 +861,6 @@ pub mod ffi {
         )]
         ConnectorPunctuation = 22,
         #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::InitialPunctuation,
-            EnumVariant
-        )]
-        InitialPunctuation = 28,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::FinalPunctuation,
-            EnumVariant
-        )]
-        FinalPunctuation = 29,
-        #[diplomat::rust_link(
             icu::properties::props::GeneralCategory::OtherPunctuation,
             EnumVariant
         )]
@@ -895,6 +885,16 @@ pub mod ffi {
             EnumVariant
         )]
         OtherSymbol = 27,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::InitialPunctuation,
+            EnumVariant
+        )]
+        InitialPunctuation = 28,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::FinalPunctuation,
+            EnumVariant
+        )]
+        FinalPunctuation = 29,
     }
 
     impl GeneralCategory {
@@ -955,8 +955,8 @@ pub mod ffi {
                 4 => Self::ModifierLetter,
                 5 => Self::OtherLetter,
                 6 => Self::NonspacingMark,
-                8 => Self::SpacingMark,
                 7 => Self::EnclosingMark,
+                8 => Self::SpacingMark,
                 9 => Self::DecimalNumber,
                 10 => Self::LetterNumber,
                 11 => Self::OtherNumber,
@@ -971,13 +971,13 @@ pub mod ffi {
                 20 => Self::OpenPunctuation,
                 21 => Self::ClosePunctuation,
                 22 => Self::ConnectorPunctuation,
-                28 => Self::InitialPunctuation,
-                29 => Self::FinalPunctuation,
                 23 => Self::OtherPunctuation,
                 24 => Self::MathSymbol,
                 25 => Self::CurrencySymbol,
                 26 => Self::ModifierSymbol,
                 27 => Self::OtherSymbol,
+                28 => Self::InitialPunctuation,
+                29 => Self::FinalPunctuation,
                 _ => return None,
             })
         }
@@ -2917,20 +2917,15 @@ pub mod ffi {
     #[non_exhaustive]
     pub enum Script {
         #[diplomat::rust_link(
-            icu::properties::props::Script::Adlam,
+            icu::properties::props::Script::Common,
             AssociatedConstantInStruct
         )]
-        Adlam = 167,
+        Common = 0,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Ahom,
+            icu::properties::props::Script::Inherited,
             AssociatedConstantInStruct
         )]
-        Ahom = 161,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::AnatolianHieroglyphs,
-            AssociatedConstantInStruct
-        )]
-        AnatolianHieroglyphs = 156,
+        Inherited = 1,
         #[diplomat::rust_link(
             icu::properties::props::Script::Arabic,
             AssociatedConstantInStruct
@@ -2942,135 +2937,25 @@ pub mod ffi {
         )]
         Armenian = 3,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Avestan,
-            AssociatedConstantInStruct
-        )]
-        Avestan = 117,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Balinese,
-            AssociatedConstantInStruct
-        )]
-        Balinese = 62,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Bamum,
-            AssociatedConstantInStruct
-        )]
-        Bamum = 130,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::BassaVah,
-            AssociatedConstantInStruct
-        )]
-        BassaVah = 134,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Batak,
-            AssociatedConstantInStruct
-        )]
-        Batak = 63,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Bengali,
             AssociatedConstantInStruct
         )]
         Bengali = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::BeriaErfe,
-            AssociatedConstantInStruct
-        )]
-        BeriaErfe = 208,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Bhaiksuki,
-            AssociatedConstantInStruct
-        )]
-        Bhaiksuki = 168,
         #[diplomat::rust_link(
             icu::properties::props::Script::Bopomofo,
             AssociatedConstantInStruct
         )]
         Bopomofo = 5,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Brahmi,
-            AssociatedConstantInStruct
-        )]
-        Brahmi = 65,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Braille,
-            AssociatedConstantInStruct
-        )]
-        Braille = 46,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Buginese,
-            AssociatedConstantInStruct
-        )]
-        Buginese = 55,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Buhid,
-            AssociatedConstantInStruct
-        )]
-        Buhid = 44,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::CanadianAboriginal,
-            AssociatedConstantInStruct
-        )]
-        CanadianAboriginal = 40,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Carian,
-            AssociatedConstantInStruct
-        )]
-        Carian = 104,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::CaucasianAlbanian,
-            AssociatedConstantInStruct
-        )]
-        CaucasianAlbanian = 159,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Chakma,
-            AssociatedConstantInStruct
-        )]
-        Chakma = 118,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Cham,
-            AssociatedConstantInStruct
-        )]
-        Cham = 66,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Cherokee,
             AssociatedConstantInStruct
         )]
         Cherokee = 6,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Chisoi,
-            AssociatedConstantInStruct
-        )]
-        Chisoi = 254,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Chorasmian,
-            AssociatedConstantInStruct
-        )]
-        Chorasmian = 189,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Common,
-            AssociatedConstantInStruct
-        )]
-        Common = 0,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Coptic,
             AssociatedConstantInStruct
         )]
         Coptic = 7,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Cuneiform,
-            AssociatedConstantInStruct
-        )]
-        Cuneiform = 101,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Cypriot,
-            AssociatedConstantInStruct
-        )]
-        Cypriot = 47,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::CyproMinoan,
-            AssociatedConstantInStruct
-        )]
-        CyproMinoan = 193,
         #[diplomat::rust_link(
             icu::properties::props::Script::Cyrillic,
             AssociatedConstantInStruct
@@ -3087,65 +2972,20 @@ pub mod ffi {
         )]
         Devanagari = 10,
         #[diplomat::rust_link(
-            icu::properties::props::Script::DivesAkuru,
-            AssociatedConstantInStruct
-        )]
-        DivesAkuru = 190,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Dogra,
-            AssociatedConstantInStruct
-        )]
-        Dogra = 178,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Duployan,
-            AssociatedConstantInStruct
-        )]
-        Duployan = 135,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::EgyptianHieroglyphs,
-            AssociatedConstantInStruct
-        )]
-        EgyptianHieroglyphs = 71,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Elbasan,
-            AssociatedConstantInStruct
-        )]
-        Elbasan = 136,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Elymaic,
-            AssociatedConstantInStruct
-        )]
-        Elymaic = 185,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Ethiopian,
             AssociatedConstantInStruct
         )]
         Ethiopian = 11,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Garay,
-            AssociatedConstantInStruct
-        )]
-        Garay = 201,
         #[diplomat::rust_link(
             icu::properties::props::Script::Georgian,
             AssociatedConstantInStruct
         )]
         Georgian = 12,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Glagolitic,
-            AssociatedConstantInStruct
-        )]
-        Glagolitic = 56,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Gothic,
             AssociatedConstantInStruct
         )]
         Gothic = 13,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Grantha,
-            AssociatedConstantInStruct
-        )]
-        Grantha = 137,
         #[diplomat::rust_link(
             icu::properties::props::Script::Greek,
             AssociatedConstantInStruct
@@ -3157,20 +2997,10 @@ pub mod ffi {
         )]
         Gujarati = 15,
         #[diplomat::rust_link(
-            icu::properties::props::Script::GunjalaGondi,
-            AssociatedConstantInStruct
-        )]
-        GunjalaGondi = 179,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Gurmukhi,
             AssociatedConstantInStruct
         )]
         Gurmukhi = 16,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::GurungKhema,
-            AssociatedConstantInStruct
-        )]
-        GurungKhema = 202,
         #[diplomat::rust_link(
             icu::properties::props::Script::Han,
             AssociatedConstantInStruct
@@ -3182,21 +3012,6 @@ pub mod ffi {
         )]
         Hangul = 18,
         #[diplomat::rust_link(
-            icu::properties::props::Script::HanifiRohingya,
-            AssociatedConstantInStruct
-        )]
-        HanifiRohingya = 182,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Hanunoo,
-            AssociatedConstantInStruct
-        )]
-        Hanunoo = 43,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Hatran,
-            AssociatedConstantInStruct
-        )]
-        Hatran = 162,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Hebrew,
             AssociatedConstantInStruct
         )]
@@ -3206,36 +3021,6 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Hiragana = 20,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::ImperialAramaic,
-            AssociatedConstantInStruct
-        )]
-        ImperialAramaic = 116,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Inherited,
-            AssociatedConstantInStruct
-        )]
-        Inherited = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::InscriptionalPahlavi,
-            AssociatedConstantInStruct
-        )]
-        InscriptionalPahlavi = 122,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::InscriptionalParthian,
-            AssociatedConstantInStruct
-        )]
-        InscriptionalParthian = 125,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Javanese,
-            AssociatedConstantInStruct
-        )]
-        Javanese = 78,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Kaithi,
-            AssociatedConstantInStruct
-        )]
-        Kaithi = 120,
         #[diplomat::rust_link(
             icu::properties::props::Script::Kannada,
             AssociatedConstantInStruct
@@ -3247,45 +3032,10 @@ pub mod ffi {
         )]
         Katakana = 22,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Kawi,
-            AssociatedConstantInStruct
-        )]
-        Kawi = 198,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::KayahLi,
-            AssociatedConstantInStruct
-        )]
-        KayahLi = 79,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Kharoshthi,
-            AssociatedConstantInStruct
-        )]
-        Kharoshthi = 57,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::KhitanSmallScript,
-            AssociatedConstantInStruct
-        )]
-        KhitanSmallScript = 191,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Khmer,
             AssociatedConstantInStruct
         )]
         Khmer = 23,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Khojki,
-            AssociatedConstantInStruct
-        )]
-        Khojki = 157,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Khudawadi,
-            AssociatedConstantInStruct
-        )]
-        Khudawadi = 145,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::KiratRai,
-            AssociatedConstantInStruct
-        )]
-        KiratRai = 203,
         #[diplomat::rust_link(
             icu::properties::props::Script::Lao,
             AssociatedConstantInStruct
@@ -3297,415 +3047,55 @@ pub mod ffi {
         )]
         Latin = 25,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Lepcha,
-            AssociatedConstantInStruct
-        )]
-        Lepcha = 82,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Limbu,
-            AssociatedConstantInStruct
-        )]
-        Limbu = 48,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::LinearA,
-            AssociatedConstantInStruct
-        )]
-        LinearA = 83,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::LinearB,
-            AssociatedConstantInStruct
-        )]
-        LinearB = 49,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Lisu,
-            AssociatedConstantInStruct
-        )]
-        Lisu = 131,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Lycian,
-            AssociatedConstantInStruct
-        )]
-        Lycian = 107,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Lydian,
-            AssociatedConstantInStruct
-        )]
-        Lydian = 108,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Mahajani,
-            AssociatedConstantInStruct
-        )]
-        Mahajani = 160,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Makasar,
-            AssociatedConstantInStruct
-        )]
-        Makasar = 180,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Malayalam,
             AssociatedConstantInStruct
         )]
         Malayalam = 26,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Mandaic,
-            AssociatedConstantInStruct
-        )]
-        Mandaic = 84,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Manichaean,
-            AssociatedConstantInStruct
-        )]
-        Manichaean = 121,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Marchen,
-            AssociatedConstantInStruct
-        )]
-        Marchen = 169,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::MasaramGondi,
-            AssociatedConstantInStruct
-        )]
-        MasaramGondi = 175,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Medefaidrin,
-            AssociatedConstantInStruct
-        )]
-        Medefaidrin = 181,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::MeeteiMayek,
-            AssociatedConstantInStruct
-        )]
-        MeeteiMayek = 115,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::MendeKikakui,
-            AssociatedConstantInStruct
-        )]
-        MendeKikakui = 140,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::MeroiticCursive,
-            AssociatedConstantInStruct
-        )]
-        MeroiticCursive = 141,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::MeroiticHieroglyphs,
-            AssociatedConstantInStruct
-        )]
-        MeroiticHieroglyphs = 86,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Miao,
-            AssociatedConstantInStruct
-        )]
-        Miao = 92,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Modi,
-            AssociatedConstantInStruct
-        )]
-        Modi = 163,
         #[diplomat::rust_link(
             icu::properties::props::Script::Mongolian,
             AssociatedConstantInStruct
         )]
         Mongolian = 27,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Mro,
-            AssociatedConstantInStruct
-        )]
-        Mro = 149,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Multani,
-            AssociatedConstantInStruct
-        )]
-        Multani = 164,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Myanmar,
             AssociatedConstantInStruct
         )]
         Myanmar = 28,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Nabataean,
-            AssociatedConstantInStruct
-        )]
-        Nabataean = 143,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::NagMundari,
-            AssociatedConstantInStruct
-        )]
-        NagMundari = 199,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Nandinagari,
-            AssociatedConstantInStruct
-        )]
-        Nandinagari = 187,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Nastaliq,
-            AssociatedConstantInStruct
-        )]
-        Nastaliq = 200,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::NewTaiLue,
-            AssociatedConstantInStruct
-        )]
-        NewTaiLue = 59,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Newa,
-            AssociatedConstantInStruct
-        )]
-        Newa = 170,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Nko,
-            AssociatedConstantInStruct
-        )]
-        Nko = 87,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Nushu,
-            AssociatedConstantInStruct
-        )]
-        Nushu = 150,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::NyiakengPuachueHmong,
-            AssociatedConstantInStruct
-        )]
-        NyiakengPuachueHmong = 186,
         #[diplomat::rust_link(
             icu::properties::props::Script::Ogham,
             AssociatedConstantInStruct
         )]
         Ogham = 29,
         #[diplomat::rust_link(
-            icu::properties::props::Script::OlChiki,
-            AssociatedConstantInStruct
-        )]
-        OlChiki = 109,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OlOnal,
-            AssociatedConstantInStruct
-        )]
-        OlOnal = 204,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OldHungarian,
-            AssociatedConstantInStruct
-        )]
-        OldHungarian = 76,
-        #[diplomat::rust_link(
             icu::properties::props::Script::OldItalic,
             AssociatedConstantInStruct
         )]
         OldItalic = 30,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OldNorthArabian,
-            AssociatedConstantInStruct
-        )]
-        OldNorthArabian = 142,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OldPermic,
-            AssociatedConstantInStruct
-        )]
-        OldPermic = 89,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OldPersian,
-            AssociatedConstantInStruct
-        )]
-        OldPersian = 61,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OldSogdian,
-            AssociatedConstantInStruct
-        )]
-        OldSogdian = 184,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OldSouthArabian,
-            AssociatedConstantInStruct
-        )]
-        OldSouthArabian = 133,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OldTurkic,
-            AssociatedConstantInStruct
-        )]
-        OldTurkic = 88,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::OldUyghur,
-            AssociatedConstantInStruct
-        )]
-        OldUyghur = 194,
         #[diplomat::rust_link(
             icu::properties::props::Script::Oriya,
             AssociatedConstantInStruct
         )]
         Oriya = 31,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Osage,
-            AssociatedConstantInStruct
-        )]
-        Osage = 171,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Osmanya,
-            AssociatedConstantInStruct
-        )]
-        Osmanya = 50,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::PahawhHmong,
-            AssociatedConstantInStruct
-        )]
-        PahawhHmong = 75,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Palmyrene,
-            AssociatedConstantInStruct
-        )]
-        Palmyrene = 144,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::PauCinHau,
-            AssociatedConstantInStruct
-        )]
-        PauCinHau = 165,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::PhagsPa,
-            AssociatedConstantInStruct
-        )]
-        PhagsPa = 90,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Phoenician,
-            AssociatedConstantInStruct
-        )]
-        Phoenician = 91,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::PsalterPahlavi,
-            AssociatedConstantInStruct
-        )]
-        PsalterPahlavi = 123,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Rejang,
-            AssociatedConstantInStruct
-        )]
-        Rejang = 110,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Runic,
             AssociatedConstantInStruct
         )]
         Runic = 32,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Samaritan,
-            AssociatedConstantInStruct
-        )]
-        Samaritan = 126,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Saurashtra,
-            AssociatedConstantInStruct
-        )]
-        Saurashtra = 111,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Sharada,
-            AssociatedConstantInStruct
-        )]
-        Sharada = 151,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Shavian,
-            AssociatedConstantInStruct
-        )]
-        Shavian = 51,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Siddham,
-            AssociatedConstantInStruct
-        )]
-        Siddham = 166,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Sidetic,
-            AssociatedConstantInStruct
-        )]
-        Sidetic = 209,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::SignWriting,
-            AssociatedConstantInStruct
-        )]
-        SignWriting = 112,
         #[diplomat::rust_link(
             icu::properties::props::Script::Sinhala,
             AssociatedConstantInStruct
         )]
         Sinhala = 33,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Sogdian,
-            AssociatedConstantInStruct
-        )]
-        Sogdian = 183,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::SoraSompeng,
-            AssociatedConstantInStruct
-        )]
-        SoraSompeng = 152,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Soyombo,
-            AssociatedConstantInStruct
-        )]
-        Soyombo = 176,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Sundanese,
-            AssociatedConstantInStruct
-        )]
-        Sundanese = 113,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Sunuwar,
-            AssociatedConstantInStruct
-        )]
-        Sunuwar = 205,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::SylotiNagri,
-            AssociatedConstantInStruct
-        )]
-        SylotiNagri = 58,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Syriac,
             AssociatedConstantInStruct
         )]
         Syriac = 34,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Tagalog,
-            AssociatedConstantInStruct
-        )]
-        Tagalog = 42,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Tagbanwa,
-            AssociatedConstantInStruct
-        )]
-        Tagbanwa = 45,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::TaiLe,
-            AssociatedConstantInStruct
-        )]
-        TaiLe = 52,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::TaiTham,
-            AssociatedConstantInStruct
-        )]
-        TaiTham = 106,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::TaiViet,
-            AssociatedConstantInStruct
-        )]
-        TaiViet = 127,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::TaiYo,
-            AssociatedConstantInStruct
-        )]
-        TaiYo = 210,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Takri,
-            AssociatedConstantInStruct
-        )]
-        Takri = 153,
-        #[diplomat::rust_link(
             icu::properties::props::Script::Tamil,
             AssociatedConstantInStruct
         )]
         Tamil = 35,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Tangsa,
-            AssociatedConstantInStruct
-        )]
-        Tangsa = 195,
-        #[diplomat::rust_link(
-            icu::properties::props::Script::Tangut,
-            AssociatedConstantInStruct
-        )]
-        Tangut = 154,
         #[diplomat::rust_link(
             icu::properties::props::Script::Telugu,
             AssociatedConstantInStruct
@@ -3727,40 +3117,215 @@ pub mod ffi {
         )]
         Tibetan = 39,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Tifinagh,
+            icu::properties::props::Script::CanadianAboriginal,
             AssociatedConstantInStruct
         )]
-        Tifinagh = 60,
+        CanadianAboriginal = 40,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Tirhuta,
+            icu::properties::props::Script::Yi,
             AssociatedConstantInStruct
         )]
-        Tirhuta = 158,
+        Yi = 41,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Todhri,
+            icu::properties::props::Script::Tagalog,
             AssociatedConstantInStruct
         )]
-        Todhri = 206,
+        Tagalog = 42,
         #[diplomat::rust_link(
-            icu::properties::props::Script::TolongSiki,
+            icu::properties::props::Script::Hanunoo,
             AssociatedConstantInStruct
         )]
-        TolongSiki = 211,
+        Hanunoo = 43,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Toto,
+            icu::properties::props::Script::Buhid,
             AssociatedConstantInStruct
         )]
-        Toto = 196,
+        Buhid = 44,
         #[diplomat::rust_link(
-            icu::properties::props::Script::TuluTigalari,
+            icu::properties::props::Script::Tagbanwa,
             AssociatedConstantInStruct
         )]
-        TuluTigalari = 207,
+        Tagbanwa = 45,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Braille,
+            AssociatedConstantInStruct
+        )]
+        Braille = 46,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Cypriot,
+            AssociatedConstantInStruct
+        )]
+        Cypriot = 47,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Limbu,
+            AssociatedConstantInStruct
+        )]
+        Limbu = 48,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::LinearB,
+            AssociatedConstantInStruct
+        )]
+        LinearB = 49,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Osmanya,
+            AssociatedConstantInStruct
+        )]
+        Osmanya = 50,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Shavian,
+            AssociatedConstantInStruct
+        )]
+        Shavian = 51,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TaiLe,
+            AssociatedConstantInStruct
+        )]
+        TaiLe = 52,
         #[diplomat::rust_link(
             icu::properties::props::Script::Ugaritic,
             AssociatedConstantInStruct
         )]
         Ugaritic = 53,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Buginese,
+            AssociatedConstantInStruct
+        )]
+        Buginese = 55,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Glagolitic,
+            AssociatedConstantInStruct
+        )]
+        Glagolitic = 56,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Kharoshthi,
+            AssociatedConstantInStruct
+        )]
+        Kharoshthi = 57,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::SylotiNagri,
+            AssociatedConstantInStruct
+        )]
+        SylotiNagri = 58,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::NewTaiLue,
+            AssociatedConstantInStruct
+        )]
+        NewTaiLue = 59,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Tifinagh,
+            AssociatedConstantInStruct
+        )]
+        Tifinagh = 60,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldPersian,
+            AssociatedConstantInStruct
+        )]
+        OldPersian = 61,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Balinese,
+            AssociatedConstantInStruct
+        )]
+        Balinese = 62,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Batak,
+            AssociatedConstantInStruct
+        )]
+        Batak = 63,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Brahmi,
+            AssociatedConstantInStruct
+        )]
+        Brahmi = 65,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Cham,
+            AssociatedConstantInStruct
+        )]
+        Cham = 66,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::EgyptianHieroglyphs,
+            AssociatedConstantInStruct
+        )]
+        EgyptianHieroglyphs = 71,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::PahawhHmong,
+            AssociatedConstantInStruct
+        )]
+        PahawhHmong = 75,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldHungarian,
+            AssociatedConstantInStruct
+        )]
+        OldHungarian = 76,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Javanese,
+            AssociatedConstantInStruct
+        )]
+        Javanese = 78,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::KayahLi,
+            AssociatedConstantInStruct
+        )]
+        KayahLi = 79,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Lepcha,
+            AssociatedConstantInStruct
+        )]
+        Lepcha = 82,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::LinearA,
+            AssociatedConstantInStruct
+        )]
+        LinearA = 83,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Mandaic,
+            AssociatedConstantInStruct
+        )]
+        Mandaic = 84,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::MeroiticHieroglyphs,
+            AssociatedConstantInStruct
+        )]
+        MeroiticHieroglyphs = 86,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Nko,
+            AssociatedConstantInStruct
+        )]
+        Nko = 87,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldTurkic,
+            AssociatedConstantInStruct
+        )]
+        OldTurkic = 88,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldPermic,
+            AssociatedConstantInStruct
+        )]
+        OldPermic = 89,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::PhagsPa,
+            AssociatedConstantInStruct
+        )]
+        PhagsPa = 90,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Phoenician,
+            AssociatedConstantInStruct
+        )]
+        Phoenician = 91,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Miao,
+            AssociatedConstantInStruct
+        )]
+        Miao = 92,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Vai,
+            AssociatedConstantInStruct
+        )]
+        Vai = 99,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Cuneiform,
+            AssociatedConstantInStruct
+        )]
+        Cuneiform = 101,
         #[diplomat::rust_link(
             icu::properties::props::Script::Unknown,
             AssociatedConstantInStruct
@@ -3768,40 +3333,475 @@ pub mod ffi {
         #[diplomat::attr(auto, default)]
         Unknown = 103,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Vai,
+            icu::properties::props::Script::Carian,
             AssociatedConstantInStruct
         )]
-        Vai = 99,
+        Carian = 104,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Vithkuqi,
+            icu::properties::props::Script::TaiTham,
             AssociatedConstantInStruct
         )]
-        Vithkuqi = 197,
+        TaiTham = 106,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Wancho,
+            icu::properties::props::Script::Lycian,
             AssociatedConstantInStruct
         )]
-        Wancho = 188,
+        Lycian = 107,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Lydian,
+            AssociatedConstantInStruct
+        )]
+        Lydian = 108,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OlChiki,
+            AssociatedConstantInStruct
+        )]
+        OlChiki = 109,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Rejang,
+            AssociatedConstantInStruct
+        )]
+        Rejang = 110,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Saurashtra,
+            AssociatedConstantInStruct
+        )]
+        Saurashtra = 111,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::SignWriting,
+            AssociatedConstantInStruct
+        )]
+        SignWriting = 112,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Sundanese,
+            AssociatedConstantInStruct
+        )]
+        Sundanese = 113,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::MeeteiMayek,
+            AssociatedConstantInStruct
+        )]
+        MeeteiMayek = 115,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::ImperialAramaic,
+            AssociatedConstantInStruct
+        )]
+        ImperialAramaic = 116,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Avestan,
+            AssociatedConstantInStruct
+        )]
+        Avestan = 117,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Chakma,
+            AssociatedConstantInStruct
+        )]
+        Chakma = 118,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Kaithi,
+            AssociatedConstantInStruct
+        )]
+        Kaithi = 120,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Manichaean,
+            AssociatedConstantInStruct
+        )]
+        Manichaean = 121,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::InscriptionalPahlavi,
+            AssociatedConstantInStruct
+        )]
+        InscriptionalPahlavi = 122,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::PsalterPahlavi,
+            AssociatedConstantInStruct
+        )]
+        PsalterPahlavi = 123,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::InscriptionalParthian,
+            AssociatedConstantInStruct
+        )]
+        InscriptionalParthian = 125,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Samaritan,
+            AssociatedConstantInStruct
+        )]
+        Samaritan = 126,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TaiViet,
+            AssociatedConstantInStruct
+        )]
+        TaiViet = 127,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Bamum,
+            AssociatedConstantInStruct
+        )]
+        Bamum = 130,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Lisu,
+            AssociatedConstantInStruct
+        )]
+        Lisu = 131,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldSouthArabian,
+            AssociatedConstantInStruct
+        )]
+        OldSouthArabian = 133,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::BassaVah,
+            AssociatedConstantInStruct
+        )]
+        BassaVah = 134,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Duployan,
+            AssociatedConstantInStruct
+        )]
+        Duployan = 135,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Elbasan,
+            AssociatedConstantInStruct
+        )]
+        Elbasan = 136,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Grantha,
+            AssociatedConstantInStruct
+        )]
+        Grantha = 137,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::MendeKikakui,
+            AssociatedConstantInStruct
+        )]
+        MendeKikakui = 140,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::MeroiticCursive,
+            AssociatedConstantInStruct
+        )]
+        MeroiticCursive = 141,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldNorthArabian,
+            AssociatedConstantInStruct
+        )]
+        OldNorthArabian = 142,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Nabataean,
+            AssociatedConstantInStruct
+        )]
+        Nabataean = 143,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Palmyrene,
+            AssociatedConstantInStruct
+        )]
+        Palmyrene = 144,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Khudawadi,
+            AssociatedConstantInStruct
+        )]
+        Khudawadi = 145,
         #[diplomat::rust_link(
             icu::properties::props::Script::WarangCiti,
             AssociatedConstantInStruct
         )]
         WarangCiti = 146,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Yezidi,
+            icu::properties::props::Script::Mro,
             AssociatedConstantInStruct
         )]
-        Yezidi = 192,
+        Mro = 149,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Yi,
+            icu::properties::props::Script::Nushu,
             AssociatedConstantInStruct
         )]
-        Yi = 41,
+        Nushu = 150,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Sharada,
+            AssociatedConstantInStruct
+        )]
+        Sharada = 151,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::SoraSompeng,
+            AssociatedConstantInStruct
+        )]
+        SoraSompeng = 152,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Takri,
+            AssociatedConstantInStruct
+        )]
+        Takri = 153,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Tangut,
+            AssociatedConstantInStruct
+        )]
+        Tangut = 154,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::AnatolianHieroglyphs,
+            AssociatedConstantInStruct
+        )]
+        AnatolianHieroglyphs = 156,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Khojki,
+            AssociatedConstantInStruct
+        )]
+        Khojki = 157,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Tirhuta,
+            AssociatedConstantInStruct
+        )]
+        Tirhuta = 158,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::CaucasianAlbanian,
+            AssociatedConstantInStruct
+        )]
+        CaucasianAlbanian = 159,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Mahajani,
+            AssociatedConstantInStruct
+        )]
+        Mahajani = 160,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Ahom,
+            AssociatedConstantInStruct
+        )]
+        Ahom = 161,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Hatran,
+            AssociatedConstantInStruct
+        )]
+        Hatran = 162,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Modi,
+            AssociatedConstantInStruct
+        )]
+        Modi = 163,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Multani,
+            AssociatedConstantInStruct
+        )]
+        Multani = 164,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::PauCinHau,
+            AssociatedConstantInStruct
+        )]
+        PauCinHau = 165,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Siddham,
+            AssociatedConstantInStruct
+        )]
+        Siddham = 166,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Adlam,
+            AssociatedConstantInStruct
+        )]
+        Adlam = 167,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Bhaiksuki,
+            AssociatedConstantInStruct
+        )]
+        Bhaiksuki = 168,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Marchen,
+            AssociatedConstantInStruct
+        )]
+        Marchen = 169,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Newa,
+            AssociatedConstantInStruct
+        )]
+        Newa = 170,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Osage,
+            AssociatedConstantInStruct
+        )]
+        Osage = 171,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::MasaramGondi,
+            AssociatedConstantInStruct
+        )]
+        MasaramGondi = 175,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Soyombo,
+            AssociatedConstantInStruct
+        )]
+        Soyombo = 176,
         #[diplomat::rust_link(
             icu::properties::props::Script::ZanabazarSquare,
             AssociatedConstantInStruct
         )]
         ZanabazarSquare = 177,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Dogra,
+            AssociatedConstantInStruct
+        )]
+        Dogra = 178,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::GunjalaGondi,
+            AssociatedConstantInStruct
+        )]
+        GunjalaGondi = 179,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Makasar,
+            AssociatedConstantInStruct
+        )]
+        Makasar = 180,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Medefaidrin,
+            AssociatedConstantInStruct
+        )]
+        Medefaidrin = 181,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::HanifiRohingya,
+            AssociatedConstantInStruct
+        )]
+        HanifiRohingya = 182,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Sogdian,
+            AssociatedConstantInStruct
+        )]
+        Sogdian = 183,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldSogdian,
+            AssociatedConstantInStruct
+        )]
+        OldSogdian = 184,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Elymaic,
+            AssociatedConstantInStruct
+        )]
+        Elymaic = 185,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::NyiakengPuachueHmong,
+            AssociatedConstantInStruct
+        )]
+        NyiakengPuachueHmong = 186,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Nandinagari,
+            AssociatedConstantInStruct
+        )]
+        Nandinagari = 187,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Wancho,
+            AssociatedConstantInStruct
+        )]
+        Wancho = 188,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Chorasmian,
+            AssociatedConstantInStruct
+        )]
+        Chorasmian = 189,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::DivesAkuru,
+            AssociatedConstantInStruct
+        )]
+        DivesAkuru = 190,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::KhitanSmallScript,
+            AssociatedConstantInStruct
+        )]
+        KhitanSmallScript = 191,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Yezidi,
+            AssociatedConstantInStruct
+        )]
+        Yezidi = 192,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::CyproMinoan,
+            AssociatedConstantInStruct
+        )]
+        CyproMinoan = 193,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldUyghur,
+            AssociatedConstantInStruct
+        )]
+        OldUyghur = 194,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Tangsa,
+            AssociatedConstantInStruct
+        )]
+        Tangsa = 195,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Toto,
+            AssociatedConstantInStruct
+        )]
+        Toto = 196,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Vithkuqi,
+            AssociatedConstantInStruct
+        )]
+        Vithkuqi = 197,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Kawi,
+            AssociatedConstantInStruct
+        )]
+        Kawi = 198,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::NagMundari,
+            AssociatedConstantInStruct
+        )]
+        NagMundari = 199,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Nastaliq,
+            AssociatedConstantInStruct
+        )]
+        Nastaliq = 200,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Garay,
+            AssociatedConstantInStruct
+        )]
+        Garay = 201,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::GurungKhema,
+            AssociatedConstantInStruct
+        )]
+        GurungKhema = 202,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::KiratRai,
+            AssociatedConstantInStruct
+        )]
+        KiratRai = 203,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OlOnal,
+            AssociatedConstantInStruct
+        )]
+        OlOnal = 204,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Sunuwar,
+            AssociatedConstantInStruct
+        )]
+        Sunuwar = 205,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Todhri,
+            AssociatedConstantInStruct
+        )]
+        Todhri = 206,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TuluTigalari,
+            AssociatedConstantInStruct
+        )]
+        TuluTigalari = 207,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::BeriaErfe,
+            AssociatedConstantInStruct
+        )]
+        BeriaErfe = 208,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Sidetic,
+            AssociatedConstantInStruct
+        )]
+        Sidetic = 209,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TaiYo,
+            AssociatedConstantInStruct
+        )]
+        TaiYo = 210,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TolongSiki,
+            AssociatedConstantInStruct
+        )]
+        TolongSiki = 211,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Chisoi,
+            AssociatedConstantInStruct
+        )]
+        Chisoi = 254,
     }
 
     impl Script {
@@ -3855,183 +3855,183 @@ pub mod ffi {
         /// Convert from an integer value from ICU4C or `CodePointMapData`
         pub fn from_integer_value(other: u16) -> Option<Self> {
             Some(match other {
-                167 => Self::Adlam,
-                161 => Self::Ahom,
-                156 => Self::AnatolianHieroglyphs,
+                0 => Self::Common,
+                1 => Self::Inherited,
                 2 => Self::Arabic,
                 3 => Self::Armenian,
-                117 => Self::Avestan,
-                62 => Self::Balinese,
-                130 => Self::Bamum,
-                134 => Self::BassaVah,
-                63 => Self::Batak,
                 4 => Self::Bengali,
-                208 => Self::BeriaErfe,
-                168 => Self::Bhaiksuki,
                 5 => Self::Bopomofo,
-                65 => Self::Brahmi,
-                46 => Self::Braille,
-                55 => Self::Buginese,
-                44 => Self::Buhid,
-                40 => Self::CanadianAboriginal,
-                104 => Self::Carian,
-                159 => Self::CaucasianAlbanian,
-                118 => Self::Chakma,
-                66 => Self::Cham,
                 6 => Self::Cherokee,
-                254 => Self::Chisoi,
-                189 => Self::Chorasmian,
-                0 => Self::Common,
                 7 => Self::Coptic,
-                101 => Self::Cuneiform,
-                47 => Self::Cypriot,
-                193 => Self::CyproMinoan,
                 8 => Self::Cyrillic,
                 9 => Self::Deseret,
                 10 => Self::Devanagari,
-                190 => Self::DivesAkuru,
-                178 => Self::Dogra,
-                135 => Self::Duployan,
-                71 => Self::EgyptianHieroglyphs,
-                136 => Self::Elbasan,
-                185 => Self::Elymaic,
                 11 => Self::Ethiopian,
-                201 => Self::Garay,
                 12 => Self::Georgian,
-                56 => Self::Glagolitic,
                 13 => Self::Gothic,
-                137 => Self::Grantha,
                 14 => Self::Greek,
                 15 => Self::Gujarati,
-                179 => Self::GunjalaGondi,
                 16 => Self::Gurmukhi,
-                202 => Self::GurungKhema,
                 17 => Self::Han,
                 18 => Self::Hangul,
-                182 => Self::HanifiRohingya,
-                43 => Self::Hanunoo,
-                162 => Self::Hatran,
                 19 => Self::Hebrew,
                 20 => Self::Hiragana,
-                116 => Self::ImperialAramaic,
-                1 => Self::Inherited,
-                122 => Self::InscriptionalPahlavi,
-                125 => Self::InscriptionalParthian,
-                78 => Self::Javanese,
-                120 => Self::Kaithi,
                 21 => Self::Kannada,
                 22 => Self::Katakana,
-                198 => Self::Kawi,
-                79 => Self::KayahLi,
-                57 => Self::Kharoshthi,
-                191 => Self::KhitanSmallScript,
                 23 => Self::Khmer,
-                157 => Self::Khojki,
-                145 => Self::Khudawadi,
-                203 => Self::KiratRai,
                 24 => Self::Lao,
                 25 => Self::Latin,
-                82 => Self::Lepcha,
-                48 => Self::Limbu,
-                83 => Self::LinearA,
-                49 => Self::LinearB,
-                131 => Self::Lisu,
-                107 => Self::Lycian,
-                108 => Self::Lydian,
-                160 => Self::Mahajani,
-                180 => Self::Makasar,
                 26 => Self::Malayalam,
-                84 => Self::Mandaic,
-                121 => Self::Manichaean,
-                169 => Self::Marchen,
-                175 => Self::MasaramGondi,
-                181 => Self::Medefaidrin,
-                115 => Self::MeeteiMayek,
-                140 => Self::MendeKikakui,
-                141 => Self::MeroiticCursive,
-                86 => Self::MeroiticHieroglyphs,
-                92 => Self::Miao,
-                163 => Self::Modi,
                 27 => Self::Mongolian,
-                149 => Self::Mro,
-                164 => Self::Multani,
                 28 => Self::Myanmar,
-                143 => Self::Nabataean,
-                199 => Self::NagMundari,
-                187 => Self::Nandinagari,
-                200 => Self::Nastaliq,
-                59 => Self::NewTaiLue,
-                170 => Self::Newa,
-                87 => Self::Nko,
-                150 => Self::Nushu,
-                186 => Self::NyiakengPuachueHmong,
                 29 => Self::Ogham,
-                109 => Self::OlChiki,
-                204 => Self::OlOnal,
-                76 => Self::OldHungarian,
                 30 => Self::OldItalic,
-                142 => Self::OldNorthArabian,
-                89 => Self::OldPermic,
-                61 => Self::OldPersian,
-                184 => Self::OldSogdian,
-                133 => Self::OldSouthArabian,
-                88 => Self::OldTurkic,
-                194 => Self::OldUyghur,
                 31 => Self::Oriya,
-                171 => Self::Osage,
-                50 => Self::Osmanya,
-                75 => Self::PahawhHmong,
-                144 => Self::Palmyrene,
-                165 => Self::PauCinHau,
-                90 => Self::PhagsPa,
-                91 => Self::Phoenician,
-                123 => Self::PsalterPahlavi,
-                110 => Self::Rejang,
                 32 => Self::Runic,
-                126 => Self::Samaritan,
-                111 => Self::Saurashtra,
-                151 => Self::Sharada,
-                51 => Self::Shavian,
-                166 => Self::Siddham,
-                209 => Self::Sidetic,
-                112 => Self::SignWriting,
                 33 => Self::Sinhala,
-                183 => Self::Sogdian,
-                152 => Self::SoraSompeng,
-                176 => Self::Soyombo,
-                113 => Self::Sundanese,
-                205 => Self::Sunuwar,
-                58 => Self::SylotiNagri,
                 34 => Self::Syriac,
-                42 => Self::Tagalog,
-                45 => Self::Tagbanwa,
-                52 => Self::TaiLe,
-                106 => Self::TaiTham,
-                127 => Self::TaiViet,
-                210 => Self::TaiYo,
-                153 => Self::Takri,
                 35 => Self::Tamil,
-                195 => Self::Tangsa,
-                154 => Self::Tangut,
                 36 => Self::Telugu,
                 37 => Self::Thaana,
                 38 => Self::Thai,
                 39 => Self::Tibetan,
-                60 => Self::Tifinagh,
-                158 => Self::Tirhuta,
-                206 => Self::Todhri,
-                211 => Self::TolongSiki,
-                196 => Self::Toto,
-                207 => Self::TuluTigalari,
-                53 => Self::Ugaritic,
-                103 => Self::Unknown,
-                99 => Self::Vai,
-                197 => Self::Vithkuqi,
-                188 => Self::Wancho,
-                146 => Self::WarangCiti,
-                192 => Self::Yezidi,
+                40 => Self::CanadianAboriginal,
                 41 => Self::Yi,
+                42 => Self::Tagalog,
+                43 => Self::Hanunoo,
+                44 => Self::Buhid,
+                45 => Self::Tagbanwa,
+                46 => Self::Braille,
+                47 => Self::Cypriot,
+                48 => Self::Limbu,
+                49 => Self::LinearB,
+                50 => Self::Osmanya,
+                51 => Self::Shavian,
+                52 => Self::TaiLe,
+                53 => Self::Ugaritic,
+                55 => Self::Buginese,
+                56 => Self::Glagolitic,
+                57 => Self::Kharoshthi,
+                58 => Self::SylotiNagri,
+                59 => Self::NewTaiLue,
+                60 => Self::Tifinagh,
+                61 => Self::OldPersian,
+                62 => Self::Balinese,
+                63 => Self::Batak,
+                65 => Self::Brahmi,
+                66 => Self::Cham,
+                71 => Self::EgyptianHieroglyphs,
+                75 => Self::PahawhHmong,
+                76 => Self::OldHungarian,
+                78 => Self::Javanese,
+                79 => Self::KayahLi,
+                82 => Self::Lepcha,
+                83 => Self::LinearA,
+                84 => Self::Mandaic,
+                86 => Self::MeroiticHieroglyphs,
+                87 => Self::Nko,
+                88 => Self::OldTurkic,
+                89 => Self::OldPermic,
+                90 => Self::PhagsPa,
+                91 => Self::Phoenician,
+                92 => Self::Miao,
+                99 => Self::Vai,
+                101 => Self::Cuneiform,
+                103 => Self::Unknown,
+                104 => Self::Carian,
+                106 => Self::TaiTham,
+                107 => Self::Lycian,
+                108 => Self::Lydian,
+                109 => Self::OlChiki,
+                110 => Self::Rejang,
+                111 => Self::Saurashtra,
+                112 => Self::SignWriting,
+                113 => Self::Sundanese,
+                115 => Self::MeeteiMayek,
+                116 => Self::ImperialAramaic,
+                117 => Self::Avestan,
+                118 => Self::Chakma,
+                120 => Self::Kaithi,
+                121 => Self::Manichaean,
+                122 => Self::InscriptionalPahlavi,
+                123 => Self::PsalterPahlavi,
+                125 => Self::InscriptionalParthian,
+                126 => Self::Samaritan,
+                127 => Self::TaiViet,
+                130 => Self::Bamum,
+                131 => Self::Lisu,
+                133 => Self::OldSouthArabian,
+                134 => Self::BassaVah,
+                135 => Self::Duployan,
+                136 => Self::Elbasan,
+                137 => Self::Grantha,
+                140 => Self::MendeKikakui,
+                141 => Self::MeroiticCursive,
+                142 => Self::OldNorthArabian,
+                143 => Self::Nabataean,
+                144 => Self::Palmyrene,
+                145 => Self::Khudawadi,
+                146 => Self::WarangCiti,
+                149 => Self::Mro,
+                150 => Self::Nushu,
+                151 => Self::Sharada,
+                152 => Self::SoraSompeng,
+                153 => Self::Takri,
+                154 => Self::Tangut,
+                156 => Self::AnatolianHieroglyphs,
+                157 => Self::Khojki,
+                158 => Self::Tirhuta,
+                159 => Self::CaucasianAlbanian,
+                160 => Self::Mahajani,
+                161 => Self::Ahom,
+                162 => Self::Hatran,
+                163 => Self::Modi,
+                164 => Self::Multani,
+                165 => Self::PauCinHau,
+                166 => Self::Siddham,
+                167 => Self::Adlam,
+                168 => Self::Bhaiksuki,
+                169 => Self::Marchen,
+                170 => Self::Newa,
+                171 => Self::Osage,
+                175 => Self::MasaramGondi,
+                176 => Self::Soyombo,
                 177 => Self::ZanabazarSquare,
+                178 => Self::Dogra,
+                179 => Self::GunjalaGondi,
+                180 => Self::Makasar,
+                181 => Self::Medefaidrin,
+                182 => Self::HanifiRohingya,
+                183 => Self::Sogdian,
+                184 => Self::OldSogdian,
+                185 => Self::Elymaic,
+                186 => Self::NyiakengPuachueHmong,
+                187 => Self::Nandinagari,
+                188 => Self::Wancho,
+                189 => Self::Chorasmian,
+                190 => Self::DivesAkuru,
+                191 => Self::KhitanSmallScript,
+                192 => Self::Yezidi,
+                193 => Self::CyproMinoan,
+                194 => Self::OldUyghur,
+                195 => Self::Tangsa,
+                196 => Self::Toto,
+                197 => Self::Vithkuqi,
+                198 => Self::Kawi,
+                199 => Self::NagMundari,
+                200 => Self::Nastaliq,
+                201 => Self::Garay,
+                202 => Self::GurungKhema,
+                203 => Self::KiratRai,
+                204 => Self::OlOnal,
+                205 => Self::Sunuwar,
+                206 => Self::Todhri,
+                207 => Self::TuluTigalari,
+                208 => Self::BeriaErfe,
+                209 => Self::Sidetic,
+                210 => Self::TaiYo,
+                211 => Self::TolongSiki,
+                254 => Self::Chisoi,
                 _ => return None,
             })
         }

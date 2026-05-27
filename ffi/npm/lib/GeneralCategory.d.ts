@@ -46,13 +46,13 @@ export class GeneralCategory {
      */
     static NonspacingMark : GeneralCategory;
     /**
-     * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
-     */
-    static SpacingMark : GeneralCategory;
-    /**
      * See the [Rust documentation for `EnclosingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.EnclosingMark) for more information.
      */
     static EnclosingMark : GeneralCategory;
+    /**
+     * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
+     */
+    static SpacingMark : GeneralCategory;
     /**
      * See the [Rust documentation for `DecimalNumber`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.DecimalNumber) for more information.
      */
@@ -110,14 +110,6 @@ export class GeneralCategory {
      */
     static ConnectorPunctuation : GeneralCategory;
     /**
-     * See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
-     */
-    static InitialPunctuation : GeneralCategory;
-    /**
-     * See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
-     */
-    static FinalPunctuation : GeneralCategory;
-    /**
      * See the [Rust documentation for `OtherPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.OtherPunctuation) for more information.
      */
     static OtherPunctuation : GeneralCategory;
@@ -137,6 +129,14 @@ export class GeneralCategory {
      * See the [Rust documentation for `OtherSymbol`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.OtherSymbol) for more information.
      */
     static OtherSymbol : GeneralCategory;
+    /**
+     * See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
+     */
+    static InitialPunctuation : GeneralCategory;
+    /**
+     * See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
+     */
+    static FinalPunctuation : GeneralCategory;
 
 
     /**
