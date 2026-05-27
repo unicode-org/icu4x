@@ -20,118 +20,6 @@
 pub use crate::names::{NamedEnumeratedProperty, ParseableEnumeratedProperty};
 
 pub use crate::bidi::{BidiMirroringGlyph, BidiPairedBracketType};
-
-/// See [`test_enumerated_property_completeness`] for usage.
-/// Example input:
-/// ```ignore
-/// impl EastAsianWidth {
-///     pub const Neutral: EastAsianWidth = EastAsianWidth(0);
-///     pub const Ambiguous: EastAsianWidth = EastAsianWidth(1);
-///     ...
-/// }
-/// ```
-/// Produces `const ALL_VALUES = &[("Neutral", 0u16), ...];` by
-/// explicitly casting first field of the struct to u16.
-macro_rules! create_const_array {
-    (
-        $ ( #[$meta:meta] )*
-        impl $enum_ty:ident {
-            #[default]
-            $(#[$default_meta:meta])* $dv:vis const $di:ident: $dt:ty = $de:expr; / $default_short_name:literal
-            $( $(#[$const_meta:meta])* $v:vis const $i:ident: $t:ty = $e:expr; / $short_name:literal )*
-            $(
-                $additional_name:literal => $additonal_discriminant:expr;
-            )*
-        }
-        #[test]
-        fn $consts_test:ident();
-    ) => {
-        $( #[$meta] )*
-        impl $enum_ty {
-            $(#[$default_meta])*
-            $dv const $di: $dt = $de;
-            $(
-                $(#[$const_meta])*
-                $v const $i: $t = $e;
-            )*
-
-            /// All possible values of this enum in the Unicode version
-            /// from this ICU4X release.
-            pub const ALL_VALUES: &'static [$enum_ty] = &[
-                $enum_ty::$di,
-                $($enum_ty::$i),*
-            ];
-        }
-
-        impl Default for $enum_ty {
-            fn default() -> Self {
-                Self::$di
-            }
-        }
-
-        #[cfg(feature = "datagen")]
-        impl databake::Bake for $enum_ty {
-            fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                env.insert("icu_properties");
-                match *self {
-                    $enum_ty::$di => databake::quote!(icu_properties::props::$enum_ty::$di),
-                    $(
-                        Self::$i => databake::quote!(icu_properties::props::$enum_ty::$i),
-                    )*
-                    Self(v) => databake::quote!(icu_properties::props::$enum_ty(#v)),
-                }
-            }
-        }
-
-
-        impl From<$enum_ty> for u16  {
-            #[allow(trivial_numeric_casts)]
-            fn from(other: $enum_ty) -> Self {
-                other.0 as u16
-            }
-        }
-
-        impl $enum_ty {
-            #[cfg(feature = "datagen")]
-            #[doc(hidden)]
-            pub fn names() -> impl Iterator<Item = (&'static str, Self)> {
-                [
-                    ($default_short_name, Self::$di),
-                    $(
-                        ($short_name, Self::$i),
-                    )*
-                    $(
-                        ($additional_name, Self($additonal_discriminant)),
-                    )*
-                ].into_iter()
-            }
-        }
-
-        #[test]
-        fn $consts_test() {
-            assert_eq!(
-                crate::names::PropertyNamesLong::<$enum_ty>::new().get($enum_ty::$di).unwrap().replace('_', ""),
-                stringify!($di)
-            );
-            $(
-                assert_eq!(
-                    crate::names::PropertyNamesLong::<$enum_ty>::new().get($enum_ty::$i).unwrap()
-                        // Rust identifiers use camel case
-                        .replace('_', "")
-                        // We use Ethiopian
-                        .replace("Ethiopic", "Ethiopian")
-                        // Nastaliq is missing a long name?
-                        .replace("Aran", "Nastaliq")
-                        // We spell these out
-                        .replace("LVSyllable", "LeadingVowelSyllable")
-                        .replace("LVTSyllable", "LeadingVowelTrailingSyllable"),
-                    stringify!($i)
-                );
-            )*
-        }
-    }
-}
-
 pub use crate::code_point_map::EnumeratedProperty;
 
 macro_rules! make_enumerated_property {
@@ -214,59 +102,10 @@ impl BidiClass {
     }
 }
 
-create_const_array! {
-#[allow(non_upper_case_globals)]
-impl BidiClass {
-    #[default]
-    /// (`L`) any strong left-to-right character
-    pub const LeftToRight: BidiClass = BidiClass(0); / "L"
-    /// (`R`) any strong right-to-left (non-Arabic-type) character
-    pub const RightToLeft: BidiClass = BidiClass(1); / "R"
-    /// (`EN`) any ASCII digit or Eastern Arabic-Indic digit
-    pub const EuropeanNumber: BidiClass = BidiClass(2); / "EN"
-    /// (`ES`) plus and minus signs
-    pub const EuropeanSeparator: BidiClass = BidiClass(3); / "ES"
-    /// (`ET`) a terminator in a numeric format context, includes currency signs
-    pub const EuropeanTerminator: BidiClass = BidiClass(4); / "ET"
-    /// (`AN`) any Arabic-Indic digit
-    pub const ArabicNumber: BidiClass = BidiClass(5); / "AN"
-    /// (`CS`) commas, colons, and slashes
-    pub const CommonSeparator: BidiClass = BidiClass(6); / "CS"
-    /// (`B`) various newline characters
-    pub const ParagraphSeparator: BidiClass = BidiClass(7); / "B"
-    /// (`S`) various segment-related control codes
-    pub const SegmentSeparator: BidiClass = BidiClass(8); / "S"
-    /// (`WS`) spaces
-    pub const WhiteSpace: BidiClass = BidiClass(9); / "WS"
-    /// (`ON`) most other symbols and punctuation marks
-    pub const OtherNeutral: BidiClass = BidiClass(10); / "ON"
-    /// (`LRE`) U+202A: the LR embedding control
-    pub const LeftToRightEmbedding: BidiClass = BidiClass(11); / "LRE"
-    /// (`LRO`) U+202D: the LR override control
-    pub const LeftToRightOverride: BidiClass = BidiClass(12); / "LRO"
-    /// (`AL`) any strong right-to-left (Arabic-type) character
-    pub const ArabicLetter: BidiClass = BidiClass(13); / "AL"
-    /// (`RLE`) U+202B: the RL embedding control
-    pub const RightToLeftEmbedding: BidiClass = BidiClass(14); / "RLE"
-    /// (`RLO`) U+202E: the RL override control
-    pub const RightToLeftOverride: BidiClass = BidiClass(15); / "RLO"
-    /// (`PDF`) U+202C: terminates an embedding or override control
-    pub const PopDirectionalFormat: BidiClass = BidiClass(16); / "PDF"
-    /// (`NSM`) any nonspacing mark
-    pub const NonspacingMark: BidiClass = BidiClass(17); / "NSM"
-    /// (`BN`) most format characters, control codes, or noncharacters
-    pub const BoundaryNeutral: BidiClass = BidiClass(18); / "BN"
-    /// (`FSI`) U+2068: the first strong isolate control
-    pub const FirstStrongIsolate: BidiClass = BidiClass(19); / "FSI"
-    /// (`LRI`) U+2066: the LR isolate control
-    pub const LeftToRightIsolate: BidiClass = BidiClass(20); / "LRI"
-    /// (`RLI`) U+2067: the RL isolate control
-    pub const RightToLeftIsolate: BidiClass = BidiClass(21); / "RLI"
-    /// (`PDI`) U+2069: terminates an isolate control
-    pub const PopDirectionalIsolate: BidiClass = BidiClass(22); / "PDI"
-}
-#[test]
-fn bidi_props_consts();
+impl Default for BidiClass {
+    fn default() -> Self {
+        Self::LeftToRight
+    }
 }
 
 make_enumerated_property! {
@@ -322,27 +161,10 @@ impl NumericType {
     }
 }
 
-create_const_array! {
-#[allow(non_upper_case_globals)]
-impl NumericType {
-    #[default]
-    /// Characters without numeric value
-    pub const None: NumericType = NumericType(0); / "None"
-    /// (`De`) Characters of positional decimal systems
-    ///
-    /// These are coextensive with [`GeneralCategory::DecimalNumber`].
-    pub const Decimal: NumericType = NumericType(1); / "De"
-    /// (`Di`) Variants of positional or sequences thereof.
-    ///
-    /// The distinction between [`NumericType::Digit`] and [`NumericType::Numeric`]
-    /// has not proven to be useful, so no further characters will be added to
-    /// this type.
-    pub const Digit: NumericType = NumericType(2); / "Di"
-    /// (`Nu`) Other characters with numeric value
-    pub const Numeric: NumericType = NumericType(3); / "Nu"
-}
-#[test]
-fn numeric_type_consts();
+impl Default for NumericType {
+    fn default() -> Self {
+        Self::None
+    }
 }
 
 make_enumerated_property! {
@@ -354,199 +176,35 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
-// This exists to encapsulate GeneralCategoryULE so that it can exist in the provider module rather than props
-pub(crate) mod gc {
-    /// Enumerated property `General_Category`.
-    ///
-    /// `General_Category` specifies the most general classification of a code point, usually
-    /// determined based on the primary characteristic of the assigned character. For example, is the
-    /// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
-    ///
-    /// `GeneralCategory` only supports specific subcategories (eg `UppercaseLetter`).
-    /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`](
-    /// crate::props::GeneralCategoryGroup).
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::{props::GeneralCategory, CodePointMapData};
-    ///
-    /// assert_eq!(
-    ///     CodePointMapData::<GeneralCategory>::new().get('木'),
-    ///     GeneralCategory::OtherLetter
-    /// ); // U+6728
-    /// assert_eq!(
-    ///     CodePointMapData::<GeneralCategory>::new().get('🎃'),
-    ///     GeneralCategory::OtherSymbol
-    /// ); // U+1F383 JACK-O-LANTERN
-    /// ```
-    #[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash, Default)]
-    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-    #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-    #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
-    #[allow(clippy::exhaustive_enums)] // this type is stable
-    #[zerovec::make_ule(GeneralCategoryULE)]
-    #[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV))]
-    #[repr(u8)]
-    pub enum GeneralCategory {
-        #[default]
-        /// (`Cn`) A reserved unassigned code point or a noncharacter
-        Unassigned = 0,
+/// Enumerated property `General_Category`.
+///
+/// `General_Category` specifies the most general classification of a code point, usually
+/// determined based on the primary characteristic of the assigned character. For example, is the
+/// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
+///
+/// `GeneralCategory` only supports specific subcategories (eg `UppercaseLetter`).
+/// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{props::GeneralCategory, CodePointMapData};
+///
+/// assert_eq!(
+///     CodePointMapData::<GeneralCategory>::new().get('木'),
+///     GeneralCategory::OtherLetter
+/// ); // U+6728
+/// assert_eq!(
+///     CodePointMapData::<GeneralCategory>::new().get('🎃'),
+///     GeneralCategory::OtherSymbol
+/// ); // U+1F383 JACK-O-LANTERN
+/// ```
+pub use crate::enum_values::GeneralCategory;
 
-        /// (`Lu`) An uppercase letter
-        UppercaseLetter = 1,
-        /// (`Ll`) A lowercase letter
-        LowercaseLetter = 2,
-        /// (`Lt`) A digraphic letter, with first part uppercase
-        TitlecaseLetter = 3,
-        /// (`Lm`) A modifier letter
-        ModifierLetter = 4,
-        /// (`Lo`) Other letters, including syllables and ideographs
-        OtherLetter = 5,
-
-        /// (`Mn`) A nonspacing combining mark (zero advance width)
-        NonspacingMark = 6,
-        /// (`Mc`) A spacing combining mark (positive advance width)
-        SpacingMark = 8,
-        /// (`Me`) An enclosing combining mark
-        EnclosingMark = 7,
-
-        /// (`Nd`) A decimal digit
-        DecimalNumber = 9,
-        /// (`Nl`) A letterlike numeric character
-        LetterNumber = 10,
-        /// (`No`) A numeric character of other type
-        OtherNumber = 11,
-
-        /// (`Zs`) A space character (of various non-zero widths)
-        SpaceSeparator = 12,
-        /// (`Zl`) U+2028 LINE SEPARATOR only
-        LineSeparator = 13,
-        /// (`Zp`) U+2029 PARAGRAPH SEPARATOR only
-        ParagraphSeparator = 14,
-
-        /// (`Cc`) A C0 or C1 control code
-        Control = 15,
-        /// (`Cf`) A format control character
-        Format = 16,
-        /// (`Co`) A private-use character
-        PrivateUse = 17,
-        /// (`Cs`) A surrogate code point
-        Surrogate = 18,
-
-        /// (`Pd`) A dash or hyphen punctuation mark
-        DashPunctuation = 19,
-        /// (`Ps`) An opening punctuation mark (of a pair)
-        OpenPunctuation = 20,
-        /// (`Pe`) A closing punctuation mark (of a pair)
-        ClosePunctuation = 21,
-        /// (`Pc`) A connecting punctuation mark, like a tie
-        ConnectorPunctuation = 22,
-        /// (`Pi`) An initial quotation mark
-        InitialPunctuation = 28,
-        /// (`Pf`) A final quotation mark
-        FinalPunctuation = 29,
-        /// (`Po`) A punctuation mark of other type
-        OtherPunctuation = 23,
-
-        /// (`Sm`) A symbol of mathematical use
-        MathSymbol = 24,
-        /// (`Sc`) A currency sign
-        CurrencySymbol = 25,
-        /// (`Sk`) A non-letterlike modifier symbol
-        ModifierSymbol = 26,
-        /// (`So`) A symbol of other type
-        OtherSymbol = 27,
-    }
-}
-
-pub use gc::GeneralCategory;
-
-impl GeneralCategory {
-    /// All possible values of this enum
-    pub const ALL_VALUES: &'static [GeneralCategory] = &[
-        GeneralCategory::Unassigned,
-        GeneralCategory::UppercaseLetter,
-        GeneralCategory::LowercaseLetter,
-        GeneralCategory::TitlecaseLetter,
-        GeneralCategory::ModifierLetter,
-        GeneralCategory::OtherLetter,
-        GeneralCategory::NonspacingMark,
-        GeneralCategory::SpacingMark,
-        GeneralCategory::EnclosingMark,
-        GeneralCategory::DecimalNumber,
-        GeneralCategory::LetterNumber,
-        GeneralCategory::OtherNumber,
-        GeneralCategory::SpaceSeparator,
-        GeneralCategory::LineSeparator,
-        GeneralCategory::ParagraphSeparator,
-        GeneralCategory::Control,
-        GeneralCategory::Format,
-        GeneralCategory::PrivateUse,
-        GeneralCategory::Surrogate,
-        GeneralCategory::DashPunctuation,
-        GeneralCategory::OpenPunctuation,
-        GeneralCategory::ClosePunctuation,
-        GeneralCategory::ConnectorPunctuation,
-        GeneralCategory::InitialPunctuation,
-        GeneralCategory::FinalPunctuation,
-        GeneralCategory::OtherPunctuation,
-        GeneralCategory::MathSymbol,
-        GeneralCategory::CurrencySymbol,
-        GeneralCategory::ModifierSymbol,
-        GeneralCategory::OtherSymbol,
-    ];
-
-    #[cfg(feature = "datagen")]
-    #[doc(hidden)]
-    pub fn names() -> impl Iterator<Item = (&'static str, Self)> {
-        [
-            ("Cn", Self::Unassigned),
-            ("Lu", Self::UppercaseLetter),
-            ("Ll", Self::LowercaseLetter),
-            ("Lt", Self::TitlecaseLetter),
-            ("Lm", Self::ModifierLetter),
-            ("Lo", Self::OtherLetter),
-            ("Mn", Self::NonspacingMark),
-            ("Mc", Self::SpacingMark),
-            ("Me", Self::EnclosingMark),
-            ("Nd", Self::DecimalNumber),
-            ("Nl", Self::LetterNumber),
-            ("No", Self::OtherNumber),
-            ("Zs", Self::SpaceSeparator),
-            ("Zl", Self::LineSeparator),
-            ("Zp", Self::ParagraphSeparator),
-            ("Cc", Self::Control),
-            ("Cf", Self::Format),
-            ("Co", Self::PrivateUse),
-            ("Cs", Self::Surrogate),
-            ("Pd", Self::DashPunctuation),
-            ("Ps", Self::OpenPunctuation),
-            ("Pe", Self::ClosePunctuation),
-            ("Pc", Self::ConnectorPunctuation),
-            ("Pi", Self::InitialPunctuation),
-            ("Pf", Self::FinalPunctuation),
-            ("Po", Self::OtherPunctuation),
-            ("Sm", Self::MathSymbol),
-            ("Sc", Self::CurrencySymbol),
-            ("Sk", Self::ModifierSymbol),
-            ("So", Self::OtherSymbol),
-        ]
-        .into_iter()
-    }
-}
-
-#[test]
-fn gc_variants() {
-    for &variant in GeneralCategory::ALL_VALUES {
-        assert_eq!(
-            crate::names::PropertyNamesLong::<GeneralCategory>::new()
-                .get(variant)
-                .unwrap()
-                // Rust identifiers use camel case
-                .replace('_', ""),
-            format!("{variant:?}")
-        );
+#[allow(clippy::derivable_impls)] // declaration is codegen'd
+impl Default for GeneralCategory {
+    fn default() -> Self {
+        Self::Unassigned
     }
 }
 
@@ -965,233 +623,10 @@ impl Script {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl Script {
-    #[default]
-    pub const Unknown: Script = Script(103); / "Zzzz"
-    pub const Adlam: Script = Script(167); / "Adlm"
-    pub const Ahom: Script = Script(161); / "Ahom"
-    pub const AnatolianHieroglyphs: Script = Script(156); / "Hluw"
-    pub const Arabic: Script = Script(2); / "Arab"
-    pub const Armenian: Script = Script(3); / "Armn"
-    pub const Avestan: Script = Script(117); / "Avst"
-    pub const Balinese: Script = Script(62); / "Bali"
-    pub const Bamum: Script = Script(130); / "Bamu"
-    pub const BassaVah: Script = Script(134); / "Bass"
-    pub const Batak: Script = Script(63); / "Batk"
-    pub const Bengali: Script = Script(4); / "Beng"
-    pub const BeriaErfe: Script = Script(208); / "Berf"
-    pub const Bhaiksuki: Script = Script(168); / "Bhks"
-    pub const Bopomofo: Script = Script(5); / "Bopo"
-    pub const Brahmi: Script = Script(65); / "Brah"
-    pub const Braille: Script = Script(46); / "Brai"
-    pub const Buginese: Script = Script(55); / "Bugi"
-    pub const Buhid: Script = Script(44); / "Buhd"
-    pub const CanadianAboriginal: Script = Script(40); / "Cans"
-    pub const Carian: Script = Script(104); / "Cari"
-    pub const CaucasianAlbanian: Script = Script(159); / "Aghb"
-    pub const Chakma: Script = Script(118); / "Cakm"
-    pub const Cham: Script = Script(66); / "Cham"
-    pub const Cherokee: Script = Script(6); / "Cher"
-    pub const Chorasmian: Script = Script(189); / "Chrs"
-    pub const Common: Script = Script(0); / "Zyyy"
-    pub const Coptic: Script = Script(7); / "Copt"
-    pub const Cuneiform: Script = Script(101); / "Xsux"
-    pub const Cypriot: Script = Script(47); / "Cprt"
-    pub const CyproMinoan: Script = Script(193); / "Cpmn"
-    pub const Cyrillic: Script = Script(8); / "Cyrl"
-    pub const Deseret: Script = Script(9); / "Dsrt"
-    pub const Devanagari: Script = Script(10); / "Deva"
-    pub const DivesAkuru: Script = Script(190); / "Diak"
-    pub const Dogra: Script = Script(178); / "Dogr"
-    pub const Duployan: Script = Script(135); / "Dupl"
-    pub const EgyptianHieroglyphs: Script = Script(71); / "Egyp"
-    pub const Elbasan: Script = Script(136); / "Elba"
-    pub const Elymaic: Script = Script(185); / "Elym"
-    pub const Ethiopian: Script = Script(11); / "Ethi"
-    pub const Garay: Script = Script(201); / "Gara"
-    pub const Georgian: Script = Script(12); / "Geor"
-    pub const Glagolitic: Script = Script(56); / "Glag"
-    pub const Gothic: Script = Script(13); / "Goth"
-    pub const Grantha: Script = Script(137); / "Gran"
-    pub const Greek: Script = Script(14); / "Grek"
-    pub const Gujarati: Script = Script(15); / "Gujr"
-    pub const GunjalaGondi: Script = Script(179); / "Gong"
-    pub const Gurmukhi: Script = Script(16); / "Guru"
-    pub const GurungKhema: Script = Script(202); / "Gukh"
-    pub const Han: Script = Script(17); / "Hani"
-    pub const Hangul: Script = Script(18); / "Hang"
-    pub const HanifiRohingya: Script = Script(182); / "Rohg"
-    pub const Hanunoo: Script = Script(43); / "Hano"
-    pub const Hatran: Script = Script(162); / "Hatr"
-    pub const Hebrew: Script = Script(19); / "Hebr"
-    pub const Hiragana: Script = Script(20); / "Hira"
-    pub const ImperialAramaic: Script = Script(116); / "Armi"
-    pub const Inherited: Script = Script(1); / "Zinh"
-    pub const InscriptionalPahlavi: Script = Script(122); / "Phli"
-    pub const InscriptionalParthian: Script = Script(125); / "Prti"
-    pub const Javanese: Script = Script(78); / "Java"
-    pub const Kaithi: Script = Script(120); / "Kthi"
-    pub const Kannada: Script = Script(21); / "Knda"
-    pub const Katakana: Script = Script(22); / "Kana"
-    pub const Kawi: Script = Script(198); / "Kawi"
-    pub const KayahLi: Script = Script(79); / "Kali"
-    pub const Kharoshthi: Script = Script(57); / "Khar"
-    pub const KhitanSmallScript: Script = Script(191); / "Kits"
-    pub const Khmer: Script = Script(23); / "Khmr"
-    pub const Khojki: Script = Script(157); / "Khoj"
-    pub const Khudawadi: Script = Script(145); / "Sind"
-    pub const KiratRai: Script = Script(203); / "Krai"
-    pub const Lao: Script = Script(24); / "Laoo"
-    pub const Latin: Script = Script(25); / "Latn"
-    pub const Lepcha: Script = Script(82); / "Lepc"
-    pub const Limbu: Script = Script(48); / "Limb"
-    pub const LinearA: Script = Script(83); / "Lina"
-    pub const LinearB: Script = Script(49); / "Linb"
-    pub const Lisu: Script = Script(131); / "Lisu"
-    pub const Lycian: Script = Script(107); / "Lyci"
-    pub const Lydian: Script = Script(108); / "Lydi"
-    pub const Mahajani: Script = Script(160); / "Mahj"
-    pub const Makasar: Script = Script(180); / "Maka"
-    pub const Malayalam: Script = Script(26); / "Mlym"
-    pub const Mandaic: Script = Script(84); / "Mand"
-    pub const Manichaean: Script = Script(121); / "Mani"
-    pub const Marchen: Script = Script(169); / "Marc"
-    pub const MasaramGondi: Script = Script(175); / "Gonm"
-    pub const Medefaidrin: Script = Script(181); / "Medf"
-    pub const MeeteiMayek: Script = Script(115); / "Mtei"
-    pub const MendeKikakui: Script = Script(140); / "Mend"
-    pub const MeroiticCursive: Script = Script(141); / "Merc"
-    pub const MeroiticHieroglyphs: Script = Script(86); / "Mero"
-    pub const Miao: Script = Script(92); / "Plrd"
-    pub const Modi: Script = Script(163); / "Modi"
-    pub const Mongolian: Script = Script(27); / "Mong"
-    pub const Mro: Script = Script(149); / "Mroo"
-    pub const Multani: Script = Script(164); / "Mult"
-    pub const Myanmar: Script = Script(28); / "Mymr"
-    pub const Nabataean: Script = Script(143); / "Nbat"
-    pub const NagMundari: Script = Script(199); / "Nagm"
-    pub const Nandinagari: Script = Script(187); / "Nand"
-    pub const Newa: Script = Script(170); / "Newa"
-    pub const NewTaiLue: Script = Script(59); / "Talu"
-    pub const Nko: Script = Script(87); / "Nkoo"
-    pub const Nushu: Script = Script(150); / "Nshu"
-    pub const NyiakengPuachueHmong: Script = Script(186); / "Hmnp"
-    pub const Ogham: Script = Script(29); / "Ogam"
-    pub const OlChiki: Script = Script(109); / "Olck"
-    pub const OldHungarian: Script = Script(76); / "Hung"
-    pub const OldItalic: Script = Script(30); / "Ital"
-    pub const OldNorthArabian: Script = Script(142); / "Narb"
-    pub const OldPermic: Script = Script(89); / "Perm"
-    pub const OldPersian: Script = Script(61); / "Xpeo"
-    pub const OldSogdian: Script = Script(184); / "Sogo"
-    pub const OldSouthArabian: Script = Script(133); / "Sarb"
-    pub const OldTurkic: Script = Script(88); / "Orkh"
-    pub const OldUyghur: Script = Script(194); / "Ougr"
-    pub const OlOnal: Script = Script(204); / "Onao"
-    pub const Oriya: Script = Script(31); / "Orya"
-    pub const Osage: Script = Script(171); / "Osge"
-    pub const Osmanya: Script = Script(50); / "Osma"
-    pub const PahawhHmong: Script = Script(75); / "Hmng"
-    pub const Palmyrene: Script = Script(144); / "Palm"
-    pub const PauCinHau: Script = Script(165); / "Pauc"
-    pub const PhagsPa: Script = Script(90); / "Phag"
-    pub const Phoenician: Script = Script(91); / "Phnx"
-    pub const PsalterPahlavi: Script = Script(123); / "Phlp"
-    pub const Rejang: Script = Script(110); / "Rjng"
-    pub const Runic: Script = Script(32); / "Runr"
-    pub const Samaritan: Script = Script(126); / "Samr"
-    pub const Saurashtra: Script = Script(111); / "Saur"
-    pub const Sharada: Script = Script(151); / "Shrd"
-    pub const Shavian: Script = Script(51); / "Shaw"
-    pub const Siddham: Script = Script(166); / "Sidd"
-    pub const Sidetic: Script = Script(209); / "Sidt"
-    pub const SignWriting: Script = Script(112); / "Sgnw"
-    pub const Sinhala: Script = Script(33); / "Sinh"
-    pub const Sogdian: Script = Script(183); / "Sogd"
-    pub const SoraSompeng: Script = Script(152); / "Sora"
-    pub const Soyombo: Script = Script(176); / "Soyo"
-    pub const Sundanese: Script = Script(113); / "Sund"
-    pub const Sunuwar: Script = Script(205); / "Sunu"
-    pub const SylotiNagri: Script = Script(58); / "Sylo"
-    pub const Syriac: Script = Script(34); / "Syrc"
-    pub const Tagalog: Script = Script(42); / "Tglg"
-    pub const Tagbanwa: Script = Script(45); / "Tagb"
-    pub const TaiLe: Script = Script(52); / "Tale"
-    pub const TaiTham: Script = Script(106); / "Lana"
-    pub const TaiViet: Script = Script(127); / "Tavt"
-    pub const TaiYo: Script = Script(210); / "Tayo"
-    pub const Takri: Script = Script(153); / "Takr"
-    pub const Tamil: Script = Script(35); / "Taml"
-    pub const Tangsa: Script = Script(195); / "Tnsa"
-    pub const Tangut: Script = Script(154); / "Tang"
-    pub const Telugu: Script = Script(36); / "Telu"
-    pub const Thaana: Script = Script(37); / "Thaa"
-    pub const Thai: Script = Script(38); / "Thai"
-    pub const Tibetan: Script = Script(39); / "Tibt"
-    pub const Tifinagh: Script = Script(60); / "Tfng"
-    pub const Tirhuta: Script = Script(158); / "Tirh"
-    pub const Todhri: Script = Script(206); / "Todr"
-    pub const TolongSiki: Script = Script(211); / "Tols"
-    pub const Toto: Script = Script(196); / "Toto"
-    pub const TuluTigalari: Script = Script(207); / "Tutg"
-    pub const Ugaritic: Script = Script(53); / "Ugar"
-    pub const Vai: Script = Script(99); / "Vaii"
-    pub const Vithkuqi: Script = Script(197); / "Vith"
-    pub const Wancho: Script = Script(188); / "Wcho"
-    pub const WarangCiti: Script = Script(146); / "Wara"
-    pub const Yezidi: Script = Script(192); / "Yezi"
-    pub const Yi: Script = Script(41); / "Yiii"
-    pub const ZanabazarSquare: Script = Script(177); / "Zanb"
-
-    // These 38 scripts are scripts that ICU defines but Unicode
-    // doesn't. We define them for parity with ICU, and so
-    // that our short name map can be dense.
-    // It's unclear why we have exposed an identifier for
-    // Nastaliq but not for any of the others.
-    pub const Nastaliq: Script = Script(200); / "Aran"
-    "Afak" => 147;
-    "Blis" => 64;
-    "Cirt" => 67;
-    "Cyrs" => 68;
-    "Egyd" => 69;
-    "Egyh" => 70;
-    "Geok" => 72;
-    "Hanb" => 172;
-    "Hans" => 73;
-    "Hant" => 74;
-    "Hntl" => 212;
-    "Hrkt" => 54;
-    "Inds" => 77;
-    "Jamo" => 173;
-    "Jpan" => 105;
-    "Jurc" => 148;
-    "Kore" => 119;
-    "Kpel" => 138;
-    "Latf" => 80;
-    "Latg" => 81;
-    "Loma" => 139;
-    "Maya" => 85;
-    "Moon" => 114;
-    "Nkgb" => 132;
-    "Phlv" => 124;
-    "Roro" => 93;
-    "Sara" => 94;
-    "Syre" => 95;
-    "Syrj" => 96;
-    "Syrn" => 97;
-    "Teng" => 98;
-    "Visp" => 100;
-    "Wole" => 155;
-    "Zmth" => 128;
-    "Zsye" => 174;
-    "Zsym" => 129;
-    "Zxxx" => 102;
-}
-#[test]
-fn script_consts();
+impl Default for Script {
+    fn default() -> Self {
+        Self::Unknown
+    }
 }
 
 impl Script {
@@ -1278,25 +713,10 @@ impl HangulSyllableType {
     }
 }
 
-create_const_array! {
-#[allow(non_upper_case_globals)]
-impl HangulSyllableType {
-    #[default]
-    /// (`NA`) not applicable (e.g. not a Hangul code point).
-    pub const NotApplicable: HangulSyllableType = HangulSyllableType(0); / "NA"
-    /// (`L`) a conjoining leading consonant Jamo.
-    pub const LeadingJamo: HangulSyllableType = HangulSyllableType(1); / "L"
-    /// (`V`) a conjoining vowel Jamo.
-    pub const VowelJamo: HangulSyllableType = HangulSyllableType(2); / "V"
-    /// (`T`) a conjoining trailing consonant Jamo.
-    pub const TrailingJamo: HangulSyllableType = HangulSyllableType(3); / "T"
-    /// (`LV`) a precomposed syllable with a leading consonant and a vowel.
-    pub const LeadingVowelSyllable: HangulSyllableType = HangulSyllableType(4); / "LV"
-    /// (`LVT`) a precomposed syllable with a leading consonant, a vowel, and a trailing consonant.
-    pub const LeadingVowelTrailingSyllable: HangulSyllableType = HangulSyllableType(5); / "LVT"
-}
-#[test]
-fn hangul_syllable_type_consts();
+impl Default for HangulSyllableType {
+    fn default() -> Self {
+        Self::NotApplicable
+    }
 }
 
 make_enumerated_property! {
@@ -1353,20 +773,10 @@ impl EastAsianWidth {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl EastAsianWidth {
-    #[default]
-    pub const Neutral: EastAsianWidth = EastAsianWidth(0); / "N"
-    pub const Ambiguous: EastAsianWidth = EastAsianWidth(1); / "A"
-    pub const Halfwidth: EastAsianWidth = EastAsianWidth(2); / "H"
-    pub const Fullwidth: EastAsianWidth = EastAsianWidth(3); / "F"
-    pub const Narrow: EastAsianWidth = EastAsianWidth(4); / "Na"
-    pub const Wide: EastAsianWidth = EastAsianWidth(5); / "W"
-}
-#[test]
-fn east_asian_width_consts();
+impl Default for EastAsianWidth {
+    fn default() -> Self {
+        Self::Neutral
+    }
 }
 
 make_enumerated_property! {
@@ -1426,67 +836,10 @@ impl LineBreak {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl LineBreak {
-    #[default]
-    pub const Unknown: LineBreak = LineBreak(0); / "XX"
-    pub const Ambiguous: LineBreak = LineBreak(1); / "AI"
-    pub const Alphabetic: LineBreak = LineBreak(2); / "AL"
-    pub const BreakBoth: LineBreak = LineBreak(3); / "B2"
-    pub const BreakAfter: LineBreak = LineBreak(4); / "BA"
-    pub const BreakBefore: LineBreak = LineBreak(5); / "BB"
-    pub const MandatoryBreak: LineBreak = LineBreak(6); / "BK"
-    pub const ContingentBreak: LineBreak = LineBreak(7); / "CB"
-    pub const ClosePunctuation: LineBreak = LineBreak(8); / "CL"
-    pub const CombiningMark: LineBreak = LineBreak(9); / "CM"
-    pub const CarriageReturn: LineBreak = LineBreak(10); / "CR"
-    pub const Exclamation: LineBreak = LineBreak(11); / "EX"
-    pub const Glue: LineBreak = LineBreak(12); / "GL"
-    pub const Hyphen: LineBreak = LineBreak(13); / "HY"
-    pub const Ideographic: LineBreak = LineBreak(14); / "ID"
-    pub const Inseparable: LineBreak = LineBreak(15); / "IN"
-    pub const InfixNumeric: LineBreak = LineBreak(16); / "IS"
-    pub const LineFeed: LineBreak = LineBreak(17); / "LF"
-    pub const Nonstarter: LineBreak = LineBreak(18); / "NS"
-    pub const Numeric: LineBreak = LineBreak(19); / "NU"
-    pub const OpenPunctuation: LineBreak = LineBreak(20); / "OP"
-    pub const PostfixNumeric: LineBreak = LineBreak(21); / "PO"
-    pub const PrefixNumeric: LineBreak = LineBreak(22); / "PR"
-    pub const Quotation: LineBreak = LineBreak(23); / "QU"
-    pub const ComplexContext: LineBreak = LineBreak(24); / "SA"
-    pub const Surrogate: LineBreak = LineBreak(25); / "SG"
-    pub const Space: LineBreak = LineBreak(26); / "SP"
-    pub const BreakSymbols: LineBreak = LineBreak(27); / "SY"
-    pub const ZWSpace: LineBreak = LineBreak(28); / "ZW"
-    pub const NextLine: LineBreak = LineBreak(29); / "NL"
-    pub const WordJoiner: LineBreak = LineBreak(30); / "WJ"
-    pub const H2: LineBreak = LineBreak(31); / "H2"
-    pub const H3: LineBreak = LineBreak(32); / "H3"
-    pub const JL: LineBreak = LineBreak(33); / "JL"
-    pub const JT: LineBreak = LineBreak(34); / "JT"
-    pub const JV: LineBreak = LineBreak(35); / "JV"
-    pub const CloseParenthesis: LineBreak = LineBreak(36); / "CP"
-    pub const ConditionalJapaneseStarter: LineBreak = LineBreak(37); / "CJ"
-    pub const HebrewLetter: LineBreak = LineBreak(38); / "HL"
-    pub const RegionalIndicator: LineBreak = LineBreak(39); / "RI"
-    pub const EBase: LineBreak = LineBreak(40); / "EB"
-    pub const EModifier: LineBreak = LineBreak(41); / "EM"
-    pub const ZWJ: LineBreak = LineBreak(42); / "ZWJ"
-
-    // Added in Unicode 15.1:
-    pub const Aksara: LineBreak = LineBreak(43); / "AK"
-    pub const AksaraPrebase: LineBreak = LineBreak(44); / "AP"
-    pub const AksaraStart: LineBreak = LineBreak(45); / "AS"
-    pub const ViramaFinal: LineBreak = LineBreak(46); / "VF"
-    pub const Virama: LineBreak = LineBreak(47); / "VI"
-
-    // Added in Unicode 17:
-    pub const UnambiguousHyphen: LineBreak = LineBreak(48); / "HH"
-}
-#[test]
-fn line_break_consts();
+impl Default for LineBreak {
+    fn default() -> Self {
+        Self::Unknown
+    }
 }
 
 make_enumerated_property! {
@@ -1545,36 +898,10 @@ impl GraphemeClusterBreak {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl GraphemeClusterBreak {
-    #[default]
-    pub const Other: GraphemeClusterBreak = GraphemeClusterBreak(0); / "XX"
-    pub const Control: GraphemeClusterBreak = GraphemeClusterBreak(1); / "CN"
-    pub const CR: GraphemeClusterBreak = GraphemeClusterBreak(2); / "CR"
-    pub const Extend: GraphemeClusterBreak = GraphemeClusterBreak(3); / "EX"
-    pub const L: GraphemeClusterBreak = GraphemeClusterBreak(4); / "L"
-    pub const LF: GraphemeClusterBreak = GraphemeClusterBreak(5); / "LF"
-    pub const LV: GraphemeClusterBreak = GraphemeClusterBreak(6); / "LV"
-    pub const LVT: GraphemeClusterBreak = GraphemeClusterBreak(7); / "LVT"
-    pub const T: GraphemeClusterBreak = GraphemeClusterBreak(8); / "T"
-    pub const V: GraphemeClusterBreak = GraphemeClusterBreak(9); / "V"
-    pub const SpacingMark: GraphemeClusterBreak = GraphemeClusterBreak(10); / "SM"
-    pub const Prepend: GraphemeClusterBreak = GraphemeClusterBreak(11); / "PP"
-    pub const RegionalIndicator: GraphemeClusterBreak = GraphemeClusterBreak(12); / "RI"
-    /// This value is obsolete and unused.
-    pub const EBase: GraphemeClusterBreak = GraphemeClusterBreak(13); / "EB"
-    /// This value is obsolete and unused.
-    pub const EBaseGAZ: GraphemeClusterBreak = GraphemeClusterBreak(14); / "EBG"
-    /// This value is obsolete and unused.
-    pub const EModifier: GraphemeClusterBreak = GraphemeClusterBreak(15); / "EM"
-    /// This value is obsolete and unused.
-    pub const GlueAfterZwj: GraphemeClusterBreak = GraphemeClusterBreak(16); / "GAZ"
-    pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); / "ZWJ"
-}
-#[test]
-fn gcb_consts();
+impl Default for GraphemeClusterBreak {
+    fn default() -> Self {
+        Self::Other
+    }
 }
 
 make_enumerated_property! {
@@ -1633,41 +960,10 @@ impl WordBreak {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl WordBreak {
-    #[default]
-    pub const Other: WordBreak = WordBreak(0); / "XX"
-    pub const ALetter: WordBreak = WordBreak(1); / "LE"
-    pub const Format: WordBreak = WordBreak(2); / "FO"
-    pub const Katakana: WordBreak = WordBreak(3); / "KA"
-    pub const MidLetter: WordBreak = WordBreak(4); / "ML"
-    pub const MidNum: WordBreak = WordBreak(5); / "MN"
-    pub const Numeric: WordBreak = WordBreak(6); / "NU"
-    pub const ExtendNumLet: WordBreak = WordBreak(7); / "EX"
-    pub const CR: WordBreak = WordBreak(8); / "CR"
-    pub const Extend: WordBreak = WordBreak(9); / "Extend"
-    pub const LF: WordBreak = WordBreak(10); / "LF"
-    pub const MidNumLet: WordBreak = WordBreak(11); / "MB"
-    pub const Newline: WordBreak = WordBreak(12); / "NL"
-    pub const RegionalIndicator: WordBreak = WordBreak(13); / "RI"
-    pub const HebrewLetter: WordBreak = WordBreak(14); / "HL"
-    pub const SingleQuote: WordBreak = WordBreak(15); / "SQ"
-    pub const DoubleQuote: WordBreak = WordBreak(16); / "DQ"
-    /// This value is obsolete and unused.
-    pub const EBase: WordBreak = WordBreak(17); / "EB"
-    /// This value is obsolete and unused.
-    pub const EBaseGAZ: WordBreak = WordBreak(18); / "EBG"
-    /// This value is obsolete and unused.
-    pub const EModifier: WordBreak = WordBreak(19); / "EM"
-    /// This value is obsolete and unused.
-    pub const GlueAfterZwj: WordBreak = WordBreak(20); / "GAZ"
-    pub const ZWJ: WordBreak = WordBreak(21); / "ZWJ"
-    pub const WSegSpace: WordBreak = WordBreak(22); / "WSegSpace"
-}
-#[test]
-fn word_break_consts();
+impl Default for WordBreak {
+    fn default() -> Self {
+        Self::Other
+    }
 }
 
 make_enumerated_property! {
@@ -1726,29 +1022,10 @@ impl SentenceBreak {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl SentenceBreak {
-    #[default]
-    pub const Other: SentenceBreak = SentenceBreak(0); / "XX"
-    pub const ATerm: SentenceBreak = SentenceBreak(1); / "AT"
-    pub const Close: SentenceBreak = SentenceBreak(2); / "CL"
-    pub const Format: SentenceBreak = SentenceBreak(3); / "FO"
-    pub const Lower: SentenceBreak = SentenceBreak(4); / "LO"
-    pub const Numeric: SentenceBreak = SentenceBreak(5); / "NU"
-    pub const OLetter: SentenceBreak = SentenceBreak(6); / "LE"
-    pub const Sep: SentenceBreak = SentenceBreak(7); / "SE"
-    pub const Sp: SentenceBreak = SentenceBreak(8); / "SP"
-    pub const STerm: SentenceBreak = SentenceBreak(9); / "ST"
-    pub const Upper: SentenceBreak = SentenceBreak(10); / "UP"
-    pub const CR: SentenceBreak = SentenceBreak(11); / "CR"
-    pub const Extend: SentenceBreak = SentenceBreak(12); / "EX"
-    pub const LF: SentenceBreak = SentenceBreak(13); / "LF"
-    pub const SContinue: SentenceBreak = SentenceBreak(14); / "SC"
-}
-#[test]
-fn sentence_break_consts();
+impl Default for SentenceBreak {
+    fn default() -> Self {
+        Self::Other
+    }
 }
 
 make_enumerated_property! {
@@ -1811,73 +1088,10 @@ impl CanonicalCombiningClass {
     }
 }
 
-create_const_array! {
-// These constant names come from PropertyValueAliases.txt
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl CanonicalCombiningClass {
-    #[default]
-    pub const NotReordered: CanonicalCombiningClass = CanonicalCombiningClass(0); / "NR"
-    pub const Overlay: CanonicalCombiningClass = CanonicalCombiningClass(1); / "OV"
-    pub const HanReading: CanonicalCombiningClass = CanonicalCombiningClass(6); / "HANR"
-    pub const Nukta: CanonicalCombiningClass = CanonicalCombiningClass(7); / "NK"
-    pub const KanaVoicing: CanonicalCombiningClass = CanonicalCombiningClass(8); / "KV"
-    pub const Virama: CanonicalCombiningClass = CanonicalCombiningClass(9); / "VR"
-    pub const CCC10: CanonicalCombiningClass = CanonicalCombiningClass(10); / "CCC10"
-    pub const CCC11: CanonicalCombiningClass = CanonicalCombiningClass(11); / "CCC11"
-    pub const CCC12: CanonicalCombiningClass = CanonicalCombiningClass(12); / "CCC12"
-    pub const CCC13: CanonicalCombiningClass = CanonicalCombiningClass(13); / "CCC13"
-    pub const CCC14: CanonicalCombiningClass = CanonicalCombiningClass(14); / "CCC14"
-    pub const CCC15: CanonicalCombiningClass = CanonicalCombiningClass(15); / "CCC15"
-    pub const CCC16: CanonicalCombiningClass = CanonicalCombiningClass(16); / "CCC16"
-    pub const CCC17: CanonicalCombiningClass = CanonicalCombiningClass(17); / "CCC17"
-    pub const CCC18: CanonicalCombiningClass = CanonicalCombiningClass(18); / "CCC18"
-    pub const CCC19: CanonicalCombiningClass = CanonicalCombiningClass(19); / "CCC19"
-    pub const CCC20: CanonicalCombiningClass = CanonicalCombiningClass(20); / "CCC20"
-    pub const CCC21: CanonicalCombiningClass = CanonicalCombiningClass(21); / "CCC21"
-    pub const CCC22: CanonicalCombiningClass = CanonicalCombiningClass(22); / "CCC22"
-    pub const CCC23: CanonicalCombiningClass = CanonicalCombiningClass(23); / "CCC23"
-    pub const CCC24: CanonicalCombiningClass = CanonicalCombiningClass(24); / "CCC24"
-    pub const CCC25: CanonicalCombiningClass = CanonicalCombiningClass(25); / "CCC25"
-    pub const CCC26: CanonicalCombiningClass = CanonicalCombiningClass(26); / "CCC26"
-    pub const CCC27: CanonicalCombiningClass = CanonicalCombiningClass(27); / "CCC27"
-    pub const CCC28: CanonicalCombiningClass = CanonicalCombiningClass(28); / "CCC28"
-    pub const CCC29: CanonicalCombiningClass = CanonicalCombiningClass(29); / "CCC29"
-    pub const CCC30: CanonicalCombiningClass = CanonicalCombiningClass(30); / "CCC30"
-    pub const CCC31: CanonicalCombiningClass = CanonicalCombiningClass(31); / "CCC31"
-    pub const CCC32: CanonicalCombiningClass = CanonicalCombiningClass(32); / "CCC32"
-    pub const CCC33: CanonicalCombiningClass = CanonicalCombiningClass(33); / "CCC33"
-    pub const CCC34: CanonicalCombiningClass = CanonicalCombiningClass(34); / "CCC34"
-    pub const CCC35: CanonicalCombiningClass = CanonicalCombiningClass(35); / "CCC35"
-    pub const CCC36: CanonicalCombiningClass = CanonicalCombiningClass(36); / "CCC36"
-    pub const CCC84: CanonicalCombiningClass = CanonicalCombiningClass(84); / "CCC84"
-    pub const CCC91: CanonicalCombiningClass = CanonicalCombiningClass(91); / "CCC91"
-    pub const CCC103: CanonicalCombiningClass = CanonicalCombiningClass(103); / "CCC103"
-    pub const CCC107: CanonicalCombiningClass = CanonicalCombiningClass(107); / "CCC107"
-    pub const CCC118: CanonicalCombiningClass = CanonicalCombiningClass(118); / "CCC118"
-    pub const CCC122: CanonicalCombiningClass = CanonicalCombiningClass(122); / "CCC122"
-    pub const CCC129: CanonicalCombiningClass = CanonicalCombiningClass(129); / "CCC129"
-    pub const CCC130: CanonicalCombiningClass = CanonicalCombiningClass(130); / "CCC130"
-    pub const CCC132: CanonicalCombiningClass = CanonicalCombiningClass(132); / "CCC132"
-    pub const CCC133: CanonicalCombiningClass = CanonicalCombiningClass(133); / "CCC133" // RESERVED
-    pub const AttachedBelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(200); / "ATBL"
-    pub const AttachedBelow: CanonicalCombiningClass = CanonicalCombiningClass(202); / "ATB"
-    pub const AttachedAbove: CanonicalCombiningClass = CanonicalCombiningClass(214); / "ATA"
-    pub const AttachedAboveRight: CanonicalCombiningClass = CanonicalCombiningClass(216); / "ATAR"
-    pub const BelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(218); / "BL"
-    pub const Below: CanonicalCombiningClass = CanonicalCombiningClass(220); / "B"
-    pub const BelowRight: CanonicalCombiningClass = CanonicalCombiningClass(222); / "BR"
-    pub const Left: CanonicalCombiningClass = CanonicalCombiningClass(224); / "L"
-    pub const Right: CanonicalCombiningClass = CanonicalCombiningClass(226); / "R"
-    pub const AboveLeft: CanonicalCombiningClass = CanonicalCombiningClass(228); / "AL"
-    pub const Above: CanonicalCombiningClass = CanonicalCombiningClass(230); / "A"
-    pub const AboveRight: CanonicalCombiningClass = CanonicalCombiningClass(232); / "AR"
-    pub const DoubleBelow: CanonicalCombiningClass = CanonicalCombiningClass(233); / "DB"
-    pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); / "DA"
-    pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); / "IS"
-}
-#[test]
-fn ccc_consts();
+impl Default for CanonicalCombiningClass {
+    fn default() -> Self {
+        Self::NotReordered
+    }
 }
 
 make_enumerated_property! {
@@ -1940,18 +1154,10 @@ impl IndicConjunctBreak {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl IndicConjunctBreak {
-    #[default]
-    pub const None: IndicConjunctBreak = IndicConjunctBreak(0); / "None"
-    pub const Consonant: IndicConjunctBreak = IndicConjunctBreak(1); / "Consonant"
-    pub const Extend: IndicConjunctBreak = IndicConjunctBreak(2); / "Extend"
-    pub const Linker: IndicConjunctBreak = IndicConjunctBreak(3); / "Linker"
-}
-#[test]
-fn indic_conjunct_break_consts();
+impl Default for IndicConjunctBreak {
+    fn default() -> Self {
+        Self::None
+    }
 }
 
 make_enumerated_property! {
@@ -2006,51 +1212,10 @@ impl IndicSyllabicCategory {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl IndicSyllabicCategory {
-    #[default]
-    pub const Other: IndicSyllabicCategory = IndicSyllabicCategory(0);
- / "Other"    pub const Avagraha: IndicSyllabicCategory = IndicSyllabicCategory(1);
- / "Avagraha"    pub const Bindu: IndicSyllabicCategory = IndicSyllabicCategory(2);
- / "Bindu"    pub const BrahmiJoiningNumber: IndicSyllabicCategory = IndicSyllabicCategory(3);
- / "Brahmi_Joining_Number"    pub const CantillationMark: IndicSyllabicCategory = IndicSyllabicCategory(4);
- / "Cantillation_Mark"    pub const Consonant: IndicSyllabicCategory = IndicSyllabicCategory(5);
- / "Consonant"    pub const ConsonantDead: IndicSyllabicCategory = IndicSyllabicCategory(6);
- / "Consonant_Dead"    pub const ConsonantFinal: IndicSyllabicCategory = IndicSyllabicCategory(7);
- / "Consonant_Final"    pub const ConsonantHeadLetter: IndicSyllabicCategory = IndicSyllabicCategory(8);
- / "Consonant_Head_Letter"    pub const ConsonantInitialPostfixed: IndicSyllabicCategory = IndicSyllabicCategory(9);
- / "Consonant_Initial_Postfixed"    pub const ConsonantKiller: IndicSyllabicCategory = IndicSyllabicCategory(10); / "Consonant_Killer"
-    pub const ConsonantMedial: IndicSyllabicCategory = IndicSyllabicCategory(11); / "Consonant_Medial"
-    pub const ConsonantPlaceholder: IndicSyllabicCategory = IndicSyllabicCategory(12); / "Consonant_Placeholder"
-    pub const ConsonantPrecedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(13); / "Consonant_Preceding_Repha"
-    pub const ConsonantPrefixed: IndicSyllabicCategory = IndicSyllabicCategory(14); / "Consonant_Prefixed"
-    pub const ConsonantSubjoined: IndicSyllabicCategory = IndicSyllabicCategory(15); / "Consonant_Subjoined"
-    pub const ConsonantSucceedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(16); / "Consonant_Succeeding_Repha"
-    pub const ConsonantWithStacker: IndicSyllabicCategory = IndicSyllabicCategory(17); / "Consonant_With_Stacker"
-    pub const GeminationMark: IndicSyllabicCategory = IndicSyllabicCategory(18); / "Gemination_Mark"
-    pub const InvisibleStacker: IndicSyllabicCategory = IndicSyllabicCategory(19); / "Invisible_Stacker"
-    pub const Joiner: IndicSyllabicCategory = IndicSyllabicCategory(20); / "Joiner"
-    pub const ModifyingLetter: IndicSyllabicCategory = IndicSyllabicCategory(21); / "Modifying_Letter"
-    pub const NonJoiner: IndicSyllabicCategory = IndicSyllabicCategory(22); / "Non_Joiner"
-    pub const Nukta: IndicSyllabicCategory = IndicSyllabicCategory(23); / "Nukta"
-    pub const Number: IndicSyllabicCategory = IndicSyllabicCategory(24); / "Number"
-    pub const NumberJoiner: IndicSyllabicCategory = IndicSyllabicCategory(25); / "Number_Joiner"
-    pub const PureKiller: IndicSyllabicCategory = IndicSyllabicCategory(26); / "Pure_Killer"
-    pub const RegisterShifter: IndicSyllabicCategory = IndicSyllabicCategory(27); / "Register_Shifter"
-    pub const SyllableModifier: IndicSyllabicCategory = IndicSyllabicCategory(28); / "Syllable_Modifier"
-    pub const ToneLetter: IndicSyllabicCategory = IndicSyllabicCategory(29); / "Tone_Letter"
-    pub const ToneMark: IndicSyllabicCategory = IndicSyllabicCategory(30); / "Tone_Mark"
-    pub const Virama: IndicSyllabicCategory = IndicSyllabicCategory(31); / "Virama"
-    pub const Visarga: IndicSyllabicCategory = IndicSyllabicCategory(32); / "Visarga"
-    pub const Vowel: IndicSyllabicCategory = IndicSyllabicCategory(33); / "Vowel"
-    pub const VowelDependent: IndicSyllabicCategory = IndicSyllabicCategory(34); / "Vowel_Dependent"
-    pub const VowelIndependent: IndicSyllabicCategory = IndicSyllabicCategory(35); / "Vowel_Independent"
-    pub const ReorderingKiller: IndicSyllabicCategory = IndicSyllabicCategory(36); / "Reordering_Killer"
-}
-#[test]
-fn indic_syllabic_category_consts();
+impl Default for IndicSyllabicCategory {
+    fn default() -> Self {
+        Self::Other
+    }
 }
 
 make_enumerated_property! {
@@ -2104,120 +1269,10 @@ impl JoiningGroup {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl JoiningGroup {
-    #[default]
-    pub const NoJoiningGroup: JoiningGroup = JoiningGroup(0); / "No_Joining_Group"
-    pub const Ain: JoiningGroup = JoiningGroup(1); / "Ain"
-    pub const Alaph: JoiningGroup = JoiningGroup(2); / "Alaph"
-    pub const Alef: JoiningGroup = JoiningGroup(3); / "Alef"
-    pub const Beh: JoiningGroup = JoiningGroup(4); / "Beh"
-    pub const Beth: JoiningGroup = JoiningGroup(5); / "Beth"
-    pub const Dal: JoiningGroup = JoiningGroup(6); / "Dal"
-    pub const DalathRish: JoiningGroup = JoiningGroup(7); / "Dalath_Rish"
-    pub const E: JoiningGroup = JoiningGroup(8); / "E"
-    pub const Feh: JoiningGroup = JoiningGroup(9); / "Feh"
-    pub const FinalSemkath: JoiningGroup = JoiningGroup(10); / "Final_Semkath"
-    pub const Gaf: JoiningGroup = JoiningGroup(11); / "Gaf"
-    pub const Gamal: JoiningGroup = JoiningGroup(12); / "Gamal"
-    pub const Hah: JoiningGroup = JoiningGroup(13); / "Hah"
-    pub const TehMarbutaGoal: JoiningGroup = JoiningGroup(14); / "Teh_Marbuta_Goal"
-    pub const He: JoiningGroup = JoiningGroup(15); / "He"
-    pub const Heh: JoiningGroup = JoiningGroup(16); / "Heh"
-    pub const HehGoal: JoiningGroup = JoiningGroup(17); / "Heh_Goal"
-    pub const Heth: JoiningGroup = JoiningGroup(18); / "Heth"
-    pub const Kaf: JoiningGroup = JoiningGroup(19); / "Kaf"
-    pub const Kaph: JoiningGroup = JoiningGroup(20); / "Kaph"
-    pub const KnottedHeh: JoiningGroup = JoiningGroup(21); / "Knotted_Heh"
-    pub const Lam: JoiningGroup = JoiningGroup(22); / "Lam"
-    pub const Lamadh: JoiningGroup = JoiningGroup(23); / "Lamadh"
-    pub const Meem: JoiningGroup = JoiningGroup(24); / "Meem"
-    pub const Mim: JoiningGroup = JoiningGroup(25); / "Mim"
-    pub const Noon: JoiningGroup = JoiningGroup(26); / "Noon"
-    pub const Nun: JoiningGroup = JoiningGroup(27); / "Nun"
-    pub const Pe: JoiningGroup = JoiningGroup(28); / "Pe"
-    pub const Qaf: JoiningGroup = JoiningGroup(29); / "Qaf"
-    pub const Qaph: JoiningGroup = JoiningGroup(30); / "Qaph"
-    pub const Reh: JoiningGroup = JoiningGroup(31); / "Reh"
-    pub const ReversedPe: JoiningGroup = JoiningGroup(32); / "Reversed_Pe"
-    pub const Sad: JoiningGroup = JoiningGroup(33); / "Sad"
-    pub const Sadhe: JoiningGroup = JoiningGroup(34); / "Sadhe"
-    pub const Seen: JoiningGroup = JoiningGroup(35); / "Seen"
-    pub const Semkath: JoiningGroup = JoiningGroup(36); / "Semkath"
-    pub const Shin: JoiningGroup = JoiningGroup(37); / "Shin"
-    pub const SwashKaf: JoiningGroup = JoiningGroup(38); / "Swash_Kaf"
-    pub const SyriacWaw: JoiningGroup = JoiningGroup(39); / "Syriac_Waw"
-    pub const Tah: JoiningGroup = JoiningGroup(40); / "Tah"
-    pub const Taw: JoiningGroup = JoiningGroup(41); / "Taw"
-    pub const TehMarbuta: JoiningGroup = JoiningGroup(42); / "Teh_Marbuta"
-    pub const Teth: JoiningGroup = JoiningGroup(43); / "Teth"
-    pub const Waw: JoiningGroup = JoiningGroup(44); / "Waw"
-    pub const Yeh: JoiningGroup = JoiningGroup(45); / "Yeh"
-    pub const YehBarree: JoiningGroup = JoiningGroup(46); / "Yeh_Barree"
-    pub const YehWithTail: JoiningGroup = JoiningGroup(47); / "Yeh_With_Tail"
-    pub const Yudh: JoiningGroup = JoiningGroup(48); / "Yudh"
-    pub const YudhHe: JoiningGroup = JoiningGroup(49); / "Yudh_He"
-    pub const Zain: JoiningGroup = JoiningGroup(50); / "Zain"
-    pub const Fe: JoiningGroup = JoiningGroup(51); / "Fe"
-    pub const Khaph: JoiningGroup = JoiningGroup(52); / "Khaph"
-    pub const Zhain: JoiningGroup = JoiningGroup(53); / "Zhain"
-    pub const BurushaskiYehBarree: JoiningGroup = JoiningGroup(54); / "Burushaski_Yeh_Barree"
-    pub const FarsiYeh: JoiningGroup = JoiningGroup(55); / "Farsi_Yeh"
-    pub const Nya: JoiningGroup = JoiningGroup(56); / "Nya"
-    pub const RohingyaYeh: JoiningGroup = JoiningGroup(57); / "Rohingya_Yeh"
-    pub const ManichaeanAleph: JoiningGroup = JoiningGroup(58); / "Manichaean_Aleph"
-    pub const ManichaeanAyin: JoiningGroup = JoiningGroup(59); / "Manichaean_Ayin"
-    pub const ManichaeanBeth: JoiningGroup = JoiningGroup(60); / "Manichaean_Beth"
-    pub const ManichaeanDaleth: JoiningGroup = JoiningGroup(61); / "Manichaean_Daleth"
-    pub const ManichaeanDhamedh: JoiningGroup = JoiningGroup(62); / "Manichaean_Dhamedh"
-    pub const ManichaeanFive: JoiningGroup = JoiningGroup(63); / "Manichaean_Five"
-    pub const ManichaeanGimel: JoiningGroup = JoiningGroup(64); / "Manichaean_Gimel"
-    pub const ManichaeanHeth: JoiningGroup = JoiningGroup(65); / "Manichaean_Heth"
-    pub const ManichaeanHundred: JoiningGroup = JoiningGroup(66); / "Manichaean_Hundred"
-    pub const ManichaeanKaph: JoiningGroup = JoiningGroup(67); / "Manichaean_Kaph"
-    pub const ManichaeanLamedh: JoiningGroup = JoiningGroup(68); / "Manichaean_Lamedh"
-    pub const ManichaeanMem: JoiningGroup = JoiningGroup(69); / "Manichaean_Mem"
-    pub const ManichaeanNun: JoiningGroup = JoiningGroup(70); / "Manichaean_Nun"
-    pub const ManichaeanOne: JoiningGroup = JoiningGroup(71); / "Manichaean_One"
-    pub const ManichaeanPe: JoiningGroup = JoiningGroup(72); / "Manichaean_Pe"
-    pub const ManichaeanQoph: JoiningGroup = JoiningGroup(73); / "Manichaean_Qoph"
-    pub const ManichaeanResh: JoiningGroup = JoiningGroup(74); / "Manichaean_Resh"
-    pub const ManichaeanSadhe: JoiningGroup = JoiningGroup(75); / "Manichaean_Sadhe"
-    pub const ManichaeanSamekh: JoiningGroup = JoiningGroup(76); / "Manichaean_Samekh"
-    pub const ManichaeanTaw: JoiningGroup = JoiningGroup(77); / "Manichaean_Taw"
-    pub const ManichaeanTen: JoiningGroup = JoiningGroup(78); / "Manichaean_Ten"
-    pub const ManichaeanTeth: JoiningGroup = JoiningGroup(79); / "Manichaean_Teth"
-    pub const ManichaeanThamedh: JoiningGroup = JoiningGroup(80); / "Manichaean_Thamedh"
-    pub const ManichaeanTwenty: JoiningGroup = JoiningGroup(81); / "Manichaean_Twenty"
-    pub const ManichaeanWaw: JoiningGroup = JoiningGroup(82); / "Manichaean_Waw"
-    pub const ManichaeanYodh: JoiningGroup = JoiningGroup(83); / "Manichaean_Yodh"
-    pub const ManichaeanZayin: JoiningGroup = JoiningGroup(84); / "Manichaean_Zayin"
-    pub const StraightWaw: JoiningGroup = JoiningGroup(85); / "Straight_Waw"
-    pub const AfricanFeh: JoiningGroup = JoiningGroup(86); / "African_Feh"
-    pub const AfricanNoon: JoiningGroup = JoiningGroup(87); / "African_Noon"
-    pub const AfricanQaf: JoiningGroup = JoiningGroup(88); / "African_Qaf"
-    pub const MalayalamBha: JoiningGroup = JoiningGroup(89); / "Malayalam_Bha"
-    pub const MalayalamJa: JoiningGroup = JoiningGroup(90); / "Malayalam_Ja"
-    pub const MalayalamLla: JoiningGroup = JoiningGroup(91); / "Malayalam_Lla"
-    pub const MalayalamLlla: JoiningGroup = JoiningGroup(92); / "Malayalam_Llla"
-    pub const MalayalamNga: JoiningGroup = JoiningGroup(93); / "Malayalam_Nga"
-    pub const MalayalamNna: JoiningGroup = JoiningGroup(94); / "Malayalam_Nna"
-    pub const MalayalamNnna: JoiningGroup = JoiningGroup(95); / "Malayalam_Nnna"
-    pub const MalayalamNya: JoiningGroup = JoiningGroup(96); / "Malayalam_Nya"
-    pub const MalayalamRa: JoiningGroup = JoiningGroup(97); / "Malayalam_Ra"
-    pub const MalayalamSsa: JoiningGroup = JoiningGroup(98); / "Malayalam_Ssa"
-    pub const MalayalamTta: JoiningGroup = JoiningGroup(99); / "Malayalam_Tta"
-    pub const HanifiRohingyaKinnaYa: JoiningGroup = JoiningGroup(100); / "Hanifi_Rohingya_Kinna_Ya"
-    pub const HanifiRohingyaPa: JoiningGroup = JoiningGroup(101); / "Hanifi_Rohingya_Pa"
-    pub const ThinYeh: JoiningGroup = JoiningGroup(102); / "Thin_Yeh"
-    pub const VerticalTail: JoiningGroup = JoiningGroup(103); / "Vertical_Tail"
-    pub const KashmiriYeh: JoiningGroup = JoiningGroup(104); / "Kashmiri_Yeh"
-    pub const ThinNoon: JoiningGroup = JoiningGroup(105); / "Thin_Noon"
-}
-#[test]
-fn joining_group_consts();
+impl Default for JoiningGroup {
+    fn default() -> Self {
+        Self::NoJoiningGroup
+    }
 }
 
 make_enumerated_property! {
@@ -2273,20 +1328,10 @@ impl JoiningType {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl JoiningType {
-    #[default]
-    pub const NonJoining: JoiningType = JoiningType(0); / "U"
-    pub const JoinCausing: JoiningType = JoiningType(1); / "C"
-    pub const DualJoining: JoiningType = JoiningType(2); / "D"
-    pub const LeftJoining: JoiningType = JoiningType(3); / "L"
-    pub const RightJoining: JoiningType = JoiningType(4); / "R"
-    pub const Transparent: JoiningType = JoiningType(5); / "T"
-}
-#[test]
-fn joining_type_consts();
+impl Default for JoiningType {
+    fn default() -> Self {
+        Self::NonJoining
+    }
 }
 
 make_enumerated_property! {
@@ -2350,18 +1395,10 @@ impl VerticalOrientation {
     }
 }
 
-create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
-impl VerticalOrientation {
-    #[default]
-    pub const Rotated: VerticalOrientation = VerticalOrientation(0); / "R"
-    pub const TransformedRotated: VerticalOrientation = VerticalOrientation(1); / "Tr"
-    pub const TransformedUpright: VerticalOrientation = VerticalOrientation(2); / "Tu"
-    pub const Upright: VerticalOrientation = VerticalOrientation(3); / "U"
-}
-#[test]
-fn vertical_orientation_consts();
+impl Default for VerticalOrientation {
+    fn default() -> Self {
+        Self::Rotated
+    }
 }
 
 make_enumerated_property! {
@@ -3828,106 +2865,4 @@ make_emoji_set! {
     /// assert!(basic_emoji.contains_str("\u{1F6E4}\u{FE0F}")); // railway track
     /// assert!(!basic_emoji.contains_str("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
     /// ```
-}
-
-#[test]
-#[allow(deprecated)]
-fn test_to_icu4c_value() {
-    // Validate discriminants against PropertyDiscriminants.txt, which is shared with ICU4C.
-    for line in include_str!("../tests/data/PropertyDiscriminants.txt").lines() {
-        let line = line.split('#').next().unwrap().trim();
-        if line.is_empty() {
-            continue;
-        }
-        let mut parts = line.split(';').map(str::trim);
-        let prop = parts.next().unwrap();
-        let name = parts.next().unwrap();
-        let expected: u16 = parts.next().unwrap().parse().unwrap();
-        let actual = match prop.as_bytes() {
-            BidiClass::SHORT_NAME => crate::names::PropertyParser::<BidiClass>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            EastAsianWidth::SHORT_NAME => crate::names::PropertyParser::<EastAsianWidth>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            GeneralCategory::SHORT_NAME => crate::names::PropertyParser::<GeneralCategory>::new()
-                .get_strict(name)
-                .unwrap() as u8 as u16,
-            GraphemeClusterBreak::SHORT_NAME => {
-                crate::names::PropertyParser::<GraphemeClusterBreak>::new()
-                    .get_strict(name)
-                    .unwrap()
-                    .to_icu4c_value() as u16
-            }
-            HangulSyllableType::SHORT_NAME => {
-                crate::names::PropertyParser::<HangulSyllableType>::new()
-                    .get_strict(name)
-                    .unwrap()
-                    .to_icu4c_value() as u16
-            }
-            IndicConjunctBreak::SHORT_NAME => {
-                crate::names::PropertyParser::<IndicConjunctBreak>::new()
-                    .get_strict(name)
-                    .unwrap()
-                    .to_icu4c_value() as u16
-            }
-            IndicSyllabicCategory::SHORT_NAME => {
-                crate::names::PropertyParser::<IndicSyllabicCategory>::new()
-                    .get_strict(name)
-                    .unwrap()
-                    .to_icu4c_value() as u16
-            }
-            JoiningGroup::SHORT_NAME => crate::names::PropertyParser::<JoiningGroup>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            JoiningType::SHORT_NAME => crate::names::PropertyParser::<JoiningType>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            LineBreak::SHORT_NAME => crate::names::PropertyParser::<LineBreak>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            NumericType::SHORT_NAME => crate::names::PropertyParser::<NumericType>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            SentenceBreak::SHORT_NAME => crate::names::PropertyParser::<SentenceBreak>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            VerticalOrientation::SHORT_NAME => {
-                crate::names::PropertyParser::<VerticalOrientation>::new()
-                    .get_strict(name)
-                    .unwrap()
-                    .to_icu4c_value() as u16
-            }
-            WordBreak::SHORT_NAME => crate::names::PropertyParser::<WordBreak>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            Script::SHORT_NAME => crate::names::PropertyParser::<Script>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value(),
-            _ => panic!("Unknown property type: {}", prop),
-        };
-        assert_eq!(actual, expected);
-    }
-}
-
-#[test]
-fn test_numeric_value() {
-    // CCC has UCD-defined numeric values, so validate against those.
-    for &value in CanonicalCombiningClass::ALL_VALUES {
-        assert_eq!(
-            crate::names::PropertyParser::<CanonicalCombiningClass>::new()
-                .get_strict(&value.0.to_string()),
-            Some(value),
-            "{value:?}"
-        );
-    }
 }

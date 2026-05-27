@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// {{ crate::capi_properties::GENERATED_BY }}
+// {{ crate::properties::GENERATED_BY }}
 
 #[rustfmt::skip]
 
@@ -173,13 +173,13 @@ pub mod ffi {
     {% for prop in props %}
 
     impl {{ prop.map_type() }} {
-        /// Create a map for the `{{prop.name}}` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::{{ prop.name }}, {{ prop.kind() }})]
-        #[diplomat::attr(auto, named_constructor = "{{ prop.snake_case() }}")]
+        /// Create a map for the `{{prop.name.to_upper_camel_case()}}` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::{{ prop.name.to_upper_camel_case() }}, {{ prop.ffi_kind() }})]
+        #[diplomat::attr(auto, named_constructor = "{{ prop.name.to_upper_camel_case().to_snake_case() }}")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_{{ prop.snake_case() }}() -> Box<Self> {
+        pub fn create_{{ prop.name.to_upper_camel_case().to_snake_case() }}() -> Box<Self> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::{{prop.name}}>::new()
+            let data = icu_properties::CodePointMapData::<props::{{prop.name.to_upper_camel_case()}}>::new()
                 .static_to_owned()
                 .try_into_converted()
                 .map_err(|_| ())
@@ -187,15 +187,15 @@ pub mod ffi {
             Box::new(Self(data))
         }
 
-        /// Create a map for the `{{prop.name}}` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::{{ prop.name }}, {{ prop.kind() }})]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ prop.snake_case() }}_with_provider")]
+        /// Create a map for the `{{prop.name.to_upper_camel_case()}}` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::{{ prop.name.to_upper_camel_case() }}, {{ prop.ffi_kind() }})]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ prop.name.to_upper_camel_case().to_snake_case() }}_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_{{ prop.snake_case() }}_with_provider(
+        pub fn create_{{ prop.name.to_upper_camel_case().to_snake_case() }}_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<Self>, DataError> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::{{prop.name}}>::try_new_unstable(&provider.get_unstable()?)?
+            let data = icu_properties::CodePointMapData::<props::{{prop.name.to_upper_camel_case()}}>::try_new_unstable(&provider.get_unstable()?)?
                 .try_into_converted()
                 .map_err(|_| ())
                 .unwrap();
@@ -205,3 +205,4 @@ pub mod ffi {
 
     {%- endfor %}
 }
+

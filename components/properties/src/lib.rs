@@ -93,6 +93,8 @@ mod runtime;
 pub mod props;
 pub mod provider;
 pub mod script;
+#[rustfmt::skip]
+mod enum_values;
 
 mod bidi;
 mod trievalue;

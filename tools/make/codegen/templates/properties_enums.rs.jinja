@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// {{ crate::capi_properties::GENERATED_BY }}
+// {{ crate::properties::GENERATED_BY }}
 
 #[rustfmt::skip]
 
@@ -16,27 +16,29 @@ pub mod ffi {
 
     {%- for prop in props %}
 
-    #[diplomat::rust_link(icu::properties::props::{{prop.name}}, {{ prop.kind() }})]
-    #[diplomat::enum_convert(icu_properties::props::{{prop.name}}, needs_wildcard)]
+    #[diplomat::rust_link(icu::properties::props::{{prop.name.to_upper_camel_case()}}, {{ prop.ffi_kind() }})]
+    #[diplomat::enum_convert(icu_properties::props::{{prop.name.to_upper_camel_case()}}, needs_wildcard)]
     #[non_exhaustive]
-    pub enum {{prop.name}} {
-        {%- for (discriminant, variant) in prop.variants %}
+    pub enum {{prop.name.to_upper_camel_case()}} {
+        {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+        {%- if !prop.is_icu4c_only_value(*discriminant) && prop.transform_long(long_name) != "KatakanaOrHiragana" %}
         #[diplomat::rust_link(
-            icu::properties::props::{{prop.name}}::{{variant}},
-            {{ prop.variant_kind() }}
+            icu::properties::props::{{prop.name.to_upper_camel_case()}}::{{prop.transform_long(long_name)}},
+            {{ prop.ffi_variant_kind() }}
         )]
-        {%- if prop.is_default(**discriminant) %}
+        {%- if prop.default == discriminant %}
         #[diplomat::attr(auto, default)]
         {%- endif %}
-        {{variant}} = {{discriminant}},
+        {{prop.transform_long(long_name)}} = {{discriminant}},
+        {%- endif %}
         {%- endfor %}
     }
 
-    impl {{prop.name}} {
+    impl {{prop.name.to_upper_camel_case()}} {
         #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
         pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::{{prop.name}}>::new()
+            icu_properties::CodePointMapData::<props::{{prop.name.to_upper_camel_case()}}>::new()
                 .get32(ch)
                 .into()
         }
@@ -54,7 +56,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
         pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::{{prop.name}}>::new().get(self.into())
+            icu_properties::PropertyNamesLongBorrowed::<props::{{prop.name.to_upper_camel_case()}}>::new().get(self.into())
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
@@ -70,21 +72,23 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
         pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::{{prop.name}}>::new().get(self.into())
+            icu_properties::PropertyNamesShortBorrowed::<props::{{prop.name.to_upper_camel_case()}}>::new().get(self.into())
         }
-        #[diplomat::rust_link(icu::properties::props::{{prop.name}}::to_icu4c_value, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::props::{{prop.name.to_upper_camel_case()}}::to_icu4c_value, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> {{ prop.int_type }} {
-            self as {{ prop.int_type }}
+        pub fn to_integer_value(self) -> {{ prop.int_type() }} {
+            self as {{ prop.int_type() }}
         }
-        #[diplomat::rust_link(icu::properties::props::{{prop.name}}::from_icu4c_value, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::props::{{prop.name.to_upper_camel_case()}}::from_icu4c_value, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: {{ prop.int_type }}) -> Option<Self> {
+        pub fn from_integer_value(other: {{ prop.int_type() }}) -> Option<Self> {
             Some(match other {
-                {%- for (discriminant, variant) in prop.variants %}
-                {{ discriminant }} => Self::{{variant}},
+                {%- for (discriminant, (_, long_name)) in prop.variants() %}
+                {%- if !prop.is_icu4c_only_value(*discriminant) && prop.transform_long(long_name) != "KatakanaOrHiragana" %}
+                {{ discriminant }} => Self::{{prop.transform_long(long_name)}},
+                {%- endif %}
                 {%- endfor %}
                 _ => return None,
             })
@@ -92,7 +96,7 @@ pub mod ffi {
 
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::{{prop.name}}>::new().get_loose_utf8(s).map(Into::into)
+            icu_properties::PropertyParser::<props::{{prop.name.to_upper_camel_case()}}>::new().get_loose_utf8(s).map(Into::into)
         }
     }
     {%- endfor %}
@@ -119,15 +123,3 @@ pub mod ffi {
     }
 }
 
-#[rustfmt::skip]
-#[test]
-fn test_all_cases_covered() {
-    use ffi::*;
-    use icu_properties::props;
-    {% for prop in props %}
-    for &prop in props::{{prop.name}}::ALL_VALUES {
-        let ffi_prop = {{prop.name}}::from(prop);
-        assert_eq!(prop, props::{{prop.name}}::from(ffi_prop));
-    }
-    {%- endfor %}
-}

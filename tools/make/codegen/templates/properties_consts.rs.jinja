@@ -1,0 +1,101 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+// {{ crate::properties::GENERATED_BY }}
+
+use crate::props::*;
+
+{%- for prop in props %}
+
+{%- if prop.is_open() %}
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl {{ prop.name.to_upper_camel_case() }} {
+    {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+    {%- if (discriminant != 254 || long_name != "Chisoi") && !prop.is_icu4c_only_value(*discriminant) %}
+    /// `{{short_name}}`
+    pub const {{prop.transform_long(long_name)}}: Self = Self({{discriminant}});
+    {%- endif %}
+    {%- endfor %}
+}
+
+{%- else %}
+
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // this type is stable
+#[zerovec::make_ule({{ prop.name.to_upper_camel_case() }}ULE)]
+#[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV))]
+#[repr(u8)]
+#[allow(missing_docs)] // These variants don't need individual documentation.
+pub enum {{ prop.name.to_upper_camel_case() }} {
+    {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+    /// `{{short_name}}`
+    {{prop.transform_long(long_name)}} = {{discriminant}},
+    {%- endfor %}
+}
+
+{%- endif %}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for {{ prop.name.to_upper_camel_case() }} {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        env.insert("icu_properties");
+        match *self {
+            {%- for (discriminant, (_, long_name)) in prop.variants() %}
+            {%- if (discriminant != 254 || long_name != "Chisoi") && !prop.is_icu4c_only_value(*discriminant) %}
+            Self::{{prop.transform_long(long_name)}} => databake::quote!(icu_properties::props::{{ prop.name.to_upper_camel_case() }}::{{prop.transform_long(long_name)}}),
+            {%- endif %}
+            {%- endfor %}
+            {%- if prop.is_open() %}
+            Self(v) => databake::quote!(icu_properties::props::{{ prop.name.to_upper_camel_case() }}(#v)),
+            {%- endif %}
+        }
+    }
+}
+
+
+impl From<{{ prop.name.to_upper_camel_case() }}> for u16  {
+    fn from(other: {{ prop.name.to_upper_camel_case() }}) -> Self {
+        {%- if !prop.is_open() %}
+        other as u16
+        {%- else if prop.int_type() == "u8" %}
+        other.0 as u16
+        {%- else %}
+        other.0
+        {%- endif %}
+    }
+}
+
+impl {{ prop.name.to_upper_camel_case() }} {
+    /// Deprecated
+    #[deprecated]
+    pub const ALL_VALUES: &'static [Self] = &[
+        {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+        {%- if (discriminant != 254 || long_name != "Chisoi") && !prop.is_icu4c_only_value(*discriminant) %}
+        Self::{{prop.transform_long(long_name)}},
+        {%- endif %}
+        {%- endfor %}
+    ];
+
+    #[cfg(feature = "datagen")]
+    #[doc(hidden)]
+    pub fn names() -> impl Iterator<Item = (&'static str, Self)> {
+        [
+            {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+            {%- if discriminant != 254 || long_name != "Chisoi" %}
+            {%- if prop.is_icu4c_only_value(*discriminant) %}
+            ("{{short_name}}", Self({{discriminant}})),
+            {%- else %}
+            ("{{short_name}}", Self::{{prop.transform_long(long_name)}}),
+            {%- endif %}
+            {%- endif %}
+            {%- endfor %}
+        ].into_iter()
+    }
+}
+
+{%- endfor %}
+

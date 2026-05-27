@@ -47,7 +47,7 @@ pub use names::{
     PropertyNameShortVerticalOrientationV1, PropertyNameShortWordBreakV1,
 };
 
-pub use crate::props::gc::GeneralCategoryULE;
+pub use crate::enum_values::GeneralCategoryULE;
 use crate::props::*;
 use crate::script::ScriptWithExt;
 use core::ops::RangeInclusive;
