@@ -62,6 +62,49 @@ impl<T> PatternsWithDistance<T> {
     }
 }
 
+/// Validates and resolves any conflicting field lengths inside a runtime pattern,
+/// normalizing them in-place to ensure consistency.
+///
+/// This checks the pattern for field conflicts (e.g., `EEE` vs `EEEE`) by loading it against
+/// a names provider. If a conflict is encountered, it invokes the logger callback and
+/// normalizes all conflicting fields to match the style of the first occurrence.
+fn enforce_consistent_field_length(
+    names: &mut FixedCalendarDateTimeNames<()>,
+    pattern: &mut runtime::Pattern<'_>,
+    mut log_fn: impl FnMut(ErrorField, ErrorField),
+) {
+    use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
+    use icu::datetime::provider::fields::Field;
+    use icu::datetime::provider::pattern::PatternItem;
+    // We need to fix conflicting field errors. We keep checking until we can
+    // load data for a pattern without errors. Each evaluation of the loop will
+    // reduce the number of errors by 1.
+    while let Err(e) =
+        names.load_for_pattern(&DebugProvider, &DateTimePattern::from(pattern.clone()))
+    {
+        let PatternLoadError::ConflictingField {
+            field: requested_field,
+            previous_field,
+        } = e
+        else {
+            panic!("only know how to fix ConflictingField, but got: {e:?}")
+        };
+        log_fn(previous_field, requested_field);
+        let requested_field = Field::from(requested_field);
+        let previous_field = Field::from(previous_field);
+        let mut pattern_items = reference::Pattern::from(&*pattern).into_items();
+        for pattern_item in pattern_items.iter_mut() {
+            let PatternItem::Field(field) = pattern_item else {
+                continue; // nothing to do: not a Field
+            };
+            if *field == requested_field {
+                *field = previous_field;
+            }
+        }
+        *pattern = runtime::Pattern::from(pattern_items);
+    }
+}
+
 fn select_pattern<'data>(
     bag: components::Bag,
     skeletons: &BTreeMap<Skeleton, PluralElements<runtime::Pattern<'data>>>,
@@ -153,40 +196,13 @@ impl SourceDataProvider {
             trio: &mut VariantPatterns,
             mut log_fn: impl FnMut(ErrorField, ErrorField, SkeletonQuality),
         ) {
-            use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
-            use icu::datetime::provider::fields::*;
-            use icu::datetime::provider::pattern::PatternItem;
             let mut names =
                 FixedCalendarDateTimeNames::<()>::new_without_number_formatting(Default::default());
             for variant in trio.iter_in_quality_order_mut() {
                 variant.inner.for_each_mut(|pattern| {
-                    // We need to fix conflicting field errors. We keep checking until we can
-                    // load data for a pattern without errors. Each evaluation of the loop will
-                    // reduce the number of errors by 1.
-                    while let Err(e) = names
-                        .load_for_pattern(&DebugProvider, &DateTimePattern::from(pattern.clone()))
-                    {
-                        let PatternLoadError::ConflictingField {
-                            field: requested_field,
-                            previous_field,
-                        } = e
-                        else {
-                            panic!("only know how to fix ConflictingField, but got: {e:?}")
-                        };
-                        log_fn(previous_field, requested_field, variant.distance);
-                        let requested_field = Field::from(requested_field);
-                        let previous_field = Field::from(previous_field);
-                        let mut pattern_items = reference::Pattern::from(&*pattern).into_items();
-                        for pattern_item in pattern_items.iter_mut() {
-                            let PatternItem::Field(field) = pattern_item else {
-                                continue; // nothing to do: not a Field
-                            };
-                            if *field == requested_field {
-                                *field = previous_field;
-                            }
-                        }
-                        *pattern = runtime::Pattern::from(pattern_items);
-                    }
+                    enforce_consistent_field_length(&mut names, pattern, |prev, req| {
+                        log_fn(prev, req, variant.distance);
+                    });
                 })
             }
         }
