@@ -204,13 +204,13 @@ pub mod ffi {
     }
 
     impl CodePointMapData8 {
-        /// Create a map for the `NumericType` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
-        #[diplomat::attr(auto, named_constructor = "numeric_type")]
+        /// Create a map for the `CanonicalCombiningClass` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
+        #[diplomat::attr(auto, named_constructor = "canonical_combining_class")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_numeric_type() -> Box<Self> {
+        pub fn create_canonical_combining_class() -> Box<Self> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::NumericType>::new()
+            let data = icu_properties::CodePointMapData::<props::CanonicalCombiningClass>::new()
                 .static_to_owned()
                 .try_into_converted()
                 .map_err(|_| ())
@@ -218,77 +218,15 @@ pub mod ffi {
             Box::new(Self(data))
         }
 
-        /// Create a map for the `NumericType` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numeric_type_with_provider")]
+        /// Create a map for the `CanonicalCombiningClass` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "canonical_combining_class_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_numeric_type_with_provider(
+        pub fn create_canonical_combining_class_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<Self>, DataError> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::NumericType>::try_new_unstable(&provider.get_unstable()?)?
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Ok(Box::new(Self(data)))
-        }
-    }
-
-    impl CodePointMapData16 {
-        /// Create a map for the `Script` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::Script, Struct)]
-        #[diplomat::attr(auto, named_constructor = "script")]
-        #[cfg(feature = "compiled_data")]
-        pub fn create_script() -> Box<Self> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::Script>::new()
-                .static_to_owned()
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Box::new(Self(data))
-        }
-
-        /// Create a map for the `Script` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::Script, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "script_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_script_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::Script>::try_new_unstable(&provider.get_unstable()?)?
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Ok(Box::new(Self(data)))
-        }
-    }
-
-    impl CodePointMapData8 {
-        /// Create a map for the `HangulSyllableType` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
-        #[diplomat::attr(auto, named_constructor = "hangul_syllable_type")]
-        #[cfg(feature = "compiled_data")]
-        pub fn create_hangul_syllable_type() -> Box<Self> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::HangulSyllableType>::new()
-                .static_to_owned()
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Box::new(Self(data))
-        }
-
-        /// Create a map for the `HangulSyllableType` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_hangul_syllable_type_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::HangulSyllableType>::try_new_unstable(&provider.get_unstable()?)?
+            let data = icu_properties::CodePointMapData::<props::CanonicalCombiningClass>::try_new_unstable(&provider.get_unstable()?)?
                 .try_into_converted()
                 .map_err(|_| ())
                 .unwrap();
@@ -328,13 +266,13 @@ pub mod ffi {
     }
 
     impl CodePointMapData8 {
-        /// Create a map for the `LineBreak` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
-        #[diplomat::attr(auto, named_constructor = "line_break")]
+        /// Create a map for the `GeneralCategory` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
+        #[diplomat::attr(auto, named_constructor = "general_category")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_line_break() -> Box<Self> {
+        pub fn create_general_category() -> Box<Self> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::LineBreak>::new()
+            let data = icu_properties::CodePointMapData::<props::GeneralCategory>::new()
                 .static_to_owned()
                 .try_into_converted()
                 .map_err(|_| ())
@@ -342,15 +280,15 @@ pub mod ffi {
             Box::new(Self(data))
         }
 
-        /// Create a map for the `LineBreak` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break_with_provider")]
+        /// Create a map for the `GeneralCategory` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_line_break_with_provider(
+        pub fn create_general_category_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<Self>, DataError> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::LineBreak>::try_new_unstable(&provider.get_unstable()?)?
+            let data = icu_properties::CodePointMapData::<props::GeneralCategory>::try_new_unstable(&provider.get_unstable()?)?
                 .try_into_converted()
                 .map_err(|_| ())
                 .unwrap();
@@ -390,13 +328,13 @@ pub mod ffi {
     }
 
     impl CodePointMapData8 {
-        /// Create a map for the `WordBreak` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::WordBreak, Struct)]
-        #[diplomat::attr(auto, named_constructor = "word_break")]
+        /// Create a map for the `HangulSyllableType` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
+        #[diplomat::attr(auto, named_constructor = "hangul_syllable_type")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_word_break() -> Box<Self> {
+        pub fn create_hangul_syllable_type() -> Box<Self> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::WordBreak>::new()
+            let data = icu_properties::CodePointMapData::<props::HangulSyllableType>::new()
                 .static_to_owned()
                 .try_into_converted()
                 .map_err(|_| ())
@@ -404,108 +342,15 @@ pub mod ffi {
             Box::new(Self(data))
         }
 
-        /// Create a map for the `WordBreak` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::WordBreak, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break_with_provider")]
+        /// Create a map for the `HangulSyllableType` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_word_break_with_provider(
+        pub fn create_hangul_syllable_type_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<Self>, DataError> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::WordBreak>::try_new_unstable(&provider.get_unstable()?)?
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Ok(Box::new(Self(data)))
-        }
-    }
-
-    impl CodePointMapData8 {
-        /// Create a map for the `SentenceBreak` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
-        #[diplomat::attr(auto, named_constructor = "sentence_break")]
-        #[cfg(feature = "compiled_data")]
-        pub fn create_sentence_break() -> Box<Self> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::SentenceBreak>::new()
-                .static_to_owned()
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Box::new(Self(data))
-        }
-
-        /// Create a map for the `SentenceBreak` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_sentence_break_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::SentenceBreak>::try_new_unstable(&provider.get_unstable()?)?
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Ok(Box::new(Self(data)))
-        }
-    }
-
-    impl CodePointMapData8 {
-        /// Create a map for the `CanonicalCombiningClass` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
-        #[diplomat::attr(auto, named_constructor = "canonical_combining_class")]
-        #[cfg(feature = "compiled_data")]
-        pub fn create_canonical_combining_class() -> Box<Self> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::CanonicalCombiningClass>::new()
-                .static_to_owned()
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Box::new(Self(data))
-        }
-
-        /// Create a map for the `CanonicalCombiningClass` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "canonical_combining_class_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_canonical_combining_class_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::CanonicalCombiningClass>::try_new_unstable(&provider.get_unstable()?)?
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Ok(Box::new(Self(data)))
-        }
-    }
-
-    impl CodePointMapData8 {
-        /// Create a map for the `IndicSyllabicCategory` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
-        #[diplomat::attr(auto, named_constructor = "indic_syllabic_category")]
-        #[cfg(feature = "compiled_data")]
-        pub fn create_indic_syllabic_category() -> Box<Self> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::IndicSyllabicCategory>::new()
-                .static_to_owned()
-                .try_into_converted()
-                .map_err(|_| ())
-                .unwrap();
-            Box::new(Self(data))
-        }
-
-        /// Create a map for the `IndicSyllabicCategory` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_indic_syllabic_category_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::IndicSyllabicCategory>::try_new_unstable(&provider.get_unstable()?)?
+            let data = icu_properties::CodePointMapData::<props::HangulSyllableType>::try_new_unstable(&provider.get_unstable()?)?
                 .try_into_converted()
                 .map_err(|_| ())
                 .unwrap();
@@ -537,6 +382,37 @@ pub mod ffi {
         ) -> Result<Box<Self>, DataError> {
             #[expect(clippy::unwrap_used)]
             let data = icu_properties::CodePointMapData::<props::IndicConjunctBreak>::try_new_unstable(&provider.get_unstable()?)?
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Ok(Box::new(Self(data)))
+        }
+    }
+
+    impl CodePointMapData8 {
+        /// Create a map for the `IndicSyllabicCategory` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
+        #[diplomat::attr(auto, named_constructor = "indic_syllabic_category")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_indic_syllabic_category() -> Box<Self> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::IndicSyllabicCategory>::new()
+                .static_to_owned()
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Box::new(Self(data))
+        }
+
+        /// Create a map for the `IndicSyllabicCategory` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_indic_syllabic_category_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<Self>, DataError> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::IndicSyllabicCategory>::try_new_unstable(&provider.get_unstable()?)?
                 .try_into_converted()
                 .map_err(|_| ())
                 .unwrap();
@@ -607,13 +483,13 @@ pub mod ffi {
     }
 
     impl CodePointMapData8 {
-        /// Create a map for the `GeneralCategory` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
-        #[diplomat::attr(auto, named_constructor = "general_category")]
+        /// Create a map for the `LineBreak` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
+        #[diplomat::attr(auto, named_constructor = "line_break")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_general_category() -> Box<Self> {
+        pub fn create_line_break() -> Box<Self> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::GeneralCategory>::new()
+            let data = icu_properties::CodePointMapData::<props::LineBreak>::new()
                 .static_to_owned()
                 .try_into_converted()
                 .map_err(|_| ())
@@ -621,15 +497,108 @@ pub mod ffi {
             Box::new(Self(data))
         }
 
-        /// Create a map for the `GeneralCategory` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category_with_provider")]
+        /// Create a map for the `LineBreak` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_general_category_with_provider(
+        pub fn create_line_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<Self>, DataError> {
             #[expect(clippy::unwrap_used)]
-            let data = icu_properties::CodePointMapData::<props::GeneralCategory>::try_new_unstable(&provider.get_unstable()?)?
+            let data = icu_properties::CodePointMapData::<props::LineBreak>::try_new_unstable(&provider.get_unstable()?)?
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Ok(Box::new(Self(data)))
+        }
+    }
+
+    impl CodePointMapData8 {
+        /// Create a map for the `NumericType` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
+        #[diplomat::attr(auto, named_constructor = "numeric_type")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_numeric_type() -> Box<Self> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::NumericType>::new()
+                .static_to_owned()
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Box::new(Self(data))
+        }
+
+        /// Create a map for the `NumericType` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numeric_type_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_numeric_type_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<Self>, DataError> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::NumericType>::try_new_unstable(&provider.get_unstable()?)?
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Ok(Box::new(Self(data)))
+        }
+    }
+
+    impl CodePointMapData16 {
+        /// Create a map for the `Script` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::Script, Struct)]
+        #[diplomat::attr(auto, named_constructor = "script")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_script() -> Box<Self> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::Script>::new()
+                .static_to_owned()
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Box::new(Self(data))
+        }
+
+        /// Create a map for the `Script` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::Script, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "script_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_script_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<Self>, DataError> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::Script>::try_new_unstable(&provider.get_unstable()?)?
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Ok(Box::new(Self(data)))
+        }
+    }
+
+    impl CodePointMapData8 {
+        /// Create a map for the `SentenceBreak` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
+        #[diplomat::attr(auto, named_constructor = "sentence_break")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_sentence_break() -> Box<Self> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::SentenceBreak>::new()
+                .static_to_owned()
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Box::new(Self(data))
+        }
+
+        /// Create a map for the `SentenceBreak` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_sentence_break_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<Self>, DataError> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::SentenceBreak>::try_new_unstable(&provider.get_unstable()?)?
                 .try_into_converted()
                 .map_err(|_| ())
                 .unwrap();
@@ -661,6 +630,37 @@ pub mod ffi {
         ) -> Result<Box<Self>, DataError> {
             #[expect(clippy::unwrap_used)]
             let data = icu_properties::CodePointMapData::<props::VerticalOrientation>::try_new_unstable(&provider.get_unstable()?)?
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Ok(Box::new(Self(data)))
+        }
+    }
+
+    impl CodePointMapData8 {
+        /// Create a map for the `WordBreak` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::WordBreak, Struct)]
+        #[diplomat::attr(auto, named_constructor = "word_break")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_word_break() -> Box<Self> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::WordBreak>::new()
+                .static_to_owned()
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Box::new(Self(data))
+        }
+
+        /// Create a map for the `WordBreak` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::WordBreak, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_word_break_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<Self>, DataError> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::WordBreak>::try_new_unstable(&provider.get_unstable()?)?
                 .try_into_converted()
                 .map_err(|_| ())
                 .unwrap();

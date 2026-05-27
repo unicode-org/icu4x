@@ -11,36 +11,36 @@ internal interface PropertyValueNameToEnumMapperLib: Library {
     fun icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(handle: Pointer, name: Slice): Short
     fun icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_script_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_PropertyValueNameToEnumMapper_create_joining_group_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_joining_group_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_PropertyValueNameToEnumMapper_create_joining_type_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_joining_type_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1(): Pointer
-    fun icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_script_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(provider: Pointer): ResultPointerInt
 }
 /** A type capable of looking up a property value from a string name.
 *
@@ -111,13 +111,13 @@ class PropertyValueNameToEnumMapper internal constructor (
         }
         @JvmStatic
         
-        /** Create a name-to-enum mapper for the `NumericType` property, using compiled data.
+        /** Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using compiled data.
         *
-        *See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
+        *See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
         */
-        fun createNumericType(): PropertyValueNameToEnumMapper {
+        fun createCanonicalCombiningClass(): PropertyValueNameToEnumMapper {
             
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1();
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
@@ -125,79 +125,13 @@ class PropertyValueNameToEnumMapper internal constructor (
         }
         @JvmStatic
         
-        /** Create a name-to-enum mapper for the `NumericType` property, using a particular data source.
+        /** Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using a particular data source.
         *
-        *See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
+        *See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
         */
-        fun createNumericTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+        fun createCanonicalCombiningClassWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(provider.handle);
-            val nativeOkVal = returnVal.getNativeOk();
-            if (nativeOkVal != null) {
-                val selfEdges: List<Any> = listOf()
-                val handle = nativeOkVal 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `Script` property, using compiled data.
-        *
-        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html) for more information.
-        */
-        fun createScript(): PropertyValueNameToEnumMapper {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_script_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `Script` property, using a particular data source.
-        *
-        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html) for more information.
-        */
-        fun createScriptWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(provider.handle);
-            val nativeOkVal = returnVal.getNativeOk();
-            if (nativeOkVal != null) {
-                val selfEdges: List<Any> = listOf()
-                val handle = nativeOkVal 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `HangulSyllableType` property, using compiled data.
-        *
-        *See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
-        */
-        fun createHangulSyllableType(): PropertyValueNameToEnumMapper {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `HangulSyllableType` property, using a particular data source.
-        *
-        *See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
-        */
-        fun createHangulSyllableTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(provider.handle);
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1(provider.handle);
             val nativeOkVal = returnVal.getNativeOk();
             if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
@@ -243,13 +177,13 @@ class PropertyValueNameToEnumMapper internal constructor (
         }
         @JvmStatic
         
-        /** Create a name-to-enum mapper for the `LineBreak` property, using compiled data.
+        /** Create a name-to-enum mapper for the `GeneralCategory` property, using compiled data.
         *
-        *See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LineBreak.html) for more information.
+        *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
         */
-        fun createLineBreak(): PropertyValueNameToEnumMapper {
+        fun createGeneralCategory(): PropertyValueNameToEnumMapper {
             
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1();
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
@@ -257,13 +191,13 @@ class PropertyValueNameToEnumMapper internal constructor (
         }
         @JvmStatic
         
-        /** Create a name-to-enum mapper for the `LineBreak` property, using a particular data source.
+        /** Create a name-to-enum mapper for the `GeneralCategory` property, using a particular data source.
         *
-        *See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LineBreak.html) for more information.
+        *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
         */
-        fun createLineBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+        fun createGeneralCategoryWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(provider.handle);
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(provider.handle);
             val nativeOkVal = returnVal.getNativeOk();
             if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
@@ -309,13 +243,13 @@ class PropertyValueNameToEnumMapper internal constructor (
         }
         @JvmStatic
         
-        /** Create a name-to-enum mapper for the `WordBreak` property, using compiled data.
+        /** Create a name-to-enum mapper for the `HangulSyllableType` property, using compiled data.
         *
-        *See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WordBreak.html) for more information.
+        *See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
         */
-        fun createWordBreak(): PropertyValueNameToEnumMapper {
+        fun createHangulSyllableType(): PropertyValueNameToEnumMapper {
             
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1();
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
@@ -323,112 +257,13 @@ class PropertyValueNameToEnumMapper internal constructor (
         }
         @JvmStatic
         
-        /** Create a name-to-enum mapper for the `WordBreak` property, using a particular data source.
+        /** Create a name-to-enum mapper for the `HangulSyllableType` property, using a particular data source.
         *
-        *See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WordBreak.html) for more information.
+        *See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
         */
-        fun createWordBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+        fun createHangulSyllableTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(provider.handle);
-            val nativeOkVal = returnVal.getNativeOk();
-            if (nativeOkVal != null) {
-                val selfEdges: List<Any> = listOf()
-                val handle = nativeOkVal 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `SentenceBreak` property, using compiled data.
-        *
-        *See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceBreak.html) for more information.
-        */
-        fun createSentenceBreak(): PropertyValueNameToEnumMapper {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `SentenceBreak` property, using a particular data source.
-        *
-        *See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceBreak.html) for more information.
-        */
-        fun createSentenceBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(provider.handle);
-            val nativeOkVal = returnVal.getNativeOk();
-            if (nativeOkVal != null) {
-                val selfEdges: List<Any> = listOf()
-                val handle = nativeOkVal 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using compiled data.
-        *
-        *See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
-        */
-        fun createCanonicalCombiningClass(): PropertyValueNameToEnumMapper {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using a particular data source.
-        *
-        *See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
-        */
-        fun createCanonicalCombiningClassWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1(provider.handle);
-            val nativeOkVal = returnVal.getNativeOk();
-            if (nativeOkVal != null) {
-                val selfEdges: List<Any> = listOf()
-                val handle = nativeOkVal 
-                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-                return returnOpaque.ok()
-            } else {
-                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-            }
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using compiled data.
-        *
-        *See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
-        */
-        fun createIndicSyllabicCategory(): PropertyValueNameToEnumMapper {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
-            val selfEdges: List<Any> = listOf()
-            val handle = returnVal 
-            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
-            return returnOpaque
-        }
-        @JvmStatic
-        
-        /** Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using a particular data source.
-        *
-        *See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
-        */
-        fun createIndicSyllabicCategoryWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
-            
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(provider.handle);
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(provider.handle);
             val nativeOkVal = returnVal.getNativeOk();
             if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
@@ -462,6 +297,39 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createIndicConjunctBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_with_provider_mv1(provider.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using compiled data.
+        *
+        *See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+        */
+        fun createIndicSyllabicCategory(): PropertyValueNameToEnumMapper {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using a particular data source.
+        *
+        *See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+        */
+        fun createIndicSyllabicCategoryWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(provider.handle);
             val nativeOkVal = returnVal.getNativeOk();
             if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
@@ -540,13 +408,13 @@ class PropertyValueNameToEnumMapper internal constructor (
         }
         @JvmStatic
         
-        /** Create a name-to-enum mapper for the `GeneralCategory` property, using compiled data.
+        /** Create a name-to-enum mapper for the `LineBreak` property, using compiled data.
         *
-        *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+        *See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LineBreak.html) for more information.
         */
-        fun createGeneralCategory(): PropertyValueNameToEnumMapper {
+        fun createLineBreak(): PropertyValueNameToEnumMapper {
             
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
@@ -554,13 +422,112 @@ class PropertyValueNameToEnumMapper internal constructor (
         }
         @JvmStatic
         
-        /** Create a name-to-enum mapper for the `GeneralCategory` property, using a particular data source.
+        /** Create a name-to-enum mapper for the `LineBreak` property, using a particular data source.
         *
-        *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+        *See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LineBreak.html) for more information.
         */
-        fun createGeneralCategoryWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+        fun createLineBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
-            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(provider.handle);
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(provider.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `NumericType` property, using compiled data.
+        *
+        *See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
+        */
+        fun createNumericType(): PropertyValueNameToEnumMapper {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `NumericType` property, using a particular data source.
+        *
+        *See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
+        */
+        fun createNumericTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(provider.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `Script` property, using compiled data.
+        *
+        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html) for more information.
+        */
+        fun createScript(): PropertyValueNameToEnumMapper {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_script_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `Script` property, using a particular data source.
+        *
+        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html) for more information.
+        */
+        fun createScriptWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(provider.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `SentenceBreak` property, using compiled data.
+        *
+        *See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceBreak.html) for more information.
+        */
+        fun createSentenceBreak(): PropertyValueNameToEnumMapper {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `SentenceBreak` property, using a particular data source.
+        *
+        *See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceBreak.html) for more information.
+        */
+        fun createSentenceBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(provider.handle);
             val nativeOkVal = returnVal.getNativeOk();
             if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()
@@ -594,6 +561,39 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createVerticalOrientationWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(provider.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `WordBreak` property, using compiled data.
+        *
+        *See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WordBreak.html) for more information.
+        */
+        fun createWordBreak(): PropertyValueNameToEnumMapper {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `WordBreak` property, using a particular data source.
+        *
+        *See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WordBreak.html) for more information.
+        */
+        fun createWordBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(provider.handle);
             val nativeOkVal = returnVal.getNativeOk();
             if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()

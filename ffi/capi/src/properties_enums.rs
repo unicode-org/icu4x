@@ -220,6 +220,2606 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::CanonicalCombiningClass, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum CanonicalCombiningClass {
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::NotReordered,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        NotReordered = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::Overlay,
+            AssociatedConstantInStruct
+        )]
+        Overlay = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::HanReading,
+            AssociatedConstantInStruct
+        )]
+        HanReading = 6,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::Nukta,
+            AssociatedConstantInStruct
+        )]
+        Nukta = 7,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::KanaVoicing,
+            AssociatedConstantInStruct
+        )]
+        KanaVoicing = 8,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::Virama,
+            AssociatedConstantInStruct
+        )]
+        Virama = 9,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC10,
+            AssociatedConstantInStruct
+        )]
+        CCC10 = 10,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC11,
+            AssociatedConstantInStruct
+        )]
+        CCC11 = 11,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC12,
+            AssociatedConstantInStruct
+        )]
+        CCC12 = 12,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC13,
+            AssociatedConstantInStruct
+        )]
+        CCC13 = 13,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC14,
+            AssociatedConstantInStruct
+        )]
+        CCC14 = 14,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC15,
+            AssociatedConstantInStruct
+        )]
+        CCC15 = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC16,
+            AssociatedConstantInStruct
+        )]
+        CCC16 = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC17,
+            AssociatedConstantInStruct
+        )]
+        CCC17 = 17,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC18,
+            AssociatedConstantInStruct
+        )]
+        CCC18 = 18,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC19,
+            AssociatedConstantInStruct
+        )]
+        CCC19 = 19,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC20,
+            AssociatedConstantInStruct
+        )]
+        CCC20 = 20,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC21,
+            AssociatedConstantInStruct
+        )]
+        CCC21 = 21,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC22,
+            AssociatedConstantInStruct
+        )]
+        CCC22 = 22,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC23,
+            AssociatedConstantInStruct
+        )]
+        CCC23 = 23,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC24,
+            AssociatedConstantInStruct
+        )]
+        CCC24 = 24,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC25,
+            AssociatedConstantInStruct
+        )]
+        CCC25 = 25,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC26,
+            AssociatedConstantInStruct
+        )]
+        CCC26 = 26,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC27,
+            AssociatedConstantInStruct
+        )]
+        CCC27 = 27,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC28,
+            AssociatedConstantInStruct
+        )]
+        CCC28 = 28,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC29,
+            AssociatedConstantInStruct
+        )]
+        CCC29 = 29,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC30,
+            AssociatedConstantInStruct
+        )]
+        CCC30 = 30,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC31,
+            AssociatedConstantInStruct
+        )]
+        CCC31 = 31,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC32,
+            AssociatedConstantInStruct
+        )]
+        CCC32 = 32,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC33,
+            AssociatedConstantInStruct
+        )]
+        CCC33 = 33,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC34,
+            AssociatedConstantInStruct
+        )]
+        CCC34 = 34,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC35,
+            AssociatedConstantInStruct
+        )]
+        CCC35 = 35,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC36,
+            AssociatedConstantInStruct
+        )]
+        CCC36 = 36,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC84,
+            AssociatedConstantInStruct
+        )]
+        CCC84 = 84,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC91,
+            AssociatedConstantInStruct
+        )]
+        CCC91 = 91,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC103,
+            AssociatedConstantInStruct
+        )]
+        CCC103 = 103,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC107,
+            AssociatedConstantInStruct
+        )]
+        CCC107 = 107,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC118,
+            AssociatedConstantInStruct
+        )]
+        CCC118 = 118,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC122,
+            AssociatedConstantInStruct
+        )]
+        CCC122 = 122,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC129,
+            AssociatedConstantInStruct
+        )]
+        CCC129 = 129,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC130,
+            AssociatedConstantInStruct
+        )]
+        CCC130 = 130,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC132,
+            AssociatedConstantInStruct
+        )]
+        CCC132 = 132,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::CCC133,
+            AssociatedConstantInStruct
+        )]
+        CCC133 = 133,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::AttachedBelowLeft,
+            AssociatedConstantInStruct
+        )]
+        AttachedBelowLeft = 200,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::AttachedBelow,
+            AssociatedConstantInStruct
+        )]
+        AttachedBelow = 202,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::AttachedAbove,
+            AssociatedConstantInStruct
+        )]
+        AttachedAbove = 214,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::AttachedAboveRight,
+            AssociatedConstantInStruct
+        )]
+        AttachedAboveRight = 216,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::BelowLeft,
+            AssociatedConstantInStruct
+        )]
+        BelowLeft = 218,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::Below,
+            AssociatedConstantInStruct
+        )]
+        Below = 220,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::BelowRight,
+            AssociatedConstantInStruct
+        )]
+        BelowRight = 222,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::Left,
+            AssociatedConstantInStruct
+        )]
+        Left = 224,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::Right,
+            AssociatedConstantInStruct
+        )]
+        Right = 226,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::AboveLeft,
+            AssociatedConstantInStruct
+        )]
+        AboveLeft = 228,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::Above,
+            AssociatedConstantInStruct
+        )]
+        Above = 230,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::AboveRight,
+            AssociatedConstantInStruct
+        )]
+        AboveRight = 232,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::DoubleBelow,
+            AssociatedConstantInStruct
+        )]
+        DoubleBelow = 233,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::DoubleAbove,
+            AssociatedConstantInStruct
+        )]
+        DoubleAbove = 234,
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::IotaSubscript,
+            AssociatedConstantInStruct
+        )]
+        IotaSubscript = 240,
+    }
+
+    impl CanonicalCombiningClass {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::CanonicalCombiningClass>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::CanonicalCombiningClass>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::CanonicalCombiningClass>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::NotReordered,
+                1 => Self::Overlay,
+                6 => Self::HanReading,
+                7 => Self::Nukta,
+                8 => Self::KanaVoicing,
+                9 => Self::Virama,
+                10 => Self::CCC10,
+                11 => Self::CCC11,
+                12 => Self::CCC12,
+                13 => Self::CCC13,
+                14 => Self::CCC14,
+                15 => Self::CCC15,
+                16 => Self::CCC16,
+                17 => Self::CCC17,
+                18 => Self::CCC18,
+                19 => Self::CCC19,
+                20 => Self::CCC20,
+                21 => Self::CCC21,
+                22 => Self::CCC22,
+                23 => Self::CCC23,
+                24 => Self::CCC24,
+                25 => Self::CCC25,
+                26 => Self::CCC26,
+                27 => Self::CCC27,
+                28 => Self::CCC28,
+                29 => Self::CCC29,
+                30 => Self::CCC30,
+                31 => Self::CCC31,
+                32 => Self::CCC32,
+                33 => Self::CCC33,
+                34 => Self::CCC34,
+                35 => Self::CCC35,
+                36 => Self::CCC36,
+                84 => Self::CCC84,
+                91 => Self::CCC91,
+                103 => Self::CCC103,
+                107 => Self::CCC107,
+                118 => Self::CCC118,
+                122 => Self::CCC122,
+                129 => Self::CCC129,
+                130 => Self::CCC130,
+                132 => Self::CCC132,
+                133 => Self::CCC133,
+                200 => Self::AttachedBelowLeft,
+                202 => Self::AttachedBelow,
+                214 => Self::AttachedAbove,
+                216 => Self::AttachedAboveRight,
+                218 => Self::BelowLeft,
+                220 => Self::Below,
+                222 => Self::BelowRight,
+                224 => Self::Left,
+                226 => Self::Right,
+                228 => Self::AboveLeft,
+                230 => Self::Above,
+                232 => Self::AboveRight,
+                233 => Self::DoubleBelow,
+                234 => Self::DoubleAbove,
+                240 => Self::IotaSubscript,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::CanonicalCombiningClass>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::EastAsianWidth, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum EastAsianWidth {
+        #[diplomat::rust_link(
+            icu::properties::props::EastAsianWidth::Neutral,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        Neutral = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::EastAsianWidth::Ambiguous,
+            AssociatedConstantInStruct
+        )]
+        Ambiguous = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::EastAsianWidth::Halfwidth,
+            AssociatedConstantInStruct
+        )]
+        Halfwidth = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::EastAsianWidth::Fullwidth,
+            AssociatedConstantInStruct
+        )]
+        Fullwidth = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::EastAsianWidth::Narrow,
+            AssociatedConstantInStruct
+        )]
+        Narrow = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::EastAsianWidth::Wide,
+            AssociatedConstantInStruct
+        )]
+        Wide = 5,
+    }
+
+    impl EastAsianWidth {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::EastAsianWidth>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::EastAsianWidth>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::EastAsianWidth>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::EastAsianWidth::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::EastAsianWidth::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::Neutral,
+                1 => Self::Ambiguous,
+                2 => Self::Halfwidth,
+                3 => Self::Fullwidth,
+                4 => Self::Narrow,
+                5 => Self::Wide,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::EastAsianWidth>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
+    #[diplomat::enum_convert(icu_properties::props::GeneralCategory, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum GeneralCategory {
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::Unassigned,
+            EnumVariant
+        )]
+        #[diplomat::attr(auto, default)]
+        Unassigned = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::UppercaseLetter,
+            EnumVariant
+        )]
+        UppercaseLetter = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::LowercaseLetter,
+            EnumVariant
+        )]
+        LowercaseLetter = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::TitlecaseLetter,
+            EnumVariant
+        )]
+        TitlecaseLetter = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::ModifierLetter,
+            EnumVariant
+        )]
+        ModifierLetter = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::OtherLetter,
+            EnumVariant
+        )]
+        OtherLetter = 5,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::NonspacingMark,
+            EnumVariant
+        )]
+        NonspacingMark = 6,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::SpacingMark,
+            EnumVariant
+        )]
+        SpacingMark = 8,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::EnclosingMark,
+            EnumVariant
+        )]
+        EnclosingMark = 7,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::DecimalNumber,
+            EnumVariant
+        )]
+        DecimalNumber = 9,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::LetterNumber,
+            EnumVariant
+        )]
+        LetterNumber = 10,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::OtherNumber,
+            EnumVariant
+        )]
+        OtherNumber = 11,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::SpaceSeparator,
+            EnumVariant
+        )]
+        SpaceSeparator = 12,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::LineSeparator,
+            EnumVariant
+        )]
+        LineSeparator = 13,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::ParagraphSeparator,
+            EnumVariant
+        )]
+        ParagraphSeparator = 14,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::Control,
+            EnumVariant
+        )]
+        Control = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::Format,
+            EnumVariant
+        )]
+        Format = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::PrivateUse,
+            EnumVariant
+        )]
+        PrivateUse = 17,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::Surrogate,
+            EnumVariant
+        )]
+        Surrogate = 18,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::DashPunctuation,
+            EnumVariant
+        )]
+        DashPunctuation = 19,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::OpenPunctuation,
+            EnumVariant
+        )]
+        OpenPunctuation = 20,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::ClosePunctuation,
+            EnumVariant
+        )]
+        ClosePunctuation = 21,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::ConnectorPunctuation,
+            EnumVariant
+        )]
+        ConnectorPunctuation = 22,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::InitialPunctuation,
+            EnumVariant
+        )]
+        InitialPunctuation = 28,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::FinalPunctuation,
+            EnumVariant
+        )]
+        FinalPunctuation = 29,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::OtherPunctuation,
+            EnumVariant
+        )]
+        OtherPunctuation = 23,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::MathSymbol,
+            EnumVariant
+        )]
+        MathSymbol = 24,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::CurrencySymbol,
+            EnumVariant
+        )]
+        CurrencySymbol = 25,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::ModifierSymbol,
+            EnumVariant
+        )]
+        ModifierSymbol = 26,
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::OtherSymbol,
+            EnumVariant
+        )]
+        OtherSymbol = 27,
+    }
+
+    impl GeneralCategory {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::GeneralCategory>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::GeneralCategory>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::GeneralCategory>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::GeneralCategory::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::GeneralCategory::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::Unassigned,
+                1 => Self::UppercaseLetter,
+                2 => Self::LowercaseLetter,
+                3 => Self::TitlecaseLetter,
+                4 => Self::ModifierLetter,
+                5 => Self::OtherLetter,
+                6 => Self::NonspacingMark,
+                8 => Self::SpacingMark,
+                7 => Self::EnclosingMark,
+                9 => Self::DecimalNumber,
+                10 => Self::LetterNumber,
+                11 => Self::OtherNumber,
+                12 => Self::SpaceSeparator,
+                13 => Self::LineSeparator,
+                14 => Self::ParagraphSeparator,
+                15 => Self::Control,
+                16 => Self::Format,
+                17 => Self::PrivateUse,
+                18 => Self::Surrogate,
+                19 => Self::DashPunctuation,
+                20 => Self::OpenPunctuation,
+                21 => Self::ClosePunctuation,
+                22 => Self::ConnectorPunctuation,
+                28 => Self::InitialPunctuation,
+                29 => Self::FinalPunctuation,
+                23 => Self::OtherPunctuation,
+                24 => Self::MathSymbol,
+                25 => Self::CurrencySymbol,
+                26 => Self::ModifierSymbol,
+                27 => Self::OtherSymbol,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::GeneralCategory>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::GraphemeClusterBreak, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum GraphemeClusterBreak {
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::Other,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        Other = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::Control,
+            AssociatedConstantInStruct
+        )]
+        Control = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::CR,
+            AssociatedConstantInStruct
+        )]
+        CR = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::Extend,
+            AssociatedConstantInStruct
+        )]
+        Extend = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::L,
+            AssociatedConstantInStruct
+        )]
+        L = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::LF,
+            AssociatedConstantInStruct
+        )]
+        LF = 5,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::LV,
+            AssociatedConstantInStruct
+        )]
+        LV = 6,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::LVT,
+            AssociatedConstantInStruct
+        )]
+        LVT = 7,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::T,
+            AssociatedConstantInStruct
+        )]
+        T = 8,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::V,
+            AssociatedConstantInStruct
+        )]
+        V = 9,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::SpacingMark,
+            AssociatedConstantInStruct
+        )]
+        SpacingMark = 10,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::Prepend,
+            AssociatedConstantInStruct
+        )]
+        Prepend = 11,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::RegionalIndicator,
+            AssociatedConstantInStruct
+        )]
+        RegionalIndicator = 12,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::EBase,
+            AssociatedConstantInStruct
+        )]
+        EBase = 13,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::EBaseGAZ,
+            AssociatedConstantInStruct
+        )]
+        EBaseGAZ = 14,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::EModifier,
+            AssociatedConstantInStruct
+        )]
+        EModifier = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::GlueAfterZwj,
+            AssociatedConstantInStruct
+        )]
+        GlueAfterZwj = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::ZWJ,
+            AssociatedConstantInStruct
+        )]
+        ZWJ = 17,
+    }
+
+    impl GraphemeClusterBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::GraphemeClusterBreak>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::GraphemeClusterBreak>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::GraphemeClusterBreak>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::Other,
+                1 => Self::Control,
+                2 => Self::CR,
+                3 => Self::Extend,
+                4 => Self::L,
+                5 => Self::LF,
+                6 => Self::LV,
+                7 => Self::LVT,
+                8 => Self::T,
+                9 => Self::V,
+                10 => Self::SpacingMark,
+                11 => Self::Prepend,
+                12 => Self::RegionalIndicator,
+                13 => Self::EBase,
+                14 => Self::EBaseGAZ,
+                15 => Self::EModifier,
+                16 => Self::GlueAfterZwj,
+                17 => Self::ZWJ,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::GraphemeClusterBreak>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::HangulSyllableType, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum HangulSyllableType {
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::NotApplicable,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        NotApplicable = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::LeadingJamo,
+            AssociatedConstantInStruct
+        )]
+        LeadingJamo = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::VowelJamo,
+            AssociatedConstantInStruct
+        )]
+        VowelJamo = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::TrailingJamo,
+            AssociatedConstantInStruct
+        )]
+        TrailingJamo = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::LeadingVowelSyllable,
+            AssociatedConstantInStruct
+        )]
+        LeadingVowelSyllable = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::LeadingVowelTrailingSyllable,
+            AssociatedConstantInStruct
+        )]
+        LeadingVowelTrailingSyllable = 5,
+    }
+
+    impl HangulSyllableType {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::HangulSyllableType>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::HangulSyllableType>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::HangulSyllableType>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::HangulSyllableType::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::HangulSyllableType::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::NotApplicable,
+                1 => Self::LeadingJamo,
+                2 => Self::VowelJamo,
+                3 => Self::TrailingJamo,
+                4 => Self::LeadingVowelSyllable,
+                5 => Self::LeadingVowelTrailingSyllable,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::HangulSyllableType>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::IndicConjunctBreak, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum IndicConjunctBreak {
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::None,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        None = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Consonant,
+            AssociatedConstantInStruct
+        )]
+        Consonant = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Extend,
+            AssociatedConstantInStruct
+        )]
+        Extend = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Linker,
+            AssociatedConstantInStruct
+        )]
+        Linker = 3,
+    }
+
+    impl IndicConjunctBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::IndicConjunctBreak>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::IndicConjunctBreak>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::IndicConjunctBreak>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::None,
+                1 => Self::Consonant,
+                2 => Self::Extend,
+                3 => Self::Linker,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::IndicConjunctBreak>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::IndicSyllabicCategory, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum IndicSyllabicCategory {
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Other,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        Other = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Avagraha,
+            AssociatedConstantInStruct
+        )]
+        Avagraha = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Bindu,
+            AssociatedConstantInStruct
+        )]
+        Bindu = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::BrahmiJoiningNumber,
+            AssociatedConstantInStruct
+        )]
+        BrahmiJoiningNumber = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::CantillationMark,
+            AssociatedConstantInStruct
+        )]
+        CantillationMark = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Consonant,
+            AssociatedConstantInStruct
+        )]
+        Consonant = 5,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantDead,
+            AssociatedConstantInStruct
+        )]
+        ConsonantDead = 6,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantFinal,
+            AssociatedConstantInStruct
+        )]
+        ConsonantFinal = 7,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantHeadLetter,
+            AssociatedConstantInStruct
+        )]
+        ConsonantHeadLetter = 8,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantInitialPostfixed,
+            AssociatedConstantInStruct
+        )]
+        ConsonantInitialPostfixed = 9,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantKiller,
+            AssociatedConstantInStruct
+        )]
+        ConsonantKiller = 10,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantMedial,
+            AssociatedConstantInStruct
+        )]
+        ConsonantMedial = 11,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantPlaceholder,
+            AssociatedConstantInStruct
+        )]
+        ConsonantPlaceholder = 12,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantPrecedingRepha,
+            AssociatedConstantInStruct
+        )]
+        ConsonantPrecedingRepha = 13,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantPrefixed,
+            AssociatedConstantInStruct
+        )]
+        ConsonantPrefixed = 14,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantSubjoined,
+            AssociatedConstantInStruct
+        )]
+        ConsonantSubjoined = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantSucceedingRepha,
+            AssociatedConstantInStruct
+        )]
+        ConsonantSucceedingRepha = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantWithStacker,
+            AssociatedConstantInStruct
+        )]
+        ConsonantWithStacker = 17,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::GeminationMark,
+            AssociatedConstantInStruct
+        )]
+        GeminationMark = 18,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::InvisibleStacker,
+            AssociatedConstantInStruct
+        )]
+        InvisibleStacker = 19,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Joiner,
+            AssociatedConstantInStruct
+        )]
+        Joiner = 20,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ModifyingLetter,
+            AssociatedConstantInStruct
+        )]
+        ModifyingLetter = 21,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::NonJoiner,
+            AssociatedConstantInStruct
+        )]
+        NonJoiner = 22,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Nukta,
+            AssociatedConstantInStruct
+        )]
+        Nukta = 23,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Number,
+            AssociatedConstantInStruct
+        )]
+        Number = 24,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::NumberJoiner,
+            AssociatedConstantInStruct
+        )]
+        NumberJoiner = 25,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::PureKiller,
+            AssociatedConstantInStruct
+        )]
+        PureKiller = 26,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::RegisterShifter,
+            AssociatedConstantInStruct
+        )]
+        RegisterShifter = 27,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::SyllableModifier,
+            AssociatedConstantInStruct
+        )]
+        SyllableModifier = 28,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ToneLetter,
+            AssociatedConstantInStruct
+        )]
+        ToneLetter = 29,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ToneMark,
+            AssociatedConstantInStruct
+        )]
+        ToneMark = 30,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Virama,
+            AssociatedConstantInStruct
+        )]
+        Virama = 31,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Visarga,
+            AssociatedConstantInStruct
+        )]
+        Visarga = 32,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::Vowel,
+            AssociatedConstantInStruct
+        )]
+        Vowel = 33,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::VowelDependent,
+            AssociatedConstantInStruct
+        )]
+        VowelDependent = 34,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::VowelIndependent,
+            AssociatedConstantInStruct
+        )]
+        VowelIndependent = 35,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ReorderingKiller,
+            AssociatedConstantInStruct
+        )]
+        ReorderingKiller = 36,
+    }
+
+    impl IndicSyllabicCategory {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::IndicSyllabicCategory>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::IndicSyllabicCategory>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::IndicSyllabicCategory>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::Other,
+                1 => Self::Avagraha,
+                2 => Self::Bindu,
+                3 => Self::BrahmiJoiningNumber,
+                4 => Self::CantillationMark,
+                5 => Self::Consonant,
+                6 => Self::ConsonantDead,
+                7 => Self::ConsonantFinal,
+                8 => Self::ConsonantHeadLetter,
+                9 => Self::ConsonantInitialPostfixed,
+                10 => Self::ConsonantKiller,
+                11 => Self::ConsonantMedial,
+                12 => Self::ConsonantPlaceholder,
+                13 => Self::ConsonantPrecedingRepha,
+                14 => Self::ConsonantPrefixed,
+                15 => Self::ConsonantSubjoined,
+                16 => Self::ConsonantSucceedingRepha,
+                17 => Self::ConsonantWithStacker,
+                18 => Self::GeminationMark,
+                19 => Self::InvisibleStacker,
+                20 => Self::Joiner,
+                21 => Self::ModifyingLetter,
+                22 => Self::NonJoiner,
+                23 => Self::Nukta,
+                24 => Self::Number,
+                25 => Self::NumberJoiner,
+                26 => Self::PureKiller,
+                27 => Self::RegisterShifter,
+                28 => Self::SyllableModifier,
+                29 => Self::ToneLetter,
+                30 => Self::ToneMark,
+                31 => Self::Virama,
+                32 => Self::Visarga,
+                33 => Self::Vowel,
+                34 => Self::VowelDependent,
+                35 => Self::VowelIndependent,
+                36 => Self::ReorderingKiller,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::IndicSyllabicCategory>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::JoiningGroup, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::JoiningGroup, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum JoiningGroup {
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::NoJoiningGroup,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        NoJoiningGroup = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Ain,
+            AssociatedConstantInStruct
+        )]
+        Ain = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Alaph,
+            AssociatedConstantInStruct
+        )]
+        Alaph = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Alef,
+            AssociatedConstantInStruct
+        )]
+        Alef = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Beh,
+            AssociatedConstantInStruct
+        )]
+        Beh = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Beth,
+            AssociatedConstantInStruct
+        )]
+        Beth = 5,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Dal,
+            AssociatedConstantInStruct
+        )]
+        Dal = 6,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::DalathRish,
+            AssociatedConstantInStruct
+        )]
+        DalathRish = 7,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::E,
+            AssociatedConstantInStruct
+        )]
+        E = 8,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Feh,
+            AssociatedConstantInStruct
+        )]
+        Feh = 9,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::FinalSemkath,
+            AssociatedConstantInStruct
+        )]
+        FinalSemkath = 10,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Gaf,
+            AssociatedConstantInStruct
+        )]
+        Gaf = 11,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Gamal,
+            AssociatedConstantInStruct
+        )]
+        Gamal = 12,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Hah,
+            AssociatedConstantInStruct
+        )]
+        Hah = 13,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::TehMarbutaGoal,
+            AssociatedConstantInStruct
+        )]
+        TehMarbutaGoal = 14,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::He,
+            AssociatedConstantInStruct
+        )]
+        He = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Heh,
+            AssociatedConstantInStruct
+        )]
+        Heh = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::HehGoal,
+            AssociatedConstantInStruct
+        )]
+        HehGoal = 17,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Heth,
+            AssociatedConstantInStruct
+        )]
+        Heth = 18,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Kaf,
+            AssociatedConstantInStruct
+        )]
+        Kaf = 19,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Kaph,
+            AssociatedConstantInStruct
+        )]
+        Kaph = 20,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::KnottedHeh,
+            AssociatedConstantInStruct
+        )]
+        KnottedHeh = 21,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Lam,
+            AssociatedConstantInStruct
+        )]
+        Lam = 22,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Lamadh,
+            AssociatedConstantInStruct
+        )]
+        Lamadh = 23,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Meem,
+            AssociatedConstantInStruct
+        )]
+        Meem = 24,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Mim,
+            AssociatedConstantInStruct
+        )]
+        Mim = 25,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Noon,
+            AssociatedConstantInStruct
+        )]
+        Noon = 26,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Nun,
+            AssociatedConstantInStruct
+        )]
+        Nun = 27,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Pe,
+            AssociatedConstantInStruct
+        )]
+        Pe = 28,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Qaf,
+            AssociatedConstantInStruct
+        )]
+        Qaf = 29,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Qaph,
+            AssociatedConstantInStruct
+        )]
+        Qaph = 30,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Reh,
+            AssociatedConstantInStruct
+        )]
+        Reh = 31,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ReversedPe,
+            AssociatedConstantInStruct
+        )]
+        ReversedPe = 32,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Sad,
+            AssociatedConstantInStruct
+        )]
+        Sad = 33,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Sadhe,
+            AssociatedConstantInStruct
+        )]
+        Sadhe = 34,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Seen,
+            AssociatedConstantInStruct
+        )]
+        Seen = 35,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Semkath,
+            AssociatedConstantInStruct
+        )]
+        Semkath = 36,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Shin,
+            AssociatedConstantInStruct
+        )]
+        Shin = 37,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::SwashKaf,
+            AssociatedConstantInStruct
+        )]
+        SwashKaf = 38,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::SyriacWaw,
+            AssociatedConstantInStruct
+        )]
+        SyriacWaw = 39,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Tah,
+            AssociatedConstantInStruct
+        )]
+        Tah = 40,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Taw,
+            AssociatedConstantInStruct
+        )]
+        Taw = 41,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::TehMarbuta,
+            AssociatedConstantInStruct
+        )]
+        TehMarbuta = 42,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Teth,
+            AssociatedConstantInStruct
+        )]
+        Teth = 43,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Waw,
+            AssociatedConstantInStruct
+        )]
+        Waw = 44,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Yeh,
+            AssociatedConstantInStruct
+        )]
+        Yeh = 45,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::YehBarree,
+            AssociatedConstantInStruct
+        )]
+        YehBarree = 46,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::YehWithTail,
+            AssociatedConstantInStruct
+        )]
+        YehWithTail = 47,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Yudh,
+            AssociatedConstantInStruct
+        )]
+        Yudh = 48,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::YudhHe,
+            AssociatedConstantInStruct
+        )]
+        YudhHe = 49,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Zain,
+            AssociatedConstantInStruct
+        )]
+        Zain = 50,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Fe,
+            AssociatedConstantInStruct
+        )]
+        Fe = 51,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Khaph,
+            AssociatedConstantInStruct
+        )]
+        Khaph = 52,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Zhain,
+            AssociatedConstantInStruct
+        )]
+        Zhain = 53,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::BurushaskiYehBarree,
+            AssociatedConstantInStruct
+        )]
+        BurushaskiYehBarree = 54,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::FarsiYeh,
+            AssociatedConstantInStruct
+        )]
+        FarsiYeh = 55,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::Nya,
+            AssociatedConstantInStruct
+        )]
+        Nya = 56,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::RohingyaYeh,
+            AssociatedConstantInStruct
+        )]
+        RohingyaYeh = 57,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanAleph,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanAleph = 58,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanAyin,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanAyin = 59,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanBeth,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanBeth = 60,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanDaleth,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanDaleth = 61,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanDhamedh,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanDhamedh = 62,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanFive,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanFive = 63,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanGimel,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanGimel = 64,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanHeth,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanHeth = 65,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanHundred,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanHundred = 66,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanKaph,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanKaph = 67,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanLamedh,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanLamedh = 68,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanMem,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanMem = 69,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanNun,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanNun = 70,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanOne,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanOne = 71,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanPe,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanPe = 72,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanQoph,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanQoph = 73,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanResh,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanResh = 74,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanSadhe,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanSadhe = 75,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanSamekh,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanSamekh = 76,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanTaw,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanTaw = 77,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanTen,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanTen = 78,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanTeth,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanTeth = 79,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanThamedh,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanThamedh = 80,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanTwenty,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanTwenty = 81,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanWaw,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanWaw = 82,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanYodh,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanYodh = 83,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanZayin,
+            AssociatedConstantInStruct
+        )]
+        ManichaeanZayin = 84,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::StraightWaw,
+            AssociatedConstantInStruct
+        )]
+        StraightWaw = 85,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::AfricanFeh,
+            AssociatedConstantInStruct
+        )]
+        AfricanFeh = 86,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::AfricanNoon,
+            AssociatedConstantInStruct
+        )]
+        AfricanNoon = 87,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::AfricanQaf,
+            AssociatedConstantInStruct
+        )]
+        AfricanQaf = 88,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamBha,
+            AssociatedConstantInStruct
+        )]
+        MalayalamBha = 89,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamJa,
+            AssociatedConstantInStruct
+        )]
+        MalayalamJa = 90,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamLla,
+            AssociatedConstantInStruct
+        )]
+        MalayalamLla = 91,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamLlla,
+            AssociatedConstantInStruct
+        )]
+        MalayalamLlla = 92,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamNga,
+            AssociatedConstantInStruct
+        )]
+        MalayalamNga = 93,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamNna,
+            AssociatedConstantInStruct
+        )]
+        MalayalamNna = 94,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamNnna,
+            AssociatedConstantInStruct
+        )]
+        MalayalamNnna = 95,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamNya,
+            AssociatedConstantInStruct
+        )]
+        MalayalamNya = 96,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamRa,
+            AssociatedConstantInStruct
+        )]
+        MalayalamRa = 97,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamSsa,
+            AssociatedConstantInStruct
+        )]
+        MalayalamSsa = 98,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::MalayalamTta,
+            AssociatedConstantInStruct
+        )]
+        MalayalamTta = 99,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::HanifiRohingyaKinnaYa,
+            AssociatedConstantInStruct
+        )]
+        HanifiRohingyaKinnaYa = 100,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::HanifiRohingyaPa,
+            AssociatedConstantInStruct
+        )]
+        HanifiRohingyaPa = 101,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ThinYeh,
+            AssociatedConstantInStruct
+        )]
+        ThinYeh = 102,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::VerticalTail,
+            AssociatedConstantInStruct
+        )]
+        VerticalTail = 103,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::KashmiriYeh,
+            AssociatedConstantInStruct
+        )]
+        KashmiriYeh = 104,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ThinNoon,
+            AssociatedConstantInStruct
+        )]
+        ThinNoon = 105,
+    }
+
+    impl JoiningGroup {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::JoiningGroup>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::JoiningGroup>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::JoiningGroup>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::NoJoiningGroup,
+                1 => Self::Ain,
+                2 => Self::Alaph,
+                3 => Self::Alef,
+                4 => Self::Beh,
+                5 => Self::Beth,
+                6 => Self::Dal,
+                7 => Self::DalathRish,
+                8 => Self::E,
+                9 => Self::Feh,
+                10 => Self::FinalSemkath,
+                11 => Self::Gaf,
+                12 => Self::Gamal,
+                13 => Self::Hah,
+                14 => Self::TehMarbutaGoal,
+                15 => Self::He,
+                16 => Self::Heh,
+                17 => Self::HehGoal,
+                18 => Self::Heth,
+                19 => Self::Kaf,
+                20 => Self::Kaph,
+                21 => Self::KnottedHeh,
+                22 => Self::Lam,
+                23 => Self::Lamadh,
+                24 => Self::Meem,
+                25 => Self::Mim,
+                26 => Self::Noon,
+                27 => Self::Nun,
+                28 => Self::Pe,
+                29 => Self::Qaf,
+                30 => Self::Qaph,
+                31 => Self::Reh,
+                32 => Self::ReversedPe,
+                33 => Self::Sad,
+                34 => Self::Sadhe,
+                35 => Self::Seen,
+                36 => Self::Semkath,
+                37 => Self::Shin,
+                38 => Self::SwashKaf,
+                39 => Self::SyriacWaw,
+                40 => Self::Tah,
+                41 => Self::Taw,
+                42 => Self::TehMarbuta,
+                43 => Self::Teth,
+                44 => Self::Waw,
+                45 => Self::Yeh,
+                46 => Self::YehBarree,
+                47 => Self::YehWithTail,
+                48 => Self::Yudh,
+                49 => Self::YudhHe,
+                50 => Self::Zain,
+                51 => Self::Fe,
+                52 => Self::Khaph,
+                53 => Self::Zhain,
+                54 => Self::BurushaskiYehBarree,
+                55 => Self::FarsiYeh,
+                56 => Self::Nya,
+                57 => Self::RohingyaYeh,
+                58 => Self::ManichaeanAleph,
+                59 => Self::ManichaeanAyin,
+                60 => Self::ManichaeanBeth,
+                61 => Self::ManichaeanDaleth,
+                62 => Self::ManichaeanDhamedh,
+                63 => Self::ManichaeanFive,
+                64 => Self::ManichaeanGimel,
+                65 => Self::ManichaeanHeth,
+                66 => Self::ManichaeanHundred,
+                67 => Self::ManichaeanKaph,
+                68 => Self::ManichaeanLamedh,
+                69 => Self::ManichaeanMem,
+                70 => Self::ManichaeanNun,
+                71 => Self::ManichaeanOne,
+                72 => Self::ManichaeanPe,
+                73 => Self::ManichaeanQoph,
+                74 => Self::ManichaeanResh,
+                75 => Self::ManichaeanSadhe,
+                76 => Self::ManichaeanSamekh,
+                77 => Self::ManichaeanTaw,
+                78 => Self::ManichaeanTen,
+                79 => Self::ManichaeanTeth,
+                80 => Self::ManichaeanThamedh,
+                81 => Self::ManichaeanTwenty,
+                82 => Self::ManichaeanWaw,
+                83 => Self::ManichaeanYodh,
+                84 => Self::ManichaeanZayin,
+                85 => Self::StraightWaw,
+                86 => Self::AfricanFeh,
+                87 => Self::AfricanNoon,
+                88 => Self::AfricanQaf,
+                89 => Self::MalayalamBha,
+                90 => Self::MalayalamJa,
+                91 => Self::MalayalamLla,
+                92 => Self::MalayalamLlla,
+                93 => Self::MalayalamNga,
+                94 => Self::MalayalamNna,
+                95 => Self::MalayalamNnna,
+                96 => Self::MalayalamNya,
+                97 => Self::MalayalamRa,
+                98 => Self::MalayalamSsa,
+                99 => Self::MalayalamTta,
+                100 => Self::HanifiRohingyaKinnaYa,
+                101 => Self::HanifiRohingyaPa,
+                102 => Self::ThinYeh,
+                103 => Self::VerticalTail,
+                104 => Self::KashmiriYeh,
+                105 => Self::ThinNoon,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::JoiningGroup>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::JoiningType, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum JoiningType {
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningType::NonJoining,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        NonJoining = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningType::JoinCausing,
+            AssociatedConstantInStruct
+        )]
+        JoinCausing = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningType::DualJoining,
+            AssociatedConstantInStruct
+        )]
+        DualJoining = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningType::LeftJoining,
+            AssociatedConstantInStruct
+        )]
+        LeftJoining = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningType::RightJoining,
+            AssociatedConstantInStruct
+        )]
+        RightJoining = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningType::Transparent,
+            AssociatedConstantInStruct
+        )]
+        Transparent = 5,
+    }
+
+    impl JoiningType {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::JoiningType>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::JoiningType>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::JoiningType>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::JoiningType::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::JoiningType::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::NonJoining,
+                1 => Self::JoinCausing,
+                2 => Self::DualJoining,
+                3 => Self::LeftJoining,
+                4 => Self::RightJoining,
+                5 => Self::Transparent,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::JoiningType>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::LineBreak, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum LineBreak {
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Unknown,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        Unknown = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Ambiguous,
+            AssociatedConstantInStruct
+        )]
+        Ambiguous = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Alphabetic,
+            AssociatedConstantInStruct
+        )]
+        Alphabetic = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::BreakBoth,
+            AssociatedConstantInStruct
+        )]
+        BreakBoth = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::BreakAfter,
+            AssociatedConstantInStruct
+        )]
+        BreakAfter = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::BreakBefore,
+            AssociatedConstantInStruct
+        )]
+        BreakBefore = 5,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::MandatoryBreak,
+            AssociatedConstantInStruct
+        )]
+        MandatoryBreak = 6,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::ContingentBreak,
+            AssociatedConstantInStruct
+        )]
+        ContingentBreak = 7,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::ClosePunctuation,
+            AssociatedConstantInStruct
+        )]
+        ClosePunctuation = 8,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::CombiningMark,
+            AssociatedConstantInStruct
+        )]
+        CombiningMark = 9,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::CarriageReturn,
+            AssociatedConstantInStruct
+        )]
+        CarriageReturn = 10,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Exclamation,
+            AssociatedConstantInStruct
+        )]
+        Exclamation = 11,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Glue,
+            AssociatedConstantInStruct
+        )]
+        Glue = 12,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Hyphen,
+            AssociatedConstantInStruct
+        )]
+        Hyphen = 13,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Ideographic,
+            AssociatedConstantInStruct
+        )]
+        Ideographic = 14,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Inseparable,
+            AssociatedConstantInStruct
+        )]
+        Inseparable = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::InfixNumeric,
+            AssociatedConstantInStruct
+        )]
+        InfixNumeric = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::LineFeed,
+            AssociatedConstantInStruct
+        )]
+        LineFeed = 17,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Nonstarter,
+            AssociatedConstantInStruct
+        )]
+        Nonstarter = 18,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Numeric,
+            AssociatedConstantInStruct
+        )]
+        Numeric = 19,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::OpenPunctuation,
+            AssociatedConstantInStruct
+        )]
+        OpenPunctuation = 20,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::PostfixNumeric,
+            AssociatedConstantInStruct
+        )]
+        PostfixNumeric = 21,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::PrefixNumeric,
+            AssociatedConstantInStruct
+        )]
+        PrefixNumeric = 22,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Quotation,
+            AssociatedConstantInStruct
+        )]
+        Quotation = 23,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::ComplexContext,
+            AssociatedConstantInStruct
+        )]
+        ComplexContext = 24,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Surrogate,
+            AssociatedConstantInStruct
+        )]
+        Surrogate = 25,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Space,
+            AssociatedConstantInStruct
+        )]
+        Space = 26,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::BreakSymbols,
+            AssociatedConstantInStruct
+        )]
+        BreakSymbols = 27,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::ZWSpace,
+            AssociatedConstantInStruct
+        )]
+        ZWSpace = 28,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::NextLine,
+            AssociatedConstantInStruct
+        )]
+        NextLine = 29,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::WordJoiner,
+            AssociatedConstantInStruct
+        )]
+        WordJoiner = 30,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::H2,
+            AssociatedConstantInStruct
+        )]
+        H2 = 31,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::H3,
+            AssociatedConstantInStruct
+        )]
+        H3 = 32,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::JL,
+            AssociatedConstantInStruct
+        )]
+        JL = 33,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::JT,
+            AssociatedConstantInStruct
+        )]
+        JT = 34,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::JV,
+            AssociatedConstantInStruct
+        )]
+        JV = 35,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::CloseParenthesis,
+            AssociatedConstantInStruct
+        )]
+        CloseParenthesis = 36,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::ConditionalJapaneseStarter,
+            AssociatedConstantInStruct
+        )]
+        ConditionalJapaneseStarter = 37,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::HebrewLetter,
+            AssociatedConstantInStruct
+        )]
+        HebrewLetter = 38,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::RegionalIndicator,
+            AssociatedConstantInStruct
+        )]
+        RegionalIndicator = 39,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::EBase,
+            AssociatedConstantInStruct
+        )]
+        EBase = 40,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::EModifier,
+            AssociatedConstantInStruct
+        )]
+        EModifier = 41,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::ZWJ,
+            AssociatedConstantInStruct
+        )]
+        ZWJ = 42,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Aksara,
+            AssociatedConstantInStruct
+        )]
+        Aksara = 43,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::AksaraPrebase,
+            AssociatedConstantInStruct
+        )]
+        AksaraPrebase = 44,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::AksaraStart,
+            AssociatedConstantInStruct
+        )]
+        AksaraStart = 45,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::ViramaFinal,
+            AssociatedConstantInStruct
+        )]
+        ViramaFinal = 46,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::Virama,
+            AssociatedConstantInStruct
+        )]
+        Virama = 47,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::UnambiguousHyphen,
+            AssociatedConstantInStruct
+        )]
+        UnambiguousHyphen = 48,
+    }
+
+    impl LineBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::LineBreak>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::LineBreak>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::LineBreak>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::LineBreak::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::LineBreak::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::Unknown,
+                1 => Self::Ambiguous,
+                2 => Self::Alphabetic,
+                3 => Self::BreakBoth,
+                4 => Self::BreakAfter,
+                5 => Self::BreakBefore,
+                6 => Self::MandatoryBreak,
+                7 => Self::ContingentBreak,
+                8 => Self::ClosePunctuation,
+                9 => Self::CombiningMark,
+                10 => Self::CarriageReturn,
+                11 => Self::Exclamation,
+                12 => Self::Glue,
+                13 => Self::Hyphen,
+                14 => Self::Ideographic,
+                15 => Self::Inseparable,
+                16 => Self::InfixNumeric,
+                17 => Self::LineFeed,
+                18 => Self::Nonstarter,
+                19 => Self::Numeric,
+                20 => Self::OpenPunctuation,
+                21 => Self::PostfixNumeric,
+                22 => Self::PrefixNumeric,
+                23 => Self::Quotation,
+                24 => Self::ComplexContext,
+                25 => Self::Surrogate,
+                26 => Self::Space,
+                27 => Self::BreakSymbols,
+                28 => Self::ZWSpace,
+                29 => Self::NextLine,
+                30 => Self::WordJoiner,
+                31 => Self::H2,
+                32 => Self::H3,
+                33 => Self::JL,
+                34 => Self::JT,
+                35 => Self::JV,
+                36 => Self::CloseParenthesis,
+                37 => Self::ConditionalJapaneseStarter,
+                38 => Self::HebrewLetter,
+                39 => Self::RegionalIndicator,
+                40 => Self::EBase,
+                41 => Self::EModifier,
+                42 => Self::ZWJ,
+                43 => Self::Aksara,
+                44 => Self::AksaraPrebase,
+                45 => Self::AksaraStart,
+                46 => Self::ViramaFinal,
+                47 => Self::Virama,
+                48 => Self::UnambiguousHyphen,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::LineBreak>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
     #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
     #[diplomat::enum_convert(icu_properties::props::NumericType, needs_wildcard)]
     #[non_exhaustive]
@@ -1442,678 +4042,93 @@ pub mod ffi {
         }
     }
 
-    #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::HangulSyllableType, needs_wildcard)]
+    #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::SentenceBreak, needs_wildcard)]
     #[non_exhaustive]
-    pub enum HangulSyllableType {
+    pub enum SentenceBreak {
         #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::NotApplicable,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        NotApplicable = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::LeadingJamo,
-            AssociatedConstantInStruct
-        )]
-        LeadingJamo = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::VowelJamo,
-            AssociatedConstantInStruct
-        )]
-        VowelJamo = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::TrailingJamo,
-            AssociatedConstantInStruct
-        )]
-        TrailingJamo = 3,
-        #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::LeadingVowelSyllable,
-            AssociatedConstantInStruct
-        )]
-        LeadingVowelSyllable = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::LeadingVowelTrailingSyllable,
-            AssociatedConstantInStruct
-        )]
-        LeadingVowelTrailingSyllable = 5,
-    }
-
-    impl HangulSyllableType {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::HangulSyllableType>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::HangulSyllableType>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::HangulSyllableType>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::HangulSyllableType::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::HangulSyllableType::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::NotApplicable,
-                1 => Self::LeadingJamo,
-                2 => Self::VowelJamo,
-                3 => Self::TrailingJamo,
-                4 => Self::LeadingVowelSyllable,
-                5 => Self::LeadingVowelTrailingSyllable,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::HangulSyllableType>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::EastAsianWidth, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum EastAsianWidth {
-        #[diplomat::rust_link(
-            icu::properties::props::EastAsianWidth::Neutral,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        Neutral = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::EastAsianWidth::Ambiguous,
-            AssociatedConstantInStruct
-        )]
-        Ambiguous = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::EastAsianWidth::Halfwidth,
-            AssociatedConstantInStruct
-        )]
-        Halfwidth = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::EastAsianWidth::Fullwidth,
-            AssociatedConstantInStruct
-        )]
-        Fullwidth = 3,
-        #[diplomat::rust_link(
-            icu::properties::props::EastAsianWidth::Narrow,
-            AssociatedConstantInStruct
-        )]
-        Narrow = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::EastAsianWidth::Wide,
-            AssociatedConstantInStruct
-        )]
-        Wide = 5,
-    }
-
-    impl EastAsianWidth {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::EastAsianWidth>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::EastAsianWidth>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::EastAsianWidth>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::EastAsianWidth::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::EastAsianWidth::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::Neutral,
-                1 => Self::Ambiguous,
-                2 => Self::Halfwidth,
-                3 => Self::Fullwidth,
-                4 => Self::Narrow,
-                5 => Self::Wide,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::EastAsianWidth>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::LineBreak, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum LineBreak {
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Unknown,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        Unknown = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Ambiguous,
-            AssociatedConstantInStruct
-        )]
-        Ambiguous = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Alphabetic,
-            AssociatedConstantInStruct
-        )]
-        Alphabetic = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::BreakBoth,
-            AssociatedConstantInStruct
-        )]
-        BreakBoth = 3,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::BreakAfter,
-            AssociatedConstantInStruct
-        )]
-        BreakAfter = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::BreakBefore,
-            AssociatedConstantInStruct
-        )]
-        BreakBefore = 5,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::MandatoryBreak,
-            AssociatedConstantInStruct
-        )]
-        MandatoryBreak = 6,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::ContingentBreak,
-            AssociatedConstantInStruct
-        )]
-        ContingentBreak = 7,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::ClosePunctuation,
-            AssociatedConstantInStruct
-        )]
-        ClosePunctuation = 8,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::CombiningMark,
-            AssociatedConstantInStruct
-        )]
-        CombiningMark = 9,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::CarriageReturn,
-            AssociatedConstantInStruct
-        )]
-        CarriageReturn = 10,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Exclamation,
-            AssociatedConstantInStruct
-        )]
-        Exclamation = 11,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Glue,
-            AssociatedConstantInStruct
-        )]
-        Glue = 12,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Hyphen,
-            AssociatedConstantInStruct
-        )]
-        Hyphen = 13,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Ideographic,
-            AssociatedConstantInStruct
-        )]
-        Ideographic = 14,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Inseparable,
-            AssociatedConstantInStruct
-        )]
-        Inseparable = 15,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::InfixNumeric,
-            AssociatedConstantInStruct
-        )]
-        InfixNumeric = 16,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::LineFeed,
-            AssociatedConstantInStruct
-        )]
-        LineFeed = 17,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Nonstarter,
-            AssociatedConstantInStruct
-        )]
-        Nonstarter = 18,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Numeric,
-            AssociatedConstantInStruct
-        )]
-        Numeric = 19,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::OpenPunctuation,
-            AssociatedConstantInStruct
-        )]
-        OpenPunctuation = 20,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::PostfixNumeric,
-            AssociatedConstantInStruct
-        )]
-        PostfixNumeric = 21,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::PrefixNumeric,
-            AssociatedConstantInStruct
-        )]
-        PrefixNumeric = 22,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Quotation,
-            AssociatedConstantInStruct
-        )]
-        Quotation = 23,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::ComplexContext,
-            AssociatedConstantInStruct
-        )]
-        ComplexContext = 24,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Surrogate,
-            AssociatedConstantInStruct
-        )]
-        Surrogate = 25,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Space,
-            AssociatedConstantInStruct
-        )]
-        Space = 26,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::BreakSymbols,
-            AssociatedConstantInStruct
-        )]
-        BreakSymbols = 27,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::ZWSpace,
-            AssociatedConstantInStruct
-        )]
-        ZWSpace = 28,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::NextLine,
-            AssociatedConstantInStruct
-        )]
-        NextLine = 29,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::WordJoiner,
-            AssociatedConstantInStruct
-        )]
-        WordJoiner = 30,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::H2,
-            AssociatedConstantInStruct
-        )]
-        H2 = 31,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::H3,
-            AssociatedConstantInStruct
-        )]
-        H3 = 32,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::JL,
-            AssociatedConstantInStruct
-        )]
-        JL = 33,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::JT,
-            AssociatedConstantInStruct
-        )]
-        JT = 34,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::JV,
-            AssociatedConstantInStruct
-        )]
-        JV = 35,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::CloseParenthesis,
-            AssociatedConstantInStruct
-        )]
-        CloseParenthesis = 36,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::ConditionalJapaneseStarter,
-            AssociatedConstantInStruct
-        )]
-        ConditionalJapaneseStarter = 37,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::HebrewLetter,
-            AssociatedConstantInStruct
-        )]
-        HebrewLetter = 38,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::RegionalIndicator,
-            AssociatedConstantInStruct
-        )]
-        RegionalIndicator = 39,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::EBase,
-            AssociatedConstantInStruct
-        )]
-        EBase = 40,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::EModifier,
-            AssociatedConstantInStruct
-        )]
-        EModifier = 41,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::ZWJ,
-            AssociatedConstantInStruct
-        )]
-        ZWJ = 42,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Aksara,
-            AssociatedConstantInStruct
-        )]
-        Aksara = 43,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::AksaraPrebase,
-            AssociatedConstantInStruct
-        )]
-        AksaraPrebase = 44,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::AksaraStart,
-            AssociatedConstantInStruct
-        )]
-        AksaraStart = 45,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::ViramaFinal,
-            AssociatedConstantInStruct
-        )]
-        ViramaFinal = 46,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::Virama,
-            AssociatedConstantInStruct
-        )]
-        Virama = 47,
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::UnambiguousHyphen,
-            AssociatedConstantInStruct
-        )]
-        UnambiguousHyphen = 48,
-    }
-
-    impl LineBreak {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::LineBreak>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::LineBreak>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::LineBreak>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::LineBreak::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::LineBreak::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::Unknown,
-                1 => Self::Ambiguous,
-                2 => Self::Alphabetic,
-                3 => Self::BreakBoth,
-                4 => Self::BreakAfter,
-                5 => Self::BreakBefore,
-                6 => Self::MandatoryBreak,
-                7 => Self::ContingentBreak,
-                8 => Self::ClosePunctuation,
-                9 => Self::CombiningMark,
-                10 => Self::CarriageReturn,
-                11 => Self::Exclamation,
-                12 => Self::Glue,
-                13 => Self::Hyphen,
-                14 => Self::Ideographic,
-                15 => Self::Inseparable,
-                16 => Self::InfixNumeric,
-                17 => Self::LineFeed,
-                18 => Self::Nonstarter,
-                19 => Self::Numeric,
-                20 => Self::OpenPunctuation,
-                21 => Self::PostfixNumeric,
-                22 => Self::PrefixNumeric,
-                23 => Self::Quotation,
-                24 => Self::ComplexContext,
-                25 => Self::Surrogate,
-                26 => Self::Space,
-                27 => Self::BreakSymbols,
-                28 => Self::ZWSpace,
-                29 => Self::NextLine,
-                30 => Self::WordJoiner,
-                31 => Self::H2,
-                32 => Self::H3,
-                33 => Self::JL,
-                34 => Self::JT,
-                35 => Self::JV,
-                36 => Self::CloseParenthesis,
-                37 => Self::ConditionalJapaneseStarter,
-                38 => Self::HebrewLetter,
-                39 => Self::RegionalIndicator,
-                40 => Self::EBase,
-                41 => Self::EModifier,
-                42 => Self::ZWJ,
-                43 => Self::Aksara,
-                44 => Self::AksaraPrebase,
-                45 => Self::AksaraStart,
-                46 => Self::ViramaFinal,
-                47 => Self::Virama,
-                48 => Self::UnambiguousHyphen,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::LineBreak>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::GraphemeClusterBreak, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum GraphemeClusterBreak {
-        #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::Other,
+            icu::properties::props::SentenceBreak::Other,
             AssociatedConstantInStruct
         )]
         #[diplomat::attr(auto, default)]
         Other = 0,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::Control,
+            icu::properties::props::SentenceBreak::ATerm,
             AssociatedConstantInStruct
         )]
-        Control = 1,
+        ATerm = 1,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::CR,
+            icu::properties::props::SentenceBreak::Close,
             AssociatedConstantInStruct
         )]
-        CR = 2,
+        Close = 2,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::Extend,
+            icu::properties::props::SentenceBreak::Format,
             AssociatedConstantInStruct
         )]
-        Extend = 3,
+        Format = 3,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::L,
+            icu::properties::props::SentenceBreak::Lower,
             AssociatedConstantInStruct
         )]
-        L = 4,
+        Lower = 4,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::LF,
+            icu::properties::props::SentenceBreak::Numeric,
             AssociatedConstantInStruct
         )]
-        LF = 5,
+        Numeric = 5,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::LV,
+            icu::properties::props::SentenceBreak::OLetter,
             AssociatedConstantInStruct
         )]
-        LV = 6,
+        OLetter = 6,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::LVT,
+            icu::properties::props::SentenceBreak::Sep,
             AssociatedConstantInStruct
         )]
-        LVT = 7,
+        Sep = 7,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::T,
+            icu::properties::props::SentenceBreak::Sp,
             AssociatedConstantInStruct
         )]
-        T = 8,
+        Sp = 8,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::V,
+            icu::properties::props::SentenceBreak::STerm,
             AssociatedConstantInStruct
         )]
-        V = 9,
+        STerm = 9,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::SpacingMark,
+            icu::properties::props::SentenceBreak::Upper,
             AssociatedConstantInStruct
         )]
-        SpacingMark = 10,
+        Upper = 10,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::Prepend,
+            icu::properties::props::SentenceBreak::CR,
             AssociatedConstantInStruct
         )]
-        Prepend = 11,
+        CR = 11,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::RegionalIndicator,
+            icu::properties::props::SentenceBreak::Extend,
             AssociatedConstantInStruct
         )]
-        RegionalIndicator = 12,
+        Extend = 12,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::EBase,
+            icu::properties::props::SentenceBreak::LF,
             AssociatedConstantInStruct
         )]
-        EBase = 13,
+        LF = 13,
         #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::EBaseGAZ,
+            icu::properties::props::SentenceBreak::SContinue,
             AssociatedConstantInStruct
         )]
-        EBaseGAZ = 14,
-        #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::EModifier,
-            AssociatedConstantInStruct
-        )]
-        EModifier = 15,
-        #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::GlueAfterZwj,
-            AssociatedConstantInStruct
-        )]
-        GlueAfterZwj = 16,
-        #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::ZWJ,
-            AssociatedConstantInStruct
-        )]
-        ZWJ = 17,
+        SContinue = 14,
     }
 
-    impl GraphemeClusterBreak {
+    impl SentenceBreak {
         #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
         pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::GraphemeClusterBreak>::new()
+            icu_properties::CodePointMapData::<props::SentenceBreak>::new()
                 .get32(ch)
                 .into()
         }
@@ -2131,7 +4146,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
         pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::GraphemeClusterBreak>::new().get(self.into())
+            icu_properties::PropertyNamesLongBorrowed::<props::SentenceBreak>::new().get(self.into())
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
@@ -2147,44 +4162,133 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
         pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::GraphemeClusterBreak>::new().get(self.into())
+            icu_properties::PropertyNamesShortBorrowed::<props::SentenceBreak>::new().get(self.into())
         }
-        #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak::to_icu4c_value, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak::to_icu4c_value, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and `CodePointMapData`
         pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak::from_icu4c_value, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak::from_icu4c_value, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or `CodePointMapData`
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
-                1 => Self::Control,
-                2 => Self::CR,
-                3 => Self::Extend,
-                4 => Self::L,
-                5 => Self::LF,
-                6 => Self::LV,
-                7 => Self::LVT,
-                8 => Self::T,
-                9 => Self::V,
-                10 => Self::SpacingMark,
-                11 => Self::Prepend,
-                12 => Self::RegionalIndicator,
-                13 => Self::EBase,
-                14 => Self::EBaseGAZ,
-                15 => Self::EModifier,
-                16 => Self::GlueAfterZwj,
-                17 => Self::ZWJ,
+                1 => Self::ATerm,
+                2 => Self::Close,
+                3 => Self::Format,
+                4 => Self::Lower,
+                5 => Self::Numeric,
+                6 => Self::OLetter,
+                7 => Self::Sep,
+                8 => Self::Sp,
+                9 => Self::STerm,
+                10 => Self::Upper,
+                11 => Self::CR,
+                12 => Self::Extend,
+                13 => Self::LF,
+                14 => Self::SContinue,
                 _ => return None,
             })
         }
 
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::GraphemeClusterBreak>::new().get_loose_utf8(s).map(Into::into)
+            icu_properties::PropertyParser::<props::SentenceBreak>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::VerticalOrientation, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum VerticalOrientation {
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientation::Rotated,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        Rotated = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientation::TransformedRotated,
+            AssociatedConstantInStruct
+        )]
+        TransformedRotated = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientation::TransformedUpright,
+            AssociatedConstantInStruct
+        )]
+        TransformedUpright = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientation::Upright,
+            AssociatedConstantInStruct
+        )]
+        Upright = 3,
+    }
+
+    impl VerticalOrientation {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::VerticalOrientation>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::VerticalOrientation>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::VerticalOrientation>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::Rotated,
+                1 => Self::TransformedRotated,
+                2 => Self::TransformedUpright,
+                3 => Self::Upright,
+                _ => return None,
+            })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::VerticalOrientation>::new().get_loose_utf8(s).map(Into::into)
         }
     }
 
@@ -2394,2110 +4498,6 @@ pub mod ffi {
         }
     }
 
-    #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::SentenceBreak, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum SentenceBreak {
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Other,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        Other = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::ATerm,
-            AssociatedConstantInStruct
-        )]
-        ATerm = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Close,
-            AssociatedConstantInStruct
-        )]
-        Close = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Format,
-            AssociatedConstantInStruct
-        )]
-        Format = 3,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Lower,
-            AssociatedConstantInStruct
-        )]
-        Lower = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Numeric,
-            AssociatedConstantInStruct
-        )]
-        Numeric = 5,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::OLetter,
-            AssociatedConstantInStruct
-        )]
-        OLetter = 6,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Sep,
-            AssociatedConstantInStruct
-        )]
-        Sep = 7,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Sp,
-            AssociatedConstantInStruct
-        )]
-        Sp = 8,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::STerm,
-            AssociatedConstantInStruct
-        )]
-        STerm = 9,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Upper,
-            AssociatedConstantInStruct
-        )]
-        Upper = 10,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::CR,
-            AssociatedConstantInStruct
-        )]
-        CR = 11,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::Extend,
-            AssociatedConstantInStruct
-        )]
-        Extend = 12,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::LF,
-            AssociatedConstantInStruct
-        )]
-        LF = 13,
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::SContinue,
-            AssociatedConstantInStruct
-        )]
-        SContinue = 14,
-    }
-
-    impl SentenceBreak {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::SentenceBreak>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::SentenceBreak>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::SentenceBreak>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::SentenceBreak::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::SentenceBreak::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::Other,
-                1 => Self::ATerm,
-                2 => Self::Close,
-                3 => Self::Format,
-                4 => Self::Lower,
-                5 => Self::Numeric,
-                6 => Self::OLetter,
-                7 => Self::Sep,
-                8 => Self::Sp,
-                9 => Self::STerm,
-                10 => Self::Upper,
-                11 => Self::CR,
-                12 => Self::Extend,
-                13 => Self::LF,
-                14 => Self::SContinue,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::SentenceBreak>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::CanonicalCombiningClass, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum CanonicalCombiningClass {
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::NotReordered,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        NotReordered = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::Overlay,
-            AssociatedConstantInStruct
-        )]
-        Overlay = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::HanReading,
-            AssociatedConstantInStruct
-        )]
-        HanReading = 6,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::Nukta,
-            AssociatedConstantInStruct
-        )]
-        Nukta = 7,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::KanaVoicing,
-            AssociatedConstantInStruct
-        )]
-        KanaVoicing = 8,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::Virama,
-            AssociatedConstantInStruct
-        )]
-        Virama = 9,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC10,
-            AssociatedConstantInStruct
-        )]
-        CCC10 = 10,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC11,
-            AssociatedConstantInStruct
-        )]
-        CCC11 = 11,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC12,
-            AssociatedConstantInStruct
-        )]
-        CCC12 = 12,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC13,
-            AssociatedConstantInStruct
-        )]
-        CCC13 = 13,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC14,
-            AssociatedConstantInStruct
-        )]
-        CCC14 = 14,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC15,
-            AssociatedConstantInStruct
-        )]
-        CCC15 = 15,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC16,
-            AssociatedConstantInStruct
-        )]
-        CCC16 = 16,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC17,
-            AssociatedConstantInStruct
-        )]
-        CCC17 = 17,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC18,
-            AssociatedConstantInStruct
-        )]
-        CCC18 = 18,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC19,
-            AssociatedConstantInStruct
-        )]
-        CCC19 = 19,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC20,
-            AssociatedConstantInStruct
-        )]
-        CCC20 = 20,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC21,
-            AssociatedConstantInStruct
-        )]
-        CCC21 = 21,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC22,
-            AssociatedConstantInStruct
-        )]
-        CCC22 = 22,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC23,
-            AssociatedConstantInStruct
-        )]
-        CCC23 = 23,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC24,
-            AssociatedConstantInStruct
-        )]
-        CCC24 = 24,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC25,
-            AssociatedConstantInStruct
-        )]
-        CCC25 = 25,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC26,
-            AssociatedConstantInStruct
-        )]
-        CCC26 = 26,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC27,
-            AssociatedConstantInStruct
-        )]
-        CCC27 = 27,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC28,
-            AssociatedConstantInStruct
-        )]
-        CCC28 = 28,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC29,
-            AssociatedConstantInStruct
-        )]
-        CCC29 = 29,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC30,
-            AssociatedConstantInStruct
-        )]
-        CCC30 = 30,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC31,
-            AssociatedConstantInStruct
-        )]
-        CCC31 = 31,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC32,
-            AssociatedConstantInStruct
-        )]
-        CCC32 = 32,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC33,
-            AssociatedConstantInStruct
-        )]
-        CCC33 = 33,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC34,
-            AssociatedConstantInStruct
-        )]
-        CCC34 = 34,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC35,
-            AssociatedConstantInStruct
-        )]
-        CCC35 = 35,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC36,
-            AssociatedConstantInStruct
-        )]
-        CCC36 = 36,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC84,
-            AssociatedConstantInStruct
-        )]
-        CCC84 = 84,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC91,
-            AssociatedConstantInStruct
-        )]
-        CCC91 = 91,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC103,
-            AssociatedConstantInStruct
-        )]
-        CCC103 = 103,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC107,
-            AssociatedConstantInStruct
-        )]
-        CCC107 = 107,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC118,
-            AssociatedConstantInStruct
-        )]
-        CCC118 = 118,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC122,
-            AssociatedConstantInStruct
-        )]
-        CCC122 = 122,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC129,
-            AssociatedConstantInStruct
-        )]
-        CCC129 = 129,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC130,
-            AssociatedConstantInStruct
-        )]
-        CCC130 = 130,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC132,
-            AssociatedConstantInStruct
-        )]
-        CCC132 = 132,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::CCC133,
-            AssociatedConstantInStruct
-        )]
-        CCC133 = 133,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::AttachedBelowLeft,
-            AssociatedConstantInStruct
-        )]
-        AttachedBelowLeft = 200,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::AttachedBelow,
-            AssociatedConstantInStruct
-        )]
-        AttachedBelow = 202,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::AttachedAbove,
-            AssociatedConstantInStruct
-        )]
-        AttachedAbove = 214,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::AttachedAboveRight,
-            AssociatedConstantInStruct
-        )]
-        AttachedAboveRight = 216,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::BelowLeft,
-            AssociatedConstantInStruct
-        )]
-        BelowLeft = 218,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::Below,
-            AssociatedConstantInStruct
-        )]
-        Below = 220,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::BelowRight,
-            AssociatedConstantInStruct
-        )]
-        BelowRight = 222,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::Left,
-            AssociatedConstantInStruct
-        )]
-        Left = 224,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::Right,
-            AssociatedConstantInStruct
-        )]
-        Right = 226,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::AboveLeft,
-            AssociatedConstantInStruct
-        )]
-        AboveLeft = 228,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::Above,
-            AssociatedConstantInStruct
-        )]
-        Above = 230,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::AboveRight,
-            AssociatedConstantInStruct
-        )]
-        AboveRight = 232,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::DoubleBelow,
-            AssociatedConstantInStruct
-        )]
-        DoubleBelow = 233,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::DoubleAbove,
-            AssociatedConstantInStruct
-        )]
-        DoubleAbove = 234,
-        #[diplomat::rust_link(
-            icu::properties::props::CanonicalCombiningClass::IotaSubscript,
-            AssociatedConstantInStruct
-        )]
-        IotaSubscript = 240,
-    }
-
-    impl CanonicalCombiningClass {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::CanonicalCombiningClass>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::CanonicalCombiningClass>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::CanonicalCombiningClass>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::NotReordered,
-                1 => Self::Overlay,
-                6 => Self::HanReading,
-                7 => Self::Nukta,
-                8 => Self::KanaVoicing,
-                9 => Self::Virama,
-                10 => Self::CCC10,
-                11 => Self::CCC11,
-                12 => Self::CCC12,
-                13 => Self::CCC13,
-                14 => Self::CCC14,
-                15 => Self::CCC15,
-                16 => Self::CCC16,
-                17 => Self::CCC17,
-                18 => Self::CCC18,
-                19 => Self::CCC19,
-                20 => Self::CCC20,
-                21 => Self::CCC21,
-                22 => Self::CCC22,
-                23 => Self::CCC23,
-                24 => Self::CCC24,
-                25 => Self::CCC25,
-                26 => Self::CCC26,
-                27 => Self::CCC27,
-                28 => Self::CCC28,
-                29 => Self::CCC29,
-                30 => Self::CCC30,
-                31 => Self::CCC31,
-                32 => Self::CCC32,
-                33 => Self::CCC33,
-                34 => Self::CCC34,
-                35 => Self::CCC35,
-                36 => Self::CCC36,
-                84 => Self::CCC84,
-                91 => Self::CCC91,
-                103 => Self::CCC103,
-                107 => Self::CCC107,
-                118 => Self::CCC118,
-                122 => Self::CCC122,
-                129 => Self::CCC129,
-                130 => Self::CCC130,
-                132 => Self::CCC132,
-                133 => Self::CCC133,
-                200 => Self::AttachedBelowLeft,
-                202 => Self::AttachedBelow,
-                214 => Self::AttachedAbove,
-                216 => Self::AttachedAboveRight,
-                218 => Self::BelowLeft,
-                220 => Self::Below,
-                222 => Self::BelowRight,
-                224 => Self::Left,
-                226 => Self::Right,
-                228 => Self::AboveLeft,
-                230 => Self::Above,
-                232 => Self::AboveRight,
-                233 => Self::DoubleBelow,
-                234 => Self::DoubleAbove,
-                240 => Self::IotaSubscript,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::CanonicalCombiningClass>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::IndicSyllabicCategory, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum IndicSyllabicCategory {
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Other,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        Other = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Avagraha,
-            AssociatedConstantInStruct
-        )]
-        Avagraha = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Bindu,
-            AssociatedConstantInStruct
-        )]
-        Bindu = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::BrahmiJoiningNumber,
-            AssociatedConstantInStruct
-        )]
-        BrahmiJoiningNumber = 3,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::CantillationMark,
-            AssociatedConstantInStruct
-        )]
-        CantillationMark = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Consonant,
-            AssociatedConstantInStruct
-        )]
-        Consonant = 5,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantDead,
-            AssociatedConstantInStruct
-        )]
-        ConsonantDead = 6,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantFinal,
-            AssociatedConstantInStruct
-        )]
-        ConsonantFinal = 7,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantHeadLetter,
-            AssociatedConstantInStruct
-        )]
-        ConsonantHeadLetter = 8,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantInitialPostfixed,
-            AssociatedConstantInStruct
-        )]
-        ConsonantInitialPostfixed = 9,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantKiller,
-            AssociatedConstantInStruct
-        )]
-        ConsonantKiller = 10,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantMedial,
-            AssociatedConstantInStruct
-        )]
-        ConsonantMedial = 11,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantPlaceholder,
-            AssociatedConstantInStruct
-        )]
-        ConsonantPlaceholder = 12,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantPrecedingRepha,
-            AssociatedConstantInStruct
-        )]
-        ConsonantPrecedingRepha = 13,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantPrefixed,
-            AssociatedConstantInStruct
-        )]
-        ConsonantPrefixed = 14,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantSubjoined,
-            AssociatedConstantInStruct
-        )]
-        ConsonantSubjoined = 15,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantSucceedingRepha,
-            AssociatedConstantInStruct
-        )]
-        ConsonantSucceedingRepha = 16,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantWithStacker,
-            AssociatedConstantInStruct
-        )]
-        ConsonantWithStacker = 17,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::GeminationMark,
-            AssociatedConstantInStruct
-        )]
-        GeminationMark = 18,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::InvisibleStacker,
-            AssociatedConstantInStruct
-        )]
-        InvisibleStacker = 19,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Joiner,
-            AssociatedConstantInStruct
-        )]
-        Joiner = 20,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ModifyingLetter,
-            AssociatedConstantInStruct
-        )]
-        ModifyingLetter = 21,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::NonJoiner,
-            AssociatedConstantInStruct
-        )]
-        NonJoiner = 22,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Nukta,
-            AssociatedConstantInStruct
-        )]
-        Nukta = 23,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Number,
-            AssociatedConstantInStruct
-        )]
-        Number = 24,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::NumberJoiner,
-            AssociatedConstantInStruct
-        )]
-        NumberJoiner = 25,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::PureKiller,
-            AssociatedConstantInStruct
-        )]
-        PureKiller = 26,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::RegisterShifter,
-            AssociatedConstantInStruct
-        )]
-        RegisterShifter = 27,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::SyllableModifier,
-            AssociatedConstantInStruct
-        )]
-        SyllableModifier = 28,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ToneLetter,
-            AssociatedConstantInStruct
-        )]
-        ToneLetter = 29,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ToneMark,
-            AssociatedConstantInStruct
-        )]
-        ToneMark = 30,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Virama,
-            AssociatedConstantInStruct
-        )]
-        Virama = 31,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Visarga,
-            AssociatedConstantInStruct
-        )]
-        Visarga = 32,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::Vowel,
-            AssociatedConstantInStruct
-        )]
-        Vowel = 33,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::VowelDependent,
-            AssociatedConstantInStruct
-        )]
-        VowelDependent = 34,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::VowelIndependent,
-            AssociatedConstantInStruct
-        )]
-        VowelIndependent = 35,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ReorderingKiller,
-            AssociatedConstantInStruct
-        )]
-        ReorderingKiller = 36,
-    }
-
-    impl IndicSyllabicCategory {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::IndicSyllabicCategory>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::IndicSyllabicCategory>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::IndicSyllabicCategory>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::Other,
-                1 => Self::Avagraha,
-                2 => Self::Bindu,
-                3 => Self::BrahmiJoiningNumber,
-                4 => Self::CantillationMark,
-                5 => Self::Consonant,
-                6 => Self::ConsonantDead,
-                7 => Self::ConsonantFinal,
-                8 => Self::ConsonantHeadLetter,
-                9 => Self::ConsonantInitialPostfixed,
-                10 => Self::ConsonantKiller,
-                11 => Self::ConsonantMedial,
-                12 => Self::ConsonantPlaceholder,
-                13 => Self::ConsonantPrecedingRepha,
-                14 => Self::ConsonantPrefixed,
-                15 => Self::ConsonantSubjoined,
-                16 => Self::ConsonantSucceedingRepha,
-                17 => Self::ConsonantWithStacker,
-                18 => Self::GeminationMark,
-                19 => Self::InvisibleStacker,
-                20 => Self::Joiner,
-                21 => Self::ModifyingLetter,
-                22 => Self::NonJoiner,
-                23 => Self::Nukta,
-                24 => Self::Number,
-                25 => Self::NumberJoiner,
-                26 => Self::PureKiller,
-                27 => Self::RegisterShifter,
-                28 => Self::SyllableModifier,
-                29 => Self::ToneLetter,
-                30 => Self::ToneMark,
-                31 => Self::Virama,
-                32 => Self::Visarga,
-                33 => Self::Vowel,
-                34 => Self::VowelDependent,
-                35 => Self::VowelIndependent,
-                36 => Self::ReorderingKiller,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::IndicSyllabicCategory>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::IndicConjunctBreak, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum IndicConjunctBreak {
-        #[diplomat::rust_link(
-            icu::properties::props::IndicConjunctBreak::None,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        None = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicConjunctBreak::Consonant,
-            AssociatedConstantInStruct
-        )]
-        Consonant = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicConjunctBreak::Extend,
-            AssociatedConstantInStruct
-        )]
-        Extend = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::IndicConjunctBreak::Linker,
-            AssociatedConstantInStruct
-        )]
-        Linker = 3,
-    }
-
-    impl IndicConjunctBreak {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::IndicConjunctBreak>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::IndicConjunctBreak>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::IndicConjunctBreak>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::None,
-                1 => Self::Consonant,
-                2 => Self::Extend,
-                3 => Self::Linker,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::IndicConjunctBreak>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::JoiningGroup, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::JoiningGroup, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum JoiningGroup {
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::NoJoiningGroup,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        NoJoiningGroup = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Ain,
-            AssociatedConstantInStruct
-        )]
-        Ain = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Alaph,
-            AssociatedConstantInStruct
-        )]
-        Alaph = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Alef,
-            AssociatedConstantInStruct
-        )]
-        Alef = 3,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Beh,
-            AssociatedConstantInStruct
-        )]
-        Beh = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Beth,
-            AssociatedConstantInStruct
-        )]
-        Beth = 5,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Dal,
-            AssociatedConstantInStruct
-        )]
-        Dal = 6,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::DalathRish,
-            AssociatedConstantInStruct
-        )]
-        DalathRish = 7,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::E,
-            AssociatedConstantInStruct
-        )]
-        E = 8,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Feh,
-            AssociatedConstantInStruct
-        )]
-        Feh = 9,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::FinalSemkath,
-            AssociatedConstantInStruct
-        )]
-        FinalSemkath = 10,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Gaf,
-            AssociatedConstantInStruct
-        )]
-        Gaf = 11,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Gamal,
-            AssociatedConstantInStruct
-        )]
-        Gamal = 12,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Hah,
-            AssociatedConstantInStruct
-        )]
-        Hah = 13,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::TehMarbutaGoal,
-            AssociatedConstantInStruct
-        )]
-        TehMarbutaGoal = 14,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::He,
-            AssociatedConstantInStruct
-        )]
-        He = 15,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Heh,
-            AssociatedConstantInStruct
-        )]
-        Heh = 16,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::HehGoal,
-            AssociatedConstantInStruct
-        )]
-        HehGoal = 17,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Heth,
-            AssociatedConstantInStruct
-        )]
-        Heth = 18,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Kaf,
-            AssociatedConstantInStruct
-        )]
-        Kaf = 19,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Kaph,
-            AssociatedConstantInStruct
-        )]
-        Kaph = 20,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::KnottedHeh,
-            AssociatedConstantInStruct
-        )]
-        KnottedHeh = 21,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Lam,
-            AssociatedConstantInStruct
-        )]
-        Lam = 22,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Lamadh,
-            AssociatedConstantInStruct
-        )]
-        Lamadh = 23,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Meem,
-            AssociatedConstantInStruct
-        )]
-        Meem = 24,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Mim,
-            AssociatedConstantInStruct
-        )]
-        Mim = 25,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Noon,
-            AssociatedConstantInStruct
-        )]
-        Noon = 26,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Nun,
-            AssociatedConstantInStruct
-        )]
-        Nun = 27,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Pe,
-            AssociatedConstantInStruct
-        )]
-        Pe = 28,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Qaf,
-            AssociatedConstantInStruct
-        )]
-        Qaf = 29,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Qaph,
-            AssociatedConstantInStruct
-        )]
-        Qaph = 30,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Reh,
-            AssociatedConstantInStruct
-        )]
-        Reh = 31,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ReversedPe,
-            AssociatedConstantInStruct
-        )]
-        ReversedPe = 32,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Sad,
-            AssociatedConstantInStruct
-        )]
-        Sad = 33,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Sadhe,
-            AssociatedConstantInStruct
-        )]
-        Sadhe = 34,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Seen,
-            AssociatedConstantInStruct
-        )]
-        Seen = 35,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Semkath,
-            AssociatedConstantInStruct
-        )]
-        Semkath = 36,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Shin,
-            AssociatedConstantInStruct
-        )]
-        Shin = 37,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::SwashKaf,
-            AssociatedConstantInStruct
-        )]
-        SwashKaf = 38,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::SyriacWaw,
-            AssociatedConstantInStruct
-        )]
-        SyriacWaw = 39,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Tah,
-            AssociatedConstantInStruct
-        )]
-        Tah = 40,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Taw,
-            AssociatedConstantInStruct
-        )]
-        Taw = 41,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::TehMarbuta,
-            AssociatedConstantInStruct
-        )]
-        TehMarbuta = 42,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Teth,
-            AssociatedConstantInStruct
-        )]
-        Teth = 43,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Waw,
-            AssociatedConstantInStruct
-        )]
-        Waw = 44,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Yeh,
-            AssociatedConstantInStruct
-        )]
-        Yeh = 45,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::YehBarree,
-            AssociatedConstantInStruct
-        )]
-        YehBarree = 46,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::YehWithTail,
-            AssociatedConstantInStruct
-        )]
-        YehWithTail = 47,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Yudh,
-            AssociatedConstantInStruct
-        )]
-        Yudh = 48,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::YudhHe,
-            AssociatedConstantInStruct
-        )]
-        YudhHe = 49,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Zain,
-            AssociatedConstantInStruct
-        )]
-        Zain = 50,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Fe,
-            AssociatedConstantInStruct
-        )]
-        Fe = 51,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Khaph,
-            AssociatedConstantInStruct
-        )]
-        Khaph = 52,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Zhain,
-            AssociatedConstantInStruct
-        )]
-        Zhain = 53,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::BurushaskiYehBarree,
-            AssociatedConstantInStruct
-        )]
-        BurushaskiYehBarree = 54,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::FarsiYeh,
-            AssociatedConstantInStruct
-        )]
-        FarsiYeh = 55,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::Nya,
-            AssociatedConstantInStruct
-        )]
-        Nya = 56,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::RohingyaYeh,
-            AssociatedConstantInStruct
-        )]
-        RohingyaYeh = 57,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanAleph,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanAleph = 58,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanAyin,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanAyin = 59,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanBeth,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanBeth = 60,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanDaleth,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanDaleth = 61,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanDhamedh,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanDhamedh = 62,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanFive,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanFive = 63,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanGimel,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanGimel = 64,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanHeth,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanHeth = 65,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanHundred,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanHundred = 66,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanKaph,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanKaph = 67,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanLamedh,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanLamedh = 68,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanMem,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanMem = 69,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanNun,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanNun = 70,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanOne,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanOne = 71,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanPe,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanPe = 72,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanQoph,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanQoph = 73,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanResh,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanResh = 74,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanSadhe,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanSadhe = 75,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanSamekh,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanSamekh = 76,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanTaw,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanTaw = 77,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanTen,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanTen = 78,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanTeth,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanTeth = 79,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanThamedh,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanThamedh = 80,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanTwenty,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanTwenty = 81,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanWaw,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanWaw = 82,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanYodh,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanYodh = 83,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ManichaeanZayin,
-            AssociatedConstantInStruct
-        )]
-        ManichaeanZayin = 84,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::StraightWaw,
-            AssociatedConstantInStruct
-        )]
-        StraightWaw = 85,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::AfricanFeh,
-            AssociatedConstantInStruct
-        )]
-        AfricanFeh = 86,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::AfricanNoon,
-            AssociatedConstantInStruct
-        )]
-        AfricanNoon = 87,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::AfricanQaf,
-            AssociatedConstantInStruct
-        )]
-        AfricanQaf = 88,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamBha,
-            AssociatedConstantInStruct
-        )]
-        MalayalamBha = 89,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamJa,
-            AssociatedConstantInStruct
-        )]
-        MalayalamJa = 90,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamLla,
-            AssociatedConstantInStruct
-        )]
-        MalayalamLla = 91,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamLlla,
-            AssociatedConstantInStruct
-        )]
-        MalayalamLlla = 92,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamNga,
-            AssociatedConstantInStruct
-        )]
-        MalayalamNga = 93,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamNna,
-            AssociatedConstantInStruct
-        )]
-        MalayalamNna = 94,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamNnna,
-            AssociatedConstantInStruct
-        )]
-        MalayalamNnna = 95,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamNya,
-            AssociatedConstantInStruct
-        )]
-        MalayalamNya = 96,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamRa,
-            AssociatedConstantInStruct
-        )]
-        MalayalamRa = 97,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamSsa,
-            AssociatedConstantInStruct
-        )]
-        MalayalamSsa = 98,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::MalayalamTta,
-            AssociatedConstantInStruct
-        )]
-        MalayalamTta = 99,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::HanifiRohingyaKinnaYa,
-            AssociatedConstantInStruct
-        )]
-        HanifiRohingyaKinnaYa = 100,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::HanifiRohingyaPa,
-            AssociatedConstantInStruct
-        )]
-        HanifiRohingyaPa = 101,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ThinYeh,
-            AssociatedConstantInStruct
-        )]
-        ThinYeh = 102,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::VerticalTail,
-            AssociatedConstantInStruct
-        )]
-        VerticalTail = 103,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::KashmiriYeh,
-            AssociatedConstantInStruct
-        )]
-        KashmiriYeh = 104,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningGroup::ThinNoon,
-            AssociatedConstantInStruct
-        )]
-        ThinNoon = 105,
-    }
-
-    impl JoiningGroup {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::JoiningGroup>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::JoiningGroup>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::JoiningGroup>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::JoiningGroup::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::JoiningGroup::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::NoJoiningGroup,
-                1 => Self::Ain,
-                2 => Self::Alaph,
-                3 => Self::Alef,
-                4 => Self::Beh,
-                5 => Self::Beth,
-                6 => Self::Dal,
-                7 => Self::DalathRish,
-                8 => Self::E,
-                9 => Self::Feh,
-                10 => Self::FinalSemkath,
-                11 => Self::Gaf,
-                12 => Self::Gamal,
-                13 => Self::Hah,
-                14 => Self::TehMarbutaGoal,
-                15 => Self::He,
-                16 => Self::Heh,
-                17 => Self::HehGoal,
-                18 => Self::Heth,
-                19 => Self::Kaf,
-                20 => Self::Kaph,
-                21 => Self::KnottedHeh,
-                22 => Self::Lam,
-                23 => Self::Lamadh,
-                24 => Self::Meem,
-                25 => Self::Mim,
-                26 => Self::Noon,
-                27 => Self::Nun,
-                28 => Self::Pe,
-                29 => Self::Qaf,
-                30 => Self::Qaph,
-                31 => Self::Reh,
-                32 => Self::ReversedPe,
-                33 => Self::Sad,
-                34 => Self::Sadhe,
-                35 => Self::Seen,
-                36 => Self::Semkath,
-                37 => Self::Shin,
-                38 => Self::SwashKaf,
-                39 => Self::SyriacWaw,
-                40 => Self::Tah,
-                41 => Self::Taw,
-                42 => Self::TehMarbuta,
-                43 => Self::Teth,
-                44 => Self::Waw,
-                45 => Self::Yeh,
-                46 => Self::YehBarree,
-                47 => Self::YehWithTail,
-                48 => Self::Yudh,
-                49 => Self::YudhHe,
-                50 => Self::Zain,
-                51 => Self::Fe,
-                52 => Self::Khaph,
-                53 => Self::Zhain,
-                54 => Self::BurushaskiYehBarree,
-                55 => Self::FarsiYeh,
-                56 => Self::Nya,
-                57 => Self::RohingyaYeh,
-                58 => Self::ManichaeanAleph,
-                59 => Self::ManichaeanAyin,
-                60 => Self::ManichaeanBeth,
-                61 => Self::ManichaeanDaleth,
-                62 => Self::ManichaeanDhamedh,
-                63 => Self::ManichaeanFive,
-                64 => Self::ManichaeanGimel,
-                65 => Self::ManichaeanHeth,
-                66 => Self::ManichaeanHundred,
-                67 => Self::ManichaeanKaph,
-                68 => Self::ManichaeanLamedh,
-                69 => Self::ManichaeanMem,
-                70 => Self::ManichaeanNun,
-                71 => Self::ManichaeanOne,
-                72 => Self::ManichaeanPe,
-                73 => Self::ManichaeanQoph,
-                74 => Self::ManichaeanResh,
-                75 => Self::ManichaeanSadhe,
-                76 => Self::ManichaeanSamekh,
-                77 => Self::ManichaeanTaw,
-                78 => Self::ManichaeanTen,
-                79 => Self::ManichaeanTeth,
-                80 => Self::ManichaeanThamedh,
-                81 => Self::ManichaeanTwenty,
-                82 => Self::ManichaeanWaw,
-                83 => Self::ManichaeanYodh,
-                84 => Self::ManichaeanZayin,
-                85 => Self::StraightWaw,
-                86 => Self::AfricanFeh,
-                87 => Self::AfricanNoon,
-                88 => Self::AfricanQaf,
-                89 => Self::MalayalamBha,
-                90 => Self::MalayalamJa,
-                91 => Self::MalayalamLla,
-                92 => Self::MalayalamLlla,
-                93 => Self::MalayalamNga,
-                94 => Self::MalayalamNna,
-                95 => Self::MalayalamNnna,
-                96 => Self::MalayalamNya,
-                97 => Self::MalayalamRa,
-                98 => Self::MalayalamSsa,
-                99 => Self::MalayalamTta,
-                100 => Self::HanifiRohingyaKinnaYa,
-                101 => Self::HanifiRohingyaPa,
-                102 => Self::ThinYeh,
-                103 => Self::VerticalTail,
-                104 => Self::KashmiriYeh,
-                105 => Self::ThinNoon,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::JoiningGroup>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::JoiningType, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum JoiningType {
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningType::NonJoining,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        NonJoining = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningType::JoinCausing,
-            AssociatedConstantInStruct
-        )]
-        JoinCausing = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningType::DualJoining,
-            AssociatedConstantInStruct
-        )]
-        DualJoining = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningType::LeftJoining,
-            AssociatedConstantInStruct
-        )]
-        LeftJoining = 3,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningType::RightJoining,
-            AssociatedConstantInStruct
-        )]
-        RightJoining = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::JoiningType::Transparent,
-            AssociatedConstantInStruct
-        )]
-        Transparent = 5,
-    }
-
-    impl JoiningType {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::JoiningType>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::JoiningType>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::JoiningType>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::JoiningType::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::JoiningType::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::NonJoining,
-                1 => Self::JoinCausing,
-                2 => Self::DualJoining,
-                3 => Self::LeftJoining,
-                4 => Self::RightJoining,
-                5 => Self::Transparent,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::JoiningType>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
-    #[diplomat::enum_convert(icu_properties::props::GeneralCategory, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum GeneralCategory {
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::Unassigned,
-            EnumVariant
-        )]
-        #[diplomat::attr(auto, default)]
-        Unassigned = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::UppercaseLetter,
-            EnumVariant
-        )]
-        UppercaseLetter = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::LowercaseLetter,
-            EnumVariant
-        )]
-        LowercaseLetter = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::TitlecaseLetter,
-            EnumVariant
-        )]
-        TitlecaseLetter = 3,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::ModifierLetter,
-            EnumVariant
-        )]
-        ModifierLetter = 4,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::OtherLetter,
-            EnumVariant
-        )]
-        OtherLetter = 5,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::NonspacingMark,
-            EnumVariant
-        )]
-        NonspacingMark = 6,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::SpacingMark,
-            EnumVariant
-        )]
-        SpacingMark = 8,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::EnclosingMark,
-            EnumVariant
-        )]
-        EnclosingMark = 7,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::DecimalNumber,
-            EnumVariant
-        )]
-        DecimalNumber = 9,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::LetterNumber,
-            EnumVariant
-        )]
-        LetterNumber = 10,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::OtherNumber,
-            EnumVariant
-        )]
-        OtherNumber = 11,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::SpaceSeparator,
-            EnumVariant
-        )]
-        SpaceSeparator = 12,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::LineSeparator,
-            EnumVariant
-        )]
-        LineSeparator = 13,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::ParagraphSeparator,
-            EnumVariant
-        )]
-        ParagraphSeparator = 14,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::Control,
-            EnumVariant
-        )]
-        Control = 15,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::Format,
-            EnumVariant
-        )]
-        Format = 16,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::PrivateUse,
-            EnumVariant
-        )]
-        PrivateUse = 17,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::Surrogate,
-            EnumVariant
-        )]
-        Surrogate = 18,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::DashPunctuation,
-            EnumVariant
-        )]
-        DashPunctuation = 19,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::OpenPunctuation,
-            EnumVariant
-        )]
-        OpenPunctuation = 20,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::ClosePunctuation,
-            EnumVariant
-        )]
-        ClosePunctuation = 21,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::ConnectorPunctuation,
-            EnumVariant
-        )]
-        ConnectorPunctuation = 22,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::InitialPunctuation,
-            EnumVariant
-        )]
-        InitialPunctuation = 28,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::FinalPunctuation,
-            EnumVariant
-        )]
-        FinalPunctuation = 29,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::OtherPunctuation,
-            EnumVariant
-        )]
-        OtherPunctuation = 23,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::MathSymbol,
-            EnumVariant
-        )]
-        MathSymbol = 24,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::CurrencySymbol,
-            EnumVariant
-        )]
-        CurrencySymbol = 25,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::ModifierSymbol,
-            EnumVariant
-        )]
-        ModifierSymbol = 26,
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::OtherSymbol,
-            EnumVariant
-        )]
-        OtherSymbol = 27,
-    }
-
-    impl GeneralCategory {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::GeneralCategory>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::GeneralCategory>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::GeneralCategory>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::GeneralCategory::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::GeneralCategory::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::Unassigned,
-                1 => Self::UppercaseLetter,
-                2 => Self::LowercaseLetter,
-                3 => Self::TitlecaseLetter,
-                4 => Self::ModifierLetter,
-                5 => Self::OtherLetter,
-                6 => Self::NonspacingMark,
-                8 => Self::SpacingMark,
-                7 => Self::EnclosingMark,
-                9 => Self::DecimalNumber,
-                10 => Self::LetterNumber,
-                11 => Self::OtherNumber,
-                12 => Self::SpaceSeparator,
-                13 => Self::LineSeparator,
-                14 => Self::ParagraphSeparator,
-                15 => Self::Control,
-                16 => Self::Format,
-                17 => Self::PrivateUse,
-                18 => Self::Surrogate,
-                19 => Self::DashPunctuation,
-                20 => Self::OpenPunctuation,
-                21 => Self::ClosePunctuation,
-                22 => Self::ConnectorPunctuation,
-                28 => Self::InitialPunctuation,
-                29 => Self::FinalPunctuation,
-                23 => Self::OtherPunctuation,
-                24 => Self::MathSymbol,
-                25 => Self::CurrencySymbol,
-                26 => Self::ModifierSymbol,
-                27 => Self::OtherSymbol,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::GeneralCategory>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
-    #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
-    #[diplomat::enum_convert(icu_properties::props::VerticalOrientation, needs_wildcard)]
-    #[non_exhaustive]
-    pub enum VerticalOrientation {
-        #[diplomat::rust_link(
-            icu::properties::props::VerticalOrientation::Rotated,
-            AssociatedConstantInStruct
-        )]
-        #[diplomat::attr(auto, default)]
-        Rotated = 0,
-        #[diplomat::rust_link(
-            icu::properties::props::VerticalOrientation::TransformedRotated,
-            AssociatedConstantInStruct
-        )]
-        TransformedRotated = 1,
-        #[diplomat::rust_link(
-            icu::properties::props::VerticalOrientation::TransformedUpright,
-            AssociatedConstantInStruct
-        )]
-        TransformedUpright = 2,
-        #[diplomat::rust_link(
-            icu::properties::props::VerticalOrientation::Upright,
-            AssociatedConstantInStruct
-        )]
-        Upright = 3,
-    }
-
-    impl VerticalOrientation {
-        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
-        #[cfg(feature = "compiled_data")]
-        pub fn for_char(ch: DiplomatChar) -> Self {
-            icu_properties::CodePointMapData::<props::VerticalOrientation>::new()
-                .get32(ch)
-                .into()
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::long_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesLongBorrowed::<props::VerticalOrientation>::new().get(self.into())
-        }
-
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::properties::props::NamedEnumeratedProperty::short_name,
-            FnInTrait,
-            hidden
-        )]
-        #[cfg(feature = "compiled_data")]
-        /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> Option<&'static str> {
-            icu_properties::PropertyNamesShortBorrowed::<props::VerticalOrientation>::new().get(self.into())
-        }
-        #[diplomat::rust_link(icu::properties::props::VerticalOrientation::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
-        pub fn to_integer_value(self) -> u8 {
-            self as u8
-        }
-        #[diplomat::rust_link(icu::properties::props::VerticalOrientation::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
-        /// Convert from an integer value from ICU4C or `CodePointMapData`
-        pub fn from_integer_value(other: u8) -> Option<Self> {
-            Some(match other {
-                0 => Self::Rotated,
-                1 => Self::TransformedRotated,
-                2 => Self::TransformedUpright,
-                3 => Self::Upright,
-                _ => return None,
-            })
-        }
-
-        #[cfg(feature = "compiled_data")]
-        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
-            icu_properties::PropertyParser::<props::VerticalOrientation>::new().get_loose_utf8(s).map(Into::into)
-        }
-    }
-
     impl GeneralCategory {
         /// Produces a `GeneralCategoryGroup` mask that can represent a group of general categories
         #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
@@ -4530,49 +4530,33 @@ fn test_all_cases_covered() {
         let ffi_prop = BidiClass::from(prop);
         assert_eq!(prop, props::BidiClass::from(ffi_prop));
     }
-    for &prop in props::NumericType::ALL_VALUES {
-        let ffi_prop = NumericType::from(prop);
-        assert_eq!(prop, props::NumericType::from(ffi_prop));
-    }
-    for &prop in props::Script::ALL_VALUES {
-        let ffi_prop = Script::from(prop);
-        assert_eq!(prop, props::Script::from(ffi_prop));
-    }
-    for &prop in props::HangulSyllableType::ALL_VALUES {
-        let ffi_prop = HangulSyllableType::from(prop);
-        assert_eq!(prop, props::HangulSyllableType::from(ffi_prop));
+    for &prop in props::CanonicalCombiningClass::ALL_VALUES {
+        let ffi_prop = CanonicalCombiningClass::from(prop);
+        assert_eq!(prop, props::CanonicalCombiningClass::from(ffi_prop));
     }
     for &prop in props::EastAsianWidth::ALL_VALUES {
         let ffi_prop = EastAsianWidth::from(prop);
         assert_eq!(prop, props::EastAsianWidth::from(ffi_prop));
     }
-    for &prop in props::LineBreak::ALL_VALUES {
-        let ffi_prop = LineBreak::from(prop);
-        assert_eq!(prop, props::LineBreak::from(ffi_prop));
+    for &prop in props::GeneralCategory::ALL_VALUES {
+        let ffi_prop = GeneralCategory::from(prop);
+        assert_eq!(prop, props::GeneralCategory::from(ffi_prop));
     }
     for &prop in props::GraphemeClusterBreak::ALL_VALUES {
         let ffi_prop = GraphemeClusterBreak::from(prop);
         assert_eq!(prop, props::GraphemeClusterBreak::from(ffi_prop));
     }
-    for &prop in props::WordBreak::ALL_VALUES {
-        let ffi_prop = WordBreak::from(prop);
-        assert_eq!(prop, props::WordBreak::from(ffi_prop));
-    }
-    for &prop in props::SentenceBreak::ALL_VALUES {
-        let ffi_prop = SentenceBreak::from(prop);
-        assert_eq!(prop, props::SentenceBreak::from(ffi_prop));
-    }
-    for &prop in props::CanonicalCombiningClass::ALL_VALUES {
-        let ffi_prop = CanonicalCombiningClass::from(prop);
-        assert_eq!(prop, props::CanonicalCombiningClass::from(ffi_prop));
-    }
-    for &prop in props::IndicSyllabicCategory::ALL_VALUES {
-        let ffi_prop = IndicSyllabicCategory::from(prop);
-        assert_eq!(prop, props::IndicSyllabicCategory::from(ffi_prop));
+    for &prop in props::HangulSyllableType::ALL_VALUES {
+        let ffi_prop = HangulSyllableType::from(prop);
+        assert_eq!(prop, props::HangulSyllableType::from(ffi_prop));
     }
     for &prop in props::IndicConjunctBreak::ALL_VALUES {
         let ffi_prop = IndicConjunctBreak::from(prop);
         assert_eq!(prop, props::IndicConjunctBreak::from(ffi_prop));
+    }
+    for &prop in props::IndicSyllabicCategory::ALL_VALUES {
+        let ffi_prop = IndicSyllabicCategory::from(prop);
+        assert_eq!(prop, props::IndicSyllabicCategory::from(ffi_prop));
     }
     for &prop in props::JoiningGroup::ALL_VALUES {
         let ffi_prop = JoiningGroup::from(prop);
@@ -4582,12 +4566,28 @@ fn test_all_cases_covered() {
         let ffi_prop = JoiningType::from(prop);
         assert_eq!(prop, props::JoiningType::from(ffi_prop));
     }
-    for &prop in props::GeneralCategory::ALL_VALUES {
-        let ffi_prop = GeneralCategory::from(prop);
-        assert_eq!(prop, props::GeneralCategory::from(ffi_prop));
+    for &prop in props::LineBreak::ALL_VALUES {
+        let ffi_prop = LineBreak::from(prop);
+        assert_eq!(prop, props::LineBreak::from(ffi_prop));
+    }
+    for &prop in props::NumericType::ALL_VALUES {
+        let ffi_prop = NumericType::from(prop);
+        assert_eq!(prop, props::NumericType::from(ffi_prop));
+    }
+    for &prop in props::Script::ALL_VALUES {
+        let ffi_prop = Script::from(prop);
+        assert_eq!(prop, props::Script::from(ffi_prop));
+    }
+    for &prop in props::SentenceBreak::ALL_VALUES {
+        let ffi_prop = SentenceBreak::from(prop);
+        assert_eq!(prop, props::SentenceBreak::from(ffi_prop));
     }
     for &prop in props::VerticalOrientation::ALL_VALUES {
         let ffi_prop = VerticalOrientation::from(prop);
         assert_eq!(prop, props::VerticalOrientation::from(ffi_prop));
+    }
+    for &prop in props::WordBreak::ALL_VALUES {
+        let ffi_prop = WordBreak::from(prop);
+        assert_eq!(prop, props::WordBreak::from(ffi_prop));
     }
 }
