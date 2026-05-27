@@ -3744,14 +3744,18 @@ fn test_to_icu4c_value() {
                     .unwrap()
                     .to_icu4c_value() as u16
             }
-            HangulSyllableType::SHORT_NAME => crate::names::PropertyParser::<HangulSyllableType>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
-            IndicConjunctBreak::SHORT_NAME => crate::names::PropertyParser::<IndicConjunctBreak>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
+            HangulSyllableType::SHORT_NAME => {
+                crate::names::PropertyParser::<HangulSyllableType>::new()
+                    .get_strict(name)
+                    .unwrap()
+                    .to_icu4c_value() as u16
+            }
+            IndicConjunctBreak::SHORT_NAME => {
+                crate::names::PropertyParser::<IndicConjunctBreak>::new()
+                    .get_strict(name)
+                    .unwrap()
+                    .to_icu4c_value() as u16
+            }
             IndicSyllabicCategory::SHORT_NAME => {
                 crate::names::PropertyParser::<IndicSyllabicCategory>::new()
                     .get_strict(name)
@@ -3778,10 +3782,12 @@ fn test_to_icu4c_value() {
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            VerticalOrientation::SHORT_NAME => crate::names::PropertyParser::<VerticalOrientation>::new()
-                .get_strict(name)
-                .unwrap()
-                .to_icu4c_value() as u16,
+            VerticalOrientation::SHORT_NAME => {
+                crate::names::PropertyParser::<VerticalOrientation>::new()
+                    .get_strict(name)
+                    .unwrap()
+                    .to_icu4c_value() as u16
+            }
             WordBreak::SHORT_NAME => crate::names::PropertyParser::<WordBreak>::new()
                 .get_strict(name)
                 .unwrap()
