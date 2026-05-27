@@ -3727,66 +3727,66 @@ fn test_to_icu4c_value() {
         let name = parts.next().unwrap();
         let expected: u16 = parts.next().unwrap().parse().unwrap();
         let actual = match prop.as_bytes() {
-            BidiClass::NAME => crate::names::PropertyParser::<BidiClass>::new()
+            BidiClass::SHORT_NAME => crate::names::PropertyParser::<BidiClass>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            EastAsianWidth::NAME => crate::names::PropertyParser::<EastAsianWidth>::new()
+            EastAsianWidth::SHORT_NAME => crate::names::PropertyParser::<EastAsianWidth>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            GeneralCategory::NAME => crate::names::PropertyParser::<GeneralCategory>::new()
+            GeneralCategory::SHORT_NAME => crate::names::PropertyParser::<GeneralCategory>::new()
                 .get_strict(name)
                 .unwrap() as u8 as u16,
-            GraphemeClusterBreak::NAME => {
+            GraphemeClusterBreak::SHORT_NAME => {
                 crate::names::PropertyParser::<GraphemeClusterBreak>::new()
                     .get_strict(name)
                     .unwrap()
                     .to_icu4c_value() as u16
             }
-            HangulSyllableType::NAME => crate::names::PropertyParser::<HangulSyllableType>::new()
+            HangulSyllableType::SHORT_NAME => crate::names::PropertyParser::<HangulSyllableType>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            IndicConjunctBreak::NAME => crate::names::PropertyParser::<IndicConjunctBreak>::new()
+            IndicConjunctBreak::SHORT_NAME => crate::names::PropertyParser::<IndicConjunctBreak>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            IndicSyllabicCategory::NAME => {
+            IndicSyllabicCategory::SHORT_NAME => {
                 crate::names::PropertyParser::<IndicSyllabicCategory>::new()
                     .get_strict(name)
                     .unwrap()
                     .to_icu4c_value() as u16
             }
-            JoiningGroup::NAME => crate::names::PropertyParser::<JoiningGroup>::new()
+            JoiningGroup::SHORT_NAME => crate::names::PropertyParser::<JoiningGroup>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            JoiningType::NAME => crate::names::PropertyParser::<JoiningType>::new()
+            JoiningType::SHORT_NAME => crate::names::PropertyParser::<JoiningType>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            LineBreak::NAME => crate::names::PropertyParser::<LineBreak>::new()
+            LineBreak::SHORT_NAME => crate::names::PropertyParser::<LineBreak>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            NumericType::NAME => crate::names::PropertyParser::<NumericType>::new()
+            NumericType::SHORT_NAME => crate::names::PropertyParser::<NumericType>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            SentenceBreak::NAME => crate::names::PropertyParser::<SentenceBreak>::new()
+            SentenceBreak::SHORT_NAME => crate::names::PropertyParser::<SentenceBreak>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            VerticalOrientation::NAME => crate::names::PropertyParser::<VerticalOrientation>::new()
+            VerticalOrientation::SHORT_NAME => crate::names::PropertyParser::<VerticalOrientation>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            WordBreak::NAME => crate::names::PropertyParser::<WordBreak>::new()
+            WordBreak::SHORT_NAME => crate::names::PropertyParser::<WordBreak>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value() as u16,
-            Script::NAME => crate::names::PropertyParser::<Script>::new()
+            Script::SHORT_NAME => crate::names::PropertyParser::<Script>::new()
                 .get_strict(name)
                 .unwrap()
                 .to_icu4c_value(),
