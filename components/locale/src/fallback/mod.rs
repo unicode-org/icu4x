@@ -20,6 +20,9 @@ mod algorithms;
 /// algorithm. See *[the design doc]* for a detailed description and [#2243](
 /// https://github.com/unicode-org/icu4x/issues/2243) to track alignment with *UTS #35*.
 ///
+/// While the first element produced here is *usually* the input locale,
+/// the fallback iterator normalizes the input locale first, which may strip implied subtags.
+///
 /// If running fallback in a loop, use [`DataLocale::is_unknown()`] to break from the loop.
 ///
 /// # Examples
@@ -51,12 +54,7 @@ mod algorithms;
 /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
 /// ```
 ///
-/// # Normalization
-///
-/// While the first element produced here is *usually* the input locale,
-/// the fallback iterator normalizes the input locale first, which may strip implied subtags.
-/// For example, `zh-Hans` normalizes to `zh` because `Hans` is the default script for `zh`.
-/// Therefore, the first element in the fallback chain for `zh-Hans` is `zh`, not `zh-Hans`.
+/// `zh-Hans` normalizes to `zh` because `Hans` is the default script for `zh`:
 ///
 /// ```
 /// use icu::locale::fallback::LocaleFallbacker;
