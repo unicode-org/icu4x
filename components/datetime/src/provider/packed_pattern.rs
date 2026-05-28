@@ -161,8 +161,6 @@ pub(crate) struct GenericUnpackedPatterns<T> {
     pub(super) elements: Vec<T>,
 }
 
-
-
 #[repr(u8)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub(crate) enum VariantPatternIndex {
