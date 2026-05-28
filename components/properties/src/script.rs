@@ -726,4 +726,10 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn test_high_discriminant() {
+        let swe = ScriptWithExtensions::new();
+        assert!(!swe.has_script32(0x0640, Script(0xAFFE)));
+    }
 }
