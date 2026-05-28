@@ -564,35 +564,45 @@ impl CanonicalCombiningClassMapBorrowed<'static> {
 }
 
 impl CanonicalCombiningClassMapBorrowed<'_> {
+    #[inline(always)]
+    fn get_internal(&self, c: char) -> CanonicalCombiningClass {
+        let trie_value = self.decompositions.trie.get(c);
+        if trie_value_has_ccc(trie_value) {
+            CanonicalCombiningClass(trie_value as u8)
+        } else {
+            CanonicalCombiningClass::NotReordered
+        }
+    }
+
+    #[inline(always)]
+    fn get32_internal(&self, c: u32) -> CanonicalCombiningClass {
+        let trie_value = self.decompositions.trie.get32(c);
+        if trie_value_has_ccc(trie_value) {
+            CanonicalCombiningClass(trie_value as u8)
+        } else {
+            CanonicalCombiningClass::NotReordered
+        }
+    }
+
     /// Look up the canonical combining class for a scalar value.
     ///
-    /// The return value is a u8 representing the canonical combining class,
+    /// The return value is a `u8` representing the canonical combining class,
     /// you may enable the `"icu_properties"` feature if you would like to use a typed
     /// `CanonicalCombiningClass`.
     #[inline(always)]
     pub fn get_u8(&self, c: char) -> u8 {
-        let trie_value = self.decompositions.trie.get(c);
-        if trie_value_has_ccc(trie_value) {
-            trie_value as u8
-        } else {
-            ccc!(NotReordered, 0).to_icu4c_value()
-        }
+        self.get_internal(c).0
     }
 
     /// Look up the canonical combining class for a scalar value
     /// represented as `u32`. If the argument is outside the scalar
-    /// value range, `Not_Reordered` is returned.
+    /// value range, `0` is returned.
     ///
-    /// The return value is a u8 representing the canonical combining class,
+    /// The return value is a `u8` representing the canonical combining class,
     /// you may enable the `"icu_properties"` feature if you would like to use a typed
     /// `CanonicalCombiningClass`.
     pub fn get32_u8(&self, c: u32) -> u8 {
-        let trie_value = self.decompositions.trie.get32(c);
-        if trie_value_has_ccc(trie_value) {
-            trie_value as u8
-        } else {
-            ccc!(NotReordered, 0).to_icu4c_value()
-        }
+        self.get32_internal(c).0
     }
 
     /// Look up the canonical combining class for a scalar value
@@ -601,7 +611,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     #[inline(always)]
     #[cfg(feature = "icu_properties")]
     pub fn get(&self, c: char) -> CanonicalCombiningClass {
-        CanonicalCombiningClass::from_icu4c_value(self.get_u8(c))
+        self.get_internal(c)
     }
 
     /// Look up the canonical combining class for a scalar value
@@ -611,7 +621,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     /// ✨ *Enabled with the `icu_properties` Cargo feature.*
     #[cfg(feature = "icu_properties")]
     pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
-        CanonicalCombiningClass::from_icu4c_value(self.get32_u8(c))
+        self.get32_internal(c)
     }
 }
 

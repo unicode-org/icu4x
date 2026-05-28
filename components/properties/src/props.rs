@@ -1546,10 +1546,7 @@ make_enumerated_property! {
 /// See UAX #15:
 /// <https://www.unicode.org/reports/tr15/>.
 ///
-/// See `icu::normalizer::properties::CanonicalCombiningClassMap` for the API
-/// to look up the `Canonical_Combining_Class` property by scalar value.
-///
-/// **Note:** See `icu::normalizer::CanonicalCombiningClassMap` for the preferred API
+/// **Note:** See `icu::normalizer::properties::CanonicalCombiningClassMap` for the preferred API
 /// to look up the `Canonical_Combining_Class` property by scalar value.
 ///
 /// # Example
@@ -1575,7 +1572,7 @@ make_enumerated_property! {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct CanonicalCombiningClass(pub(crate) u8);
+pub struct CanonicalCombiningClass(pub u8);
 
 impl CanonicalCombiningClass {
     /// Returns an ICU4C `UCanonicalCombiningClass` value.
