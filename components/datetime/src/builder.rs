@@ -129,6 +129,8 @@ pub enum DateFields {
     /// The weekday alone, as in
     /// “Saturday”.
     E,
+    /// Weekday and hour, as in “Saturday 3 PM”.
+    Eh,
     /// A standalone month, as in
     /// “January”.
     M,
@@ -150,6 +152,7 @@ impl DateFields {
         Self::MDE,
         Self::YMDE,
         Self::E,
+        Self::Eh,
         Self::M,
         Self::YM,
         Self::Y,
@@ -165,6 +168,7 @@ impl DateFields {
             DateFields::MDE => false,
             DateFields::YMDE => false,
             DateFields::E => false,
+            DateFields::Eh => false,
             DateFields::M => true,
             DateFields::YM => true,
             DateFields::Y => true,
@@ -492,6 +496,9 @@ impl FieldSetBuilder {
                 Date(DateFieldSet::YMDE(fieldsets::YMDE::take_from_builder(self)))
             }
             Some(DateFields::E) => Date(DateFieldSet::E(fieldsets::E::take_from_builder(self))),
+            Some(DateFields::Eh) => {
+                Date(DateFieldSet::Eh(fieldsets::Eh::take_from_builder(self)))
+            }
             Some(DateFields::M) => CalendarPeriod(CalendarPeriodFieldSet::M(
                 fieldsets::M::take_from_builder(self),
             )),
@@ -754,6 +761,7 @@ impl FieldSetBuilder {
                 DateAndTimeFieldSet::YMDET(fieldsets::YMDET::take_from_builder(&mut self))
             }
             DateFields::E => DateAndTimeFieldSet::ET(fieldsets::ET::take_from_builder(&mut self)),
+            DateFields::Eh => DateAndTimeFieldSet::EH(fieldsets::EH::take_from_builder(&mut self)),
             DateFields::M | DateFields::YM | DateFields::Y => {
                 return Err(BuilderError::InvalidDateFields)
             }
@@ -1092,6 +1100,7 @@ mod tests {
         DateFields::MDE,
         DateFields::YMDE,
         DateFields::E,
+        DateFields::Eh,
     ];
 
     static CALENDAR_PERIOD_FIELD_SETS: &[DateFields] =

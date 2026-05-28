@@ -1053,6 +1053,18 @@ impl_date_marker!(
 );
 
 impl_date_marker!(
+    /// Weekday and hour, as in "Saturday 3 PM".
+    Eh,
+    EH,
+    description = "weekday and hour",
+    sample_length = long,
+    sample = "Friday",
+    sample_time = "Friday 3 PM",
+    weekdays = yes,
+    input_weekday = yes,
+);
+
+impl_date_marker!(
     /// This format may use ordinal formatting, such as "Friday the 17th",
     /// in the future. See CLDR-18040.
     DE,
@@ -1315,6 +1327,19 @@ impl_time_marker!(
     description = "time (locale-dependent hour cycle)",
     sample_length = medium,
     sample = "3:47:50 PM",
+    dayperiods = yes,
+    input_hour = yes,
+    input_minute = yes,
+    input_second = yes,
+    input_subsecond = yes,
+);
+
+impl_time_marker!(
+    /// Time with generic non-location timezone.
+    Tv,
+    description = "time with generic non-location timezone",
+    sample_length = medium,
+    sample = "3:47:50 PM PT",
     dayperiods = yes,
     input_hour = yes,
     input_minute = yes,
